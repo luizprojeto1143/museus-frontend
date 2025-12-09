@@ -1,0 +1,251 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "back": "Back",
+        "search": "Search",
+        "actions": "Actions",
+        "confirm": "Confirm",
+        "success": "Success",
+        "error": "Error"
+    },
+    "welcome": {
+        "title": "Cultura Viva",
+        "subtitle": "Your cultural journey starts here",
+        "firstTime": "Welcome to Cultura Viva, {{name}}!",
+        "returning": "Good to see you again, {{name}}!"
+    },
+    "auth": {
+        "login": {
+            "title": "Access your account",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Login",
+            "forgotPassword": "Forgot password",
+            "noAccount": "No account? Register"
+        },
+        "register": {
+            "title": "Create your account",
+            "name": "Name",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm password",
+            "submit": "Register",
+            "hasAccount": "Have an account? Login"
+        },
+        "errors": {}
+    },
+    "visitor": {
+        "sidebar": {
+            "home": "Home",
+            "artworks": "Artworks",
+            "trails": "Trails",
+            "map": "Map",
+            "events": "Events",
+            "favorites": "Favorites",
+            "aiChat": "AI Chat",
+            "souvenir": "Souvenir",
+            "passport": "Passport",
+            "achievements": "Achievements",
+            "changeMuseum": "Change Museum",
+            "logout": "Logout"
+        },
+        "home": {
+            "badge": "Welcome",
+            "title": "Hello, {{name}}",
+            "subtitle": "Explore the history and culture of our museums.",
+            "startTrail": "Start Trail",
+            "viewMap": "View Map",
+            "featuredArtworks": "Featured Artworks",
+            "featuredSubtitle": "Discover some of the most iconic pieces in our collection.",
+            "exampleArtwork": "Example Artwork",
+            "guestArtist": "Guest Artist",
+            "painting": "Painting",
+            "accessible": "Accessible",
+            "exampleDisclaimer": "* Image for illustration purposes only.",
+            "viewDetails": "View Details",
+            "recommendedTrails": "Recommended Trails",
+            "trailsSubtitle": "Curated itineraries for you to make the most of your visit.",
+            "quickTrail": "Quick Trail",
+            "quickTrailDesc": "Ideal for those short on time.",
+            "museumSuggestion": "Museum Suggestion",
+            "viewTrails": "View Trails",
+            "completeTrail": "Complete Trail",
+            "completeTrailDesc": "Discover the entire collection in detail.",
+            "chooseTrail": "Choose Trail"
+        },
+        "scan": {
+            "title": "Scan QR Code",
+            "instruction": "Point camera at artwork QR Code",
+            "permission": "We need permission to access camera"
+        },
+        "artwork": {
+            "details": "Artwork Details",
+            "audioGuide": "Audio Guide",
+            "play": "Play",
+            "pause": "Pause",
+            "badge": "Artwork",
+            "location": "Location",
+            "unknownRoom": "Unknown room",
+            "unknownFloor": "Unknown floor",
+            "imagePlaceholder": "Artwork image placeholder. In production, load the actual image from the backend URL (imageUrl field).",
+            "description": "Description",
+            "noDescription": "Description not available",
+            "stopReading": "Stop Reading",
+            "listenDescription": "Listen to Description",
+            "defaultDescription": "Complete description of the artwork, including historical context, technique used, curiosities, and relation to the collection.",
+            "accessibility": "Accessibility",
+            "audioDescription": "Audio Description",
+            "audioDescriptionText": "Narration describing the visual elements of the artwork for blind or low-vision people.",
+            "libras": "Libras (Sign Language)",
+            "librasText": "Video in Libras with the main explanation about the artwork, designed for the deaf community.",
+            "aiInteraction": "AI Interaction (Conceptual)",
+            "logout": "Logout"
+        },
+        "selectMuseum": {
+            "title": "Select Museum",
+            "subtitle": "Choose the museum you want to visit"
+        },
+        "favorites": {
+            "title": "Your Favorites",
+            "subtitle": "Artworks and trails you loved",
+            "empty": "You don't have any favorites yet.",
+            "explore": "Explore Artworks"
+        },
+        "museums": {
+            "title": "Manage Museums",
+            "add": "Add Museum",
+            "name": "Museum Name",
+            "location": "Location"
+        },
+        "artworks": {
+            "title": "Manage Artworks",
+            "add": "Add Artwork",
+            "name": "Artwork Title",
+            "artist": "Artist",
+            "description": "Description"
+        },
+        "works": {
+            "title": "Artworks Gallery",
+            "subtitle": "Explore the complete museum collection"
+        },
+        "map": {
+            "title": "Interactive Map",
+            "subtitle": "Navigate through the museum and historical city.",
+            "legend": "Legend",
+            "placeholder": "The map will be loaded here.",
+            "floorPlan": "Floor Plan (Indoor)",
+            "coordinates": "Coordinates (Outdoor)"
+        },
+        "chat": {
+            "title": "AI Chat",
+            "error": "An error occurred while processing your message.",
+            "you": "You",
+            "guide": "Guide",
+            "placeholder": "Type your question...",
+            "send": "Send"
+        },
+        "souvenir": {
+            "title": "Digital Souvenir",
+            "subtitle": "Generate a unique souvenir of your visit",
+            "generating": "Generating...",
+            "generate": "Generate Souvenir",
+            "error": "Error generating souvenir."
+        },
+        "trails": {
+            "title": "Trails",
+            "subtitle": "Thematic itineraries for your visit",
+            "mapTracking": "Map tracking",
+            "viewDetails": "View Details",
+            "badge": "Trail"
+        },
+        "trailDetail": {
+            "loading": "Loading trail...",
+            "about": "About the trail",
+            "artworks": "Artworks in this trail",
+            "clickDetails": "Click to view details"
+        },
+        "events": {
+            "title": "Events",
+            "subtitle": "Check the cultural program",
+            "location": "Location"
+        },
+        "eventDetail": {
+            "notFound": "Event not found.",
+            "backToEvents": "Back to Events",
+            "about": "About the event",
+            "participateAlert": "To participate, go to the event location at the scheduled time.",
+            "participate": "Participate"
+        },
+        "passport": {
+            "title": "My Passport",
+            "subtitle": "Your record of visits and experiences",
+            "totalXp": "Total XP",
+            "work": "Artwork",
+            "visitedAt": "Visited at"
+        },
+        "achievements": {
+            "title": "Achievements",
+            "subtitle": "Your medals and awards"
+        }
+    },
+    "admin": {
+        "trailForm": {
+            "editTitle": "Edit Trail",
+            "newTitle": "New Trail",
+            "subtitle": "Create thematic itineraries for visitors",
+            "labels": {
+                "name": "Trail Name",
+                "description": "Description",
+                "works": "Add Artworks"
+            },
+            "placeholders": {
+                "name": "Ex: Baroque Trail"
+            },
+            "demoSave": "Demo Mode: Trail saved locally!",
+            "selectWork": "Select a work...",
+            "add": "Add",
+            "orderTitle": "Trail Order",
+            "orderSubtitle": "Drag works to define the order. This will be the suggested sequence for the visitor.",
+            "empty": "No works added yet. Click a work on the left to add it."
+        },
+        "dashboard": {
+            "title": "Control Panel",
+            "subtitle": "Museum Overview",
+            "stats": {
+                "visitors": "Visitors this month",
+                "qrScans": "QR Code Scans",
+                "xpDistributed": "XP Distributed",
+                "monthlyGrowth": "Monthly Growth"
+            },
+            "charts": {
+                "visitsByDay": "Visits by Day",
+                "accessBySource": "Access by Source",
+                "xpByCategory": "XP by Category"
+            },
+            "growth": {
+                "summary": "Growth Summary",
+                "weekly": "Weekly",
+                "monthly": "Monthly"
+            },
+            "topWorks": "Top Works",
+            "topTrails": "Top Trails",
+            "topEvents": "Top Events",
+            "visits": "visits",
+            "completions": "completions",
+            "views": "views",
+            "days": {
+                "mon": "Mon",
+                "tue": "Tue",
+                "wed": "Wed",
+                "thu": "Thu",
+                "fri": "Fri",
+                "sat": "Sat",
+                "sun": "Sun"
+            }
+        }
+    }
+}

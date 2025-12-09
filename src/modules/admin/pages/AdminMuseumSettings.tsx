@@ -1,0 +1,501 @@
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
+
+interface MuseumSettings {
+  // 2.1 Dados do Museu
+  name: string;
+  mission: string;
+  address: string;
+  openingHours: string;
+  whatsapp: string;
+  email: string;
+  website: string;
+  logoUrl: string;
+  coverImageUrl: string;
+  appIconUrl: string;
+  bannerUrl: string;
+
+  // 2.3 Mapa
+  mapImageUrl: string;
+  latitude: number;
+  longitude: number;
+
+  // 2.2 Cores e Tema
+  primaryColor: string;
+  secondaryColor: string;
+  theme: "light" | "dark";
+  historicalFont: boolean;
+}
+
+export const AdminMuseumSettings: React.FC = () => {
+  const { t } = useTranslation();
+  const { tenantId } = useAuth();
+  const [settings, setSettings] = useState<MuseumSettings>({
+    name: "",
+    mission: "",
+    address: "",
+    openingHours: "",
+    whatsapp: "",
+    email: "",
+    website: "",
+    logoUrl: "",
+    coverImageUrl: "",
+    appIconUrl: "",
+    bannerUrl: "",
+    mapImageUrl: "",
+    latitude: -20.385574, // Default Ouro Preto
+    longitude: -43.503578,
+    primaryColor: "#d4af37",
+    secondaryColor: "#cd7f32",
+    theme: "dark",
+    historicalFont: true
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+
+
+  const loadSettings = React.useCallback(async () => {
+    try {
+      const res = await api.get(`/tenants/${tenantId}/settings`);
+      setSettings(res.data);
+    } catch {
+      console.error("Erro ao carregar configurações");
+    } finally {
+      setLoading(false);
+    }
+  }, [tenantId]);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await api.put(`/tenants/${tenantId}/settings`, settings);
+      alert(t("admin.museumSettings.success"));
+    } catch {
+      alert(t("admin.museumSettings.error"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleFileUpload = async (field: keyof MuseumSettings, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await api.post("/upload", formData);
+      setSettings({ ...settings, [field]: res.data.url });
+    } catch {
+      alert(t("common.error"));
+    }
+  };
+
+  if (loading) {
+    return <p>{t("common.loading")}</p>;
+  }
+
+  return (
+    <div>
+      <h1 className="section-title">🏛 {t("admin.museumSettings.title")}</h1>
+      <p className="section-subtitle">
+        {t("admin.museumSettings.subtitle")}
+      </p>
+
+      {/* 2.1 DADOS DO MUSEU */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <h2 className="card-title">📋 {t("admin.museumSettings.institutionalData")}</h2>
+
+        <div className="form-group">
+          <label className="form-label">{t("admin.museumSettings.labels.name")} *</label>
+          <input
+            type="text"
+            value={settings.name}
+            onChange={(e) => setSettings({ ...settings, name: e.target.value })}
+            placeholder="Ex: Museu Histórico de Ouro Preto"
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">{t("admin.museumSettings.labels.mission")}</label>
+          <textarea
+            value={settings.mission}
+            onChange={(e) => setSettings({ ...settings, mission: e.target.value })}
+            placeholder={t("admin.museumSettings.placeholders.mission")}
+            rows={4}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">{t("admin.museumSettings.labels.address")}</label>
+          <input
+            type="text"
+            value={settings.address}
+            onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+            placeholder={t("admin.museumSettings.placeholders.address")}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">{t("admin.museumSettings.labels.openingHours")}</label>
+          <input
+            type="text"
+            value={settings.openingHours}
+            onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })}
+            placeholder="Ex: Seg-Sex 9h-17h, Sáb 10h-14h"
+          />
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
+          <div className="form-group">
+            <label className="form-label">{t("admin.museumSettings.labels.whatsapp")}</label>
+            <input
+              type="text"
+              value={settings.whatsapp}
+              onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
+              placeholder="(31) 99999-9999"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">{t("admin.museumSettings.labels.email")}</label>
+            <input
+              type="email"
+              value={settings.email}
+              onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+              placeholder="contato@museu.com.br"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">{t("admin.museumSettings.labels.website")}</label>
+            <input
+              type="url"
+              value={settings.website}
+              onChange={(e) => setSettings({ ...settings, website: e.target.value })}
+              placeholder="https://museu.com.br"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* UPLOADS */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <h2 className="card-title">🖼 {t("admin.museumSettings.images.title")}</h2>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
+          {/* Logo */}
+          <div>
+            <label className="form-label">{t("admin.museumSettings.images.logo")}</label>
+            <div
+              style={{
+                width: "100%",
+                height: "150px",
+                border: "2px dashed var(--border-strong)",
+                borderRadius: "var(--radius-md)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: settings.logoUrl ? `url(${settings.logoUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
+                cursor: "pointer",
+                position: "relative"
+              }}
+              onClick={() => document.getElementById("logo-upload")?.click()}
+            >
+              {!settings.logoUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
+              <input
+                id="logo-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])}
+              />
+            </div>
+          </div>
+
+          {/* Capa */}
+          <div>
+            <label className="form-label">{t("admin.museumSettings.images.cover")}</label>
+            <div
+              style={{
+                width: "100%",
+                height: "150px",
+                border: "2px dashed var(--border-strong)",
+                borderRadius: "var(--radius-md)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: settings.coverImageUrl ? `url(${settings.coverImageUrl}) center/cover no-repeat` : "rgba(42, 24, 16, 0.3)",
+                cursor: "pointer"
+              }}
+              onClick={() => document.getElementById("cover-upload")?.click()}
+            >
+              {!settings.coverImageUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
+              <input
+                id="cover-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => e.target.files?.[0] && handleFileUpload("coverImageUrl", e.target.files[0])}
+              />
+            </div>
+          </div>
+
+          {/* Ícone App */}
+          <div>
+            <label className="form-label">{t("admin.museumSettings.images.appIcon")}</label>
+            <div
+              style={{
+                width: "100%",
+                height: "150px",
+                border: "2px dashed var(--border-strong)",
+                borderRadius: "var(--radius-md)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: settings.appIconUrl ? `url(${settings.appIconUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
+                cursor: "pointer"
+              }}
+              onClick={() => document.getElementById("icon-upload")?.click()}
+            >
+              {!settings.appIconUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
+              <input
+                id="icon-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => e.target.files?.[0] && handleFileUpload("appIconUrl", e.target.files[0])}
+              />
+            </div>
+          </div>
+
+          {/* Banner */}
+          <div>
+            <label className="form-label">{t("admin.museumSettings.images.banner")}</label>
+            <div
+              style={{
+                width: "100%",
+                height: "150px",
+                border: "2px dashed var(--border-strong)",
+                borderRadius: "var(--radius-md)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: settings.bannerUrl ? `url(${settings.bannerUrl}) center/cover no-repeat` : "rgba(42, 24, 16, 0.3)",
+                cursor: "pointer"
+              }}
+              onClick={() => document.getElementById("banner-upload")?.click()}
+            >
+              {!settings.bannerUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
+              <input
+                id="banner-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => e.target.files?.[0] && handleFileUpload("bannerUrl", e.target.files[0])}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      {/* 2.3 CONFIGURAÇÃO DE MAPA */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <h2 className="card-title">📍 {t("admin.museumSettings.map.title") || "Configuração de Mapa"}</h2>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
+          {/* Planta Baixa */}
+          <div>
+            <label className="form-label">{t("admin.museumSettings.map.floorPlan") || "Planta Baixa (Indoor)"}</label>
+            <div
+              style={{
+                width: "100%",
+                height: "200px",
+                border: "2px dashed var(--border-strong)",
+                borderRadius: "var(--radius-md)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: settings.mapImageUrl ? `url(${settings.mapImageUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
+                cursor: "pointer",
+                marginBottom: "0.5rem"
+              }}
+              onClick={() => document.getElementById("map-upload")?.click()}
+            >
+              {!settings.mapImageUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
+              <input
+                id="map-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => e.target.files?.[0] && handleFileUpload("mapImageUrl", e.target.files[0])}
+              />
+            </div>
+            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+              Use uma imagem de alta resolução da planta do museu.
+            </p>
+          </div>
+
+          {/* Coordenadas */}
+          <div>
+            <label className="form-label">{t("admin.museumSettings.map.coordinates") || "Coordenadas (Outdoor)"}</label>
+            <div className="form-group">
+              <label style={{ fontSize: "0.85rem" }}>Latitude</label>
+              <input
+                type="number"
+                step="any"
+                value={settings.latitude}
+                onChange={(e) => setSettings({ ...settings, latitude: parseFloat(e.target.value) })}
+                placeholder="-20.385574"
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ fontSize: "0.85rem" }}>Longitude</label>
+              <input
+                type="number"
+                step="any"
+                value={settings.longitude}
+                onChange={(e) => setSettings({ ...settings, longitude: parseFloat(e.target.value) })}
+                placeholder="-43.503578"
+              />
+            </div>
+            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+              Defina a localização exata do museu para o mapa da cidade.
+              <br />
+              <a
+                href="https://www.google.com/maps"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--primary)" }}
+              >
+                Consultar no Google Maps
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 2.2 CORES E TEMA */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <h2 className="card-title">🎨 {t("admin.museumSettings.colors.title")}</h2>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+          <div className="form-group">
+            <label className="form-label">{t("admin.museumSettings.colors.primary")}</label>
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <input
+                type="color"
+                value={settings.primaryColor}
+                onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
+                style={{ width: "60px", height: "40px", cursor: "pointer" }}
+              />
+              <input
+                type="text"
+                value={settings.primaryColor}
+                onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
+                placeholder="#d4af37"
+                style={{ flex: 1 }}
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">{t("admin.museumSettings.colors.secondary")}</label>
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+              <input
+                type="color"
+                value={settings.secondaryColor}
+                onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })}
+                style={{ width: "60px", height: "40px", cursor: "pointer" }}
+              />
+              <input
+                type="text"
+                value={settings.secondaryColor}
+                onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })}
+                placeholder="#cd7f32"
+                style={{ flex: 1 }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">{t("admin.museumSettings.colors.theme")}</label>
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input
+                type="radio"
+                checked={settings.theme === "light"}
+                onChange={() => setSettings({ ...settings, theme: "light" })}
+              />
+              <span>{t("admin.museumSettings.colors.light")}</span>
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input
+                type="radio"
+                checked={settings.theme === "dark"}
+                onChange={() => setSettings({ ...settings, theme: "dark" })}
+              />
+              <span>{t("admin.museumSettings.colors.dark")}</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+            <input
+              type="checkbox"
+              checked={settings.historicalFont}
+              onChange={(e) => setSettings({ ...settings, historicalFont: e.target.checked })}
+            />
+            <span className="form-label" style={{ marginBottom: 0 }}>{t("admin.museumSettings.colors.historicalFont")}</span>
+          </label>
+        </div>
+
+        {/* Preview */}
+        <div
+          style={{
+            marginTop: "1.5rem",
+            padding: "1.5rem",
+            borderRadius: "var(--radius-md)",
+            background: settings.theme === "dark" ? "#1a1108" : "#f5f5f5",
+            color: settings.theme === "dark" ? "#f5e6d3" : "#1a1108",
+            fontFamily: settings.historicalFont ? "Georgia, serif" : "system-ui",
+            border: "2px solid var(--border-subtle)"
+          }}
+        >
+          <h3 style={{ color: settings.primaryColor, marginBottom: "0.5rem" }}>{t("admin.museumSettings.preview.title")}</h3>
+          <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
+            {t("admin.museumSettings.preview.text")}
+          </p>
+          <button
+            className="btn"
+            style={{
+              background: `linear-gradient(135deg, ${settings.primaryColor}, ${settings.secondaryColor})`,
+              color: settings.theme === "dark" ? "#1a1108" : "#fff"
+            }}
+          >
+            {t("admin.museumSettings.preview.button")}
+          </button>
+        </div>
+      </div>
+
+      {/* Botão Salvar */}
+      <button
+        className="btn btn-primary"
+        onClick={handleSave}
+        disabled={saving}
+        style={{ width: "100%", padding: "1rem", fontSize: "1rem" }}
+      >
+        {saving ? t("admin.museumSettings.saving") : `💾 ${t("admin.museumSettings.save")}`}
+      </button>
+    </div >
+  );
+};

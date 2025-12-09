@@ -1,0 +1,251 @@
+{
+    "common": {
+        "loading": "Cargando...",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "back": "Volver",
+        "search": "Buscar",
+        "actions": "Acciones",
+        "confirm": "Confirmar",
+        "success": "Éxito",
+        "error": "Error"
+    },
+    "welcome": {
+        "title": "Cultura Viva",
+        "subtitle": "Tu viaje cultural comienza aquí",
+        "firstTime": "¡Bienvenido a Cultura Viva, {{name}}!",
+        "returning": "¡Qué bueno verte de nuevo, {{name}}!"
+    },
+    "auth": {
+        "login": {
+            "title": "Accede a tu cuenta",
+            "email": "Correo",
+            "password": "Contraseña",
+            "submit": "Entrar",
+            "forgotPassword": "Olvidé mi contraseña",
+            "noAccount": "¿No tienes cuenta? Regístrate"
+        },
+        "register": {
+            "title": "Crea tu cuenta",
+            "name": "Nombre",
+            "email": "Correo",
+            "password": "Contraseña",
+            "confirmPassword": "Confirmar contraseña",
+            "submit": "Registrarse",
+            "hasAccount": "¿Ya tienes cuenta? Entra"
+        },
+        "errors": {}
+    },
+    "visitor": {
+        "sidebar": {
+            "home": "Inicio",
+            "artworks": "Obras",
+            "trails": "Rutas",
+            "map": "Mapa",
+            "events": "Eventos",
+            "favorites": "Favoritos",
+            "aiChat": "Chat IA",
+            "souvenir": "Souvenir",
+            "passport": "Pasaporte",
+            "achievements": "Logros",
+            "changeMuseum": "Cambiar Museo",
+            "logout": "Cerrar Sesión"
+        },
+        "home": {
+            "badge": "Bienvenido",
+            "title": "Hola, {{name}}",
+            "subtitle": "Explora la historia y la cultura de nuestros museos.",
+            "startTrail": "Comenzar Ruta",
+            "viewMap": "Ver Mapa",
+            "featuredArtworks": "Obras Destacadas",
+            "featuredSubtitle": "Descubre algunas de las piezas más icónicas de nuestra colección.",
+            "exampleArtwork": "Obra de Ejemplo",
+            "guestArtist": "Artista Invitado",
+            "painting": "Pintura",
+            "accessible": "Accesible",
+            "exampleDisclaimer": "* Imagen meramente ilustrativa.",
+            "viewDetails": "Ver Detalles",
+            "recommendedTrails": "Rutas Recomendadas",
+            "trailsSubtitle": "Itinerarios seleccionados para que aproveches al máximo tu visita.",
+            "quickTrail": "Ruta Rápida",
+            "quickTrailDesc": "Ideal para quien tiene poco tiempo.",
+            "museumSuggestion": "Sugerencia del Museo",
+            "viewTrails": "Ver Rutas",
+            "completeTrail": "Ruta Completa",
+            "completeTrailDesc": "Conoce toda la colección en detalle.",
+            "chooseTrail": "Elegir Ruta"
+        },
+        "scan": {
+            "title": "Escanear QR Code",
+            "instruction": "Apunta la cámara al QR Code de la obra",
+            "permission": "Necesitamos permiso para acceder a la cámara"
+        },
+        "artwork": {
+            "details": "Detalles de la Obra",
+            "audioGuide": "Audioguía",
+            "play": "Reproducir",
+            "pause": "Pausar",
+            "badge": "Obra",
+            "location": "Ubicación",
+            "unknownRoom": "Sala desconocida",
+            "unknownFloor": "Piso desconocido",
+            "imagePlaceholder": "Marcador de posición de la imagen de la obra. En producción, cargue la imagen real desde la URL del backend (campo imageUrl).",
+            "description": "Descripción",
+            "noDescription": "Descripción no disponible",
+            "stopReading": "Detener Lectura",
+            "listenDescription": "Escuchar Descripción",
+            "defaultDescription": "Descripción completa de la obra, incluyendo contexto histórico, técnica utilizada, curiosidades y relación con la colección.",
+            "accessibility": "Accesibilidad",
+            "audioDescription": "Audiodescripción",
+            "audioDescriptionText": "Narración que describe los elementos visuales de la obra para personas ciegas o con baja visión.",
+            "libras": "Libras (Lengua de Señas)",
+            "librasText": "Video en Libras con la explicación principal sobre a obra, pensado para la comunidad sorda.",
+            "aiInteraction": "Interacción con IA (Conceptual)",
+            "logout": "Salir"
+        },
+        "selectMuseum": {
+            "title": "Selecciona el Museo",
+            "subtitle": "Elige el museo que deseas visitar"
+        },
+        "favorites": {
+            "title": "Tus Favoritos",
+            "subtitle": "Obras y rutas que te encantaron",
+            "empty": "Aún no tienes favoritos.",
+            "explore": "Explorar Obras"
+        },
+        "museums": {
+            "title": "Gestionar Museus",
+            "add": "Añadir Museo",
+            "name": "Nombre del Museo",
+            "location": "Ubicación"
+        },
+        "artworks": {
+            "title": "Gestionar Obras",
+            "add": "Añadir Obra",
+            "name": "Título de la Obra",
+            "artist": "Artista",
+            "description": "Descripción"
+        },
+        "works": {
+            "title": "Galería de Obras",
+            "subtitle": "Explora la colección completa del museo"
+        },
+        "map": {
+            "title": "Mapa Interativo",
+            "subtitle": "Navegue por el museo y la ciudad histórica.",
+            "legend": "Leyenda",
+            "placeholder": "El mapa se cargará aquí.",
+            "floorPlan": "Plano de Planta (Interior)",
+            "coordinates": "Coordenadas (Exterior)"
+        },
+        "chat": {
+            "title": "Chat con IA",
+            "error": "Ocurrió un error al procesar su mensaje.",
+            "you": "Tú",
+            "guide": "Guía",
+            "placeholder": "Escribe tu pregunta...",
+            "send": "Enviar"
+        },
+        "souvenir": {
+            "title": "Souvenir Digital",
+            "subtitle": "Genera un recuerdo único de tu visita",
+            "generating": "Generando...",
+            "generate": "Generar Souvenir",
+            "error": "Error al generar souvenir."
+        },
+        "trails": {
+            "title": "Rutas",
+            "subtitle": "Itinerarios temáticos para tu visita",
+            "mapTracking": "Seguimiento en el mapa",
+            "viewDetails": "Ver Detalles",
+            "badge": "Ruta"
+        },
+        "trailDetail": {
+            "loading": "Cargando ruta...",
+            "about": "Sobre la ruta",
+            "artworks": "Obras en esta ruta",
+            "clickDetails": "Clic para ver detalles"
+        },
+        "events": {
+            "title": "Eventos",
+            "subtitle": "Consulta la programación cultural",
+            "location": "Ubicación"
+        },
+        "eventDetail": {
+            "notFound": "Evento no encontrado.",
+            "backToEvents": "Volver a Eventos",
+            "about": "Sobre el evento",
+            "participateAlert": "Para participar, dirígete al lugar del evento a la hora programada.",
+            "participate": "Participar"
+        },
+        "passport": {
+            "title": "Mi Pasaporte",
+            "subtitle": "Tu registro de visitas y experiencias",
+            "totalXp": "XP Total",
+            "work": "Obra",
+            "visitedAt": "Visitado el"
+        },
+        "achievements": {
+            "title": "Logros",
+            "subtitle": "Tus medallas y premios"
+        }
+    },
+    "admin": {
+        "trailForm": {
+            "editTitle": "Editar Ruta",
+            "newTitle": "Nueva Ruta",
+            "subtitle": "Crea itinerarios temáticos para los visitantes",
+            "labels": {
+                "name": "Nombre de la Ruta",
+                "description": "Descripción",
+                "works": "Añadir Obras"
+            },
+            "placeholders": {
+                "name": "Ej: Ruta del Barroco"
+            },
+            "demoSave": "Modo Demo: ¡Ruta guardada localmente!",
+            "selectWork": "Selecciona una obra...",
+            "add": "Añadir",
+            "orderTitle": "Orden de la ruta",
+            "orderSubtitle": "Arrastra las obras para definir el orden. Esta será la secuencia sugerida al visitante.",
+            "empty": "No se han añadido obras todavía. Haz clic en una obra a la izquierda para añadirla."
+        },
+        "dashboard": {
+            "title": "Panel de Control",
+            "subtitle": "Visión general del museo",
+            "stats": {
+                "visitors": "Visitantes este mes",
+                "qrScans": "Escaneos de QR",
+                "xpDistributed": "XP Distribuido",
+                "monthlyGrowth": "Crecimiento Mensual"
+            },
+            "charts": {
+                "visitsByDay": "Visitas por Día",
+                "accessBySource": "Acceso por Origen",
+                "xpByCategory": "XP por Categoría"
+            },
+            "growth": {
+                "summary": "Resumen de Crecimiento",
+                "weekly": "Semanal",
+                "monthly": "Mensual"
+            },
+            "topWorks": "Top Obras",
+            "topTrails": "Top Rutas",
+            "topEvents": "Top Eventos",
+            "visits": "visitas",
+            "completions": "completados",
+            "views": "vistas",
+            "days": {
+                "mon": "Lun",
+                "tue": "Mar",
+                "wed": "Mié",
+                "thu": "Jue",
+                "fri": "Vie",
+                "sat": "Sáb",
+                "sun": "Dom"
+            }
+        }
+    }
+}
