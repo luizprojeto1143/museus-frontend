@@ -22,10 +22,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
 
         try {
             // Call backend to update
-            const response = await fetch("http://localhost:3000/visitors/me", {
+            const baseUrl = import.meta.env.VITE_API_URL || "";
+            const response = await fetch(`${baseUrl}/visitors/me`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     email, // Current email to identify

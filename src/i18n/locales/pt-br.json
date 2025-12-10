@@ -25,7 +25,9 @@
         "title": "Cultura Viva",
         "subtitle": "Sua jornada cultural começa aqui",
         "firstTime": "Bem-vindo ao Cultura Viva, {{name}}!",
-        "returning": "Que bom te ver de novo, {{name}}!"
+        "returning": "Que bom te ver de novo, {{name}}!",
+        "explore": "Explorar",
+        "login": "Login"
     },
     "auth": {
         "login": {
