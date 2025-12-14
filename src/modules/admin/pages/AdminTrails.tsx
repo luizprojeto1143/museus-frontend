@@ -16,7 +16,6 @@ export const AdminTrails: React.FC = () => {
   const { tenantId } = useAuth();
   const [trails, setTrails] = useState<AdminTrailItem[]>([]);
 
-  const [trails, setTrails] = useState<AdminTrailItem[]>([]);
 
   React.useEffect(() => {
     if (!tenantId) return;
