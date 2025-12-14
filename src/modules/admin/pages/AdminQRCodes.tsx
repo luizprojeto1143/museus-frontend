@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useTranslation } from "react-i18next";
-import { isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 
 
 type QRCodeItem = {
@@ -17,13 +18,20 @@ export const AdminQRCodes: React.FC = () => {
   const { t } = useTranslation();
 
 
-  // Mock data
-  const mockQRCodes: QRCodeItem[] = [
-    { id: "1", code: "QR001", type: "WORK", title: "Mona Lisa", xpReward: 10, referenceId: "1" }
-  ];
-
-  const [qrcodes] = useState<QRCodeItem[]>(isDemoMode ? mockQRCodes : []);
+  const { tenantId } = useAuth();
+  const [qrcodes, setQrcodes] = useState<QRCodeItem[]>([]);
   const [showForm, setShowForm] = useState(false);
+
+  const fetchQRCodes = React.useCallback(() => {
+    if (!tenantId) return;
+    api.get("/qrcodes", { params: { tenantId } })
+      .then(res => setQrcodes(res.data))
+      .catch(console.error);
+  }, [tenantId]);
+
+  React.useEffect(() => {
+    fetchQRCodes();
+  }, [fetchQRCodes]);
 
   // Dados do formulário
   const [type, setType] = useState("WORK");
@@ -38,15 +46,27 @@ export const AdminQRCodes: React.FC = () => {
 
 
 
-  const handleGenerate = () => {
-    // Lógica simples de geração de URL/DeepLink
-    let value = "";
-    if (type === "CUSTOM") {
-      value = customUrl;
-    } else {
-      value = `museuapp://${type.toLowerCase()}/${referenceId}`;
+  const handleGenerate = async () => {
+    if (!tenantId) return;
+
+    try {
+      const res = await api.post("/qrcodes", {
+        type,
+        referenceId: type === "CUSTOM" ? null : referenceId,
+        title: type === "CUSTOM" ? customUrl : `${type} ${referenceId}`,
+        tenantId,
+        code: type === "CUSTOM" ? undefined : undefined // Let backend generate code
+      });
+
+      const newQr = res.data;
+      setGeneratedValue(newQr.code); // Or full URL if needed
+      fetchQRCodes();
+      setShowForm(false);
+      alert(t("common.success"));
+    } catch (err) {
+      console.error("Erro ao gerar QR Code", err);
+      alert(t("common.error"));
     }
-    setGeneratedValue(value);
   };
 
   const handleDownload = () => {
@@ -172,6 +192,7 @@ export const AdminQRCodes: React.FC = () => {
               <th>{t("admin.qrCodes.table.code")}</th>
               <th>{t("admin.qrCodes.table.type")}</th>
               <th>{t("admin.qrCodes.table.reference")}</th>
+              <th style={{ textAlign: "right" }}>{t("common.actions")}</th>
             </tr>
           </thead>
           <tbody>
@@ -180,11 +201,29 @@ export const AdminQRCodes: React.FC = () => {
                 <td>{qr.code}</td>
                 <td>{qr.type}</td>
                 <td>{qr.referenceId || "-"}</td>
+                <td style={{ textAlign: "right" }}>
+                  <button
+                    className="btn btn-secondary"
+                    style={{ color: "#ef4444", borderColor: "#ef4444", padding: "0.25rem 0.5rem" }}
+                    onClick={async () => {
+                      if (confirm(t("common.confirmDelete"))) {
+                        try {
+                          await api.delete(`/qrcodes/${qr.id}`);
+                          fetchQRCodes();
+                        } catch {
+                          alert(t("common.error"));
+                        }
+                      }
+                    }}
+                  >
+                    🗑️
+                  </button>
+                </td>
               </tr>
             ))}
             {qrcodes.length === 0 && (
               <tr>
-                <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
+                <td colSpan={4} style={{ textAlign: "center", padding: "1rem" }}>
                   {t("common.noData")}
                 </td>
               </tr>

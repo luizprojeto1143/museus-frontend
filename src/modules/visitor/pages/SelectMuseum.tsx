@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { useAuth } from "../../auth/AuthContext";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
+import "./SelectMuseum.css";
 
 interface Tenant {
   id: string;
@@ -86,16 +87,7 @@ export const SelectMuseum: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "linear-gradient(135deg, #1a1108, #2d1810)",
-        color: "#d4af37",
-        fontSize: "1.2rem",
-        fontFamily: "serif"
-      }}>
+      <div className="select-museum-loading">
         {t("visitor.selectMuseum.loading")}
       </div>
     );
@@ -103,32 +95,11 @@ export const SelectMuseum: React.FC = () => {
 
   if (error) {
     return (
-      <div style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "linear-gradient(135deg, #1a1108, #2d1810)",
-        color: "#ff6b6b",
-        fontSize: "1.1rem",
-        fontFamily: "serif",
-        padding: "2rem",
-        textAlign: "center"
-      }}>
+      <div className="select-museum-error">
         <p>{error}</p>
         <button
           onClick={() => navigate("/")}
-          style={{
-            marginTop: "1rem",
-            padding: "0.75rem 1.5rem",
-            background: "#d4af37",
-            color: "#1a1108",
-            border: "none",
-            borderRadius: "0.5rem",
-            cursor: "pointer",
-            fontFamily: "serif"
-          }}
+          className="error-back-button"
         >
           {t("common.back")}
         </button>
@@ -137,130 +108,50 @@ export const SelectMuseum: React.FC = () => {
   }
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #1a1108, #2d1810)",
-      padding: "4rem 2rem 2rem 2rem", // Increased top padding to clear LanguageSwitcher
-      overflowY: "auto",
-      position: "relative" // Ensure absolute positioning of LanguageSwitcher works
-    }}>
+    <div className="select-museum-container">
       <LanguageSwitcher />
-      <div style={{
-        maxWidth: "1200px",
-        margin: "0 auto"
-      }}>
+      <div className="select-museum-content">
         {/* Cabeçalho */}
-        <div style={{
-          textAlign: "center",
-          marginBottom: "3rem"
-        }}>
-          <h1 style={{
-            fontSize: "2.5rem",
-            color: "#d4af37",
-            fontFamily: "serif",
-            margin: 0,
-            marginBottom: "0.5rem",
-            textShadow: "0 2px 12px rgba(212,175,55,0.5)"
-          }}>
+        <div className="select-museum-header">
+          <h1 className="select-museum-title">
             🏛 {t("visitor.selectMuseum.title")}
           </h1>
-          <p style={{
-            color: "#c9b58c",
-            fontSize: "1rem",
-            fontFamily: "serif"
-          }}>
+          <p className="select-museum-subtitle">
             {t("visitor.selectMuseum.subtitle")}
           </p>
         </div>
 
         {/* Grid de museus */}
         {tenants.length === 0 ? (
-          <div style={{
-            textAlign: "center",
-            color: "#8b7355",
-            fontSize: "1.1rem",
-            fontFamily: "serif",
-            padding: "3rem"
-          }}>
+          <div className="no-museums">
             <p>{t("visitor.selectMuseum.noMuseums")}</p>
-            <p style={{ fontSize: "0.9rem", marginTop: "1rem" }}>
+            <p className="admin-hint">
               {t("visitor.selectMuseum.adminHint")}
             </p>
           </div>
         ) : (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: "2rem"
-          }}>
+          <div className="museum-grid">
             {tenants.map((tenant) => (
               <div
                 key={tenant.id}
                 onClick={() => handleSelectMuseum(tenant)}
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(212,175,55,0.1), rgba(42,24,16,0.8))",
-                  border: "2px solid #8b7355",
-                  borderRadius: "1rem",
-                  padding: "2rem 1.5rem",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                  textAlign: "center",
-                  position: "relative",
-                  overflow: "hidden",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.5)"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-8px)";
-                  e.currentTarget.style.borderColor = "#d4af37";
-                  e.currentTarget.style.boxShadow = "0 8px 32px rgba(212,175,55,0.4)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.borderColor = "#8b7355";
-                  e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.5)";
-                }}
+                className="museum-card"
               >
                 {/* Moldura decorativa */}
-                <div style={{
-                  position: "absolute",
-                  top: "10px",
-                  left: "10px",
-                  right: "10px",
-                  bottom: "10px",
-                  border: "1px solid rgba(212,175,55,0.2)",
-                  borderRadius: "0.8rem",
-                  pointerEvents: "none"
-                }} />
+                <div className="museum-card-frame" />
 
                 {/* Ícone */}
-                <div style={{
-                  fontSize: "4rem",
-                  marginBottom: "1rem",
-                  filter: "sepia(0.5) hue-rotate(20deg)"
-                }}>
+                <div className="museum-card-icon">
                   🏛
                 </div>
 
                 {/* Nome do museu */}
-                <h3 style={{
-                  fontSize: "1.3rem",
-                  color: "#d4af37",
-                  fontFamily: "serif",
-                  margin: 0,
-                  marginBottom: "0.5rem",
-                  textShadow: "0 2px 8px rgba(212,175,55,0.3)"
-                }}>
+                <h3 className="museum-card-title">
                   {tenant.name}
                 </h3>
 
                 {/* Slug */}
-                <p style={{
-                  fontSize: "0.85rem",
-                  color: "#8b7355",
-                  fontFamily: "serif",
-                  margin: 0
-                }}>
+                <p className="museum-card-slug">
                   {tenant.slug}
                 </p>
               </div>
@@ -269,31 +160,10 @@ export const SelectMuseum: React.FC = () => {
         )}
 
         {/* Botão voltar */}
-        <div style={{
-          textAlign: "center",
-          marginTop: "3rem"
-        }}>
+        <div className="back-button-container">
           <button
             onClick={() => navigate("/welcome")}
-            style={{
-              background: "transparent",
-              color: "#8b7355",
-              fontSize: "0.9rem",
-              fontFamily: "serif",
-              padding: "0.6rem 1.5rem",
-              border: "1px solid #8b7355",
-              borderRadius: "0.5rem",
-              cursor: "pointer",
-              transition: "all 0.3s ease"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#d4af37";
-              e.currentTarget.style.borderColor = "#d4af37";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#8b7355";
-              e.currentTarget.style.borderColor = "#8b7355";
-            }}
+            className="back-button"
           >
             ← {t("common.back")}
           </button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
@@ -66,29 +66,15 @@ export const AdminTrailForm: React.FC = () => {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
-  // Mock data
-  const mockWorks = [
-    { id: "w1", title: "Monalisa" },
-    { id: "w2", title: "O Grito" },
-    { id: "w3", title: "Abaporu" },
-    { id: "w4", title: "A Noite Estrelada" }
-  ];
-
-  const mockSelectedWorks = [
-    { id: "w1", title: "Monalisa" },
-    { id: "w3", title: "Abaporu" }
-  ];
-
-  // Initial state based on demo mode
-  const [name, setName] = useState(isDemoMode && isEdit ? "Trilha Imperial" : "");
-  const [description, setDescription] = useState(isDemoMode && isEdit ? "Uma jornada pelo século XIX." : "");
+  // Initial state
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [active, setActive] = useState(true);
-  const [allWorks, setAllWorks] = useState<{ id: string; title: string }[]>(isDemoMode ? mockWorks : []);
-  const [selectedWorks, setSelectedWorks] = useState<{ id: string; title: string }[]>(isDemoMode && isEdit ? mockSelectedWorks : []);
+  const [allWorks, setAllWorks] = useState<{ id: string; title: string }[]>([]);
+  const [selectedWorks, setSelectedWorks] = useState<{ id: string; title: string }[]>([]);
   const [workToAdd, setWorkToAdd] = useState("");
 
   useEffect(() => {
-    if (isDemoMode) return;
 
     if (tenantId) {
       api.get("/works", { params: { tenantId } }).then(res => {
@@ -141,11 +127,7 @@ export const AdminTrailForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isDemoMode || !tenantId) {
-      alert(t("admin.trailForm.demoSave"));
-      navigate("/admin/trilhas");
-      return;
-    }
+    if (!tenantId) return;
 
     const payload = {
       title: name,

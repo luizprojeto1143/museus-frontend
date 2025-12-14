@@ -1,0 +1,115 @@
+.dialer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
+    z-index: 2100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+.dialer-container {
+    background: linear-gradient(135deg, #2d1810, #1a1108);
+    border: 2px solid #8b7355;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 320px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.dialer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    color: #d4af37;
+}
+
+.dialer-header h3 {
+    margin: 0;
+    font-family: serif;
+    font-size: 1.5rem;
+}
+
+.dialer-close {
+    background: none;
+    border: none;
+    color: #8b7355;
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.dialer-display {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #8b7355;
+    border-radius: 0.8rem;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.dialer-code {
+    font-size: 2.5rem;
+    color: #d4af37;
+    font-family: monospace;
+    letter-spacing: 0.5rem;
+}
+
+.dialer-code.placeholder {
+    color: rgba(212, 175, 55, 0.3);
+}
+
+.dialer-error {
+    color: #ff6b6b;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.dialer-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.dialer-key {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid #8b7355;
+    background: rgba(42, 24, 16, 0.5);
+    color: #d4af37;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialer-key:active {
+    background: #d4af37;
+    color: #1a1108;
+    transform: scale(0.95);
+}
+
+.dialer-key.action {
+    background: rgba(139, 115, 85, 0.2);
+    font-size: 1.2rem;
+}
+
+.dialer-key.confirm {
+    background: #d4af37;
+    color: #1a1108;
+    font-weight: bold;
+}
+
+.dialer-key:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

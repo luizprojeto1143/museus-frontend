@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
 type AdminWorkItem = {
@@ -17,15 +17,7 @@ export const AdminWorks: React.FC = () => {
   const [works, setWorks] = useState<AdminWorkItem[]>([]);
 
   React.useEffect(() => {
-    const mock: AdminWorkItem[] = [
-      { id: "1", title: t("visitor.home.exampleArtwork") + " 1", artist: "Artista A", published: true },
-      { id: "2", title: t("visitor.home.exampleArtwork") + " 2", artist: "Artista B", published: false }
-    ];
-
-    if (isDemoMode || !tenantId) {
-      setWorks(mock);
-      return;
-    }
+    if (!tenantId) return;
 
     api
       .get("/works", { params: { tenantId } })
@@ -38,10 +30,11 @@ export const AdminWorks: React.FC = () => {
         }));
         setWorks(apiWorks);
       })
-      .catch(() => {
-        setWorks(mock);
+      .catch((err) => {
+        console.error("Failed to fetch works", err);
+        setWorks([]);
       });
-  }, [tenantId, t]);
+  }, [tenantId]);
 
   return (
     <div>

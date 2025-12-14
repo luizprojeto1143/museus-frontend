@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
 type DashboardData = {
@@ -38,56 +38,7 @@ export const AdminDashboard: React.FC = () => {
 
   const loadDashboard = React.useCallback(async () => {
     try {
-      if (isDemoMode || !tenantId) {
-        // Dados mock para demo
-        setData({
-          visitorsThisMonth: 342,
-          topWorks: [
-            { id: "1", title: "Monalisa Colonial", visits: 145 },
-            { id: "2", title: "Escultura Barroca", visits: 98 },
-            { id: "3", title: "Azulejos Históricos", visits: 87 }
-          ],
-          topTrails: [
-            { id: "1", title: "Arte Sacra", completions: 56 },
-            { id: "2", title: "Barroco Mineiro", completions: 43 }
-          ],
-          topEvents: [
-            { id: "1", title: "Exposição de Ouro", views: 234 },
-            { id: "2", title: "Semana da Arte", views: 156 }
-          ],
-          totalQRScans: 876,
-          totalXPDistributed: 12450,
-          weeklyGrowth: 12.5,
-          monthlyGrowth: 34.2,
-          visitsByDay: [
-            { date: t("admin.dashboard.days.mon"), count: 45 },
-            { date: t("admin.dashboard.days.tue"), count: 52 },
-            { date: t("admin.dashboard.days.wed"), count: 48 },
-            { date: t("admin.dashboard.days.thu"), count: 67 },
-            { date: t("admin.dashboard.days.fri"), count: 89 },
-            { date: t("admin.dashboard.days.sat"), count: 123 },
-            { date: t("admin.dashboard.days.sun"), count: 98 }
-          ],
-          visitsByWork: [
-            { workTitle: "Monalisa Colonial", count: 145 },
-            { workTitle: "Escultura Barroca", count: 98 },
-            { workTitle: "Azulejos Históricos", count: 87 }
-          ],
-          xpByCategory: [
-            { category: "Arte Sacra", xp: 3400 },
-            { category: "Barroco", xp: 2800 },
-            { category: "Contemporâneo", xp: 1900 }
-          ],
-          accessBySource: { qr: 450, app: 320, map: 78, trails: 128 },
-          alerts: [
-            { type: "warning", message: "3 trilhas sem imagens", link: "/admin/trilhas" },
-            { type: "warning", message: "5 obras sem categoria", link: "/admin/obras" },
-            { type: "info", message: "2 eventos expirados", link: "/admin/eventos" }
-          ]
-        });
-        setLoading(false);
-        return;
-      }
+      if (!tenantId) return;
 
       const res = await api.get(`/analytics/dashboard/${tenantId}`);
       setData(res.data);
@@ -97,7 +48,7 @@ export const AdminDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [tenantId, t]);
+  }, [tenantId]);
 
   useEffect(() => {
     loadDashboard();

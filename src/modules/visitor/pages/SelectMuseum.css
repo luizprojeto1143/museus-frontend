@@ -1,0 +1,157 @@
+.select-museum-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1108, #2d1810);
+    padding: 4rem 2rem 2rem 2rem;
+    overflow-y: auto;
+    position: relative;
+}
+
+.select-museum-loading,
+.select-museum-error {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1108, #2d1810);
+    font-family: serif;
+}
+
+.select-museum-loading {
+    color: #d4af37;
+    font-size: 1.2rem;
+}
+
+.select-museum-error {
+    flex-direction: column;
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.error-back-button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #d4af37;
+    color: #1a1108;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: serif;
+}
+
+.select-museum-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.select-museum-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.select-museum-title {
+    font-size: 2.5rem;
+    color: #d4af37;
+    font-family: serif;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 12px rgba(212, 175, 55, 0.5);
+}
+
+.select-museum-subtitle {
+    color: #c9b58c;
+    font-size: 1rem;
+    font-family: serif;
+}
+
+.no-museums {
+    text-align: center;
+    color: #8b7355;
+    font-size: 1.1rem;
+    font-family: serif;
+    padding: 3rem;
+}
+
+.admin-hint {
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.museum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.museum-card {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(42, 24, 16, 0.8));
+    border: 2px solid #8b7355;
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.museum-card:hover {
+    transform: translateY(-8px);
+    border-color: #d4af37;
+    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.4);
+}
+
+.museum-card-frame {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 0.8rem;
+    pointer-events: none;
+}
+
+.museum-card-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    filter: sepia(0.5) hue-rotate(20deg);
+}
+
+.museum-card-title {
+    font-size: 1.3rem;
+    color: #d4af37;
+    font-family: serif;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+.museum-card-slug {
+    font-size: 0.85rem;
+    color: #8b7355;
+    font-family: serif;
+    margin: 0;
+}
+
+.back-button-container {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.back-button {
+    background: transparent;
+    color: #8b7355;
+    font-size: 0.9rem;
+    font-family: serif;
+    padding: 0.6rem 1.5rem;
+    border: 1px solid #8b7355;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-button:hover {
+    color: #d4af37;
+    border-color: #d4af37;
+}

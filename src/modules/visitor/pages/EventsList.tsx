@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 
 type EventItem = {
   id: string;
@@ -13,30 +14,22 @@ type EventItem = {
 
 export const EventsList: React.FC = () => {
   const { t } = useTranslation();
-  const mock: EventItem[] = [
-    {
-      id: "1",
-      title: "Oficina de aquarela",
-      date: "15/12/2025",
-      time: "14:00",
-      location: "Atelier 1"
-    },
-    {
-      id: "2",
-      title: "Visita guiada temática",
-      date: "20/12/2025",
-      time: "10:00",
-      location: "Saguão principal"
-    }
-  ];
+  type EventItem = {
+    id: string;
+    title: string;
+    date?: string;
+    time?: string;
+    location?: string;
+  };
 
-  const [apiEvents, setApiEvents] = useState<EventItem[] | null>(null);
-  const tenantId = import.meta.env.VITE_DEFAULT_TENANT_ID as string | undefined;
-  const isDemo = isDemoMode || !tenantId;
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { tenantId } = useAuth();
 
   useEffect(() => {
-    if (isDemo) return;
+    if (!tenantId) return;
 
+    setLoading(true);
     api
       .get("/events", { params: { tenantId } })
       .then((res) => {
@@ -44,18 +37,17 @@ export const EventsList: React.FC = () => {
         const apiEvents = (res.data as any[]).map((e) => ({
           id: e.id,
           title: e.title,
-          date: e.date ?? e.startsAt ?? "",
-          time: e.time ?? "",
+          date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",
+          time: e.startDate ? new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
           location: e.location ?? ""
         }));
-        setApiEvents(apiEvents);
+        setEvents(apiEvents);
       })
       .catch(() => {
         console.error("Failed to fetch events");
-      });
-  }, [isDemo, tenantId]);
-
-  const events = isDemo ? mock : (apiEvents || []);
+      })
+      .finally(() => setLoading(false));
+  }, [tenantId]);
 
   return (
     <div>
@@ -64,19 +56,40 @@ export const EventsList: React.FC = () => {
         {t("visitor.events.subtitle")}
       </p>
 
-      <div className="card-grid">
-        {events.map(ev => (
-          <Link key={ev.id} to={`/eventos/${ev.id}`} style={{ textDecoration: "none" }}>
-            <article className="card">
-              <h2 className="card-title">{ev.title}</h2>
-              <p className="card-subtitle">
-                {ev.date} • {ev.time}
-              </p>
-              <p style={{ fontSize: "0.85rem", color: "#e5e7eb" }}>{t("visitor.events.location")}: {ev.location}</p>
-            </article>
-          </Link>
-        ))}
-      </div>
+      {loading ? (
+        <div className="card-grid">
+          {[1, 2].map(i => (
+            <div key={i} className="card" style={{ height: "150px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+          ))}
+        </div>
+      ) : events.length === 0 ? (
+        <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📅</div>
+          <h3>{t("visitor.events.emptyTitle", "Nenhum evento agendado")}</h3>
+          <p style={{ color: "#9ca3af" }}>{t("visitor.events.emptyDesc", "Fique de olho! Em breve teremos novos eventos e workshops.")}</p>
+        </div>
+      ) : (
+        <div className="card-grid">
+          {events.map(ev => (
+            <Link key={ev.id} to={`/eventos/${ev.id}`} style={{ textDecoration: "none" }}>
+              <article className="card">
+                <h2 className="card-title">{ev.title}</h2>
+                <p className="card-subtitle">
+                  {ev.date} • {ev.time}
+                </p>
+                <p style={{ fontSize: "0.85rem", color: "#e5e7eb" }}>{t("visitor.events.location")}: {ev.location}</p>
+              </article>
+            </Link>
+          ))}
+        </div>
+      )}
+      <style>{`
+        @keyframes pulse {
+          0% { opacity: 0.6; }
+          50% { opacity: 0.3; }
+          100% { opacity: 0.6; }
+        }
+      `}</style>
     </div>
   );
 };

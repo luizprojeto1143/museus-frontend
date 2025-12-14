@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
+import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 
 interface GamificationContextType {
     stats: UserStats;
@@ -10,6 +12,7 @@ interface GamificationContextType {
     unlockAchievement: (achievementId: string) => void;
     visitWork: (workId: string) => void;
     completeTrail: (trailId: string) => void;
+    refreshGamification?: () => void;
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
@@ -17,6 +20,7 @@ const GamificationContext = createContext<GamificationContextType | undefined>(u
 const STORAGE_KEY = "cultura_viva_gamification";
 
 export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { isAuthenticated, email, tenantId } = useAuth();
     const [stats, setStats] = useState<UserStats>(() => {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -25,18 +29,68 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         return {
             xp: 0,
             level: 1,
-            achievements: INITIAL_ACHIEVEMENTS, // Start with locked achievements (unlockedAt undefined)
+            achievements: INITIAL_ACHIEVEMENTS,
             visitedWorks: [],
             visitedTrails: [],
         };
     });
+
+    // Sync with backend on mount/auth change
+    useEffect(() => {
+        if (isAuthenticated && email && tenantId) {
+            fetchBackendData();
+        }
+    }, [isAuthenticated, email, tenantId]);
+
+    const fetchBackendData = async () => {
+        try {
+            const res = await api.get(`/visitors/me/summary?email=${email}&tenantId=${tenantId}`);
+            const data = res.data;
+
+            // Merge backend data with local stats structure
+            setStats(prev => {
+                const newXp = data.xp || 0;
+                const newLevelInfo = getCurrentLevelInfo(newXp);
+
+                // Map backend achievements to frontend structure
+                // Assuming backend returns { id, code, unlockedAt }
+                const backendAchievements = data.achievements || [];
+                const mergedAchievements = prev.achievements.map(localAch => {
+                    const found = backendAchievements.find((ba: any) => ba.code === localAch.id);
+                    if (found) {
+                        return { ...localAch, unlockedAt: found.unlockedAt };
+                    }
+                    return localAch;
+                });
+
+                // Map backend stamps/visits to visitedWorks (IDs)
+                // Backend summary returns stamps: { workTitle, date, workId? }
+                // We might need to adjust backend to return workId in stamps if not present
+                // For now assuming stamps has workId or we use visits
+
+                return {
+                    ...prev,
+                    xp: newXp,
+                    level: newLevelInfo.level,
+                    achievements: mergedAchievements,
+                    // We might need to fetch full visited works list if not in summary
+                    // For now, keep local or merge if possible
+                };
+            });
+        } catch (error) {
+            console.error("Error fetching gamification data", error);
+        }
+    };
+
+    const refreshGamification = () => {
+        if (isAuthenticated) fetchBackendData();
+    };
 
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
     }, [stats]);
 
     const getCurrentLevelInfo = (xp: number) => {
-        // Find the highest level where minXp <= current xp
         return LEVELS.slice().reverse().find((l) => xp >= l.minXp) || LEVELS[0];
     };
 
@@ -49,60 +103,38 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         : 100;
 
     const addXp = (amount: number) => {
+        // Optimistic update
         setStats((prev) => {
             const newXp = prev.xp + amount;
             const newLevelInfo = getCurrentLevelInfo(newXp);
-
-            // Check for level up (could trigger a modal/toast here)
-            if (newLevelInfo.level > prev.level) {
-                // Level up logic
-            }
-
-            return {
-                ...prev,
-                xp: newXp,
-                level: newLevelInfo.level,
-            };
+            return { ...prev, xp: newXp, level: newLevelInfo.level };
         });
     };
 
     const unlockAchievement = (achievementId: string) => {
+        // Optimistic update
         setStats((prev) => {
             const achievementIndex = prev.achievements.findIndex((a) => a.id === achievementId);
-            if (achievementIndex === -1) return prev; // Achievement not found
-
-            const achievement = prev.achievements[achievementIndex];
-            if (achievement.unlockedAt) return prev; // Already unlocked
+            if (achievementIndex === -1) return prev;
+            if (prev.achievements[achievementIndex].unlockedAt) return prev;
 
             const updatedAchievements = [...prev.achievements];
             updatedAchievements[achievementIndex] = {
-                ...achievement,
+                ...prev.achievements[achievementIndex],
                 unlockedAt: new Date().toISOString(),
             };
 
-            // Add XP reward
-            const newXp = prev.xp + achievement.xpReward;
-            const newLevelInfo = getCurrentLevelInfo(newXp);
-
-            return {
-                ...prev,
-                achievements: updatedAchievements,
-                xp: newXp,
-                level: newLevelInfo.level
-            };
+            return { ...prev, achievements: updatedAchievements };
         });
     };
 
     const visitWork = (workId: string) => {
         setStats((prev) => {
             if (prev.visitedWorks.includes(workId)) return prev;
-
-            const newVisited = [...prev.visitedWorks, workId];
-            return { ...prev, visitedWorks: newVisited };
+            return { ...prev, visitedWorks: [...prev.visitedWorks, workId] };
         });
-
-        // Simple XP for visiting
-        addXp(10);
+        // Also trigger refresh from backend if connected
+        if (isAuthenticated) setTimeout(fetchBackendData, 1000);
     };
 
     const completeTrail = (trailId: string) => {
@@ -110,39 +142,13 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
             if (prev.visitedTrails.includes(trailId)) return prev;
             return { ...prev, visitedTrails: [...prev.visitedTrails, trailId] };
         });
-        addXp(50);
+        if (isAuthenticated) setTimeout(fetchBackendData, 1000);
     };
 
-    const checkAchievements = (currentStats: UserStats) => {
-        // Check "Art Lover" (5 works)
-        if (currentStats.visitedWorks.length >= 5) {
-            unlockAchievement("art_lover");
-        }
-        // Check "Trail Blazer" (1 trail)
-        if (currentStats.visitedTrails.length >= 1) {
-            unlockAchievement("trail_blazer");
-        }
-    };
-
-    // Effect removed, logic moved to actions or a separate check function
-    // But unlockAchievement depends on state, so calling it inside setStats is tricky.
-    // Better to use a useEffect that listens to specific changes but is guarded?
-    // Or just call checkAchievements after state updates?
-    // Since setStats is async, we can't check immediately after.
-    // The original useEffect was actually the correct "React way" to react to state changes, 
-    // despite the lint warning about cascading renders (which are inevitable here).
-    // I will restore the useEffect but add the missing dependency and suppress the warning 
-    // because this IS a valid use case for an effect (reacting to state change to trigger another state change).
-
+    // Client-side achievement checks (can still run for immediate feedback)
     useEffect(() => {
-        // Check "Art Lover" (5 works)
-        if (stats.visitedWorks.length >= 5) {
-            unlockAchievement("art_lover");
-        }
-        // Check "Trail Blazer" (1 trail)
-        if (stats.visitedTrails.length >= 1) {
-            unlockAchievement("trail_blazer");
-        }
+        if (stats.visitedWorks.length >= 5) unlockAchievement("art_lover");
+        if (stats.visitedTrails.length >= 1) unlockAchievement("trail_blazer");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stats.visitedWorks.length, stats.visitedTrails.length]);
 
@@ -155,6 +161,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         unlockAchievement,
         visitWork,
         completeTrail,
+        refreshGamification // Export this so components can trigger refresh
     };
 
     return (

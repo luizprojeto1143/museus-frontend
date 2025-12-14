@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
 type CategoryItem = {
@@ -13,18 +13,11 @@ type CategoryItem = {
 export const AdminCategories: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
-  // Mock data
-  const mockCategories: CategoryItem[] = [
-    { id: "1", name: "Pintura", description: "Obras de pintura em tela" },
-    { id: "2", name: "Escultura", description: "Esculturas em mármore e bronze" },
-    { id: "3", name: "Fotografia", description: "Acervo fotográfico do século XX" }
-  ];
-
-  const [categories, setCategories] = useState<CategoryItem[]>(isDemoMode ? mockCategories : []);
-  const [loading, setLoading] = useState(!isDemoMode);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isDemoMode || !tenantId) return;
+    if (!tenantId) return;
 
     api.get("/categories", { params: { tenantId } })
       .then(res => {
@@ -39,10 +32,7 @@ export const AdminCategories: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!confirm(t("common.confirmDelete"))) return;
 
-    if (isDemoMode) {
-      setCategories(categories.filter(c => c.id !== id));
-      return;
-    }
+
 
     try {
       await api.delete(`/categories/${id}`);

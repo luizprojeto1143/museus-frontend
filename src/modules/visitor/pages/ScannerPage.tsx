@@ -109,7 +109,7 @@ export const ScannerPage: React.FC = () => {
                 {!isScanning && !error && (
                     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <button onClick={startScanner} className="btn btn-primary">
-                            📷 Iniciar Câmera
+                            📷 {t("visitor.scanner.startCamera", "Iniciar Câmera")}
                         </button>
                     </div>
                 )}
@@ -124,14 +124,14 @@ export const ScannerPage: React.FC = () => {
             {/* Manual Input Fallback */}
             <div style={{ width: "100%", padding: "1.5rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "1rem" }}>
                 <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "var(--accent-gold)" }}>
-                    Digitar Código
+                    {t("visitor.dialer.title", "Digitar Código")}
                 </h3>
                 <form onSubmit={handleManualSubmit} style={{ display: "flex", gap: "0.5rem" }}>
                     <input
                         type="text"
                         value={manualCode}
                         onChange={(e) => setManualCode(e.target.value)}
-                        placeholder="Ex: OBRA_123"
+                        placeholder={t("visitor.dialer.placeholder", "Ex: 1234")}
                         className="input"
                         style={{ flex: 1 }}
                     />

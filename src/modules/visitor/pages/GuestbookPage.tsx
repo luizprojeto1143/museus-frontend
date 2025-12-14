@@ -15,7 +15,7 @@ type GuestbookEntry = {
 
 export const GuestbookPage: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId, isAuthenticated, name } = useAuth();
+    const { tenantId, isAuthenticated, name, email } = useAuth();
     const [entries, setEntries] = useState<GuestbookEntry[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -44,35 +44,10 @@ export const GuestbookPage: React.FC = () => {
 
         setSubmitting(true);
         try {
-            // Assuming visitorId is handled by backend via auth token or we need to pass it?
-            // The backend route expects visitorId in body, but usually we get it from token.
-            // Let's check backend implementation... 
-            // Ah, the backend route I wrote expects visitorId in body. 
-            // Ideally it should extract from token like bookings.
-            // But for now let's assume we need to pass it or the backend middleware handles it.
-            // Wait, my backend route `guestbook.ts` uses `validate(createEntrySchema)` which expects `visitorId`.
-            // But `authMiddleware` is not applied to POST /guestbook in my previous step?
-            // Let me double check. I didn't add authMiddleware to guestbook route.
-            // I should probably fix that or pass visitorId from frontend if I have it.
-            // The frontend `useAuth` has `user` object which might have id.
-            // Let's assume I need to pass it.
-
-            // Actually, looking at `AuthContext`, I might not have the visitor ID readily available as `id`.
-            // I have `name`, `email`, `role`.
-            // Let's assume for now I can get it from local storage or context if available.
-            // If not, I might need to fetch profile first.
-            // Or better, update backend to use token.
-
-            // For this iteration, I will try to use `user.id` from context if available, 
-            // or just send the request and see.
-            // Wait, `useAuth` exposes `user` which has `id`.
-
-            const user = JSON.parse(localStorage.getItem("user") || "{}");
-
             await api.post("/guestbook", {
                 message: newMessage,
                 tenantId,
-                visitorId: user.id
+                email: email
             });
 
             setNewMessage("");
@@ -136,7 +111,10 @@ export const GuestbookPage: React.FC = () => {
             {/* List */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {loading ? (
-                    <p>{t("common.loading")}</p>
+                    <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+                        <div className="spinner" style={{ width: "30px", height: "30px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                    </div>
                 ) : entries.length === 0 ? (
                     <p style={{ textAlign: "center", color: "#9ca3af" }}>
                         {t("visitor.guestbook.empty", "Seja o primeiro a assinar!")}
@@ -157,11 +135,12 @@ export const GuestbookPage: React.FC = () => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        fontSize: "1.2rem"
+                                        fontSize: "1.2rem",
+                                        overflow: "hidden"
                                     }}
                                 >
                                     {entry.visitor.photoUrl ? (
-                                        <img src={entry.visitor.photoUrl} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
+                                        <img src={entry.visitor.photoUrl} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                     ) : (
                                         "👤"
                                     )}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
 export const AdminTrails: React.FC = () => {
@@ -16,16 +16,10 @@ export const AdminTrails: React.FC = () => {
   const { tenantId } = useAuth();
   const [trails, setTrails] = useState<AdminTrailItem[]>([]);
 
-  React.useEffect(() => {
-    const mock: AdminTrailItem[] = [
-      { id: "1", name: "Trilha Imperial", worksCount: 12, active: true },
-      { id: "2", name: "Arte Moderna", worksCount: 8, active: false }
-    ];
+  const [trails, setTrails] = useState<AdminTrailItem[]>([]);
 
-    if (isDemoMode || !tenantId) {
-      setTrails(mock);
-      return;
-    }
+  React.useEffect(() => {
+    if (!tenantId) return;
 
     api
       .get("/trails", { params: { tenantId } })
@@ -38,8 +32,9 @@ export const AdminTrails: React.FC = () => {
         }));
         setTrails(apiTrails);
       })
-      .catch(() => {
-        setTrails(mock);
+      .catch((err) => {
+        console.error("Failed to fetch trails", err);
+        setTrails([]);
       });
   }, [tenantId, t]);
 

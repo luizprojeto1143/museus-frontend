@@ -17,6 +17,7 @@ export const TrailDetail: React.FC = () => {
 
   const [apiTrail, setApiTrail] = useState<TrailDetailData | null>(null);
   const [apiLoading, setApiLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const mock: TrailDetailData = React.useMemo(() => ({
     id: id || "fast",
@@ -35,7 +36,8 @@ export const TrailDetail: React.FC = () => {
   useEffect(() => {
     if (isDemo) return;
 
-    // setApiLoading(true); // Initialized as true
+    setApiLoading(true);
+    setError(false);
     api
       .get(`/trails/${id}`)
       .then((res) => {
@@ -59,8 +61,9 @@ export const TrailDetail: React.FC = () => {
         };
         setApiTrail(mapped);
       })
-      .catch(() => {
-        console.error("Failed to fetch trail details");
+      .catch((err) => {
+        console.error("Failed to fetch trail details", err);
+        setError(true);
       })
       .finally(() => setApiLoading(false));
   }, [id, isDemo, mock]);
@@ -70,17 +73,23 @@ export const TrailDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div>
-        <h1 className="section-title">{t("visitor.trailDetail.loading")}</h1>
+      <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+        <p>{t("common.loading")}</p>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  if (!trail) {
+  if (error || !trail) {
     return (
-      <div>
+      <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
+        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
         <h1 className="section-title">{t("visitor.trailDetail.notFound", "Trilha não encontrada")}</h1>
-        <button className="btn btn-secondary mt-4" onClick={() => window.history.back()}>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
+          {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : t("visitor.trailDetail.notFoundDesc", "A trilha que você procura não existe ou foi removida.")}
+        </p>
+        <button className="btn btn-secondary" onClick={() => window.history.back()}>
           {t("common.back")}
         </button>
       </div>
@@ -106,14 +115,42 @@ export const TrailDetail: React.FC = () => {
 
       <section>
         <h2 className="section-title">{t("visitor.trailDetail.artworks")}</h2>
-        <div className="card-grid">
-          {trail.works.map((work) => (
-            <article key={work.id} className="card">
-              <h3 className="card-title">{work.title}</h3>
-              <p className="card-subtitle">{t("visitor.trailDetail.clickDetails")}</p>
-            </article>
-          ))}
-        </div>
+        {trail.works.length > 0 ? (
+          <div className="card-grid">
+            {trail.works.map((work, index) => (
+              <article key={work.id} className="card" style={{ position: "relative" }}>
+                <div style={{
+                  position: "absolute",
+                  top: "-0.75rem",
+                  left: "-0.75rem",
+                  width: "2rem",
+                  height: "2rem",
+                  background: "var(--primary-color)",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "bold",
+                  color: "#1a1108",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
+                }}>
+                  {index + 1}
+                </div>
+                <h3 className="card-title" style={{ marginTop: "0.5rem" }}>{work.title}</h3>
+                <p className="card-subtitle">{t("visitor.trailDetail.clickDetails")}</p>
+                <button
+                  className="btn btn-secondary"
+                  style={{ marginTop: "1rem", width: "100%" }}
+                  onClick={() => window.location.href = `/obras/${work.id}`}
+                >
+                  {t("visitor.home.viewDetails")}
+                </button>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p style={{ color: "#9ca3af", fontStyle: "italic" }}>{t("visitor.trailDetail.noWorks", "Esta trilha ainda não possui obras.")}</p>
+        )}
       </section>
     </div>
   );

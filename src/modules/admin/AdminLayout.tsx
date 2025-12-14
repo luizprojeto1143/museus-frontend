@@ -19,6 +19,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️" },
     { to: "/admin/visitantes", label: t("admin.sidebar.visitors"), icon: "👥" },
     { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️" },
+    { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅" },
+    { to: "/admin/ia", label: t("admin.sidebar.ai", "Assistente IA"), icon: "🤖" },
+    { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈" },
+    { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂" },
+    { to: "/admin/usuarios", label: t("admin.sidebar.users", "Usuários"), icon: "👤" },
     { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️" }
   ];
 

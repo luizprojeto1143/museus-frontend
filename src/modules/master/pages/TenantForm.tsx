@@ -19,15 +19,16 @@ export const TenantForm: React.FC = () => {
 
   const loadTenant = async () => {
     try {
-      // Need a route to get full tenant details for master, currently we only have public or settings
-      // Assuming we can use the list route or add a detail route. 
-      // For now, let's assume GET /tenants/:id exists or we filter from list.
-      // Actually, let's just use the settings route which is public-ish but maybe add a master route.
-      // Or better, let's implement GET /tenants/:id in backend for MASTER.
-      // Since I didn't implement GET /tenants/:id for master, I will skip pre-filling for now or rely on list.
-      // Wait, I should implement GET /tenants/:id for Master to do this properly.
+      const res = await api.get(`/tenants/${id}`);
+      const data = res.data;
+      setName(data.name);
+      setSlug(data.slug);
+      setPlan(data.plan || "START");
+      setMaxWorks(data.maxWorks || 50);
     } catch {
       console.error("Failed to load tenant");
+      alert(t("common.errorLoad"));
+      navigate("/master/tenants");
     }
   };
 

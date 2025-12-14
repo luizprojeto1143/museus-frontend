@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { AudioDescriptionPlayer } from "../../../components/accessibility/AudioDescriptionPlayer";
 import { LibrasPlayer } from "../../../components/accessibility/LibrasPlayer";
 import { useTTS } from "../../../hooks/useTTS";
@@ -20,6 +20,7 @@ type WorkDetailData = {
   description?: string;
   room?: string;
   floor?: string;
+  imageUrl?: string | null;
   audioUrl?: string | null;
   librasUrl?: string | null;
 };
@@ -28,38 +29,23 @@ export const WorkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t, i18n } = useTranslation();
 
-  const [apiWork, setApiWork] = useState<WorkDetailData | null>(null);
-  const [apiLoading, setApiLoading] = useState(true);
+  const [work, setWork] = useState<WorkDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const { speak, cancel, isSpeaking } = useTTS();
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsFavorite(favorites.some((f: { id: string; type: string }) => f.id === id && f.type === "work"));
   }, [id]);
 
-  const mock: WorkDetailData = {
-    id: id || "1",
-    title: "Obra de exemplo",
-    artist: "Artista A",
-    year: "1920",
-    category: "Pintura",
-    description:
-      "Descrição completa da obra, incluindo contexto histórico, técnica utilizada, curiosidades e relação com o acervo.",
-    room: "Sala 2",
-    floor: "2º andar",
-    audioUrl: "/audios/exemplo.mp3",
-    librasUrl: "/videos/libras-exemplo.mp4"
-  };
-
-  const isDemo = isDemoMode || !id;
-
   useEffect(() => {
-    if (isDemo) return;
+    if (!id) return;
 
-    // setApiLoading(true); // Initialized as true
+    setLoading(true);
+    setError(false);
     api
       .get(`/works/${id}`)
       .then((res) => {
@@ -70,23 +56,22 @@ export const WorkDetail: React.FC = () => {
           title: w.title,
           artist: w.artist ?? "Artista desconhecido",
           year: w.year ?? "",
-          category: w.category ?? "",
+          category: w.category?.name ?? w.category ?? "",
           description: w.description ?? "",
           room: w.room ?? "",
           floor: w.floor ?? "",
+          imageUrl: w.imageUrl ?? null,
           audioUrl: w.audioUrl ?? null,
           librasUrl: w.librasUrl ?? null
         };
-        setApiWork(mapped);
+        setWork(mapped);
       })
-      .catch(() => {
-        console.error("Failed to fetch work details");
+      .catch((err) => {
+        console.error("Failed to fetch work details", err);
+        setError(true);
       })
-      .finally(() => setApiLoading(false));
-  }, [id, isDemo]);
-
-  const work = isDemo ? mock : apiWork;
-  const loading = isDemo ? false : apiLoading;
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const { visitWork, addXp } = useGamification();
   const [treasureFound, setTreasureFound] = useState<{ found: boolean; xp: number } | null>(null);
@@ -116,7 +101,7 @@ export const WorkDetail: React.FC = () => {
         setTreasureFound({ found: true, xp: matchedClue.xpReward });
       }
     }
-  }, [work, treasureFound?.found, addXp]); // Add addXp to dependencies
+  }, [work, treasureFound?.found, addXp, visitWork]);
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -131,7 +116,7 @@ export const WorkDetail: React.FC = () => {
         type: "work",
         title: work?.title,
         artist: work?.artist,
-        imageUrl: null
+        imageUrl: work?.imageUrl
       });
       localStorage.setItem("favorites", JSON.stringify(favorites));
       setIsFavorite(true);
@@ -140,17 +125,23 @@ export const WorkDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div>
-        <h1 className="section-title">{t("common.loading")}</h1>
+      <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+        <p>{t("common.loading")}</p>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  if (!work) {
+  if (error || !work) {
     return (
-      <div>
+      <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
+        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>😕</div>
         <h1 className="section-title">{t("visitor.artwork.notFound", "Obra não encontrada")}</h1>
-        <button className="btn btn-secondary mt-4" onClick={() => window.history.back()}>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
+          {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : t("visitor.artwork.notFoundDesc", "Não conseguimos encontrar a obra que você está procurando.")}
+        </p>
+        <button className="btn btn-secondary" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = "/obras"}>
           {t("common.back")}
         </button>
       </div>
@@ -207,7 +198,7 @@ export const WorkDetail: React.FC = () => {
             <button
               onClick={toggleFavorite}
               className="btn btn-secondary"
-              style={{ fontSize: "1.2rem", padding: "0.5rem 0.75rem" }}
+              style={{ fontSize: "1.2rem", padding: "0.5rem 0.75rem", color: isFavorite ? "var(--primary-color)" : "inherit" }}
             >
               {isFavorite ? "★" : "☆"}
             </button>
@@ -217,30 +208,44 @@ export const WorkDetail: React.FC = () => {
 
       {showShare && work && (
         <ShareCard
-          work={{ title: work.title, artist: work.artist, imageUrl: null }}
+          work={{ title: work.title, artist: work.artist, imageUrl: work.imageUrl || null }}
           onClose={() => setShowShare(false)}
         />
       )}
 
       <section style={{ marginBottom: "1.75rem" }}>
-        <div
-          style={{
-            width: "100%",
-            aspectRatio: "16 / 9",
-            borderRadius: "1rem",
-            background:
-              "linear-gradient(135deg, rgba(30,64,175,0.8), rgba(56,189,248,0.4))",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "#e5e7eb",
-            fontSize: "0.95rem",
-            textAlign: "center",
-            padding: "1rem"
-          }}
-        >
-          {t("visitor.artwork.imagePlaceholder")}
-        </div>
+        {work.imageUrl ? (
+          <img
+            src={work.imageUrl}
+            alt={work.title}
+            style={{
+              width: "100%",
+              maxHeight: "500px",
+              objectFit: "contain",
+              borderRadius: "1rem",
+              backgroundColor: "rgba(0,0,0,0.2)"
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              aspectRatio: "16 / 9",
+              borderRadius: "1rem",
+              background:
+                "linear-gradient(135deg, rgba(30,64,175,0.8), rgba(56,189,248,0.4))",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#e5e7eb",
+              fontSize: "0.95rem",
+              textAlign: "center",
+              padding: "1rem"
+            }}
+          >
+            {t("visitor.artwork.imagePlaceholder")}
+          </div>
+        )}
       </section>
 
       <section style={{ marginBottom: "1.75rem" }}>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { QRCodeCanvas } from "qrcode.react";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -11,9 +12,11 @@ export const AdminWorkForm: React.FC = () => {
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState(isEdit ? t("visitor.home.exampleArtwork") + " 1" : "");
-  const [artist, setArtist] = useState(isEdit ? "Artista A" : "");
-  const [year, setYear] = useState(isEdit ? "1920" : "");
+  const [code, setCode] = useState("");
+
+  const [title, setTitle] = useState("");
+  const [artist, setArtist] = useState("");
+  const [year, setYear] = useState("");
   const [category, setCategory] = useState("Pintura");
   const [description, setDescription] = useState(
     t("admin.workForm.defaultDescription")
@@ -24,63 +27,60 @@ export const AdminWorkForm: React.FC = () => {
   const [audioUrl, setAudioUrl] = useState("");
   const [librasUrl, setLibrasUrl] = useState("");
   const [published, setPublished] = useState(true);
+  const [radius, setRadius] = useState(5);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await api.post("/upload/image", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      setImageUrl(res.data.url);
-    } catch (err) {
-      console.error("Erro ao enviar imagem", err);
-      alert(t("common.error"));
+  // Fetch data on load
+  React.useEffect(() => {
+    if (id && tenantId) {
+      api.get(`/works/${id}`).then((res) => {
+        const data = res.data;
+        setTitle(data.title);
+        setArtist(data.artist || "");
+        setYear(data.year || "");
+        setCategory(data.category?.name || "Pintura");
+        setDescription(data.description || "");
+        setRoom(data.room || "");
+        setFloor(data.floor || "");
+        setImageUrl(data.imageUrl || "");
+        setAudioUrl(data.audioUrl || "");
+        setLibrasUrl(data.librasUrl || "");
+        setLibrasUrl(data.librasUrl || "");
+        setPublished(data.published ?? true);
+        setRadius(data.radius || 5);
+
+        if (data.qrCode) {
+          setCode(data.qrCode.code);
+        }
+      }).catch(console.error);
+    }
+  }, [id, tenantId]);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "image" | "audio" | "video", setter: (url: string) => void) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const res = await api.post(`/upload/${type}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        setter(res.data.url);
+      } catch (error) {
+        console.error(`Error uploading ${type}`, error);
+        alert(t("common.errorUpload"));
+      }
     }
   };
 
-  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await api.post("/upload/audio", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      setAudioUrl(res.data.url);
-    } catch (err) {
-      console.error("Erro ao enviar áudio", err);
-      alert(t("common.error"));
-    }
-  };
-
-  const handleLibrasUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await api.post("/upload/video", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-      setLibrasUrl(res.data.url);
-    } catch (err) {
-      console.error("Erro ao enviar vídeo de Libras", err);
-      alert(t("common.error"));
-    }
-  };
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => handleUpload(e, "image", setImageUrl);
+  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => handleUpload(e, "audio", setAudioUrl);
+  const handleLibrasUpload = (e: React.ChangeEvent<HTMLInputElement>) => handleUpload(e, "video", setLibrasUrl);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isDemoMode || !tenantId) {
-      alert(t("admin.workForm.demoSave"));
-      navigate("/admin/obras");
-      return;
-    }
+    if (!tenantId) return;
 
     const payload = {
       title,
@@ -93,7 +93,10 @@ export const AdminWorkForm: React.FC = () => {
       imageUrl,
       audioUrl,
       librasUrl,
-      tenantId
+      tenantId,
+      code,
+      published,
+      radius: Number(radius)
     };
 
     try {
@@ -103,9 +106,9 @@ export const AdminWorkForm: React.FC = () => {
         await api.post("/works", payload);
       }
       navigate("/admin/obras");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar obra", error);
-      alert(t("common.error"));
+      alert(error.response?.data?.message || t("common.error"));
     }
   };
 
@@ -114,37 +117,59 @@ export const AdminWorkForm: React.FC = () => {
       <h1 className="section-title">
         {isEdit ? t("admin.workForm.editTitle") : t("admin.workForm.newTitle")}
       </h1>
-      <p className="section-subtitle">
-        {t("admin.workForm.subtitle")}
-      </p>
+      {/* ... */}
 
       <form onSubmit={handleSubmit} className="card" style={{ maxWidth: 840 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           {isEdit && id && (
-            <div style={{ gridColumn: "1 / -1" }}>
-              <label>{t("admin.workForm.labels.id")}</label>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <input
-                  value={id}
-                  readOnly
-                  style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem", background: "rgba(0,0,0,0.2)", color: "var(--text-secondary)" }}
-                />
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    navigator.clipboard.writeText(id);
-                    alert("ID copiado!");
-                  }}
-                >
-                  📋
-                </button>
+            <div style={{ gridColumn: "1 / -1", display: "flex", gap: "1rem", alignItems: "flex-start", background: "rgba(0,0,0,0.1)", padding: "1rem", borderRadius: "0.5rem" }}>
+              <div style={{ flex: 1 }}>
+                <label>{t("admin.workForm.labels.id")}</label>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <input
+                    value={id}
+                    readOnly
+                    style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem", background: "rgba(0,0,0,0.2)", color: "var(--text-secondary)" }}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      navigator.clipboard.writeText(id);
+                      alert("ID copiado!");
+                    }}
+                  >
+                    📋
+                  </button>
+                </div>
               </div>
-              <small style={{ color: "var(--text-secondary)" }}>Use este ID para gerar o QR Code.</small>
+
+              {code && (
+                <div style={{ textAlign: "center" }}>
+                  <label>QR Code</label>
+                  <div style={{ background: "white", padding: "0.5rem", borderRadius: "0.5rem", marginTop: "0.25rem" }}>
+                    <QRCodeCanvas value={window.location.origin + "/qr/" + code} size={100} level="H" />
+                  </div>
+                  <small style={{ display: "block", marginTop: "0.25rem" }}>#{code}</small>
+                </div>
+              )}
             </div>
           )}
+
+          <div style={{ gridColumn: "1 / -1" }}>
+            <label style={{ color: "#d4af37", fontWeight: "bold" }}>🔢 Código Numérico (Discador)</label>
+            <input
+              value={code}
+              onChange={e => setCode(e.target.value)}
+              placeholder="Ex: 101"
+              style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem", border: "1px solid #d4af37" }}
+            />
+            <small style={{ color: "var(--text-secondary)" }}>Código usado no discador e para gerar o QR Code.</small>
+          </div>
+
           <div>
             <label>{t("admin.workForm.labels.title")}</label>
+            {/* ... title input */}
             <input
               value={title}
               onChange={e => setTitle(e.target.value)}
@@ -152,6 +177,7 @@ export const AdminWorkForm: React.FC = () => {
               style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             />
           </div>
+          {/* ... other inputs */}
           <div>
             <label>{t("admin.workForm.labels.artist")}</label>
             <input
@@ -200,6 +226,7 @@ export const AdminWorkForm: React.FC = () => {
           </div>
         </div>
 
+        {/* ... description and uploads ... */}
         <div style={{ marginTop: "1rem" }}>
           <label>{t("admin.workForm.labels.description")}</label>
           <textarea

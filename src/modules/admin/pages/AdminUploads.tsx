@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
@@ -13,17 +14,16 @@ interface UploadedFile {
 }
 
 export const AdminUploads: React.FC = () => {
+  const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<"all" | "image" | "audio" | "video">("all");
 
-
-
   const loadFiles = React.useCallback(async () => {
     try {
-      const res = await api.get(`/uploads?tenantId=${tenantId}`);
+      const res = await api.get(`/upload?tenantId=${tenantId}`);
       setFiles(res.data);
     } catch {
       console.error("Erro ao carregar arquivos");
@@ -47,9 +47,9 @@ export const AdminUploads: React.FC = () => {
         headers: { "Content-Type": "multipart/form-data" }
       });
       loadFiles();
-      alert("Arquivo enviado com sucesso!");
+      alert(t("admin.uploads.success"));
     } catch {
-      alert("Erro ao enviar arquivo");
+      alert(t("common.error"));
     } finally {
       setUploading(false);
     }
@@ -58,16 +58,16 @@ export const AdminUploads: React.FC = () => {
   const handleDelete = async (id: string, usedIn: UploadedFile["usedIn"]) => {
     if (usedIn.length > 0) {
       const confirm = window.confirm(
-        `Este arquivo está sendo usado em ${usedIn.length} item(ns). Tem certeza que deseja excluir?`
+        t("admin.uploads.deleteConfirmUsed", { count: usedIn.length })
       );
       if (!confirm) return;
     }
 
     try {
-      await api.delete(`/uploads/${id}`);
+      await api.delete(`/upload/${id}`);
       loadFiles();
     } catch {
-      alert("Erro ao excluir arquivo");
+      alert(t("common.error"));
     }
   };
 
@@ -87,9 +87,9 @@ export const AdminUploads: React.FC = () => {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
-          <h1 className="section-title">📤 Uploads</h1>
+          <h1 className="section-title">📤 {t("admin.uploads.title")}</h1>
           <p className="section-subtitle">
-            Gerencie todos os arquivos do museu
+            {t("admin.uploads.subtitle")}
           </p>
         </div>
         <button
@@ -97,7 +97,7 @@ export const AdminUploads: React.FC = () => {
           disabled={uploading}
           className="btn btn-primary"
         >
-          {uploading ? "Enviando..." : "+ Novo Upload"}
+          {uploading ? t("common.uploading") : "+ " + t("admin.uploads.newUpload")}
         </button>
         <input
           id="file-upload"
@@ -115,15 +115,15 @@ export const AdminUploads: React.FC = () => {
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
         <div className="stat-card">
           <div className="stat-value">{files.length}</div>
-          <div className="stat-label">Total de Arquivos</div>
+          <div className="stat-label">{t("admin.uploads.stats.total")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{formatSize(totalSize)}</div>
-          <div className="stat-label">Espaço Usado</div>
+          <div className="stat-label">{t("admin.uploads.stats.usedSpace")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{files.filter(f => f.type.startsWith("image")).length}</div>
-          <div className="stat-label">Imagens</div>
+          <div className="stat-label">{t("admin.uploads.stats.images")}</div>
         </div>
       </div>
 
@@ -135,37 +135,37 @@ export const AdminUploads: React.FC = () => {
             className={filter === "all" ? "btn btn-primary" : "btn btn-secondary"}
             style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
           >
-            Todos ({files.length})
+            {t("common.all")} ({files.length})
           </button>
           <button
             onClick={() => setFilter("image")}
             className={filter === "image" ? "btn btn-primary" : "btn btn-secondary"}
             style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
           >
-            Imagens ({files.filter(f => f.type.startsWith("image")).length})
+            {t("common.images")} ({files.filter(f => f.type.startsWith("image")).length})
           </button>
           <button
             onClick={() => setFilter("audio")}
             className={filter === "audio" ? "btn btn-primary" : "btn btn-secondary"}
             style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
           >
-            Áudios ({files.filter(f => f.type.startsWith("audio")).length})
+            {t("common.audios")} ({files.filter(f => f.type.startsWith("audio")).length})
           </button>
           <button
             onClick={() => setFilter("video")}
             className={filter === "video" ? "btn btn-primary" : "btn btn-secondary"}
             style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
           >
-            Vídeos ({files.filter(f => f.type.startsWith("video")).length})
+            {t("common.videos")} ({files.filter(f => f.type.startsWith("video")).length})
           </button>
         </div>
       </div>
 
-      {loading && <p>Carregando arquivos...</p>}
+      {loading && <p>{t("common.loading")}</p>}
 
       {!loading && filteredFiles.length === 0 && (
         <div className="card">
-          <p>Nenhum arquivo encontrado.</p>
+          <p>{t("common.noResults")}</p>
         </div>
       )}
 
@@ -210,7 +210,7 @@ export const AdminUploads: React.FC = () => {
               {file.usedIn.length > 0 && (
                 <div style={{ marginBottom: "0.75rem", fontSize: "0.75rem" }}>
                   <div style={{ color: "var(--fg-soft)", marginBottom: "0.25rem" }}>
-                    Usado em:
+                    {t("admin.uploads.usedIn")}:
                   </div>
                   {file.usedIn.map((usage, idx) => (
                     <div key={idx} className="badge" style={{ marginRight: "0.25rem", marginBottom: "0.25rem" }}>
@@ -229,7 +229,7 @@ export const AdminUploads: React.FC = () => {
                   className="btn btn-secondary"
                   style={{ flex: 1, fontSize: "0.8rem", textAlign: "center" }}
                 >
-                  Ver
+                  {t("common.view")}
                 </a>
                 <button
                   onClick={() => handleDelete(file.id, file.usedIn)}

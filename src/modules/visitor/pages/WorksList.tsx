@@ -23,7 +23,7 @@ export const WorksList: React.FC = () => {
 
   useEffect(() => {
     if (tenantId) {
-      // setLoading(true); // Removed to avoid lint warning, loading is true by default
+      setLoading(true);
       api
         .get("/works", { params: { tenantId } })
         .then((res) => {
@@ -33,7 +33,7 @@ export const WorksList: React.FC = () => {
             title: w.title,
             artist: w.artist ?? "Artista desconhecido",
             year: w.year ?? "",
-            category: w.category ?? "Obra",
+            category: w.category?.name ?? w.category ?? "Obra",
             accessible: true,
             imageUrl: w.imageUrl
           }));
@@ -48,12 +48,8 @@ export const WorksList: React.FC = () => {
     }
   }, [tenantId]);
 
-  if (loading) {
-    return <div className="p-8 text-center">{t("common.loading")}</div>;
-  }
-
   if (!tenantId) {
-    return <div className="p-8 text-center">Selecione um museu para ver as obras.</div>;
+    return <div className="p-8 text-center">{t("visitor.works.selectMuseum", "Selecione um museu para ver as obras.")}</div>;
   }
 
   return (
@@ -63,33 +59,63 @@ export const WorksList: React.FC = () => {
         {t("visitor.works.subtitle")}
       </p>
 
-      {works.length === 0 ? (
-        <div className="text-center py-12 bg-slate-50 rounded-lg">
-          <p className="text-slate-500">Nenhuma obra encontrada.</p>
+      {loading ? (
+        <div className="card-grid">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="card" style={{ height: "300px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+          ))}
+        </div>
+      ) : works.length === 0 ? (
+        <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🖼️</div>
+          <h3>{t("visitor.works.emptyTitle", "Nenhuma obra encontrada")}</h3>
+          <p style={{ color: "#9ca3af" }}>{t("visitor.works.emptyDesc", "O acervo deste museu ainda não foi cadastrado ou não há obras públicas.")}</p>
         </div>
       ) : (
         <div className="card-grid">
           {works.map(work => (
-            <article key={work.id} className="card">
-              {work.imageUrl && (
+            <article key={work.id} className="card" style={{ display: "flex", flexDirection: "column" }}>
+              {work.imageUrl ? (
                 <img
                   src={work.imageUrl}
                   alt={work.title}
-                  className="w-full h-48 object-cover rounded-t-lg mb-2"
+                  style={{
+                    width: "100%",
+                    height: "200px",
+                    objectFit: "cover",
+                    borderRadius: "0.5rem 0.5rem 0 0",
+                    marginBottom: "1rem",
+                    backgroundColor: "rgba(0,0,0,0.2)"
+                  }}
                 />
+              ) : (
+                <div style={{
+                  width: "100%",
+                  height: "200px",
+                  borderRadius: "0.5rem 0.5rem 0 0",
+                  marginBottom: "1rem",
+                  background: "linear-gradient(135deg, rgba(30,64,175,0.8), rgba(56,189,248,0.4))",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#e5e7eb"
+                }}>
+                  {t("visitor.artwork.imagePlaceholder")}
+                </div>
               )}
-              <div className="p-4">
+              <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
                 <h2 className="card-title">{work.title}</h2>
                 <p className="card-subtitle">
                   {work.artist} • {work.year}
                 </p>
-                <div className="card-meta">
+                <div className="card-meta" style={{ marginTop: "auto" }}>
                   <span className="chip">{work.category}</span>
                   {work.accessible && <span className="chip">{t("visitor.home.accessible")}</span>}
                 </div>
                 <Link
                   to={`/obras/${work.id}`}
-                  className="btn btn-secondary w-full mt-3 block text-center"
+                  className="btn btn-secondary"
+                  style={{ marginTop: "1rem", width: "100%", textAlign: "center" }}
                 >
                   {t("visitor.home.viewDetails")}
                 </Link>
@@ -98,6 +124,13 @@ export const WorksList: React.FC = () => {
           ))}
         </div>
       )}
+      <style>{`
+        @keyframes pulse {
+          0% { opacity: 0.6; }
+          50% { opacity: 0.3; }
+          100% { opacity: 0.6; }
+        }
+      `}</style>
     </div>
   );
 };

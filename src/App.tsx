@@ -52,9 +52,15 @@ import { AdminQRCodes } from "./modules/admin/pages/AdminQRCodes";
 import { AdminCategories } from "./modules/admin/pages/AdminCategories";
 import { AdminCategoryForm } from "./modules/admin/pages/AdminCategoryForm";
 import { AdminVisitors } from "./modules/admin/pages/AdminVisitors";
+import { AdminVisitorProfile } from "./modules/admin/pages/AdminVisitorProfile";
 import { AdminMuseumSettings } from "./modules/admin/pages/AdminMuseumSettings";
 import { AdminTreasureHunt } from "./modules/admin/pages/AdminTreasureHunt";
-import { AdminTreasureHuntForm } from "./modules/admin/pages/AdminTreasureHuntForm";
+import { AdminAchievements } from "./modules/admin/pages/AdminAchievements";
+import { AdminAchievementForm } from "./modules/admin/pages/AdminAchievementForm";
+import { AdminAIAssistant } from "./modules/admin/pages/AdminAIAssistant";
+import { AdminAnalytics } from "./modules/admin/pages/AdminAnalytics";
+import { AdminUploads } from "./modules/admin/pages/AdminUploads";
+import { AdminInternalUsers } from "./modules/admin/pages/AdminInternalUsers";
 
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
@@ -473,6 +479,16 @@ const App: React.FC = () => {
             }
           />
           <Route
+            path="/admin/visitantes/:id"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminVisitorProfile />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
             path="/admin/configuracoes"
             element={
               <RequireRole allowed={["admin"]}>
@@ -492,26 +508,82 @@ const App: React.FC = () => {
               </RequireRole>
             }
           />
+
           <Route
-            path="/admin/treasure-hunt/new"
+            path="/admin/conquistas"
             element={
               <RequireRole allowed={["admin"]}>
                 <AdminLayout>
-                  <AdminTreasureHuntForm />
+                  <AdminAchievements />
                 </AdminLayout>
               </RequireRole>
             }
           />
           <Route
-            path="/admin/treasure-hunt/:id"
+            path="/admin/conquistas/nova"
             element={
               <RequireRole allowed={["admin"]}>
                 <AdminLayout>
-                  <AdminTreasureHuntForm />
+                  <AdminAchievementForm />
                 </AdminLayout>
               </RequireRole>
             }
           />
+          <Route
+            path="/admin/conquistas/:id"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminAchievementForm />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+
+          <Route
+            path="/admin/ia"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminAIAssistant />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+
+          <Route
+            path="/admin/analytics"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminAnalytics />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+
+          <Route
+            path="/admin/uploads"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminUploads />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+
+          <Route
+            path="/admin/usuarios"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminInternalUsers />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+
 
           {/* MASTER (multi-tenant) */}
           <Route

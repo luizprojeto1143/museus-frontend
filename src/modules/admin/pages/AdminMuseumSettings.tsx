@@ -89,7 +89,7 @@ export const AdminMuseumSettings: React.FC = () => {
     formData.append("file", file);
 
     try {
-      const res = await api.post("/upload", formData);
+      const res = await api.post("/upload/image", formData);
       setSettings({ ...settings, [field]: res.data.url });
     } catch {
       alert(t("common.error"));

@@ -12,11 +12,14 @@ export default function ChatAI() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
+  const [isTyping, setIsTyping] = useState(false);
+
   async function send() {
     if (!input) return;
     const userMsg = { role: "user", content: input };
     setMessages((m) => [...m, userMsg]);
     setInput("");
+    setIsTyping(true);
 
     try {
       const res = await api.post("/ai/chat", { message: input, tenantId });
@@ -24,6 +27,8 @@ export default function ChatAI() {
       setMessages((m) => [...m, botMsg]);
     } catch {
       setMessages((m) => [...m, { role: "assistant", content: t("visitor.chat.error") }]);
+    } finally {
+      setIsTyping(false);
     }
   }
 
@@ -64,6 +69,27 @@ export default function ChatAI() {
             {msg.content}
           </div>
         ))}
+        {isTyping && (
+          <div style={{
+            alignSelf: "flex-start",
+            padding: "0.8rem 1.2rem",
+            borderRadius: "1rem",
+            backgroundColor: "rgba(42, 24, 16, 0.8)",
+            color: "var(--fg-main)",
+            border: "1px solid var(--border-subtle)",
+            display: "flex",
+            gap: "0.3rem",
+            alignItems: "center"
+          }}>
+            <span className="typing-dot" style={{ animationDelay: "0s" }}>.</span>
+            <span className="typing-dot" style={{ animationDelay: "0.2s" }}>.</span>
+            <span className="typing-dot" style={{ animationDelay: "0.4s" }}>.</span>
+            <style>{`
+              .typing-dot { animation: typing 1.4s infinite ease-in-out both; font-size: 1.5rem; line-height: 0.5rem; }
+              @keyframes typing { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+            `}</style>
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: '0.5rem' }}>

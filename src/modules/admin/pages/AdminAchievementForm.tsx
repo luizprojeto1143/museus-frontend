@@ -39,12 +39,6 @@ export const AdminAchievementForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (isEditing) {
-      loadAchievement();
-    }
-  }, [id, isEditing, loadAchievement]);
-
   const loadAchievement = React.useCallback(async () => {
     setLoading(true);
     try {
@@ -57,6 +51,12 @@ export const AdminAchievementForm: React.FC = () => {
       setLoading(false);
     }
   }, [id, navigate, t]);
+
+  useEffect(() => {
+    if (isEditing) {
+      loadAchievement();
+    }
+  }, [id, isEditing, loadAchievement]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +90,7 @@ export const AdminAchievementForm: React.FC = () => {
     formData.append("file", file);
 
     try {
-      const res = await api.post("/upload", formData);
+      const res = await api.post("/upload/image", formData);
       setForm({ ...form, iconUrl: res.data.url });
     } catch {
       alert(t("admin.achievementForm.alerts.errorUpload"));

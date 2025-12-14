@@ -2,19 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
+import { api } from "../../api/client";
 
 import { useAuth } from "../auth/AuthContext";
 import { WelcomeAnimation } from "./components/WelcomeAnimation";
 
 import { GlobalSearch } from "./components/GlobalSearch";
+import { DialerModal } from "./components/DialerModal";
 import { AiChatWidget } from "./components/AiChatWidget";
 
+import "./VisitorLayout.css";
+
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
-  const { logout, name, email } = useAuth();
   const { t } = useTranslation();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const location = useLocation();
+  const { logout, name, email, tenantId } = useAuth();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDialerOpen, setIsDialerOpen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
@@ -29,40 +36,25 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const handleInstallClick = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       deferredPrompt.userChoice.then((choiceResult: any) => {
         if (choiceResult.outcome === "accepted") {
-          // accepted
-        } else {
-          // dismissed
+          console.log("User accepted the install prompt");
         }
         setDeferredPrompt(null);
       });
     }
   };
 
-
   const links = [
-    { to: "/", label: t("visitor.sidebar.home") },
-    { to: "/obras", label: t("visitor.sidebar.artworks") },
-    { to: "/trilhas", label: t("visitor.sidebar.trails") },
-    { to: "/mapa", label: t("visitor.sidebar.map", "Mapa"), icon: "🗺️" },
-    { to: "/eventos", label: t("visitor.sidebar.events") },
-    { to: "/agendamento", label: t("visitor.sidebar.scheduling", "Agendamento"), icon: "📅" },
-    { to: "/favoritos", label: t("visitor.sidebar.favorites") },
-    { to: "/chat", label: t("visitor.sidebar.aiChat") },
-    { to: "/roteiro-inteligente", label: t("visitor.sidebar.smartItinerary", "Roteiro Inteligente"), icon: "🤖" },
-    { to: "/scanner", label: t("visitor.sidebar.scanner", "QR Scanner"), icon: "📷" },
-    { to: "/scanner-visual", label: t("visitor.sidebar.visualScanner", "Scanner Visual (IA)"), icon: "👁️" },
-    { to: "/caca-tesouro", label: t("visitor.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️" },
-    { to: "/livro-visitas", label: t("visitor.sidebar.guestbook", "Livro de Visitas"), icon: "📖" },
-    { to: "/souvenir", label: t("visitor.sidebar.souvenir") },
-    { to: "/passaporte", label: t("visitor.sidebar.passport") },
-    { to: "/conquistas", label: t("visitor.sidebar.achievements", "Conquistas"), icon: "🏆" },
-    { to: "/ranking", label: t("visitor.sidebar.leaderboard", "Ranking"), icon: "📊" }
+    { to: "/home", label: t("visitor.sidebar.home"), icon: "🏠" },
+    { to: "/obras", label: t("visitor.sidebar.artworks"), icon: "🎨" },
+    { to: "/trilhas", label: t("visitor.sidebar.trails"), icon: "🗺️" },
+    { to: "/eventos", label: t("visitor.sidebar.events"), icon: "📅" },
+    { to: "/scanner", label: t("visitor.sidebar.scanner"), icon: "📸" },
+    { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤" },
+    { to: "/guestbook", label: t("visitor.sidebar.guestbook"), icon: "✍️" },
   ];
 
-  // NavLinks logic moved to render or separate component
   const renderNavLinks = (mobile = false) => (
     <>
       {links.map((link) => {
@@ -72,13 +64,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             key={link.to}
             to={link.to}
             onClick={() => mobile && setIsMenuOpen(false)}
-            className="app-nav-link"
-            style={{
-              backgroundColor: isActive ? "rgba(15,23,42,0.06)" : "transparent",
-              fontSize: mobile ? "1.1rem" : "0.85rem",
-              justifyContent: mobile ? "center" : "flex-start"
-            }}
+            className={`app-sidebar-link ${isActive ? "active" : ""}`}
           >
+            {link.icon && <span>{link.icon}</span>}
             {link.label}
           </Link>
         );
@@ -86,18 +74,31 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     </>
   );
 
-  const [showWelcome, setShowWelcome] = React.useState(false);
+  // Theme State
+  const [settings, setSettings] = useState<{
+    primaryColor: string;
+    secondaryColor: string;
+    historicalFont: boolean;
+    logoUrl?: string;
+    name?: string;
+  } | null>(null);
 
-  React.useEffect(() => {
-    if (location.state?.justLoggedIn) {
-      setShowWelcome(true);
-      // Limpar o state para não mostrar novamente ao recarregar (opcional, mas bom pra UX)
-      window.history.replaceState({}, document.title);
+  useEffect(() => {
+    if (tenantId) {
+      api.get(`/tenants/${tenantId}/settings`)
+        .then(res => setSettings(res.data))
+        .catch(console.error);
     }
-  }, [location]);
+  }, [tenantId]);
+
+  const themeStyles = settings ? {
+    "--primary-color": settings.primaryColor,
+    "--secondary-color": settings.secondaryColor,
+    fontFamily: settings.historicalFont ? "Georgia, serif" : "system-ui"
+  } as React.CSSProperties : {};
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={themeStyles}>
       {showWelcome && name && email && (
         <WelcomeAnimation
           name={name}
@@ -108,11 +109,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
       {/* SIDEBAR (Desktop) */}
       <aside className="app-sidebar">
-        {/* ... existing brand ... */}
-        <div className="app-brand" style={{ marginBottom: "1rem" }}>
-          <span className="app-logo">CV</span>
+        <div className="app-brand">
+          {settings?.logoUrl ? (
+            <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+          ) : (
+            <span className="app-logo">CV</span>
+          )}
           <div>
-            <div className="app-title">{t("welcome.title")}</div>
+            <div className="app-title">{settings?.name || t("welcome.title")}</div>
             <div className="app-subtitle">{t("visitor.sidebar.home")}</div>
           </div>
         </div>
@@ -121,30 +125,23 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           <button
             onClick={() => setIsSearchOpen(true)}
             className="app-sidebar-link"
-            style={{ textAlign: "left", cursor: "pointer", background: "none", border: "none", width: "100%" }}
           >
             🔍 {t("visitor.search.title", "Buscar")}
           </button>
-          {links.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`app-sidebar-link ${isActive ? "active" : ""}`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+          <button
+            onClick={() => setIsDialerOpen(true)}
+            className="app-sidebar-link"
+          >
+            🔢 {t("visitor.dialer.button", "Digitar Código")}
+          </button>
+          {renderNavLinks(false)}
         </nav>
 
-        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+        <div className="app-sidebar-footer">
           {deferredPrompt && (
             <button
               onClick={handleInstallClick}
               className="btn btn-primary"
-              style={{ width: "100%", justifyContent: "flex-start", marginBottom: "0.5rem" }}
             >
               ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
             </button>
@@ -155,20 +152,12 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           <button
             onClick={() => window.location.href = "/select-museum"}
             className="btn btn-secondary"
-            style={{ width: "100%", justifyContent: "flex-start" }}
           >
             {t("visitor.sidebar.changeMuseum")}
           </button>
           <button
             onClick={logout}
-            className="btn"
-            style={{
-              background: "rgba(239, 68, 68, 0.1)",
-              color: "#ef4444",
-              borderColor: "rgba(239, 68, 68, 0.5)",
-              width: "100%",
-              justifyContent: "flex-start"
-            }}
+            className="btn btn-logout"
           >
             {t("visitor.sidebar.logout")}
           </button>
@@ -178,24 +167,32 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       {/* HEADER (Mobile Only) */}
       <header className="app-header mobile-only">
         <div className="app-brand">
-          <span className="app-logo">CV</span>
+          {settings?.logoUrl ? (
+            <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 32, height: 32, borderRadius: 6, objectFit: "contain" }} />
+          ) : (
+            <span className="app-logo">CV</span>
+          )}
           <div>
-            <div className="app-title">{t("welcome.title")}</div>
+            <div className="app-title">{settings?.name || t("welcome.title")}</div>
           </div>
         </div>
 
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary icon-btn"
             onClick={() => setIsSearchOpen(true)}
-            style={{ padding: "0.5rem", fontSize: "1.2rem", border: "none", boxShadow: "none" }}
           >
             🔍
           </button>
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary icon-btn"
+            onClick={() => setIsDialerOpen(true)}
+          >
+            🔢
+          </button>
+          <button
+            className="btn btn-secondary icon-btn"
             onClick={() => setIsMenuOpen(true)}
-            style={{ padding: "0.5rem", fontSize: "1.5rem", border: "none", boxShadow: "none" }}
           >
             ☰
           </button>
@@ -214,11 +211,11 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             <div className="app-title" style={{ fontSize: "1.5rem" }}>Menu</div>
           </div>
 
-          <nav style={{ display: "flex", flexDirection: "column", gap: "1rem", overflowY: "auto" }}>
+          <nav className="app-sidebar-nav">
             {renderNavLinks(true)}
           </nav>
 
-          <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: "1rem", paddingBottom: "2rem" }}>
+          <div className="app-sidebar-footer">
             <div style={{ display: "flex", justifyContent: "center" }}>
               <LanguageSwitcher style={{ position: "static" }} />
             </div>
@@ -230,12 +227,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             </button>
             <button
               onClick={logout}
-              className="btn"
-              style={{
-                background: "rgba(239, 68, 68, 0.1)",
-                color: "#ef4444",
-                borderColor: "rgba(239, 68, 68, 0.5)"
-              }}
+              className="btn btn-logout"
             >
               {t("visitor.sidebar.logout")}
             </button>
@@ -246,6 +238,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <main className="app-content">{children}</main>
 
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <DialerModal isOpen={isDialerOpen} onClose={() => setIsDialerOpen(false)} />
       <AiChatWidget />
     </div>
   );

@@ -51,7 +51,7 @@ export const AdminAIAssistant: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await api.post(`/persona`, { ...persona, tenantId });
+      await api.post(`/persona/${tenantId}`, { ...persona });
       alert(t("admin.aiAssistant.alerts.success"));
     } catch {
       alert(t("admin.aiAssistant.alerts.errorSave"));

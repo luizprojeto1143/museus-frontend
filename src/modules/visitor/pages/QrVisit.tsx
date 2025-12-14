@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 
 type QRCodeData = {
   id: string;
@@ -18,6 +19,7 @@ export const QrVisit: React.FC = () => {
   const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
+  const { email } = useAuth();
 
   const [data, setData] = useState<QRCodeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,7 +72,7 @@ export const QrVisit: React.FC = () => {
 
     try {
       // Endpoint a ser implementado no backend para associar visita ao QR
-      await api.post("/visitors/visit-from-qr", { code: data.code });
+      await api.post("/visitors/visit-from-qr", { code: data.code, email });
       setFeedback(t("visitor.qr.success", { xp: data.xpReward }));
     } catch (err) {
       console.error(err);
@@ -92,18 +94,23 @@ export const QrVisit: React.FC = () => {
 
   if (loading) {
     return (
-      <div>
-        <h1 className="section-title">{t("visitor.qr.reading")}</h1>
-        <p className="section-subtitle">{t("visitor.qr.searching")}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', gap: '1rem' }}>
+        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid var(--border)", borderTopColor: "var(--primary)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+        <p>{t("visitor.qr.reading", "Lendo QR Code...")}</p>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div>
-        <h1 className="section-title">{t("visitor.qr.title")}</h1>
-        <p className="section-subtitle">{error || t("visitor.qr.invalid")}</p>
+      <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
+        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚠️</div>
+        <h1 className="section-title">{t("visitor.qr.title", "QR Code Inválido")}</h1>
+        <p style={{ color: "#9ca3af", marginBottom: "1.5rem" }}>{error || t("visitor.qr.invalid", "Não foi possível identificar este código.")}</p>
+        <button className="btn btn-secondary" onClick={() => navigate("/scanner")}>
+          {t("visitor.qr.tryAgain", "Tentar Novamente")}
+        </button>
       </div>
     );
   }
@@ -148,9 +155,14 @@ export const QrVisit: React.FC = () => {
           type="button"
           onClick={handleRegisterAndOpen}
           disabled={registering}
-          style={{ marginTop: "1rem" }}
+          style={{ marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
         >
-          {registering ? t("visitor.qr.registering") : t("visitor.qr.register")}
+          {registering ? (
+            <>
+              <span className="spinner" style={{ width: "16px", height: "16px", border: "2px solid white", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></span>
+              {t("visitor.qr.registering", "Registrando...")}
+            </>
+          ) : t("visitor.qr.register", "Registrar Visita")}
         </button>
       </div>
     </div>

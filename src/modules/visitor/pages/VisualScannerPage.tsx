@@ -136,11 +136,10 @@ export const VisualScannerPage: React.FC = () => {
                 )}
 
                 {loading && (
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "black", zIndex: 20 }}>
-                        <div style={{ textAlign: "center" }}>
-                            <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>⏳</div>
-                            <p>{status}</p>
-                        </div>
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "black", zIndex: 20, flexDirection: "column" }}>
+                        <div className="spinner" style={{ width: "50px", height: "50px", border: "4px solid #333", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "1rem" }}></div>
+                        <p style={{ color: "white" }}>{status}</p>
+                        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
                     </div>
                 )}
 

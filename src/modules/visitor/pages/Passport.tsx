@@ -39,8 +39,7 @@ export const Passport: React.FC = () => {
     setGenerating(workId);
     try {
       // Mock title/artist since we don't have the full work object here easily without fetching
-      // In a real app, we'd probably have the work details in the visitedWorks list or fetch them
-      const stampUrl = await generateStamp(`Obra #${workId}`, "Artista Desconhecido");
+      const stampUrl = await generateStamp(`${t("visitor.artwork.badge")} #${workId}`, t("visitor.artwork.unknownArtist"));
       const newStamps = { ...stamps, [workId]: stampUrl };
       setStamps(newStamps);
       localStorage.setItem("passport_stamps", JSON.stringify(newStamps));
@@ -111,7 +110,7 @@ export const Passport: React.FC = () => {
           {name ? getInitials(name) : "V"}
         </div>
         <div style={{ flex: 1 }}>
-          <h1 className="section-title" style={{ marginBottom: "0.25rem" }}>{name || "Visitante"}</h1>
+          <h1 className="section-title" style={{ marginBottom: "0.25rem" }}>{name || t("common.visitor")}</h1>
           <p style={{ margin: 0, color: "#6b7280", fontSize: "0.9rem" }}>{email}</p>
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -151,7 +150,7 @@ export const Passport: React.FC = () => {
           <div className="card" style={{ padding: "1.5rem", marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
               <h2 style={{ margin: 0, fontSize: "1.25rem" }}>{currentLevel.title}</h2>
-              <span className="chip" style={{ background: "var(--primary)", color: "white" }}>Nível {currentLevel.level}</span>
+              <span className="chip" style={{ background: "var(--primary)", color: "white" }}>{t("visitor.passport.level", "Nível")} {currentLevel.level}</span>
             </div>
 
             <div style={{ background: "#e5e7eb", borderRadius: "999px", height: "0.75rem", overflow: "hidden", marginBottom: "0.5rem" }}>
@@ -167,22 +166,22 @@ export const Passport: React.FC = () => {
 
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.875rem", color: "#6b7280" }}>
               <span>{stats.xp} XP</span>
-              {nextLevel && <span>Próximo: {nextLevel.minXp} XP</span>}
+              {nextLevel && <span>{t("visitor.passport.next", "Próximo")}: {nextLevel.minXp} XP</span>}
             </div>
           </div>
 
-          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>Histórico de Visitas</h3>
+          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{t("visitor.passport.historyTitle", "Histórico de Visitas")}</h3>
 
           {stats.visitedWorks.length === 0 ? (
-            <p style={{ color: "#6b7280", fontStyle: "italic" }}>Você ainda não visitou nenhuma obra.</p>
+            <p style={{ color: "#6b7280", fontStyle: "italic" }}>{t("visitor.passport.noHistory", "Você ainda não visitou nenhuma obra.")}</p>
           ) : (
             <div style={{ display: "grid", gap: "0.75rem" }}>
               {stats.visitedWorks.map((workId, i) => (
                 <div key={i} className="card" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
                   <span style={{ fontSize: "1.5rem" }}>🖼️</span>
                   <div>
-                    <p style={{ fontWeight: "bold", margin: 0 }}>Obra #{workId}</p>
-                    <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>Visitada</p>
+                    <p style={{ fontWeight: "bold", margin: 0 }}>{t("visitor.artwork.badge")} #{workId}</p>
+                    <p style={{ margin: 0, fontSize: "0.875rem", color: "#6b7280" }}>{t("visitor.passport.visited", "Visitada")}</p>
                   </div>
                 </div>
               ))}
@@ -193,7 +192,7 @@ export const Passport: React.FC = () => {
 
       {activeTab === "stamps" && (
         <div>
-          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>Meus Carimbos</h3>
+          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{t("visitor.passport.stampsTitle", "Meus Carimbos")}</h3>
           <div className="passport-book" style={{
             background: "#fdf6e3",
             border: "1px solid #d6d3d1",
@@ -222,7 +221,10 @@ export const Passport: React.FC = () => {
                       <img src={stamps[workId]} alt="Stamp" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8, filter: "sepia(0.5)" }} />
                     ) : (
                       generating === workId ? (
-                        <span className="spinner">🔄</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <span className="spinner" style={{ display: 'block', width: '20px', height: '20px', border: '2px solid #666', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></span>
+                          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                        </div>
                       ) : (
                         <button
                           onClick={() => handleGenerateStamp(workId)}
@@ -235,7 +237,7 @@ export const Passport: React.FC = () => {
                     )}
                   </div>
                   <p style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#444" }}>
-                    Obra #{workId}
+                    {t("visitor.artwork.badge")} #{workId}
                   </p>
                 </div>
               ))}
@@ -252,15 +254,15 @@ export const Passport: React.FC = () => {
 
       {activeTab === "collection" && (
         <div>
-          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>Meus Favoritos</h3>
+          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{t("visitor.passport.favoritesTitle", "Meus Favoritos")}</h3>
           {favorites.length === 0 ? (
-            <p style={{ color: "#6b7280", fontStyle: "italic" }}>Sua coleção está vazia.</p>
+            <p style={{ color: "#6b7280", fontStyle: "italic" }}>{t("visitor.passport.noFavorites", "Sua coleção está vazia.")}</p>
           ) : (
             <div className="card-grid">
               {favorites.map((item: any) => (
                 <div key={item.id} className="card" style={{ padding: "1rem" }}>
                   <h4 className="card-title">{item.title}</h4>
-                  <p className="card-subtitle">{item.type === "work" ? "Obra" : "Item"}</p>
+                  <p className="card-subtitle">{item.type === "work" ? t("visitor.sidebar.artworks") : "Item"}</p>
                 </div>
               ))}
             </div>
@@ -270,14 +272,14 @@ export const Passport: React.FC = () => {
 
       {activeTab === "journal" && (
         <div>
-          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>Meu Diário de Bordo</h3>
+          <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{t("visitor.passport.journalTitle", "Meu Diário de Bordo")}</h3>
           {Object.keys(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).length === 0 ? (
-            <p style={{ color: "#6b7280", fontStyle: "italic" }}>Seu diário de bordo está vazio. Visite obras para adicionar anotações.</p>
+            <p style={{ color: "#6b7280", fontStyle: "italic" }}>{t("visitor.passport.noNotes", "Seu diário de bordo está vazio. Visite obras para adicionar anotações.")}</p>
           ) : (
             <div className="card-grid">
               {Object.entries(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).map(([workId, note]) => (
                 <div key={workId} className="card" style={{ padding: "1rem" }}>
-                  <h4 className="card-title">Obra #{workId}</h4>
+                  <h4 className="card-title">{t("visitor.artwork.badge")} #{workId}</h4>
                   <p style={{ whiteSpace: "pre-wrap", fontSize: "0.9rem", color: "#4b5563" }}>{note as string}</p>
                 </div>
               ))}

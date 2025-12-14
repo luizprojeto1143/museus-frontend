@@ -48,11 +48,28 @@ export const EventDetail: React.FC = () => {
   const loading = isDemo ? false : apiLoading;
 
   if (loading) {
-    return <div className="card">{t("common.loading")}</div>;
+    return (
+      <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
+        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+        <p>{t("common.loading")}</p>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
   }
 
   if (!event) {
-    return <div className="card">{t("visitor.eventDetail.notFound")}</div>;
+    return (
+      <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
+        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📅</div>
+        <h1 className="section-title">{t("visitor.eventDetail.notFound", "Evento não encontrado")}</h1>
+        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
+          {t("visitor.eventDetail.notFoundDesc", "O evento que você procura não existe ou já foi encerrado.")}
+        </p>
+        <button className="btn btn-secondary" onClick={() => window.history.back()}>
+          {t("common.back")}
+        </button>
+      </div>
+    );
   }
 
   const formatDate = (dateStr: string) => {

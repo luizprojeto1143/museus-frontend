@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { api, isDemoMode } from "../../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const MasterUserForm: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
@@ -13,18 +15,38 @@ export const MasterUserForm: React.FC = () => {
   const [role, setRole] = useState("ADMIN");
   const [tenantId, setTenantId] = useState("");
   const [tenants, setTenants] = useState<Array<{ id: string; name: string }>>([]);
+  const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isDemoMode) {
       api.get("/tenants").then(res => setTenants(res.data)).catch(console.error);
     }
   }, []);
 
+  useEffect(() => {
+    if (isEdit && id && !isDemoMode) {
+      setLoading(true);
+      api.get(`/users/${id}`)
+        .then(res => {
+          const u = res.data;
+          setEmail(u.email);
+          setName(u.name);
+          setRole(u.role);
+          setTenantId(u.tenantId || "");
+        })
+        .catch(() => {
+          alert(t("common.errorLoad"));
+          navigate("/master/users");
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [isEdit, id, navigate, t]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isDemoMode) {
-      alert("Simulação de criação de usuário (modo demo).");
+      alert(t("master.userForm.demoAlert"));
       navigate("/master/users");
       return;
     }
@@ -49,7 +71,7 @@ export const MasterUserForm: React.FC = () => {
 
     if (role === "ADMIN") {
       if (!tenantId) {
-        alert("Selecione um museu para o usuário ADMIN.");
+        alert(t("master.userForm.alerts.selectTenant"));
         return;
       }
       payload.tenantId = tenantId;
@@ -66,76 +88,80 @@ export const MasterUserForm: React.FC = () => {
       navigate("/master/users");
     } catch (error) {
       console.error("Erro ao salvar usuário", error);
-      alert("Erro ao salvar usuário.");
+      alert(t("master.userForm.alerts.errorSave"));
     }
   };
+
+  if (loading) {
+    return <p>{t("common.loading")}</p>;
+  }
 
   return (
     <div>
       <h1 className="section-title">
-        {isEdit ? "Editar usuário" : "Novo usuário"}
+        {isEdit ? t("master.userForm.editTitle") : t("master.userForm.newTitle")}
       </h1>
       <p className="section-subtitle">
-        Crie usuários MASTER (gestores da plataforma) ou ADMIN (gestores de museus específicos).
+        {t("master.userForm.subtitle")}
       </p>
 
       <form onSubmit={handleSubmit} className="card" style={{ maxWidth: 640 }}>
         <div className="form-group">
-          <label htmlFor="name">Nome completo</label>
+          <label htmlFor="name">{t("master.userForm.labels.name")}</label>
           <input
             id="name"
             className="input"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Ex.: João Silva"
+            placeholder={t("master.userForm.placeholders.name")}
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="email">E-mail</label>
+          <label htmlFor="email">{t("master.userForm.labels.email")}</label>
           <input
             id="email"
             type="email"
             className="input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="usuario@email.com"
+            placeholder={t("master.userForm.placeholders.email")}
             required
           />
         </div>
 
         {!isEdit && (
           <div className="form-group">
-            <label htmlFor="password">Senha</label>
+            <label htmlFor="password">{t("master.userForm.labels.password")}</label>
             <input
               id="password"
               type="password"
               className="input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Senha forte"
+              placeholder={t("master.userForm.placeholders.password")}
               required
             />
           </div>
         )}
 
         <div className="form-group">
-          <label htmlFor="role">Perfil</label>
+          <label htmlFor="role">{t("master.userForm.labels.role")}</label>
           <select
             id="role"
             className="input"
             value={role}
             onChange={(e) => setRole(e.target.value)}
           >
-            <option value="MASTER">MASTER (Gestor da plataforma)</option>
-            <option value="ADMIN">ADMIN (Gestor de museu)</option>
+            <option value="MASTER">{t("master.userForm.roles.master")}</option>
+            <option value="ADMIN">{t("master.userForm.roles.admin")}</option>
           </select>
         </div>
 
         {role === "ADMIN" && (
           <div className="form-group">
-            <label htmlFor="tenantId">Museu / Tenant</label>
+            <label htmlFor="tenantId">{t("master.userForm.labels.tenant")}</label>
             <select
               id="tenantId"
               className="input"
@@ -143,27 +169,27 @@ export const MasterUserForm: React.FC = () => {
               onChange={(e) => setTenantId(e.target.value)}
               required
             >
-              <option value="">Selecione um museu...</option>
+              <option value="">{t("master.userForm.placeholders.selectTenant")}</option>
               {tenants.map(t => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
             </select>
             <p style={{ fontSize: "0.8rem", color: "#9ca3af", marginTop: "0.25rem" }}>
-              O usuário terá acesso administrativo a este museu.
+              {t("master.userForm.helpers.tenant")}
             </p>
           </div>
         )}
 
         <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>
           <button type="submit" className="btn">
-            Salvar
+            {t("common.save")}
           </button>
           <button
             type="button"
             className="btn btn-secondary"
             onClick={() => navigate("/master/users")}
           >
-            Cancelar
+            {t("common.cancel")}
           </button>
         </div>
       </form>

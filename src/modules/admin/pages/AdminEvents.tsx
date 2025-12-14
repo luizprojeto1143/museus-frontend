@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
 type AdminEventItem = {
@@ -15,15 +15,10 @@ type AdminEventItem = {
 export const AdminEvents: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
-  // Mock data
-  const mockEvents: AdminEventItem[] = [
-    { id: "1", title: "Oficina de aquarela", date: "15/12/2025", time: "14:00", active: true }
-  ];
-
-  const [events, setEvents] = useState<AdminEventItem[]>(isDemoMode ? mockEvents : []);
+  const [events, setEvents] = useState<AdminEventItem[]>([]);
 
   useEffect(() => {
-    if (isDemoMode || !tenantId) return;
+    if (!tenantId) return;
 
     api
       .get("/events", { params: { tenantId } })
@@ -37,8 +32,9 @@ export const AdminEvents: React.FC = () => {
         }));
         setEvents(apiEvents);
       })
-      .catch(() => {
-        // Silently fail or use mock if needed
+      .catch((err) => {
+        console.error("Failed to fetch events", err);
+        setEvents([]);
       });
   }, [tenantId]);
 

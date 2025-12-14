@@ -1,61 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 
 export const TrailsList: React.FC = () => {
   const { t } = useTranslation();
   type TrailItem = {
     id: string;
     name: string;
+    description?: string;
     duration?: string;
     worksCount?: number;
     type?: string;
   };
 
-  const mock: TrailItem[] = [
-    {
-      id: "fast",
-      name: t("visitor.home.quickTrail"),
-      duration: "45 min",
-      worksCount: 8,
-      type: "Rápida"
-    },
-    {
-      id: "complete",
-      name: t("visitor.home.completeTrail"),
-      duration: "2h",
-      worksCount: 20,
-      type: "Completa"
-    }
-  ];
-
-  const [apiTrails, setApiTrails] = useState<TrailItem[] | null>(null);
-  const tenantId = import.meta.env.VITE_DEFAULT_TENANT_ID as string | undefined;
-  const isDemo = isDemoMode || !tenantId;
+  const [trails, setTrails] = useState<TrailItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { tenantId } = useAuth();
 
   useEffect(() => {
-    if (isDemo) return;
+    if (!tenantId) return;
 
+    setLoading(true);
     api
       .get("/trails", { params: { tenantId } })
       .then((res) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const apiTrails = (res.data as any[]).map((t) => ({
           id: t.id,
-          name: t.name,
-          duration: t.durationLabel ?? t.duration ?? "",
-          worksCount: Array.isArray(t.works) ? t.works.length : undefined,
-          type: t.type ?? "Trilha"
+          name: t.title, // Backend returns title
+          description: t.description,
+          duration: t.duration ? `${t.duration} min` : undefined,
+          worksCount: Array.isArray(t.workIds) ? t.workIds.length : 0,
+          type: "Trilha"
         }));
-        setApiTrails(apiTrails);
+        setTrails(apiTrails);
       })
       .catch(() => {
         console.error("Failed to fetch trails");
-      });
-  }, [isDemo, tenantId]);
-
-  const trails = isDemo ? mock : (apiTrails || []);
+      })
+      .finally(() => setLoading(false));
+  }, [tenantId]);
 
   return (
     <div>
@@ -63,27 +49,54 @@ export const TrailsList: React.FC = () => {
       <p className="section-subtitle">
         {t("visitor.trails.subtitle")}
       </p>
-      <div className="card-grid">
-        {trails.map(trail => (
-          <article key={trail.id} className="card">
-            <h2 className="card-title">{trail.name}</h2>
-            <p className="card-subtitle">
-              {trail.duration} • {trail.worksCount} {t("visitor.sidebar.artworks")}
-            </p>
-            <div className="card-meta">
-              <span className="chip">{trail.type}</span>
-              <span className="chip">{t("visitor.trails.mapTracking")}</span>
-            </div>
-            <Link
-              to={`/trilhas/${trail.id}`}
-              className="btn btn-secondary"
-              style={{ marginTop: "0.75rem" }}
-            >
-              {t("visitor.trails.viewDetails")}
-            </Link>
-          </article>
-        ))}
-      </div>
+
+      {loading ? (
+        <div className="card-grid">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="card" style={{ height: "200px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+          ))}
+        </div>
+      ) : trails.length > 0 ? (
+        <div className="card-grid">
+          {trails.map(trail => (
+            <article key={trail.id} className="card" style={{ display: "flex", flexDirection: "column" }}>
+              <h2 className="card-title">{trail.name}</h2>
+              {trail.description && (
+                <p className="card-subtitle" style={{ marginBottom: "1rem", flex: 1 }}>
+                  {trail.description.length > 100 ? trail.description.substring(0, 100) + "..." : trail.description}
+                </p>
+              )}
+              <div className="card-meta" style={{ marginTop: "auto" }}>
+                <span className="chip">⏱ {trail.duration || "Livre"}</span>
+                <span className="chip">🖼 {trail.worksCount} {t("visitor.sidebar.artworks")}</span>
+              </div>
+              <Link
+                to={`/trilhas/${trail.id}`}
+                className="btn btn-secondary"
+                style={{ marginTop: "1rem", width: "100%", textAlign: "center" }}
+              >
+                {t("visitor.trails.viewDetails")}
+              </Link>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
+          <h3>{t("visitor.trails.emptyTitle", "Nenhuma trilha disponível")}</h3>
+          <p style={{ color: "#9ca3af" }}>{t("visitor.trails.emptyDesc", "O museu ainda não criou trilhas guiadas. Explore as obras individualmente!")}</p>
+          <Link to="/obras" className="btn btn-primary" style={{ marginTop: "1rem", display: "inline-block" }}>
+            {t("visitor.home.viewArtworks", "Ver Obras")}
+          </Link>
+        </div>
+      )}
+      <style>{`
+        @keyframes pulse {
+          0% { opacity: 0.6; }
+          50% { opacity: 0.3; }
+          100% { opacity: 0.6; }
+        }
+      `}</style>
     </div>
   );
 };

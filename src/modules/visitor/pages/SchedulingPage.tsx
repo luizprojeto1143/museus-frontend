@@ -21,16 +21,21 @@ export const SchedulingPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+    const [initialLoading, setInitialLoading] = useState(true);
+
     useEffect(() => {
         fetchBookings();
     }, []);
 
     const fetchBookings = async () => {
+        setInitialLoading(true);
         try {
             const res = await api.get("/bookings/my");
             setBookings(res.data);
         } catch (error) {
             console.error("Failed to fetch bookings", error);
+        } finally {
+            setInitialLoading(false);
         }
     };
 
@@ -119,47 +124,64 @@ export const SchedulingPage: React.FC = () => {
                         </div>
                     )}
 
-                    <button type="submit" className="btn btn-primary" disabled={loading}>
-                        {loading ? t("common.loading") : t("visitor.scheduling.submit", "Agendar Visita")}
+                    <button type="submit" className="btn btn-primary" disabled={loading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                        {loading ? (
+                            <>
+                                <span className="spinner" style={{ width: "16px", height: "16px", border: "2px solid white", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></span>
+                                {t("common.sending", "Enviando...")}
+                            </>
+                        ) : t("visitor.scheduling.submit", "Agendar Visita")}
                     </button>
                 </form>
             </div>
 
             <h2 className="section-title">{t("visitor.scheduling.myBookings", "Meus Agendamentos")}</h2>
             <div className="card-grid">
-                {bookings.length === 0 ? (
-                    <p style={{ color: "#9ca3af" }}>{t("visitor.scheduling.empty", "Nenhum agendamento encontrado.")}</p>
-                ) : (
-                    bookings.map((booking) => (
-                        <article key={booking.id} className="card" style={{ borderLeft: booking.status === "CANCELLED" ? "4px solid #ef4444" : "4px solid #10b981" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <div>
-                                    <h3 className="card-title">
-                                        {new Date(booking.date).toLocaleDateString()} às {new Date(booking.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </h3>
-                                    <p className="card-subtitle">{booking.tenant.name}</p>
-                                    <span className="badge" style={{
-                                        backgroundColor: booking.status === "CANCELLED" ? "#ef4444" : "#10b981",
-                                        color: "white",
-                                        marginTop: "0.5rem",
-                                        display: "inline-block"
-                                    }}>
-                                        {booking.status === "CANCELLED" ? t("common.cancelled", "Cancelado") : t("common.confirmed", "Confirmado")}
-                                    </span>
+                <div className="card-grid">
+                    {initialLoading ? (
+                        <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "2rem" }}>
+                            <div className="spinner" style={{ width: "30px", height: "30px", border: "3px solid #ccc", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto 1rem auto" }}></div>
+                            <p>{t("common.loading")}</p>
+                            <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                        </div>
+                    ) : bookings.length === 0 ? (
+                        <div className="card" style={{ gridColumn: "1 / -1", textAlign: "center", padding: "3rem" }}>
+                            <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📅</div>
+                            <h3>{t("visitor.scheduling.emptyTitle", "Nenhum agendamento")}</h3>
+                            <p style={{ color: "#9ca3af" }}>{t("visitor.scheduling.emptyDesc", "Você ainda não tem visitas agendadas. Use o formulário acima para marcar uma visita.")}</p>
+                        </div>
+                    ) : (
+                        bookings.map((booking) => (
+                            <article key={booking.id} className="card" style={{ borderLeft: booking.status === "CANCELLED" ? "4px solid #ef4444" : "4px solid #10b981" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                    <div>
+                                        <h3 className="card-title">
+                                            {new Date(booking.date).toLocaleDateString()} às {new Date(booking.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </h3>
+                                        <p className="card-subtitle">{booking.tenant.name}</p>
+                                        <span className="badge" style={{
+                                            backgroundColor: booking.status === "CANCELLED" ? "#ef4444" : "#10b981",
+                                            color: "white",
+                                            marginTop: "0.5rem",
+                                            display: "inline-block"
+                                        }}>
+                                            {booking.status === "CANCELLED" ? t("common.cancelled", "Cancelado") : t("common.confirmed", "Confirmado")}
+                                        </span>
+                                    </div>
+                                    {booking.status !== "CANCELLED" && (
+                                        <button
+                                            onClick={() => handleCancel(booking.id)}
+                                            className="btn"
+                                            style={{ color: "#ef4444", padding: "0.25rem 0.5rem", fontSize: "0.8rem" }}
+                                        >
+                                            {t("common.cancel", "Cancelar")}
+                                        </button>
+                                    )}
                                 </div>
-                                {booking.status !== "CANCELLED" && (
-                                    <button
-                                        onClick={() => handleCancel(booking.id)}
-                                        className="btn"
-                                        style={{ color: "#ef4444", padding: "0.25rem 0.5rem", fontSize: "0.8rem" }}
-                                    >
-                                        {t("common.cancel", "Cancelar")}
-                                    </button>
-                                )}
-                            </div>
-                        </article>
-                    ))
-                )}
+                            </article>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

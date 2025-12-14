@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
 interface AnalyticsData {
@@ -26,56 +26,9 @@ export const AdminAnalytics: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState<"7d" | "30d" | "90d">("30d");
 
-  useEffect(() => {
-    loadAnalytics();
-  }, [loadAnalytics]);
-
   const loadAnalytics = React.useCallback(async () => {
     try {
-      if (isDemoMode || !tenantId) {
-        // Mock data
-        setData({
-          totalVisitors: 1247,
-          recurringVisitors: 342,
-          averageAge: 34,
-          accessBySource: { qr: 678, app: 456, web: 113 },
-          peakHours: [
-            { hour: 9, count: 45 },
-            { hour: 10, count: 89 },
-            { hour: 11, count: 123 },
-            { hour: 14, count: 156 },
-            { hour: 15, count: 178 },
-            { hour: 16, count: 134 }
-          ],
-          hotWorks: [
-            { id: "1", title: "Monalisa Colonial", heat: 95 },
-            { id: "2", title: "Escultura Barroca", heat: 87 },
-            { id: "3", title: "Azulejos Históricos", heat: 76 }
-          ],
-          hotTrails: [
-            { id: "1", title: "Arte Sacra", heat: 89 },
-            { id: "2", title: "Barroco Mineiro", heat: 72 }
-          ],
-          hotEvents: [
-            { id: "1", title: "Exposição de Ouro", heat: 92 },
-            { id: "2", title: "Semana da Arte", heat: 78 }
-          ],
-          visitorsByAge: [
-            { range: "0-17", count: 124 },
-            { range: "18-25", count: 345 },
-            { range: "26-35", count: 456 },
-            { range: "36-50", count: 234 },
-            { range: "51+", count: 88 }
-          ],
-          visitorsByDay: Array.from({ length: 30 }, (_, i) => ({
-            date: new Date(Date.now() - (29 - i) * 86400000).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
-            count: Math.floor(Math.random() * 50 + 20),
-            recurring: Math.floor(Math.random() * 15 + 5)
-          }))
-        });
-        setLoading(false);
-        return;
-      }
+      if (!tenantId) return;
 
       const res = await api.get(`/analytics/advanced/${tenantId}?range=${dateRange}`);
       setData(res.data);
@@ -85,6 +38,10 @@ export const AdminAnalytics: React.FC = () => {
       setLoading(false);
     }
   }, [tenantId, dateRange]);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [loadAnalytics]);
 
   const handleExportCSV = () => {
     if (!data) return;

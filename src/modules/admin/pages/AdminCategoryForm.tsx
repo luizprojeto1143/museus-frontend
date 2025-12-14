@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -18,28 +18,22 @@ export const AdminCategoryForm: React.FC = () => {
 
   useEffect(() => {
     if (isEdit && id) {
-      if (isDemoMode) {
-        setName("Pintura");
-        setDescription("Obras de pintura em tela");
-      } else {
-        setLoading(true);
-        api.get(`/categories/${id}`)
-          .then(res => {
-            setName(res.data.name);
-            setDescription(res.data.description || "");
-          })
-          .catch(err => console.error(err))
-          .finally(() => setLoading(false));
-      }
+      setLoading(true);
+      api.get(`/categories/${id}`)
+        .then(res => {
+          setName(res.data.name);
+          setDescription(res.data.description || "");
+        })
+        .catch(err => console.error(err))
+        .finally(() => setLoading(false));
     }
   }, [id, isEdit]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isDemoMode || !tenantId) {
-      alert(t("admin.categoryForm.demoSave"));
-      navigate("/admin/categorias");
+    if (!tenantId) {
+      alert(t("common.error"));
       return;
     }
 

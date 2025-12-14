@@ -56,20 +56,26 @@ export const SmartItineraryWizard: React.FC = () => {
                     <div>
                         <h2 className="card-title">{t("visitor.itinerary.interestsQuestion", "O que você gosta?")}</h2>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
-                            {["Pintura", "Escultura", "História", "Moderno", "Interativo"].map((interest) => (
-                                <label key={interest} className="card" style={{ cursor: "pointer", border: preferences.interests.includes(interest) ? "2px solid var(--primary)" : "1px solid var(--border)" }}>
+                            {[
+                                { id: "Pintura", label: t("visitor.interests.painting", "Pintura") },
+                                { id: "Escultura", label: t("visitor.interests.sculpture", "Escultura") },
+                                { id: "História", label: t("visitor.interests.history", "História") },
+                                { id: "Moderno", label: t("visitor.interests.modern", "Moderno") },
+                                { id: "Interativo", label: t("visitor.interests.interactive", "Interativo") }
+                            ].map((interest) => (
+                                <label key={interest.id} className="card" style={{ cursor: "pointer", border: preferences.interests.includes(interest.id) ? "2px solid var(--primary)" : "1px solid var(--border)" }}>
                                     <input
                                         type="checkbox"
-                                        checked={preferences.interests.includes(interest)}
+                                        checked={preferences.interests.includes(interest.id)}
                                         onChange={(e) => {
                                             const newInterests = e.target.checked
-                                                ? [...preferences.interests, interest]
-                                                : preferences.interests.filter(i => i !== interest);
+                                                ? [...preferences.interests, interest.id]
+                                                : preferences.interests.filter(i => i !== interest.id);
                                             setPreferences({ ...preferences, interests: newInterests });
                                         }}
                                         style={{ marginRight: "0.5rem" }}
                                     />
-                                    {interest}
+                                    {interest.label}
                                 </label>
                             ))}
                         </div>
@@ -84,20 +90,25 @@ export const SmartItineraryWizard: React.FC = () => {
                     <div>
                         <h2 className="card-title">{t("visitor.itinerary.accessibilityQuestion", "Necessidades de Acessibilidade")}</h2>
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem" }}>
-                            {["Cadeirante", "Deficiência Visual", "Deficiência Auditiva", "Neurodivergente"].map((acc) => (
-                                <label key={acc} className="card" style={{ cursor: "pointer", border: preferences.accessibility.includes(acc) ? "2px solid var(--primary)" : "1px solid var(--border)" }}>
+                            {[
+                                { id: "Cadeirante", label: t("visitor.accessibility.wheelchair", "Cadeirante") },
+                                { id: "Deficiência Visual", label: t("visitor.accessibility.visual", "Deficiência Visual") },
+                                { id: "Deficiência Auditiva", label: t("visitor.accessibility.hearing", "Deficiência Auditiva") },
+                                { id: "Neurodivergente", label: t("visitor.accessibility.neuro", "Neurodivergente") }
+                            ].map((acc) => (
+                                <label key={acc.id} className="card" style={{ cursor: "pointer", border: preferences.accessibility.includes(acc.id) ? "2px solid var(--primary)" : "1px solid var(--border)" }}>
                                     <input
                                         type="checkbox"
-                                        checked={preferences.accessibility.includes(acc)}
+                                        checked={preferences.accessibility.includes(acc.id)}
                                         onChange={(e) => {
                                             const newAcc = e.target.checked
-                                                ? [...preferences.accessibility, acc]
-                                                : preferences.accessibility.filter(a => a !== acc);
+                                                ? [...preferences.accessibility, acc.id]
+                                                : preferences.accessibility.filter(a => a !== acc.id);
                                             setPreferences({ ...preferences, accessibility: newAcc });
                                         }}
                                         style={{ marginRight: "0.5rem" }}
                                     />
-                                    {acc}
+                                    {acc.label}
                                 </label>
                             ))}
                         </div>

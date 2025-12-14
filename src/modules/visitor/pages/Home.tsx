@@ -1,17 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
+import { api } from "../../../api/client";
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
-  const { name } = useAuth();
+  const { name, tenantId } = useAuth();
+  const [featuredWorks, setFeaturedWorks] = useState<any[]>([]);
+  const [featuredTrails, setFeaturedTrails] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // Fetch works and trails (using public endpoints if available, or just list)
+        // Since we don't have a specific "featured" endpoint, we'll fetch list and slice
+        const [worksRes, trailsRes] = await Promise.all([
+          api.get(`/works?tenantId=${tenantId}&limit=3`),
+          api.get(`/trails?tenantId=${tenantId}&limit=2`)
+        ]);
+        setFeaturedWorks(worksRes.data);
+        setFeaturedTrails(trailsRes.data);
+      } catch (err) {
+        console.error("Error fetching home data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (tenantId) {
+      fetchData();
+    }
+  }, [tenantId]);
 
   return (
     <div>
       <section style={{ marginBottom: "2rem" }}>
         <div className="badge">{t("visitor.home.badge")}</div>
-        <h1 className="section-title">{t("visitor.home.title", { name: name || "Visitante" })}</h1>
+        <h1 className="section-title">{t("visitor.home.title", { name: name || t("common.visitor", "Visitante") })}</h1>
         <p className="section-subtitle">
           {t("visitor.home.subtitle")}
         </p>
@@ -30,24 +58,42 @@ export const Home: React.FC = () => {
         <p className="section-subtitle">
           {t("visitor.home.featuredSubtitle")}
         </p>
-        <div className="card-grid">
-          {[1, 2, 3].map(i => (
-            <article key={i} className="card">
-              <h3 className="card-title">{t("visitor.home.exampleArtwork")} {i}</h3>
-              <p className="card-subtitle">{t("visitor.home.guestArtist")} • 192{i}</p>
-              <div className="card-meta">
-                <span className="chip">{t("visitor.home.painting")}</span>
-                <span className="chip">{t("visitor.home.accessible")}</span>
-              </div>
-              <p style={{ fontSize: "0.85rem", color: "#e5e7eb" }}>
-                {t("visitor.home.exampleDisclaimer")}
-              </p>
-              <Link to="/obras" className="btn btn-secondary" style={{ marginTop: "0.75rem" }}>
-                {t("visitor.home.viewDetails")}
-              </Link>
-            </article>
-          ))}
-        </div>
+
+        {loading ? (
+          <div className="card-grid">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="card" style={{ height: "200px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+            ))}
+          </div>
+        ) : featuredWorks.length > 0 ? (
+          <div className="card-grid">
+            {featuredWorks.map(work => (
+              <article key={work.id} className="card">
+                {work.imageUrl && (
+                  <div style={{
+                    height: "150px",
+                    marginBottom: "1rem",
+                    borderRadius: "0.5rem",
+                    background: `url(${work.imageUrl}) center/cover`,
+                    backgroundColor: "rgba(0,0,0,0.2)"
+                  }} />
+                )}
+                <h3 className="card-title">{work.title}</h3>
+                <p className="card-subtitle">{work.artist} • {work.year}</p>
+                <div className="card-meta">
+                  <span className="chip">{work.category?.name || work.category || "Geral"}</span>
+                </div>
+                <Link to={`/obras/${work.id}`} className="btn btn-secondary" style={{ marginTop: "0.75rem" }}>
+                  {t("visitor.home.viewDetails")}
+                </Link>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="card">
+            <p>{t("common.noResults", "Nenhuma obra em destaque no momento.")}</p>
+          </div>
+        )}
       </section>
 
       <section>
@@ -55,31 +101,42 @@ export const Home: React.FC = () => {
         <p className="section-subtitle">
           {t("visitor.home.trailsSubtitle")}
         </p>
-        <div className="card-grid">
-          <article className="card">
-            <h3 className="card-title">{t("visitor.home.quickTrail")}</h3>
-            <p className="card-subtitle">{t("visitor.home.quickTrailDesc")}</p>
-            <div className="card-meta">
-              <span className="chip">8 {t("visitor.sidebar.artworks")}</span>
-              <span className="chip">{t("visitor.home.museumSuggestion")}</span>
-            </div>
-            <Link to="/trilhas" className="btn" style={{ marginTop: "0.75rem" }}>
-              {t("visitor.home.viewTrails")}
-            </Link>
-          </article>
-          <article className="card">
-            <h3 className="card-title">{t("visitor.home.completeTrail")}</h3>
-            <p className="card-subtitle">{t("visitor.home.completeTrailDesc")}</p>
-            <div className="card-meta">
-              <span className="chip">25+ {t("visitor.sidebar.artworks")}</span>
-              <span className="chip">{t("visitor.artwork.audioDescription")}</span>
-            </div>
-            <Link to="/trilhas" className="btn btn-secondary" style={{ marginTop: "0.75rem" }}>
-              {t("visitor.home.chooseTrail")}
-            </Link>
-          </article>
-        </div>
+
+        {loading ? (
+          <div className="card-grid">
+            {[1, 2].map(i => (
+              <div key={i} className="card" style={{ height: "150px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+            ))}
+          </div>
+        ) : featuredTrails.length > 0 ? (
+          <div className="card-grid">
+            {featuredTrails.map(trail => (
+              <article key={trail.id} className="card">
+                <h3 className="card-title">{trail.title}</h3>
+                <p className="card-subtitle">{trail.description}</p>
+                <div className="card-meta">
+                  <span className="chip">{trail.workIds?.length || 0} {t("visitor.sidebar.artworks")}</span>
+                  <span className="chip">{trail.duration ? `${trail.duration} min` : "Livre"}</span>
+                </div>
+                <Link to={`/trilhas/${trail.id}`} className="btn btn-secondary" style={{ marginTop: "0.75rem" }}>
+                  {t("visitor.home.viewTrails")}
+                </Link>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="card">
+            <p>{t("common.noResults", "Nenhuma trilha disponível.")}</p>
+          </div>
+        )}
       </section>
+      <style>{`
+        @keyframes pulse {
+          0% { opacity: 0.6; }
+          50% { opacity: 0.3; }
+          100% { opacity: 0.6; }
+        }
+      `}</style>
     </div>
   );
 };
