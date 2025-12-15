@@ -165,6 +165,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           >
             {t("visitor.sidebar.logout")}
           </button>
+          <div style={{ textAlign: "center", fontSize: "0.7rem", opacity: 0.5, marginTop: "0.5rem" }}>
+            v1.1.0 (Fixes)
+          </div>
         </div>
       </aside>
 
