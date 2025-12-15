@@ -128,13 +128,13 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         <nav className="app-sidebar-nav">
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="app-sidebar-link"
+            className="app-sidebar-link sidebar-action-btn"
           >
             🔍 {t("visitor.search.title", "Buscar")}
           </button>
           <button
             onClick={() => setIsDialerOpen(true)}
-            className="app-sidebar-link"
+            className="app-sidebar-link sidebar-action-btn"
           >
             🔢 {t("visitor.dialer.button", "Digitar Código")}
           </button>

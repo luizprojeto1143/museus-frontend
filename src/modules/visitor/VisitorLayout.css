@@ -65,7 +65,7 @@
 }
 
 .app-sidebar-nav::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 .app-sidebar-nav::-webkit-scrollbar-track {
@@ -74,8 +74,25 @@
 
 .app-sidebar-nav::-webkit-scrollbar-thumb {
     background-color: var(--primary-color);
-    border-radius: 3px;
-    opacity: 0.5;
+    border-radius: 4px;
+    opacity: 0.3;
+}
+
+.sidebar-action-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.5rem;
+    justify-content: center;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.sidebar-action-btn:hover {
+    background: var(--primary-color);
+    color: #1a1108 !important;
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .app-sidebar-link {
