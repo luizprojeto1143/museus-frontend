@@ -49,7 +49,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email,
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
-                        zIndex: 9999,
+                        zIndex: 2147483647,
                         padding: "2rem",
                         textAlign: "center"
                     }}
