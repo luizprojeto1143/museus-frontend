@@ -90,6 +90,18 @@ const RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }> =
   return children;
 };
 
+const RootRedirector: React.FC = () => {
+  const { role } = useAuth();
+  if (role === "master") return <Navigate to="/master" replace />;
+  if (role === "admin") return <Navigate to="/admin" replace />;
+
+  return (
+    <VisitorLayout>
+      <Home />
+    </VisitorLayout>
+  );
+};
+
 const App: React.FC = () => {
   return (
     <GamificationProvider>
@@ -106,9 +118,7 @@ const App: React.FC = () => {
             path="/"
             element={
               <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <Home />
-                </VisitorLayout>
+                <RootRedirector />
               </RequireRole>
             }
           />
