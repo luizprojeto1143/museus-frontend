@@ -57,6 +57,22 @@
     margin-top: 2rem;
     flex: 1;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
+
+.app-sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.app-sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.app-sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    opacity: 0.5;
 }
 
 .app-sidebar-link {
