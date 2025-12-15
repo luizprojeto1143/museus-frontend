@@ -96,7 +96,7 @@ export const ScannerPage: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: "1rem", display: "flex", flexDirection: "column", alignItems: "center", maxWidth: "600px", margin: "0 auto" }}>
+        <div style={{ padding: "1rem", paddingBottom: "3rem", display: "flex", flexDirection: "column", alignItems: "center", maxWidth: "600px", margin: "0 auto" }}>
             <h1 className="section-title">{t("visitor.scanner.title", "Scanner de QR Code")}</h1>
             <p style={{ marginBottom: "1.5rem", color: "#9ca3af", textAlign: "center" }}>
                 {t("visitor.scanner.instruction", "Aponte a câmera para o QR Code da obra ou digite o código abaixo.")}

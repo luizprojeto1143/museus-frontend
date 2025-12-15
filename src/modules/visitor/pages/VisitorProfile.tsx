@@ -10,7 +10,7 @@ export const VisitorProfile: React.FC = () => {
 
     return (
         <div className="fade-in">
-            <h1 className="page-title">{t("visitor.sidebar.profile")}</h1>
+            <h1 className="page-title" style={{ marginTop: "1rem" }}>{t("visitor.sidebar.profile")}</h1>
             <p className="page-subtitle">Gerencie suas informações</p>
 
             <div className="card" style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "1rem" }}>

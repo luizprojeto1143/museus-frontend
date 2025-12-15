@@ -116,10 +116,17 @@ const App: React.FC = () => {
 
           {/* VISITANTE */}
           <Route
-            path="/"
             element={
               <RequireRole allowed={["visitor", "admin", "master"]}>
                 <RootRedirector />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <RequireRole allowed={["visitor", "admin", "master"]}>
+                <Home />
               </RequireRole>
             }
           />

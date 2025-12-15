@@ -56,7 +56,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     { to: "/chat", label: t("visitor.sidebar.aiChat", "Chat IA"), icon: "🤖" },
     { to: "/scanner", label: t("visitor.sidebar.scanner"), icon: "📸" },
     { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤" },
-    { to: "/guestbook", label: t("visitor.sidebar.guestbook"), icon: "✍️" },
+    { to: "/livro-visitas", label: t("visitor.sidebar.guestbook"), icon: "✍️" },
   ];
 
   const renderNavLinks = (mobile = false) => (
@@ -165,9 +165,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           >
             {t("visitor.sidebar.logout")}
           </button>
-          <div style={{ textAlign: "center", fontSize: "0.7rem", opacity: 0.5, marginTop: "0.5rem" }}>
-            v1.1.0 (Fixes)
-          </div>
         </div>
       </aside>
 
