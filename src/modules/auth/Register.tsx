@@ -154,17 +154,9 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
         }} />
 
-        <h1 style={{
-          margin: 0,
-          fontSize: "1.75rem",
-          marginBottom: "0.5rem",
-          color: "#d4af37",
-          fontFamily: "serif",
-          textAlign: "center",
-          textShadow: "0 2px 8px rgba(212,175,55,0.3)"
-        }}>
-          🪪 {t("auth.register.title")} <small style={{ fontSize: "0.6rem", opacity: 0.5 }}>v1.1</small>
-        </h1>
+        <h2 className="text-2xl font-bold text-[var(--accent-gold)] text-center mb-6" style={{ fontFamily: "Georgia, serif" }}>
+          {t("auth.register.title")} <small style={{ fontSize: "0.6em", opacity: 0.5 }}>v1.2</small>
+        </h2>
 
         <p style={{
           textAlign: "center",

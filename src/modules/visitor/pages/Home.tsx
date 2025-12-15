@@ -102,8 +102,9 @@ export const Home: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="card">
-            <p>{t("common.noResults", "Nenhuma obra em destaque no momento.")}</p>
+          <div className="card" style={{ textAlign: "center", padding: "3rem", background: "rgba(0,0,0,0.2)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem", opacity: 0.5 }}>🎨</span>
+            <p style={{ color: "#aaa" }}>{t("common.noResults", "Nenhuma obra em destaque no momento.")}</p>
           </div>
         )}
       </section>
@@ -137,8 +138,9 @@ export const Home: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="card">
-            <p>{t("common.noResults", "Nenhuma trilha disponível.")}</p>
+          <div className="card" style={{ textAlign: "center", padding: "3rem", background: "rgba(0,0,0,0.2)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem", opacity: 0.5 }}>🗺️</span>
+            <p style={{ color: "#aaa" }}>{t("common.noResults", "Nenhuma trilha disponível.")}</p>
           </div>
         )}
       </section>
