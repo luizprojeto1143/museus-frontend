@@ -90,7 +90,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
       const authData = await registerRes.json();
 
       // Criar registro de visitante com idade
-      await fetch(baseUrl + "/visitors/register", {
+      const visitorRes = await fetch(baseUrl + "/visitors/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,6 +100,13 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           age: ageNum
         })
       });
+
+      if (!visitorRes.ok) {
+        const vData = await visitorRes.json();
+        // Se falhar o visitor, mas criou o Auth, ainda é um problema de consistência.
+        // Mas vamos apenas alertar o erro.
+        throw new Error(vData.message || t("auth.errors.generic"));
+      }
 
       // Salvar dados do visitante e autenticação no localStorage
       localStorage.setItem("museus_visitor", JSON.stringify({
