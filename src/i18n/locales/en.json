@@ -10,7 +10,8 @@
         "actions": "Actions",
         "confirm": "Confirm",
         "success": "Success",
-        "error": "Error"
+        "error": "Error",
+        "menu": "Menu"
     },
     "welcome": {
         "title": "Cultura Viva",

@@ -16,7 +16,8 @@
         "solved": "Resolvido!",
         "minutes": "minutos",
         "next": "Próximo",
-        "noData": "Nenhum dado encontrado."
+        "noData": "Nenhum dado encontrado.",
+        "menu": "Menu"
     },
     "dashboard": {
         "title": "Painel de Controle"

@@ -1,9 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { name, email, logout } = useAuth();
 
     return (
@@ -28,13 +30,13 @@ export const VisitorProfile: React.FC = () => {
                 <hr style={{ borderColor: "var(--border-color)", margin: "1rem 0" }} />
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    <button className="btn btn-secondary" onClick={() => window.location.href = "/conquistas"}>
+                    <button className="btn btn-secondary" onClick={() => navigate("/conquistas")}>
                         🏆 {t("visitor.achievements.title", "Conquistas")}
                     </button>
-                    <button className="btn btn-secondary" onClick={() => window.location.href = "/passaporte"}>
+                    <button className="btn btn-secondary" onClick={() => navigate("/passaporte")}>
                         🛂 {t("visitor.passport.title", "Passaporte")}
                     </button>
-                    <button className="btn btn-secondary" onClick={() => window.location.href = "/favoritos"}>
+                    <button className="btn btn-secondary" onClick={() => navigate("/favoritos")}>
                         ❤️ {t("visitor.favorites.title", "Favoritos")}
                     </button>
 

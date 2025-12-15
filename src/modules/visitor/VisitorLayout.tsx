@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { api } from "../../api/client";
@@ -14,6 +14,7 @@ import { AiChatWidget } from "./components/AiChatWidget";
 import "./VisitorLayout.css";
 
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const location = useLocation();
   const { logout, name, email, tenantId } = useAuth();
@@ -49,7 +50,10 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     { to: "/home", label: t("visitor.sidebar.home"), icon: "🏠" },
     { to: "/obras", label: t("visitor.sidebar.artworks"), icon: "🎨" },
     { to: "/trilhas", label: t("visitor.sidebar.trails"), icon: "🗺️" },
+    { to: "/mapa", label: t("visitor.sidebar.map", "Mapa"), icon: "📍" },
     { to: "/eventos", label: t("visitor.sidebar.events"), icon: "📅" },
+    { to: "/ranking", label: t("visitor.sidebar.leaderboard", "Ranking"), icon: "🏆" },
+    { to: "/chat", label: t("visitor.sidebar.aiChat", "Chat IA"), icon: "🤖" },
     { to: "/scanner", label: t("visitor.sidebar.scanner"), icon: "📸" },
     { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤" },
     { to: "/guestbook", label: t("visitor.sidebar.guestbook"), icon: "✍️" },
@@ -150,7 +154,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             <LanguageSwitcher style={{ position: "static" }} />
           </div>
           <button
-            onClick={() => window.location.href = "/select-museum"}
+            onClick={() => navigate("/select-museum")}
             className="btn btn-secondary"
           >
             {t("visitor.sidebar.changeMuseum")}
@@ -198,6 +202,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           </button>
         </div>
 
+        {/* Mobile Menu Backdrop */}
+        {isMenuOpen && (
+          <div
+            className="mobile-menu-backdrop"
+            onClick={() => setIsMenuOpen(false)}
+          />
+        )}
+
         {/* Mobile Menu Drawer */}
         <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
           <button
@@ -208,7 +220,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           </button>
 
           <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-            <div className="app-title" style={{ fontSize: "1.5rem" }}>Menu</div>
+            <div className="app-title" style={{ fontSize: "1.5rem" }}>{t("common.menu", "Menu")}</div>
           </div>
 
           <nav className="app-sidebar-nav">
@@ -240,7 +252,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
               <LanguageSwitcher style={{ position: "static" }} />
             </div>
             <button
-              onClick={() => window.location.href = "/select-museum"}
+              onClick={() => navigate("/select-museum")}
               className="btn btn-secondary"
             >
               {t("visitor.sidebar.changeMuseum")}
