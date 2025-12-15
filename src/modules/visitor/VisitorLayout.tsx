@@ -205,70 +205,71 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           </button>
         </div>
 
-        {/* Mobile Menu Backdrop */}
-        {isMenuOpen && (
-          <div
-            className="mobile-menu-backdrop"
-            onClick={() => setIsMenuOpen(false)}
-          />
-        )}
-
-        {/* Mobile Menu Drawer */}
-        <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
-          <button
-            className="mobile-menu-close"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            ×
-          </button>
-
-          <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-            <div className="app-title" style={{ fontSize: "1.5rem" }}>{t("common.menu", "Menu")}</div>
-          </div>
-
-          <nav className="app-sidebar-nav">
-            {renderNavLinks(true)}
-            <button
-              onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}
-              className="app-sidebar-link"
-            >
-              🔍 {t("visitor.search.title", "Buscar")}
-            </button>
-            <button
-              onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
-              className="app-sidebar-link"
-            >
-              🔢 {t("visitor.dialer.button", "Digitar Código")}
-            </button>
-          </nav>
-
-          <div className="app-sidebar-footer">
-            {deferredPrompt && (
-              <button
-                onClick={handleInstallClick}
-                className="btn btn-primary"
-              >
-                ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
-              </button>
-            )}
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <LanguageSwitcher style={{ position: "static" }} />
-            </div>
-            <button
-              onClick={() => navigate("/select-museum")}
-              className="btn btn-secondary"
-            >
-              {t("visitor.sidebar.changeMuseum")}
-            </button>
-            <button
-              onClick={logout}
-              className="btn btn-logout"
-            >
-              {t("visitor.sidebar.logout")}
-            </button>
-          </div>
-        </div>
       </header>
+
+      {/* Mobile Menu Backdrop */}
+      {isMenuOpen && (
+        <div
+          className="mobile-menu-backdrop"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu Drawer */}
+      <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
+        <button
+          className="mobile-menu-close"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          ×
+        </button>
+
+        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+          <div className="app-title" style={{ fontSize: "1.5rem" }}>{t("common.menu", "Menu")}</div>
+        </div>
+
+        <nav className="app-sidebar-nav">
+          {renderNavLinks(true)}
+          <button
+            onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}
+            className="app-sidebar-link"
+          >
+            🔍 {t("visitor.search.title", "Buscar")}
+          </button>
+          <button
+            onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
+            className="app-sidebar-link"
+          >
+            🔢 {t("visitor.dialer.button", "Digitar Código")}
+          </button>
+        </nav>
+
+        <div className="app-sidebar-footer">
+          {deferredPrompt && (
+            <button
+              onClick={handleInstallClick}
+              className="btn btn-primary"
+            >
+              ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
+            </button>
+          )}
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <LanguageSwitcher style={{ position: "static" }} />
+          </div>
+          <button
+            onClick={() => navigate("/select-museum")}
+            className="btn btn-secondary"
+          >
+            {t("visitor.sidebar.changeMuseum")}
+          </button>
+          <button
+            onClick={logout}
+            className="btn btn-logout"
+          >
+            {t("visitor.sidebar.logout")}
+          </button>
+        </div>
+      </div>
 
       <main className="app-content">{children}</main>
 
