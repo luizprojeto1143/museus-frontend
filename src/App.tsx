@@ -39,6 +39,7 @@ import { SchedulingPage } from "./modules/visitor/pages/SchedulingPage";
 import { GuestbookPage } from "./modules/visitor/pages/GuestbookPage";
 import { VisualScannerPage } from "./modules/visitor/pages/VisualScannerPage";
 import { LeaderboardPage } from "./modules/visitor/pages/LeaderboardPage";
+import { VisitorProfile } from "./modules/visitor/pages/VisitorProfile";
 
 // Admin pages
 import { AdminDashboard } from "./modules/admin/pages/AdminDashboard";
@@ -198,6 +199,16 @@ const App: React.FC = () => {
               <RequireRole allowed={["visitor", "admin", "master"]}>
                 <VisitorLayout>
                   <Favorites />
+                </VisitorLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <RequireRole allowed={["visitor", "admin", "master"]}>
+                <VisitorLayout>
+                  <VisitorProfile />
                 </VisitorLayout>
               </RequireRole>
             }
