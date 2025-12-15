@@ -102,10 +102,13 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
       });
 
       if (!visitorRes.ok) {
-        const vData = await visitorRes.json();
-        // Se falhar o visitor, mas criou o Auth, ainda é um problema de consistência.
-        // Mas vamos apenas alertar o erro.
-        throw new Error(vData.message || t("auth.errors.generic"));
+        let vData;
+        try {
+          vData = await visitorRes.json();
+        } catch (e) {
+          throw new Error(`Visitor Error ${visitorRes.status}: ${visitorRes.statusText}`);
+        }
+        throw new Error(vData.message || `Visitor Error: ${JSON.stringify(vData)}`);
       }
 
       // Salvar dados do visitante e autenticação no localStorage
@@ -126,9 +129,10 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
       // Redirecionar para home do visitante
       window.location.href = "/";
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("auth.errors.generic")
-      );
+      console.error("Registration Error:", err);
+      // Show raw error message to user for debugging
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setError(`Falha no cadastro: ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
     }
