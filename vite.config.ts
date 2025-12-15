@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico"],
+      includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
         name: "Cultura Viva - Museus",
         short_name: "Cultura Viva",
