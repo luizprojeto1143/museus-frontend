@@ -213,9 +213,29 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
           <nav className="app-sidebar-nav">
             {renderNavLinks(true)}
+            <button
+              onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}
+              className="app-sidebar-link"
+            >
+              🔍 {t("visitor.search.title", "Buscar")}
+            </button>
+            <button
+              onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
+              className="app-sidebar-link"
+            >
+              🔢 {t("visitor.dialer.button", "Digitar Código")}
+            </button>
           </nav>
 
           <div className="app-sidebar-footer">
+            {deferredPrompt && (
+              <button
+                onClick={handleInstallClick}
+                className="btn btn-primary"
+              >
+                ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
+              </button>
+            )}
             <div style={{ display: "flex", justifyContent: "center" }}>
               <LanguageSwitcher style={{ position: "static" }} />
             </div>
