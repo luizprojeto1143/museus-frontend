@@ -63,7 +63,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
         <div className="sidebar-footer">
           <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
-            <LanguageSwitcher />
+            <LanguageSwitcher style={{ position: "static" }} />
           </div>
           <button
             onClick={logout}
