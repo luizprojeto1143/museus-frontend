@@ -98,7 +98,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   } as React.CSSProperties : {};
 
   return (
-    <div className="app-shell" style={themeStyles}>
+    <div id="visitor-layout" className="app-shell" style={themeStyles}>
       {showWelcome && name && email && (
         <WelcomeAnimation
           name={name}
