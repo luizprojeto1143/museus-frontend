@@ -39,7 +39,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
     // Validação básica
     const nameParts = name.trim().split(" ");
     if (nameParts.length < 2) {
-      setError(t("auth.errors.generic"));
+      setError("Por favor, digite seu nome e sobrenome.");
       return;
     }
 
