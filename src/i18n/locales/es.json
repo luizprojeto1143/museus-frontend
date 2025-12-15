@@ -107,7 +107,11 @@
         },
         "selectMuseum": {
             "title": "Selecciona el Museo",
-            "subtitle": "Elige el museo que deseas visitar"
+            "subtitle": "Elige el museo que deseas visitar",
+            "loading": "Cargando museos...",
+            "errorLoading": "Error al cargar la lista de museos.",
+            "noMuseums": "No se encontraron museos.",
+            "adminHint": "Consejo: Registra un museo en el panel Master para comenzar."
         },
         "favorites": {
             "title": "Tus Favoritos",

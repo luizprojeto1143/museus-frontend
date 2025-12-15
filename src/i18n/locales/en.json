@@ -107,7 +107,11 @@
         },
         "selectMuseum": {
             "title": "Select Museum",
-            "subtitle": "Choose the museum you want to visit"
+            "subtitle": "Choose the museum you want to visit",
+            "loading": "Loading museums...",
+            "errorLoading": "Failed to load museum list.",
+            "noMuseums": "No museums found.",
+            "adminHint": "Tip: Register a museum in the Master panel to start."
         },
         "favorites": {
             "title": "Your Favorites",
