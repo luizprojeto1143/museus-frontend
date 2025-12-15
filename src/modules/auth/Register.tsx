@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
+import { api } from "../../api/client";
 
 interface RegisterProps {
   tenantId: string;
@@ -24,7 +25,6 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result as string);
@@ -39,17 +39,17 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
     // Validação básica
     const nameParts = name.trim().split(" ");
     if (nameParts.length < 2) {
-      setError(t("auth.errors.generic")); // Ideally specific error
+      setError(t("auth.errors.generic"));
       return;
     }
 
     if (!email.includes("@")) {
-      setError(t("auth.errors.generic")); // Ideally specific error
+      setError(t("auth.login.email") + " inválido");
       return;
     }
 
     if (password.length < 6) {
-      setError(t("auth.errors.generic")); // Ideally specific error
+      setError("Senha muito curta (min 6)");
       return;
     }
 
@@ -60,7 +60,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
 
     const ageNum = parseInt(age);
     if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
-      setError(t("auth.errors.generic")); // Ideally specific error
+      setError("Idade inválida");
       return;
     }
 
@@ -68,48 +68,24 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
     setError(null);
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL as string;
-
-      // Criar conta de usuário visitante
-      const registerRes = await fetch(baseUrl + "/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId,
-          name,
-          email,
-          password: password,
-        })
+      // 1. Criar conta de usuário visitante com api axios
+      const registerRes = await api.post("/auth/register", {
+        tenantId,
+        name,
+        email,
+        password: password,
+        role: "visitor"
       });
 
-      if (!registerRes.ok) {
-        const data = await registerRes.json();
-        throw new Error(data.message || t("auth.errors.generic"));
-      }
+      const authData = registerRes.data;
 
-      const authData = await registerRes.json();
-
-      // Criar registro de visitante com idade
-      const visitorRes = await fetch(baseUrl + "/visitors/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tenantId,
-          name,
-          email,
-          age: ageNum
-        })
+      // 2. Criar registro de visitante com idade (axios)
+      await api.post("/visitors/register", {
+        tenantId,
+        name,
+        email,
+        age: ageNum
       });
-
-      if (!visitorRes.ok) {
-        let vData;
-        try {
-          vData = await visitorRes.json();
-        } catch (e) {
-          throw new Error(`Visitor Error ${visitorRes.status}: ${visitorRes.statusText}`);
-        }
-        throw new Error(vData.message || `Visitor Error: ${JSON.stringify(vData)}`);
-      }
 
       // Salvar dados do visitante e autenticação no localStorage
       localStorage.setItem("museus_visitor", JSON.stringify({
@@ -128,11 +104,13 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
 
       // Redirecionar para home do visitante
       window.location.href = "/";
-    } catch (err) {
+    } catch (err: any) {
       console.error("Registration Error:", err);
-      // Show raw error message to user for debugging
-      const errorMsg = err instanceof Error ? err.message : String(err);
-      setError(`Falha no cadastro: ${errorMsg}`);
+      // Axios puts response data in err.response.data
+      const backendMessage = err.response?.data?.message;
+      const errorMsg = backendMessage || err.message || String(err);
+
+      setError(`Falha (v1.1): ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -185,7 +163,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           textAlign: "center",
           textShadow: "0 2px 8px rgba(212,175,55,0.3)"
         }}>
-          🪪 {t("auth.register.title")}
+          🪪 {t("auth.register.title")} <small style={{ fontSize: "0.6rem", opacity: 0.5 }}>v1.1</small>
         </h1>
 
         <p style={{
