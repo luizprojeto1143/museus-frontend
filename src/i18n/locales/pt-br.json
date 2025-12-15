@@ -25,9 +25,22 @@
         "title": "Cultura Viva",
         "subtitle": "Sua jornada cultural começa aqui",
         "firstTime": "Bem-vindo ao Cultura Viva, {{name}}!",
+        "selectTenantAlert": "Selecione um museu!",
+        "errorSave": "Erro ao salvar conquista",
+        "errorUpload": "Erro ao fazer upload da imagem",
         "returning": "Que bom te ver de novo, {{name}}!",
         "explore": "Explorar",
         "login": "Login"
+    },
+    "uploads": {
+        "title": "Arquivos",
+        "subtitle": "Gerencie todas as imagens, áudios e vídeos armazenados.",
+        "newUpload": "Novo Arquivo",
+        "stats": {
+            "total": "Arquivos Totais",
+            "usedSpace": "Espaço Usado",
+            "images": "Imagens"
+        }
     },
     "auth": {
         "login": {
@@ -47,7 +60,9 @@
             "submit": "Cadastrar",
             "hasAccount": "Já tem uma conta? Entre"
         },
-        "errors": {}
+        "errors": {
+            "generic": "Erro interno ao realizar cadastro. Tente novamente mais tarde."
+        }
     },
     "visitor": {
         "sidebar": {

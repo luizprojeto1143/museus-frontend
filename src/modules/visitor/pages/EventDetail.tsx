@@ -10,6 +10,9 @@ type EventDetail = {
   location?: string;
   startDate: string;
   endDate?: string;
+  isOnline: boolean;
+  meetingLink?: string;
+  tenant?: { name: string };
 };
 
 export const EventDetail: React.FC = () => {
@@ -17,6 +20,8 @@ export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [apiEvent, setApiEvent] = useState<EventDetail | null>(null);
   const [apiLoading, setApiLoading] = useState(true);
+  const [attendance, setAttendance] = useState<any>(null);
+  const [sendingCert, setSendingCert] = useState(false);
 
   const mock: EventDetail = {
     id: id || "1",
@@ -24,7 +29,8 @@ export const EventDetail: React.FC = () => {
     description: "Aprenda técnicas básicas de aquarela com artistas renomados. Evento gratuito, vagas limitadas.",
     location: "Atelier 1 - 2º andar",
     startDate: "2025-12-15T14:00:00",
-    endDate: "2025-12-15T17:00:00"
+    endDate: "2025-12-15T17:00:00",
+    isOnline: false
   };
 
   const isDemo = isDemoMode || !id;
@@ -32,56 +38,110 @@ export const EventDetail: React.FC = () => {
   useEffect(() => {
     if (isDemo) return;
 
-
-    api
-      .get(`/events/${id}`)
-      .then((res) => {
-        setApiEvent(res.data);
-      })
-      .catch(() => {
-        console.error("Failed to fetch event details");
-      })
-      .finally(() => setApiLoading(false));
+    fetchData();
   }, [id, isDemo]);
+
+  const fetchData = async () => {
+    try {
+      setApiLoading(true);
+      const res = await api.get(`/events/${id}`);
+      setApiEvent(res.data);
+
+      // Check attendance if logged in
+      const rawAuth = localStorage.getItem("museus_auth_v1");
+      if (rawAuth) {
+        try {
+          const auth = JSON.parse(rawAuth);
+          if (auth.token) {
+            const attRes = await api.get(`/events/${id}/my-attendance`);
+            if (attRes.data.attended) {
+              setAttendance(attRes.data.attendance);
+            }
+          }
+        } catch (e) {
+          console.warn("Could not fetch attendance status", e);
+        }
+      }
+    } catch (e) {
+      console.error("Failed", e);
+    } finally {
+      setApiLoading(false);
+    }
+  };
+
+  const handleCheckIn = async () => {
+    if (isDemo) {
+      alert("Demo: Check-in realizado!");
+      setAttendance({ status: "PRESENT" });
+      return;
+    }
+
+    try {
+      const auth = JSON.parse(localStorage.getItem("museus_auth_v1") || "{}");
+      const user = JSON.parse(localStorage.getItem("museus_visitor") || "{}");
+
+      const email = auth.user?.email || user.email;
+
+      if (!email) {
+        alert("Você precisa estar logado para fazer check-in.");
+        return;
+      }
+
+      const res = await api.post(`/events/${id}/checkin`, { email });
+      setAttendance(res.data.attendance);
+      alert(t("visitor.eventDetail.checkinSuccess", "Check-in realizado com sucesso!"));
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Erro ao fazer check-in");
+      if (error.response?.data?.attendance) {
+        setAttendance(error.response.data.attendance);
+      }
+    }
+  };
+
+  const handleDownloadCertificate = async () => {
+    if (isDemo) {
+      alert("Demo: Download iniciado!");
+      return;
+    }
+    try {
+      setSendingCert(true);
+      const response = await api.get(`/events/${id}/certificate/download`, {
+        responseType: "blob"
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Certificado_${event?.title}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao baixar certificado.");
+    } finally {
+      setSendingCert(false);
+    }
+  };
+
+  // Reuse existing handleCertificate to point to download
+  const handleCertificate = handleDownloadCertificate;
 
   const event = isDemo ? mock : apiEvent;
   const loading = isDemo ? false : apiLoading;
 
-  if (loading) {
-    return (
-      <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
-        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
-        <p>{t("common.loading")}</p>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
-
-  if (!event) {
-    return (
-      <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📅</div>
-        <h1 className="section-title">{t("visitor.eventDetail.notFound", "Evento não encontrado")}</h1>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
-          {t("visitor.eventDetail.notFoundDesc", "O evento que você procura não existe ou já foi encerrado.")}
-        </p>
-        <button className="btn btn-secondary" onClick={() => window.history.back()}>
-          {t("common.back")}
-        </button>
-      </div>
-    );
-  }
+  if (loading) return <div className="p-4">{t("common.loading")}</div>;
+  if (!event) return <div className="p-4">Evento não encontrado</div>;
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString(i18n.language, {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
+      day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
     });
   };
+
+  const isHappening = new Date() >= new Date(event.startDate) && (!event.endDate || new Date() <= new Date(event.endDate));
+  const hasEnded = event.endDate && new Date() > new Date(event.endDate);
 
   return (
     <div>
@@ -96,7 +156,7 @@ export const EventDetail: React.FC = () => {
 
         {event.location && (
           <p style={{ fontSize: "0.9rem", color: "#9ca3af", marginBottom: "0.5rem" }}>
-            📍 {event.location}
+            📍 {event.location} {event.isOnline && "(Online)"}
           </p>
         )}
 
@@ -112,10 +172,37 @@ export const EventDetail: React.FC = () => {
           </div>
         )}
 
-        <div style={{ marginTop: "2rem", display: "flex", gap: "0.75rem" }}>
-          <button className="btn" onClick={() => alert(t("visitor.eventDetail.participateAlert"))}>
-            {t("visitor.eventDetail.participate")}
-          </button>
+        <div style={{ marginTop: "2rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+          {!attendance && event.isOnline && isHappening && (
+            <button className="btn btn-primary" onClick={handleCheckIn}>
+              ✅ {t("visitor.eventDetail.checkinOnline", "Fazer Check-in Online")}
+            </button>
+          )}
+
+          {!attendance && !event.isOnline && (
+            <p style={{ color: "#fbbf24", fontStyle: "italic" }}>
+              📷 {t("visitor.eventDetail.scanQr", "Para confirmar presença, escaneie o QR Code no local.")}
+            </p>
+          )}
+
+          {attendance && (
+            <div style={{ background: "rgba(16, 185, 129, 0.2)", padding: "0.5rem 1rem", borderRadius: "0.5rem", color: "#34d399", border: "1px solid #34d399" }}>
+              ✓ Presença Confirmada
+            </div>
+          )}
+
+          {attendance && (hasEnded || true) && (
+            <button className="btn btn-outline" onClick={handleCertificate} disabled={sendingCert}>
+              {sendingCert ? "Baixando..." : "📥 " + t("visitor.eventDetail.downloadCertificate", "Baixar Certificado")}
+            </button>
+          )}
+
+          {event.meetingLink && (
+            <a href={event.meetingLink} target="_blank" rel="noreferrer" className="btn btn-secondary">
+              🔗 Acessar Link do Evento
+            </a>
+          )}
+
           <button className="btn btn-secondary" onClick={() => window.history.back()}>
             {t("common.back")}
           </button>

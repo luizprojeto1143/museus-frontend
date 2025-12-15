@@ -87,8 +87,8 @@ export const QrVisit: React.FC = () => {
     } else if (data.type === "TRAIL" && data.referenceId) {
       navigate(`/trilhas/${data.referenceId}`);
     } else if (data.type === "EVENT" && data.referenceId) {
-      // Poderíamos ter uma rota de detalhe de evento; por enquanto, apenas volta para /eventos
-      navigate("/eventos");
+      // Redireciona para detalhes do evento
+      navigate(`/eventos/${data.referenceId}`);
     }
   }
 
