@@ -25,3 +25,21 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Log API URL for debugging
+console.log(`🔌 API Client Initialized with baseURL: ${baseURL}`);
+
+// Global Error Handler for API
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("❌ API Error:", {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
+    return Promise.reject(error);
+  }
+);
