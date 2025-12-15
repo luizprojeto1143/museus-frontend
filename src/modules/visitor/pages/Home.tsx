@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
-  const { name, tenantId } = useAuth();
+  const { name, tenantId, role } = useAuth();
+  const navigate = useNavigate();
   const [featuredWorks, setFeaturedWorks] = useState<any[]>([]);
   const [featuredTrails, setFeaturedTrails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (role === "master") {
+      navigate("/master", { replace: true });
+      return;
+    }
+    if (role === "admin") {
+      navigate("/admin", { replace: true });
+      return;
+    }
+  }, [role, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
