@@ -14,8 +14,8 @@ export const LibrasPlayer: React.FC<LibrasPlayerProps> = ({ src }) => {
     return (
       <div>
         <p className="card-subtitle">
-          Vídeo em Libras ainda não cadastrado para esta obra. Quando o conteúdo estiver pronto, basta
-          informar a URL do vídeo no backend.
+          {/* Vídeo em Libras indisponível */}
+          Recurso não disponível para esta obra.
         </p>
         <button className="btn btn-secondary" type="button" disabled>
           Vídeo em Libras indisponível

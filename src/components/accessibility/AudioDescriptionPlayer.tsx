@@ -17,8 +17,8 @@ export const AudioDescriptionPlayer: React.FC<AudioDescriptionPlayerProps> = ({ 
     return (
       <div>
         <p className="card-subtitle">
-          Audiodescrição indisponível para esta obra no momento. Em produção, basta cadastrar o arquivo
-          de áudio no backend e enviar a URL para o front.
+          {/* Audiodescrição indisponível */}
+          Recurso não disponível para esta obra.
         </p>
         <button className="btn btn-secondary" type="button" disabled>
           Audiodescrição indisponível

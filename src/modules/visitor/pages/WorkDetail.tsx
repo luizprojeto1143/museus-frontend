@@ -333,7 +333,7 @@ export const WorkDetail: React.FC = () => {
       <section style={{ marginBottom: "1.75rem" }}>
         <h2 className="section-title">{t("visitor.artwork.aiInteraction")}</h2>
         <p className="section-subtitle">
-          {t("visitor.artwork.aiInteractionText")}
+          {t("visitor.artwork.aiInteractionText", "Converse com nossa Inteligência Artificial para descobrir mais detalhes fascinantes sobre esta obra.")}
         </p>
         <AiChatWidget
           workContext={{
