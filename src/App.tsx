@@ -127,7 +127,9 @@ const App: React.FC = () => {
             path="/home"
             element={
               <RequireRole allowed={["visitor", "admin", "master"]}>
-                <Home />
+                <VisitorLayout>
+                  <Home />
+                </VisitorLayout>
               </RequireRole>
             }
           />
