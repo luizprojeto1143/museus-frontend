@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import { getFullUrl } from "../../../utils/url";
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -86,7 +87,7 @@ export const Home: React.FC = () => {
                     height: "150px",
                     marginBottom: "1rem",
                     borderRadius: "0.5rem",
-                    background: `url(${work.imageUrl}) center/cover`,
+                    background: `url(${getFullUrl(work.imageUrl)}) center/cover`,
                     backgroundColor: "rgba(0,0,0,0.2)"
                   }} />
                 )}

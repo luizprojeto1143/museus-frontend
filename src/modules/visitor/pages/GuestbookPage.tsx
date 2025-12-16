@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { getFullUrl } from "../../../utils/url";
 
 type GuestbookEntry = {
     id: string;
@@ -140,7 +141,7 @@ export const GuestbookPage: React.FC = () => {
                                     }}
                                 >
                                     {entry.visitor.photoUrl ? (
-                                        <img src={entry.visitor.photoUrl} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                        <img src={getFullUrl(entry.visitor.photoUrl)} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                     ) : (
                                         "👤"
                                     )}

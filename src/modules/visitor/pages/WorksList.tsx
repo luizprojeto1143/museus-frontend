@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { getFullUrl } from "../../../utils/url";
 
 export const WorksList: React.FC = () => {
   const { t } = useTranslation();
@@ -15,7 +17,7 @@ export const WorksList: React.FC = () => {
     year?: string;
     category?: string;
     accessible?: boolean;
-    imageUrl?: string;
+    imageUrl?: string | null;
   };
 
   const [works, setWorks] = useState<WorkItem[]>([]);
@@ -35,7 +37,7 @@ export const WorksList: React.FC = () => {
             year: w.year ?? "",
             category: w.category?.name ?? w.category ?? "Obra",
             accessible: true,
-            imageUrl: w.imageUrl
+            imageUrl: getFullUrl(w.imageUrl)
           }));
           setWorks(worksData);
         })

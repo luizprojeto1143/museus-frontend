@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { useTranslation } from "react-i18next";
+import { getFullUrl } from "../../../utils/url";
 
 interface ShareCardProps {
     work: {
@@ -72,7 +73,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ work, onClose }) => {
                     {/* Image Area */}
                     <div style={{
                         flex: 1,
-                        background: work.imageUrl ? `url(${work.imageUrl}) center/cover` : "linear-gradient(135deg, #d4af37 0%, #1a1108 100%)",
+                        background: work.imageUrl ? `url(${getFullUrl(work.imageUrl)}) center/cover` : "linear-gradient(135deg, #d4af37 0%, #1a1108 100%)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

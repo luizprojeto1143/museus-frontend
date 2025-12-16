@@ -157,7 +157,11 @@
             "aiInteraction": "Interação com IA (conceitual)",
             "aiInteractionText": "Nesta sessão, o visitante pode fazer perguntas sobre a obra para a IA configurada pelo museu. A integração com o endpoint /ai/chat já está preparada no backend, bastando conectar aqui no front conforme as regras de negócio do projeto.",
             "logout": "Sair",
-            "notFound": "Obra não encontrada"
+            "notFound": "Obra não encontrada",
+            "relatedWorks": "Obras Relacionadas",
+            "relatedWork": "Obra Relacionada",
+            "relatedArtist": "Artista Relacionado",
+            "viewDetails": "Ver Detalhes"
         },
         "selectMuseum": {
             "title": "Selecione o Museu",

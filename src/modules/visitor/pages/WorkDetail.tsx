@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { AudioDescriptionPlayer } from "../../../components/accessibility/AudioDescriptionPlayer";
 import { LibrasPlayer } from "../../../components/accessibility/LibrasPlayer";
 import { useTTS } from "../../../hooks/useTTS";
 import { useTranslation } from "react-i18next";
+import { getFullUrl } from "../../../utils/url";
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { WorkNote } from "../components/WorkNote";
 import { ShareCard } from "../components/ShareCard";
@@ -27,7 +29,14 @@ type WorkDetailData = {
 
 export const WorkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { tenantId } = useAuth();
   const { t, i18n } = useTranslation();
+
+  // Helper to format URLs
+  // content removed - now using imported util
+
+  const [relatedWorks, setRelatedWorks] = useState<WorkDetailData[]>([]);
 
   const [work, setWork] = useState<WorkDetailData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,9 +69,9 @@ export const WorkDetail: React.FC = () => {
           description: w.description ?? "",
           room: w.room ?? "",
           floor: w.floor ?? "",
-          imageUrl: w.imageUrl ?? null,
-          audioUrl: w.audioUrl ?? null,
-          librasUrl: w.librasUrl ?? null
+          imageUrl: getFullUrl(w.imageUrl),
+          audioUrl: getFullUrl(w.audioUrl),
+          librasUrl: getFullUrl(w.librasUrl)
         };
         setWork(mapped);
       })
@@ -102,6 +111,29 @@ export const WorkDetail: React.FC = () => {
       }
     }
   }, [work, treasureFound?.found, addXp, visitWork]);
+
+  useEffect(() => {
+    if (tenantId && id) {
+      api.get(`/works?tenantId=${tenantId}`)
+        .then((res) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const allWorks = res.data as any[];
+          const others = allWorks.filter((w) => w.id !== id);
+          const shuffled = others.sort(() => 0.5 - Math.random());
+          const selected = shuffled.slice(0, 2).map((w) => ({
+            id: w.id,
+            title: w.title,
+            artist: w.artist ?? "Artista desconhecido",
+            imageUrl: getFullUrl(w.imageUrl),
+            audioUrl: getFullUrl(w.audioUrl),
+            librasUrl: getFullUrl(w.librasUrl),
+            // minimal fields for card
+          } as WorkDetailData));
+          setRelatedWorks(selected);
+        })
+        .catch(console.error);
+    }
+  }, [tenantId, id]);
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -319,15 +351,31 @@ export const WorkDetail: React.FC = () => {
       <section>
         <h2 className="section-title">{t("visitor.artwork.relatedWorks")}</h2>
         <div className="card-grid">
-          {[1, 2].map((r) => (
-            <article key={r} className="card">
-              <h3 className="card-title">{t("visitor.artwork.relatedWork")} {r}</h3>
-              <p className="card-subtitle">{t("visitor.artwork.relatedArtist")}</p>
-              <button className="btn btn-secondary" type="button" style={{ marginTop: "0.75rem" }}>
+          {relatedWorks.map((rw) => (
+            <article key={rw.id} className="card">
+              {rw.imageUrl && (
+                <div style={{ width: "100%", height: "150px", overflow: "hidden", borderRadius: "0.5rem", marginBottom: "0.5rem" }}>
+                  <img src={rw.imageUrl} alt={rw.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+              )}
+              <h3 className="card-title">{rw.title}</h3>
+              <p className="card-subtitle">{rw.artist}</p>
+              <button
+                className="btn btn-secondary"
+                type="button"
+                style={{ marginTop: "0.75rem" }}
+                onClick={() => {
+                  navigate(`/obras/${rw.id}`);
+                  window.scrollTo(0, 0);
+                }}
+              >
                 {t("visitor.artwork.viewDetails")}
               </button>
             </article>
           ))}
+          {relatedWorks.length === 0 && (
+            <p style={{ color: "#9ca3af", fontStyle: "italic" }}>{t("visitor.noResults")}</p>
+          )}
         </div>
       </section>
     </div>

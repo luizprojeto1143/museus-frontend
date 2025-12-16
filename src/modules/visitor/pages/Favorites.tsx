@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { getFullUrl } from "../../../utils/url";
 
 type FavoriteItem = {
   id: string;
@@ -67,7 +68,7 @@ export const Favorites: React.FC = () => {
             <article key={item.id} className="card" style={{ display: "flex", flexDirection: "column" }}>
               {item.imageUrl ? (
                 <img
-                  src={item.imageUrl}
+                  src={getFullUrl(item.imageUrl) || item.imageUrl} // Fallback to raw if already full or broken logic
                   alt={item.title}
                   style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: "0.5rem 0.5rem 0 0", marginBottom: "0" }}
                 />
