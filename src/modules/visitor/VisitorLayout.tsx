@@ -102,7 +102,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   } as React.CSSProperties : {};
 
   return (
-    <div id="visitor-layout" className="app-shell" style={themeStyles}>
+  return (
+    <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
       {showWelcome && name && email && (
         <WelcomeAnimation
           name={name}
@@ -111,164 +112,123 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         />
       )}
 
-      {/* SIDEBAR (Desktop) */}
-      <aside className="app-sidebar">
-        <div className="app-brand">
-          {settings?.logoUrl ? (
-            <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
-          ) : (
-            <span className="app-logo">CV</span>
-          )}
-          <div>
-            <div className="app-title">{settings?.name || t("welcome.title")}</div>
-            <div className="app-subtitle">{t("visitor.sidebar.home")}</div>
+      {/* Mobile Overlay */}
+      <div
+        className={`mobile-overlay ${isMenuOpen ? "open" : ""}`}
+        onClick={() => setIsMenuOpen(false)}
+      />
+
+      {/* SIDEBAR */}
+      <aside className={`layout-sidebar ${isMenuOpen ? "open" : ""}`}>
+        <div className="sidebar-header">
+          <div className="app-brand">
+            {settings?.logoUrl ? (
+              <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+            ) : (
+              <span className="app-logo">CV</span>
+            )}
+            <div>
+              <div className="app-title">{settings?.name || t("welcome.title")}</div>
+              <div className="app-subtitle">{t("visitor.sidebar.home")}</div>
+            </div>
           </div>
         </div>
 
-        <nav className="app-sidebar-nav">
+        <nav className="sidebar-content">
           <button
-            onClick={() => setIsSearchOpen(true)}
-            className="app-sidebar-link sidebar-action-btn"
+            onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}
+            className="nav-item sidebar-action-btn"
+            style={{ justifyContent: 'flex-start' }}
           >
             🔍 {t("visitor.search.title", "Buscar")}
           </button>
           <button
-            onClick={() => setIsDialerOpen(true)}
-            className="app-sidebar-link sidebar-action-btn"
+            onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
+            className="nav-item sidebar-action-btn"
+            style={{ justifyContent: 'flex-start' }}
           >
             🔢 {t("visitor.dialer.button", "Digitar Código")}
           </button>
-          {renderNavLinks(false)}
+
+          {links.map((link) => {
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setIsMenuOpen(false)}
+                className={`nav-item ${isActive ? "active" : ""}`}
+              >
+                {link.icon && <span>{link.icon}</span>}
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="app-sidebar-footer">
+        <div className="sidebar-footer">
           {deferredPrompt && (
             <button
               onClick={handleInstallClick}
               className="btn btn-primary"
+              style={{ width: "100%", marginBottom: "0.5rem" }}
             >
               ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
             </button>
           )}
-          <div style={{ padding: "0.5rem", display: "flex", justifyContent: "center" }}>
+          <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
             <LanguageSwitcher style={{ position: "static" }} />
           </div>
           <button
             onClick={() => navigate("/select-museum")}
             className="btn btn-secondary"
+            style={{ width: "100%", marginBottom: "0.5rem" }}
           >
             {t("visitor.sidebar.changeMuseum")}
           </button>
           <button
             onClick={logout}
             className="btn btn-logout"
+            style={{ width: "100%", color: "#ef4444", borderColor: "#ef4444" }}
           >
             {t("visitor.sidebar.logout")}
           </button>
         </div>
       </aside>
 
-      {/* HEADER (Mobile Only) */}
-      <header className="app-header mobile-only">
-        <div className="app-brand">
-          {settings?.logoUrl ? (
-            <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 32, height: 32, borderRadius: 6, objectFit: "contain" }} />
-          ) : (
-            <span className="app-logo">CV</span>
-          )}
-          <div>
-            <div className="app-title">{settings?.name || t("welcome.title")}</div>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
-            className="btn btn-secondary icon-btn"
-            onClick={() => setIsSearchOpen(true)}
-          >
-            🔍
-          </button>
-          <button
-            className="btn btn-secondary icon-btn"
-            onClick={() => setIsDialerOpen(true)}
-          >
-            🔢
-          </button>
-          <button
-            className="btn btn-secondary icon-btn"
-            onClick={() => setIsMenuOpen(true)}
-          >
+      {/* MAIN CONTENT */}
+      <main className="layout-main">
+        <header className="layout-header">
+          {/* Mobile Toggle */}
+          <button className="menu-toggle" onClick={() => setIsMenuOpen(true)}>
             ☰
           </button>
-        </div>
 
-      </header>
-
-      {/* Mobile Menu Backdrop */}
-      {isMenuOpen && (
-        <div
-          className="mobile-menu-backdrop"
-          onClick={() => setIsMenuOpen(false)}
-        />
-      )}
-
-      {/* Mobile Menu Drawer */}
-      <div className={`mobile-menu ${isMenuOpen ? "open" : ""}`}>
-        <button
-          className="mobile-menu-close"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          ×
-        </button>
-
-        <div style={{ textAlign: "center", marginBottom: "1rem" }}>
-          <div className="app-title" style={{ fontSize: "1.5rem" }}>{t("common.menu", "Menu")}</div>
-        </div>
-
-        <nav className="app-sidebar-nav">
-          {renderNavLinks(true)}
-          <button
-            onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}
-            className="app-sidebar-link"
-          >
-            🔍 {t("visitor.search.title", "Buscar")}
-          </button>
-          <button
-            onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
-            className="app-sidebar-link"
-          >
-            🔢 {t("visitor.dialer.button", "Digitar Código")}
-          </button>
-        </nav>
-
-        <div className="app-sidebar-footer">
-          {deferredPrompt && (
+          {/* Desktop/Mobile Common Header Items (if any, e.g. User Profile or Spacer) */}
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <button
-              onClick={handleInstallClick}
-              className="btn btn-primary"
+              className="btn btn-secondary icon-btn mobile-only"
+              style={{ display: 'flex' }}
+              onClick={() => setIsSearchOpen(true)}
             >
-              ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
+              🔍
             </button>
-          )}
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <LanguageSwitcher style={{ position: "static" }} />
+            <button
+              className="btn btn-secondary icon-btn mobile-only"
+              style={{ display: 'flex' }}
+              onClick={() => setIsDialerOpen(true)}
+            >
+              🔢
+            </button>
           </div>
-          <button
-            onClick={() => navigate("/select-museum")}
-            className="btn btn-secondary"
-          >
-            {t("visitor.sidebar.changeMuseum")}
-          </button>
-          <button
-            onClick={logout}
-            className="btn btn-logout"
-          >
-            {t("visitor.sidebar.logout")}
-          </button>
-        </div>
-      </div>
+        </header>
 
-      <main className="app-content">{children}</main>
+        <div className="layout-content">
+          <div className="layout-content-inner">
+            {children}
+          </div>
+        </div>
+      </main>
 
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <DialerModal isOpen={isDialerOpen} onClose={() => setIsDialerOpen(false)} />
