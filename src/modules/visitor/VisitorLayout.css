@@ -1,7 +1,23 @@
-/* VisitorLayout.css */
+/* VisitorLayout.css - Premium "Admin-Style" Theme */
 :root {
     --sidebar-width: 280px;
     --header-height: 64px;
+
+    /* Premium Palette (Dark Brown & Gold) */
+    --bg-primary: #1a1108;
+    /* Deep Brown Background */
+    --bg-card: #2c1e10;
+    /* Lighter Brown for Cards/Sidebar */
+    --primary-color: #D4AF37;
+    /* Gold */
+    --text-primary: #EAE0D5;
+    /* Off-white/Beige text */
+    --text-secondary: #B0A090;
+    /* Muted beige */
+    --border-color: #463420;
+    /* Brown border */
+    --bg-hover: rgba(212, 175, 55, 0.1);
+    /* Gold hover */
 }
 
 #visitor-layout.layout-wrapper {
@@ -10,6 +26,8 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     width: 100%;
+    font-family: 'Georgia', serif;
+    /* Enforce Serif for premium feel */
 }
 
 /* SIDEBAR */
@@ -26,7 +44,7 @@
     flex-direction: column;
     z-index: 1000;
     transition: transform 0.3s ease;
-    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Sidebar Header */
@@ -45,25 +63,31 @@
     width: 40px;
     height: 40px;
     background-color: var(--primary-color);
+    /* Gold Logo */
     color: #1a1108;
-    border-radius: 8px;
+    border-radius: 50%;
+    /* Circle like Admin */
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
     font-size: 1.2rem;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 .app-title {
-    font-family: serif;
-    font-size: 1.2rem;
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem;
     color: var(--primary-color);
     line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .app-subtitle {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
+    font-style: italic;
 }
 
 /* Sidebar Content (Nav) */
@@ -79,7 +103,7 @@
 .nav-item {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     color: var(--text-secondary);
@@ -91,24 +115,29 @@
     cursor: pointer;
     width: 100%;
     text-align: left;
+    font-family: 'Georgia', serif;
+    /* Match Admin font */
 }
 
-.nav-item:hover,
-.nav-item.active {
+.nav-item:hover {
     background-color: var(--bg-hover);
     color: var(--primary-color);
 }
 
+.nav-item.active {
+    background-color: var(--bg-hover);
+    color: var(--primary-color);
+    border-left: 3px solid var(--primary-color);
+    /* Admin active indicator */
+}
+
+/* Action Buttons (Search, Dialer) */
 .sidebar-action-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     margin-bottom: 0.5rem;
-    font-weight: 600;
 }
 
 .sidebar-action-btn:hover {
-    background: var(--primary-color);
-    color: #1a1108 !important;
     border-color: var(--primary-color);
 }
 
@@ -116,84 +145,94 @@
 .sidebar-footer {
     padding: 1rem;
     border-top: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 /* MAIN CONTENT */
 .layout-main {
     flex: 1;
     margin-left: var(--sidebar-width);
-    /* Push content to right */
     width: calc(100% - var(--sidebar-width));
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+    /* Context for children */
 }
 
 .layout-header {
-    display: none;
-    /* Hidden on desktop */
+    display: flex;
+    /* Always distinct from content */
     height: var(--header-height);
-    padding: 0 1rem;
+    padding: 0 2rem;
+    /* Match content padding */
     align-items: center;
-    justify-content: space-between;
-    background-color: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
+    justify-content: flex-end;
+    /* Align user info to right */
+    background-color: transparent;
+    /* Seamless with body */
+    /* border-bottom: 1px solid var(--border-color); - Optional, maybe remove for cleaner look */
     z-index: 900;
 }
 
 .layout-content {
-    padding: 2rem;
+    padding: 0 2rem 2rem 2rem;
+    /* Left align: No auto margins */
     flex: 1;
+    overflow-x: hidden;
 }
 
 .layout-content-inner {
-    max-width: 1200px;
-    margin: 0 auto;
+    /* REMOVED MAX-WIDTH and AUTO MARGINS to fix spacing */
     width: 100%;
+    max-width: 1400px;
+    /* Optional cap for ultra-wide, but keeps it left */
+    margin: 0;
+    /* Left align */
 }
 
-/* Mobile Overlay */
-.mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    backdrop-filter: blur(2px);
+/* Card Styles matching Admin */
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.mobile-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
+.card-title {
+    color: var(--primary-color);
+    font-family: 'Georgia', serif;
 }
 
-.menu-toggle {
-    background: none;
+.btn-primary,
+.btn {
+    background-color: var(--primary-color);
+    color: #1a1108;
+    font-weight: bold;
     border: none;
-    font-size: 1.5rem;
-    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-decoration: none;
+    display: inline-block;
 }
 
-.mobile-only {
-    display: none;
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
 }
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
     .layout-sidebar {
         transform: translateX(-100%);
-        /* Hidden by default on mobile */
     }
 
     .layout-sidebar.open {
@@ -202,23 +241,19 @@
 
     .layout-main {
         margin-left: 0;
-        /* Full width on mobile */
         width: 100%;
         padding-top: var(--header-height);
     }
 
     .layout-header {
-        display: flex;
-        /* Show header on mobile */
-        position: fixed;
-        width: 100%;
+        justify-content: space-between;
+        /* Show toggle on mobile */
+        background-color: var(--bg-card);
+        /* Solid header on mobile */
+        padding: 0 1rem;
     }
 
     .layout-content {
         padding: 1rem;
-    }
-
-    .mobile-only {
-        display: flex;
     }
 }

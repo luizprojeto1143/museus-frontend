@@ -122,13 +122,13 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         <div className="sidebar-header">
           <div className="app-brand">
             {settings?.logoUrl ? (
-              <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+              <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
             ) : (
               <span className="app-logo">CV</span>
             )}
             <div>
-              <div className="app-title">{settings?.name || t("welcome.title")}</div>
-              <div className="app-subtitle">{t("visitor.sidebar.home")}</div>
+              <div className="app-title">{settings?.name || "Cultura Viva"}</div>
+              <div className="app-subtitle">{t("visitor.home.subtitle", "Museus & Cidades Históricas")}</div>
             </div>
           </div>
         </div>
@@ -139,14 +139,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             className="nav-item sidebar-action-btn"
             style={{ justifyContent: 'flex-start' }}
           >
-            🔍 {t("visitor.search.title", "Buscar")}
+            <span>🔍</span> {t("visitor.search.title", "Buscar")}
           </button>
           <button
             onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
             className="nav-item sidebar-action-btn"
             style={{ justifyContent: 'flex-start' }}
           >
-            🔢 {t("visitor.dialer.button", "Digitar Código")}
+            <span>🔢</span> {t("visitor.dialer.button", "Digitar Código")}
           </button>
 
           {links.map((link) => {
@@ -158,7 +158,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
                 onClick={() => setIsMenuOpen(false)}
                 className={`nav-item ${isActive ? "active" : ""}`}
               >
-                {link.icon && <span>{link.icon}</span>}
+                {link.icon && <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>}
                 {link.label}
               </Link>
             );
@@ -170,7 +170,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             <button
               onClick={handleInstallClick}
               className="btn btn-primary"
-              style={{ width: "100%", marginBottom: "0.5rem" }}
+              style={{ width: "100%", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
             >
               ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
             </button>
@@ -181,14 +181,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           <button
             onClick={() => navigate("/select-museum")}
             className="btn btn-secondary"
-            style={{ width: "100%", marginBottom: "0.5rem" }}
+            style={{ width: "100%", marginBottom: "0.5rem", fontSize: "0.9rem" }}
           >
             {t("visitor.sidebar.changeMuseum")}
           </button>
           <button
             onClick={logout}
-            className="btn btn-logout"
-            style={{ width: "100%", color: "#ef4444", borderColor: "#ef4444" }}
+            className="btn btn-secondary"
+            style={{ width: "100%", color: "#ef4444", borderColor: "#ef4444", fontSize: "0.9rem" }}
           >
             {t("visitor.sidebar.logout")}
           </button>
