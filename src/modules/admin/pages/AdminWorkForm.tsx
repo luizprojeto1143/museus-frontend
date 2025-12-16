@@ -71,6 +71,8 @@ export const AdminWorkForm: React.FC = () => {
     }
   }, [id, tenantId]);
 
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "image" | "audio" | "video", setter: (url: string) => void) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -78,6 +80,7 @@ export const AdminWorkForm: React.FC = () => {
       formData.append("file", file);
 
       try {
+        setIsUploading(true);
         const res = await api.post(`/upload/${type}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
@@ -85,6 +88,8 @@ export const AdminWorkForm: React.FC = () => {
       } catch (error) {
         console.error(`Error uploading ${type}`, error);
         alert(t("common.errorUpload"));
+      } finally {
+        setIsUploading(false);
       }
     }
   };
@@ -130,6 +135,23 @@ export const AdminWorkForm: React.FC = () => {
 
   return (
     <div>
+      {isUploading && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.7)", zIndex: 9999,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          color: "white"
+        }}>
+          <div className="spinner" style={{
+            width: "50px", height: "50px", border: "5px solid rgba(255,255,255,0.3)",
+            borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite"
+          }}></div>
+          <p style={{ marginTop: "1rem", fontSize: "1.2rem", fontWeight: "bold" }}>Enviando arquivo... (Isso pode levar alguns minutos)</p>
+          <p style={{ fontSize: "0.9rem", opacity: 0.8 }}>Por favor, não feche a página.</p>
+          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+
       <h1 className="section-title">
         {isEdit ? t("admin.workForm.editTitle") : t("admin.workForm.newTitle")}
       </h1>
