@@ -102,7 +102,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   } as React.CSSProperties : {};
 
   return (
-  return (
     <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
       {showWelcome && name && email && (
         <WelcomeAnimation
