@@ -31,7 +31,7 @@ export const Login: React.FC = () => {
       } else if (userRole === "admin") {
         redirectPath = "/admin";
       } else if (userRole === "visitor") {
-        redirectPath = "/";
+        redirectPath = "/home";
       }
 
 

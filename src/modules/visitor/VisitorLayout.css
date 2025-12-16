@@ -6,6 +6,8 @@
     margin: 0 !important;
     max-width: none !important;
     width: 100vw !important;
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
 .app-sidebar {
