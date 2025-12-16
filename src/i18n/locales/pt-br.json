@@ -279,6 +279,11 @@
             "qrcodes": "QR Codes",
             "categories": "Categorias",
             "visitors": "Visitantes",
+            "achievements": "Conquistas",
+            "ai": "Assistente IA",
+            "analytics": "Analytics",
+            "uploads": "Arquivos",
+            "users": "Usuários",
             "treasureHunt": "Caça ao Tesouro",
             "settings": "Configurações",
             "logout": "Sair"
@@ -503,7 +508,14 @@
             "subtitle": "Preencha os dados da categoria",
             "labels": {
                 "name": "Nome",
+                "type": "Tipo",
                 "description": "Descrição"
+            },
+            "types": {
+                "WORK": "Obra",
+                "TRAIL": "Trilha",
+                "EVENT": "Evento",
+                "GENERAL": "Geral"
             },
             "placeholders": {
                 "name": "Ex: Pintura",

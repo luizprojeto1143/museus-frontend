@@ -13,6 +13,7 @@ export const AdminCategoryForm: React.FC = () => {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [type, setType] = useState("WORK");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -23,6 +24,7 @@ export const AdminCategoryForm: React.FC = () => {
         .then(res => {
           setName(res.data.name);
           setDescription(res.data.description || "");
+          setType(res.data.type || "WORK");
         })
         .catch(err => console.error(err))
         .finally(() => setLoading(false));
@@ -38,7 +40,7 @@ export const AdminCategoryForm: React.FC = () => {
     }
 
     setSaving(true);
-    const payload = { name, description, tenantId };
+    const payload = { name, description, type, tenantId };
 
     try {
       if (isEdit && id) {
@@ -77,6 +79,21 @@ export const AdminCategoryForm: React.FC = () => {
             placeholder={t("admin.categoryForm.placeholders.name")}
             required
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="type">{t("admin.categoryForm.labels.type")}</label>
+          <select
+            id="type"
+            className="input"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+          >
+            <option value="WORK">{t("admin.categoryForm.types.WORK")}</option>
+            <option value="TRAIL">{t("admin.categoryForm.types.TRAIL")}</option>
+            <option value="EVENT">{t("admin.categoryForm.types.EVENT")}</option>
+            <option value="GENERAL">{t("admin.categoryForm.types.GENERAL")}</option>
+          </select>
         </div>
 
         <div className="form-group">
