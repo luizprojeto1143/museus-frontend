@@ -10,7 +10,7 @@
     align-items: stretch;
     padding: 0 !important;
     padding-left: 280px !important;
-    gap: 0 !important;
+    /* gap: 0 !important; Removed to allow default spacing if needed, but flex-start handles it */
 }
 
 .app-sidebar {
@@ -18,13 +18,14 @@
     background-color: var(--bg-card);
     border-right: 1px solid var(--border-color);
     padding: 1.5rem;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
-    z-index: 50;
+    z-index: 999;
+    /* Increased z-index */
 }
 
 .app-brand {
