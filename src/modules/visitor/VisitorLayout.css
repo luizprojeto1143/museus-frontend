@@ -8,6 +8,9 @@
     width: 100vw !important;
     justify-content: flex-start;
     align-items: stretch;
+    padding: 0 !important;
+    padding-left: 280px !important;
+    gap: 0 !important;
 }
 
 .app-sidebar {
@@ -124,9 +127,9 @@
 
 .app-content {
     flex: 1;
-    margin-left: 280px;
+    margin: 0 !important;
     padding: 2rem;
-    max-width: 1200px;
+    max-width: 100% !important;
     width: 100%;
 }
 
