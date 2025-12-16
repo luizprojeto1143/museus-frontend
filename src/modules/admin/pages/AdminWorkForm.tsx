@@ -211,19 +211,21 @@ export const AdminWorkForm: React.FC = () => {
               style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             />
           </div>
-          <label>{t("admin.workForm.labels.category")}</label>
-          <select
-            value={category}
-            onChange={e => setCategory(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
-          >
-            <option value="">{t("admin.dashboard.select")}</option>
-            {categories.map((cat: any) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+          <div>
+            <label>{t("admin.workForm.labels.category")}</label>
+            <select
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
+            >
+              <option value="">{t("admin.dashboard.select")}</option>
+              {categories.map((cat: any) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div>
             <label>{t("admin.workForm.labels.room")}</label>
             <input
