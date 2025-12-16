@@ -154,7 +154,7 @@
             "audioDescriptionText": "Narração com descrição dos elementos visuais da obra para pessoas cegas ou com baixa visão.",
             "libras": "Libras",
             "librasText": "Vídeo em Libras com a explicação principal sobre a obra, pensado para a comunidade surda.",
-            "aiInteraction": "Interação com IA (conceitual)",
+            "aiInteraction": "Interação com IA",
             "aiInteractionText": "Converse com nossa Inteligência Artificial para descobrir mais detalhes fascinantes sobre esta obra.",
             "logout": "Sair",
             "notFound": "Obra não encontrada",

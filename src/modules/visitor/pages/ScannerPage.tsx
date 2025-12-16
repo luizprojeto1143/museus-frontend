@@ -50,7 +50,7 @@ export const ScannerPage: React.FC = () => {
             setIsScanning(true);
         } catch (err) {
             console.error("Error starting scanner", err);
-            setError("Não foi possível acessar a câmera. Verifique se você permitiu o acesso e se está usando HTTPS (se estiver no celular).");
+            setError("Não foi possível acessar a câmera. Verifique se você permitiu o acesso.");
             setIsScanning(false);
         }
     };
