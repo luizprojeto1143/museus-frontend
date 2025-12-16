@@ -35,7 +35,12 @@ export const AdminAIAssistant: React.FC = () => {
     try {
       const res = await api.get(`/persona/${tenantId}`);
       if (res.data) {
-        setPersona(res.data);
+        // Merge with defaults to avoid undefined fields
+        setPersona(prev => ({
+          ...prev,
+          ...res.data,
+          references: res.data.references || [], // Ensure array
+        }));
       }
     } catch {
       // ignore error
@@ -164,7 +169,7 @@ export const AdminAIAssistant: React.FC = () => {
         <div className="form-group">
           <label className="form-label">{t("admin.aiAssistant.labels.references")}</label>
           <textarea
-            value={persona.references.join("\n")}
+            value={persona.references?.join("\n") || ""}
             onChange={(e) => setPersona({ ...persona, references: e.target.value.split("\n").filter(r => r.trim()) })}
             placeholder={t("admin.aiAssistant.placeholders.references")}
             rows={5}
