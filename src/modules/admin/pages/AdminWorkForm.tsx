@@ -17,7 +17,8 @@ export const AdminWorkForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [year, setYear] = useState("");
-  const [category, setCategory] = useState("Pintura");
+  const [category, setCategory] = useState(""); // Stores categoryId now
+  const [categories, setCategories] = useState<any[]>([]); // List of available categories
   const [description, setDescription] = useState(
     t("admin.workForm.defaultDescription")
   );
@@ -26,25 +27,40 @@ export const AdminWorkForm: React.FC = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [librasUrl, setLibrasUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState(""); // Added missing videoUrl state
   const [published, setPublished] = useState(true);
   const [radius, setRadius] = useState(5);
 
   // Fetch data on load
   React.useEffect(() => {
+    if (tenantId) {
+      // 1. Fetch Categories
+      api.get(`/categories`, { params: { tenantId } })
+        .then(res => {
+          // Filter only WORK or GENERAL types if needed, or show all. 
+          // Assuming backend lists all. We might want to filter by type later.
+          // For now, list all.
+          setCategories(res.data);
+        })
+        .catch(console.error);
+    }
+
     if (id && tenantId) {
+      // 2. Fetch Work details
       api.get(`/works/${id}`).then((res) => {
         const data = res.data;
         setTitle(data.title);
         setArtist(data.artist || "");
         setYear(data.year || "");
-        setCategory(data.category?.name || "Pintura");
+        // Set categoryId if available
+        setCategory(data.categoryId || "");
         setDescription(data.description || "");
         setRoom(data.room || "");
         setFloor(data.floor || "");
         setImageUrl(data.imageUrl || "");
         setAudioUrl(data.audioUrl || "");
         setLibrasUrl(data.librasUrl || "");
-        setLibrasUrl(data.librasUrl || "");
+        setVideoUrl(data.videoUrl || "");
         setPublished(data.published ?? true);
         setRadius(data.radius || 5);
 
@@ -195,19 +211,19 @@ export const AdminWorkForm: React.FC = () => {
               style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             />
           </div>
-          <div>
-            <label>{t("admin.workForm.labels.category")}</label>
-            <select
-              value={category}
-              onChange={e => setCategory(e.target.value)}
-              style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
-            >
-              <option>Pintura</option>
-              <option>Escultura</option>
-              <option>Fotografia</option>
-              <option>Instalação</option>
-            </select>
-          </div>
+          <label>{t("admin.workForm.labels.category")}</label>
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
+          >
+            <option value="">{t("admin.dashboard.select")}</option>
+            {categories.map((cat: any) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
           <div>
             <label>{t("admin.workForm.labels.room")}</label>
             <input
