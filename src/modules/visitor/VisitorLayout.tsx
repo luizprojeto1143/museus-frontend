@@ -195,6 +195,77 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         </div>
       </aside>
 
+      {/* DESKTOP HEADER (Visible only on min-width: 1024px) */}
+      <header className="desktop-header">
+        <div className="app-brand">
+          {settings?.logoUrl ? (
+            <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "contain" }} />
+          ) : (
+            <span className="app-logo">CV</span>
+          )}
+          <div>
+            <div className="app-title">{settings?.name || t("welcome.title")}</div>
+          </div>
+        </div>
+
+        <nav className="desktop-nav">
+          {links.slice(0, 5).map((link) => { // Show first 5 links directly
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`desktop-nav-link ${isActive ? "active" : ""}`}
+              >
+                {link.icon && <span>{link.icon}</span>}
+                {link.label}
+              </Link>
+            )
+          })}
+          {/* Dropdown for extra links could go here, for now just showing main ones or all if space permits */}
+          {/* Let's show all for now as there are only ~9 links and desktop is wide */}
+          {links.slice(5).map((link) => {
+            const isActive = location.pathname === link.to;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`desktop-nav-link ${isActive ? "active" : ""}`}
+              >
+                {link.icon}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            className="btn btn-secondary icon-btn"
+            title={t("visitor.search.title", "Buscar")}
+            style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', fontSize: '1.2rem' }}
+          >
+            🔍
+          </button>
+          <button
+            onClick={() => setIsDialerOpen(true)}
+            className="btn btn-secondary icon-btn"
+            title={t("visitor.dialer.button", "Digitar Código")}
+            style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', fontSize: '1.2rem' }}
+          >
+            🔢
+          </button>
+          <LanguageSwitcher style={{ position: 'static' }} />
+          <button
+            onClick={() => navigate("/select-museum")}
+            className="btn btn-secondary"
+            style={{ fontSize: '0.9rem', padding: '0.5rem' }}
+          >
+            {t("visitor.sidebar.changeMuseum")}
+          </button>
+        </div>
+      </header>
+
       {/* MAIN CONTENT */}
       <main className="layout-main">
         <header className="layout-header">
