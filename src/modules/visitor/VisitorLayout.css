@@ -14,7 +14,12 @@
 }
 
 .app-sidebar {
-    width: 280px;
+    width: 280px !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
     background-color: var(--bg-card);
     border-right: 1px solid var(--border-color);
     padding: 1.5rem;
