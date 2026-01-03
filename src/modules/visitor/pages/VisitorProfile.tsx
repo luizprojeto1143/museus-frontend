@@ -16,6 +16,7 @@ interface Certificate {
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { name, email, logout } = useAuth();
     const [certificates, setCertificates] = React.useState<Certificate[]>([]);
     const [loadingCerts, setLoadingCerts] = React.useState(false);
 
