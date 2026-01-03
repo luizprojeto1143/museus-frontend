@@ -811,6 +811,10 @@
         "achievements": {
             "title": "Gestão de Conquistas",
             "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
+            "selectTenant": "Selecione um cliente para ver as conquistas",
+            "select": "Selecione...",
+            "empty": "Nenhuma conquista encontrada.",
+            "errorLoad": "Erro ao carregar conquistas.",
             "new": "Nova Conquista",
             "table": {
                 "icon": "Ícone",
