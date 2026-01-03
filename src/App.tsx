@@ -40,6 +40,7 @@ import { GuestbookPage } from "./modules/visitor/pages/GuestbookPage";
 import { VisualScannerPage } from "./modules/visitor/pages/VisualScannerPage";
 import { LeaderboardPage } from "./modules/visitor/pages/LeaderboardPage";
 import { VisitorProfile } from "./modules/visitor/pages/VisitorProfile";
+import { CertificateVerification } from "./modules/public/CertificateVerification";
 
 // Admin pages
 import { AdminDashboard } from "./modules/admin/pages/AdminDashboard";
@@ -111,6 +112,7 @@ const App: React.FC = () => {
           {/* PUBLIC ROUTES */}
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/select-museum" element={<SelectMuseum />} />
+          <Route path="/verify/:code" element={<CertificateVerification />} />
           <Route path="/register" element={<RegisterWrapper />} />
           <Route path="/login" element={<Login />} />
 

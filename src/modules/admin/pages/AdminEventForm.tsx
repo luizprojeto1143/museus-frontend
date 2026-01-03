@@ -16,6 +16,9 @@ export const AdminEventForm: React.FC = () => {
   const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [certificateBackgroundUrl, setCertificateBackgroundUrl] = useState("");
+  const [certificateText, setCertificateText] = useState("");
+  const [minMinutesForCertificate, setMinMinutesForCertificate] = useState("");
 
   React.useEffect(() => {
     if (id && tenantId) {
@@ -27,6 +30,9 @@ export const AdminEventForm: React.FC = () => {
           setLocation(data.location || "");
           setStartDate(data.startDate ? new Date(data.startDate).toISOString().slice(0, 16) : "");
           setEndDate(data.endDate ? new Date(data.endDate).toISOString().slice(0, 16) : "");
+          setCertificateBackgroundUrl(data.certificateBackgroundUrl || "");
+          setCertificateText(data.certificateText || "");
+          setMinMinutesForCertificate(data.minMinutesForCertificate || "");
         })
         .catch(console.error);
     }
@@ -43,7 +49,10 @@ export const AdminEventForm: React.FC = () => {
       location,
       startDate: new Date(startDate).toISOString(),
       endDate: endDate ? new Date(endDate).toISOString() : null,
-      tenantId
+      tenantId,
+      certificateBackgroundUrl,
+      certificateText,
+      minMinutesForCertificate: minMinutesForCertificate ? Number(minMinutesForCertificate) : null
     };
 
     try {
@@ -125,6 +134,31 @@ export const AdminEventForm: React.FC = () => {
               className="input"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <h3 className="section-subtitle" style={{ marginTop: '2rem', marginBottom: '1rem' }}>Certificado Digital</h3>
+        <div className="card-section">
+          <div className="form-group">
+            <label htmlFor="certificateBackgroundUrl">URL da Imagem de Fundo (Padrão A4 Paisagem)</label>
+            <input
+              id="certificateBackgroundUrl"
+              className="input"
+              value={certificateBackgroundUrl}
+              onChange={(e) => setCertificateBackgroundUrl(e.target.value)}
+              placeholder="https://... (Deixe em branco para usar o padrão do museu)"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="minMinutesForCertificate">Minutos Mínimos para Elegibilidade</label>
+            <input
+              id="minMinutesForCertificate"
+              type="number"
+              className="input"
+              value={minMinutesForCertificate}
+              onChange={(e) => setMinMinutesForCertificate(e.target.value)}
+              placeholder="Ex: 60"
             />
           </div>
         </div>

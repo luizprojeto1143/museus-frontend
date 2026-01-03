@@ -2,11 +2,38 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import { api } from "../../../api/client";
+
+interface Certificate {
+    id: string;
+    code: string;
+    type: string;
+    generatedAt: string;
+    tenant: { name: string };
+    metadata: any;
+}
 
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { name, email, logout } = useAuth();
+    const [certificates, setCertificates] = React.useState<Certificate[]>([]);
+    const [loadingCerts, setLoadingCerts] = React.useState(false);
+
+    React.useEffect(() => {
+        setLoadingCerts(true);
+        api.get('/certificates/mine')
+            .then(res => setCertificates(res.data))
+            .catch(console.error)
+            .finally(() => setLoadingCerts(false));
+    }, []);
+
+    const downloadCertificate = (id: string, title: string) => {
+        window.open(`${api.defaults.baseURL}/events/${id}/certificate/download`, '_blank');
+        // Note: The download endpoint might differ for non-event certificates. 
+        // Current implementation in backend `src/routes/events` supports download for events.
+        // But `src/routes/certificates.ts` supports generic download via `GET /:id/pdf`.
+        // I should use the generic one created in `certificates.ts`: `/certificates/:id/pdf`.
+    };
 
     return (
         <div className="fade-in">
@@ -36,14 +63,54 @@ export const VisitorProfile: React.FC = () => {
                     <button className="btn btn-secondary" onClick={() => navigate("/passaporte")}>
                         🛂 {t("visitor.passport.title", "Passaporte")}
                     </button>
-                    <button className="btn btn-secondary" onClick={() => navigate("/favoritos")}>
-                        ❤️ {t("visitor.favorites.title", "Favoritos")}
-                    </button>
-
-                    <button className="btn btn-logout" style={{ marginTop: "1rem" }} onClick={logout}>
-                        {t("visitor.sidebar.logout")}
-                    </button>
                 </div>
+
+                <hr style={{ borderColor: "var(--border-color)", margin: "1rem 0" }} />
+
+                <h3 style={{ margin: "0 0 1rem 0" }}>🎓 Meus Certificados</h3>
+                {loadingCerts ? (
+                    <p>Carregando...</p>
+                ) : certificates.length === 0 ? (
+                    <p className="text-muted">Você ainda não possui certificados.</p>
+                ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                        {certificates.map(cert => (
+                            <div key={cert.id} style={{
+                                border: "1px solid var(--border-color)",
+                                borderRadius: "8px",
+                                padding: "1rem",
+                                background: "rgba(255,255,255,0.05)"
+                            }}>
+                                <div style={{ fontWeight: "bold", marginBottom: "0.25rem" }}>
+                                    {cert.type === 'EVENT' ? 'Evento' : cert.type}
+                                    {cert.metadata?.title && ` - ${cert.metadata.title}`}
+                                </div>
+                                <div style={{ fontSize: "0.9rem", opacity: 0.8, marginBottom: "0.5rem" }}>
+                                    Emissor: {cert.tenant.name} | {new Date(cert.generatedAt).toLocaleDateString()}
+                                </div>
+                                <button
+                                    className="btn btn-sm btn-outline"
+                                    onClick={() => window.open(`${api.defaults.baseURL?.replace('/api', '') || ''}/certificates/${cert.id}/pdf`, '_blank')}
+                                >
+                                    📄 Baixar PDF
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-ghost"
+                                    style={{ marginLeft: "0.5rem" }}
+                                    onClick={() => navigate(`/verify/${cert.code}`)}
+                                >
+                                    🔍 Validar
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                <hr style={{ borderColor: "var(--border-color)", margin: "1rem 0" }} />
+
+                <button className="btn btn-logout" onClick={logout}>
+                    {t("visitor.sidebar.logout")}
+                </button>
             </div>
         </div>
     );
