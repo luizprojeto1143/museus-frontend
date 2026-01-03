@@ -63,6 +63,7 @@ import { AdminAIAssistant } from "./modules/admin/pages/AdminAIAssistant";
 import { AdminAnalytics } from "./modules/admin/pages/AdminAnalytics";
 import { AdminUploads } from "./modules/admin/pages/AdminUploads";
 import { AdminInternalUsers } from "./modules/admin/pages/AdminInternalUsers";
+import { AdminCertificates } from "./modules/admin/certificates";
 
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
@@ -437,6 +438,16 @@ const App: React.FC = () => {
               <RequireRole allowed={["admin"]}>
                 <AdminLayout>
                   <AdminEvents />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/certificates/*"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminCertificates />
                 </AdminLayout>
               </RequireRole>
             }
