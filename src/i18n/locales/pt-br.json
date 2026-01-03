@@ -17,7 +17,12 @@
         "minutes": "minutos",
         "next": "Próximo",
         "noData": "Nenhum dado encontrado.",
-        "menu": "Menu"
+        "menu": "Menu",
+        "all": "Todos",
+        "images": "Imagens",
+        "audios": "Áudios",
+        "videos": "Vídeos",
+        "noResults": "Nenhum resultado encontrado."
     },
     "dashboard": {
         "title": "Painel de Controle"
@@ -291,6 +296,16 @@
             "treasureHunt": "Caça ao Tesouro",
             "settings": "Configurações",
             "logout": "Sair"
+        },
+        "uploads": {
+            "title": "Gerenciador de Arquivos",
+            "subtitle": "Visualize e gerencie todos os arquivos de mídia do museu",
+            "newUpload": "Novo Upload",
+            "stats": {
+                "total": "Total de Arquivos",
+                "usedSpace": "Espaço Utilizado",
+                "images": "Imagens"
+            }
         },
         "museums": {
             "title": "Visão Geral do Museu"
