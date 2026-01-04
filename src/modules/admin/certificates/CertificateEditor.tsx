@@ -85,8 +85,11 @@ export const CertificateEditor: React.FC = () => {
 
     // Element Management
     const addElement = (type: 'text' | 'variable' | 'qrcode', content?: string) => {
+        // Fallback for ID generation to avoid crypto.randomUUID() crash in non-secure contexts
+        const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
         const newEl: Element = {
-            id: crypto.randomUUID(),
+            id: newId,
             type,
             x: 50,
             y: 50,
