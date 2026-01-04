@@ -613,7 +613,6 @@ textarea {
   flex-direction: column;
   min-width: 0;
   /* Prevent flex overflow */
-  /* Prevent flex overflow */
   position: relative;
 }
 
