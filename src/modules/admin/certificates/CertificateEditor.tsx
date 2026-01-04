@@ -40,6 +40,14 @@ export const CertificateEditor: React.FC = () => {
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
     const dragItem = useRef<string | null>(null);
+    const textInputRef = useRef<HTMLTextAreaElement>(null);
+
+    // Focus properties panel input when element is selected
+    useEffect(() => {
+        if (selectedElementId && textInputRef.current) {
+            textInputRef.current.focus({ preventScroll: true });
+        }
+    }, [selectedElementId]);
 
 
     useEffect(() => {
@@ -368,7 +376,7 @@ export const CertificateEditor: React.FC = () => {
                                 return (
                                     <div
                                         key={el.id}
-                                        draggable
+                                        draggable={true}
                                         onDragStart={(e) => handleDragStart(e, el.id)}
                                         onClick={(e) => { e.stopPropagation(); setSelectedElementId(el.id); }}
                                         onDoubleClick={(e) => {
@@ -455,7 +463,7 @@ export const CertificateEditor: React.FC = () => {
                                             <label className="form-label text-xs mb-1.5 block uppercase tracking-wide text-[var(--fg-soft)]">Conteúdo de Texto</label>
                                             <textarea
                                                 key={selectedElement.id}
-                                                autoFocus
+                                                ref={textInputRef}
                                                 value={selectedElement.text}
                                                 onChange={e => updateElement(selectedElement.id, { text: e.target.value })}
                                                 rows={4}
