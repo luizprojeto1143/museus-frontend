@@ -180,11 +180,11 @@ export const CertificateEditor: React.FC = () => {
         const x = (e.clientX - rect.left) / zoom;
         const y = (e.clientY - rect.top) / zoom;
 
-        // Snap to grid (optional, 10px)
-        const snappedX = Math.round(x / 10) * 10;
-        const snappedY = Math.round(y / 10) * 10;
+        // Snap to grid removed for free movement
+        // const snappedX = Math.round(x / 10) * 10;
+        // const snappedY = Math.round(y / 10) * 10;
 
-        updateElement(elId, { x: snappedX, y: snappedY });
+        updateElement(elId, { x, y });
         dragItem.current = null;
     };
 
