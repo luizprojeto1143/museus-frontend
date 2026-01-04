@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { AudioDescriptionPlayer } from "../../../components/accessibility/AudioDescriptionPlayer";
-import { LibrasPlayer } from "../../../components/accessibility/LibrasPlayer";
+import { LibrasSection } from "../../../components/accessibility/LibrasPlayer";
 import { useTTS } from "../../../hooks/useTTS";
 import { useTranslation } from "react-i18next";
 import { getFullUrl } from "../../../utils/url";
@@ -324,7 +324,7 @@ export const WorkDetail: React.FC = () => {
             <p className="card-subtitle">
               {t("visitor.artwork.librasText")}
             </p>
-            <LibrasPlayer src={work.librasUrl} />
+            <LibrasSection videoUrl={work.librasUrl} contentTitle={work.title} />
           </article>
         </div>
       </section>

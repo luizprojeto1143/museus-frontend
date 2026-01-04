@@ -75,6 +75,9 @@ export const AdminEvents: React.FC = () => {
                 <Link to={`/admin/eventos/${ev.id}`} className="btn btn-secondary">
                   {t("common.edit")}
                 </Link>
+                <Link to={`/admin/eventos/${ev.id}/dashboard`} className="btn btn-primary ml-2">
+                  Gerenciar
+                </Link>
               </td>
             </tr>
           ))}

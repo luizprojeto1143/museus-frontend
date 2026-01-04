@@ -141,7 +141,7 @@ export const GuestbookPage: React.FC = () => {
                                     }}
                                 >
                                     {entry.visitor.photoUrl ? (
-                                        <img src={getFullUrl(entry.visitor.photoUrl)} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                        <img src={getFullUrl(entry.visitor.photoUrl) ?? undefined} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                     ) : (
                                         "👤"
                                     )}

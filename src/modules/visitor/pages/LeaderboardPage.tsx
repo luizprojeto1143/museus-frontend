@@ -53,7 +53,7 @@ export const LeaderboardPage: React.FC = () => {
             <div key={entry.id} className={`podium-item ${placeClass}`}>
                 <div className="podium-avatar-container">
                     {entry.photoUrl ? (
-                        <img src={getFullUrl(entry.photoUrl)} alt={entry.name || "User"} className="podium-avatar" />
+                        <img src={getFullUrl(entry.photoUrl) ?? undefined} alt={entry.name || "User"} className="podium-avatar" />
                     ) : (
                         <div className="podium-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>👤</div>
                     )}
@@ -78,7 +78,7 @@ export const LeaderboardPage: React.FC = () => {
             </div>
 
             {entry.photoUrl ? (
-                <img src={getFullUrl(entry.photoUrl)} alt={entry.name || "User"} className="item-avatar" />
+                <img src={getFullUrl(entry.photoUrl) ?? undefined} alt={entry.name || "User"} className="item-avatar" />
             ) : (
                 <div className="item-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', background: 'var(--bg-elevated)' }}>👤</div>
             )}

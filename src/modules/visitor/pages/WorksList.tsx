@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { getFullUrl } from "../../../utils/url";
 

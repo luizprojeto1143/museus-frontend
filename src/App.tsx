@@ -41,6 +41,8 @@ import { VisualScannerPage } from "./modules/visitor/pages/VisualScannerPage";
 import { LeaderboardPage } from "./modules/visitor/pages/LeaderboardPage";
 import { VisitorProfile } from "./modules/visitor/pages/VisitorProfile";
 import { CertificateVerification } from "./modules/public/CertificateVerification";
+import { ShopPage } from "./modules/visitor/pages/ShopPage";
+import { ChallengesPage } from "./modules/visitor/pages/ChallengesPage";
 
 // Admin pages
 import { AdminDashboard } from "./modules/admin/pages/AdminDashboard";
@@ -50,6 +52,8 @@ import { AdminTrails } from "./modules/admin/pages/AdminTrails";
 import { AdminTrailForm } from "./modules/admin/pages/AdminTrailForm";
 import { AdminEvents } from "./modules/admin/pages/AdminEvents";
 import { AdminEventForm } from "./modules/admin/pages/AdminEventForm";
+import { AdminEventDashboard } from "./modules/admin/pages/AdminEventDashboard";
+import { AdminEventCheckIn } from "./modules/admin/pages/AdminEventCheckIn";
 import { AdminQRCodes } from "./modules/admin/pages/AdminQRCodes";
 import { AdminCategories } from "./modules/admin/pages/AdminCategories";
 import { AdminCategoryForm } from "./modules/admin/pages/AdminCategoryForm";
@@ -64,6 +68,8 @@ import { AdminAnalytics } from "./modules/admin/pages/AdminAnalytics";
 import { AdminUploads } from "./modules/admin/pages/AdminUploads";
 import { AdminInternalUsers } from "./modules/admin/pages/AdminInternalUsers";
 import { AdminCertificates } from "./modules/admin/certificates";
+import { AdminReviews } from "./modules/admin/pages/AdminReviews";
+import { AdminShop } from "./modules/admin/pages/AdminShop";
 
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
@@ -73,6 +79,8 @@ import { MasterUsers } from "./modules/master/pages/MasterUsers";
 import { MasterUserForm } from "./modules/master/pages/MasterUserForm";
 import { MasterAchievements } from "./modules/master/pages/MasterAchievements";
 import { MasterAchievementForm } from "./modules/master/pages/MasterAchievementForm";
+import { MasterAuditLogs } from "./modules/master/pages/MasterAuditLogs";
+import { MasterSystemHealth } from "./modules/master/pages/MasterSystemHealth";
 
 const RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }> = ({
   allowed,
@@ -212,6 +220,26 @@ const App: React.FC = () => {
               <RequireRole allowed={["visitor", "admin", "master"]}>
                 <VisitorLayout>
                   <Favorites />
+                </VisitorLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/loja"
+            element={
+              <RequireRole allowed={["visitor", "admin", "master"]}>
+                <VisitorLayout>
+                  <ShopPage />
+                </VisitorLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/desafios"
+            element={
+              <RequireRole allowed={["visitor", "admin", "master"]}>
+                <VisitorLayout>
+                  <ChallengesPage />
                 </VisitorLayout>
               </RequireRole>
             }
@@ -473,6 +501,26 @@ const App: React.FC = () => {
             }
           />
           <Route
+            path="/admin/eventos/:id/dashboard"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminEventDashboard />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/eventos/:id/checkin"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminEventCheckIn />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
             path="/admin/qrcodes"
             element={
               <RequireRole allowed={["admin"]}>
@@ -628,6 +676,28 @@ const App: React.FC = () => {
             }
           />
 
+          {/* Admin Reviews and Shop */}
+          <Route
+            path="/admin/reviews"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminReviews />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin/loja"
+            element={
+              <RequireRole allowed={["admin"]}>
+                <AdminLayout>
+                  <AdminShop />
+                </AdminLayout>
+              </RequireRole>
+            }
+          />
+
 
           {/* MASTER (multi-tenant) */}
           <Route
@@ -726,6 +796,26 @@ const App: React.FC = () => {
               <RequireRole allowed={["master"]}>
                 <MasterLayout>
                   <MasterAchievementForm />
+                </MasterLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/master/audit-logs"
+            element={
+              <RequireRole allowed={["master"]}>
+                <MasterLayout>
+                  <MasterAuditLogs />
+                </MasterLayout>
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/master/system-health"
+            element={
+              <RequireRole allowed={["master"]}>
+                <MasterLayout>
+                  <MasterSystemHealth />
                 </MasterLayout>
               </RequireRole>
             }

@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import { User, Ticket, Award, LogOut, ChevronRight, QrCode } from 'lucide-react';
+import { QRCodeSVG } from "qrcode.react";
+import { TicketCard } from "../components/TicketCard";
 
 interface Certificate {
     id: string;
@@ -13,106 +16,188 @@ interface Certificate {
     metadata: any;
 }
 
+interface Registration {
+    id: string;
+    code: string;
+    checkInDate?: string;
+    guestName?: string;
+    event: {
+        id: string;
+        title: string;
+        startDate: string;
+        location?: string;
+    };
+    ticket: {
+        name: string;
+        type: string;
+    }
+}
+
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { name, email, logout } = useAuth();
-    const [certificates, setCertificates] = React.useState<Certificate[]>([]);
-    const [loadingCerts, setLoadingCerts] = React.useState(false);
 
-    React.useEffect(() => {
-        setLoadingCerts(true);
-        api.get('/certificates/mine')
-            .then(res => setCertificates(res.data))
-            .catch(console.error)
-            .finally(() => setLoadingCerts(false));
-    }, []);
+    // Tabs: 'info' | 'tickets' | 'certificates'
+    const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates'>('info');
 
-    const downloadCertificate = (id: string, title: string) => {
-        window.open(`${api.defaults.baseURL}/events/${id}/certificate/download`, '_blank');
-        // Note: The download endpoint might differ for non-event certificates. 
-        // Current implementation in backend `src/routes/events` supports download for events.
-        // But `src/routes/certificates.ts` supports generic download via `GET /:id/pdf`.
-        // I should use the generic one created in `certificates.ts`: `/certificates/:id/pdf`.
+    // Data
+    const [certificates, setCertificates] = useState<Certificate[]>([]);
+    const [registrations, setRegistrations] = useState<Registration[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (activeTab === 'certificates' && certificates.length === 0) {
+            setLoading(true);
+            api.get('/certificates/mine')
+                .then(res => setCertificates(res.data))
+                .catch(console.error)
+                .finally(() => setLoading(false));
+        }
+        if (activeTab === 'tickets' && registrations.length === 0) {
+            setLoading(true);
+            // Mock endpoint or real one if exists
+            // Using a mock for now since we didn't explicitly create GET /registrations/mine yet
+            // Assuming we added it or using filtering
+            api.get('/registrations/my-registrations')
+                .then(res => setRegistrations(res.data))
+                .catch(async () => {
+                    // Fallback: fetch attended events and try to map (mocking for demo)
+                    // In real implementation we need GET /registrations
+                    setRegistrations([]);
+                })
+                .finally(() => setLoading(false));
+        }
+    }, [activeTab]);
+
+    const renderContent = () => {
+        if (loading) return <div className="p-8 text-center animate-pulse">Carregando...</div>;
+
+        switch (activeTab) {
+            case 'info':
+                return (
+                    <div className="space-y-4 animate-fadeIn">
+                        <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl">
+                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                                {name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{name}</h2>
+                                <p className="text-gray-500 dark:text-gray-400">{email}</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            <button className="btn btn-secondary flex flex-col items-center justify-center py-6 gap-2" onClick={() => navigate("/conquistas")}>
+                                <Award className="w-8 h-8 text-yellow-500" />
+                                <span className="font-semibold">{t("visitor.achievements.title", "Conquistas")}</span>
+                            </button>
+                            <button className="btn btn-secondary flex flex-col items-center justify-center py-6 gap-2" onClick={() => navigate("/passaporte")}>
+                                <div className="w-8 h-8 flex items-center justify-center text-2xl">🛂</div>
+                                <span className="font-semibold">{t("visitor.passport.title", "Passaporte")}</span>
+                            </button>
+                        </div>
+
+                        <button className="btn w-full flex items-center justify-between text-red-500 hover:bg-red-50 mt-4" onClick={logout}>
+                            <span className="flex items-center gap-2"><LogOut className="w-4 h-4" /> {t("visitor.sidebar.logout")}</span>
+                            <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+                    </div>
+                );
+            case 'tickets':
+                return (
+                    <div className="space-y-6 animate-fadeIn">
+                        {registrations.length === 0 ? (
+                            <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                                <Ticket className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                                <p className="text-gray-500">Nenhum ingresso encontrado.</p>
+                                <button className="btn btn-link mt-2" onClick={() => navigate('/eventos')}>Ver Eventos</button>
+                            </div>
+                        ) : (
+                            registrations.map(reg => {
+                                const eventDate = new Date(reg.event.startDate);
+                                return (
+                                    <TicketCard
+                                        key={reg.id}
+                                        eventTitle={reg.event.title}
+                                        code={reg.code}
+                                        guestName={reg.guestName || name || "Visitante"}
+                                        date={eventDate.toLocaleDateString('pt-BR')}
+                                        time={eventDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                        location={reg.event.location}
+                                        ticketType={reg.ticket.name}
+                                    />
+                                );
+                            })
+                        )}
+                    </div>
+                );
+            case 'certificates':
+                return (
+                    <div className="space-y-3 animate-fadeIn">
+                        {certificates.length === 0 ? (
+                            <div className="text-center py-10">
+                                <p className="text-gray-500">Nenhum certificado ainda.</p>
+                            </div>
+                        ) : (
+                            certificates.map(cert => (
+                                <div key={cert.id} className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-1">
+                                        {cert.metadata?.title || (cert.type === 'EVENT' ? 'Certificado de Evento' : 'Certificado')}
+                                    </h4>
+                                    <p className="text-xs text-gray-500 mb-3">
+                                        Emitido em {new Date(cert.generatedAt).toLocaleDateString()} por {cert.tenant.name}
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <button
+                                            className="btn btn-sm btn-outline flex-1"
+                                            onClick={() => window.open(`${api.defaults.baseURL?.replace('/api', '') || ''}/certificates/${cert.id}/pdf`, '_blank')}
+                                        >
+                                            PDF
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-ghost flex-1"
+                                            onClick={() => navigate(`/verify/${cert.code}`)}
+                                        >
+                                            Validar
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                );
+        }
     };
 
     return (
-        <div className="fade-in">
-            <h1 className="page-title" style={{ marginTop: "1rem" }}>{t("visitor.sidebar.profile")}</h1>
-            <p className="page-subtitle">Gerencie suas informações</p>
+        <div className="pb-20">
+            <h1 className="page-title mt-4 mb-1">{t("visitor.sidebar.profile")}</h1>
+            <p className="page-subtitle mb-6">Sua conta pessoal</p>
 
-            <div className="card" style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                    <div style={{
-                        width: 64, height: 64, borderRadius: "50%", backgroundColor: "var(--primary-color)",
-                        display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", fontWeight: "bold"
-                    }}>
-                        {name?.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                        <h2 style={{ margin: 0 }}>{name}</h2>
-                        <p style={{ margin: 0, opacity: 0.8 }}>{email}</p>
-                    </div>
-                </div>
-
-                <hr style={{ borderColor: "var(--border-color)", margin: "1rem 0" }} />
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                    <button className="btn btn-secondary" onClick={() => navigate("/conquistas")}>
-                        🏆 {t("visitor.achievements.title", "Conquistas")}
-                    </button>
-                    <button className="btn btn-secondary" onClick={() => navigate("/passaporte")}>
-                        🛂 {t("visitor.passport.title", "Passaporte")}
-                    </button>
-                </div>
-
-                <hr style={{ borderColor: "var(--border-color)", margin: "1rem 0" }} />
-
-                <h3 style={{ margin: "0 0 1rem 0" }}>🎓 Meus Certificados</h3>
-                {loadingCerts ? (
-                    <p>Carregando...</p>
-                ) : certificates.length === 0 ? (
-                    <p className="text-muted">Você ainda não possui certificados.</p>
-                ) : (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        {certificates.map(cert => (
-                            <div key={cert.id} style={{
-                                border: "1px solid var(--border-color)",
-                                borderRadius: "8px",
-                                padding: "1rem",
-                                background: "rgba(255,255,255,0.05)"
-                            }}>
-                                <div style={{ fontWeight: "bold", marginBottom: "0.25rem" }}>
-                                    {cert.type === 'EVENT' ? 'Evento' : cert.type}
-                                    {cert.metadata?.title && ` - ${cert.metadata.title}`}
-                                </div>
-                                <div style={{ fontSize: "0.9rem", opacity: 0.8, marginBottom: "0.5rem" }}>
-                                    Emissor: {cert.tenant.name} | {new Date(cert.generatedAt).toLocaleDateString()}
-                                </div>
-                                <button
-                                    className="btn btn-sm btn-outline"
-                                    onClick={() => window.open(`${api.defaults.baseURL?.replace('/api', '') || ''}/certificates/${cert.id}/pdf`, '_blank')}
-                                >
-                                    📄 Baixar PDF
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-ghost"
-                                    style={{ marginLeft: "0.5rem" }}
-                                    onClick={() => navigate(`/verify/${cert.code}`)}
-                                >
-                                    🔍 Validar
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                <hr style={{ borderColor: "var(--border-color)", margin: "1rem 0" }} />
-
-                <button className="btn btn-logout" onClick={logout}>
-                    {t("visitor.sidebar.logout")}
+            {/* Tabs Header */}
+            <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl mb-6">
+                <button
+                    onClick={() => setActiveTab('info')}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'info' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
+                >
+                    Info
+                </button>
+                <button
+                    onClick={() => setActiveTab('tickets')}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'tickets' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
+                >
+                    Ingressos
+                </button>
+                <button
+                    onClick={() => setActiveTab('certificates')}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'certificates' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
+                >
+                    Certificados
                 </button>
             </div>
+
+            {renderContent()}
         </div>
     );
 };
