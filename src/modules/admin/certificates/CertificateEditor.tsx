@@ -148,71 +148,74 @@ export const CertificateEditor: React.FC = () => {
     const selectedElement = elements.find(el => el.id === selectedElementId);
 
     return (
-        <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+        <div className="flex flex-col h-[calc(100vh-4rem)] bg-[var(--bg-page)] overflow-hidden">
             {/* Header */}
-            <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between z-10 shrink-0">
+            <header className="h-16 border-b border-[var(--border-subtle)] px-6 flex items-center justify-between z-10 shrink-0 bg-[var(--bg-elevated)]/80 backdrop-blur-md">
                 <div className="flex items-center gap-4">
-                    <Button variant="outline" size="sm" onClick={() => navigate('/admin/certificates')}>
+                    <button
+                        onClick={() => navigate('/admin/certificates')}
+                        className="btn btn-secondary py-1 px-3 text-xs"
+                    >
                         Voltar
-                    </Button>
-                    <div className="h-6 w-px bg-gray-300" />
+                    </button>
+                    <div className="h-6 w-px bg-[var(--border-subtle)]" />
                     <input
                         value={name}
                         onChange={e => setName(e.target.value)}
-                        className="text-lg font-semibold bg-transparent border-none outline-none focus:ring-2 focus:ring-primary-500 rounded px-2"
+                        className="input bg-transparent border-transparent hover:border-[var(--border-strong)] focus:border-[var(--accent-gold)] text-lg font-semibold px-2 py-1 w-64"
                         placeholder="Nome do Modelo"
                     />
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center bg-gray-100 rounded-lg p-1 mr-4">
-                        <button onClick={() => setZoom(z => Math.max(0.4, z - 0.1))} className="p-1 hover:bg-white rounded"><ZoomOut size={16} /></button>
-                        <span className="text-xs font-medium w-12 text-center">{Math.round(zoom * 100)}%</span>
-                        <button onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="p-1 hover:bg-white rounded"><ZoomIn size={16} /></button>
+                    <div className="flex items-center bg-[var(--bg-elevated-soft)] rounded-lg p-1 mr-4 border border-[var(--border-subtle)]">
+                        <button onClick={() => setZoom(z => Math.max(0.4, z - 0.1))} className="p-1 hover:text-[var(--accent-gold)] rounded transition-colors text-[var(--fg-muted)]"><ZoomOut size={16} /></button>
+                        <span className="text-xs font-medium w-12 text-center text-[var(--fg-main)]">{Math.round(zoom * 100)}%</span>
+                        <button onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="p-1 hover:text-[var(--accent-gold)] rounded transition-colors text-[var(--fg-muted)]"><ZoomIn size={16} /></button>
                     </div>
-                    <Button onClick={handleSave} disabled={loading} className="gap-2">
+                    <button onClick={handleSave} disabled={loading} className="btn btn-primary gap-2">
                         <Save size={18} />
                         Salvar
-                    </Button>
+                    </button>
                 </div>
             </header>
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Left Sidebar: Tools */}
-                <aside className="w-72 bg-white border-r border-gray-200 flex flex-col z-10">
-                    <div className="flex border-b border-gray-200">
+                <aside className="w-72 bg-[var(--bg-elevated)] border-r border-[var(--border-subtle)] flex flex-col z-10">
+                    <div className="flex border-b border-[var(--border-subtle)]">
                         <button
                             onClick={() => setActiveTab('tools')}
-                            className={`flex-1 py-3 text-sm font-medium border-b-2 ${activeTab === 'tools' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'}`}
+                            className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'tools' ? 'border-[var(--accent-gold)] text-[var(--accent-gold)] bg-[var(--bg-elevated-soft)]' : 'border-transparent text-[var(--fg-muted)] hover:text-[var(--fg-main)]'}`}
                         >
                             Elementos
                         </button>
                         <button
                             onClick={() => setActiveTab('settings')}
-                            className={`flex-1 py-3 text-sm font-medium border-b-2 ${activeTab === 'settings' ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-500'}`}
+                            className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'settings' ? 'border-[var(--accent-gold)] text-[var(--accent-gold)] bg-[var(--bg-elevated-soft)]' : 'border-transparent text-[var(--fg-muted)] hover:text-[var(--fg-main)]'}`}
                         >
                             Configurações
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4">
+                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                         {activeTab === 'tools' ? (
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Básico</h3>
+                                    <h3 className="section-title text-sm mb-3 !m-0">Básico</h3>
                                     <div className="grid grid-cols-2 gap-3">
-                                        <button onClick={() => addElement('text')} className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors group">
-                                            <Type size={24} className="text-gray-600 group-hover:text-primary-600 mb-2" />
-                                            <span className="text-xs font-medium text-gray-600 group-hover:text-primary-600">Texto</span>
+                                        <button onClick={() => addElement('text')} className="flex flex-col items-center justify-center p-4 border border-[var(--border-strong)] rounded-lg hover:border-[var(--accent-gold)] hover:bg-[var(--bg-elevated-soft)] transition-all group bg-[var(--bg-elevated)]/50">
+                                            <Type size={24} className="text-[var(--fg-muted)] group-hover:text-[var(--accent-gold)] mb-2" />
+                                            <span className="text-xs font-medium text-[var(--fg-muted)] group-hover:text-[var(--accent-gold)]">Texto</span>
                                         </button>
-                                        <button onClick={() => addElement('qrcode')} className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-colors group">
-                                            <QrCode size={24} className="text-gray-600 group-hover:text-primary-600 mb-2" />
-                                            <span className="text-xs font-medium text-gray-600 group-hover:text-primary-600">QR Code</span>
+                                        <button onClick={() => addElement('qrcode')} className="flex flex-col items-center justify-center p-4 border border-[var(--border-strong)] rounded-lg hover:border-[var(--accent-gold)] hover:bg-[var(--bg-elevated-soft)] transition-all group bg-[var(--bg-elevated)]/50">
+                                            <QrCode size={24} className="text-[var(--fg-muted)] group-hover:text-[var(--accent-gold)] mb-2" />
+                                            <span className="text-xs font-medium text-[var(--fg-muted)] group-hover:text-[var(--accent-gold)]">QR Code</span>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Variáveis Dinâmicas</h3>
+                                    <h3 className="section-title text-sm mb-3 !m-0">Variáveis Dinâmicas</h3>
                                     <div className="space-y-2">
                                         {[
                                             { label: 'Nome do Visitante', val: '{{nome_visitante}}' },
@@ -224,14 +227,14 @@ export const CertificateEditor: React.FC = () => {
                                             <button
                                                 key={v.val}
                                                 onClick={() => addElement('variable', v.val)}
-                                                className="w-full flex items-center px-3 py-2 text-sm text-gray-700 bg-gray-50 border border-transparent rounded-md hover:bg-white hover:border-gray-300 hover:shadow-sm transition-all"
+                                                className="w-full flex items-center px-3 py-2 text-sm text-[var(--fg-main)] bg-[var(--bg-elevated-soft)] border border-[var(--border-subtle)] rounded-md hover:border-[var(--accent-gold)] hover:shadow-[0_0_10px_rgba(212,175,55,0.1)] transition-all group"
                                             >
-                                                <span className="w-2 h-2 rounded-full bg-green-400 mr-2" />
+                                                <span className="w-2 h-2 rounded-full bg-[var(--accent-gold)] mr-2 group-hover:shadow-[0_0_8px_var(--accent-gold)]" />
                                                 {v.label}
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="text-xs text-gray-400 mt-2 px-1">
+                                    <p className="text-xs text-[var(--fg-muted)] mt-2 px-1 italic opacity-70">
                                         Esses campos serão preenchidos automaticamente ao gerar o certificado.
                                     </p>
                                 </div>
@@ -239,23 +242,23 @@ export const CertificateEditor: React.FC = () => {
                         ) : (
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Fundo do Certificado</h3>
+                                    <h3 className="section-title text-sm mb-3 !m-0">Fundo do Certificado</h3>
                                     <div className="space-y-3">
-                                        <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden border border-gray-200 relative group">
+                                        <div className="aspect-video bg-[var(--bg-elevated-soft)] rounded-lg overflow-hidden border border-[var(--border-subtle)] relative group">
                                             {backgroundUrl ? (
                                                 <img src={backgroundUrl} alt="Background" className="w-full h-full object-cover" />
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                <div className="w-full h-full flex items-center justify-center text-[var(--fg-muted)]">
                                                     <ImageIcon size={32} />
                                                 </div>
                                             )}
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">URL da Imagem</label>
+                                            <label className="form-label text-xs mb-1 block">URL da Imagem</label>
                                             <input
                                                 value={backgroundUrl}
                                                 onChange={e => setBackgroundUrl(e.target.value)}
-                                                className="w-full text-sm border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                                                className="input w-full text-sm"
                                                 placeholder="https://..."
                                             />
                                         </div>
@@ -267,11 +270,15 @@ export const CertificateEditor: React.FC = () => {
                 </aside>
 
                 {/* Center: Workspace (Canvas) */}
-                <main className="flex-1 bg-gray-100 relative overflow-hidden flex flex-col">
-                    <div className="flex-1 overflow-auto p-8 flex items-center justify-center relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+                <main className="flex-1 bg-[var(--bg-page)] relative overflow-hidden flex flex-col">
+                    <div className="flex-1 overflow-auto p-8 flex items-center justify-center relative">
+                        {/* Grid Pattern Overlay */}
+                        <div className="absolute inset-0 opacity-10 pointer-events-none"
+                            style={{ backgroundImage: 'radial-gradient(#d4af37 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+
                         <div
                             ref={containerRef}
-                            className="bg-white shadow-2xl relative transition-transform duration-200 ease-out origin-center select-none"
+                            className="bg-white shadow-[0_0_50px_rgba(0,0,0,0.5)] relative transition-transform duration-200 ease-out origin-center select-none"
                             style={{
                                 width: '842px',
                                 height: '595px',
@@ -285,8 +292,8 @@ export const CertificateEditor: React.FC = () => {
                             onClick={() => setSelectedElementId(null)}
                         >
                             {!backgroundUrl && (
-                                <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-gray-200 text-gray-300 pointer-events-none">
-                                    <span className="text-4xl font-bold opacity-10">A4 Landscape</span>
+                                <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-gray-300 text-gray-300 pointer-events-none">
+                                    <span className="text-4xl font-bold opacity-20 font-serif">A4 Landscape</span>
                                 </div>
                             )}
 
@@ -298,7 +305,7 @@ export const CertificateEditor: React.FC = () => {
                                         draggable
                                         onDragStart={(e) => handleDragStart(e, el.id)}
                                         onClick={(e) => { e.stopPropagation(); setSelectedElementId(el.id); }}
-                                        className={`absolute group cursor-move hover:outline hover:outline-1 hover:outline-primary-400 ${isSelected ? 'outline outline-2 outline-primary-600 z-10' : ''}`}
+                                        className={`absolute group cursor-move hover:outline hover:outline-1 hover:outline-[var(--accent-gold)] ${isSelected ? 'outline outline-2 outline-[var(--accent-gold)] z-10' : ''}`}
                                         style={{
                                             left: el.x,
                                             top: el.y,
@@ -312,20 +319,20 @@ export const CertificateEditor: React.FC = () => {
                                     >
                                         {isSelected && (
                                             <>
-                                                <div className="absolute -top-3 -left-3 w-2 h-2 bg-white border border-primary-600 rounded-full" />
-                                                <div className="absolute -top-3 -right-3 w-2 h-2 bg-white border border-primary-600 rounded-full" />
-                                                <div className="absolute -bottom-3 -left-3 w-2 h-2 bg-white border border-primary-600 rounded-full" />
-                                                <div className="absolute -bottom-3 -right-3 w-2 h-2 bg-white border border-primary-600 rounded-full" />
+                                                <div className="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border border-[var(--accent-gold)] rounded-full shadow-sm" />
+                                                <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border border-[var(--accent-gold)] rounded-full shadow-sm" />
+                                                <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border border-[var(--accent-gold)] rounded-full shadow-sm" />
+                                                <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border border-[var(--accent-gold)] rounded-full shadow-sm" />
                                             </>
                                         )}
 
                                         {el.type === 'qrcode' ? (
-                                            <div className="w-full h-full bg-gray-900 flex flex-col items-center justify-center text-white/50 text-xs gap-1">
+                                            <div className="w-full h-full bg-black flex flex-col items-center justify-center text-white/50 text-xs gap-1">
                                                 <QrCode size={24} />
                                                 QR
                                             </div>
                                         ) : (
-                                            <span className="select-none whitespace-pre-wrap">{el.text}</span>
+                                            <span className="select-none whitespace-pre-wrap leading-tight">{el.text}</span>
                                         )}
                                     </div>
                                 );
@@ -335,14 +342,14 @@ export const CertificateEditor: React.FC = () => {
                 </main>
 
                 {/* Right Sidebar: Properties */}
-                <aside className="w-72 bg-white border-l border-gray-200 overflow-y-auto">
+                <aside className="w-72 bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] overflow-y-auto custom-scrollbar">
                     {selectedElement ? (
                         <div className="p-4 space-y-6">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-semibold text-gray-900">Propriedades</h3>
+                                <h3 className="text-sm font-semibold text-[var(--accent-gold)] font-serif tracking-wide">Propriedades</h3>
                                 <button
                                     onClick={() => deleteElement(selectedElement.id)}
-                                    className="text-red-500 hover:bg-red-50 p-1.5 rounded-md transition-colors"
+                                    className="text-red-500 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"
                                     title="Remover elemento"
                                 >
                                     <Trash size={16} />
@@ -353,43 +360,44 @@ export const CertificateEditor: React.FC = () => {
                                 {selectedElement.type !== 'qrcode' && (
                                     <>
                                         <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">Conteúdo</label>
+                                            <label className="form-label text-xs mb-1 block">Conteúdo</label>
                                             <textarea
                                                 value={selectedElement.text}
                                                 onChange={e => updateElement(selectedElement.id, { text: e.target.value })}
                                                 rows={3}
-                                                className="w-full text-sm border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                                                className="input w-full text-sm"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">Fonte</label>
+                                            <label className="form-label text-xs mb-1 block">Fonte</label>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <select
                                                     value={selectedElement.fontFamily}
                                                     onChange={e => updateElement(selectedElement.id, { fontFamily: e.target.value })}
-                                                    className="text-sm border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
+                                                    className="input text-sm"
                                                 >
                                                     <option value="Helvetica">Helvetica</option>
                                                     <option value="Times">Times New Roman</option>
                                                     <option value="Courier">Courier</option>
+                                                    <option value="Georgia">Georgia</option>
                                                 </select>
                                                 <input
                                                     type="number"
                                                     value={selectedElement.fontSize}
                                                     onChange={e => updateElement(selectedElement.id, { fontSize: Number(e.target.value) })}
-                                                    className="text-sm border-gray-300 rounded-md focus:ring-primary-500 focus:border-primary-500"
-                                                    placeholder="Tamanho"
+                                                    className="input text-sm"
+                                                    placeholder="Size"
                                                 />
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">Alinhamento</label>
-                                            <div className="flex bg-gray-100 p-1 rounded-md">
+                                            <label className="form-label text-xs mb-1 block">Alinhamento</label>
+                                            <div className="flex bg-[var(--bg-elevated-soft)] p-1 rounded-md border border-[var(--border-subtle)]">
                                                 {['left', 'center', 'right'].map((align) => (
                                                     <button
                                                         key={align}
                                                         onClick={() => updateElement(selectedElement.id, { align: align as any })}
-                                                        className={`flex-1 py-1 rounded text-xs capitalize ${selectedElement.align === align ? 'bg-white shadow text-primary-600' : 'text-gray-500 hover:text-gray-900'}`}
+                                                        className={`flex-1 py-1 rounded text-xs capitalize transition-all ${selectedElement.align === align ? 'bg-[var(--accent-gold)] text-[var(--bg-page)] font-bold shadow-sm' : 'text-[var(--fg-muted)] hover:text-[var(--fg-main)]'}`}
                                                     >
                                                         {align === 'left' ? 'Esq' : align === 'center' ? 'Centro' : 'Dir'}
                                                     </button>
@@ -397,43 +405,43 @@ export const CertificateEditor: React.FC = () => {
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-medium text-gray-700 mb-1">Cor</label>
+                                            <label className="form-label text-xs mb-1 block">Cor</label>
                                             <div className="flex gap-2 items-center">
                                                 <input
                                                     type="color"
                                                     value={selectedElement.color}
                                                     onChange={e => updateElement(selectedElement.id, { color: e.target.value })}
-                                                    className="h-8 w-8 rounded border border-gray-300 cursor-pointer p-0 overflow-hidden"
+                                                    className="h-9 w-9 rounded-md border border-[var(--border-strong)] cursor-pointer p-0 overflow-hidden bg-transparent"
                                                 />
                                                 <input
                                                     value={selectedElement.color}
                                                     onChange={e => updateElement(selectedElement.id, { color: e.target.value })}
-                                                    className="flex-1 text-sm border-gray-300 rounded-md uppercase font-mono"
+                                                    className="input flex-1 text-sm uppercase font-mono"
                                                 />
                                             </div>
                                         </div>
                                     </>
                                 )}
 
-                                <div className="pt-4 border-t border-gray-200">
-                                    <label className="block text-xs font-medium text-gray-700 mb-2">Posição</label>
+                                <div className="pt-4 border-t border-[var(--border-subtle)]">
+                                    <label className="form-label text-xs mb-2 block">Posição</label>
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
-                                            <span className="text-[10px] text-gray-500 uppercase">X</span>
+                                            <span className="text-[10px] text-[var(--fg-muted)] uppercase mb-1 block">X</span>
                                             <input
                                                 type="number"
                                                 value={Math.round(selectedElement.x)}
                                                 onChange={e => updateElement(selectedElement.id, { x: Number(e.target.value) })}
-                                                className="w-full text-sm border-gray-300 rounded-md"
+                                                className="input w-full text-sm"
                                             />
                                         </div>
                                         <div>
-                                            <span className="text-[10px] text-gray-500 uppercase">Y</span>
+                                            <span className="text-[10px] text-[var(--fg-muted)] uppercase mb-1 block">Y</span>
                                             <input
                                                 type="number"
                                                 value={Math.round(selectedElement.y)}
                                                 onChange={e => updateElement(selectedElement.id, { y: Number(e.target.value) })}
-                                                className="w-full text-sm border-gray-300 rounded-md"
+                                                className="input w-full text-sm"
                                             />
                                         </div>
                                     </div>
@@ -441,9 +449,9 @@ export const CertificateEditor: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-400 p-8 text-center">
-                            <MousePointer2 size={48} className="mb-4 opacity-20" />
-                            <p className="text-sm">Selecione um elemento no certificado para editar suas propriedades.</p>
+                        <div className="h-full flex flex-col items-center justify-center text-[var(--fg-muted)] p-8 text-center opacity-50">
+                            <MousePointer2 size={48} className="mb-4 text-[var(--accent-gold)]" />
+                            <p className="text-sm font-serif italic">Selecione um elemento para editar</p>
                         </div>
                     )}
                 </aside>
