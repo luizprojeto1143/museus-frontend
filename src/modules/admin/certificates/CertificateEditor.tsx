@@ -187,20 +187,21 @@ export const CertificateEditor: React.FC = () => {
         // I will trust the backend allows upload or I'll add useAuth.
 
         try {
-            // Using the same endpoint as AdminUploads
-            const res = await api.post("/upload", formData, {
+            // Using the correct endpoint for images
+            const res = await api.post("/upload/image", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            // Assuming response has { url: ... } or similar based on AdminUploads usage logic (it reloads list there)
-            // Let's assume standard response or we might need to check network.
-            // Actually AdminUploads doesn't use the response URL directly, it reloads. 
-            // Lets assume the backend returns the file object.
+
             if (res.data && res.data.url) {
-                setBackgroundUrl(res.data.url);
+                let url = res.data.url;
+                // If it's a local relative path, prepend API URL
+                if (url.startsWith('/')) {
+                    const apiBase = (import.meta.env.VITE_API_URL as string) || "http://localhost:3000";
+                    // Remove potential double slash if apiBase ends with /
+                    url = `${apiBase.replace(/\/$/, "")}${url}`;
+                }
+                setBackgroundUrl(url);
             } else {
-                // Fallback if backend doesn't return URL immediately (unlikely for a dedicated upload endpoint)
-                // If specific implementation is needed, we'd need to inspect backend.
-                // For now, let's assume it returns { url: '...' }
                 alert("Upload realizado! Se a imagem não aparecer, verifique o formato.");
             }
         } catch (err) {
