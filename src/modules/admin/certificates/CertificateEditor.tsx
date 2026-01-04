@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/Button';
 import {
     Save, Image as ImageIcon, Type, Trash,
     Settings, Move, ZoomIn, ZoomOut,
-    QrCode, LayoutTemplate, MousePointer2, AlertTriangle
+    QrCode, LayoutTemplate, MousePointer2, AlertTriangle, Layers, ArrowUp, ArrowDown
 } from 'lucide-react';
 
 interface Element {
@@ -134,6 +134,29 @@ export const CertificateEditor: React.FC = () => {
         }
         setElements(prev => prev.filter(elm => elm.id !== id));
         setSelectedElementId(null);
+    };
+
+    // Layer Management
+    const bringToFront = (id: string) => {
+        setElements(prev => {
+            const elIndex = prev.findIndex(e => e.id === id);
+            if (elIndex === -1 || elIndex === prev.length - 1) return prev;
+            const newArr = [...prev];
+            const [movedEl] = newArr.splice(elIndex, 1);
+            newArr.push(movedEl);
+            return newArr;
+        });
+    };
+
+    const sendToBack = (id: string) => {
+        setElements(prev => {
+            const elIndex = prev.findIndex(e => e.id === id);
+            if (elIndex === -1 || elIndex === 0) return prev;
+            const newArr = [...prev];
+            const [movedEl] = newArr.splice(elIndex, 1);
+            newArr.unshift(movedEl);
+            return newArr;
+        });
     };
 
     // Drag & Drop
@@ -439,15 +462,32 @@ export const CertificateEditor: React.FC = () => {
                         <div className="p-4 space-y-6">
                             <div className="flex items-center justify-between bg-[var(--bg-elevated-soft)] p-3 rounded-lg border border-[var(--border-subtle)]">
                                 <span className="text-xs font-bold text-[var(--fg-main)] uppercase">{selectedElement.type === 'variable' ? 'Variável' : selectedElement.type === 'qrcode' ? 'QR Code' : 'Texto'}</span>
-                                <button
-                                    onClick={() => deleteElement(selectedElement.id)}
-                                    className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"
-                                    title="Remover elemento"
-                                    disabled={selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}'}
-                                    style={{ opacity: (selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}') ? 0.5 : 1 }}
-                                >
-                                    <Trash size={16} />
-                                </button>
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        onClick={() => bringToFront(selectedElement.id)}
+                                        className="text-[var(--fg-muted)] hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold)]/10 p-1.5 rounded-md transition-colors"
+                                        title="Trazer para frente"
+                                    >
+                                        <ArrowUp size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => sendToBack(selectedElement.id)}
+                                        className="text-[var(--fg-muted)] hover:text-[var(--accent-gold)] hover:bg-[var(--accent-gold)]/10 p-1.5 rounded-md transition-colors"
+                                        title="Enviar para trás"
+                                    >
+                                        <ArrowDown size={16} />
+                                    </button>
+                                    <div className="w-px h-4 bg-[var(--border-subtle)] mx-1" />
+                                    <button
+                                        onClick={() => deleteElement(selectedElement.id)}
+                                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"
+                                        title="Remover elemento"
+                                        disabled={selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}'}
+                                        style={{ opacity: (selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}') ? 0.5 : 1 }}
+                                    >
+                                        <Trash size={16} />
+                                    </button>
+                                </div>
                             </div>
 
                             {(selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}') && (
@@ -562,12 +602,39 @@ export const CertificateEditor: React.FC = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center p-8 text-center opacity-40">
-                            <div className="w-16 h-16 rounded-full bg-[var(--bg-elevated-soft)] flex items-center justify-center mb-4 border border-[var(--border-subtle)]">
-                                <MousePointer2 size={24} className="text-[var(--accent-gold)]" />
+                        <div className="p-4">
+                            <div className="flex items-center gap-2 mb-4 text-[var(--fg-muted)]">
+                                <Layers size={16} />
+                                <span className="text-xs font-bold uppercase tracking-wider">Camadas</span>
                             </div>
-                            <h3 className="text-sm font-bold text-[var(--fg-main)] mb-1">Nada Selecionado</h3>
-                            <p className="text-xs text-[var(--fg-muted)]">Clique em um elemento no certificado para editar suas propriedades.</p>
+
+                            <div className="space-y-2">
+                                {[...elements].reverse().map((el, i) => (
+                                    <div
+                                        key={el.id}
+                                        onClick={() => setSelectedElementId(el.id)}
+                                        className="flex items-center gap-3 p-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-elevated-soft)] hover:border-[var(--accent-gold)] cursor-pointer group transition-all"
+                                    >
+                                        <div className="w-8 h-8 rounded bg-[var(--bg-elevated)] flex items-center justify-center text-[var(--fg-muted)] shrink-0 font-mono text-xs border border-[var(--border-subtle)]">
+                                            {elements.length - i}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="text-xs font-medium text-[var(--fg-main)] truncate">
+                                                {el.type === 'qrcode' ? 'QR Code' : el.text || 'Texto vazio'}
+                                            </div>
+                                            <div className="text-[10px] text-[var(--fg-soft)] uppercase tracking-wide">
+                                                {el.type === 'variable' ? 'Variável' : el.type}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {elements.length === 0 && (
+                                    <div className="text-center py-8 text-[var(--fg-soft)] text-xs italic">
+                                        Nenhum elemento adicionado
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </aside>
