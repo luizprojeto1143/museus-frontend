@@ -40,7 +40,7 @@ import { GuestbookPage } from "./modules/visitor/pages/GuestbookPage";
 import { VisualScannerPage } from "./modules/visitor/pages/VisualScannerPage";
 import { LeaderboardPage } from "./modules/visitor/pages/LeaderboardPage";
 import { VisitorProfile } from "./modules/visitor/pages/VisitorProfile";
-import { CertificateVerification } from "./modules/public/CertificateVerification";
+import { CertificateValidator } from "./modules/public/CertificateValidator";
 import { ShopPage } from "./modules/visitor/pages/ShopPage";
 import { ChallengesPage } from "./modules/visitor/pages/ChallengesPage";
 
@@ -121,7 +121,7 @@ const App: React.FC = () => {
           {/* PUBLIC ROUTES */}
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/select-museum" element={<SelectMuseum />} />
-          <Route path="/verify/:code" element={<CertificateVerification />} />
+          <Route path="/verify/:code" element={<CertificateValidator />} />
           <Route path="/register" element={<RegisterWrapper />} />
           <Route path="/login" element={<Login />} />
 

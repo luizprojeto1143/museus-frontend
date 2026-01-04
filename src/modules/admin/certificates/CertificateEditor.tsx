@@ -6,7 +6,7 @@ import { Button } from '../../../components/ui/Button';
 import {
     Save, Image as ImageIcon, Type, Trash,
     Settings, Move, ZoomIn, ZoomOut,
-    QrCode, LayoutTemplate, MousePointer2
+    QrCode, LayoutTemplate, MousePointer2, AlertTriangle
 } from 'lucide-react';
 
 interface Element {
@@ -121,7 +121,18 @@ export const CertificateEditor: React.FC = () => {
     };
 
     const deleteElement = (id: string) => {
-        setElements(prev => prev.filter(el => el.id !== id));
+        const el = elements.find(e => e.id === id);
+        if (el) {
+            if (el.type === 'qrcode') {
+                alert("O QR Code é obrigatório para validação e não pode ser removido.");
+                return;
+            }
+            if (el.text === '{{code}}') {
+                alert("O Código de Validação é obrigatório e não pode ser removido.");
+                return;
+            }
+        }
+        setElements(prev => prev.filter(elm => elm.id !== id));
         setSelectedElementId(null);
     };
 
@@ -432,10 +443,19 @@ export const CertificateEditor: React.FC = () => {
                                     onClick={() => deleteElement(selectedElement.id)}
                                     className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-1.5 rounded-md transition-colors"
                                     title="Remover elemento"
+                                    disabled={selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}'}
+                                    style={{ opacity: (selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}') ? 0.5 : 1 }}
                                 >
                                     <Trash size={16} />
                                 </button>
                             </div>
+
+                            {(selectedElement.type === 'qrcode' || selectedElement.text === '{{code}}') && (
+                                <div className="bg-yellow-900/20 border border-yellow-700/30 p-2.5 rounded text-xs text-yellow-500 flex items-start gap-2">
+                                    <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                                    <span>Este elemento é obrigatório para a validação do certificado e não pode ser removido.</span>
+                                </div>
+                            )}
 
                             <div className="space-y-5">
                                 {selectedElement.type !== 'qrcode' && (
