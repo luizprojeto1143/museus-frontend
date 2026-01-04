@@ -40,10 +40,21 @@ export const CertificateEditor: React.FC = () => {
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
     const dragItem = useRef<string | null>(null);
+    const textInputRef = useRef<HTMLTextAreaElement>(null);
+
+    // Focus properties panel input when element is selected
+    useEffect(() => {
+        if (selectedElementId && textInputRef.current) {
+            textInputRef.current.focus();
+        }
+    }, [selectedElementId]);
+
 
     useEffect(() => {
         if (id) loadTemplate();
     }, [id]);
+
+
 
     const loadTemplate = async () => {
         try {
@@ -357,6 +368,11 @@ export const CertificateEditor: React.FC = () => {
                                         draggable
                                         onDragStart={(e) => handleDragStart(e, el.id)}
                                         onClick={(e) => { e.stopPropagation(); setSelectedElementId(el.id); }}
+                                        onDoubleClick={(e) => {
+                                            e.stopPropagation();
+                                            setSelectedElementId(el.id);
+                                            setTimeout(() => textInputRef.current?.focus(), 50);
+                                        }}
                                         className={`absolute group cursor-move hover:outline hover:outline-1 hover:outline-[var(--accent-gold)] ${isSelected ? 'outline outline-2 outline-[var(--accent-gold)] z-10' : ''}`}
                                         style={{
                                             left: el.x,
@@ -427,10 +443,11 @@ export const CertificateEditor: React.FC = () => {
                                         <div className="form-group">
                                             <label className="form-label text-xs mb-1.5 block uppercase tracking-wide text-[var(--fg-soft)]">Conteúdo de Texto</label>
                                             <textarea
+                                                ref={textInputRef}
                                                 value={selectedElement.text}
                                                 onChange={e => updateElement(selectedElement.id, { text: e.target.value })}
                                                 rows={4}
-                                                className="input w-full text-sm leading-relaxed"
+                                                className="input w-full text-sm leading-relaxed focus:ring-2 focus:ring-[var(--accent-gold)]"
                                                 placeholder="Digite o texto aqui..."
                                             />
                                         </div>
