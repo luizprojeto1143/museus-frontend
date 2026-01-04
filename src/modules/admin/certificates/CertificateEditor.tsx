@@ -192,7 +192,7 @@ export const CertificateEditor: React.FC = () => {
     const selectedElement = elements.find(el => el.id === selectedElementId);
 
     return (
-        <div className="flex flex-col h-[calc(100vh-4rem)] bg-[var(--bg-page)] overflow-hidden">
+        <div className="flex flex-col h-[calc(100vh-70px)] -m-8 bg-[var(--bg-page)] overflow-hidden">
             {/* Header */}
             <header className="h-16 border-b border-[var(--border-subtle)] px-6 flex items-center justify-between z-10 shrink-0 bg-[var(--bg-elevated)]/80 backdrop-blur-md">
                 <div className="flex items-center gap-4">
