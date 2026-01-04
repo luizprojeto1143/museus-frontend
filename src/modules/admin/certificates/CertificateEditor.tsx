@@ -215,9 +215,9 @@ export const CertificateEditor: React.FC = () => {
                 </div>
             </header>
 
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex flex-row overflow-hidden">
                 {/* Left Sidebar: Tools */}
-                <aside className="w-80 bg-[var(--bg-elevated)] border-r border-[var(--border-subtle)] flex flex-col z-20 shadow-xl">
+                <aside className="w-80 bg-[var(--bg-elevated)] border-r border-[var(--border-subtle)] flex flex-col z-20 shadow-xl shrink-0">
                     <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-soft)]">
                         <h2 className="text-sm font-bold text-[var(--accent-gold)] uppercase tracking-wider flex items-center gap-2">
                             <LayoutTemplate size={16} /> Ferramentas
@@ -290,9 +290,6 @@ export const CertificateEditor: React.FC = () => {
                         {/* Section: Variables */}
                         <div>
                             <h3 className="section-title text-xs font-bold text-[var(--fg-muted)] uppercase mb-3">Variáveis Dinâmicas</h3>
-                            <p className="text-[10px] text-[var(--fg-muted)] mb-3 leading-relaxed">
-                                Clique para adicionar campos que serão preenchidos automaticamente.
-                            </p>
                             <div className="space-y-2">
                                 {[
                                     { label: 'Nome do Visitante', val: '{{nome_visitante}}' },
@@ -304,10 +301,13 @@ export const CertificateEditor: React.FC = () => {
                                     <button
                                         key={v.val}
                                         onClick={() => addElement('variable', v.val)}
-                                        className="w-full flex items-center justify-between px-3 py-2 text-xs text-[var(--fg-main)] bg-[var(--bg-elevated-soft)] border border-[var(--border-subtle)] rounded-md hover:border-[var(--accent-gold)] hover:bg-[var(--bg-elevated)] hover:shadow-sm transition-all group"
+                                        className="w-full flex items-center gap-3 px-3 py-2 text-xs text-[var(--fg-main)] bg-[var(--bg-elevated-soft)] border border-[var(--border-subtle)] rounded-md hover:border-[var(--accent-gold)] hover:bg-[var(--bg-elevated)] hover:shadow-sm transition-all group text-left"
                                     >
-                                        <span>{v.label}</span>
-                                        <span className="text-[10px] bg-[var(--bg-elevated)] px-1.5 py-0.5 rounded text-[var(--fg-soft)] group-hover:text-[var(--accent-gold)] font-mono">{v.val}</span>
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-gold)] shrink-0" />
+                                        <div className="flex-1">
+                                            <span className="block font-medium">{v.label}</span>
+                                            <span className="text-[10px] text-[var(--fg-soft)] font-mono opacity-80">{v.val}</span>
+                                        </div>
                                     </button>
                                 ))}
                             </div>
@@ -316,29 +316,31 @@ export const CertificateEditor: React.FC = () => {
                 </aside>
 
                 {/* Center: Workspace (Canvas) */}
-                <main className="flex-1 bg-[var(--bg-page)] relative overflow-hidden flex flex-col">
-                    <div className="flex-1 overflow-auto p-12 flex items-center justify-center relative">
-                        {/* Grid Pattern Overlay */}
-                        <div className="absolute inset-0 opacity-5 pointer-events-none"
-                            style={{ backgroundImage: 'radial-gradient(#d4af37 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+                <main className="flex-1 bg-[#1a1108] relative overflow-hidden flex flex-col items-center justify-center p-8">
+                    {/* Grid Pattern Overlay */}
+                    <div className="absolute inset-0 opacity-10 pointer-events-none"
+                        style={{ backgroundImage: 'radial-gradient(#d4af37 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
+                    <div className="relative">
                         <div
                             ref={containerRef}
-                            className="bg-white shadow-[0_0_50px_rgba(0,0,0,0.5)] relative transition-transform duration-200 ease-out origin-center select-none ring-1 ring-black/5"
+                            className="shadow-2xl relative transition-transform duration-200 ease-out origin-center select-none"
                             style={{
                                 width: '842px',
                                 height: '595px',
                                 transform: `scale(${zoom})`,
+                                backgroundColor: '#ffffff', // FORCE WHITE BACKGROUND
                                 backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
                                 backgroundSize: 'cover',
-                                backgroundPosition: 'center'
+                                backgroundPosition: 'center',
+                                border: '1px solid #e5e7eb' // subtle border for white-on-white situations usually, but here contrast is high
                             }}
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
                             onClick={() => setSelectedElementId(null)}
                         >
                             {!backgroundUrl && (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-gray-300 pointer-events-none gap-4">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-gray-300 pointer-events-none gap-4 m-8">
                                     <span className="text-6xl opacity-20">📜</span>
                                     <span className="text-2xl font-bold opacity-30 font-serif">Área do Certificado (A4)</span>
                                 </div>
@@ -385,18 +387,18 @@ export const CertificateEditor: React.FC = () => {
                                 );
                             })}
                         </div>
+                    </div>
 
-                        {/* Zoom Controls Floating */}
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-[var(--bg-elevated)]/90 backdrop-blur border border-[var(--border-subtle)] rounded-full px-4 py-2 shadow-xl">
-                            <button onClick={() => setZoom(z => Math.max(0.4, z - 0.1))} className="text-[var(--fg-muted)] hover:text-[var(--accent-gold)] transition-colors"><ZoomOut size={16} /></button>
-                            <span className="text-xs font-mono w-12 text-center text-[var(--fg-main)]">{Math.round(zoom * 100)}%</span>
-                            <button onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="text-[var(--fg-muted)] hover:text-[var(--accent-gold)] transition-colors"><ZoomIn size={16} /></button>
-                        </div>
+                    {/* Zoom Controls Floating */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-[var(--bg-elevated)]/90 backdrop-blur border border-[var(--border-subtle)] rounded-full px-4 py-2 shadow-xl z-30">
+                        <button onClick={() => setZoom(z => Math.max(0.4, z - 0.1))} className="text-[var(--fg-muted)] hover:text-[var(--accent-gold)] transition-colors"><ZoomOut size={16} /></button>
+                        <span className="text-xs font-mono w-12 text-center text-[var(--fg-main)]">{Math.round(zoom * 100)}%</span>
+                        <button onClick={() => setZoom(z => Math.min(2, z + 0.1))} className="text-[var(--fg-muted)] hover:text-[var(--accent-gold)] transition-colors"><ZoomIn size={16} /></button>
                     </div>
                 </main>
 
                 {/* Right Sidebar: Properties */}
-                <aside className="w-80 bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] overflow-y-auto custom-scrollbar shadow-xl z-20">
+                <aside className="w-80 bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] overflow-y-auto custom-scrollbar shadow-xl z-20 shrink-0">
                     <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-soft)] flex justify-between items-center">
                         <h2 className="text-sm font-bold text-[var(--accent-gold)] uppercase tracking-wider flex items-center gap-2">
                             <Settings size={16} /> Propriedades
