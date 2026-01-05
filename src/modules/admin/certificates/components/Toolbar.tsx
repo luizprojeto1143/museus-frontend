@@ -27,68 +27,302 @@ export const Toolbar: React.FC = () => {
         { label: 'Código Validação', val: '{{code}}', icon: Hash }
     ];
 
+    const styles = {
+        aside: {
+            width: '280px',
+            background: 'linear-gradient(180deg, #1a1108 0%, #0f0a04 100%)',
+            borderRight: '1px solid rgba(61,46,26,0.5)',
+            display: 'flex',
+            flexDirection: 'column' as const,
+            height: '100%',
+            flexShrink: 0,
+        },
+        header: {
+            padding: '20px',
+            borderBottom: '1px solid rgba(61,46,26,0.5)',
+            background: 'linear-gradient(90deg, rgba(212,175,55,0.1) 0%, transparent 100%)',
+        },
+        title: {
+            fontSize: '12px',
+            fontWeight: 700,
+            color: '#d4af37',
+            textTransform: 'uppercase' as const,
+            letterSpacing: '2px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+        },
+        subtitle: {
+            fontSize: '10px',
+            color: '#a89060',
+            marginTop: '6px',
+            opacity: 0.7,
+        },
+        content: {
+            flex: 1,
+            overflowY: 'auto' as const,
+            padding: '20px',
+        },
+        section: {
+            marginBottom: '28px',
+        },
+        sectionTitle: {
+            fontSize: '11px',
+            fontWeight: 700,
+            color: '#a89060',
+            textTransform: 'uppercase' as const,
+            letterSpacing: '1px',
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+        },
+        sectionLine: {
+            width: '32px',
+            height: '1px',
+            background: 'linear-gradient(90deg, rgba(212,175,55,0.5) 0%, transparent 100%)',
+        },
+        elementsGrid: {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '12px',
+        },
+        elementBtn: {
+            display: 'flex',
+            flexDirection: 'column' as const,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px 12px',
+            borderRadius: '12px',
+            border: '1px solid #3d2e1a',
+            background: 'linear-gradient(180deg, #1f1610 0%, #151009 100%)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+        },
+        elementIcon: {
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '12px',
+        },
+        elementLabel: {
+            fontSize: '12px',
+            fontWeight: 600,
+            color: '#e8dcc8',
+        },
+        elementSub: {
+            fontSize: '9px',
+            color: '#8a7a5a',
+            marginTop: '4px',
+        },
+        variableBtn: {
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '12px 16px',
+            borderRadius: '10px',
+            border: '1px solid rgba(61,46,26,0.6)',
+            background: 'rgba(26,17,8,0.5)',
+            cursor: 'pointer',
+            marginBottom: '8px',
+            transition: 'all 0.2s ease',
+            textAlign: 'left' as const,
+        },
+        variableIcon: {
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            background: 'rgba(212,175,55,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+        },
+        variableLabel: {
+            fontSize: '12px',
+            color: '#e8dcc8',
+            fontWeight: 500,
+        },
+        variableCode: {
+            fontSize: '9px',
+            color: '#6a5a3a',
+            fontFamily: 'monospace',
+            marginTop: '2px',
+        },
+        bgUpload: {
+            aspectRatio: '16/9',
+            background: 'linear-gradient(135deg, #1f1610 0%, #0f0a04 100%)',
+            borderRadius: '12px',
+            border: '2px dashed #3d2e1a',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column' as const,
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            position: 'relative' as const,
+        },
+        bgIcon: {
+            width: '56px',
+            height: '56px',
+            borderRadius: '50%',
+            border: '2px dashed currentColor',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '12px',
+            color: '#6a5a3a',
+        },
+        bgText: {
+            fontSize: '11px',
+            fontWeight: 500,
+            color: '#6a5a3a',
+        },
+        bgSubtext: {
+            fontSize: '9px',
+            color: '#6a5a3a',
+            opacity: 0.6,
+            marginTop: '4px',
+        },
+        footer: {
+            padding: '16px',
+            borderTop: '1px solid rgba(61,46,26,0.5)',
+            background: 'rgba(15,10,4,0.8)',
+        },
+        zoomContainer: {
+            display: 'flex',
+            alignItems: 'center',
+            background: '#1a1108',
+            borderRadius: '10px',
+            padding: '8px',
+            border: '1px solid rgba(61,46,26,0.5)',
+        },
+        zoomBtn: {
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'transparent',
+            border: 'none',
+            color: '#8a7a5a',
+            cursor: 'pointer',
+        },
+        zoomTrack: {
+            flex: 1,
+            margin: '0 12px',
+            height: '6px',
+            background: '#2a1f14',
+            borderRadius: '3px',
+            overflow: 'hidden',
+        },
+        zoomFill: {
+            height: '100%',
+            background: 'linear-gradient(90deg, #d4af37 0%, #f0d878 100%)',
+            borderRadius: '3px',
+            transition: 'width 0.2s ease',
+        },
+        zoomLabel: {
+            fontSize: '12px',
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            color: '#d4af37',
+            width: '48px',
+            textAlign: 'center' as const,
+        },
+    };
+
     return (
-        <aside className="w-72 bg-gradient-to-b from-[#1a1108] to-[#0f0a04] border-r border-[#3d2e1a]/50 flex flex-col z-20 shrink-0 h-full shadow-2xl">
-            {/* Header */}
-            <div className="p-5 border-b border-[#3d2e1a]/50 bg-gradient-to-r from-[#d4af37]/10 to-transparent">
-                <h2 className="text-sm font-bold text-[#d4af37] uppercase tracking-widest flex items-center gap-2">
-                    <LayoutTemplate size={18} className="opacity-80" />
+        <aside style={styles.aside}>
+            <div style={styles.header}>
+                <h2 style={styles.title}>
+                    <LayoutTemplate size={18} style={{ opacity: 0.8 }} />
                     Ferramentas
                 </h2>
-                <p className="text-[10px] text-[#a89060] mt-1 opacity-70">Arraste elementos para o canvas</p>
+                <p style={styles.subtitle}>Arraste elementos para o canvas</p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-8">
-                {/* Basic Elements */}
-                <div>
-                    <h3 className="text-[11px] font-bold text-[#a89060] uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <div className="w-8 h-px bg-gradient-to-r from-[#d4af37]/50 to-transparent" />
+            <div style={styles.content}>
+                {/* Elements */}
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>
+                        <div style={styles.sectionLine} />
                         Elementos
                     </h3>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div style={styles.elementsGrid}>
                         <button
                             onClick={() => addElement('text')}
-                            className="group relative flex flex-col items-center justify-center p-5 rounded-xl border border-[#3d2e1a] bg-gradient-to-b from-[#1f1610] to-[#151009] hover:border-[#d4af37]/60 hover:shadow-lg hover:shadow-[#d4af37]/10 transition-all duration-300 hover:-translate-y-0.5"
+                            style={styles.elementBtn}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = '#3d2e1a';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                            }}
                         >
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d4af37]/20 to-[#d4af37]/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                <Type size={22} className="text-[#d4af37]" />
+                            <div style={styles.elementIcon}>
+                                <Type size={22} color="#d4af37" />
                             </div>
-                            <span className="text-xs font-semibold text-[#e8dcc8]">Texto</span>
-                            <span className="text-[9px] text-[#8a7a5a] mt-1">Adicionar texto</span>
+                            <span style={styles.elementLabel}>Texto</span>
+                            <span style={styles.elementSub}>Adicionar texto</span>
                         </button>
 
                         <button
                             onClick={() => addElement('qrcode')}
-                            className="group relative flex flex-col items-center justify-center p-5 rounded-xl border border-[#3d2e1a] bg-gradient-to-b from-[#1f1610] to-[#151009] hover:border-[#d4af37]/60 hover:shadow-lg hover:shadow-[#d4af37]/10 transition-all duration-300 hover:-translate-y-0.5"
+                            style={styles.elementBtn}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'rgba(212,175,55,0.6)';
+                                e.currentTarget.style.transform = 'translateY(-2px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = '#3d2e1a';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                            }}
                         >
-                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d4af37]/20 to-[#d4af37]/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                                <QrCode size={22} className="text-[#d4af37]" />
+                            <div style={styles.elementIcon}>
+                                <QrCode size={22} color="#d4af37" />
                             </div>
-                            <span className="text-xs font-semibold text-[#e8dcc8]">QR Code</span>
-                            <span className="text-[9px] text-[#8a7a5a] mt-1">Validação</span>
+                            <span style={styles.elementLabel}>QR Code</span>
+                            <span style={styles.elementSub}>Validação</span>
                         </button>
                     </div>
                 </div>
 
                 {/* Variables */}
-                <div>
-                    <h3 className="text-[11px] font-bold text-[#a89060] uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <div className="w-8 h-px bg-gradient-to-r from-[#d4af37]/50 to-transparent" />
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>
+                        <div style={styles.sectionLine} />
                         Variáveis Dinâmicas
                     </h3>
-                    <div className="space-y-2">
+                    <div>
                         {variables.map(v => (
                             <button
                                 key={v.val}
                                 onClick={() => addElement('variable', v.val)}
-                                className="w-full text-left px-4 py-3 text-xs rounded-lg border border-[#3d2e1a]/60 bg-[#1a1108]/50 hover:bg-[#d4af37]/10 hover:border-[#d4af37]/40 flex items-center gap-3 transition-all duration-200 group"
+                                style={styles.variableBtn}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.background = 'rgba(212,175,55,0.1)';
+                                    e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.background = 'rgba(26,17,8,0.5)';
+                                    e.currentTarget.style.borderColor = 'rgba(61,46,26,0.6)';
+                                }}
                             >
-                                <div className="w-8 h-8 rounded-lg bg-[#d4af37]/10 flex items-center justify-center group-hover:bg-[#d4af37]/20 transition-colors">
-                                    <v.icon size={14} className="text-[#d4af37]" />
+                                <div style={styles.variableIcon}>
+                                    <v.icon size={14} color="#d4af37" />
                                 </div>
-                                <div className="flex-1">
-                                    <span className="text-[#e8dcc8] font-medium block">{v.label}</span>
-                                    <span className="text-[9px] text-[#6a5a3a] font-mono">{v.val}</span>
+                                <div style={{ flex: 1 }}>
+                                    <div style={styles.variableLabel}>{v.label}</div>
+                                    <div style={styles.variableCode}>{v.val}</div>
                                 </div>
                             </button>
                         ))}
@@ -96,57 +330,53 @@ export const Toolbar: React.FC = () => {
                 </div>
 
                 {/* Background */}
-                <div>
-                    <h3 className="text-[11px] font-bold text-[#a89060] uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <div className="w-8 h-px bg-gradient-to-r from-[#d4af37]/50 to-transparent" />
+                <div style={styles.section}>
+                    <h3 style={styles.sectionTitle}>
+                        <div style={styles.sectionLine} />
                         Imagem de Fundo
                     </h3>
                     <div
-                        className="aspect-video bg-gradient-to-br from-[#1f1610] to-[#0f0a04] rounded-xl border-2 border-dashed border-[#3d2e1a] hover:border-[#d4af37]/50 cursor-pointer relative overflow-hidden group transition-all duration-300"
+                        style={styles.bgUpload}
                         onClick={() => document.getElementById('bg-upload-new')?.click()}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = 'rgba(212,175,55,0.5)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = '#3d2e1a';
+                        }}
                     >
                         {backgroundUrl ? (
-                            <>
-                                <img src={backgroundUrl} className="w-full h-full object-cover" alt="bg" />
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                    <span className="text-white text-xs font-medium">Alterar</span>
-                                </div>
-                            </>
+                            <img src={backgroundUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="bg" />
                         ) : (
-                            <div className="flex flex-col items-center justify-center h-full text-[#6a5a3a] group-hover:text-[#d4af37] transition-colors">
-                                <div className="w-14 h-14 rounded-full border-2 border-dashed border-current flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <>
+                                <div style={styles.bgIcon}>
                                     <ImageIcon size={24} />
                                 </div>
-                                <span className="text-[11px] font-medium">Clique para adicionar</span>
-                                <span className="text-[9px] opacity-60 mt-1">PNG, JPG até 5MB</span>
-                            </div>
+                                <span style={styles.bgText}>Clique para adicionar</span>
+                                <span style={styles.bgSubtext}>PNG, JPG até 5MB</span>
+                            </>
                         )}
                     </div>
-                    <input type="file" id="bg-upload-new" className="hidden" accept="image/*" onChange={handleFileUpload} />
+                    <input type="file" id="bg-upload-new" style={{ display: 'none' }} accept="image/*" onChange={handleFileUpload} />
                 </div>
             </div>
 
             {/* Zoom Footer */}
-            <div className="p-4 border-t border-[#3d2e1a]/50 bg-[#0f0a04]/80">
-                <div className="flex items-center justify-between bg-[#1a1108] rounded-lg p-2 border border-[#3d2e1a]/50">
+            <div style={styles.footer}>
+                <div style={styles.zoomContainer}>
                     <button
                         onClick={() => setZoom((z: number) => Math.max(0.2, z - 0.1))}
-                        className="w-8 h-8 rounded-lg hover:bg-[#d4af37]/10 flex items-center justify-center text-[#8a7a5a] hover:text-[#d4af37] transition-colors"
+                        style={styles.zoomBtn}
                     >
                         <ZoomOut size={16} />
                     </button>
-                    <div className="flex-1 mx-3">
-                        <div className="h-1.5 bg-[#2a1f14] rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-[#d4af37] to-[#f0d878] rounded-full transition-all"
-                                style={{ width: `${Math.min(100, (zoom - 0.2) / 2.8 * 100)}%` }}
-                            />
-                        </div>
+                    <div style={styles.zoomTrack}>
+                        <div style={{ ...styles.zoomFill, width: `${Math.min(100, (zoom - 0.2) / 2.8 * 100)}%` }} />
                     </div>
-                    <span className="text-xs font-mono font-bold text-[#d4af37] w-12 text-center">{Math.round(zoom * 100)}%</span>
+                    <span style={styles.zoomLabel}>{Math.round(zoom * 100)}%</span>
                     <button
                         onClick={() => setZoom((z: number) => Math.min(3, z + 0.1))}
-                        className="w-8 h-8 rounded-lg hover:bg-[#d4af37]/10 flex items-center justify-center text-[#8a7a5a] hover:text-[#d4af37] transition-colors"
+                        style={styles.zoomBtn}
                     >
                         <ZoomIn size={16} />
                     </button>
