@@ -5,7 +5,17 @@ import { useCertificate } from '../context/CertificateContext';
 import { CertificateElement } from '../types';
 import { QrCode } from 'lucide-react';
 
-const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element }) => {
+interface ElementRendererProps {
+    element: CertificateElement;
+    onSelect: (id: string) => void;
+}
+
+const ElementRenderer: React.FC<ElementRendererProps> = ({ element, onSelect }) => {
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent container click from clearing selection
+        onSelect(element.id);
+    };
+
     return (
         <div
             className="certificate-element"
@@ -34,6 +44,7 @@ const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element })
                 borderRadius: element.type === 'qrcode' ? '8px' : undefined,
             }}
             data-id={element.id}
+            onClick={handleClick}
         >
             {element.type === 'qrcode' ? (
                 <>
@@ -58,6 +69,7 @@ export const CertificateCanvas: React.FC = () => {
     const selectoRef = useRef<Selecto>(null);
     const [targets, setTargets] = useState<(HTMLElement | SVGElement)[]>([]);
 
+    // Sync targets when selection changes
     useEffect(() => {
         const domTargets: (HTMLElement | SVGElement)[] = [];
         selectedIds.forEach(id => {
@@ -66,6 +78,16 @@ export const CertificateCanvas: React.FC = () => {
         });
         setTargets(domTargets);
     }, [selectedIds, elements]);
+
+    // Handle element selection
+    const handleElementSelect = (id: string) => {
+        setSelectedIds([id]);
+    };
+
+    // Handle container click (clear selection)
+    const handleContainerClick = () => {
+        setSelectedIds([]);
+    };
 
     const styles = {
         wrapper: {
@@ -161,7 +183,7 @@ export const CertificateCanvas: React.FC = () => {
                 <div
                     ref={containerRef}
                     style={styles.certificate}
-                    onClick={() => setSelectedIds([])}
+                    onClick={handleContainerClick}
                 >
                     {!backgroundUrl && (
                         <div style={styles.emptyState}>
@@ -174,7 +196,11 @@ export const CertificateCanvas: React.FC = () => {
                     )}
 
                     {elements.map(el => (
-                        <ElementRenderer key={el.id} element={el} />
+                        <ElementRenderer
+                            key={el.id}
+                            element={el}
+                            onSelect={handleElementSelect}
+                        />
                     ))}
                 </div>
 
@@ -270,7 +296,9 @@ export const CertificateCanvas: React.FC = () => {
                     toggleContinueSelect={['shift']}
                     onSelect={e => {
                         const ids = e.selected.map(el => el.getAttribute('data-id') || '').filter(Boolean);
-                        setSelectedIds(ids);
+                        if (ids.length > 0) {
+                            setSelectedIds(ids);
+                        }
                     }}
                 />
             </div>
