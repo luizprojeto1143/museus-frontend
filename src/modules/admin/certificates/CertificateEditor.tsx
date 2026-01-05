@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../../api/client';
 import { Save, ArrowLeft, RotateCcw, RotateCw, Loader2, FileText } from 'lucide-react';
 
-// New Architecture Imports
 import { CertificateProvider, useCertificate } from './context/CertificateContext';
 import { CertificateCanvas } from './components/CertificateCanvas';
 import { Toolbar } from './components/Toolbar';
@@ -22,7 +21,6 @@ const CertificateEditorContent: React.FC = () => {
         loadTemplate
     } = useCertificate();
 
-    // Load Logic
     useEffect(() => {
         if (id) {
             const fetchTemplate = async () => {
@@ -46,7 +44,6 @@ const CertificateEditorContent: React.FC = () => {
         }
     }, [id, loadTemplate]);
 
-    // Save Logic
     const handleSave = async () => {
         setSaving(true);
         try {
@@ -71,51 +68,175 @@ const CertificateEditorContent: React.FC = () => {
         }
     };
 
+    const styles = {
+        container: {
+            display: 'flex',
+            flexDirection: 'column' as const,
+            height: 'calc(100vh - 70px)',
+            margin: '-32px',
+            overflow: 'hidden',
+            background: '#0a0705',
+        },
+        header: {
+            height: '64px',
+            borderBottom: '1px solid rgba(61,46,26,0.5)',
+            padding: '0 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexShrink: 0,
+            background: 'linear-gradient(to right, rgba(26,17,8,0.95), rgba(15,10,4,0.98))',
+            backdropFilter: 'blur(12px)',
+            zIndex: 100,
+        },
+        headerLeft: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px',
+        },
+        backBtn: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            fontSize: '12px',
+            fontWeight: 500,
+            color: '#a89060',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+        },
+        divider: {
+            height: '32px',
+            width: '1px',
+            background: 'linear-gradient(to bottom, transparent, #3d2e1a, transparent)',
+        },
+        titleWrapper: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+        },
+        titleIcon: {
+            width: '36px',
+            height: '36px',
+            borderRadius: '8px',
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.05) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        titleInput: {
+            background: 'transparent',
+            border: 'none',
+            fontSize: '18px',
+            fontWeight: 600,
+            color: '#e8dcc8',
+            outline: 'none',
+            width: '250px',
+            padding: '4px 8px',
+            borderRadius: '6px',
+        },
+        headerRight: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+        },
+        undoRedoGroup: {
+            display: 'flex',
+            alignItems: 'center',
+            background: '#1a1108',
+            borderRadius: '10px',
+            border: '1px solid rgba(61,46,26,0.5)',
+            padding: '4px',
+        },
+        undoRedoBtn: {
+            width: '36px',
+            height: '36px',
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'transparent',
+            border: 'none',
+            color: '#8a7a5a',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+        },
+        undoRedoDivider: {
+            width: '1px',
+            height: '20px',
+            background: 'rgba(61,46,26,0.5)',
+            margin: '0 2px',
+        },
+        saveBtn: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '10px 20px',
+            borderRadius: '10px',
+            fontWeight: 600,
+            fontSize: '14px',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+        },
+        // CRITICAL: The workspace layout
+        workspace: {
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'row' as const,
+            overflow: 'hidden',
+            position: 'relative' as const,
+        },
+    };
+
     return (
-        <div className="flex flex-col h-[calc(100vh-70px)] -m-8 overflow-hidden" style={{ background: '#0a0705' }}>
+        <div style={styles.container}>
             {/* HEADER */}
-            <header className="h-16 border-b border-[#3d2e1a]/50 px-6 flex items-center justify-between z-30 shrink-0 backdrop-blur-xl"
-                style={{ background: 'linear-gradient(to right, rgba(26,17,8,0.95), rgba(15,10,4,0.98))' }}>
-                <div className="flex items-center gap-5">
+            <header style={styles.header}>
+                <div style={styles.headerLeft}>
                     <button
                         onClick={() => navigate('/admin/certificates')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium text-[#a89060] hover:text-[#d4af37] hover:bg-[#d4af37]/10 transition-all duration-200"
+                        style={styles.backBtn}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = '#a89060'; e.currentTarget.style.background = 'transparent'; }}
                     >
                         <ArrowLeft size={16} />
                         <span>Voltar</span>
                     </button>
 
-                    <div className="h-8 w-px bg-gradient-to-b from-transparent via-[#3d2e1a] to-transparent" />
+                    <div style={styles.divider} />
 
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#d4af37]/20 to-[#d4af37]/5 flex items-center justify-center">
-                            <FileText size={18} className="text-[#d4af37]" />
+                    <div style={styles.titleWrapper}>
+                        <div style={styles.titleIcon}>
+                            <FileText size={18} color="#d4af37" />
                         </div>
                         <input
                             value={name}
                             onChange={e => setName(e.target.value)}
-                            className="bg-transparent border-0 text-lg font-semibold text-[#e8dcc8] placeholder-[#6a5a3a] outline-none focus:ring-0 w-64 hover:bg-[#d4af37]/5 px-2 py-1 rounded-lg transition-colors"
+                            style={styles.titleInput}
                             placeholder="Nome do Modelo"
                         />
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    {/* Undo/Redo */}
-                    <div className="flex items-center bg-[#1a1108] rounded-lg border border-[#3d2e1a]/50 p-1">
+                <div style={styles.headerRight}>
+                    <div style={styles.undoRedoGroup}>
                         <button
                             onClick={undo}
                             disabled={!canUndo}
-                            className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-[#d4af37]/10 disabled:opacity-20 transition-all text-[#8a7a5a] hover:text-[#d4af37] disabled:hover:bg-transparent"
+                            style={{ ...styles.undoRedoBtn, opacity: canUndo ? 1 : 0.3 }}
                             title="Desfazer (Ctrl+Z)"
                         >
                             <RotateCcw size={16} />
                         </button>
-                        <div className="w-px h-5 bg-[#3d2e1a]/50 mx-0.5" />
+                        <div style={styles.undoRedoDivider} />
                         <button
                             onClick={redo}
                             disabled={!canRedo}
-                            className="w-9 h-9 rounded-md flex items-center justify-center hover:bg-[#d4af37]/10 disabled:opacity-20 transition-all text-[#8a7a5a] hover:text-[#d4af37] disabled:hover:bg-transparent"
+                            style={{ ...styles.undoRedoBtn, opacity: canRedo ? 1 : 0.3 }}
                             title="Refazer (Ctrl+Y)"
                         >
                             <RotateCw size={16} />
@@ -125,11 +246,11 @@ const CertificateEditorContent: React.FC = () => {
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex items-center gap-2.5 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 disabled:opacity-50"
                         style={{
+                            ...styles.saveBtn,
                             background: saving ? '#3d2e1a' : 'linear-gradient(135deg, #d4af37 0%, #c4a030 50%, #b8942a 100%)',
                             color: saving ? '#8a7a5a' : '#1a1108',
-                            boxShadow: saving ? 'none' : '0 4px 20px -4px rgba(212,175,55,0.4)'
+                            boxShadow: saving ? 'none' : '0 4px 20px -4px rgba(212,175,55,0.4)',
                         }}
                     >
                         {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
@@ -138,8 +259,8 @@ const CertificateEditorContent: React.FC = () => {
                 </div>
             </header>
 
-            {/* EDITOR WORKSPACE */}
-            <div className="flex-1 flex flex-row overflow-hidden relative">
+            {/* WORKSPACE: 3 columns side by side */}
+            <div style={styles.workspace}>
                 <Toolbar />
                 <CertificateCanvas />
                 <PropertiesPanel />
