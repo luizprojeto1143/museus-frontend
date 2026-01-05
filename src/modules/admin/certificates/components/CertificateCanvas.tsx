@@ -94,120 +94,113 @@ export const CertificateCanvas: React.FC = () => {
                     {elements.map(el => (
                         <ElementRenderer key={el.id} element={el} />
                     ))}
+                </div>
 
-                    <Moveable
-                        ref={moveableRef}
-                        target={targets}
-                        draggable={true}
-                        resizable={true}
-                        rotatable={true}
-                        snappable={true}
-                        snapDirections={{ top: true, left: true, bottom: true, right: true, center: true, middle: true }}
-                        elementGuidelines={Array.from(document.querySelectorAll('.certificate-element'))}
+                {/* Overlays - Moved OUTSIDE the scaled container */}
+                <Moveable
+                    ref={moveableRef}
+                    target={targets}
+                    draggable={true}
+                    resizable={true}
+                    rotatable={true}
+                    snappable={true}
+                    snapDirections={{ top: true, left: true, bottom: true, right: true, center: true, middle: true }}
+                    elementGuidelines={Array.from(document.querySelectorAll('.certificate-element'))}
 
-                        // Drag
-                        onDragStart={() => saveSnapshot()}
-                        onDrag={e => {
-                            e.target.style.transform = e.transform;
-                        }}
-                        onDragEnd={e => {
-                            if (e.isDrag) {
-                                // Extract X and Y (simple parse for MVP, robust solution uses matrix)
-                                // Moveable returns `translate(x, y) rotate(deg)`
-                                // We need to sync this back to React state
-                                const target = e.target as HTMLElement;
-                                const id = target.getAttribute('data-id');
-                                if (id) {
-                                    // Parse transform manually or assume relative delta?
-                                    // Moveable's "beforeTranslate" or "absolute" logic is better, but let's try delta first
-                                    // Actually, react-moveable modifies transform directly. We just need to parse it back or use e.lastEvent
-
-                                    // Better approach: use e.beforeTranslate which gives [x, y]
-                                    // BUT onDragEnd doesn't give precise final X/Y easily without parsing style.
-                                    // Let's rely on parsing the transform style we just set.
-                                    const match = target.style.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-                                    if (match) {
-                                        updateElement(id, {
-                                            x: parseFloat(match[1]),
-                                            y: parseFloat(match[2])
-                                        });
-                                    }
-                                }
-                            }
-                        }}
-                        // Group Drag
-                        onDragGroupStart={() => saveSnapshot()}
-                        onDragGroup={e => {
-                            e.events.forEach(ev => {
-                                ev.target.style.transform = ev.transform;
-                            });
-                        }}
-                        onDragGroupEnd={e => {
-                            e.events.forEach(ev => {
-                                const target = ev.target as HTMLElement;
-                                const id = target.getAttribute('data-id');
-                                if (id) {
-                                    const match = target.style.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-                                    if (match) updateElement(id, { x: parseFloat(match[1]), y: parseFloat(match[2]) });
-                                }
-                            });
-                        }}
-
-                        // Resize
-                        onResizeStart={() => saveSnapshot()}
-                        onResize={e => {
-                            e.target.style.width = `${e.width}px`;
-                            e.target.style.height = `${e.height}px`;
-                            e.target.style.transform = e.drag.transform;
-                        }}
-                        onResizeEnd={e => {
+                    // Drag
+                    onDragStart={() => saveSnapshot()}
+                    onDrag={e => {
+                        e.target.style.transform = e.transform;
+                    }}
+                    onDragEnd={e => {
+                        if (e.isDrag) {
                             const target = e.target as HTMLElement;
                             const id = target.getAttribute('data-id');
                             if (id) {
                                 const match = target.style.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
-                                const x = match ? parseFloat(match[1]) : 0;
-                                const y = match ? parseFloat(match[2]) : 0;
-
-                                updateElement(id, {
-                                    width: e.lastEvent?.width || parseFloat(target.style.width),
-                                    height: e.lastEvent?.height || parseFloat(target.style.height),
-                                    x, y
-                                });
+                                if (match) {
+                                    updateElement(id, {
+                                        x: parseFloat(match[1]),
+                                        y: parseFloat(match[2])
+                                    });
+                                }
                             }
-                        }}
-
-                        // Rotate
-                        onRotateStart={() => saveSnapshot()}
-                        onRotate={e => {
-                            e.target.style.transform = e.drag.transform;
-                        }}
-                        onRotateEnd={e => {
-                            const target = e.target as HTMLElement;
+                        }
+                    }}
+                    // Group Drag
+                    onDragGroupStart={() => saveSnapshot()}
+                    onDragGroup={e => {
+                        e.events.forEach(ev => {
+                            ev.target.style.transform = ev.transform;
+                        });
+                    }}
+                    onDragGroupEnd={e => {
+                        e.events.forEach(ev => {
+                            const target = ev.target as HTMLElement;
                             const id = target.getAttribute('data-id');
                             if (id) {
-                                // We need to extract rotation. Moveable gives us e.lastEvent.rotate ideally?
-                                // Or parsing.
-                                // Regex for rotate
-                                const match = target.style.transform.match(/rotate\(([-\d.]+)deg\)/);
-                                if (match) updateElement(id, { rotate: parseFloat(match[1]) });
+                                const match = target.style.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+                                if (match) updateElement(id, { x: parseFloat(match[1]), y: parseFloat(match[2]) });
                             }
-                        }}
-                    />
+                        });
+                    }}
 
-                    <Selecto
-                        ref={selectoRef}
-                        dragContainer={containerRef.current}
-                        selectableTargets={['.certificate-element']}
-                        hitRate={0}
-                        selectByClick={true}
-                        selectFromInside={false}
-                        toggleContinueSelect={['shift']}
-                        onSelect={e => {
-                            const ids = e.selected.map(el => el.getAttribute('data-id') || '').filter(Boolean);
-                            setSelectedIds(ids);
-                        }}
-                    />
-                </div>
+                    // Resize
+                    onResizeStart={() => saveSnapshot()}
+                    onResize={e => {
+                        e.target.style.width = `${e.width}px`;
+                        e.target.style.height = `${e.height}px`;
+                        e.target.style.transform = e.drag.transform;
+                    }}
+                    onResizeEnd={e => {
+                        const target = e.target as HTMLElement;
+                        const id = target.getAttribute('data-id');
+                        if (id) {
+                            const match = target.style.transform.match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+                            const x = match ? parseFloat(match[1]) : 0;
+                            const y = match ? parseFloat(match[2]) : 0;
+
+                            updateElement(id, {
+                                width: e.lastEvent?.width || parseFloat(target.style.width),
+                                height: e.lastEvent?.height || parseFloat(target.style.height),
+                                x, y
+                            });
+                        }
+                    }}
+
+                    // Rotate
+                    onRotateStart={() => saveSnapshot()}
+                    onRotate={e => {
+                        e.target.style.transform = e.drag.transform;
+                    }}
+                    onRotateEnd={e => {
+                        const target = e.target as HTMLElement;
+                        const id = target.getAttribute('data-id');
+                        if (id) {
+                            const match = target.style.transform.match(/rotate\(([-\d.]+)deg\)/);
+                            if (match) updateElement(id, { rotate: parseFloat(match[1]) });
+                        }
+                    }}
+                />
+
+                <Selecto
+                    ref={selectoRef}
+                    dragContainer={window}
+                    selectableTargets={['.certificate-element']}
+                    hitRate={0}
+                    selectByClick={true}
+                    selectFromInside={false}
+                    toggleContinueSelect={['shift']}
+                    onSelect={e => {
+                        const ids = e.selected.map(el => el.getAttribute('data-id') || '').filter(Boolean);
+                        setSelectedIds(ids);
+                    }}
+                />
+            </div>
+
+            {/* Zoom Controls Overlay */}
+            <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur rounded-lg shadow-lg border border-gray-200 p-2 flex items-center gap-2 z-50">
+                <span className="text-xs font-mono font-medium px-2 text-black">{Math.round(zoom * 100)}%</span>
             </div>
         </div>
     );
