@@ -39,12 +39,21 @@ export const CertificateEditor: React.FC = () => {
 
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
-    const dragItem = useRef<string | null>(null);
     const textInputRef = useRef<HTMLTextAreaElement>(null);
+
+    // Pointer Drag State
+    const dragInfo = useRef<{
+        id: string;
+        startX: number;
+        startY: number;
+        originalX: number;
+        originalY: number;
+    } | null>(null);
 
     // Focus properties panel input when element is selected
     useEffect(() => {
-        if (selectedElementId && textInputRef.current) {
+        // Only focus if NOT dragging (to prevent theft)
+        if (selectedElementId && textInputRef.current && !dragInfo.current) {
             textInputRef.current.focus({ preventScroll: true });
         }
     }, [selectedElementId]);
@@ -159,39 +168,59 @@ export const CertificateEditor: React.FC = () => {
         });
     };
 
-    // Drag & Drop
-    const handleDragStart = (e: React.DragEvent, elId: string) => {
+    // Pointer Events Drag Logic
+    const handlePointerDown = (e: React.PointerEvent, el: Element) => {
         e.stopPropagation();
-        dragItem.current = elId;
-        e.dataTransfer.effectAllowed = 'move';
-        // Set drag image to transparent or custom if needed
-    };
-
-    const handleDrop = (e: React.DragEvent) => {
         e.preventDefault();
-        const elId = dragItem.current;
-        if (!elId || !containerRef.current) return;
 
-        const rect = containerRef.current.getBoundingClientRect();
+        // Select element immediately on touch/click
+        setSelectedElementId(el.id);
 
-        // Calculate position relative to the scaled canvas
-        // Mouse ClientX - Canvas Left = X relative to canvas screen pixels
-        // Divide by Zoom to get X relative to canvas real pixels
-        const x = (e.clientX - rect.left) / zoom;
-        const y = (e.clientY - rect.top) / zoom;
-
-        // Snap to grid removed for free movement
-        // const snappedX = Math.round(x / 10) * 10;
-        // const snappedY = Math.round(y / 10) * 10;
-
-        updateElement(elId, { x, y });
-        dragItem.current = null;
+        dragInfo.current = {
+            id: el.id,
+            startX: e.clientX,
+            startY: e.clientY,
+            originalX: el.x,
+            originalY: el.y
+        };
     };
 
-    const handleDragOver = (e: React.DragEvent) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    };
+    // Global Pointer Move & Up
+    useEffect(() => {
+        const handleGlobalMove = (e: PointerEvent) => {
+            if (!dragInfo.current) return;
+
+            const { startX, startY, originalX, originalY } = dragInfo.current;
+
+            // Delta / zoom enables 1:1 movement relative to canvas scale
+            const deltaX = (e.clientX - startX) / zoom;
+            const deltaY = (e.clientY - startY) / zoom;
+
+            updateElement(dragInfo.current.id, {
+                x: originalX + deltaX,
+                y: originalY + deltaY
+            });
+        };
+
+        const handleGlobalUp = () => {
+            if (dragInfo.current) {
+                dragInfo.current = null;
+                // Refocus input after drag finishes
+                if (textInputRef.current) textInputRef.current.focus({ preventScroll: true });
+            }
+        };
+
+        window.addEventListener('pointermove', handleGlobalMove);
+        window.addEventListener('pointerup', handleGlobalUp);
+        // Also catch if mouse leaves window
+        window.addEventListener('pointercancel', handleGlobalUp);
+
+        return () => {
+            window.removeEventListener('pointermove', handleGlobalMove);
+            window.removeEventListener('pointerup', handleGlobalUp);
+            window.removeEventListener('pointercancel', handleGlobalUp);
+        };
+    }, [zoom, elements]); // Re-bind if zoom changes to ensure calculation is correct
 
     // File Upload Handler
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -384,8 +413,6 @@ export const CertificateEditor: React.FC = () => {
                                 backgroundPosition: 'center',
                                 border: '1px solid #e5e7eb' // subtle border for white-on-white situations usually, but here contrast is high
                             }}
-                            onDrop={handleDrop}
-                            onDragOver={handleDragOver}
                             onClick={() => setSelectedElementId(null)}
                         >
                             {!backgroundUrl && (
@@ -400,13 +427,8 @@ export const CertificateEditor: React.FC = () => {
                                 return (
                                     <div
                                         key={el.id}
-                                        draggable={true}
-                                        onDragStart={(e) => handleDragStart(e, el.id)}
-                                        onClick={(e) => { e.stopPropagation(); setSelectedElementId(el.id); }}
-                                        onDoubleClick={(e) => {
-                                            e.stopPropagation();
-                                            setSelectedElementId(el.id);
-                                        }}
+                                        onPointerDown={(e) => handlePointerDown(e, el)}
+                                        onClick={(e) => e.stopPropagation()} // Prevent deselection
                                         className={`absolute group cursor-move hover:outline hover:outline-1 hover:outline-[var(--accent-gold)] ${isSelected ? 'outline outline-2 outline-[var(--accent-gold)] z-10' : ''}`}
                                         style={{
                                             left: el.x,
