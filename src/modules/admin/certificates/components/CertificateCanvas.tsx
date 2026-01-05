@@ -77,6 +77,7 @@ export const CertificateCanvas: React.FC = () => {
                         width: '842px',
                         height: '595px',
                         transform: `scale(${zoom})`,
+                        backgroundColor: '#ffffff', // FORCE WHITE BACKGROUND
                         backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
@@ -85,8 +86,8 @@ export const CertificateCanvas: React.FC = () => {
                 >
                     {!backgroundUrl && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-gray-300 pointer-events-none gap-4">
-                            <span className="text-6xl opacity-20">📜</span>
-                            <span className="text-2xl font-bold opacity-30 font-serif">Área do Certificado (A4)</span>
+                            <span className="text-6xl opacity-10">📜</span>
+                            <span className="text-2xl font-bold opacity-20 font-serif">Área do Certificado (A4)</span>
                         </div>
                     )}
 
