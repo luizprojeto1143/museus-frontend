@@ -457,7 +457,9 @@ export const CertificateEditor: React.FC = () => {
                                             fontFamily: el.fontFamily,
                                             width: el.width,
                                             height: el.height,
-                                            textAlign: el.align
+                                            height: el.height,
+                                            textAlign: el.align,
+                                            touchAction: 'none'
                                         }}
                                     >
                                         {isSelected && (
