@@ -8,7 +8,7 @@ import { QrCode } from 'lucide-react';
 const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element }) => {
     return (
         <div
-            className={`certificate-element relative group ${element.type === 'qrcode' ? 'bg-gradient-to-br from-gray-900 to-black text-white/60 flex flex-col items-center justify-center rounded-lg' : ''}`}
+            className="certificate-element"
             style={{
                 position: 'absolute',
                 left: 0,
@@ -19,20 +19,26 @@ const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element })
                 fontSize: element.fontSize,
                 fontFamily: element.fontFamily,
                 color: element.color,
-                textAlign: element.align,
+                textAlign: element.align as any,
                 opacity: element.opacity ?? 1,
                 whiteSpace: 'pre-wrap',
                 lineHeight: 1.2,
                 cursor: 'pointer',
                 touchAction: 'none',
-                userSelect: 'none'
+                userSelect: 'none',
+                display: element.type === 'qrcode' ? 'flex' : 'block',
+                flexDirection: 'column',
+                alignItems: element.type === 'qrcode' ? 'center' : undefined,
+                justifyContent: element.type === 'qrcode' ? 'center' : undefined,
+                background: element.type === 'qrcode' ? 'linear-gradient(135deg, #1a1a1a 0%, #000 100%)' : 'transparent',
+                borderRadius: element.type === 'qrcode' ? '8px' : undefined,
             }}
             data-id={element.id}
         >
             {element.type === 'qrcode' ? (
                 <>
-                    <QrCode size={element.width ? element.width * 0.5 : 24} />
-                    <span className="text-[10px] mt-1 opacity-60">QR Code</span>
+                    <QrCode size={element.width ? element.width * 0.5 : 24} color="rgba(255,255,255,0.6)" />
+                    <span style={{ fontSize: '10px', marginTop: '4px', opacity: 0.6, color: 'white' }}>QR Code</span>
                 </>
             ) : (
                 element.text
@@ -61,55 +67,109 @@ export const CertificateCanvas: React.FC = () => {
         setTargets(domTargets);
     }, [selectedIds, elements]);
 
+    const styles = {
+        wrapper: {
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative' as const,
+            overflow: 'hidden',
+            padding: '32px',
+            background: 'radial-gradient(ellipse at center, #1f1610 0%, #0f0a04 100%)',
+            minWidth: 0,
+        },
+        gridPattern: {
+            position: 'absolute' as const,
+            inset: 0,
+            pointerEvents: 'none' as const,
+            backgroundImage: 'radial-gradient(#d4af37 0.5px, transparent 0.5px)',
+            backgroundSize: '32px 32px',
+            opacity: 0.08,
+        },
+        ambientGlow: {
+            position: 'absolute' as const,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '800px',
+            height: '600px',
+            borderRadius: '50%',
+            pointerEvents: 'none' as const,
+            background: 'radial-gradient(ellipse, rgba(212,175,55,0.05) 0%, transparent 70%)',
+        },
+        canvasContainer: {
+            position: 'relative' as const,
+        },
+        canvasShadow: {
+            position: 'absolute' as const,
+            inset: 0,
+            borderRadius: '8px',
+            pointerEvents: 'none' as const,
+            width: '842px',
+            height: '595px',
+            boxShadow: '0 25px 80px -20px rgba(0,0,0,0.6), 0 0 60px -15px rgba(212,175,55,0.15)',
+            transform: `scale(${zoom})`,
+            transformOrigin: 'center center',
+        },
+        certificate: {
+            position: 'relative' as const,
+            width: '842px',
+            height: '595px',
+            backgroundColor: '#ffffff',
+            backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            transform: `scale(${zoom})`,
+            transformOrigin: 'center center',
+            transition: 'transform 0.2s ease-out',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            userSelect: 'none' as const,
+        },
+        emptyState: {
+            position: 'absolute' as const,
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column' as const,
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid #e5e7eb',
+            color: '#9ca3af',
+            pointerEvents: 'none' as const,
+        },
+        emptyIcon: {
+            width: '96px',
+            height: '96px',
+            borderRadius: '50%',
+            border: '2px dashed #d1d5db',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '16px',
+        },
+    };
+
     return (
-        <div className="flex-1 relative overflow-hidden flex flex-col items-center justify-center p-8"
-            style={{ background: 'radial-gradient(ellipse at center, #1f1610 0%, #0f0a04 100%)' }}>
-            {/* Subtle Grid Pattern */}
-            <div className="absolute inset-0 pointer-events-none"
-                style={{
-                    backgroundImage: 'radial-gradient(#d4af37 0.5px, transparent 0.5px)',
-                    backgroundSize: '32px 32px',
-                    opacity: 0.08
-                }}
-            />
+        <div style={styles.wrapper}>
+            <div style={styles.gridPattern} />
+            <div style={styles.ambientGlow} />
 
-            {/* Ambient Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full pointer-events-none"
-                style={{ background: 'radial-gradient(ellipse, rgba(212,175,55,0.05) 0%, transparent 70%)' }} />
-
-            <div className="relative">
-                {/* Certificate Shadow */}
-                <div
-                    className="absolute inset-0 rounded-lg pointer-events-none"
-                    style={{
-                        transform: `scale(${zoom})`,
-                        width: '842px',
-                        height: '595px',
-                        boxShadow: '0 25px 80px -20px rgba(0,0,0,0.6), 0 0 60px -15px rgba(212,175,55,0.15)',
-                    }}
-                />
+            <div style={styles.canvasContainer}>
+                <div style={styles.canvasShadow} />
 
                 <div
                     ref={containerRef}
-                    className="relative transition-transform duration-200 ease-out origin-center select-none rounded-sm overflow-hidden"
-                    style={{
-                        width: '842px',
-                        height: '595px',
-                        transform: `scale(${zoom})`,
-                        backgroundColor: '#ffffff',
-                        backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
+                    style={styles.certificate}
                     onClick={() => setSelectedIds([])}
                 >
                     {!backgroundUrl && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center border border-gray-200 text-gray-300 pointer-events-none">
-                            <div className="w-24 h-24 rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center mb-4">
-                                <span className="text-4xl opacity-30">📜</span>
+                        <div style={styles.emptyState}>
+                            <div style={styles.emptyIcon}>
+                                <span style={{ fontSize: '36px', opacity: 0.3 }}>📜</span>
                             </div>
-                            <span className="text-lg font-medium opacity-40">Área do Certificado</span>
-                            <span className="text-xs text-gray-400 mt-2 opacity-50">842 × 595 px (A4 Paisagem)</span>
+                            <span style={{ fontSize: '18px', fontWeight: 500, opacity: 0.4 }}>Área do Certificado</span>
+                            <span style={{ fontSize: '12px', color: '#9ca3af', marginTop: '8px', opacity: 0.5 }}>842 × 595 px (A4 Paisagem)</span>
                         </div>
                     )}
 
@@ -118,7 +178,6 @@ export const CertificateCanvas: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Moveable & Selecto - Outside scaled container */}
                 <Moveable
                     ref={moveableRef}
                     target={targets}
