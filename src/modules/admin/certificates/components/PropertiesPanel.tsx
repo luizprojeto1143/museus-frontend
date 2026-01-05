@@ -2,7 +2,7 @@ import React from 'react';
 import { useCertificate } from '../context/CertificateContext';
 import {
     Trash, Copy, ArrowUp, ArrowDown, Type, AlignLeft, AlignCenter, AlignRight,
-    Settings, Layers
+    Settings, Move, RotateCw, Maximize2, Palette
 } from 'lucide-react';
 
 export const PropertiesPanel: React.FC = () => {
@@ -13,11 +13,15 @@ export const PropertiesPanel: React.FC = () => {
 
     if (selectedIds.length === 0) {
         return (
-            <aside className="w-72 bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] flex flex-col z-20 shadow-xl shrink-0 h-full p-4">
-                <div className="flex flex-col items-center justify-center h-full text-[var(--fg-muted)] opacity-50 text-center">
-                    <Settings size={48} className="mb-4" />
-                    <h3 className="text-sm font-medium">Nenhum elemento selecionado</h3>
-                    <p className="text-xs mt-2 max-w-[200px]">Clique em um elemento para editar suas propriedades.</p>
+            <aside className="w-72 bg-gradient-to-b from-[#1a1108] to-[#0f0a04] border-l border-[#3d2e1a]/50 flex flex-col z-20 shrink-0 h-full shadow-2xl">
+                <div className="flex flex-col items-center justify-center h-full text-[#6a5a3a] text-center px-8">
+                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#d4af37]/10 to-transparent flex items-center justify-center mb-6">
+                        <Settings size={36} className="text-[#d4af37]/40" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-[#a89060]">Nenhum elemento selecionado</h3>
+                    <p className="text-[11px] mt-3 leading-relaxed opacity-70">
+                        Clique em um elemento no canvas para editar suas propriedades
+                    </p>
                 </div>
             </aside>
         );
@@ -33,56 +37,74 @@ export const PropertiesPanel: React.FC = () => {
         selectedIds.forEach(id => updateElement(id, updates));
     };
 
+    const ActionButton: React.FC<{ onClick: () => void; icon: any; label: string; danger?: boolean }> =
+        ({ onClick, icon: Icon, label, danger }) => (
+            <button
+                onClick={onClick}
+                className={`flex-1 p-3 rounded-lg flex flex-col items-center gap-1.5 transition-all duration-200 ${danger
+                        ? 'hover:bg-red-900/20 text-red-400 hover:text-red-300'
+                        : 'hover:bg-[#d4af37]/10 text-[#8a7a5a] hover:text-[#d4af37]'
+                    }`}
+                title={label}
+            >
+                <Icon size={18} />
+                <span className="text-[9px] font-medium uppercase tracking-wider">{label}</span>
+            </button>
+        );
+
     return (
-        <aside className="w-72 bg-[var(--bg-elevated)] border-l border-[var(--border-subtle)] flex flex-col z-20 shadow-xl shrink-0 h-full">
-            <div className="p-4 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated-soft)] flex justify-between items-center">
-                <h2 className="text-sm font-bold text-[var(--accent-gold)] uppercase tracking-wider flex items-center gap-2">
-                    <Settings size={16} /> Propriedades
-                </h2>
-                <span className="text-[10px] bg-[var(--bg-elevated)] px-2 py-0.5 rounded border border-[var(--border-subtle)]">
-                    {isMulti ? `${selectedIds.length} selecionados` : selectedElement?.type}
-                </span>
+        <aside className="w-72 bg-gradient-to-b from-[#1a1108] to-[#0f0a04] border-l border-[#3d2e1a]/50 flex flex-col z-20 shrink-0 h-full shadow-2xl">
+            {/* Header */}
+            <div className="p-5 border-b border-[#3d2e1a]/50 bg-gradient-to-r from-[#d4af37]/10 to-transparent">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-sm font-bold text-[#d4af37] uppercase tracking-widest flex items-center gap-2">
+                        <Settings size={18} className="opacity-80" />
+                        Propriedades
+                    </h2>
+                    <span className="text-[10px] bg-[#d4af37]/20 text-[#d4af37] px-3 py-1 rounded-full font-semibold uppercase tracking-wide">
+                        {isMulti ? `${selectedIds.length} itens` : selectedElement?.type}
+                    </span>
+                </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-6">
-                {/* GLOBAL ACTIONS */}
-                <div className="flex items-center gap-2 p-2 bg-[var(--bg-elevated-soft)] rounded border border-[var(--border-subtle)]">
-                    <button onClick={duplicateSelected} className="flex-1 p-2 hover:bg-[var(--bg-elevated)] rounded transition-colors text-[var(--fg-main)]" title="Duplicar">
-                        <Copy size={16} className="mx-auto" />
-                    </button>
-                    <div className="w-px h-6 bg-[var(--border-subtle)]" />
-                    <button onClick={bringToFront} className="flex-1 p-2 hover:bg-[var(--bg-elevated)] rounded transition-colors text-[var(--fg-main)]" title="Trazer p/ Frente">
-                        <ArrowUp size={16} className="mx-auto" />
-                    </button>
-                    <button onClick={sendToBack} className="flex-1 p-2 hover:bg-[var(--bg-elevated)] rounded transition-colors text-[var(--fg-main)]" title="Enviar p/ Trás">
-                        <ArrowDown size={16} className="mx-auto" />
-                    </button>
-                    <div className="w-px h-6 bg-[var(--border-subtle)]" />
-                    <button onClick={deleteSelected} className="flex-1 p-2 hover:bg-red-900/20 text-red-500 rounded transition-colors" title="Excluir">
-                        <Trash size={16} className="mx-auto" />
-                    </button>
+            <div className="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-6">
+                {/* Actions */}
+                <div className="bg-[#1f1610] rounded-xl border border-[#3d2e1a]/50 p-2 grid grid-cols-4 gap-1">
+                    <ActionButton onClick={duplicateSelected} icon={Copy} label="Copiar" />
+                    <ActionButton onClick={bringToFront} icon={ArrowUp} label="Frente" />
+                    <ActionButton onClick={sendToBack} icon={ArrowDown} label="Trás" />
+                    <ActionButton onClick={deleteSelected} icon={Trash} label="Excluir" danger />
                 </div>
 
-                {/* TEXT PROPERTIES */}
+                {/* Text Properties */}
                 {!isMulti && (selectedElement?.type === 'text' || selectedElement?.type === 'variable') && (
-                    <div className="space-y-4">
+                    <div className="space-y-5">
+                        {/* Content */}
                         <div>
-                            <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">Conteúdo</label>
+                            <label className="text-[11px] font-bold text-[#a89060] uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <div className="w-6 h-px bg-gradient-to-r from-[#d4af37]/50 to-transparent" />
+                                Conteúdo
+                            </label>
                             <textarea
                                 value={selectedElement.text}
                                 onChange={e => handleUpdate({ text: e.target.value })}
                                 rows={3}
-                                className="input w-full text-sm"
+                                className="w-full bg-[#1f1610] border border-[#3d2e1a] rounded-xl px-4 py-3 text-sm text-[#e8dcc8] placeholder-[#6a5a3a] focus:border-[#d4af37]/50 focus:ring-2 focus:ring-[#d4af37]/20 outline-none transition-all resize-none"
+                                placeholder="Digite o texto..."
                             />
                         </div>
 
+                        {/* Typography */}
                         <div>
-                            <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">Tipografia</label>
-                            <div className="grid grid-cols-2 gap-2 mb-2">
+                            <label className="text-[11px] font-bold text-[#a89060] uppercase tracking-wider mb-3 flex items-center gap-2">
+                                <div className="w-6 h-px bg-gradient-to-r from-[#d4af37]/50 to-transparent" />
+                                Tipografia
+                            </label>
+                            <div className="grid grid-cols-2 gap-3 mb-3">
                                 <select
                                     value={selectedElement.fontFamily}
                                     onChange={e => handleUpdate({ fontFamily: e.target.value })}
-                                    className="input text-xs"
+                                    className="bg-[#1f1610] border border-[#3d2e1a] rounded-lg px-3 py-2.5 text-xs text-[#e8dcc8] focus:border-[#d4af37]/50 outline-none"
                                 >
                                     <option value="Helvetica">Helvetica</option>
                                     <option value="Times New Roman">Times</option>
@@ -94,23 +116,26 @@ export const PropertiesPanel: React.FC = () => {
                                         type="number"
                                         value={selectedElement.fontSize}
                                         onChange={e => handleUpdate({ fontSize: Number(e.target.value) })}
-                                        className="input text-xs pl-8"
+                                        className="w-full bg-[#1f1610] border border-[#3d2e1a] rounded-lg px-3 py-2.5 pl-9 text-xs text-[#e8dcc8] focus:border-[#d4af37]/50 outline-none"
                                     />
-                                    <Type size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--fg-muted)]" />
+                                    <Type size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6a5a3a]" />
                                 </div>
                             </div>
 
                             {/* Colors & Align */}
-                            <div className="flex gap-2">
+                            <div className="flex gap-3">
                                 <div className="relative flex-1">
-                                    <input
-                                        type="color"
-                                        value={selectedElement.color}
-                                        onChange={e => handleUpdate({ color: e.target.value })}
-                                        className="w-full h-8 rounded cursor-pointer border border-[var(--border-subtle)]"
-                                    />
+                                    <div className="flex items-center gap-2 bg-[#1f1610] border border-[#3d2e1a] rounded-lg p-2">
+                                        <Palette size={14} className="text-[#6a5a3a]" />
+                                        <input
+                                            type="color"
+                                            value={selectedElement.color}
+                                            onChange={e => handleUpdate({ color: e.target.value })}
+                                            className="w-full h-6 rounded cursor-pointer bg-transparent border-0"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="flex bg-[var(--bg-elevated-soft)] rounded border border-[var(--border-subtle)] p-0.5">
+                                <div className="flex bg-[#1f1610] rounded-lg border border-[#3d2e1a] p-1">
                                     {[
                                         { v: 'left', i: AlignLeft },
                                         { v: 'center', i: AlignCenter },
@@ -119,7 +144,10 @@ export const PropertiesPanel: React.FC = () => {
                                         <button
                                             key={o.v}
                                             onClick={() => handleUpdate({ align: o.v })}
-                                            className={`p-1.5 rounded ${selectedElement.align === o.v ? 'bg-[var(--accent-gold)] text-black' : 'text-[var(--fg-muted)]'}`}
+                                            className={`p-2 rounded-md transition-all ${selectedElement.align === o.v
+                                                    ? 'bg-gradient-to-br from-[#d4af37] to-[#c4a030] text-[#1a1108] shadow-md'
+                                                    : 'text-[#6a5a3a] hover:text-[#d4af37]'
+                                                }`}
                                         >
                                             <o.i size={16} />
                                         </button>
@@ -130,25 +158,29 @@ export const PropertiesPanel: React.FC = () => {
                     </div>
                 )}
 
-                {/* DIMENSIONS (Read Only mostly, or allow manual edit) */}
-                {!isMulti && (
-                    <div className="pt-4 border-t border-[var(--border-subtle)]">
-                        <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">Transformação</label>
-                        <div className="grid grid-cols-2 gap-2 text-xs text-[var(--fg-muted)]">
-                            <div className="flex justify-between bg-[var(--bg-elevated-soft)] p-2 rounded">
-                                <span>X:</span> <span className="text-[var(--fg-main)] font-mono">{Math.round(selectedElement?.x || 0)}</span>
-                            </div>
-                            <div className="flex justify-between bg-[var(--bg-elevated-soft)] p-2 rounded">
-                                <span>Y:</span> <span className="text-[var(--fg-main)] font-mono">{Math.round(selectedElement?.y || 0)}</span>
-                            </div>
-                            <div className="flex justify-between bg-[var(--bg-elevated-soft)] p-2 rounded">
-                                <span>W:</span> <span className="text-[var(--fg-main)] font-mono">{Math.round(selectedElement?.width || 0)}</span>
-                            </div>
-                            <div className="flex justify-between bg-[var(--bg-elevated-soft)] p-2 rounded">
-                                <span>H:</span> <span className="text-[var(--fg-main)] font-mono">{Math.round(selectedElement?.height || 0)}</span>
-                            </div>
-                            <div className="flex justify-between bg-[var(--bg-elevated-soft)] p-2 rounded col-span-2">
-                                <span>Rotação:</span> <span className="text-[var(--fg-main)] font-mono">{Math.round(selectedElement?.rotate || 0)}°</span>
+                {/* Transformation */}
+                {!isMulti && selectedElement && (
+                    <div>
+                        <label className="text-[11px] font-bold text-[#a89060] uppercase tracking-wider mb-3 flex items-center gap-2">
+                            <div className="w-6 h-px bg-gradient-to-r from-[#d4af37]/50 to-transparent" />
+                            Transformação
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {[
+                                { label: 'X', value: selectedElement.x, icon: Move },
+                                { label: 'Y', value: selectedElement.y, icon: Move },
+                                { label: 'W', value: selectedElement.width, icon: Maximize2 },
+                                { label: 'H', value: selectedElement.height, icon: Maximize2 },
+                            ].map(item => (
+                                <div key={item.label} className="bg-[#1f1610] border border-[#3d2e1a]/50 rounded-lg p-3 flex items-center gap-2">
+                                    <span className="text-[10px] text-[#6a5a3a] font-bold w-3">{item.label}</span>
+                                    <span className="flex-1 text-right text-xs font-mono text-[#d4af37]">{Math.round(item.value || 0)}</span>
+                                </div>
+                            ))}
+                            <div className="col-span-2 bg-[#1f1610] border border-[#3d2e1a]/50 rounded-lg p-3 flex items-center gap-3">
+                                <RotateCw size={14} className="text-[#6a5a3a]" />
+                                <span className="text-[10px] text-[#6a5a3a] font-bold">Rotação</span>
+                                <span className="flex-1 text-right text-xs font-mono text-[#d4af37]">{Math.round(selectedElement.rotate || 0)}°</span>
                             </div>
                         </div>
                     </div>

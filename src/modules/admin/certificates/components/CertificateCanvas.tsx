@@ -8,7 +8,7 @@ import { QrCode } from 'lucide-react';
 const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element }) => {
     return (
         <div
-            className={`certificate-element relative group ${element.type === 'qrcode' ? 'bg-black text-white/50 flex flex-col items-center justify-center' : ''}`}
+            className={`certificate-element relative group ${element.type === 'qrcode' ? 'bg-gradient-to-br from-gray-900 to-black text-white/60 flex flex-col items-center justify-center rounded-lg' : ''}`}
             style={{
                 position: 'absolute',
                 left: 0,
@@ -32,7 +32,7 @@ const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element })
             {element.type === 'qrcode' ? (
                 <>
                     <QrCode size={element.width ? element.width * 0.5 : 24} />
-                    <span className="text-[10px]">QR Code</span>
+                    <span className="text-[10px] mt-1 opacity-60">QR Code</span>
                 </>
             ) : (
                 element.text
@@ -44,16 +44,14 @@ const ElementRenderer: React.FC<{ element: CertificateElement }> = ({ element })
 export const CertificateCanvas: React.FC = () => {
     const {
         elements, selectedIds, setSelectedIds, updateElement,
-        backgroundUrl, zoom, saveSnapshot, toggleSelection
+        backgroundUrl, zoom, saveSnapshot
     } = useCertificate();
 
-    // Refs
     const containerRef = useRef<HTMLDivElement>(null);
     const moveableRef = useRef<Moveable>(null);
     const selectoRef = useRef<Selecto>(null);
     const [targets, setTargets] = useState<(HTMLElement | SVGElement)[]>([]);
 
-    // Sync targets when selection changes
     useEffect(() => {
         const domTargets: (HTMLElement | SVGElement)[] = [];
         selectedIds.forEach(id => {
@@ -64,20 +62,41 @@ export const CertificateCanvas: React.FC = () => {
     }, [selectedIds, elements]);
 
     return (
-        <div className="flex-1 bg-[#1a1108] relative overflow-hidden flex flex-col items-center justify-center p-8">
-            {/* Grid Pattern */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(#d4af37 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+        <div className="flex-1 relative overflow-hidden flex flex-col items-center justify-center p-8"
+            style={{ background: 'radial-gradient(ellipse at center, #1f1610 0%, #0f0a04 100%)' }}>
+            {/* Subtle Grid Pattern */}
+            <div className="absolute inset-0 pointer-events-none"
+                style={{
+                    backgroundImage: 'radial-gradient(#d4af37 0.5px, transparent 0.5px)',
+                    backgroundSize: '32px 32px',
+                    opacity: 0.08
+                }}
+            />
+
+            {/* Ambient Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full pointer-events-none"
+                style={{ background: 'radial-gradient(ellipse, rgba(212,175,55,0.05) 0%, transparent 70%)' }} />
 
             <div className="relative">
+                {/* Certificate Shadow */}
+                <div
+                    className="absolute inset-0 rounded-lg pointer-events-none"
+                    style={{
+                        transform: `scale(${zoom})`,
+                        width: '842px',
+                        height: '595px',
+                        boxShadow: '0 25px 80px -20px rgba(0,0,0,0.6), 0 0 60px -15px rgba(212,175,55,0.15)',
+                    }}
+                />
+
                 <div
                     ref={containerRef}
-                    className="shadow-2xl relative transition-transform duration-200 ease-out origin-center select-none bg-white"
+                    className="relative transition-transform duration-200 ease-out origin-center select-none rounded-sm overflow-hidden"
                     style={{
                         width: '842px',
                         height: '595px',
                         transform: `scale(${zoom})`,
-                        backgroundColor: '#ffffff', // FORCE WHITE BACKGROUND
+                        backgroundColor: '#ffffff',
                         backgroundImage: backgroundUrl ? `url(${backgroundUrl})` : 'none',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
@@ -85,9 +104,12 @@ export const CertificateCanvas: React.FC = () => {
                     onClick={() => setSelectedIds([])}
                 >
                     {!backgroundUrl && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-gray-300 pointer-events-none gap-4">
-                            <span className="text-6xl opacity-10">📜</span>
-                            <span className="text-2xl font-bold opacity-20 font-serif">Área do Certificado (A4)</span>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center border border-gray-200 text-gray-300 pointer-events-none">
+                            <div className="w-24 h-24 rounded-full border-2 border-dashed border-gray-200 flex items-center justify-center mb-4">
+                                <span className="text-4xl opacity-30">📜</span>
+                            </div>
+                            <span className="text-lg font-medium opacity-40">Área do Certificado</span>
+                            <span className="text-xs text-gray-400 mt-2 opacity-50">842 × 595 px (A4 Paisagem)</span>
                         </div>
                     )}
 
@@ -96,7 +118,7 @@ export const CertificateCanvas: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Overlays - Moved OUTSIDE the scaled container */}
+                {/* Moveable & Selecto - Outside scaled container */}
                 <Moveable
                     ref={moveableRef}
                     target={targets}
@@ -107,7 +129,6 @@ export const CertificateCanvas: React.FC = () => {
                     snapDirections={{ top: true, left: true, bottom: true, right: true, center: true, middle: true }}
                     elementGuidelines={Array.from(document.querySelectorAll('.certificate-element'))}
 
-                    // Drag
                     onDragStart={() => saveSnapshot()}
                     onDrag={e => {
                         e.target.style.transform = e.transform;
@@ -127,7 +148,6 @@ export const CertificateCanvas: React.FC = () => {
                             }
                         }
                     }}
-                    // Group Drag
                     onDragGroupStart={() => saveSnapshot()}
                     onDragGroup={e => {
                         e.events.forEach(ev => {
@@ -145,7 +165,6 @@ export const CertificateCanvas: React.FC = () => {
                         });
                     }}
 
-                    // Resize
                     onResizeStart={() => saveSnapshot()}
                     onResize={e => {
                         e.target.style.width = `${e.width}px`;
@@ -168,7 +187,6 @@ export const CertificateCanvas: React.FC = () => {
                         }
                     }}
 
-                    // Rotate
                     onRotateStart={() => saveSnapshot()}
                     onRotate={e => {
                         e.target.style.transform = e.drag.transform;
@@ -196,11 +214,6 @@ export const CertificateCanvas: React.FC = () => {
                         setSelectedIds(ids);
                     }}
                 />
-            </div>
-
-            {/* Zoom Controls Overlay */}
-            <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur rounded-lg shadow-lg border border-gray-200 p-2 flex items-center gap-2 z-50">
-                <span className="text-xs font-mono font-medium px-2 text-black">{Math.round(zoom * 100)}%</span>
             </div>
         </div>
     );
