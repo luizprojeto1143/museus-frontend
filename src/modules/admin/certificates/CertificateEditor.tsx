@@ -40,6 +40,9 @@ export const CertificateEditor: React.FC = () => {
     // Refs
     const containerRef = useRef<HTMLDivElement>(null);
     const textInputRef = useRef<HTMLTextAreaElement>(null);
+    const elementRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+
 
     // Pointer Drag State
     const dragInfo = useRef<{
@@ -186,24 +189,39 @@ export const CertificateEditor: React.FC = () => {
     };
 
     // Global Pointer Move & Up
+    // Global Pointer Move & Up
     useEffect(() => {
         const handleGlobalMove = (e: PointerEvent) => {
             if (!dragInfo.current) return;
 
-            const { startX, startY, originalX, originalY } = dragInfo.current;
+            const { id, startX, startY, originalX, originalY } = dragInfo.current;
 
             // Delta / zoom enables 1:1 movement relative to canvas scale
             const deltaX = (e.clientX - startX) / zoom;
             const deltaY = (e.clientY - startY) / zoom;
 
-            updateElement(dragInfo.current.id, {
-                x: originalX + deltaX,
-                y: originalY + deltaY
-            });
+            // DIRECT DOM MANIPULATION FOR 60FPS PERFORMANCE
+            // We bypass React render cycle for smooth 60fps dragging
+            const el = elementRefs.current[id];
+            if (el) {
+                el.style.left = `${originalX + deltaX}px`;
+                el.style.top = `${originalY + deltaY}px`;
+            }
         };
 
-        const handleGlobalUp = () => {
+        const handleGlobalUp = (e: PointerEvent) => {
             if (dragInfo.current) {
+                const { id, startX, startY, originalX, originalY } = dragInfo.current;
+                const deltaX = (e.clientX - startX) / zoom;
+                const deltaY = (e.clientY - startY) / zoom;
+
+                // COMMIT TO REACT STATE ON DROP
+                // Only now do we trigger a re-render
+                updateElement(id, {
+                    x: originalX + deltaX,
+                    y: originalY + deltaY
+                });
+
                 dragInfo.current = null;
                 // Refocus input after drag finishes
                 if (textInputRef.current) textInputRef.current.focus({ preventScroll: true });
@@ -427,6 +445,7 @@ export const CertificateEditor: React.FC = () => {
                                 return (
                                     <div
                                         key={el.id}
+                                        ref={(r) => (elementRefs.current[el.id] = r)}
                                         onPointerDown={(e) => handlePointerDown(e, el)}
                                         onClick={(e) => e.stopPropagation()} // Prevent deselection
                                         className={`absolute group cursor-move hover:outline hover:outline-1 hover:outline-[var(--accent-gold)] ${isSelected ? 'outline outline-2 outline-[var(--accent-gold)] z-10' : ''}`}
