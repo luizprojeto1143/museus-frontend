@@ -34,6 +34,7 @@ export const TenantForm: React.FC = () => {
   const [featureReviews, setFeatureReviews] = useState(true);
   const [featureGuestbook, setFeatureGuestbook] = useState(true);
   const [featureAccessibility, setFeatureAccessibility] = useState(true);
+  const [featureMinigames, setFeatureMinigames] = useState(false);
 
   const loadTenant = async () => {
     try {
@@ -59,6 +60,7 @@ export const TenantForm: React.FC = () => {
       setFeatureReviews(data.featureReviews ?? true);
       setFeatureGuestbook(data.featureGuestbook ?? true);
       setFeatureAccessibility(data.featureAccessibility ?? true);
+      setFeatureMinigames(data.featureMinigames ?? false);
     } catch {
       console.error("Failed to load tenant");
       alert(t("common.errorLoad"));
@@ -105,6 +107,7 @@ export const TenantForm: React.FC = () => {
       featureReviews?: boolean;
       featureGuestbook?: boolean;
       featureAccessibility?: boolean;
+      featureMinigames?: boolean;
     }
 
     const payload: TenantPayload = {
@@ -127,7 +130,8 @@ export const TenantForm: React.FC = () => {
       featureCertificates,
       featureReviews,
       featureGuestbook,
-      featureAccessibility
+      featureAccessibility,
+      featureMinigames
     };
 
     if (!isEdit) {
@@ -325,6 +329,10 @@ export const TenantForm: React.FC = () => {
             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
               <input type="checkbox" checked={featureAccessibility} onChange={e => setFeatureAccessibility(e.target.checked)} />
               ♿ Acessibilidade/Libras
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureMinigames} onChange={e => setFeatureMinigames(e.target.checked)} />
+              🎮 Minigame (Art Run)
             </label>
 
             {/* Premium Features */}
