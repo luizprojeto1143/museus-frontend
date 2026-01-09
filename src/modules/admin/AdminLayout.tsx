@@ -27,6 +27,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈" },
     { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂" },
     { to: "/admin/usuarios", label: t("admin.sidebar.users", "Usuários"), icon: "👤" },
+    { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️" },
+    { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍" },
     { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️" }
   ];
 

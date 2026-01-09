@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 import { api, isDemoMode } from "../../../api/client";
 import {
   MapPin, Calendar, Globe, Share2, Ticket as TicketIcon,
@@ -14,6 +15,14 @@ type Ticket = {
   price: number;
   quantity: number;
   sold: number;
+};
+
+type FormField = {
+  id: string;
+  label: string;
+  type: 'text' | 'textarea' | 'select' | 'checkbox';
+  required: boolean;
+  options?: string[];
 };
 
 type EventDetail = {
@@ -38,17 +47,30 @@ type EventDetail = {
   city?: string;
   state?: string;
 
+  // Sympla Killer Features
+  customFormSchema?: FormField[];
+  galleryUrls?: string[];
+
   tenant?: { name: string };
 };
 
 export const EventDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  // Navigation
+  // const navigate = useNavigate(); // IF needed
+
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [attendance, setAttendance] = useState<any>(null);
+
+  // Checkout State
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [selectedTicketId, setSelectedTicketId] = useState<string>("");
+  const [ticketQuantity, setTicketQuantity] = useState(1);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   // Demo Fallback
   useEffect(() => {
@@ -70,7 +92,17 @@ export const EventDetail: React.FC = () => {
         api.get(`/events/${id}/tickets`).catch(() => ({ data: [] })),
         api.get(`/events/${id}/my-attendance`).catch(() => ({ data: { attended: false } }))
       ]).then(([evRes, tickRes, attRes]) => {
-        setEvent(evRes.data);
+        const evData = evRes.data;
+
+        // Parse JSON fields if they come as strings (safe check)
+        if (typeof evData.customFormSchema === 'string') {
+          try { evData.customFormSchema = JSON.parse(evData.customFormSchema); } catch (e) { evData.customFormSchema = []; }
+        }
+        if (typeof evData.galleryUrls === 'string') {
+          try { evData.galleryUrls = JSON.parse(evData.galleryUrls); } catch (e) { evData.galleryUrls = []; }
+        }
+
+        setEvent(evData);
         setTickets(tickRes.data);
         if (attRes.data?.attended) setAttendance(attRes.data.attendance);
       }).finally(() => setLoading(false));
@@ -80,12 +112,25 @@ export const EventDetail: React.FC = () => {
   if (loading) return <div className="p-8 text-center animate-pulse">Carregando detalhes...</div>;
   if (!event) return <div className="p-8 text-center">Evento não encontrado</div>;
 
+
+
   const formatDate = (d: string) => new Date(d).toLocaleDateString(i18n.language, {
     weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'
   });
 
   return (
     <div className="pb-24">
+      <Helmet>
+        <title>{event.title} | Museus</title>
+        <meta name="description" content={event.description?.substring(0, 150)} />
+        {/* Open Graph / Facebook / WhatsApp */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={`Evento: ${event.title}`} />
+        <meta property="og:description" content={event.description?.substring(0, 150)} />
+        <meta property="og:image" content={event.coverImageUrl} />
+        <meta property="og:url" content={window.location.href} />
+      </Helmet>
+
       {/* Cover Image Parallax */}
       <div className="relative h-64 md:h-80 w-full overflow-hidden bg-gray-900">
         <img
@@ -123,6 +168,20 @@ export const EventDetail: React.FC = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{formatDate(event.startDate)}</p>
                 </div>
               </div>
+
+              {/* Photo Gallery (Sympla Killer) */}
+              {event.galleryUrls && event.galleryUrls.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="section-title text-xl">Galeria</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {event.galleryUrls.map((url, idx) => (
+                      <div key={idx} className="aspect-square rounded-lg overflow-hidden bg-gray-100 cursor-pointer hover:opacity-90 transition-opacity">
+                        <img src={url} alt={`Galeria ${idx}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -210,7 +269,7 @@ export const EventDetail: React.FC = () => {
             </div>
           ) : (
             <button
-              onClick={() => alert("Janela de Inscrição em criação no próximo passo...")}
+              onClick={() => setIsCheckoutOpen(true)}
               className="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all transform hover:scale-105"
             >
               Garantir Ingressos
@@ -218,6 +277,105 @@ export const EventDetail: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+
+      {/* Checkout Modal */}
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+              <h3 className="font-bold text-lg">Realizar Inscrição</h3>
+              <button onClick={() => setIsCheckoutOpen(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+            </div>
+
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              {/* Ticket Selection */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Selecione o Ingresso</label>
+                <div className="space-y-2">
+                  {tickets.map(t => (
+                    <label key={t.id} className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${selectedTicketId === t.id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="ticket"
+                          value={t.id}
+                          checked={selectedTicketId === t.id}
+                          onChange={() => setSelectedTicketId(t.id)}
+                          className="w-4 h-4 text-blue-600"
+                        />
+                        <div>
+                          <p className="font-medium text-gray-900 dark:text-white">{t.name}</p>
+                          <p className="text-xs text-gray-500">{t.quantity - t.sold} disponíveis</p>
+                        </div>
+                      </div>
+                      <div className="font-bold text-green-600">
+                        {Number(t.price) === 0 ? "Grátis" : `R$ ${Number(t.price)}`}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dynamic Form Questions */}
+              {event?.customFormSchema && event.customFormSchema.length > 0 && (
+                <div className="space-y-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                  <h4 className="font-bold text-gray-800 dark:text-gray-200">Perguntas do Organizador</h4>
+                  {event.customFormSchema.map((field, idx) => (
+                    <div key={idx} className="form-group">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        {field.label} {field.required && <span className="text-red-500">*</span>}
+                      </label>
+
+                      {field.type === 'textarea' ? (
+                        <textarea
+                          className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-transparent"
+                          rows={3}
+                          value={answers[field.label] || ''}
+                          onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
+                        />
+                      ) : field.type === 'select' ? (
+                        <select
+                          className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-transparent"
+                          value={answers[field.label] || ''}
+                          onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
+                        >
+                          <option value="">Selecione...</option>
+                          {field.options?.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
+                        </select>
+                      ) : (
+                        <input
+                          type={field.type === 'text' ? 'text' : 'text'}
+                          className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-transparent"
+                          value={answers[field.label] || ''}
+                          onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50 flex justify-end gap-2">
+              <button
+                onClick={() => setIsCheckoutOpen(false)}
+                className="px-4 py-2 rounded text-gray-600 hover:bg-gray-200 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleRegister}
+                disabled={submitting}
+                className="px-6 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {submitting ? "Processando..." : "Confirmar Inscrição"}
+                {!submitting && <CheckCircle className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+      }
+    </div >
   );
 };

@@ -21,6 +21,20 @@ export const TenantForm: React.FC = () => {
   const [plan, setPlan] = useState("START");
   const [maxWorks, setMaxWorks] = useState(50);
 
+  // Feature Flags
+  const [featureWorks, setFeatureWorks] = useState(true);
+  const [featureTrails, setFeatureTrails] = useState(true);
+  const [featureEvents, setFeatureEvents] = useState(true);
+  const [featureGamification, setFeatureGamification] = useState(true);
+  const [featureQRCodes, setFeatureQRCodes] = useState(true);
+  const [featureChatAI, setFeatureChatAI] = useState(false);
+  const [featureShop, setFeatureShop] = useState(false);
+  const [featureDonations, setFeatureDonations] = useState(false);
+  const [featureCertificates, setFeatureCertificates] = useState(true);
+  const [featureReviews, setFeatureReviews] = useState(true);
+  const [featureGuestbook, setFeatureGuestbook] = useState(true);
+  const [featureAccessibility, setFeatureAccessibility] = useState(true);
+
   const loadTenant = async () => {
     try {
       const res = await api.get(`/tenants/${id}`);
@@ -32,6 +46,19 @@ export const TenantForm: React.FC = () => {
       setCertificateBackgroundUrl(data.certificateBackgroundUrl || "");
       setPlan(data.plan || "START");
       setMaxWorks(data.maxWorks || 50);
+      // Feature Flags
+      setFeatureWorks(data.featureWorks ?? true);
+      setFeatureTrails(data.featureTrails ?? true);
+      setFeatureEvents(data.featureEvents ?? true);
+      setFeatureGamification(data.featureGamification ?? true);
+      setFeatureQRCodes(data.featureQRCodes ?? true);
+      setFeatureChatAI(data.featureChatAI ?? false);
+      setFeatureShop(data.featureShop ?? false);
+      setFeatureDonations(data.featureDonations ?? false);
+      setFeatureCertificates(data.featureCertificates ?? true);
+      setFeatureReviews(data.featureReviews ?? true);
+      setFeatureGuestbook(data.featureGuestbook ?? true);
+      setFeatureAccessibility(data.featureAccessibility ?? true);
     } catch {
       console.error("Failed to load tenant");
       alert(t("common.errorLoad"));
@@ -65,6 +92,19 @@ export const TenantForm: React.FC = () => {
       adminPassword?: string;
       plan?: string;
       maxWorks?: number;
+      // Feature Flags
+      featureWorks?: boolean;
+      featureTrails?: boolean;
+      featureEvents?: boolean;
+      featureGamification?: boolean;
+      featureQRCodes?: boolean;
+      featureChatAI?: boolean;
+      featureShop?: boolean;
+      featureDonations?: boolean;
+      featureCertificates?: boolean;
+      featureReviews?: boolean;
+      featureGuestbook?: boolean;
+      featureAccessibility?: boolean;
     }
 
     const payload: TenantPayload = {
@@ -74,7 +114,20 @@ export const TenantForm: React.FC = () => {
       signatureUrl,
       certificateBackgroundUrl,
       plan,
-      maxWorks
+      maxWorks,
+      // Feature Flags
+      featureWorks,
+      featureTrails,
+      featureEvents,
+      featureGamification,
+      featureQRCodes,
+      featureChatAI,
+      featureShop,
+      featureDonations,
+      featureCertificates,
+      featureReviews,
+      featureGuestbook,
+      featureAccessibility
     };
 
     if (!isEdit) {
@@ -222,6 +275,71 @@ export const TenantForm: React.FC = () => {
             <p style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
               Imagem A4 (Paisagem) que substituirá o fundo padrão. O texto será sobreposto a ela.
             </p>
+          </div>
+        </div>
+
+        {/* Feature Flags Section */}
+        <div style={{ marginTop: "1.5rem", marginBottom: "1.5rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>
+          <h3 style={{ fontSize: "1rem", marginBottom: "0.75rem" }}>📦 Funcionalidades Habilitadas</h3>
+          <p style={{ fontSize: "0.85rem", color: "#9ca3af", marginBottom: "1rem" }}>
+            Selecione os módulos que este museu terá acesso. Módulos premium estão marcados com ⭐.
+          </p>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "0.75rem"
+          }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureWorks} onChange={e => setFeatureWorks(e.target.checked)} />
+              🎨 Obras/Artefatos
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureTrails} onChange={e => setFeatureTrails(e.target.checked)} />
+              🗺️ Trilhas/Roteiros
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureEvents} onChange={e => setFeatureEvents(e.target.checked)} />
+              📅 Eventos
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureGamification} onChange={e => setFeatureGamification(e.target.checked)} />
+              🏆 Gamificação (XP, Ranking)
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureQRCodes} onChange={e => setFeatureQRCodes(e.target.checked)} />
+              📸 QR Codes/Scanner
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureCertificates} onChange={e => setFeatureCertificates(e.target.checked)} />
+              📜 Certificados
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureReviews} onChange={e => setFeatureReviews(e.target.checked)} />
+              ⭐ Favoritos/Avaliações
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureGuestbook} onChange={e => setFeatureGuestbook(e.target.checked)} />
+              ✍️ Livro de Visitas
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
+              <input type="checkbox" checked={featureAccessibility} onChange={e => setFeatureAccessibility(e.target.checked)} />
+              ♿ Acessibilidade/Libras
+            </label>
+
+            {/* Premium Features */}
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", color: "#f59e0b" }}>
+              <input type="checkbox" checked={featureChatAI} onChange={e => setFeatureChatAI(e.target.checked)} />
+              🤖 Chat IA ⭐
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", color: "#f59e0b" }}>
+              <input type="checkbox" checked={featureShop} onChange={e => setFeatureShop(e.target.checked)} />
+              🛒 Loja Virtual ⭐
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer", color: "#f59e0b" }}>
+              <input type="checkbox" checked={featureDonations} onChange={e => setFeatureDonations(e.target.checked)} />
+              💝 Doações ⭐
+            </label>
           </div>
         </div>
 

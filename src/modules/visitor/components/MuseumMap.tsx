@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, ImageOverlay, Marker, Popup, useMap, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, ImageOverlay, Circle, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -67,6 +67,19 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
     const [mode, setMode] = useState<MapMode>("outdoor");
     const [zoom] = useState(15);
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+    const [aspectRatio, setAspectRatio] = useState<number>(1);
+
+    useEffect(() => {
+        if (mode === "indoor" && indoorImageUrl) {
+            const img = new Image();
+            img.src = indoorImageUrl;
+            img.onload = () => {
+                if (img.width && img.height) {
+                    setAspectRatio(img.width / img.height);
+                }
+            };
+        }
+    }, [mode, indoorImageUrl]);
 
     // Toggle mode handler removed as it was unused (buttons set mode directly)
 
@@ -83,8 +96,36 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
         }
     }, [mode]);
 
+    // Add Polyline support
+    const [destinationId, setDestinationId] = useState<string | null>(null);
+
+    // Simple mocked graph/routes for demo purposes
+    // In a real app, this would use a graph algorithm (Dijkstra)
+    const getRouteTo = (destId: string): [number, number][] => {
+        const dest = pois.find(p => p.id === destId);
+        if (!dest) return [];
+
+        // Mock route: Center -> Random Point -> Destination
+        // Assuming starting point is "Center" or User Location
+        const start = outdoorCenter;
+        const midPoint: [number, number] = [
+            (start[0] + dest.lat) / 2,
+            (start[1] + dest.lng) / 2 + 0.0005 // Little curve
+        ];
+
+        return [start, midPoint, [dest.lat, dest.lng]];
+    };
+
     return (
-        <div style={{ position: "relative", height: "500px", width: "100%", borderRadius: "1rem", overflow: "hidden", border: "1px solid var(--border-subtle)" }}>
+        <div style={{
+            position: "relative",
+            width: "100%",
+            aspectRatio: mode === "indoor" ? `${aspectRatio}` : "auto",
+            height: mode === "indoor" ? "auto" : "500px",
+            borderRadius: "1rem",
+            overflow: "hidden",
+            border: "1px solid var(--border-subtle)"
+        }}>
             {/* Controls */}
             <div
                 style={{
@@ -97,30 +138,48 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                     borderRadius: "0.5rem",
                     boxShadow: "0 2px 10px rgba(0,0,0,0.2)",
                     display: "flex",
-                    gap: "0.5rem"
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                    alignItems: "flex-end"
                 }}
             >
-                <button
-                    onClick={() => setMode("outdoor")}
-                    className={`btn ${mode === "outdoor" ? "btn-primary" : "btn-secondary"}`}
-                    style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}
-                >
-                    🏙️ Cidade
-                </button>
-                <button
-                    onClick={() => setMode("indoor")}
-                    className={`btn ${mode === "indoor" ? "btn-primary" : "btn-secondary"}`}
-                    style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}
-                >
-                    🏛️ Planta
-                </button>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <button
+                        onClick={() => setMode("outdoor")}
+                        className={`btn ${mode === "outdoor" ? "btn-primary" : "btn-secondary"} `}
+                        style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}
+                    >
+                        🏙️ Cidade
+                    </button>
+                    <button
+                        onClick={() => setMode("indoor")}
+                        className={`btn ${mode === "indoor" ? "btn-primary" : "btn-secondary"} `}
+                        style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}
+                    >
+                        🏛️ Planta
+                    </button>
+                </div>
+
+                {/* Destination Selector for Wayfinding Demo */}
+                {mode === "indoor" && pois.length > 0 && (
+                    <select
+                        className="input"
+                        style={{ fontSize: "0.8rem", padding: "0.25rem", width: "150px" }}
+                        onChange={(e) => setDestinationId(e.target.value)}
+                        value={destinationId || ""}
+                    >
+                        <option value="">🎯 Ir para...</option>
+                        {pois.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
+                    </select>
+                )}
             </div>
 
             <MapContainer
-                center={outdoorCenter}
-                zoom={zoom}
-                style={{ height: "100%", width: "100%", background: "#e5e7eb" }}
+                center={mode === "outdoor" ? outdoorCenter : [50, 50]}
+                zoom={mode === "outdoor" ? 15 : 1}
                 scrollWheelZoom={true}
+                style={{ width: "100%", height: "100%", borderRadius: "1rem" }}
+                crs={mode === "outdoor" ? L.CRS.EPSG3857 : L.CRS.Simple}
             >
                 {mode === "outdoor" ? (
                     <>
@@ -164,11 +223,10 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                     </>
                 ) : (
                     <>
-                        <ChangeView center={[500, 500]} zoom={0} />
                         {indoorImageUrl ? (
                             <ImageOverlay
                                 url={indoorImageUrl}
-                                bounds={indoorBounds}
+                                bounds={[[0, 0], [100, 100]]}
                             />
                         ) : (
                             <div style={{
@@ -183,15 +241,36 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                                 <p>Imagem da planta não configurada.</p>
                             </div>
                         )}
-                        {/* Indoor Markers */}
-                        {pois.map(poi => (
-                            <Marker key={poi.id} position={[poi.lat, poi.lng]}>
-                                <Popup>
-                                    <b>{poi.title}</b><br />
-                                    {poi.description}
-                                </Popup>
-                            </Marker>
-                        ))}
+                        {/* Indoor Markers: Filter POIs that have internal coordinates */}
+                        {pois.filter(p => p.lat != null && p.lng != null).map(poi => {
+                            // If we use 0-100 logic, poi.lat is y, poi.lng is x.
+                            // Ensure they are within bounds or logic matches AdminMapEditor
+                            return (
+                                <Marker key={poi.id} position={[poi.lat, poi.lng]}>
+                                    <Popup>
+                                        <b>{poi.title}</b><br />
+                                        {poi.description}
+                                        <button
+                                            className="btn btn-sm btn-primary"
+                                            style={{ marginTop: "0.5rem", width: "100%" }}
+                                            onClick={() => setDestinationId(poi.id)}
+                                        >
+                                            Ir para cá 🏃
+                                        </button>
+                                    </Popup>
+                                </Marker>
+                            );
+                        })}
+
+                        {/* Route Line */}
+                        {destinationId && (
+                            <Polyline
+                                positions={getRouteTo(destinationId)}
+                                color="blue"
+                                dashArray={[10, 10]}
+                                weight={4}
+                            />
+                        )}
                     </>
                 )}
             </MapContainer>

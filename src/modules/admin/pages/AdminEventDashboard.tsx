@@ -55,14 +55,18 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex gap-3">
-                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2">
+                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">
                         <QrCode className="w-4 h-4" /> Check-in
                     </Link>
-                    <Link to={`/admin/eventos/${id}`} className="btn flex items-center gap-2 bg-gray-900 text-white">
+                    <Link to={`/admin/eventos/${id}`} className="btn flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">
                         <Settings className="w-4 h-4" /> Editar
                     </Link>
                 </div>
             </div>
+
+            {/* Sales Analytics Widget (Sympla Killer) */}
+            {/* Sales Analytics Widget (Sympla Killer) */}
+            <DashboardSalesWidget />
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -113,12 +117,12 @@ export const AdminEventDashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* Content Row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            < div className="grid grid-cols-1 lg:grid-cols-3 gap-8" >
                 {/* Recent Registrations */}
-                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
+                < div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200" >
                     <div className="p-6 border-b border-gray-100 flex justify-between items-center">
                         <h3 className="font-bold text-gray-800">Inscrições Recentes</h3>
                         <button className="text-blue-600 text-sm font-medium hover:underline">Ver todas</button>
@@ -129,10 +133,10 @@ export const AdminEventDashboard: React.FC = () => {
                             Nenhuma inscrição recente.
                         </div>
                     </div>
-                </div>
+                </div >
 
                 {/* Quick Actions / Tips */}
-                <div className="space-y-6">
+                < div className="space-y-6" >
                     <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white text-center">
                         <QrCode className="w-12 h-12 mx-auto mb-4 opacity-80" />
                         <h3 className="font-bold text-lg mb-2">Check-in Rápido</h3>
@@ -141,8 +145,8 @@ export const AdminEventDashboard: React.FC = () => {
                             Abrir Scanner
                         </Link>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 };

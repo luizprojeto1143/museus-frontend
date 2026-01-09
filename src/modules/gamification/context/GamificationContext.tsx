@@ -8,6 +8,7 @@ interface GamificationContextType {
     currentLevel: { level: number; minXp: number; title: string };
     nextLevel: { level: number; minXp: number; title: string } | null;
     progressToNextLevel: number; // 0 to 100
+    loading: boolean;
     addXp: (amount: number) => void;
     unlockAchievement: (achievementId: string) => void;
     visitWork: (workId: string) => void;
@@ -21,6 +22,7 @@ const STORAGE_KEY = "cultura_viva_gamification";
 
 export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { isAuthenticated, email, tenantId } = useAuth();
+    const [loading, setLoading] = useState(false);
     const [stats, setStats] = useState<UserStats>(() => {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -43,6 +45,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     }, [isAuthenticated, email, tenantId]);
 
     const fetchBackendData = async () => {
+        setLoading(true);
         try {
             const res = await api.get(`/visitors/me/summary?email=${email}&tenantId=${tenantId}`);
             const data = res.data;
@@ -79,6 +82,8 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
             });
         } catch (error) {
             console.error("Error fetching gamification data", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -157,6 +162,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         currentLevel,
         nextLevel,
         progressToNextLevel,
+        loading,
         addXp,
         unlockAchievement,
         visitWork,

@@ -11,6 +11,7 @@ import { Login } from "./modules/auth/Login";
 import { RegisterWrapper } from "./modules/auth/RegisterWrapper";
 import { GamificationProvider } from "./modules/gamification/context/GamificationContext";
 import { GeoFencingProvider } from "./modules/visitor/context/GeoFencingProvider";
+import { AudioProvider } from "./modules/visitor/context/AudioContext";
 
 // Public pages
 import { Welcome } from "./modules/visitor/pages/Welcome";
@@ -70,6 +71,8 @@ import { AdminInternalUsers } from "./modules/admin/pages/AdminInternalUsers";
 import { AdminCertificates } from "./modules/admin/certificates";
 import { AdminReviews } from "./modules/admin/pages/AdminReviews";
 import { AdminShop } from "./modules/admin/pages/AdminShop";
+import { AdminScannerTrainer } from "./modules/admin/pages/AdminScannerTrainer";
+import { AdminMapEditor } from "./modules/admin/pages/AdminMapEditor";
 
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
@@ -117,716 +120,729 @@ const App: React.FC = () => {
   return (
     <GamificationProvider>
       <GeoFencingProvider>
-        <Routes>
-          {/* PUBLIC ROUTES */}
-          <Route path="/welcome" element={<Welcome />} />
-          <Route path="/select-museum" element={<SelectMuseum />} />
-          <Route path="/verify/:code" element={<CertificateValidator />} />
-          <Route path="/register" element={<RegisterWrapper />} />
-          <Route path="/login" element={<Login />} />
+        <AudioProvider>
+          <Routes>
+            {/* PUBLIC ROUTES */}
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/select-museum" element={<SelectMuseum />} />
+            <Route path="/verify/:code" element={<CertificateValidator />} />
+            <Route path="/register" element={<RegisterWrapper />} />
+            <Route path="/login" element={<Login />} />
 
-          {/* VISITANTE */}
-          <Route
-            path="/"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <RootRedirector />
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/home"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <Home />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/obras"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <WorksList />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/obras/:id"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <WorkDetail />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/trilhas"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <TrailsList />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/trilhas/:id"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <TrailDetail />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/mapa"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <MapView />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/eventos"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <EventsList />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/eventos/:id"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <EventDetail />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/favoritos"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <Favorites />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/loja"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <ShopPage />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/desafios"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <ChallengesPage />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/perfil"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <VisitorProfile />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/chat"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <ChatAI />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/souvenir"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <Souvenir />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/passaporte"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <Passport />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/conquistas"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <Achievements />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/caca-tesouro"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <TreasureHunt />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/roteiro-inteligente"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <SmartItineraryWizard />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/roteiro-inteligente/resultado"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <SmartItineraryResult />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/scanner"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <ScannerPage />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
+            {/* VISITANTE */}
+            <Route
+              path="/"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <RootRedirector />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/home"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <Home />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/obras"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <WorksList />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/obras/:id"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <WorkDetail />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/trilhas"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <TrailsList />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/trilhas/:id"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <TrailDetail />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/mapa"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <MapView />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/eventos"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <EventsList />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/eventos/:id"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <EventDetail />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/favoritos"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <Favorites />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/loja"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <ShopPage />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/desafios"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <ChallengesPage />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/perfil"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <VisitorProfile />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <ChatAI />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/souvenir"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <Souvenir />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/passaporte"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <Passport />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/conquistas"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <Achievements />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/caca-tesouro"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <TreasureHunt />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/roteiro-inteligente"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <SmartItineraryWizard />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/roteiro-inteligente/resultado"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <SmartItineraryResult />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/scanner"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <ScannerPage />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/agendamento"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <SchedulingPage />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/agendamento"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <SchedulingPage />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/livro-visitas"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <GuestbookPage />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/livro-visitas"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <GuestbookPage />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/scanner-visual"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisualScannerPage />
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/scanner-visual"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisualScannerPage />
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/ranking"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <LeaderboardPage />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/ranking"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <LeaderboardPage />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
 
-          {/* QR Code gamificado */}
-          <Route
-            path="/qr/:code"
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <QrVisit />
-                </VisitorLayout>
-              </RequireRole>
-            }
-          />
+            {/* QR Code gamificado */}
+            <Route
+              path="/qr/:code"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <QrVisit />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
 
-          {/* ADMIN */}
-          <Route
-            path="/admin"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminDashboard />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/obras"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminWorks />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/obras/nova"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminWorkForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/obras/:id"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminWorkForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/trilhas"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminTrails />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/trilhas/nova"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminTrailForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/trilhas/:id"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminTrailForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/eventos"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminEvents />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/certificates/*"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminCertificates />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/eventos/novo"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminEventForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/eventos/:id"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminEventForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/eventos/:id/dashboard"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminEventDashboard />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/eventos/:id/checkin"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminEventCheckIn />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/qrcodes"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminQRCodes />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/categorias"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminCategories />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/categorias/nova"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminCategoryForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/categorias/:id"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminCategoryForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/visitantes"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminVisitors />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/visitantes/:id"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminVisitorProfile />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/configuracoes"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminMuseumSettings />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/treasure-hunt"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminTreasureHunt />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            {/* ADMIN */}
+            <Route
+              path="/admin"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminDashboard />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/obras"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminWorks />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/obras/nova"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminWorkForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/obras/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminWorkForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/trilhas"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminTrails />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/trilhas/nova"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminTrailForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/trilhas/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminTrailForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/eventos"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEvents />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/certificates/*"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminCertificates />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/eventos/novo"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEventForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/eventos/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEventForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/eventos/:id/dashboard"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEventDashboard />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/eventos/:id/checkin"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEventCheckIn />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/qrcodes"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminQRCodes />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/categorias"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminCategories />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/categorias/nova"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminCategoryForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/categorias/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminCategoryForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/visitantes"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminVisitors />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/visitantes/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminVisitorProfile />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/configuracoes"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminMuseumSettings />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/treasure-hunt"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminTreasureHunt />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/admin/conquistas"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminAchievements />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/conquistas/nova"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminAchievementForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/conquistas/:id"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminAchievementForm />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/admin/conquistas"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminAchievements />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/conquistas/nova"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminAchievementForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/conquistas/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminAchievementForm />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/admin/ia"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminAIAssistant />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/admin/ia"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminAIAssistant />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/admin/analytics"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminAnalytics />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/admin/analytics"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminAnalytics />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/admin/uploads"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminUploads />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/admin/uploads"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminUploads />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
-          <Route
-            path="/admin/usuarios"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminInternalUsers />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            <Route
+              path="/admin/usuarios"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminInternalUsers />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
-          {/* Admin Reviews and Shop */}
-          <Route
-            path="/admin/reviews"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminReviews />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/admin/loja"
-            element={
-              <RequireRole allowed={["admin"]}>
-                <AdminLayout>
-                  <AdminShop />
-                </AdminLayout>
-              </RequireRole>
-            }
-          />
+            {/* Admin Reviews and Shop */}
+            <Route
+              path="/admin/reviews"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminReviews />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/admin/scanner-treinamento"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminScannerTrainer />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/mapa-editor"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminMapEditor />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
 
-          {/* MASTER (multi-tenant) */}
-          <Route
-            path="/master"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterDashboard />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/tenants"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <TenantsList />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/tenants/novo"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <TenantForm />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/tenants/:id"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <TenantForm />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/users"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterUsers />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/users/novo"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterUserForm />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/users/:id"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterUserForm />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/achievements"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterAchievements />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/achievements/novo"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterAchievementForm />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/achievements/:id"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterAchievementForm />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/audit-logs"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterAuditLogs />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
-          <Route
-            path="/master/system-health"
-            element={
-              <RequireRole allowed={["master"]}>
-                <MasterLayout>
-                  <MasterSystemHealth />
-                </MasterLayout>
-              </RequireRole>
-            }
-          />
+            {/* MASTER (multi-tenant) */}
+            <Route
+              path="/master"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterDashboard />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/tenants"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <TenantsList />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/tenants/novo"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <TenantForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/tenants/:id"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <TenantForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/users"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterUsers />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/users/novo"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterUserForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/users/:id"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterUserForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/achievements"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterAchievements />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/achievements/novo"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterAchievementForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/achievements/:id"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterAchievementForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/audit-logs"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterAuditLogs />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/system-health"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterSystemHealth />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
 
-          {/* AUTH */}
-          <Route path="/login" element={<Login />} />
+            {/* AUTH */}
+            <Route path="/login" element={<Login />} />
 
-          {/* 404 - Redireciona para Welcome se não autenticado, senão para home */}
-          <Route path="*" element={<Navigate to="/welcome" replace />} />
-        </Routes>
+            {/* 404 - Redireciona para Welcome se não autenticado, senão para home */}
+            <Route path="*" element={<Navigate to="/welcome" replace />} />
+          </Routes>
+        </AudioProvider>
       </GeoFencingProvider>
     </GamificationProvider>
   );

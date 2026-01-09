@@ -10,6 +10,7 @@ import { WelcomeAnimation } from "./components/WelcomeAnimation";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { DialerModal } from "./components/DialerModal";
 import { AiChatWidget } from "./components/AiChatWidget";
+import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
 
 import "./VisitorLayout.css";
 
@@ -46,21 +47,28 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const links = [
-    { to: "/home", label: t("visitor.sidebar.home"), icon: "🏠" },
-    { to: "/obras", label: t("visitor.sidebar.artworks"), icon: "🎨" },
-    { to: "/trilhas", label: t("visitor.sidebar.trails"), icon: "🗺️" },
-    { to: "/mapa", label: t("visitor.sidebar.map", "Mapa"), icon: "📍" },
-    { to: "/eventos", label: t("visitor.sidebar.events"), icon: "📅" },
-    { to: "/desafios", label: t("visitor.sidebar.challenges", "Desafios"), icon: "🎯" },
-    { to: "/loja", label: t("visitor.sidebar.shop", "Loja"), icon: "🛒" },
-    { to: "/ranking", label: t("visitor.sidebar.leaderboard", "Ranking"), icon: "🏆" },
-    { to: "/favoritos", label: t("visitor.sidebar.favorites", "Favoritos"), icon: "❤️" },
-    { to: "/chat", label: t("visitor.sidebar.aiChat", "Chat IA"), icon: "🤖" },
-    { to: "/scanner", label: t("visitor.sidebar.scanner"), icon: "📸" },
-    { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤" },
-    { to: "/livro-visitas", label: t("visitor.sidebar.guestbook"), icon: "✍️" },
+  const allLinks = [
+    { to: "/home", label: t("visitor.sidebar.home"), icon: "🏠", feature: null }, // Always visible
+    { to: "/obras", label: t("visitor.sidebar.artworks"), icon: "🎨", feature: "featureWorks" },
+    { to: "/trilhas", label: t("visitor.sidebar.trails"), icon: "🗺️", feature: "featureTrails" },
+    { to: "/mapa", label: t("visitor.sidebar.map", "Mapa"), icon: "📍", feature: null }, // Always visible
+    { to: "/eventos", label: t("visitor.sidebar.events"), icon: "📅", feature: "featureEvents" },
+    { to: "/desafios", label: t("visitor.sidebar.challenges", "Desafios"), icon: "🎯", feature: "featureGamification" },
+    { to: "/loja", label: t("visitor.sidebar.shop", "Loja"), icon: "🛒", feature: "featureShop" },
+    { to: "/ranking", label: t("visitor.sidebar.leaderboard", "Ranking"), icon: "🏆", feature: "featureGamification" },
+    { to: "/favoritos", label: t("visitor.sidebar.favorites", "Favoritos"), icon: "❤️", feature: "featureReviews" },
+    { to: "/chat", label: t("visitor.sidebar.aiChat", "Chat IA"), icon: "🤖", feature: "featureChatAI" },
+    { to: "/scanner", label: t("visitor.sidebar.scanner"), icon: "📸", feature: "featureQRCodes" },
+    { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤", feature: null }, // Always visible
+    { to: "/livro-visitas", label: t("visitor.sidebar.guestbook"), icon: "✍️", feature: "featureGuestbook" },
   ];
+
+  // Filter links based on tenant features
+  const links = allLinks.filter(link => {
+    if (!link.feature) return true; // Always show links without feature requirement
+    if (!settings) return true; // Show all while loading
+    return (settings as any)[link.feature] !== false;
+  });
 
   const renderNavLinks = (mobile = false) => (
     <>
@@ -81,13 +89,26 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     </>
   );
 
-  // Theme State
+  // Theme and Features State
   const [settings, setSettings] = useState<{
     primaryColor: string;
     secondaryColor: string;
     historicalFont: boolean;
     logoUrl?: string;
     name?: string;
+    // Feature Flags
+    featureWorks?: boolean;
+    featureTrails?: boolean;
+    featureEvents?: boolean;
+    featureGamification?: boolean;
+    featureQRCodes?: boolean;
+    featureChatAI?: boolean;
+    featureShop?: boolean;
+    featureDonations?: boolean;
+    featureCertificates?: boolean;
+    featureReviews?: boolean;
+    featureGuestbook?: boolean;
+    featureAccessibility?: boolean;
   } | null>(null);
 
   useEffect(() => {
@@ -234,7 +255,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <DialerModal isOpen={isDialerOpen} onClose={() => setIsDialerOpen(false)} />
-      <AiChatWidget />
+      <GlobalAudioPlayer />
+      {settings?.featureChatAI !== false && <AiChatWidget />}
     </div>
   );
 };

@@ -33,17 +33,27 @@ export const VisualScannerPage: React.FC = () => {
                 if (isMounted) {
                     setNet(loadedNet);
                     setClassifier(loadedClassifier);
-                    setStatus(t("visitor.visualScanner.loadingWorks", "Carregando obras para reconhecimento..."));
+                    setStatus(t("visitor.visualScanner.loadingWorks", "Carregando modelo treinado..."));
                 }
 
-                // Load works to train the classifier
-                const res = await api.get("/works", { params: { tenantId } });
-                const works = res.data;
-
-                // Process works (Simplified: In a real app, we would need pre-computed embeddings or user-guided training)
-                // For this demo, we will just set up the camera and assume we can match later if we had embeddings.
-                // Since we can't easily auto-train from URLs in the browser without CORS/Canvas issues, 
-                // we will simulate the "Ready" state but warn if no works.
+                // Load trained model from localStorage
+                const savedModel = localStorage.getItem(`scanner_model_${tenantId}`);
+                if (savedModel) {
+                    try {
+                        const datasetObj = JSON.parse(savedModel);
+                        const dataset: any = {};
+                        Object.keys(datasetObj).forEach((key) => {
+                            dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
+                        });
+                        loadedClassifier.setClassifierDataset(dataset);
+                        console.log("Modelo carregado com sucesso!");
+                    } catch (e) {
+                        console.error("Erro ao carregar modelo", e);
+                    }
+                } else {
+                    console.warn("Nenhum modelo treinado encontrado.");
+                    if (isMounted) setStatus("Nenhum modelo treinado encontrado. O scanner pode não funcionar.");
+                }
 
                 if (isMounted) {
                     setLoading(false);
@@ -73,7 +83,8 @@ export const VisualScannerPage: React.FC = () => {
                 videoRef.current.srcObject = stream;
                 videoRef.current.play();
                 setScanning(true);
-                scanLoop();
+                // Start loop
+                requestAnimationFrame(scanLoop);
             } catch (err) {
                 console.error("Error accessing camera:", err);
                 alert(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"));
@@ -91,21 +102,50 @@ export const VisualScannerPage: React.FC = () => {
     };
 
     const scanLoop = async () => {
-        if (!scanning || !net || !classifier || !videoRef.current) return;
+        if (!videoRef.current || videoRef.current.readyState !== 4) {
+            if (scanning) requestAnimationFrame(scanLoop);
+            return;
+        }
 
-        // In a real implementation, we would:
-        // 1. Get activation from net.infer(videoRef.current, 'conv_preds')
-        // 2. Predict class: classifier.predictClass(activation)
-        // 3. If conf > threshold, show match.
+        // Check if we have a classifier with examples
+        if (classifier && classifier.getNumClasses() > 0 && net) {
+            try {
+                const activation = net.infer(videoRef.current, true);
+                const result = await classifier.predictClass(activation);
 
-        // For now, we just keep the loop running to show the camera feed is active.
-        // requestAnimationFrame(scanLoop); 
-        // (Commented out to prevent infinite loop in this "skeleton" implementation)
+                const confidence = result.confidences[result.label] || 0;
+                if (confidence > 0.8) { // 80% confidence threshold
+                    setMatch({ label: result.label, conf: confidence });
+                } else {
+                    setMatch(null);
+                }
+                activation.dispose(); // Important: dispose tensor to avoid memory leak
+            } catch (e) {
+                console.error("Error predicting", e);
+            }
+        }
+
+        if (scanning) requestAnimationFrame(scanLoop);
     };
 
+    const [worksMap, setWorksMap] = useState<Record<string, string>>({});
+
     useEffect(() => {
+        if (tenantId) {
+            api.get("/works", { params: { tenantId, limit: 100 } }) // Fetch top 100 for scanner mapping
+                .then(res => {
+                    const list = res.data.data || [];
+                    const mapping: Record<string, string> = {};
+                    list.forEach((w: any) => {
+                        mapping[w.id] = w.title;
+                    });
+                    setWorksMap(mapping);
+                })
+                .catch(console.error);
+        }
+
         return () => stopCamera();
-    }, []);
+    }, [tenantId]);
 
     if (!tenantId) return <div style={{ padding: "2rem", textAlign: "center" }}>Selecione um museu.</div>;
 
@@ -145,7 +185,8 @@ export const VisualScannerPage: React.FC = () => {
 
                 {match && (
                     <div style={{ position: "absolute", bottom: "2.5rem", left: "1rem", right: "1rem", backgroundColor: "white", color: "black", padding: "1rem", borderRadius: "0.75rem", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}>
-                        <h3 style={{ fontWeight: "bold", fontSize: "1.125rem" }}>{match.label}</h3>
+                        <h3 style={{ fontWeight: "bold", fontSize: "1.125rem" }}>{worksMap[match.label] || "Obra Detectada"}</h3>
+                        <p style={{ fontSize: "0.75rem", color: "#999" }}>ID: {match.label}</p>
                         <p style={{ fontSize: "0.875rem", color: "#4b5563" }}>Confiança: {(match.conf * 100).toFixed(0)}%</p>
                         <button
                             onClick={() => navigate(`/obras/${match.label}`)} // Assuming label is ID
