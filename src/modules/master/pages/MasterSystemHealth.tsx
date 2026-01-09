@@ -115,16 +115,16 @@ export const MasterSystemHealth: React.FC = () => {
                         <Database size={24} />
                         <span>Banco de Dados</span>
                     </div>
-                    <div className={`metric-status ${health?.database.status === 'connected' ? 'ok' : 'error'}`}>
-                        {health?.database.status === 'connected' ? '✅ Conectado' : '❌ Desconectado'}
+                    <div className={`metric-status ${health?.database?.status === 'connected' ? 'ok' : 'error'}`}>
+                        {health?.database?.status === 'connected' ? '✅ Conectado' : '❌ Desconectado'}
                     </div>
-                    {health?.database.latency && (
+                    {health?.database?.latency && (
                         <div className="metric-detail">
-                            Latência: <strong>{health.database.latency}</strong>
+                            Latência: <strong>{health?.database?.latency}</strong>
                         </div>
                     )}
-                    {health?.database.error && (
-                        <div className="metric-error">{health.database.error}</div>
+                    {health?.database?.error && (
+                        <div className="metric-error">{health?.database?.error}</div>
                     )}
                 </div>
 
@@ -148,19 +148,19 @@ export const MasterSystemHealth: React.FC = () => {
                         <HardDrive size={24} />
                         <span>Memória</span>
                     </div>
-                    <div className="metric-value">{health?.system.memory.used || '-'}</div>
+                    <div className="metric-value">{health?.system?.memory?.used || '-'}</div>
                     <div className="memory-bar">
                         <div
                             className="memory-used"
                             style={{
-                                width: health ?
-                                    `${(parseInt(health.system.memory.used) / parseInt(health.system.memory.total)) * 100}%`
+                                width: (health?.system?.memory?.used && health?.system?.memory?.total) ?
+                                    `${(parseInt(health?.system?.memory?.used || '0') / parseInt(health?.system?.memory?.total || '1')) * 100}%`
                                     : '0%'
                             }}
                         />
                     </div>
                     <div className="metric-detail">
-                        de {health?.system.memory.total || '-'} total
+                        de {health?.system?.memory?.total || '-'} total
                     </div>
                 </div>
 
@@ -170,9 +170,9 @@ export const MasterSystemHealth: React.FC = () => {
                         <Cpu size={24} />
                         <span>CPU</span>
                     </div>
-                    <div className="metric-value">{health?.system.cpu || '-'}</div>
+                    <div className="metric-value">{health?.system?.cpu || '-'}</div>
                     <div className="metric-detail">
-                        Plataforma: <strong>{health?.system.platform || 'N/A'}</strong>
+                        Plataforma: <strong>{health?.system?.platform || 'N/A'}</strong>
                     </div>
                 </div>
 
@@ -182,7 +182,7 @@ export const MasterSystemHealth: React.FC = () => {
                         <Server size={24} />
                         <span>Servidor</span>
                     </div>
-                    <div className="metric-value hostname">{health?.system.hostname || '-'}</div>
+                    <div className="metric-value hostname">{health?.system?.hostname || '-'}</div>
                     <div className="metric-detail">
                         Ambiente: <strong>{import.meta.env.MODE || 'development'}</strong>
                     </div>
