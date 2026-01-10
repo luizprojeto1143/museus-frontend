@@ -6,10 +6,12 @@ interface HealthData {
     status: 'healthy' | 'unhealthy';
     timestamp: string;
     uptime: number;
-    database: {
-        status: string;
-        latency?: string;
-        error?: string;
+    services: {
+        database: {
+            status: string;
+            latency?: string;
+            error?: string;
+        };
     };
     system: {
         hostname: string;
@@ -54,7 +56,9 @@ export const MasterSystemHealth: React.FC = () => {
                 status: 'unhealthy',
                 timestamp: new Date().toISOString(),
                 uptime: 0,
-                database: { status: 'disconnected', error: 'Connection failed' },
+                services: {
+                    database: { status: 'disconnected', error: 'Connection failed' }
+                },
                 system: { hostname: 'Unknown', platform: 'Unknown', memory: { total: '0', free: '0', used: '0' }, cpu: '0' },
                 version: 'Unknown'
             });
@@ -115,16 +119,16 @@ export const MasterSystemHealth: React.FC = () => {
                         <Database size={24} />
                         <span>Banco de Dados</span>
                     </div>
-                    <div className={`metric-status ${health?.database?.status === 'connected' ? 'ok' : 'error'}`}>
-                        {health?.database?.status === 'connected' ? '✅ Conectado' : '❌ Desconectado'}
+                    <div className={`metric-status ${health?.services?.database?.status === 'connected' ? 'ok' : 'error'}`}>
+                        {health?.services?.database?.status === 'connected' ? '✅ Conectado' : '❌ Desconectado'}
                     </div>
-                    {health?.database?.latency && (
+                    {health?.services?.database?.latency && (
                         <div className="metric-detail">
-                            Latência: <strong>{health?.database?.latency}</strong>
+                            Latência: <strong>{health?.services?.database?.latency}</strong>
                         </div>
                     )}
-                    {health?.database?.error && (
-                        <div className="metric-error">{health?.database?.error}</div>
+                    {health?.services?.database?.error && (
+                        <div className="metric-error">{health?.services?.database?.error}</div>
                     )}
                 </div>
 
