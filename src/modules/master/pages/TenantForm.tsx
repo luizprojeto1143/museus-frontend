@@ -332,7 +332,7 @@ export const TenantForm: React.FC = () => {
             </label>
             <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
               <input type="checkbox" checked={featureMinigames} onChange={e => setFeatureMinigames(e.target.checked)} />
-              🎮 Minigame (Art Run)
+              🎮 Minigame (Art Run) <span style={{ fontSize: '0.7em', background: '#22c55e', color: '#fff', padding: '1px 4px', borderRadius: '4px' }}>NOVO</span>
             </label>
 
             {/* Premium Features */}
