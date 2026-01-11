@@ -98,10 +98,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
 
   const login: AuthContextValue["login"] = async ({ email, password }) => {
-    const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
+    const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
     const demo = import.meta.env.VITE_DEMO_MODE === "true";
 
-    if (!demo && baseUrl) {
+    if (!demo) {
       const res = await fetch(baseUrl + "/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
