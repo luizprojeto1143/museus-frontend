@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 
 type GeoContextType = {
@@ -14,12 +13,48 @@ const GeoContext = createContext<GeoContextType>({
 
 export const useGeoFencing = () => useContext(GeoContext);
 
+// Helper to safely get tenantId from localStorage
+const getTenantIdFromStorage = (): string | null => {
+    try {
+        const stored = window.localStorage.getItem("museus_auth_v1");
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            return parsed.tenantId ?? null;
+        }
+    } catch {
+        // Ignore parse errors
+    }
+    return null;
+};
+
 export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const { tenantId } = useAuth();
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [permission, setPermission] = useState<"granted" | "denied" | "prompt">("prompt");
     const [works, setWorks] = useState<any[]>([]);
     const [notifiedWorks, setNotifiedWorks] = useState<Set<string>>(new Set());
+    const [tenantId, setTenantId] = useState<string | null>(getTenantIdFromStorage);
+
+    // Listen for storage changes to update tenantId
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setTenantId(getTenantIdFromStorage());
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+
+        // Also check periodically in case storage changed in same tab
+        const interval = setInterval(() => {
+            const newTenantId = getTenantIdFromStorage();
+            if (newTenantId !== tenantId) {
+                setTenantId(newTenantId);
+            }
+        }, 1000);
+
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+            clearInterval(interval);
+        };
+    }, [tenantId]);
 
     const loadWorks = async () => {
         if (!tenantId) {
@@ -88,7 +123,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         return () => navigator.geolocation.clearWatch(watchId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [works]); // Re-run if works list updates (though works usually static per session)
+    }, [works]);
 
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const R = 6371e3; // metres
@@ -107,23 +142,18 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     const triggerNotification = (work: any) => {
         // Browser Notification
-        if (Notification.permission === "granted") {
+        if (typeof Notification !== "undefined" && Notification.permission === "granted") {
             new Notification(`Você está perto de uma obra!`, {
                 body: `Descubra "${work.title}" a poucos passos de você.`,
                 icon: work.imageUrl || "/icon-192x192.png"
             });
-        } else if (Notification.permission !== "denied") {
+        } else if (typeof Notification !== "undefined" && Notification.permission !== "denied") {
             Notification.requestPermission().then((perm) => {
                 if (perm === "granted") {
                     triggerNotification(work);
                 }
             });
         }
-
-        // In-app Toast (Using simple alert for now, or could use a toast library if available)
-        // For a better UX, we could dispatch a custom event or use a Toast context.
-        // Let's just log for now or assume a global toast exists.
-
 
         // Optional: Vibrate
         if (navigator.vibrate) navigator.vibrate(200);
