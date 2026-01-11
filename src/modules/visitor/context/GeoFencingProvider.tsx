@@ -22,6 +22,11 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const [notifiedWorks, setNotifiedWorks] = useState<Set<string>>(new Set());
 
     const loadWorks = async () => {
+        if (!tenantId) {
+            setWorks([]);
+            return;
+        }
+
         try {
             const res = await api.get(`/works?tenantId=${tenantId}`);
             // Handle paginated response (data.works) or direct array (data)
