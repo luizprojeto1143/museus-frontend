@@ -23,7 +23,7 @@ export const SelectMuseum: React.FC = () => {
   useEffect(() => {
     const loadTenants = async () => {
       try {
-        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
+        const baseUrl = import.meta.env.VITE_API_URL as string;
         const res = await fetch(baseUrl + "/tenants/public");
 
         if (!res.ok) {
@@ -45,7 +45,7 @@ export const SelectMuseum: React.FC = () => {
   const handleSelectMuseum = async (tenant: Tenant) => {
     if (isAuthenticated && token) {
       try {
-        const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
+        const baseUrl = import.meta.env.VITE_API_URL as string;
         const res = await fetch(baseUrl + "/auth/switch-tenant", {
           method: "POST",
           headers: {

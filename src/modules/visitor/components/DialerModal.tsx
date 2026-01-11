@@ -44,7 +44,7 @@ export const DialerModal: React.FC<DialerModalProps> = ({ isOpen, onClose }) => 
         setError(null);
 
         try {
-            const baseUrl = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
+            const baseUrl = import.meta.env.VITE_API_URL as string;
             // Usar a rota pública de QR
             const res = await fetch(`${baseUrl}/qr/${code}`);
 
