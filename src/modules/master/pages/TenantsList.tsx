@@ -27,9 +27,12 @@ export const TenantsList: React.FC = () => {
     api
       .get("/tenants")
       .then((res) => {
-        setApiTenants(res.data);
+        // Ensure res.data is an array before setting state
+        const data = Array.isArray(res.data) ? res.data : [];
+        setApiTenants(data);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Erro ao carregar museus:", err);
         setApiTenants([]);
       });
   }, []);
@@ -54,7 +57,8 @@ export const TenantsList: React.FC = () => {
       await api.delete("/tenants/utils/demo");
       // Reload list
       const res = await api.get("/tenants");
-      setApiTenants(res.data);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setApiTenants(data);
       alert("Dados de demonstração limpos.");
     } catch (err) {
       console.error(err);
