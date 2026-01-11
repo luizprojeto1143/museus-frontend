@@ -24,12 +24,17 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const loadWorks = async () => {
         try {
             const res = await api.get(`/works?tenantId=${tenantId}`);
+            // Handle paginated response (data.works) or direct array (data)
+            const worksArray = Array.isArray(res.data)
+                ? res.data
+                : (res.data?.works || []);
             // Filter works that have coordinates
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const geoWorks = res.data.filter((w: any) => w.latitude && w.longitude);
+            const geoWorks = worksArray.filter((w: any) => w.latitude && w.longitude);
             setWorks(geoWorks);
         } catch (err) {
             console.error("Failed to load works for geofencing", err);
+            setWorks([]);
         }
     };
 
