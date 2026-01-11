@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
-import { useAuth } from "../../auth/AuthContext";
 
 interface GamificationContextType {
     stats: UserStats;
@@ -19,14 +18,37 @@ interface GamificationContextType {
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
 
 const STORAGE_KEY = "cultura_viva_gamification";
+const AUTH_STORAGE_KEY = "museus_auth_v1";
+
+// Helper to safely get auth data from localStorage
+const getAuthFromStorage = (): { email: string | null; tenantId: string | null; isAuthenticated: boolean } => {
+    try {
+        const stored = window.localStorage.getItem(AUTH_STORAGE_KEY);
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            return {
+                email: parsed.email ?? null,
+                tenantId: parsed.tenantId ?? null,
+                isAuthenticated: !!parsed.token
+            };
+        }
+    } catch {
+        // Ignore parse errors
+    }
+    return { email: null, tenantId: null, isAuthenticated: false };
+};
 
 export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { isAuthenticated, email, tenantId } = useAuth();
+    const [authState, setAuthState] = useState(getAuthFromStorage);
     const [loading, setLoading] = useState(false);
     const [stats, setStats] = useState<UserStats>(() => {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            return JSON.parse(stored);
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                return JSON.parse(stored);
+            }
+        } catch {
+            // Ignore parse errors
         }
         return {
             xp: 0,
@@ -37,14 +59,41 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         };
     });
 
+    // Listen for storage changes to update auth state
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setAuthState(getAuthFromStorage());
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+
+        // Also check periodically in case storage changed in same tab
+        const interval = setInterval(() => {
+            const newAuth = getAuthFromStorage();
+            if (newAuth.email !== authState.email || newAuth.tenantId !== authState.tenantId) {
+                setAuthState(newAuth);
+            }
+        }, 1000);
+
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+            clearInterval(interval);
+        };
+    }, [authState.email, authState.tenantId]);
+
+    const { isAuthenticated, email, tenantId } = authState;
+
     // Sync with backend on mount/auth change
     useEffect(() => {
         if (isAuthenticated && email && tenantId) {
             fetchBackendData();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAuthenticated, email, tenantId]);
 
     const fetchBackendData = async () => {
+        if (!email || !tenantId) return;
+
         setLoading(true);
         try {
             const res = await api.get(`/visitors/me/summary?email=${email}&tenantId=${tenantId}`);
@@ -66,18 +115,11 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                     return localAch;
                 });
 
-                // Map backend stamps/visits to visitedWorks (IDs)
-                // Backend summary returns stamps: { workTitle, date, workId? }
-                // We might need to adjust backend to return workId in stamps if not present
-                // For now assuming stamps has workId or we use visits
-
                 return {
                     ...prev,
                     xp: newXp,
                     level: newLevelInfo.level,
                     achievements: mergedAchievements,
-                    // We might need to fetch full visited works list if not in summary
-                    // For now, keep local or merge if possible
                 };
             });
         } catch (error) {
@@ -92,7 +134,11 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     };
 
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+        } catch {
+            // Ignore storage errors
+        }
     }, [stats]);
 
     const getCurrentLevelInfo = (xp: number) => {
