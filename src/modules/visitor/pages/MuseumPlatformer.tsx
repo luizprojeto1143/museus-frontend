@@ -36,13 +36,13 @@ const SPRITE_SHEETS = {
 // Future: This can be replaced by "ImperialMuseumTheme" or "MASPTheme" props.
 const DEFAULT_THEME = {
     colors: {
-        sky: '#87CEEB',
-        ground: '#5D4037',     // Dark Brown
-        platform: '#8D6E63',   // Light Brown
-        player: '#E53935',     // Mario Red
+        sky: '#5BA3E6',        // Museum Blue
+        ground: '#3E2723',     // Dark Museum Wood
+        platform: '#6D4C41',   // Mahogany
+        player: '#00ACC1',     // Teal (matches visitor jacket)
         coin: '#FFD700',       // Gold
-        goal: '#4CAF50',       // Green Painting
-        spike: '#757575'       // Grey Spikes
+        goal: '#66BB6A',       // Green Exit
+        spike: '#37474F'       // Dark Grey Spikes
     },
     backgrounds: {
         default: null as string | null,
@@ -147,7 +147,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
 
     // Game Mutable State (Ref to avoid re-renders in loop)
     const game = useRef({
-        player: { x: 50, y: 100, width: 50, height: 60, vx: 0, vy: 0, isGrounded: false, isDead: false } as Entity,
+        player: { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false } as Entity,
         keys: { left: false, right: false, up: false },
         camera: { x: 0 },
         tiles: [] as { x: number, y: number, type: string, collected?: boolean, animFrame?: number }[],
@@ -201,7 +201,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
             }
         }
         game.current.tiles = tiles;
-        game.current.player = { x: 50, y: 100, width: 30, height: 30, vx: 0, vy: 0, isGrounded: false, isDead: false };
+        game.current.player = { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false };
         game.current.camera.x = 0;
 
         // Only reset score/coins if starting fresh campaign
