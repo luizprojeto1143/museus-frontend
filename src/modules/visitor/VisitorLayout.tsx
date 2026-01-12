@@ -26,6 +26,36 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [showWelcome, setShowWelcome] = useState(true);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
+  // Theme and Features State - MUST be declared before allLinks uses it
+  const [settings, setSettings] = useState<{
+    primaryColor: string;
+    secondaryColor: string;
+    historicalFont: boolean;
+    logoUrl?: string;
+    name?: string;
+    // Feature Flags
+    featureWorks?: boolean;
+    featureTrails?: boolean;
+    featureEvents?: boolean;
+    featureGamification?: boolean;
+    featureQRCodes?: boolean;
+    featureChatAI?: boolean;
+    featureShop?: boolean;
+    featureDonations?: boolean;
+    featureCertificates?: boolean;
+    featureReviews?: boolean;
+    featureGuestbook?: boolean;
+    featureAccessibility?: boolean;
+  } | null>(null);
+
+  useEffect(() => {
+    if (tenantId) {
+      api.get(`/tenants/${tenantId}/settings`)
+        .then(res => setSettings(res.data))
+        .catch(console.error);
+    }
+  }, [tenantId]);
+
   useEffect(() => {
     const handler = (e: any) => {
       e.preventDefault();
@@ -88,36 +118,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       })}
     </>
   );
-
-  // Theme and Features State
-  const [settings, setSettings] = useState<{
-    primaryColor: string;
-    secondaryColor: string;
-    historicalFont: boolean;
-    logoUrl?: string;
-    name?: string;
-    // Feature Flags
-    featureWorks?: boolean;
-    featureTrails?: boolean;
-    featureEvents?: boolean;
-    featureGamification?: boolean;
-    featureQRCodes?: boolean;
-    featureChatAI?: boolean;
-    featureShop?: boolean;
-    featureDonations?: boolean;
-    featureCertificates?: boolean;
-    featureReviews?: boolean;
-    featureGuestbook?: boolean;
-    featureAccessibility?: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    if (tenantId) {
-      api.get(`/tenants/${tenantId}/settings`)
-        .then(res => setSettings(res.data))
-        .catch(console.error);
-    }
-  }, [tenantId]);
 
   const themeStyles = settings ? {
     "--primary-color": settings.primaryColor,
