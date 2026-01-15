@@ -32,21 +32,24 @@ const SPRITE_SHEETS = {
     }
 };
 
-// --- CONFIGURATION (Default Theme - "The Gallery") ---
-// Future: This can be replaced by "ImperialMuseumTheme" or "MASPTheme" props.
+// --- CONFIGURATION (Default Theme - "Museum Guardian" AAA) ---
 const DEFAULT_THEME = {
+    name: 'Guardião do Museu',
     colors: {
-        sky: '#5BA3E6',        // Museum Blue
-        ground: '#3E2723',     // Dark Museum Wood
-        platform: '#6D4C41',   // Mahogany
+        sky: '#1a1a2e',        // Deep Museum Night
+        ground: '#2D1B0E',     // Rich Dark Wood
+        platform: '#4A3728',   // Mahogany
         player: '#00ACC1',     // Teal (matches visitor jacket)
         coin: '#FFD700',       // Gold
         goal: '#66BB6A',       // Green Exit
-        spike: '#37474F'       // Dark Grey Spikes
+        spike: '#8B0000'       // Dark Red Danger
     },
+    // AAA Parallax Backgrounds
     backgrounds: {
-        default: null as string | null,
-        level2: null as string | null
+        far: '/assets/game/bg_far.png',
+        mid: '/assets/game/bg_mid.png',
+        platform: '/assets/game/platform.png',
+        artifact: '/assets/game/artifact.png'
     },
     level: [
         "..................................................",
@@ -87,6 +90,7 @@ interface Particle {
 // Pre-load images for animation
 const preloadedImages: { [key: string]: HTMLImageElement } = {};
 const preloadImages = () => {
+    // Preload sprite sheets
     Object.entries(SPRITE_SHEETS).forEach(([entityType, animations]) => {
         Object.entries(animations).forEach(([animName, config]) => {
             const key = `${entityType}_${animName}`;
@@ -94,6 +98,19 @@ const preloadImages = () => {
             img.src = config.src;
             preloadedImages[key] = img;
         });
+    });
+
+    // Preload AAA backgrounds
+    const bgImages = [
+        { key: 'bg_far', src: '/assets/game/bg_far.png' },
+        { key: 'bg_mid', src: '/assets/game/bg_mid.png' },
+        { key: 'platform', src: '/assets/game/platform.png' },
+        { key: 'artifact', src: '/assets/game/artifact.png' }
+    ];
+    bgImages.forEach(({ key, src }) => {
+        const img = new Image();
+        img.src = src;
+        preloadedImages[key] = img;
     });
 };
 preloadImages();
@@ -150,7 +167,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         player: { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false } as Entity,
         keys: { left: false, right: false, up: false },
         camera: { x: 0 },
-        tiles: [] as { x: number, y: number, type: string, collected?: boolean, animFrame?: number }[],
+        tiles: [] as { x: number, y: number, type: string, collected?: boolean, animFrame?: number, vx?: number, vy?: number, originX?: number, originY?: number }[],
         particles: [] as Particle[],
         levelWidth: 0,
         levelHeight: 0,
@@ -456,52 +473,150 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     };
 
     const draw = (ctx: CanvasRenderingContext2D) => {
-        // Clear Screen or Draw Background
-        const currentLevelIdx = 0; // TODO: Track current level in state to select bg
-        // For now, use sky color as fallback
-        ctx.fillStyle = theme.colors.sky;
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        const canvasW = ctx.canvas.width;
+        const canvasH = ctx.canvas.height;
+        const cameraX = game.current.camera.x;
 
-        // Draw Background Image if available
-        if (theme.backgrounds?.default) {
-            const img = new Image();
-            img.src = theme.backgrounds.default;
-            // In a real game, pre-load images. For prototype:
-            if (img.complete) {
-                ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-            } else {
-                img.onload = () => ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-            }
+        // ==================== AAA PARALLAX SYSTEM ====================
+        // Layer 0: Dark gradient sky
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvasH);
+        gradient.addColorStop(0, '#0f0c29');
+        gradient.addColorStop(0.5, '#302b63');
+        gradient.addColorStop(1, '#24243e');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        // Layer 1: Far background (slowest parallax - 10%)
+        const bgFar = preloadedImages['bg_far'];
+        if (bgFar && bgFar.complete) {
+            const parallaxFar = cameraX * 0.1;
+            // Tile the background for seamless scrolling
+            const bgWidth = canvasW * 1.5;
+            const bgX = -(parallaxFar % bgWidth);
+            ctx.drawImage(bgFar, bgX, 0, bgWidth, canvasH);
+            ctx.drawImage(bgFar, bgX + bgWidth, 0, bgWidth, canvasH);
         }
 
-        ctx.save();
-        ctx.translate(-game.current.camera.x, 0);
+        // Layer 2: Mid background (medium parallax - 30%)
+        const bgMid = preloadedImages['bg_mid'];
+        if (bgMid && bgMid.complete) {
+            const parallaxMid = cameraX * 0.3;
+            const midY = canvasH * 0.4; // Position in lower half
+            const midH = canvasH * 0.6;
+            const midW = canvasW * 2;
+            const midX = -(parallaxMid % midW);
+            ctx.globalAlpha = 0.9;
+            ctx.drawImage(bgMid, midX, midY, midW, midH);
+            ctx.drawImage(bgMid, midX + midW, midY, midW, midH);
+            ctx.globalAlpha = 1;
+        }
 
-        // Draw Tiles
+        // ==================== AMBIENT LIGHTING ====================
+        // Add subtle vignette effect
+        const vignetteGradient = ctx.createRadialGradient(
+            canvasW / 2, canvasH / 2, canvasH * 0.3,
+            canvasW / 2, canvasH / 2, canvasH
+        );
+        vignetteGradient.addColorStop(0, 'rgba(0,0,0,0)');
+        vignetteGradient.addColorStop(1, 'rgba(0,0,0,0.4)');
+        ctx.fillStyle = vignetteGradient;
+        ctx.fillRect(0, 0, canvasW, canvasH);
+
+        // ==================== GAME WORLD (Camera Transform) ====================
+        ctx.save();
+        ctx.translate(-cameraX, 0);
+
+        // ==================== DRAW TILES WITH AAA TEXTURES ====================
+        const platformImg = preloadedImages['platform'];
+        const artifactImg = preloadedImages['artifact'];
+
         for (const tile of game.current.tiles) {
             if (tile.collected) continue;
 
-            if (tile.type === '#') ctx.fillStyle = theme.colors.ground;
-            else if (tile.type === '=') ctx.fillStyle = theme.colors.platform;
-            else if (tile.type === 'C') ctx.fillStyle = theme.colors.coin;
-            else if (tile.type === '^') ctx.fillStyle = theme.colors.spike;
-            else if (tile.type === 'G') ctx.fillStyle = theme.colors.goal;
-            else if (tile.type === 'E') ctx.fillStyle = '#FF5722'; // Enemy Orange
-            else if (tile.type === 'B') ctx.fillStyle = '#880E4F'; // Boss Purple
-            else continue;
+            // Ground tiles (#) - Use platform texture
+            if (tile.type === '#' || tile.type === '=') {
+                if (platformImg && platformImg.complete) {
+                    ctx.drawImage(platformImg, tile.x, tile.y, TILE_SIZE, TILE_SIZE);
+                } else {
+                    // Fallback: Rich gradient
+                    const tileGrad = ctx.createLinearGradient(tile.x, tile.y, tile.x, tile.y + TILE_SIZE);
+                    tileGrad.addColorStop(0, '#5D4037');
+                    tileGrad.addColorStop(0.5, '#4E342E');
+                    tileGrad.addColorStop(1, '#3E2723');
+                    ctx.fillStyle = tileGrad;
+                    ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
+                    // Gold trim
+                    ctx.strokeStyle = '#D4AF37';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(tile.x + 1, tile.y + 1, TILE_SIZE - 2, TILE_SIZE - 2);
+                }
+                continue;
+            }
 
+            // Coins (C) - Use artifact texture with glow
             if (tile.type === 'C') {
-                ctx.beginPath();
-                ctx.arc(tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 10, 0, Math.PI * 2);
-                ctx.fill();
-            } else if (tile.type === '^') {
+                if (artifactImg && artifactImg.complete) {
+                    // Glow effect
+                    ctx.shadowColor = '#FFD700';
+                    ctx.shadowBlur = 15;
+                    ctx.drawImage(artifactImg, tile.x - 5, tile.y - 5, TILE_SIZE + 10, TILE_SIZE + 10);
+                    ctx.shadowBlur = 0;
+                } else {
+                    // Fallback: Golden coin with shine
+                    ctx.shadowColor = '#FFD700';
+                    ctx.shadowBlur = 10;
+                    const coinGrad = ctx.createRadialGradient(
+                        tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 0,
+                        tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 15
+                    );
+                    coinGrad.addColorStop(0, '#FFF8E1');
+                    coinGrad.addColorStop(0.5, '#FFD700');
+                    coinGrad.addColorStop(1, '#FF8F00');
+                    ctx.fillStyle = coinGrad;
+                    ctx.beginPath();
+                    ctx.arc(tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+                continue;
+            }
+
+            // Spikes (^) - Danger red with glow
+            if (tile.type === '^') {
+                ctx.shadowColor = '#FF0000';
+                ctx.shadowBlur = 8;
+                const spikeGrad = ctx.createLinearGradient(tile.x, tile.y + TILE_SIZE, tile.x, tile.y);
+                spikeGrad.addColorStop(0, '#4A0000');
+                spikeGrad.addColorStop(1, '#8B0000');
+                ctx.fillStyle = spikeGrad;
                 ctx.beginPath();
                 ctx.moveTo(tile.x, tile.y + TILE_SIZE);
                 ctx.lineTo(tile.x + TILE_SIZE / 2, tile.y);
                 ctx.lineTo(tile.x + TILE_SIZE, tile.y + TILE_SIZE);
                 ctx.fill();
-            } else if (tile.type === 'E') {
-                // Draw Animated Enemy (Ink Monster)
+                ctx.shadowBlur = 0;
+                continue;
+            }
+
+            // Goal (G) - Green portal with glow
+            if (tile.type === 'G') {
+                ctx.shadowColor = '#00FF00';
+                ctx.shadowBlur = 20;
+                const goalGrad = ctx.createRadialGradient(
+                    tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 0,
+                    tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, TILE_SIZE
+                );
+                goalGrad.addColorStop(0, '#A5D6A7');
+                goalGrad.addColorStop(0.5, '#66BB6A');
+                goalGrad.addColorStop(1, '#2E7D32');
+                ctx.fillStyle = goalGrad;
+                ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
+                ctx.shadowBlur = 0;
+                continue;
+            }
+
+            // Enemies (E) - Animated ink monster
+            if (tile.type === 'E') {
                 const enemyImg = preloadedImages['enemy_walk'];
                 if (enemyImg && enemyImg.complete) {
                     const sheet = SPRITE_SHEETS.enemy.walk;
@@ -510,56 +625,29 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                     const sx = frame * frameWidth;
                     ctx.drawImage(enemyImg, sx, 0, frameWidth, enemyImg.height, tile.x - 10, tile.y - 20, 60, 60);
                 } else {
-                    // Fallback Draw Spiky Enemy
+                    ctx.fillStyle = '#FF5722';
                     ctx.fillRect(tile.x, tile.y + 10, TILE_SIZE, TILE_SIZE - 10);
-                    ctx.fillStyle = 'white';
-                    ctx.fillRect(tile.x + 5, tile.y + 15, 8, 8);
-                    ctx.fillRect(tile.x + 25, tile.y + 15, 8, 8);
                 }
-            } else if (tile.type === 'S') {
-                // Draw Animated Statue Enemy
-                const statueImg = preloadedImages['statue_walk'];
-                if (statueImg && statueImg.complete) {
-                    const sheet = SPRITE_SHEETS.statue.walk;
-                    const frameWidth = sheet.frameWidth;
-                    const frame = tile.animFrame || 0;
-                    const sx = frame * frameWidth;
-                    ctx.drawImage(statueImg, sx, 0, frameWidth, statueImg.height, tile.x - 10, tile.y - 30, 60, 70);
-                } else {
-                    ctx.fillStyle = '#BDBDBD';
-                    ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
-                }
-            } else if (tile.type === 'F') {
-                // Draw Animated Frame Enemy
-                const frameImg = preloadedImages['frame_walk'];
-                if (frameImg && frameImg.complete) {
-                    const sheet = SPRITE_SHEETS.frame.walk;
-                    const frameWidth = sheet.frameWidth;
-                    const frame = tile.animFrame || 0;
-                    const sx = frame * frameWidth;
-                    ctx.drawImage(frameImg, sx, 0, frameWidth, frameImg.height, tile.x - 10, tile.y - 20, 60, 60);
-                } else {
-                    ctx.fillStyle = '#FFD700';
-                    ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
-                }
-            } else if (tile.type === 'B') {
-                // Draw Animated Boss
+                continue;
+            }
+
+            // Boss (B) - Animated boss
+            if (tile.type === 'B') {
                 const bossImg = preloadedImages['boss_attack'];
                 if (bossImg && bossImg.complete) {
                     const sheet = SPRITE_SHEETS.boss.attack;
                     const frameWidth = sheet.frameWidth;
                     const frame = (tile.animFrame || 0) % 3;
                     const sx = frame * frameWidth;
+                    ctx.shadowColor = '#880E4F';
+                    ctx.shadowBlur = 15;
                     ctx.drawImage(bossImg, sx, 0, frameWidth, bossImg.height, tile.x - 30, tile.y - 40, 120, 100);
+                    ctx.shadowBlur = 0;
                 } else {
-                    // Fallback Draw Big Boss
+                    ctx.fillStyle = '#880E4F';
                     ctx.fillRect(tile.x, tile.y, 60, 60);
-                    ctx.fillStyle = 'yellow';
-                    ctx.fillRect(tile.x + 10, tile.y + 10, 15, 10);
-                    ctx.fillRect(tile.x + 35, tile.y + 10, 15, 10);
                 }
-            } else {
-                ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
+                continue;
             }
         }
 
