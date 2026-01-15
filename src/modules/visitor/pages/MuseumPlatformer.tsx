@@ -178,6 +178,18 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         facingRight: true,
     });
 
+    // Player sprite based on character selection
+    const playerSpriteRef = useRef<HTMLImageElement | null>(null);
+
+    // Load selected character sprite
+    useEffect(() => {
+        const img = new Image();
+        img.src = selectedCharacter.sprite;
+        img.onload = () => {
+            playerSpriteRef.current = img;
+        };
+    }, [selectedCharacter]);
+
     useEffect(() => {
         initLevel(currentLevelIdx);
         window.addEventListener('keydown', handleKeyDown);
@@ -651,21 +663,20 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
             }
         }
 
-        // Draw Player with Animation
+        // Draw Player with Selected Character Sprite
         if (!game.current.player.isDead) {
             const p = game.current.player;
-            const isJumping = !p.isGrounded;
             const isMoving = Math.abs(p.vx) > 0.5;
 
-            // Select sprite sheet based on state
-            const sheetKey = isJumping ? 'player_jump' : 'player_walk';
-            const sheet = isJumping ? SPRITE_SHEETS.player.jump : SPRITE_SHEETS.player.walk;
-            const img = preloadedImages[sheetKey];
+            // Use selected character sprite
+            const playerImg = playerSpriteRef.current;
 
-            if (img && img.complete) {
-                const frameWidth = sheet.frameWidth;
-                const frameHeight = img.height;
-                const frame = isJumping ? 0 : game.current.playerAnimFrame;
+            if (playerImg && playerImg.complete) {
+                // Calculate frame (4 frames in sprite sheet)
+                const totalFrames = 4;
+                const frameWidth = playerImg.width / totalFrames;
+                const frameHeight = playerImg.height;
+                const frame = isMoving ? game.current.playerAnimFrame % totalFrames : 0;
                 const sx = frame * frameWidth;
 
                 ctx.save();
@@ -674,20 +685,21 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 if (!game.current.facingRight) {
                     ctx.translate(p.x + p.width, p.y);
                     ctx.scale(-1, 1);
-                    ctx.drawImage(img, sx, 0, frameWidth, frameHeight, 0, 0, p.width, p.height);
+                    ctx.drawImage(playerImg, sx, 0, frameWidth, frameHeight, 0, -20, 80, 100);
                 } else {
-                    ctx.drawImage(img, sx, 0, frameWidth, frameHeight, p.x, p.y, p.width, p.height);
+                    ctx.drawImage(playerImg, sx, 0, frameWidth, frameHeight, p.x - 10, p.y - 20, 80, 100);
                 }
 
                 ctx.restore();
             } else {
-                // Fallback: Draw colored rectangle
-                ctx.fillStyle = theme.colors.player;
+                // Fallback: Draw colored rectangle with character color
+                ctx.fillStyle = selectedCharacter.color;
                 ctx.fillRect(p.x, p.y, p.width, p.height);
-                // Eyes
+                // Face
                 ctx.fillStyle = 'white';
-                const faceDir = game.current.facingRight ? 1 : -1;
-                ctx.fillRect(p.x + (faceDir === 1 ? 30 : 8), p.y + 12, 10, 10);
+                ctx.beginPath();
+                ctx.arc(p.x + p.width / 2, p.y + 20, 15, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
 
