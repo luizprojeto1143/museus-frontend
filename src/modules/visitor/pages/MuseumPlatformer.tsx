@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ArrowLeft, RefreshCw, Trophy, ChevronRight, Star } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trophy, ChevronRight, Star, CheckCircle, Gamepad2 as GamePadIcon } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 
@@ -943,70 +943,148 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
 
     // --- RENDER UI ---
     return (
-        <div className="fixed inset-0 bg-gradient-to-b from-gray-900 to-gray-800 z-50 flex flex-col items-center justify-center p-4">
+        <div className="fixed inset-0 bg-gradient-to-b from-gray-950 to-gray-900 z-50 flex flex-col items-center justify-center p-4">
+            <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+                
+                .font-Orbitron { font-family: 'Orbitron', sans-serif; }
+                
+                @keyframes fade-in-down {
+                    0% { opacity: 0; transform: translateY(-20px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-down { animation: fade-in-down 0.8s ease-out; }
+                
+                @keyframes shine {
+                    0% { background-position: 200% center; }
+                    100% { background-position: -200% center; }
+                }
+                .animate-shine {
+                    background-size: 200% auto;
+                    animation: shine 3s linear infinite;
+                }
+                
+                .glitch-effect {
+                    text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+                }
+            `}</style>
 
-            {/* CHARACTER SELECTION SCREEN */}
+            {/* CHARACTER SELECTION SCREEN (PREMIUM REDESIGN) */}
             {gameState === 'SELECT_CHARACTER' && (
-                <div className="flex flex-col items-center justify-center w-full max-w-3xl">
-                    {/* Logo */}
-                    <img src="/assets/characters/select_male.jpg" alt="Art Run Select" className="w-full max-w-md rounded-xl mb-6 shadow-2xl" />
+                <div className="relative z-10 flex flex-col items-center justify-center w-full h-full max-w-5xl">
+                    {/* Background Ambience */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+                    </div>
 
-                    <h2 className="text-3xl font-black text-white mb-6 tracking-wider">SELECT YOUR VISITOR</h2>
+                    <div className="z-10 text-center mb-8 animate-fade-in-down">
+                        <h2 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-yellow-300 via-yellow-100 to-yellow-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.5)] tracking-tighter mb-2 font-Orbitron">
+                            ART RUN
+                        </h2>
+                        <p className="text-blue-200 text-lg uppercase tracking-[0.3em] font-light">Museum Guardian Edition</p>
+                    </div>
 
-                    {/* Character Grid */}
-                    <div className="grid grid-cols-3 gap-4 mb-8">
-                        {CHARACTERS.map((char) => (
-                            <button
+                    {/* Character Cards Carousel */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full px-4">
+                        {CHARACTERS.slice(0, 3).map((char) => ( // Showing top 3 for layout symmetry, or mapped properly
+                            <div
                                 key={char.id}
                                 onClick={() => setSelectedCharacter(char)}
                                 className={`
-                                        p-4 rounded-xl border-4 transition-all hover:scale-105
-                                        ${selectedCharacter.id === char.id
-                                        ? 'border-yellow-400 bg-yellow-400/20 shadow-lg shadow-yellow-400/30'
-                                        : 'border-gray-600 bg-gray-700/50 hover:border-gray-500'}
-                                    `}
+                                    group relative overflow-hidden rounded-2xl transition-all duration-300 cursor-pointer
+                                    hover:transform hover:scale-105 hover:shadow-[0_0_30px_rgba(59,130,246,0.4)]
+                                    ${selectedCharacter.id === char.id
+                                        ? 'ring-4 ring-yellow-400 shadow-[0_0_40px_rgba(234,179,8,0.4)] scale-105 bg-gradient-to-b from-gray-800/90 to-black/90'
+                                        : 'bg-gray-900/60 border border-white/10 hover:border-white/30'}
+                                `}
                             >
-                                <div
-                                    className="w-16 h-16 rounded-full mx-auto mb-2"
-                                    style={{ backgroundColor: char.color }}
-                                />
-                                <p className="text-white text-sm font-medium">{char.name}</p>
-                            </button>
+                                {/* Card Content */}
+                                <div className="p-6 flex flex-col items-center">
+                                    <div className={`
+                                        w-24 h-24 rounded-full mb-4 flex items-center justify-center relative
+                                        ${selectedCharacter.id === char.id ? 'bg-yellow-400/20' : 'bg-white/5'}
+                                    `}>
+                                        <div className="absolute inset-0 rounded-full border border-white/10"></div>
+                                        <img src={char.sprite} alt={char.name} className="w-16 h-16 object-contain drop-shadow-lg group-hover:scale-110 transition-transform" />
+                                    </div>
+
+                                    <h3 className={`text-xl font-bold mb-1 ${selectedCharacter.id === char.id ? 'text-yellow-400' : 'text-white'}`}>
+                                        {char.name}
+                                    </h3>
+                                    <div className="flex gap-1 mb-4">
+                                        {[...Array(3)].map((_, i) => (
+                                            <Star key={i} size={12} className="text-yellow-500 fill-yellow-500" />
+                                        ))}
+                                    </div>
+
+                                    <div className="w-full h-1 bg-gray-700 rounded-full overflow-hidden">
+                                        <div className="h-full bg-blue-500 w-3/4"></div>
+                                    </div>
+                                    <p className="text-xs text-gray-400 mt-2 uppercase tracking-wider">Speed Class A</p>
+                                </div>
+
+                                {/* Selection Overlay */}
+                                {selectedCharacter.id === char.id && (
+                                    <div className="absolute top-2 right-2">
+                                        <CheckCircle className="text-yellow-400 w-6 h-6" />
+                                    </div>
+                                )}
+                            </div>
                         ))}
                     </div>
 
-                    {/* Start Button */}
-                    <button
-                        onClick={() => {
-                            setCurrentLevelIdx(0);
-                            initLevel(0);
-                        }}
-                        className="px-12 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xl font-black rounded-xl hover:scale-105 transition-all shadow-xl shadow-blue-500/30"
-                    >
-                        JOGAR AGORA!
-                    </button>
+                    {/* Action Bar */}
+                    <div className="flex flex-col gap-4 items-center w-full max-w-md z-20">
+                        <button
+                            onClick={() => {
+                                setCurrentLevelIdx(0);
+                                initLevel(0);
+                            }}
+                            className="w-full py-5 bg-gradient-to-r from-yellow-500 to-amber-600 text-black text-xl font-black rounded-lg 
+                            hover:from-yellow-400 hover:to-amber-500 transition-all transform hover:scale-[1.02] hover:-translate-y-1 shadow-[0_0_20px_rgba(234,179,8,0.4)]
+                            flex items-center justify-center gap-3 uppercase tracking-wider"
+                        >
+                            <GamePadIcon /> START MISSION
+                        </button>
 
-                    <button onClick={onClose} className="mt-4 text-gray-400 hover:text-white text-sm">
-                        ← Voltar aos Desafios
-                    </button>
+                        <button onClick={onClose} className="text-gray-400 hover:text-white text-sm uppercase tracking-widest hover:underline transition-all">
+                            Exit to Exhibition
+                        </button>
+                    </div>
                 </div>
             )}
 
             {/* GAME UI (only show when not selecting character) */}
             {gameState !== 'SELECT_CHARACTER' && (
                 <>
-                    {/* Header / Score */}
-                    <div className="absolute top-4 left-4 right-4 flex justify-between items-center text-white pointer-events-none">
-                        <div className="flex gap-4 text-xl font-bold font-mono">
-                            <span className="text-yellow-400">COINS: {coins}</span>
-                            <span>SCORE: {score}</span>
-                            <span className="text-gray-400 text-sm">Level {currentLevelIdx + 1}/{levels.length}</span>
+                    {/* PREMIUM HUD */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 flex justify-between items-start pointer-events-none z-20">
+                        {/* Score Card */}
+                        <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl px-6 py-2 flex flex-col items-center shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                            <span className="text-xs text-blue-200 uppercase tracking-widest font-bold">Score</span>
+                            <span className="text-2xl font-black text-white font-mono drop-shadow-md">{score.toLocaleString()}</span>
                         </div>
-                        <div>
-                            <button onClick={onClose} className="pointer-events-auto bg-white/10 p-2 rounded hover:bg-white/20">
-                                <ArrowLeft className="w-6 h-6" />
-                            </button>
+
+                        {/* Level Progress */}
+                        <div className="flex-1 mx-8 pt-2">
+                            <div className="flex justify-between text-xs text-white uppercase font-bold mb-1 opacity-80 tracking-wider">
+                                <span>Coins: {coins}</span>
+                                <span>Level {currentLevelIdx + 1} / {levels.length}</span>
+                            </div>
+                            <div className="w-full h-2 bg-gray-800/50 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
+                                {/* Fake progress for visual - could be linked to x pos if we knew level length in pixels */}
+                                <div
+                                    className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 shadow-[0_0_10px_rgba(234,179,8,0.6)]"
+                                    style={{ width: `${((currentLevelIdx + 1) / levels.length) * 100}%` }}
+                                ></div>
+                            </div>
                         </div>
+
+                        {/* Controls / Exit */}
+                        <button onClick={onClose} className="pointer-events-auto bg-red-500/10 hover:bg-red-500/30 text-red-200 border border-red-500/20 p-2 rounded-xl backdrop-blur-md transition-all">
+                            <ArrowLeft className="w-6 h-6" />
+                        </button>
                     </div>
 
                     {/* Game Canvas */}
@@ -1018,84 +1096,125 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                             className="bg-sky-300 max-w-full h-auto"
                         />
 
-                        {/* Overlays */}
+                        {/* Overlays - PREMIUM REDESIGN */}
                         {gameState === 'GAMEOVER' && (
-                            <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white p-4">
-                                <h2 className="text-5xl font-black mb-2 text-red-500">GAME OVER</h2>
-                                <p className="mb-6 font-mono text-xl">Score: {score}</p>
+                            <div className="absolute inset-0 bg-red-900/90 flex flex-col items-center justify-center text-white p-4 backdrop-blur-sm z-30 animate-fade-in">
+                                <div className="absolute inset-0 bg-[url('/assets/pattern_grid.png')] opacity-10"></div>
 
-                                {/* Mini Leaderboard */}
-                                <div className="bg-white/10 p-4 rounded-xl mb-6 w-full max-w-sm backdrop-blur-md">
-                                    <h3 className="text-yellow-400 font-bold mb-2 flex items-center gap-2"><Trophy size={16} /> TOP PLAYERS</h3>
-                                    <div className="space-y-2 text-sm">
+                                <h2 className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-b from-red-500 to-red-900 drop-shadow-[0_0_25px_rgba(220,38,38,0.8)] mb-2 font-Orbitron glitch-effect">
+                                    SECURITY BREACH
+                                </h2>
+                                <p className="mb-8 font-mono text-xl text-red-200 tracking-[0.5em] uppercase">Session Terminated</p>
+
+                                {/* Stats Panel */}
+                                <div className="bg-black/60 border border-red-500/30 p-8 rounded-2xl mb-8 w-full max-w-md backdrop-blur-xl shadow-2xl relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent animate-scanline"></div>
+
+                                    <div className="flex justify-between items-end mb-6 border-b border-white/10 pb-4">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-gray-400 uppercase tracking-widest">Final Score</span>
+                                            <span className="text-4xl font-mono font-bold text-white">{score.toLocaleString()}</span>
+                                        </div>
+                                        <Trophy className="text-red-500 w-8 h-8 opacity-50" />
+                                    </div>
+
+                                    {/* Mini Leaderboard */}
+                                    <h3 className="text-red-400 text-xs font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Star size={12} /> Elite Agents
+                                    </h3>
+                                    <div className="space-y-3">
                                         {leaderboard.slice(0, 3).map((p, i) => (
-                                            <div key={i} className="flex justify-between border-b border-white/10 pb-1">
-                                                <span>#{p.rank} {p.name}</span>
-                                                <span className="text-yellow-400 font-mono">{p.xp} XP</span>
+                                            <div key={i} className="flex justify-between items-center text-sm group">
+                                                <div className="flex items-center gap-3">
+                                                    <span className={`w-5 h-5 flex items-center justify-center rounded text-xs font-bold ${i === 0 ? 'bg-yellow-500 text-black' :
+                                                        i === 1 ? 'bg-gray-400 text-black' :
+                                                            'bg-orange-700 text-white'
+                                                        }`}>{i + 1}</span>
+                                                    <span className="text-gray-300 group-hover:text-white transition-colors">{p.name}</span>
+                                                </div>
+                                                <span className="font-mono text-red-200">{p.xp.toLocaleString()}</span>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
 
-                                <button
-                                    onClick={() => initLevel(currentLevelIdx)}
-                                    className="flex items-center gap-2 px-8 py-3 bg-red-600 rounded-xl hover:bg-red-700 font-bold transition-transform hover:scale-105"
-                                >
-                                    <RefreshCw /> Tentar Novamente
-                                </button>
-                                <button onClick={onClose} className="mt-4 text-gray-400 hover:text-white">Sair</button>
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => initLevel(currentLevelIdx)}
+                                        className="flex items-center gap-2 px-8 py-4 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all hover:scale-105 shadow-[0_0_20px_rgba(220,38,38,0.4)] uppercase tracking-wider"
+                                    >
+                                        <RefreshCw size={20} /> Retry Mission
+                                    </button>
+                                    <button onClick={onClose} className="px-8 py-4 bg-transparent border border-white/20 hover:bg-white/10 text-gray-300 rounded-xl font-bold uppercase tracking-wider transition-all">
+                                        Abort
+                                    </button>
+                                </div>
                             </div>
                         )}
 
                         {gameState === 'WIN' && (
-                            <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center text-white text-center p-8">
-                                <Trophy className="w-20 h-20 text-yellow-400 mb-4 animate-bounce" />
-                                <h2 className="text-4xl font-black mb-2 text-yellow-500">LEVEL COMPLETED!</h2>
-                                <p className="mb-6 opacity-80">Você completou a fase {currentLevelIdx + 1}/{levels.length}</p>
-                                <p className="text-2xl font-mono mb-6 text-green-400">Score Atual: {score} XP</p>
+                            <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/95 to-black/95 flex flex-col items-center justify-center text-center p-8 backdrop-blur-md z-30">
+                                <div className="bg-gradient-to-b from-yellow-400/20 to-transparent p-10 rounded-full mb-6 animate-pulse">
+                                    <Trophy className="w-24 h-24 text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]" />
+                                </div>
+                                <h2 className="text-5xl font-black mb-2 text-white font-Orbitron">MISSION COMPLETE</h2>
+                                <p className="mb-8 text-blue-200 text-lg tracking-widest uppercase">Sector {currentLevelIdx + 1} Secured</p>
+
+                                <div className="flex gap-8 mb-10">
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-400 uppercase mb-1">Score</p>
+                                        <p className="text-3xl font-mono font-bold text-yellow-400">{score}</p>
+                                    </div>
+                                    <div className="text-center">
+                                        <p className="text-xs text-gray-400 uppercase mb-1">Coins</p>
+                                        <p className="text-3xl font-mono font-bold text-yellow-400">{coins}</p>
+                                    </div>
+                                </div>
 
                                 <button
                                     onClick={() => nextLevel()}
-                                    className="px-8 py-3 bg-green-600 rounded-lg hover:bg-green-700 font-bold shadow-lg shadow-green-600/20 flex items-center gap-2"
+                                    className="px-10 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl hover:scale-105 font-bold shadow-[0_0_30px_rgba(234,179,8,0.4)] flex items-center gap-3 text-black uppercase tracking-wider transition-all"
                                 >
-                                    Próxima Fase <ChevronRight />
+                                    Next Sector <ChevronRight className="w-5 h-5" />
                                 </button>
                             </div>
                         )}
 
                         {gameState === 'CAMPAIGN_WIN' && (
-                            <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center text-white text-center p-8">
-                                <div className="relative">
-                                    <Star className="w-24 h-24 text-yellow-500 mb-4 animate-spin-slow" />
-                                    <Trophy className="w-12 h-12 text-white absolute top-6 left-6" />
-                                </div>
-                                <h2 className="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
-                                    CAMPAIGN CLEARED!
-                                </h2>
-                                <p className="mb-6 text-xl text-gray-300">Você zerou a campanha "{theme.name || 'Art Run'}"!</p>
-                                <div className="bg-white/10 p-6 rounded-2xl mb-8 border border-white/20">
-                                    <p className="text-sm uppercase tracking-widest text-gray-400 mb-2">XP TOTAL</p>
-                                    <p className="text-6xl font-mono font-bold text-green-400">{score + 1000}</p>
+                            <div className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center text-white text-center p-8 z-30">
+                                {/* Confetti Effect (CSS only for now) */}
+                                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                                    {[...Array(20)].map((_, i) => (
+                                        <div key={i} className="absolute w-2 h-2 bg-yellow-500 rounded-full animate-ping" style={{
+                                            top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`,
+                                            animationDuration: `${1 + Math.random()}s`
+                                        }}></div>
+                                    ))}
                                 </div>
 
-                                {/* Leaderboard */}
-                                <div className="w-full max-w-sm mb-6">
-                                    <h3 className="text-left text-sm font-bold text-yellow-500 mb-2">RANKING FINAL</h3>
-                                    <div className="bg-black/50 rounded-lg p-2 max-h-40 overflow-y-auto">
-                                        {leaderboard.map((p, i) => (
-                                            <div key={i} className="flex justify-between border-b border-light/10 py-1 text-sm">
-                                                <span>#{p.rank} {p.name}</span>
-                                                <span>{p.xp}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                <div className="relative mb-8">
+                                    <div className="absolute inset-0 bg-yellow-500/20 blur-3xl rounded-full"></div>
+                                    <Star className="w-32 h-32 text-yellow-400 relative z-10 animate-spin-slow drop-shadow-[0_0_30px_rgba(250,204,21,0.8)]" />
+                                    <Trophy className="w-16 h-16 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20" />
+                                </div>
+
+                                <h2 className="text-6xl md:text-7xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-white to-yellow-300 animate-shine font-Orbitron">
+                                    LEGENDARY
+                                </h2>
+                                <p className="mb-8 text-xl text-gray-300 max-w-lg">You have recovered all artifacts and secured the museum. Your name will be etched in history.</p>
+
+                                <div className="bg-white/5 border border-white/10 p-8 rounded-2xl mb-10 w-full max-w-md backdrop-blur-md">
+                                    <p className="text-sm uppercase tracking-[0.3em] text-gray-500 mb-2">Total Experience</p>
+                                    <p className="text-7xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-b from-green-400 to-emerald-600 drop-shadow-sm">
+                                        {(score + 1000).toLocaleString()}
+                                    </p>
                                 </div>
 
                                 <button
                                     onClick={onClose}
-                                    className="px-10 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl hover:scale-105 transition-all font-bold shadow-xl lg:text-xl"
+                                    className="px-12 py-5 bg-white text-black rounded-full hover:scale-105 transition-all font-black shadow-[0_0_40px_rgba(255,255,255,0.3)] text-xl uppercase tracking-widest"
                                 >
-                                    Voltar ao Menu
+                                    Claim Victory
                                 </button>
                             </div>
                         )}
