@@ -31,7 +31,8 @@ export const AdminMapEditor: React.FC = () => {
                     api.get(`/tenants/${tenantId}/settings`)
                 ]);
 
-                setWorks(worksRes.data);
+                // API returns { data: works[], pagination: {} }
+                setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
                 setMapUrl(settingsRes.data.mapImageUrl);
             } catch (error) {
                 console.error("Error loading data", error);

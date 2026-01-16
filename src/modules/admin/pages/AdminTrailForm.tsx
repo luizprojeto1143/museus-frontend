@@ -78,7 +78,9 @@ export const AdminTrailForm: React.FC = () => {
 
     if (tenantId) {
       api.get("/works", { params: { tenantId } }).then(res => {
-        setAllWorks((res.data as { id: string; title: string }[]).map(w => ({ id: w.id, title: w.title })));
+        // API returns { data: works[], pagination: {} }
+        const worksData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+        setAllWorks((worksData as { id: string; title: string }[]).map(w => ({ id: w.id, title: w.title })));
       });
     }
 

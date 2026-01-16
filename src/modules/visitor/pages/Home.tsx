@@ -32,8 +32,9 @@ export const Home: React.FC = () => {
           api.get(`/works?tenantId=${tenantId}&limit=3`),
           api.get(`/trails?tenantId=${tenantId}&limit=2`)
         ]);
-        setFeaturedWorks(worksRes.data);
-        setFeaturedTrails(trailsRes.data);
+        // API returns { data: works[], pagination: {} }
+        setFeaturedWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
+        setFeaturedTrails(Array.isArray(trailsRes.data) ? trailsRes.data : (trailsRes.data.data || trailsRes.data || []));
       } catch (err) {
         console.error("Error fetching home data", err);
       } finally {

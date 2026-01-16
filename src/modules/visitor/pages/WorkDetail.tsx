@@ -116,8 +116,9 @@ export const WorkDetail: React.FC = () => {
     if (tenantId && id) {
       api.get(`/works?tenantId=${tenantId}`)
         .then((res) => {
+          // API returns { data: works[], pagination: {} }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const allWorks = res.data as any[];
+          const allWorks = (Array.isArray(res.data) ? res.data : (res.data.data || [])) as any[];
           const others = allWorks.filter((w) => w.id !== id);
           const shuffled = others.sort(() => 0.5 - Math.random());
           const selected = shuffled.slice(0, 2).map((w) => ({

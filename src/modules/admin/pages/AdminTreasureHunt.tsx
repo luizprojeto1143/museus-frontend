@@ -52,8 +52,9 @@ export const AdminTreasureHunt: React.FC = () => {
                 api.get("/clues"),
                 api.get("/works")
             ]);
-            setClues(cluesRes.data);
-            setWorks(worksRes.data);
+            // Handle paginated responses
+            setClues(Array.isArray(cluesRes.data) ? cluesRes.data : (cluesRes.data.data || []));
+            setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         } catch (error) {
             console.error("Erro ao carregar dados", error);
         } finally {

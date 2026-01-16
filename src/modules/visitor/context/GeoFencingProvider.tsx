@@ -64,10 +64,10 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         try {
             const res = await api.get(`/works?tenantId=${tenantId}`);
-            // Handle paginated response (data.works) or direct array (data)
+            // Handle paginated response (data.data) or direct array (data)
             const worksArray = Array.isArray(res.data)
                 ? res.data
-                : (res.data?.works || []);
+                : (res.data?.data || res.data?.works || []);
             // Filter works that have coordinates
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const geoWorks = worksArray.filter((w: any) => w.latitude && w.longitude);
