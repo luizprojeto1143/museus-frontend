@@ -11,6 +11,7 @@ import { useGamification } from "../../gamification/context/GamificationContext"
 import { WorkNote } from "../components/WorkNote";
 import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
+import { NavigationModal } from "../../../components/navigation/NavigationModal";
 
 
 type WorkDetailData = {
@@ -25,6 +26,8 @@ type WorkDetailData = {
   imageUrl?: string | null;
   audioUrl?: string | null;
   librasUrl?: string | null;
+  latitude?: number;
+  longitude?: number;
 };
 
 export const WorkDetail: React.FC = () => {
@@ -43,6 +46,7 @@ export const WorkDetail: React.FC = () => {
   const [error, setError] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(false);
   const { speak, cancel, isSpeaking } = useTTS();
 
   useEffect(() => {
@@ -220,6 +224,17 @@ export const WorkDetail: React.FC = () => {
             </p>
           </div>
           <div style={{ display: "flex", gap: "0.5rem" }}>
+            {/* Navigation button - only show if work has coordinates */}
+            {work.latitude && work.longitude && (
+              <button
+                onClick={() => setShowNavigation(true)}
+                className="btn btn-secondary"
+                style={{ fontSize: "1.2rem", padding: "0.5rem 0.75rem" }}
+                title={t("visitor.navigation.howToGet", "Como Chegar")}
+              >
+                🧭
+              </button>
+            )}
             <button
               onClick={() => setShowShare(true)}
               className="btn btn-secondary"
@@ -243,6 +258,19 @@ export const WorkDetail: React.FC = () => {
         <ShareCard
           work={{ title: work.title, artist: work.artist, imageUrl: work.imageUrl || null }}
           onClose={() => setShowShare(false)}
+        />
+      )}
+
+      {/* Navigation Modal */}
+      {showNavigation && work.latitude && work.longitude && (
+        <NavigationModal
+          isOpen={showNavigation}
+          onClose={() => setShowNavigation(false)}
+          destination={{
+            lat: work.latitude,
+            lng: work.longitude,
+            name: work.title
+          }}
         />
       )}
 
