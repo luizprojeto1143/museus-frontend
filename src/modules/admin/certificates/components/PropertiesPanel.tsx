@@ -2,7 +2,7 @@ import React from 'react';
 import { useCertificate } from '../context/CertificateContext';
 import {
     Trash, Copy, ArrowUp, ArrowDown, Type, AlignLeft, AlignCenter, AlignRight,
-    Settings, Move, RotateCw, Maximize2, Palette
+    Settings, RotateCw, Palette
 } from 'lucide-react';
 
 export const PropertiesPanel: React.FC = () => {
@@ -262,7 +262,7 @@ export const PropertiesPanel: React.FC = () => {
 
     if (!selectedElement && !isMulti) return null;
 
-    const handleUpdate = (updates: any) => {
+    const handleUpdate = (updates: Partial<import('../types').CertificateElement>) => {
         selectedIds.forEach(id => updateElement(id, updates));
     };
 
@@ -375,9 +375,9 @@ export const PropertiesPanel: React.FC = () => {
                                 </div>
                                 <div style={styles.alignGroup}>
                                     {[
-                                        { v: 'left', i: AlignLeft },
-                                        { v: 'center', i: AlignCenter },
-                                        { v: 'right', i: AlignRight }
+                                        { v: 'left' as const, i: AlignLeft },
+                                        { v: 'center' as const, i: AlignCenter },
+                                        { v: 'right' as const, i: AlignRight }
                                     ].map(o => (
                                         <button
                                             key={o.v}

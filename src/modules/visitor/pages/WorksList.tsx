@@ -24,14 +24,15 @@ export const WorksList: React.FC = () => {
 
   useEffect(() => {
     if (tenantId) {
-      setLoading(true);
+      // setLoading(true); // Removed to avoid cascading update. Initial loading state is true.
       api
         .get("/works", { params: { tenantId } })
         .then((res) => {
           // API returns { data: works[], pagination: {} }
           const rawData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const worksData = (rawData as any[]).map((w) => ({
+          const worksData = (rawData as any[]).map((w: any) => ({
             id: w.id,
             title: w.title,
             artist: w.artist ?? "Artista desconhecido",

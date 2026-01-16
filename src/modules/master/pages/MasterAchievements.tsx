@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 
@@ -23,21 +23,7 @@ export const MasterAchievements: React.FC = () => {
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        loadTenants();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        if (selectedTenantId) {
-            loadAchievements(selectedTenantId);
-        } else {
-            setAchievements([]);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedTenantId]);
-
-    const loadTenants = async () => {
+    const loadTenants = useCallback(async () => {
         try {
             const res = await api.get("/tenants");
             setTenants(res.data);
@@ -48,9 +34,9 @@ export const MasterAchievements: React.FC = () => {
             console.error("Erro ao carregar tenants", err);
             alert(t("master.achievements.errorLoad"));
         }
-    };
+    }, [t]);
 
-    const loadAchievements = async (tenantId: string) => {
+    const loadAchievements = useCallback(async (tenantId: string) => {
         setLoading(true);
         try {
             const res = await api.get(`/achievements?tenantId=${tenantId}`);
@@ -61,7 +47,19 @@ export const MasterAchievements: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        loadTenants();
+    }, [loadTenants]);
+
+    useEffect(() => {
+        if (selectedTenantId) {
+            loadAchievements(selectedTenantId);
+        } else {
+            setAchievements([]);
+        }
+    }, [selectedTenantId, loadAchievements]);
 
     const handleDelete = async (id: string) => {
         if (!confirm(t("master.achievements.confirmDelete"))) return;

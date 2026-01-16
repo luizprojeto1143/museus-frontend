@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Heart } from 'lucide-react';
 import { api } from '../../api/client';
 
@@ -21,18 +21,18 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     const [loading, setLoading] = useState(false);
     const [count, setCount] = useState(0);
 
-    useEffect(() => {
-        checkFavoriteStatus();
-    }, [workId]);
-
-    const checkFavoriteStatus = async () => {
+    const checkFavoriteStatus = useCallback(async () => {
         try {
             const res = await api.get(`/favorites/check/${workId}`);
             setIsFavorite(res.data.isFavorite);
         } catch (error) {
             console.error('Error checking favorite:', error);
         }
-    };
+    }, [workId]);
+
+    useEffect(() => {
+        checkFavoriteStatus();
+    }, [workId, checkFavoriteStatus]);
 
     const toggleFavorite = async () => {
         if (loading) return;

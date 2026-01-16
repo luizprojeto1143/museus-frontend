@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
-import { Button } from '../../../components/ui/Button';
 import { Plus, Edit, Trash, FileText } from 'lucide-react';
 
 export const CertificateTemplates: React.FC = () => {
     const navigate = useNavigate();
     const [templates, setTemplates] = useState<any[]>([]);
-
-    useEffect(() => {
-        loadTemplates();
-    }, []);
 
     const loadTemplates = async () => {
         try {
@@ -21,12 +16,16 @@ export const CertificateTemplates: React.FC = () => {
         }
     };
 
+    useEffect(() => {
+        loadTemplates();
+    }, []);
+
     const handleDelete = async (id: string) => {
         if (!confirm('Deseja excluir este modelo?')) return;
         try {
             await api.delete(`/certificate-templates/${id}`);
             loadTemplates(); // Reload
-        } catch (err) {
+        } catch {
             alert('Erro ao excluir');
         }
     };

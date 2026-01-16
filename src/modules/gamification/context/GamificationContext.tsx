@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
 
@@ -83,15 +83,11 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     const { isAuthenticated, email, tenantId } = authState;
 
-    // Sync with backend on mount/auth change
-    useEffect(() => {
-        if (isAuthenticated && email && tenantId) {
-            fetchBackendData();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isAuthenticated, email, tenantId]);
+    const getCurrentLevelInfo = useCallback((xp: number) => {
+        return LEVELS.slice().reverse().find((l) => xp >= l.minXp) || LEVELS[0];
+    }, []);
 
-    const fetchBackendData = async () => {
+    const fetchBackendData = useCallback(async () => {
         if (!email || !tenantId) return;
 
         setLoading(true);
@@ -105,7 +101,6 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 const newLevelInfo = getCurrentLevelInfo(newXp);
 
                 // Map backend achievements to frontend structure
-                // Assuming backend returns { id, code, unlockedAt }
                 const backendAchievements = data.achievements || [];
                 const mergedAchievements = prev.achievements.map(localAch => {
                     const found = backendAchievements.find((ba: any) => ba.code === localAch.id);
@@ -127,11 +122,18 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         } finally {
             setLoading(false);
         }
-    };
+    }, [email, tenantId, getCurrentLevelInfo]);
 
-    const refreshGamification = () => {
+    // Sync with backend on mount/auth change - MUST BE AFTER fetchBackendData definition
+    useEffect(() => {
+        if (isAuthenticated && email && tenantId) {
+            fetchBackendData();
+        }
+    }, [isAuthenticated, email, tenantId, fetchBackendData]);
+
+    const refreshGamification = useCallback(() => {
         if (isAuthenticated) fetchBackendData();
-    };
+    }, [isAuthenticated, fetchBackendData]);
 
     useEffect(() => {
         try {
@@ -141,28 +143,16 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         }
     }, [stats]);
 
-    const getCurrentLevelInfo = (xp: number) => {
-        return LEVELS.slice().reverse().find((l) => xp >= l.minXp) || LEVELS[0];
-    };
-
-    const currentLevel = getCurrentLevelInfo(stats.xp);
-    const nextLevelIndex = LEVELS.findIndex((l) => l.level === currentLevel.level) + 1;
-    const nextLevel = nextLevelIndex < LEVELS.length ? LEVELS[nextLevelIndex] : null;
-
-    const progressToNextLevel = nextLevel
-        ? Math.min(100, Math.max(0, ((stats.xp - currentLevel.minXp) / (nextLevel.minXp - currentLevel.minXp)) * 100))
-        : 100;
-
-    const addXp = (amount: number) => {
+    const addXp = useCallback((amount: number) => {
         // Optimistic update
         setStats((prev) => {
             const newXp = prev.xp + amount;
             const newLevelInfo = getCurrentLevelInfo(newXp);
             return { ...prev, xp: newXp, level: newLevelInfo.level };
         });
-    };
+    }, [getCurrentLevelInfo]);
 
-    const unlockAchievement = (achievementId: string) => {
+    const unlockAchievement = useCallback((achievementId: string) => {
         // Optimistic update
         setStats((prev) => {
             const achievementIndex = prev.achievements.findIndex((a) => a.id === achievementId);
@@ -177,31 +167,39 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
             return { ...prev, achievements: updatedAchievements };
         });
-    };
+    }, []);
 
-    const visitWork = (workId: string) => {
+    const visitWork = useCallback((workId: string) => {
         setStats((prev) => {
             if (prev.visitedWorks.includes(workId)) return prev;
             return { ...prev, visitedWorks: [...prev.visitedWorks, workId] };
         });
         // Also trigger refresh from backend if connected
         if (isAuthenticated) setTimeout(fetchBackendData, 1000);
-    };
+    }, [isAuthenticated, fetchBackendData]);
 
-    const completeTrail = (trailId: string) => {
+    const completeTrail = useCallback((trailId: string) => {
         setStats((prev) => {
             if (prev.visitedTrails.includes(trailId)) return prev;
             return { ...prev, visitedTrails: [...prev.visitedTrails, trailId] };
         });
         if (isAuthenticated) setTimeout(fetchBackendData, 1000);
-    };
+    }, [isAuthenticated, fetchBackendData]);
 
     // Client-side achievement checks (can still run for immediate feedback)
     useEffect(() => {
         if (stats.visitedWorks.length >= 5) unlockAchievement("art_lover");
         if (stats.visitedTrails.length >= 1) unlockAchievement("trail_blazer");
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stats.visitedWorks.length, stats.visitedTrails.length]);
+    }, [stats.visitedWorks.length, stats.visitedTrails.length, unlockAchievement]);
+
+    // Derived State Calculation
+    const currentLevel = getCurrentLevelInfo(stats.xp);
+    const nextLevelIndex = LEVELS.findIndex((l) => l.level === currentLevel.level) + 1;
+    const nextLevel = nextLevelIndex < LEVELS.length ? LEVELS[nextLevelIndex] : null;
+
+    const progressToNextLevel = nextLevel
+        ? Math.min(100, Math.max(0, ((stats.xp - currentLevel.minXp) / (nextLevel.minXp - currentLevel.minXp)) * 100))
+        : 100;
 
     const contextValue: GamificationContextType = {
         stats,
@@ -213,7 +211,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         unlockAchievement,
         visitWork,
         completeTrail,
-        refreshGamification // Export this so components can trigger refresh
+        refreshGamification
     };
 
     return (

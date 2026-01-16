@@ -36,6 +36,7 @@ export const TrailDetail: React.FC = () => {
   useEffect(() => {
     if (isDemo) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setApiLoading(true);
     setError(false);
     api

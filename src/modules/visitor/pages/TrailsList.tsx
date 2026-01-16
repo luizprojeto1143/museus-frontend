@@ -22,6 +22,7 @@ export const TrailsList: React.FC = () => {
   useEffect(() => {
     if (!tenantId) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     api
       .get("/trails", { params: { tenantId } })

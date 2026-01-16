@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { ArrowLeft, RefreshCw, Trophy, ChevronRight, Star } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 
@@ -217,16 +216,78 @@ interface Particle {
     color: string;
 }
 
+interface GameTile {
+    x: number;
+    y: number;
+    type: string;
+    collected?: boolean;
+    vx?: number;
+    vy?: number;
+    animFrame?: number;
+    originX?: number;
+    originY?: number;
+}
+
+interface LeaderboardEntry {
+    userId: string;
+    name: string;
+    xp: number;
+    level: number;
+    rank?: number;
+}
+
+// Helper to remove black background
+const createTransparentImage = (src: string): HTMLImageElement => {
+    const img = new Image();
+    const raw = new Image();
+    raw.src = src;
+
+    raw.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = raw.width;
+        canvas.height = raw.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.drawImage(raw, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const tolerance = 20; // Tolerance for compression artifacts
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            // If roughly black
+            if (r <= tolerance && g <= tolerance && b <= tolerance) {
+                data[i + 3] = 0;
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+    };
+
+    return img;
+};
+
 // Pre-load images for animation
 const preloadedImages: { [key: string]: HTMLImageElement } = {};
 const preloadImages = () => {
+    // Assets that need transparency processing (black background removal)
+    const needsTransparency = ['player_walk', 'artifact'];
+
     // Preload sprite sheets
     Object.entries(SPRITE_SHEETS).forEach(([entityType, animations]) => {
         Object.entries(animations).forEach(([animName, config]) => {
             const key = `${entityType}_${animName}`;
-            const img = new Image();
-            img.src = config.src;
-            preloadedImages[key] = img;
+            if (needsTransparency.includes(key)) {
+                preloadedImages[key] = createTransparentImage(config.src);
+            } else {
+                const img = new Image();
+                img.src = config.src;
+                preloadedImages[key] = img;
+            }
         });
     });
 
@@ -238,9 +299,13 @@ const preloadImages = () => {
         { key: 'artifact', src: '/assets/game/artifact.png' }
     ];
     bgImages.forEach(({ key, src }) => {
-        const img = new Image();
-        img.src = src;
-        preloadedImages[key] = img;
+        if (key === 'artifact') { // Use processed version
+            preloadedImages[key] = createTransparentImage(src);
+        } else {
+            const img = new Image();
+            img.src = src;
+            preloadedImages[key] = img;
+        }
     });
 };
 preloadImages();
@@ -248,9 +313,6 @@ preloadImages();
 
 export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DEFAULT_THEME }> = ({ onClose, theme = DEFAULT_THEME }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    // Remove navigate since we use onClose
-    // const navigate = useNavigate();
-
     const { tenantId } = useAuth(); // Need tenantId for leaderboard
 
     // Character Options
@@ -268,36 +330,21 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     const [selectedCharacter, setSelectedCharacter] = useState(CHARACTERS[0]);
     const [score, setScore] = useState(0);
     const [coins, setCoins] = useState(0);
-    const [leaderboard, setLeaderboard] = useState<any[]>([]);
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
 
-    // Normalize theme levels (support single or array)
-    const levels = (theme as any).levels || [theme.level];
-    const sprites = (theme as any).sprites; // Access sprites safely
-
-    // Fetch Leaderboard on Game Over / Campaign Win
-    useEffect(() => {
-        if (gameState === 'GAMEOVER' || gameState === 'CAMPAIGN_WIN') {
-            fetchLeaderboard();
-        }
-    }, [gameState]);
-
-    const fetchLeaderboard = async () => {
-        if (!tenantId) return;
-        try {
-            const res = await api.get(`/gamification/leaderboard?tenantId=${tenantId}`);
-            setLeaderboard(res.data);
-        } catch (e) {
-            console.error("Failed to load leaderboard", e);
-        }
-    };
+    const levels = React.useMemo(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const t = theme as any;
+        return t.levels || [t.level];
+    }, [theme]);
 
     // Game Mutable State (Ref to avoid re-renders in loop)
     const game = useRef({
         player: { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false } as Entity,
         keys: { left: false, right: false, up: false },
         camera: { x: 0 },
-        tiles: [] as { x: number, y: number, type: string, collected?: boolean, animFrame?: number, vx?: number, vy?: number, originX?: number, originY?: number }[],
+        tiles: [] as GameTile[],
         particles: [] as Particle[],
         levelWidth: 0,
         levelHeight: 0,
@@ -311,92 +358,17 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     // Player sprite based on character selection
     const playerSpriteRef = useRef<HTMLImageElement | null>(null);
 
-    // Load selected character sprite
-    useEffect(() => {
-        const img = new Image();
-        img.src = selectedCharacter.sprite;
-        img.onload = () => {
-            playerSpriteRef.current = img;
-        };
-    }, [selectedCharacter]);
-
-    useEffect(() => {
-        initLevel(currentLevelIdx);
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-
-        // Start Loop
-        game.current.animationFrame = requestAnimationFrame(gameLoop);
-
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('keyup', handleKeyUp);
-            cancelAnimationFrame(game.current.animationFrame);
-        };
-    }, [currentLevelIdx, levels]); // Added dependencies for level changes
-
-    const initLevel = (levelIndex: number = 0) => {
-        const tiles = [];
-        const rows = levels[levelIndex]; // Load specific level
-        if (!rows) return; // Safety check
-
-        game.current.levelHeight = rows.length * TILE_SIZE;
-        game.current.levelWidth = rows[0].length * TILE_SIZE;
-
-        for (let r = 0; r < rows.length; r++) {
-            for (let c = 0; c < rows[r].length; c++) {
-                const char = rows[r][c];
-                if (char !== '.') {
-                    tiles.push({
-                        x: c * TILE_SIZE,
-                        y: r * TILE_SIZE,
-                        type: char,
-                        vx: 0, // For enemies
-                        vy: 0,
-                        originX: c * TILE_SIZE, // Guard patrol origin
-                        originY: r * TILE_SIZE
-                    });
-                }
-            }
+    const fetchLeaderboard = useCallback(async () => {
+        if (!tenantId) return;
+        try {
+            const res = await api.get(`/gamification/leaderboard?tenantId=${tenantId}`);
+            setLeaderboard(res.data);
+        } catch (e) {
+            console.error("Failed to load leaderboard", e);
         }
-        game.current.tiles = tiles;
-        game.current.player = { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false };
-        game.current.camera.x = 0;
+    }, [tenantId]);
 
-        // Only reset score/coins if starting fresh campaign
-        if (levelIndex === 0) {
-            setCoins(0);
-            setScore(0);
-        }
-
-        setGameState('PLAYING');
-    };
-
-    const nextLevel = () => {
-        if (currentLevelIdx < levels.length - 1) {
-            setCurrentLevelIdx(prev => prev + 1);
-            // initLevel will be called by the useEffect due to currentLevelIdx change
-        } else {
-            setGameState('CAMPAIGN_WIN');
-            saveProgress();
-        }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = true;
-        if (e.code === 'ArrowRight' || e.code === 'KeyD') game.current.keys.right = true;
-        if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') {
-            game.current.keys.up = true;
-        }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-        if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = false;
-        if (e.code === 'ArrowRight' || e.code === 'KeyD') game.current.keys.right = false;
-        if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') game.current.keys.up = false;
-    };
-
-    const spawnParticles = (x: number, y: number, color: string, count: number) => {
+    const spawnParticles = useCallback((x: number, y: number, color: string, count: number) => {
         for (let i = 0; i < count; i++) {
             game.current.particles.push({
                 x, y,
@@ -406,116 +378,22 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 color
             });
         }
-    };
+    }, []);
 
-    const update = () => {
-        if (gameState !== 'PLAYING') return;
-        const { player, keys, tiles } = game.current;
+    const saveProgress = useCallback(async () => {
+        console.log("Saving XP:", score);
+        try {
+            await api.post('/gamification/xp', { amount: score + 500, reason: 'GAME_WIN' });
+        } catch (e) { console.error(e); }
+    }, [score]);
 
-        // --- 1. MOVEMENT & PHYSICS ---
-        if (keys.left) {
-            player.vx = -SPEED;
-            game.current.facingRight = false;
-        }
-        if (keys.right) {
-            player.vx = SPEED;
-            game.current.facingRight = true;
-        }
-        if (!keys.left && !keys.right) player.vx *= FRICTION;
+    const die = useCallback(() => {
+        game.current.player.isDead = true;
+        setGameState('GAMEOVER');
+        spawnParticles(game.current.player.x, game.current.player.y, theme.colors.player, 20);
+    }, [theme, spawnParticles]);
 
-        // Jump
-        if (keys.up && player.isGrounded) {
-            player.vy = JUMP_FORCE;
-            player.isGrounded = false;
-        }
-
-        player.vy += GRAVITY;
-
-        // --- ANIMATION FRAME UPDATE ---
-        const now = performance.now();
-        if (now - game.current.lastFrameTime > ANIMATION_FRAME_DURATION) {
-            game.current.lastFrameTime = now;
-            // Player animation
-            if (Math.abs(player.vx) > 0.5) {
-                game.current.playerAnimFrame = (game.current.playerAnimFrame + 1) % 4;
-            } else {
-                game.current.playerAnimFrame = 0; // Idle = first frame
-            }
-            // Enemy animations
-            for (const tile of tiles) {
-                if (tile.type === 'E' || tile.type === 'S' || tile.type === 'F' || tile.type === 'B') {
-                    tile.animFrame = ((tile.animFrame || 0) + 1) % 4;
-                }
-            }
-        }
-
-        // --- 2. X COLLISION ---
-        player.x += player.vx;
-        checkCollision(player, tiles, 'x');
-
-        // --- 3. Y COLLISION ---
-        player.y += player.vy;
-        player.isGrounded = false; // Assume falling until proven otherwise
-        checkCollision(player, tiles, 'y');
-
-        // --- 4. GAME OVER/WIN CHECK ---
-        if (player.y > game.current.levelHeight) {
-            die();
-        }
-
-        // --- 5. CAMERA ---
-        // Camera follows player (centered)
-        game.current.camera.x = player.x - 400;
-        // Clamp camera
-        if (game.current.camera.x < 0) game.current.camera.x = 0;
-        if (game.current.camera.x > game.current.levelWidth - 800) game.current.camera.x = game.current.levelWidth - 800;
-
-        // --- 6. PARTICLES ---
-        for (let i = game.current.particles.length - 1; i >= 0; i--) {
-            const p = game.current.particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.vy += 0.2; // gravity
-            p.life -= 0.05;
-            if (p.life <= 0) game.current.particles.splice(i, 1);
-        }
-
-        // --- 7. ENTITIES (Enemies/Boss) ---
-        for (const tile of tiles) {
-            // Update Enemies (Simple Patrol: Move left/right)
-            if (tile.type === 'E') {
-                if (!tile.vx) tile.vx = -2; // Init Speed
-
-                tile.x += tile.vx;
-                // Bounce logic (simple distance based or collision based if implemented)
-                // For now, simple bounce after 100px travel (assuming we track origin)
-                // Simplified: Bounce on edges (needs more logic for platforms).
-                // Hack: Just oscillate every 60 frames? No, use position.
-                // Let's use a simpler "Patrol Range" or just bounce on solid block collision if we checked it.
-                // For MVP: oscillating movement relative to spawn.
-
-                // Better MVP: Just move back and forth 100px
-                if (!tile.originX) tile.originX = tile.x;
-                if (tile.x < tile.originX - 100) tile.vx = 2;
-                if (tile.x > tile.originX + 100) tile.vx = -2;
-            }
-
-            // Boss Logic (B) - Moves faster and jumps?
-            if (tile.type === 'B') {
-                if (!tile.vx) tile.vx = 3;
-                tile.x += tile.vx;
-                if (!tile.originX) tile.originX = tile.x;
-                if (tile.x < tile.originX - 200) tile.vx = 3;
-                if (tile.x > tile.originX + 200) tile.vx = -3;
-
-                // Boss Jump randomly
-                if (Math.random() < 0.02) tile.y -= 10;
-                if (tile.y < (tile.originY || 0)) tile.y += 1; // Gravity fake
-            }
-        }
-    };
-
-    const checkCollision = (p: Entity, tiles: any[], axis: 'x' | 'y') => {
+    const checkCollision = useCallback((p: Entity, tiles: GameTile[], axis: 'x' | 'y') => {
         for (const tile of tiles) {
             if (tile.collected) continue; // Skip collected coins
 
@@ -548,9 +426,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                         setScore(prev => prev + (tile.type === 'B' ? 1000 : 200));
                         spawnParticles(tile.x, tile.y, '#555', 10);
                         if (tile.type === 'B') {
-                            // Boss Defeated! Maybe drop key? For now just XP.
-                            // setGameState('WIN') if boss is mandatory?
-                            // Let's keep Goal as win condition.
+                            // Boss Defeated!
                         }
                     } else {
                         // Die
@@ -572,14 +448,13 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 }
 
                 if (tile.type === '^') {
-                    // Spike Death
                     die();
                     return;
                 }
 
                 // Solid Block Collision (# or =)
                 if (axis === 'x') {
-                    if (tile.type === 'E' || tile.type === 'B') continue; // Don't collide solid X with enemies yet (handled above)
+                    if (tile.type === 'E' || tile.type === 'B') continue;
 
                     if (p.vx > 0) p.x = tile.x - p.width;
                     if (p.vx < 0) p.x = tile.x + TILE_SIZE;
@@ -598,52 +473,174 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 }
             }
         }
-    };
+    }, [currentLevelIdx, levels.length, theme, die, saveProgress, spawnParticles]);
 
-    const die = () => {
-        game.current.player.isDead = true;
-        setGameState('GAMEOVER');
-        spawnParticles(game.current.player.x, game.current.player.y, theme.colors.player, 20);
-    };
+    const initLevel = useCallback((levelIndex: number = 0) => {
+        const tiles = [];
+        const rows = levels[levelIndex];
+        if (!rows) return;
 
-    const saveProgress = async () => {
-        // Mock save for now - in real app, call API
-        console.log("Saving XP:", score);
-        try {
-            await api.post('/gamification/xp', { amount: score + 500, reason: 'GAME_WIN' });
-        } catch (e) { console.error(e); }
-    };
+        game.current.levelHeight = rows.length * TILE_SIZE;
+        game.current.levelWidth = rows[0].length * TILE_SIZE;
 
-    const draw = (ctx: CanvasRenderingContext2D) => {
+        for (let r = 0; r < rows.length; r++) {
+            for (let c = 0; c < rows[r].length; c++) {
+                const char = rows[r][c];
+                if (char !== '.') {
+                    tiles.push({
+                        x: c * TILE_SIZE,
+                        y: r * TILE_SIZE,
+                        type: char,
+                        vx: 0,
+                        vy: 0,
+                        originX: c * TILE_SIZE,
+                        originY: r * TILE_SIZE
+                    });
+                }
+            }
+        }
+        game.current.tiles = tiles;
+        game.current.player = { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false };
+        game.current.camera.x = 0;
+
+        if (levelIndex === 0) {
+            setCoins(0);
+            setScore(0);
+        }
+
+        setGameState('PLAYING');
+    }, [levels]);
+
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = true;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') game.current.keys.right = true;
+        if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') {
+            game.current.keys.up = true;
+        }
+    }, []);
+
+    const handleKeyUp = useCallback((e: KeyboardEvent) => {
+        if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = false;
+        if (e.code === 'ArrowRight' || e.code === 'KeyD') game.current.keys.right = false;
+        if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') game.current.keys.up = false;
+    }, []);
+
+    const update = useCallback(() => {
+        if (gameState !== 'PLAYING') return;
+        const { player, keys, tiles } = game.current;
+
+        // --- 1. MOVEMENT & PHYSICS ---
+        if (keys.left) {
+            player.vx = -SPEED;
+            game.current.facingRight = false;
+        }
+        if (keys.right) {
+            player.vx = SPEED;
+            game.current.facingRight = true;
+        }
+        if (!keys.left && !keys.right) player.vx *= FRICTION;
+
+        // Jump
+        if (keys.up && player.isGrounded) {
+            player.vy = JUMP_FORCE;
+            player.isGrounded = false;
+        }
+
+        player.vy += GRAVITY;
+
+        // --- ANIMATION FRAME UPDATE ---
+        const now = performance.now();
+        if (now - game.current.lastFrameTime > ANIMATION_FRAME_DURATION) {
+            game.current.lastFrameTime = now;
+            if (Math.abs(player.vx) > 0.5) {
+                game.current.playerAnimFrame = (game.current.playerAnimFrame + 1) % 4;
+            } else {
+                game.current.playerAnimFrame = 0;
+            }
+            for (const tile of tiles) {
+                if (tile.type === 'E' || tile.type === 'S' || tile.type === 'F' || tile.type === 'B') {
+                    // eslint-disable-next-line react-hooks/immutability
+                    tile.animFrame = ((tile.animFrame || 0) + 1) % 4;
+                }
+            }
+        }
+
+        // --- 2. X COLLISION ---
+        player.x += player.vx;
+        checkCollision(player, tiles, 'x');
+
+        // --- 3. Y COLLISION ---
+        player.y += player.vy;
+        player.isGrounded = false;
+        checkCollision(player, tiles, 'y');
+
+        // --- 4. GAME OVER/WIN CHECK ---
+        if (player.y > game.current.levelHeight) {
+            die();
+        }
+
+        // --- 5. CAMERA ---
+        game.current.camera.x = player.x - 400;
+        if (game.current.camera.x < 0) game.current.camera.x = 0;
+        if (game.current.camera.x > game.current.levelWidth - 800) game.current.camera.x = game.current.levelWidth - 800;
+
+        // --- 6. PARTICLES ---
+        for (let i = game.current.particles.length - 1; i >= 0; i--) {
+            const p = game.current.particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.2;
+            p.life -= 0.05;
+            if (p.life <= 0) game.current.particles.splice(i, 1);
+        }
+
+        // --- 7. ENTITIES ---
+        for (const tile of tiles) {
+            if (tile.type === 'E') {
+                if (!tile.vx) tile.vx = -2;
+                tile.x += tile.vx;
+                if (!tile.originX) tile.originX = tile.x;
+                if (tile.x < tile.originX - 100) tile.vx = 2;
+                if (tile.x > tile.originX + 100) tile.vx = -2;
+            }
+            if (tile.type === 'B') {
+                if (!tile.vx) tile.vx = 3;
+                tile.x += tile.vx;
+                if (!tile.originX) tile.originX = tile.x;
+                if (tile.x < tile.originX - 200) tile.vx = 3;
+                if (tile.x > tile.originX + 200) tile.vx = -3;
+                if (Math.random() < 0.02) tile.y -= 10;
+                if (tile.y < (tile.originY || 0)) tile.y += 1;
+            }
+        }
+    }, [gameState, die, checkCollision]);
+
+    const draw = useCallback((ctx: CanvasRenderingContext2D) => {
         const canvasW = ctx.canvas.width;
         const canvasH = ctx.canvas.height;
         const cameraX = game.current.camera.x;
 
-        // ==================== AAA PARALLAX SYSTEM ====================
-        // Layer 0: Dark gradient sky
+        // Backgrounds
         const gradient = ctx.createLinearGradient(0, 0, 0, canvasH);
-        gradient.addColorStop(0, '#0f0c29');
+        gradient.addColorStop(0, theme.colors.sky);
         gradient.addColorStop(0.5, '#302b63');
         gradient.addColorStop(1, '#24243e');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvasW, canvasH);
 
-        // Layer 1: Far background (slowest parallax - 10%)
         const bgFar = preloadedImages['bg_far'];
         if (bgFar && bgFar.complete) {
             const parallaxFar = cameraX * 0.1;
-            // Tile the background for seamless scrolling
             const bgWidth = canvasW * 1.5;
             const bgX = -(parallaxFar % bgWidth);
             ctx.drawImage(bgFar, bgX, 0, bgWidth, canvasH);
             ctx.drawImage(bgFar, bgX + bgWidth, 0, bgWidth, canvasH);
         }
 
-        // Layer 2: Mid background (medium parallax - 30%)
         const bgMid = preloadedImages['bg_mid'];
         if (bgMid && bgMid.complete) {
             const parallaxMid = cameraX * 0.3;
-            const midY = canvasH * 0.4; // Position in lower half
+            const midY = canvasH * 0.4;
             const midH = canvasH * 0.6;
             const midW = canvasW * 2;
             const midX = -(parallaxMid % midW);
@@ -653,8 +650,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
             ctx.globalAlpha = 1;
         }
 
-        // ==================== AMBIENT LIGHTING ====================
-        // Add subtle vignette effect
+        // Vignette
         const vignetteGradient = ctx.createRadialGradient(
             canvasW / 2, canvasH / 2, canvasH * 0.3,
             canvasW / 2, canvasH / 2, canvasH
@@ -664,100 +660,58 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         ctx.fillStyle = vignetteGradient;
         ctx.fillRect(0, 0, canvasW, canvasH);
 
-        // ==================== GAME WORLD (Camera Transform) ====================
         ctx.save();
         ctx.translate(-cameraX, 0);
 
-        // ==================== DRAW TILES WITH AAA TEXTURES ====================
         const platformImg = preloadedImages['platform'];
         const artifactImg = preloadedImages['artifact'];
 
         for (const tile of game.current.tiles) {
             if (tile.collected) continue;
 
-            // Ground tiles (#) - Use platform texture
             if (tile.type === '#' || tile.type === '=') {
                 if (platformImg && platformImg.complete) {
                     ctx.drawImage(platformImg, tile.x, tile.y, TILE_SIZE, TILE_SIZE);
                 } else {
-                    // Fallback: Rich gradient
-                    const tileGrad = ctx.createLinearGradient(tile.x, tile.y, tile.x, tile.y + TILE_SIZE);
-                    tileGrad.addColorStop(0, '#5D4037');
-                    tileGrad.addColorStop(0.5, '#4E342E');
-                    tileGrad.addColorStop(1, '#3E2723');
-                    ctx.fillStyle = tileGrad;
+                    ctx.fillStyle = theme.colors.platform;
                     ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
-                    // Gold trim
                     ctx.strokeStyle = '#D4AF37';
-                    ctx.lineWidth = 2;
                     ctx.strokeRect(tile.x + 1, tile.y + 1, TILE_SIZE - 2, TILE_SIZE - 2);
                 }
                 continue;
             }
 
-            // Coins (C) - Use artifact texture with glow
             if (tile.type === 'C') {
                 if (artifactImg && artifactImg.complete) {
-                    // Glow effect
-                    ctx.shadowColor = '#FFD700';
+                    ctx.shadowColor = theme.colors.coin;
                     ctx.shadowBlur = 15;
                     ctx.drawImage(artifactImg, tile.x - 5, tile.y - 5, TILE_SIZE + 10, TILE_SIZE + 10);
                     ctx.shadowBlur = 0;
                 } else {
-                    // Fallback: Golden coin with shine
-                    ctx.shadowColor = '#FFD700';
-                    ctx.shadowBlur = 10;
-                    const coinGrad = ctx.createRadialGradient(
-                        tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 0,
-                        tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 15
-                    );
-                    coinGrad.addColorStop(0, '#FFF8E1');
-                    coinGrad.addColorStop(0.5, '#FFD700');
-                    coinGrad.addColorStop(1, '#FF8F00');
-                    ctx.fillStyle = coinGrad;
+                    ctx.fillStyle = theme.colors.coin;
                     ctx.beginPath();
                     ctx.arc(tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 15, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.shadowBlur = 0;
                 }
                 continue;
             }
 
-            // Spikes (^) - Danger red with glow
             if (tile.type === '^') {
-                ctx.shadowColor = '#FF0000';
-                ctx.shadowBlur = 8;
-                const spikeGrad = ctx.createLinearGradient(tile.x, tile.y + TILE_SIZE, tile.x, tile.y);
-                spikeGrad.addColorStop(0, '#4A0000');
-                spikeGrad.addColorStop(1, '#8B0000');
-                ctx.fillStyle = spikeGrad;
+                ctx.fillStyle = theme.colors.spike;
                 ctx.beginPath();
                 ctx.moveTo(tile.x, tile.y + TILE_SIZE);
                 ctx.lineTo(tile.x + TILE_SIZE / 2, tile.y);
                 ctx.lineTo(tile.x + TILE_SIZE, tile.y + TILE_SIZE);
                 ctx.fill();
-                ctx.shadowBlur = 0;
                 continue;
             }
 
-            // Goal (G) - Green portal with glow
             if (tile.type === 'G') {
-                ctx.shadowColor = '#00FF00';
-                ctx.shadowBlur = 20;
-                const goalGrad = ctx.createRadialGradient(
-                    tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, 0,
-                    tile.x + TILE_SIZE / 2, tile.y + TILE_SIZE / 2, TILE_SIZE
-                );
-                goalGrad.addColorStop(0, '#A5D6A7');
-                goalGrad.addColorStop(0.5, '#66BB6A');
-                goalGrad.addColorStop(1, '#2E7D32');
-                ctx.fillStyle = goalGrad;
+                ctx.fillStyle = theme.colors.goal;
                 ctx.fillRect(tile.x, tile.y, TILE_SIZE, TILE_SIZE);
-                ctx.shadowBlur = 0;
                 continue;
             }
 
-            // Enemies (E) - Animated ink monster
             if (tile.type === 'E') {
                 const enemyImg = preloadedImages['enemy_walk'];
                 if (enemyImg && enemyImg.complete) {
@@ -773,7 +727,6 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 continue;
             }
 
-            // Boss (B) - Animated boss
             if (tile.type === 'B') {
                 const bossImg = preloadedImages['boss_attack'];
                 if (bossImg && bossImg.complete) {
@@ -781,10 +734,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                     const frameWidth = sheet.frameWidth;
                     const frame = (tile.animFrame || 0) % 3;
                     const sx = frame * frameWidth;
-                    ctx.shadowColor = '#880E4F';
-                    ctx.shadowBlur = 15;
                     ctx.drawImage(bossImg, sx, 0, frameWidth, bossImg.height, tile.x - 30, tile.y - 40, 120, 100);
-                    ctx.shadowBlur = 0;
                 } else {
                     ctx.fillStyle = '#880E4F';
                     ctx.fillRect(tile.x, tile.y, 60, 60);
@@ -793,16 +743,13 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
             }
         }
 
-        // Draw Player with Selected Character Sprite
+        // Draw Player
         if (!game.current.player.isDead) {
             const p = game.current.player;
             const isMoving = Math.abs(p.vx) > 0.5;
-
-            // Use selected character sprite
             const playerImg = playerSpriteRef.current;
 
             if (playerImg && playerImg.complete) {
-                // Calculate frame (4 frames in sprite sheet)
                 const totalFrames = 4;
                 const frameWidth = playerImg.width / totalFrames;
                 const frameHeight = playerImg.height;
@@ -810,8 +757,6 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 const sx = frame * frameWidth;
 
                 ctx.save();
-
-                // Flip horizontally if facing left
                 if (!game.current.facingRight) {
                     ctx.translate(p.x + p.width, p.y);
                     ctx.scale(-1, 1);
@@ -819,21 +764,14 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 } else {
                     ctx.drawImage(playerImg, sx, 0, frameWidth, frameHeight, p.x - 10, p.y - 20, 80, 100);
                 }
-
                 ctx.restore();
             } else {
-                // Fallback: Draw colored rectangle with character color
                 ctx.fillStyle = selectedCharacter.color;
                 ctx.fillRect(p.x, p.y, p.width, p.height);
-                // Face
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.arc(p.x + p.width / 2, p.y + 20, 15, 0, Math.PI * 2);
-                ctx.fill();
             }
         }
 
-        // Draw Particles
+        // Particles
         for (const p of game.current.particles) {
             ctx.fillStyle = p.color;
             ctx.globalAlpha = p.life;
@@ -842,17 +780,64 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         }
 
         ctx.restore();
-    };
+    }, [theme, selectedCharacter]);
 
-    const gameLoop = () => {
+    const animateRef = useRef<() => void>(() => { });
+
+    const animate = useCallback(() => {
         update();
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
             if (ctx) draw(ctx);
         }
-        game.current.animationFrame = requestAnimationFrame(gameLoop);
-    };
+        game.current.animationFrame = requestAnimationFrame(animateRef.current);
+    }, [update, draw]);
+
+    useEffect(() => {
+        animateRef.current = animate;
+    }, [animate]);
+
+    const nextLevel = useCallback(() => {
+        if (currentLevelIdx < levels.length - 1) {
+            setCurrentLevelIdx(prev => prev + 1);
+        } else {
+            setGameState('CAMPAIGN_WIN');
+            saveProgress();
+        }
+    }, [currentLevelIdx, levels.length, saveProgress]);
+
+    // Effects
+    useEffect(() => {
+        const img = new Image();
+        img.src = selectedCharacter.sprite;
+        img.onload = () => {
+            playerSpriteRef.current = img;
+        };
+    }, [selectedCharacter]);
+
+    useEffect(() => {
+        if (gameState === 'GAMEOVER' || gameState === 'CAMPAIGN_WIN') {
+            fetchLeaderboard();
+        }
+    }, [gameState, fetchLeaderboard]);
+
+    useEffect(() => {
+        if (gameState === 'PLAYING') {
+            initLevel(currentLevelIdx);
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
+
+            game.current.animationFrame = requestAnimationFrame(animate);
+
+            return () => {
+                window.removeEventListener('keydown', handleKeyDown);
+                window.removeEventListener('keyup', handleKeyUp);
+                // eslint-disable-next-line react-hooks/exhaustive-deps
+                cancelAnimationFrame(game.current.animationFrame);
+            };
+        }
+    }, [currentLevelIdx, initLevel, handleKeyDown, handleKeyUp, animate, gameState]);
 
     // --- RENDER UI ---
     return (
@@ -873,11 +858,11 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                                 key={char.id}
                                 onClick={() => setSelectedCharacter(char)}
                                 className={`
-                                    p-4 rounded-xl border-4 transition-all hover:scale-105
-                                    ${selectedCharacter.id === char.id
+                                        p-4 rounded-xl border-4 transition-all hover:scale-105
+                                        ${selectedCharacter.id === char.id
                                         ? 'border-yellow-400 bg-yellow-400/20 shadow-lg shadow-yellow-400/30'
                                         : 'border-gray-600 bg-gray-700/50 hover:border-gray-500'}
-                                `}
+                                    `}
                             >
                                 <div
                                     className="w-16 h-16 rounded-full mx-auto mb-2"
@@ -951,7 +936,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                                 </div>
 
                                 <button
-                                    onClick={() => initLevel()}
+                                    onClick={() => initLevel(currentLevelIdx)}
                                     className="flex items-center gap-2 px-8 py-3 bg-red-600 rounded-xl hover:bg-red-700 font-bold transition-transform hover:scale-105"
                                 >
                                     <RefreshCw /> Tentar Novamente
@@ -1046,7 +1031,14 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     );
 };
 
-const ControlBtn = ({ onDown, onUp, icon, large }: any) => (
+interface ControlBtnProps {
+    onDown: () => void;
+    onUp: () => void;
+    icon: React.ReactNode;
+    large?: boolean;
+}
+
+const ControlBtn: React.FC<ControlBtnProps> = ({ onDown, onUp, icon, large }) => (
     <button
         onPointerDown={(e) => { e.preventDefault(); onDown(); }}
         onPointerUp={(e) => { e.preventDefault(); onUp(); }}

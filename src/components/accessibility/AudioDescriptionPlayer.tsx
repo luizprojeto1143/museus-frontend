@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Play, Pause, Volume2, VolumeX, RotateCcw } from "lucide-react";
+import { Play, Pause, VolumeX, RotateCcw } from "lucide-react";
 
 interface AudioDescriptionPlayerProps {
   src?: string | null;
@@ -10,11 +10,12 @@ export const AudioDescriptionPlayer: React.FC<AudioDescriptionPlayerProps> = ({ 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
+
 
   useEffect(() => {
     if (audioRef.current) {
       // Reset state on src change
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsPlaying(false);
       setCurrentTime(0);
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -16,7 +16,7 @@ interface Clue {
 export const TreasureHunt: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
+
     const { addXp } = useGamification();
     const [clues, setClues] = useState<Clue[]>([]);
     const [solvedClues, setSolvedClues] = useState<string[]>([]);
@@ -29,13 +29,14 @@ export const TreasureHunt: React.FC = () => {
 
     useEffect(() => {
         if (tenantId) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setLoading(true);
             api.get("/gamification/treasure-hunt", { params: { tenantId } })
                 .then(res => {
                     setClues(res.data.clues || []);
                     setSolvedClues(res.data.solved || []);
                 })
-                .catch(err => console.error(err))
+                .catch(() => console.error("Error loading treasure hunt"))
                 .finally(() => setLoading(false));
         }
     }, [tenantId]);
@@ -71,7 +72,7 @@ export const TreasureHunt: React.FC = () => {
             } else {
                 setFeedback({ type: 'error', message: t("visitor.treasure.incorrect", "Resposta incorreta. Tente novamente.") });
             }
-        } catch (err) {
+        } catch {
             setFeedback({ type: 'error', message: t("common.error") });
         }
     };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import { api } from '../../../api/client';
 import { Save, ArrowLeft, RotateCcw, RotateCw, Loader2, FileText } from 'lucide-react';
 
@@ -12,7 +12,7 @@ import { PropertiesPanel } from './components/PropertiesPanel';
 const CertificateEditorContent: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    // const { t } = useTranslation();
     const [saving, setSaving] = useState(false);
 
     const {
@@ -26,6 +26,7 @@ const CertificateEditorContent: React.FC = () => {
             const fetchTemplate = async () => {
                 try {
                     const res = await api.get('/certificate-templates');
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const found = res.data.find((t: any) => t.id === id);
                     if (found) {
                         loadTemplate({

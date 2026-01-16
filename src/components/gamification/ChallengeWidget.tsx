@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Star, Target, ChevronRight, Check } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Star, Target, Check } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
 
@@ -29,14 +29,7 @@ export const DailyChallengeWidget: React.FC = () => {
     const [progress, setProgress] = useState<Progress | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (tenantId) {
-            fetchChallenge();
-            fetchProgress();
-        }
-    }, [tenantId]);
-
-    const fetchChallenge = async () => {
+    const fetchChallenge = useCallback(async () => {
         try {
             const res = await api.get(`/challenges/today?tenantId=${tenantId}`);
             setChallenge(res.data);
@@ -45,16 +38,23 @@ export const DailyChallengeWidget: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [tenantId]);
 
-    const fetchProgress = async () => {
+    const fetchProgress = useCallback(async () => {
         try {
             const res = await api.get(`/challenges/my-progress?tenantId=${tenantId}`);
             setProgress(res.data);
         } catch (error) {
             console.error('Error fetching progress:', error);
         }
-    };
+    }, [tenantId]);
+
+    useEffect(() => {
+        if (tenantId) {
+            fetchChallenge();
+            fetchProgress();
+        }
+    }, [tenantId, fetchChallenge, fetchProgress]);
 
     if (loading) {
         return <div className="daily-challenge loading">Carregando...</div>;

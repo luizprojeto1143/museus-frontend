@@ -8,10 +8,6 @@ export const CertificateRules: React.FC = () => {
     const navigate = useNavigate();
     const [rules, setRules] = useState<any[]>([]);
 
-    useEffect(() => {
-        loadRules();
-    }, []);
-
     const loadRules = async () => {
         try {
             const res = await api.get('/certificate-rules');
@@ -20,6 +16,10 @@ export const CertificateRules: React.FC = () => {
             console.error(err);
         }
     };
+
+    useEffect(() => {
+        loadRules();
+    }, []);
 
     return (
         <div className="p-6">

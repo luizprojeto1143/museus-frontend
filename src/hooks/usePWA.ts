@@ -1,5 +1,14 @@
 import { useState, useEffect } from 'react';
 
+interface BeforeInstallPromptEvent extends Event {
+    readonly platforms: string[];
+    readonly userChoice: Promise<{
+        outcome: 'accepted' | 'dismissed';
+        platform: string;
+    }>;
+    prompt(): Promise<void>;
+}
+
 /**
  * Hook to detect online/offline status
  */
@@ -37,7 +46,7 @@ export const useOnlineStatus = () => {
  * Hook to check if PWA is installed
  */
 export const usePWAInstall = () => {
-    const [installPrompt, setInstallPrompt] = useState<any>(null);
+    const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
     const [isInstalled, setIsInstalled] = useState(false);
 
     useEffect(() => {
@@ -48,7 +57,7 @@ export const usePWAInstall = () => {
 
         const handleBeforeInstall = (e: Event) => {
             e.preventDefault();
-            setInstallPrompt(e);
+            setInstallPrompt(e as BeforeInstallPromptEvent);
         };
 
         const handleAppInstalled = () => {

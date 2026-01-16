@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-    Package, Image, Calendar, Users, Award,
+    Package, Image, Calendar, Award,
     MessageSquare, Map, Search, Heart, Star,
-    Ticket, BookOpen, Trophy
+    Ticket, Trophy
 } from 'lucide-react';
 
 type EmptyStateType =

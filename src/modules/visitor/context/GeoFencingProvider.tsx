@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../../api/client";
 
 type GeoContextType = {
@@ -27,104 +27,34 @@ const getTenantIdFromStorage = (): string | null => {
     return null;
 };
 
+type GeoWork = {
+    id: string;
+    title: string;
+    latitude: number;
+    longitude: number;
+    radius?: number;
+    imageUrl?: string;
+    [key: string]: unknown; // Allow other props
+};
+
 export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [permission, setPermission] = useState<"granted" | "denied" | "prompt">("prompt");
-    const [works, setWorks] = useState<any[]>([]);
+    const [works, setWorks] = useState<GeoWork[]>([]);
     const [notifiedWorks, setNotifiedWorks] = useState<Set<string>>(new Set());
     const [tenantId, setTenantId] = useState<string | null>(getTenantIdFromStorage);
 
-    // Listen for storage changes to update tenantId
-    useEffect(() => {
-        const handleStorageChange = () => {
-            setTenantId(getTenantIdFromStorage());
-        };
+    // Refs for stale closure prevention
+    const worksRef = useRef(works);
+    const notifiedWorksRef = useRef(notifiedWorks);
+    const userLocationRef = useRef(userLocation);
 
-        window.addEventListener("storage", handleStorageChange);
+    // Sync refs
+    useEffect(() => { worksRef.current = works; }, [works]);
+    useEffect(() => { notifiedWorksRef.current = notifiedWorks; }, [notifiedWorks]);
+    useEffect(() => { userLocationRef.current = userLocation; }, [userLocation]);
 
-        // Also check periodically in case storage changed in same tab
-        const interval = setInterval(() => {
-            const newTenantId = getTenantIdFromStorage();
-            if (newTenantId !== tenantId) {
-                setTenantId(newTenantId);
-            }
-        }, 1000);
-
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-            clearInterval(interval);
-        };
-    }, [tenantId]);
-
-    const loadWorks = async () => {
-        if (!tenantId) {
-            setWorks([]);
-            return;
-        }
-
-        try {
-            const res = await api.get(`/works?tenantId=${tenantId}`);
-            // Handle paginated response (data.data) or direct array (data)
-            const worksArray = Array.isArray(res.data)
-                ? res.data
-                : (res.data?.data || res.data?.works || []);
-            // Filter works that have coordinates
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const geoWorks = worksArray.filter((w: any) => w.latitude && w.longitude);
-            setWorks(geoWorks);
-        } catch (err) {
-            console.error("Failed to load works for geofencing", err);
-            setWorks([]);
-        }
-    };
-
-    useEffect(() => {
-        if (tenantId) {
-            loadWorks();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tenantId]);
-
-    const checkProximity = (lat: number, lng: number) => {
-        works.forEach((work) => {
-            if (notifiedWorks.has(work.id)) return;
-
-            const distance = calculateDistance(lat, lng, work.latitude, work.longitude);
-            const radius = work.radius || 5; // meters
-
-            if (distance <= radius) {
-                triggerNotification(work);
-                setNotifiedWorks((prev) => new Set(prev).add(work.id));
-            }
-        });
-    };
-
-    useEffect(() => {
-        if (!navigator.geolocation) {
-            console.warn("Geolocation not supported");
-            return;
-        }
-
-        const watchId = navigator.geolocation.watchPosition(
-            (position) => {
-                setPermission("granted");
-                const { latitude, longitude } = position.coords;
-                setUserLocation({ lat: latitude, lng: longitude });
-                checkProximity(latitude, longitude);
-            },
-            (error) => {
-                console.warn("Geolocation error", error);
-                if (error.code === error.PERMISSION_DENIED) {
-                    setPermission("denied");
-                }
-            },
-            { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-        );
-
-        return () => navigator.geolocation.clearWatch(watchId);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [works]);
-
+    // Helpers
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const R = 6371e3; // metres
         const φ1 = (lat1 * Math.PI) / 180;
@@ -140,12 +70,12 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         return R * c;
     };
 
-    const triggerNotification = (work: any) => {
+    const triggerNotification = useCallback((work: GeoWork) => {
         // Browser Notification
         if (typeof Notification !== "undefined" && Notification.permission === "granted") {
             new Notification(`Você está perto de uma obra!`, {
                 body: `Descubra "${work.title}" a poucos passos de você.`,
-                icon: work.imageUrl || "/icon-192x192.png"
+                icon: (work.imageUrl as string) || "/icon-192x192.png"
             });
         } else if (typeof Notification !== "undefined" && Notification.permission !== "denied") {
             Notification.requestPermission().then((perm) => {
@@ -157,7 +87,104 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         // Optional: Vibrate
         if (navigator.vibrate) navigator.vibrate(200);
-    };
+    }, []);
+
+    const checkProximity = useCallback((lat: number, lng: number) => {
+        worksRef.current.forEach((work) => {
+            if (notifiedWorksRef.current.has(work.id)) return;
+
+            const distance = calculateDistance(lat, lng, work.latitude, work.longitude);
+            const radius = work.radius || 5; // meters
+
+            if (distance <= radius) {
+                triggerNotification(work);
+                setNotifiedWorks((prev) => new Set(prev).add(work.id));
+            }
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [triggerNotification]); // Deps can be minimal as we use refs
+
+    const loadWorks = useCallback(async () => {
+        if (!tenantId) {
+            setWorks([]);
+            return;
+        }
+
+        try {
+            const res = await api.get(`/works?tenantId=${tenantId}`);
+            const worksArray = Array.isArray(res.data)
+                ? res.data
+                : (res.data?.data || res.data?.works || []);
+            const geoWorks = worksArray.filter((w: any): w is GeoWork => typeof w.latitude === 'number' && typeof w.longitude === 'number');
+            setWorks(geoWorks);
+        } catch (err) {
+            console.error("Failed to load works for geofencing", err);
+            setWorks([]);
+        }
+    }, [tenantId]);
+
+    // Effects
+
+    // Storage listener
+    useEffect(() => {
+        const handleStorageChange = () => {
+            setTenantId(getTenantIdFromStorage());
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        const interval = setInterval(() => {
+            const newTenantId = getTenantIdFromStorage();
+            if (newTenantId !== tenantId) {
+                setTenantId(newTenantId);
+            }
+        }, 1000);
+
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+            clearInterval(interval);
+        };
+    }, [tenantId]);
+
+    // Load Works
+    useEffect(() => {
+        if (tenantId) {
+            loadWorks();
+        }
+    }, [tenantId, loadWorks]);
+
+    // Check when works change if we have location
+    useEffect(() => {
+        if (userLocationRef.current) {
+            checkProximity(userLocationRef.current.lat, userLocationRef.current.lng);
+        }
+    }, [works, checkProximity]);
+
+    // Geolocation Watcher
+    useEffect(() => {
+        if (!navigator.geolocation) {
+            console.warn("Geolocation not supported");
+            return;
+        }
+
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                setPermission("granted");
+                const { latitude, longitude } = position.coords;
+                setUserLocation({ lat: latitude, lng: longitude });
+                // Check proximity with fresh coordinates
+                checkProximity(latitude, longitude);
+            },
+            (error) => {
+                console.warn("Geolocation error", error);
+                if (error.code === error.PERMISSION_DENIED) {
+                    setPermission("denied");
+                }
+            },
+            { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+        );
+
+        return () => navigator.geolocation.clearWatch(watchId);
+    }, [checkProximity]); // checkProximity is now stable (mostly) or we rely on it
 
     return (
         <GeoContext.Provider value={{ userLocation, permission }}>

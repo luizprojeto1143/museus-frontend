@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import {
@@ -8,8 +8,7 @@ import {
     formatDuration,
     getGoogleMapsUrl,
     NavigationRoute,
-    NavigationProfile,
-    NavigationStep
+    NavigationProfile
 } from "../../services/navigationService";
 
 interface NavigationModalProps {
@@ -44,7 +43,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
     onClose,
     destination
 }) => {
-    const { t } = useTranslation();
+
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<L.Map | null>(null);
     const routeLayerRef = useRef<L.Polyline | null>(null);
@@ -269,7 +268,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                     opacity: 0.9
                 }).addTo(mapInstanceRef.current);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Erro rota:", err);
             setError("Erro ao calcular rota");
         } finally {

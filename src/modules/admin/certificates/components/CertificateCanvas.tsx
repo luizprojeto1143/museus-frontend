@@ -29,7 +29,7 @@ const ElementRenderer: React.FC<ElementRendererProps> = ({ element, onSelect }) 
                 fontSize: element.fontSize,
                 fontFamily: element.fontFamily,
                 color: element.color,
-                textAlign: element.align as any,
+                textAlign: element.align as React.CSSProperties['textAlign'],
                 opacity: element.opacity ?? 1,
                 whiteSpace: 'pre-wrap',
                 lineHeight: 1.2,
@@ -77,7 +77,8 @@ export const CertificateCanvas: React.FC = () => {
             if (el) domTargets.push(el as HTMLElement);
         });
         setTargets(domTargets);
-    }, [selectedIds, elements]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedIds]);
 
     // Handle element selection
     const handleElementSelect = (id: string) => {

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { User, Ticket, Award, LogOut, ChevronRight, QrCode } from 'lucide-react';
-import { QRCodeSVG } from "qrcode.react";
+import { Ticket, Award, LogOut, ChevronRight } from 'lucide-react';
 import { TicketCard } from "../components/TicketCard";
 
 interface Certificate {
@@ -13,7 +12,7 @@ interface Certificate {
     type: string;
     generatedAt: string;
     tenant: { name: string };
-    metadata: any;
+    metadata: Record<string, unknown>;
 }
 
 interface Registration {
@@ -46,29 +45,27 @@ export const VisitorProfile: React.FC = () => {
     const [registrations, setRegistrations] = useState<Registration[]>([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (activeTab === 'certificates' && certificates.length === 0) {
+    const handleTabChange = (tab: 'info' | 'tickets' | 'certificates') => {
+        setActiveTab(tab);
+
+        if (tab === 'certificates' && certificates.length === 0) {
             setLoading(true);
             api.get('/certificates/mine')
                 .then(res => setCertificates(res.data))
                 .catch(console.error)
                 .finally(() => setLoading(false));
         }
-        if (activeTab === 'tickets' && registrations.length === 0) {
+
+        if (tab === 'tickets' && registrations.length === 0) {
             setLoading(true);
-            // Mock endpoint or real one if exists
-            // Using a mock for now since we didn't explicitly create GET /registrations/mine yet
-            // Assuming we added it or using filtering
             api.get('/registrations/my-registrations')
                 .then(res => setRegistrations(res.data))
                 .catch(async () => {
-                    // Fallback: fetch attended events and try to map (mocking for demo)
-                    // In real implementation we need GET /registrations
                     setRegistrations([]);
                 })
                 .finally(() => setLoading(false));
         }
-    }, [activeTab]);
+    };
 
     const renderContent = () => {
         if (loading) return <div className="p-8 text-center animate-pulse">Carregando...</div>;
@@ -178,19 +175,19 @@ export const VisitorProfile: React.FC = () => {
             {/* Tabs Header */}
             <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl mb-6">
                 <button
-                    onClick={() => setActiveTab('info')}
+                    onClick={() => handleTabChange('info')}
                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'info' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
                 >
                     Info
                 </button>
                 <button
-                    onClick={() => setActiveTab('tickets')}
+                    onClick={() => handleTabChange('tickets')}
                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'tickets' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
                 >
                     Ingressos
                 </button>
                 <button
-                    onClick={() => setActiveTab('certificates')}
+                    onClick={() => handleTabChange('certificates')}
                     className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === 'certificates' ? 'bg-white dark:bg-gray-700 shadow text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}
                 >
                     Certificados

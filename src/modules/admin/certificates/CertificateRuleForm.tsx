@@ -5,18 +5,17 @@ import { Button } from '../../../components/ui/Button';
 
 export const CertificateRuleForm: React.FC = () => {
     const navigate = useNavigate();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [templates, setTemplates] = useState<any[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [trails, setTrails] = useState<any[]>([]);
 
     // Form State
     const [name, setName] = useState('');
     const [triggerType, setTriggerType] = useState('TRAIL_COMPLETED');
     const [templateId, setTemplateId] = useState('');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [conditions, setConditions] = useState<any>({});
-
-    useEffect(() => {
-        loadData();
-    }, []);
 
     const loadData = async () => {
         try {
@@ -27,9 +26,14 @@ export const CertificateRuleForm: React.FC = () => {
             setTemplates(tplRes.data);
             setTrails(trailRes.data);
         } catch (err) {
-            console.error("Failed to load data");
+            console.error("Failed to load data", err);
         }
     };
+
+    useEffect(() => {
+        loadData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleSave = async () => {
         try {
@@ -42,6 +46,7 @@ export const CertificateRuleForm: React.FC = () => {
             });
             navigate('/admin/certificates/rules');
         } catch (err) {
+            console.error(err);
             alert("Erro ao salvar regra");
         }
     };

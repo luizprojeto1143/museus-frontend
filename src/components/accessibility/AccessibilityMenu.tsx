@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAccessibility } from './AccessibilityProvider';
 import {
     Accessibility, Type, Eye, Zap, BookOpen,
-    ChevronUp, ChevronDown, RotateCcw, X
+    RotateCcw, X
 } from 'lucide-react';
 
 /**

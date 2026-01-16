@@ -41,7 +41,7 @@ export const VisualScannerPage: React.FC = () => {
                 if (savedModel) {
                     try {
                         const datasetObj = JSON.parse(savedModel);
-                        const dataset: any = {};
+                        const dataset: Record<string, tf.Tensor2D> = {};
                         Object.keys(datasetObj).forEach((key) => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
@@ -136,7 +136,7 @@ export const VisualScannerPage: React.FC = () => {
                 .then(res => {
                     const list = res.data.data || [];
                     const mapping: Record<string, string> = {};
-                    list.forEach((w: any) => {
+                    list.forEach((w: { id: string; title: string }) => {
                         mapping[w.id] = w.title;
                     });
                     setWorksMap(mapping);

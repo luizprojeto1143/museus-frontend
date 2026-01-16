@@ -29,23 +29,28 @@ export const LibrasPlayer: React.FC<LibrasPlayerProps> = ({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
 
+  const [currentTime, setCurrentTime] = useState(0);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const updateProgress = () => {
-      setProgress((video.currentTime / video.duration) * 100);
+    const updateTime = () => {
+      setCurrentTime(video.currentTime);
+      if (video.duration) {
+        setProgress((video.currentTime / video.duration) * 100);
+      }
     };
 
     const handleLoadedMetadata = () => {
       setDuration(video.duration);
     };
 
-    video.addEventListener('timeupdate', updateProgress);
+    video.addEventListener('timeupdate', updateTime);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
 
     return () => {
-      video.removeEventListener('timeupdate', updateProgress);
+      video.removeEventListener('timeupdate', updateTime);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
   }, []);
@@ -180,7 +185,7 @@ export const LibrasPlayer: React.FC<LibrasPlayerProps> = ({
               <SkipForward size={18} />
             </button>
             <span className="time-display">
-              {formatTime(videoRef.current?.currentTime || 0)} / {formatTime(duration)}
+              {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
 

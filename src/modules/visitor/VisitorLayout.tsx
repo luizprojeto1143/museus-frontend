@@ -14,6 +14,12 @@ import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
 
 import "./VisitorLayout.css";
 
+// Custom event for PWA install
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
+
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -24,7 +30,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   // Theme and Features State - MUST be declared before allLinks uses it
   const [settings, setSettings] = useState<{

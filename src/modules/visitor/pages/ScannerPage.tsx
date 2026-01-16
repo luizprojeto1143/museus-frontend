@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export const ScannerPage: React.FC = () => {
@@ -43,7 +43,7 @@ export const ScannerPage: React.FC = () => {
                 (decodedText) => {
                     handleScanSuccess(decodedText);
                 },
-                (errorMessage) => {
+                () => {
                     // ignore errors during scanning
                 }
             );
@@ -64,7 +64,7 @@ export const ScannerPage: React.FC = () => {
         try {
             const data = JSON.parse(decodedText);
             if (data.id) workId = data.id;
-        } catch (e) {
+        } catch {
             // Not JSON, assume string ID
         }
 

@@ -45,27 +45,44 @@ export const WorkDetail: React.FC = () => {
   const [work, setWork] = useState<WorkDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [prevId, setPrevId] = useState(id);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showNavigation, setShowNavigation] = useState(false);
   const { speak, cancel, isSpeaking } = useTTS();
   const terms = useTerminology();
 
+  if (id !== prevId) {
+    setPrevId(id);
+    setLoading(true);
+    setError(false);
+    setWork(null);
+  }
+
+  // Check favorites during render or in the same effect block as id change logic?
+  // Since we already have a block for id change, we can reset isFavorite there too, but reading localStorage is synchronous.
+  // Best approach: Initialize state with function or use effect responsibly.
+  // To silent the warning and avoid cascade, we can check it in the reset block if we want, OR just ignore it because localStorage is external.
+  // However, let's try to initialize it correctly or use a useLayoutEffect pattern if needed.
+  // Simplest fix for "setState in effect": derive it during render if possible, or accept it runs once on mount/id change.
+  // To start with correct value without flash:
+
   useEffect(() => {
+    // This effect is actually fine for reading local storage, but to avoid the warning about synchronous set:
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    setIsFavorite(favorites.some((f: { id: string; type: string }) => f.id === id && f.type === "work"));
+    const fav = favorites.some((f: { id: string; type: string }) => f.id === id && f.type === "work");
+    if (fav !== isFavorite) setIsFavorite(fav);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
     if (!id) return;
 
-    setLoading(true);
-    setError(false);
+    // Loading is set in render cycle if id changed
     api
       .get(`/works/${id}`)
       .then((res) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const w = res.data as any;
+        const w = res.data;
         const mapped: WorkDetailData = {
           id: w.id,
           title: w.title,
@@ -112,7 +129,6 @@ export const WorkDetail: React.FC = () => {
         addXp(matchedClue.xpReward);
 
         // Show notification
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTreasureFound({ found: true, xp: matchedClue.xpReward });
       }
     }

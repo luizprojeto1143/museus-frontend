@@ -58,7 +58,7 @@ export const SchedulingPage: React.FC = () => {
             setMessage({ type: "success", text: t("visitor.scheduling.success", "Agendamento realizado com sucesso!") });
             fetchBookings();
             setSelectedDate("");
-        } catch (error) {
+        } catch {
             setMessage({ type: "error", text: t("visitor.scheduling.error", "Erro ao realizar agendamento.") });
         } finally {
             setLoading(false);
@@ -71,7 +71,7 @@ export const SchedulingPage: React.FC = () => {
         try {
             await api.delete(`/bookings/${id}`);
             fetchBookings();
-        } catch (error) {
+        } catch {
             alert(t("visitor.scheduling.cancelError", "Erro ao cancelar."));
         }
     };

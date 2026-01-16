@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ShoppingBag, Plus, Minus, Trash2, X } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
@@ -367,13 +367,7 @@ export const ProductGrid: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showCart, setShowCart] = useState(false);
 
-    useEffect(() => {
-        if (tenantId) {
-            fetchProducts();
-        }
-    }, [tenantId]);
-
-    const fetchProducts = async () => {
+    const fetchProducts = useCallback(async () => {
         try {
             const res = await api.get(`/shop/products?tenantId=${tenantId}`);
             setProducts(res.data);
@@ -382,7 +376,13 @@ export const ProductGrid: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [tenantId]);
+
+    useEffect(() => {
+        if (tenantId) {
+            fetchProducts();
+        }
+    }, [tenantId, fetchProducts]);
 
     const addToCart = (product: Product) => {
         setCart(prev => {

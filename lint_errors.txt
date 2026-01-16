@@ -1,0 +1,929 @@
+
+> museus-frontend@1.0.0 lint
+> eslint .
+
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\App.tsx
+  73:10  error  'AdminShop' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\AccessibilityMenu.tsx
+  5:5   error  'ChevronUp' is defined but never used    @typescript-eslint/no-unused-vars
+  5:16  error  'ChevronDown' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\AccessibilityProvider.tsx
+  28:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\AudioDescriptionPlayer.tsx
+   2:23  error  'Volume2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  13:10  error  'isMuted' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  13:19  error  'setIsMuted' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+  18:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\AudioDescriptionPlayer.tsx:18:7
+  16 |     if (audioRef.current) {
+  17 |       // Reset state on src change
+> 18 |       setIsPlaying(false);
+     |       ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  19 |       setCurrentTime(0);
+  20 |     }
+  21 |   }, [src]);  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\LibrasPlayer.tsx
+  183:27  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\LibrasPlayer.tsx:183:27
+  181 |             </button>
+  182 |             <span className="time-display">
+> 183 |               {formatTime(videoRef.current?.currentTime || 0)} / {formatTime(duration)}
+      |                           ^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  184 |             </span>
+  185 |           </div>
+  186 |                    react-hooks/refs
+  183:27  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\LibrasPlayer.tsx:183:27
+  181 |             </button>
+  182 |             <span className="time-display">
+> 183 |               {formatTime(videoRef.current?.currentTime || 0)} / {formatTime(duration)}
+      |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  184 |             </span>
+  185 |           </div>
+  186 |       react-hooks/refs
+  183:27  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\accessibility\LibrasPlayer.tsx:183:27
+  181 |             </button>
+  182 |             <span className="time-display">
+> 183 |               {formatTime(videoRef.current?.currentTime || 0)} / {formatTime(duration)}
+      |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  184 |             </span>
+  185 |           </div>
+  186 |  react-hooks/refs
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\gamification\ChallengeWidget.tsx
+   2:10  error    'Trophy' is defined but never used                                                                                                       @typescript-eslint/no-unused-vars
+   2:32  error    'ChevronRight' is defined but never used                                                                                                 @typescript-eslint/no-unused-vars
+  37:8   warning  React Hook useEffect has missing dependencies: 'fetchChallenge' and 'fetchProgress'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\navigation\NavigationModal.tsx
+   12:5   error    'NavigationStep' is defined but never used                                                                                              @typescript-eslint/no-unused-vars
+   47:13  error    't' is assigned a value but never used                                                                                                  @typescript-eslint/no-unused-vars
+  272:23  error    Unexpected any. Specify a different type                                                                                                @typescript-eslint/no-explicit-any
+  291:8   warning  React Hook useEffect has missing dependencies: 'calculateRoute' and 'userLocation'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\shop\ShopComponents.tsx
+  374:8  warning  React Hook useEffect has a missing dependency: 'fetchProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\ui\ConfirmModal.tsx
+  2:33  error  'X' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\ui\EmptyState.tsx
+  3:31  error  'Users' is defined but never used     @typescript-eslint/no-unused-vars
+  5:13  error  'BookOpen' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\ui\FavoriteButton.tsx
+  26:8  warning  React Hook useEffect has a missing dependency: 'checkFavoriteStatus'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\ui\NewsletterForm.tsx
+  38:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\components\ui\StarRating.tsx
+  172:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\hooks\usePWA.ts
+  40:56  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  46:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\hooks\usePWA.ts:46:13
+  44 |         // Check if already installed
+  45 |         if (window.matchMedia('(display-mode: standalone)').matches) {
+> 46 |             setIsInstalled(true);
+     |             ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |         }
+  48 |
+  49 |         const handleBeforeInstall = (e: Event) => {  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\hooks\useTTS.ts
+  78:8  warning  React Hook useCallback has missing dependencies: 'speakNative' and 'stopAll'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateEditor.tsx
+  15:13  error  't' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  29:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateRuleForm.tsx
+   8:48  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   9:42  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  15:50  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  18:9   error  Error: Cannot access variable before it is declared
+
+`loadData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateRuleForm.tsx:18:9
+  16 |
+  17 |     useEffect(() => {
+> 18 |         loadData();
+     |         ^^^^^^^^ `loadData` accessed before it is declared
+  19 |     }, []);
+  20 |
+  21 |     const loadData = async () => {
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateRuleForm.tsx:21:5
+  19 |     }, []);
+  20 |
+> 21 |     const loadData = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 22 |         try {
+     | ^^^^^^^^^^^^^
+> 23 |             const [tplRes, trailRes] = await Promise.all([
+     …
+     | ^^^^^^^^^^^^^
+> 31 |         }
+     | ^^^^^^^^^^^^^
+> 32 |     };
+     | ^^^^^^^ `loadData` is declared here
+  33 |
+  34 |     const handleSave = async () => {
+  35 |         try {  react-hooks/immutability
+  29:18  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  44:18  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateRules.tsx
+   9:40  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  12:9   error  Error: Cannot access variable before it is declared
+
+`loadRules` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateRules.tsx:12:9
+  10 |
+  11 |     useEffect(() => {
+> 12 |         loadRules();
+     |         ^^^^^^^^^ `loadRules` accessed before it is declared
+  13 |     }, []);
+  14 |
+  15 |     const loadRules = async () => {
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateRules.tsx:15:5
+  13 |     }, []);
+  14 |
+> 15 |     const loadRules = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 |         try {
+     | ^^^^^^^^^^^^^
+> 17 |             const res = await api.get('/certificate-rules');
+     | ^^^^^^^^^^^^^
+> 18 |             setRules(res.data);
+     | ^^^^^^^^^^^^^
+> 19 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 20 |             console.error(err);
+     | ^^^^^^^^^^^^^
+> 21 |         }
+     | ^^^^^^^^^^^^^
+> 22 |     };
+     | ^^^^^^^ `loadRules` is declared here
+  23 |
+  24 |     return (
+  25 |         <div className="p-6">  react-hooks/immutability
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateTemplates.tsx
+   4:10  error  'Button' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   9:48  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  12:9   error  Error: Cannot access variable before it is declared
+
+`loadTemplates` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateTemplates.tsx:12:9
+  10 |
+  11 |     useEffect(() => {
+> 12 |         loadTemplates();
+     |         ^^^^^^^^^^^^^ `loadTemplates` accessed before it is declared
+  13 |     }, []);
+  14 |
+  15 |     const loadTemplates = async () => {
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\CertificateTemplates.tsx:15:5
+  13 |     }, []);
+  14 |
+> 15 |     const loadTemplates = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 |         try {
+     | ^^^^^^^^^^^^^
+> 17 |             const res = await api.get('/certificate-templates');
+     | ^^^^^^^^^^^^^
+> 18 |             setTemplates(res.data);
+     | ^^^^^^^^^^^^^
+> 19 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 20 |             console.error(err);
+     | ^^^^^^^^^^^^^
+> 21 |         }
+     | ^^^^^^^^^^^^^
+> 22 |     };
+     | ^^^^^^^ `loadTemplates` is declared here
+  23 |
+  24 |     const handleDelete = async (id: string) => {
+  25 |         if (!confirm('Deseja excluir este modelo?')) return;  react-hooks/immutability
+  29:18  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\components\CertificateCanvas.tsx
+  32:45  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  79:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\components\CertificateCanvas.tsx:79:9
+  77 |             if (el) domTargets.push(el as HTMLElement);
+  78 |         });
+> 79 |         setTargets(domTargets);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  80 |     }, [selectedIds, elements]);
+  81 |
+  82 |     // Handle element selection  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\components\PropertiesPanel.tsx
+    5:15  error  'Move' is defined but never used          @typescript-eslint/no-unused-vars
+    5:31  error  'Maximize2' is defined but never used     @typescript-eslint/no-unused-vars
+  265:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\components\Toolbar.tsx
+  12:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\certificates\context\CertificateContext.tsx
+    1:67  error    'useRef' is defined but never used                                                                                              @typescript-eslint/no-unused-vars
+  195:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminEventCheckIn.tsx
+   9:50  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  21:13  error  Error: Cannot access variable before it is declared
+
+`handleCheckIn` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminEventCheckIn.tsx:21:13
+  19 |         scanner.render((decodedText) => {
+  20 |             // Handle scan
+> 21 |             handleCheckIn(decodedText);
+     |             ^^^^^^^^^^^^^ `handleCheckIn` accessed before it is declared
+  22 |             scanner.clear();
+  23 |         }, (err) => {
+  24 |             // console.log(err);
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminEventCheckIn.tsx:32:5
+  30 |     }, []);
+  31 |
+> 32 |     const handleCheckIn = async (code: string) => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 33 |         setError(null);
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 34 |         setScanResult(null);
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 35 |         try {
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |             const res = await api.post('/registrations/checkin', { code });
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             setScanResult(res.data.registration);
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |         } catch (err: any) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |             setError(err.response?.data?.error || "Erro ao fazer check-in");
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 40 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |     };
+     | ^^^^^^^ `handleCheckIn` is declared here
+  42 |
+  43 |     return (
+  44 |         <div className="max-w-md mx-auto p-6">  react-hooks/immutability
+  23:13  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  38:23  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminEventDashboard.tsx
+   5:10  error  'BarChart' is defined but never used      @typescript-eslint/no-unused-vars
+  10:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:63  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  28:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  31:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminEventForm.tsx
+    7:44  error  'ImageIcon' is defined but never used     @typescript-eslint/no-unused-vars
+   22:11  error  't' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  398:81  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminReviews.tsx
+  28:8  warning  React Hook useEffect has a missing dependency: 'fetchReviews'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminScannerTrainer.tsx
+    2:13  error  'tf' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   46:32  error  Error: Cannot access variable before it is declared
+
+`startCamera` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminScannerTrainer.tsx:46:32
+  44 |
+  45 |                 if (isMounted) setLoading(false);
+> 46 |                 if (isMounted) startCamera();
+     |                                ^^^^^^^^^^^ `startCamera` accessed before it is declared
+  47 |
+  48 |             } catch (err) {
+  49 |                 console.error("Error init trainer", err);
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminScannerTrainer.tsx:70:5
+  68 |     }, [tenantId]);
+  69 |
+> 70 |     const startCamera = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         if (videoRef.current) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |             videoRef.current.srcObject = stream;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |             videoRef.current.play();
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |     };
+     | ^^^^^^^ `startCamera` is declared here
+  77 |
+  78 |     const stopCamera = () => {
+  79 |         if (videoRef.current && videoRef.current.srcObject) {                          react-hooks/immutability
+   56:13  error  Error: Cannot access variable before it is declared
+
+`stopCamera` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminScannerTrainer.tsx:56:13
+  54 |         return () => {
+  55 |             isMounted = false;
+> 56 |             stopCamera();
+     |             ^^^^^^^^^^ `stopCamera` accessed before it is declared
+  57 |             // Cleanup tensors
+  58 |             setClassifier(prev => {
+  59 |                 if (prev) {
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminScannerTrainer.tsx:78:5
+  76 |     };
+  77 |
+> 78 |     const stopCamera = () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |         if (videoRef.current && videoRef.current.srcObject) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |             const stream = videoRef.current.srcObject as MediaStream;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |             stream.getTracks().forEach(t => t.stop());
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |     };
+     | ^^^^^^^ `stopCamera` is declared here
+  84 |
+  85 |     const addExample = async () => {
+  86 |         if (!selectedWorkId || !net || !classifier || !videoRef.current) return;  react-hooks/immutability
+  109:42  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  111:17  error  'data' is never reassigned. Use 'const' instead                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        prefer-const
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminShop.tsx
+  28:8  warning  React Hook useEffect has a missing dependency: 'fetchProducts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminTreasureHunt.tsx
+  70:18  error  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  98:18  error  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminWorkForm.tsx
+   21:48  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+   30:10  error  'videoUrl' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  130:21  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+  244:37  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\admin\pages\AdminWorks.tsx
+  34:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\auth\Register.tsx
+  107:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\auth\TenantContext.tsx
+  60:8  warning  React Hook useEffect has a missing dependency: 'fetchTenant'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\gamification\context\GamificationContext.tsx
+  106:65  error    Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+  224:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\master\pages\MasterAchievementForm.tsx
+  201:45  error  'url' is never reassigned. Use 'const' instead  prefer-const
+  234:43  error  'e' is defined but never used                   @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\master\pages\MasterAchievements.tsx
+  2:16  error  'useNavigate' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\master\pages\MasterAuditLogs.tsx
+  13:14  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  14:14  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  33:8   warning  React Hook useEffect has a missing dependency: 'fetchLogs'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\master\pages\MasterUserForm.tsx
+  28:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\master\pages\MasterUserForm.tsx:28:7
+  26 |   useEffect(() => {
+  27 |     if (isEdit && id && !isDemoMode) {
+> 28 |       setLoading(true);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |       api.get(`/users/${id}`)
+  30 |         .then(res => {
+  31 |           const u = res.data;  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\master\pages\TenantForm.tsx
+  75:6  warning  React Hook React.useEffect has a missing dependency: 'loadTenant'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\public\CertificateValidator.tsx
+  24:19  error    Error: Cannot access variable before it is declared
+
+`validateCertificate` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\public\CertificateValidator.tsx:24:19
+  22 |
+  23 |     useEffect(() => {
+> 24 |         if (code) validateCertificate();
+     |                   ^^^^^^^^^^^^^^^^^^^ `validateCertificate` accessed before it is declared
+  25 |     }, [code]);
+  26 |
+  27 |     const validateCertificate = async () => {
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\public\CertificateValidator.tsx:27:5
+  25 |     }, [code]);
+  26 |
+> 27 |     const validateCertificate = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 28 |         try {
+     | ^^^^^^^^^^^^^
+> 29 |             // Note: Use baseURL-less request or ensure API client handles relative paths correctly 
+     …
+     | ^^^^^^^^^^^^^
+> 46 |         }
+     | ^^^^^^^^^^^^^
+> 47 |     };
+     | ^^^^^^^ `validateCertificate` is declared here
+  48 |
+  49 |     return (
+  50 |         <div className="min-h-screen bg-[#1a1108] text-[#f5e6d3] font-serif flex flex-col items-center justify-center p-4 relative overflow-hidden">  react-hooks/immutability
+  25:8   warning  React Hook useEffect has a missing dependency: 'validateCertificate'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/exhaustive-deps
+  39:23  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\VisitorLayout.tsx
+   66:25  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   77:53  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  106:25  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  109:9   error  'renderNavLinks' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\components\CheckoutModal.tsx
+   2:36  error  'MapPin' is defined but never used        @typescript-eslint/no-unused-vars
+  17:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:63  error  '_' is defined but never used             @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\components\GlobalSearch.tsx
+  46:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\components\GlobalSearch.tsx:46:13
+  44 |             return () => clearTimeout(timeoutId);
+  45 |         } else if (query.trim().length < 2) {
+> 46 |             setResults([]);
+     |             ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |         }
+  48 |     }, [isOpen, query, tenantId]);
+  49 |  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\components\MuseumMap.tsx
+  64:5   error  'indoorBounds' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  68:12  error  'zoom' is assigned a value but never used          @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\components\WelcomeAnimation.tsx
+  14:25  error  'setIsFirstTime' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\components\WorkNote.tsx
+  1:27  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\context\AudioContext.tsx
+  130:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\context\GeoFencingProvider.tsx
+   14:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+  104:9   warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+  118:52  error    Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\ChallengesPage.tsx
+   3:58  error    'CheckCircle' is defined but never used                                                                        @typescript-eslint/no-unused-vars
+  18:11  error    'UserProgress' is defined but never used                                                                       @typescript-eslint/no-unused-vars
+  40:8   warning  React Hook useEffect has a missing dependency: 'fetchHunts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\EventDetail.tsx
+    7:21  error  'Globe' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+    7:46  error  'TicketIcon' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+    8:29  error  'Clock' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+   58:11  error  't' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   66:48  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   71:10  error  'ticketQuantity' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+   71:26  error  'setTicketQuantity' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   72:57  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   73:22  error  'setSubmitting' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   78:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\EventDetail.tsx:78:7
+  76 |   useEffect(() => {
+  77 |     if (isDemoMode) {
+> 78 |       setEvent({
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  79 |         id: "1", title: "Oficina de Aquarela",
+  80 |         description: "Aprenda técnicas. Lorem ipsum dolor sit amet...",
+  81 |         location: "Atelier 1", startDate: new Date().toISOString(),  react-hooks/set-state-in-effect
+   99:89  error  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+  102:79  error  'e' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\EventsList.tsx
+   7:6  error  'EventItem' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  32:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\EventsList.tsx:32:5
+  30 |     if (!tenantId) return;
+  31 |
+> 32 |     setLoading(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |     api
+  34 |       .get("/events", { params: { tenantId } })
+  35 |       .then((res) => {  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\GuestbookPage.tsx
+  19:40  error    'name' is assigned a value but never used                                                                        @typescript-eslint/no-unused-vars
+  27:8   warning  React Hook useEffect has a missing dependency: 'fetchEntries'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\Home.tsx
+  12:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\LeaderboardPage.tsx
+  18:13  error  'tenantId' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  24:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\LeaderboardPage.tsx:24:9
+  22 |
+  23 |     useEffect(() => {
+> 24 |         setLoading(true);
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  25 |         api.get("/leaderboard")
+  26 |             .then(res => {
+  27 |                 if (res.data.ranking) {  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MapView.tsx
+  20:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MapView.tsx:20:7
+  18 |   useEffect(() => {
+  19 |     if (tenantId) {
+> 20 |       setLoading(true);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |       // Fetch settings and works in parallel
+  22 |       Promise.all([
+  23 |         api.get(`/tenants/${tenantId}/settings`),  react-hooks/set-state-in-effect
+  26:30  error  'worksRes' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx
+     3:10  error    'useNavigate' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   295:30  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   295:56  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   296:11  error    'sprites' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+   296:31  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+   301:13  error    Error: Cannot access variable before it is declared
+
+`fetchLeaderboard` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:301:13
+  299 |     useEffect(() => {
+  300 |         if (gameState === 'GAMEOVER' || gameState === 'CAMPAIGN_WIN') {
+> 301 |             fetchLeaderboard();
+      |             ^^^^^^^^^^^^^^^^ `fetchLeaderboard` accessed before it is declared
+  302 |         }
+  303 |     }, [gameState]);
+  304 |
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:305:5
+  303 |     }, [gameState]);
+  304 |
+> 305 |     const fetchLeaderboard = async () => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 306 |         if (!tenantId) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 307 |         try {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 308 |             const res = await api.get(`/gamification/leaderboard?tenantId=${tenantId}`);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 309 |             setLeaderboard(res.data);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 310 |         } catch (e) {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 311 |             console.error("Failed to load leaderboard", e);
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 312 |         }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 313 |     };
+      | ^^^^^^^ `fetchLeaderboard` is declared here
+  314 |
+  315 |     // Game Mutable State (Ref to avoid re-renders in loop)
+  316 |     const game = useRef({                                                                                                                                                                                                                                                                                                                                                        react-hooks/immutability
+   303:8   warning  React Hook useEffect has a missing dependency: 'fetchLeaderboard'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/exhaustive-deps
+   344:9   error    Error: Cannot access variable before it is declared
+
+`initLevel` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:344:9
+  342 |
+  343 |     useEffect(() => {
+> 344 |         initLevel(currentLevelIdx);
+      |         ^^^^^^^^^ `initLevel` accessed before it is declared
+  345 |         window.addEventListener('keydown', handleKeyDown);
+  346 |         window.addEventListener('keyup', handleKeyUp);
+  347 |
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:358:5
+  356 |     }, [currentLevelIdx, levels]); // Added dependencies for level changes
+  357 |
+> 358 |     const initLevel = (levelIndex: number = 0) => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 359 |         const tiles = [];
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 360 |         const rows = levels[levelIndex]; // Load specific level
+      …
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 392 |         setGameState('PLAYING');
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 393 |     };
+      | ^^^^^^^ `initLevel` is declared here
+  394 |
+  395 |     const nextLevel = () => {
+  396 |         if (currentLevelIdx < levels.length - 1) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react-hooks/immutability
+   345:44  error    Error: Cannot access variable before it is declared
+
+`handleKeyDown` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:345:44
+  343 |     useEffect(() => {
+  344 |         initLevel(currentLevelIdx);
+> 345 |         window.addEventListener('keydown', handleKeyDown);
+      |                                            ^^^^^^^^^^^^^ `handleKeyDown` accessed before it is declared
+  346 |         window.addEventListener('keyup', handleKeyUp);
+  347 |
+  348 |         // Start Loop
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:405:5
+  403 |     };
+  404 |
+> 405 |     const handleKeyDown = (e: KeyboardEvent) => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 406 |         if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = true;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 407 |         if (e.code === 'ArrowRight' || e.code === 'KeyD') game.current.keys.right = true;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 408 |         if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') {
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 409 |             game.current.keys.up = true;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 410 |         }
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 411 |     };
+      | ^^^^^^^ `handleKeyDown` is declared here
+  412 |
+  413 |     const handleKeyUp = (e: KeyboardEvent) => {
+  414 |         if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = false;  react-hooks/immutability
+   346:42  error    Error: Cannot access variable before it is declared
+
+`handleKeyUp` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:346:42
+  344 |         initLevel(currentLevelIdx);
+  345 |         window.addEventListener('keydown', handleKeyDown);
+> 346 |         window.addEventListener('keyup', handleKeyUp);
+      |                                          ^^^^^^^^^^^ `handleKeyUp` accessed before it is declared
+  347 |
+  348 |         // Start Loop
+  349 |         game.current.animationFrame = requestAnimationFrame(gameLoop);
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:413:5
+  411 |     };
+  412 |
+> 413 |     const handleKeyUp = (e: KeyboardEvent) => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 414 |         if (e.code === 'ArrowLeft' || e.code === 'KeyA') game.current.keys.left = false;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 415 |         if (e.code === 'ArrowRight' || e.code === 'KeyD') game.current.keys.right = false;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 416 |         if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') game.current.keys.up = false;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 417 |     };
+      | ^^^^^^^ `handleKeyUp` is declared here
+  418 |
+  419 |     const spawnParticles = (x: number, y: number, color: string, count: number) => {
+  420 |         for (let i = 0; i < count; i++) {                                                                                                                                                                                                           react-hooks/immutability
+   349:61  error    Error: Cannot access variable before it is declared
+
+`gameLoop` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:349:61
+  347 |
+  348 |         // Start Loop
+> 349 |         game.current.animationFrame = requestAnimationFrame(gameLoop);
+      |                                                             ^^^^^^^^ `gameLoop` accessed before it is declared
+  350 |
+  351 |         return () => {
+  352 |             window.removeEventListener('keydown', handleKeyDown);
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:867:5
+  865 |     };
+  866 |
+> 867 |     const gameLoop = () => {
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^
+> 868 |         update();
+      | ^^^^^^^^^^^^^^^^^
+> 869 |         const canvas = canvasRef.current;
+      | ^^^^^^^^^^^^^^^^^
+> 870 |         if (canvas) {
+      | ^^^^^^^^^^^^^^^^^
+> 871 |             const ctx = canvas.getContext('2d');
+      | ^^^^^^^^^^^^^^^^^
+> 872 |             if (ctx) draw(ctx);
+      | ^^^^^^^^^^^^^^^^^
+> 873 |         }
+      | ^^^^^^^^^^^^^^^^^
+> 874 |         game.current.animationFrame = requestAnimationFrame(gameLoop);
+      | ^^^^^^^^^^^^^^^^^
+> 875 |     };
+      | ^^^^^^^ `gameLoop` is declared here
+  876 |
+  877 |     // --- RENDER UI ---
+  878 |     return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/immutability
+   354:39  warning  The ref value 'game.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'game.current' to a variable inside the effect, and use that variable in the cleanup function                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/exhaustive-deps
+   356:8   warning  React Hook useEffect has missing dependencies: 'gameLoop' and 'initLevel'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+   455:21  error    Error: Cannot call impure function during render
+
+`performance.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:455:21
+  453 |
+  454 |         // --- ANIMATION FRAME UPDATE ---
+> 455 |         const now = performance.now();
+      |                     ^^^^^^^^^^^^^^^^^ Cannot call impure function
+  456 |         if (now - game.current.lastFrameTime > ANIMATION_FRAME_DURATION) {
+  457 |             game.current.lastFrameTime = now;
+  458 |             // Player animation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-hooks/purity
+   467:21  error    Error: This value cannot be modified
+
+Modifying a value used previously in an effect function or as an effect dependency is not allowed. Consider moving the modification before calling useEffect().
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:467:21
+  465 |             for (const tile of tiles) {
+  466 |                 if (tile.type === 'E' || tile.type === 'S' || tile.type === 'F' || tile.type === 'B') {
+> 467 |                     tile.animFrame = ((tile.animFrame || 0) + 1) % 4;
+      |                     ^^^^ `game` cannot be modified
+  468 |                 }
+  469 |             }
+  470 |         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/immutability
+   532:21  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\MuseumPlatformer.tsx:532:21
+  530 |
+  531 |                 // Boss Jump randomly
+> 532 |                 if (Math.random() < 0.02) tile.y -= 10;
+      |                     ^^^^^^^^^^^^^ Cannot call impure function
+  533 |                 if (tile.y < (tile.originY || 0)) tile.y += 1; // Gravity fake
+  534 |             }
+  535 |         }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/purity
+  1069:52  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\Passport.tsx
+  79:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\ScannerPage.tsx
+   3:23  error  'useSearchParams' is defined but never used  @typescript-eslint/no-unused-vars
+  46:18  error  'errorMessage' is defined but never used     @typescript-eslint/no-unused-vars
+  67:18  error  'e' is defined but never used                @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\SchedulingPage.tsx
+  61:18  error  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  74:18  error  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\TrailDetail.tsx
+  39:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\TrailDetail.tsx:39:5
+  37 |     if (isDemo) return;
+  38 |
+> 39 |     setApiLoading(true);
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  40 |     setError(false);
+  41 |     api
+  42 |       .get(`/trails/${id}`)  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\TrailsList.tsx
+  25:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\TrailsList.tsx:25:5
+  23 |     if (!tenantId) return;
+  24 |
+> 25 |     setLoading(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  26 |     api
+  27 |       .get("/trails", { params: { tenantId } })
+  28 |       .then((res) => {  react-hooks/set-state-in-effect
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\TreasureHunt.tsx
+  19:12  error  'searchParams' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  19:26  error  'setSearchParams' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  32:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\luiza\Documents\PicWish\museus-frontend\src\modules\visitor\pages\TreasureHunt.tsx:32:13
+  30 |     useEffect(() => {
+  31 |         if (tenantId) {
+> 32 |             setLoading(true);
+     |             ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |             api.get("/gamification/treasure-hunt", { params: { tenantId } })
+  34 |                 .then(res => {
+  35 |                     setClues(res.data.clues || []);  react-hooks/set-state-in-effect
+  74:18  error  'err' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+
+✖ 162 problems (140 errors, 22 warnings)
+  2 errors and 1 warning potentially fixable with the `--fix` option.
+

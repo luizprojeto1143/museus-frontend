@@ -25,6 +25,50 @@ export const useTTS = () => {
         };
     }, []);
 
+    const stopAll = useCallback(() => {
+        // Stop Audio API
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+
+        // Stop Native
+        if (nativeSupported) {
+            window.speechSynthesis.cancel();
+        }
+
+        setIsSpeaking(false);
+        setIsPaused(false);
+        setIsLoading(false);
+    }, [nativeSupported]);
+
+    const speakNative = useCallback((text: string, lang: string) => {
+        if (!nativeSupported) return;
+
+        window.speechSynthesis.cancel();
+        setIsLoading(false);
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 1.0;
+
+        utterance.onstart = () => {
+            setIsSpeaking(true);
+            setIsPaused(false);
+        };
+
+        utterance.onend = () => {
+            setIsSpeaking(false);
+            setIsPaused(false);
+        };
+
+        utterance.onerror = () => {
+            setIsSpeaking(false);
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }, [nativeSupported]);
+
     const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
         // Stop any current playback
         stopAll();
@@ -75,51 +119,7 @@ export const useTTS = () => {
             if (!audioRef.current) setIsLoading(false);
         }
 
-    }, []);
-
-    const speakNative = useCallback((text: string, lang: string) => {
-        if (!nativeSupported) return;
-
-        window.speechSynthesis.cancel();
-        setIsLoading(false);
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 1.0;
-
-        utterance.onstart = () => {
-            setIsSpeaking(true);
-            setIsPaused(false);
-        };
-
-        utterance.onend = () => {
-            setIsSpeaking(false);
-            setIsPaused(false);
-        };
-
-        utterance.onerror = () => {
-            setIsSpeaking(false);
-        };
-
-        window.speechSynthesis.speak(utterance);
-    }, [nativeSupported]);
-
-    const stopAll = useCallback(() => {
-        // Stop Audio API
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current = null;
-        }
-
-        // Stop Native
-        if (nativeSupported) {
-            window.speechSynthesis.cancel();
-        }
-
-        setIsSpeaking(false);
-        setIsPaused(false);
-        setIsLoading(false);
-    }, [nativeSupported]);
+    }, [stopAll, speakNative]);
 
     const cancel = useCallback(() => {
         stopAll();

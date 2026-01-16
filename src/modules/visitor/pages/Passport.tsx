@@ -13,7 +13,14 @@ export const Passport: React.FC = () => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"progress" | "collection" | "journal" | "stamps">("progress");
-  const [favorites, setFavorites] = useState<any[]>([]);
+  type FavoriteItem = {
+    id: string;
+    title: string;
+    type: "work" | "artist" | "event";
+    [key: string]: unknown;
+  };
+
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
 
   // Stamp Logic
   const [stamps, setStamps] = useState<Record<string, string>>({});
@@ -69,7 +76,7 @@ export const Passport: React.FC = () => {
       ].map((tab) => (
         <button
           key={tab.id}
-          onClick={() => setActiveTab(tab.id as any)}
+          onClick={() => setActiveTab(tab.id as "progress" | "collection" | "journal" | "stamps")}
           style={{
             padding: "0.75rem 0",
             borderBottom: activeTab === tab.id ? "2px solid var(--primary)" : "none",
@@ -259,7 +266,7 @@ export const Passport: React.FC = () => {
             <p style={{ color: "#6b7280", fontStyle: "italic" }}>{t("visitor.passport.noFavorites", "Sua coleção está vazia.")}</p>
           ) : (
             <div className="card-grid">
-              {favorites.map((item: any) => (
+              {favorites.map((item) => (
                 <div key={item.id} className="card" style={{ padding: "1rem" }}>
                   <h4 className="card-title">{item.title}</h4>
                   <p className="card-subtitle">{item.type === "work" ? t("visitor.sidebar.artworks") : "Item"}</p>

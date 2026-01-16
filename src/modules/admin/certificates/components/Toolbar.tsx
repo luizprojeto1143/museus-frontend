@@ -9,7 +9,7 @@ export const Toolbar: React.FC = () => {
     const {
         addElement, backgroundUrl, setBackgroundUrl,
         zoom, setZoom
-    } = useCertificate() as any;
+    } = useCertificate();
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

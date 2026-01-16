@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -29,45 +29,18 @@ export const MasterAchievementForm: React.FC = () => {
 
     const isEditing = !!id;
 
-    useEffect(() => {
-        loadTenants();
-        if (isEditing) {
-            loadAchievement(id);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
-
-    const loadTenants = async () => {
+    const loadTenants = useCallback(async () => {
         try {
             const res = await api.get("/tenants");
             setTenants(res.data);
         } catch (err) {
             console.error("Erro ao carregar tenants", err);
         }
-    };
+    }, []);
 
-    const loadAchievement = async (achievementId: string) => {
+    const loadAchievement = useCallback(async (achievementId: string) => {
         setLoading(true);
         try {
-            // We don't have a direct "get by id" that returns tenantId easily if we don't know the tenant
-            // But usually GET /achievements returns a list. 
-            // Wait, the backend route GET /achievements requires tenantId query param.
-            // And there isn't a GET /achievements/:id route in the backend code I saw earlier?
-            // Let me check the backend code again.
-            // src/routes/achievements.ts:
-            // router.put("/:id", ...) exists.
-            // router.delete("/:id", ...) exists.
-            // router.get("/", ...) lists by tenant.
-            // router.get("/visitor/:visitorId", ...) lists by visitor.
-            // THERE IS NO router.get("/:id") to get a single achievement!
-
-            // I need to implement GET /achievements/:id in the backend first or I can't edit properly without knowing the tenantId beforehand.
-            // Or I can try to find it in the list if I knew the tenantId.
-            // But when editing, I have the ID in the URL.
-
-            // I will assume I need to add GET /achievements/:id to the backend.
-            // For now, I'll implement the form assuming the endpoint exists, and then I'll go fix the backend.
-
             const res = await api.get(`/achievements/${achievementId}`);
             setFormData({
                 tenantId: res.data.tenantId,
@@ -83,7 +56,14 @@ export const MasterAchievementForm: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [navigate, t]);
+
+    useEffect(() => {
+        loadTenants();
+        if (isEditing && id) {
+            loadAchievement(id);
+        }
+    }, [id, isEditing, loadTenants, loadAchievement]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
