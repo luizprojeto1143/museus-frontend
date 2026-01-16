@@ -1018,7 +1018,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                     </div>
 
                     {/* Character Cards Carousel */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full px-4 relative z-30">
                         {CHARACTERS.slice(0, 3).map((char) => ( // Showing top 3 for layout symmetry, or mapped properly
                             <div
                                 key={char.id}
