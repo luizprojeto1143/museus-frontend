@@ -38,7 +38,8 @@ export const AdminScannerTrainer: React.FC = () => {
                 // Load works
                 if (tenantId && isMounted) {
                     const res = await api.get("/works", { params: { tenantId } });
-                    setWorks(res.data);
+                    // API returns { data: works[], pagination: {} }
+                    setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []));
                 }
 
                 if (isMounted) setLoading(false);
