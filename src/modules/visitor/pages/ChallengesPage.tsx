@@ -4,7 +4,7 @@ import { Target, Trophy, Map, ChevronRight, Star, Clock, CheckCircle } from 'luc
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { DailyChallengeWidget, XpProgressBar } from '../../../components/gamification/ChallengeWidget';
-import { MuseumPlatformer } from './MuseumPlatformer';
+
 import { Gamepad2 } from 'lucide-react';
 
 interface ScavengerHunt {
@@ -30,7 +30,6 @@ export const ChallengesPage: React.FC = () => {
     const [hunts, setHunts] = useState<ScavengerHunt[]>([]);
     const [loading, setLoading] = useState(true);
     const [userXp, setUserXp] = useState(0);
-    const [showGame, setShowGame] = useState(false);
 
     useEffect(() => {
         if (tenantId) {
@@ -93,7 +92,7 @@ export const ChallengesPage: React.FC = () => {
                         <h2 className="text-2xl font-black text-yellow-400 italic">ART RUN</h2>
                         <p className="text-indigo-200 mb-4">Jogue a nova aventura platformer! Colete moedas e ganhe XP real.</p>
                         <button
-                            onClick={() => setShowGame(true)}
+                            onClick={() => window.location.href = '/arcade'}
                             className="bg-yellow-500 hover:bg-yellow-400 text-indigo-900 font-bold px-8 py-3 rounded-xl transition-transform hover:scale-105 shadow-lg shadow-yellow-500/30"
                         >
                             JOGAR AGORA
@@ -106,7 +105,7 @@ export const ChallengesPage: React.FC = () => {
                 </div>
             </section>
 
-            {showGame && <MuseumPlatformer onClose={() => setShowGame(false)} />}
+
 
 
             {/* Daily Challenge */}

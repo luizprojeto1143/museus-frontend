@@ -5,11 +5,14 @@ import { useAuth } from '../../auth/AuthContext';
 
 // --- GAME CONSTANTS ---
 const TILE_SIZE = 40;
-const GRAVITY = 0.5;
-const FRICTION = 0.8;
-const JUMP_FORCE = -12;
-const SPEED = 5;
-const ANIMATION_FRAME_DURATION = 150; // ms per frame
+const GRAVITY = 0.6; // Slightly heavier
+const FRICTION = 0.82;
+const ACCELERATION = 0.8; // New accel
+const MAX_SPEED = 7;
+const JUMP_FORCE = -14;
+const COYOTE_TIME = 6; // Frames (approx 100ms)
+const JUMP_BUFFER = 5; // Frames
+const ANIMATION_FRAME_DURATION = 100; // Faster anims
 
 // --- SPRITE SHEET CONFIG ---
 const SPRITE_SHEETS = {
@@ -236,10 +239,11 @@ interface LeaderboardEntry {
     rank?: number;
 }
 
-// Helper to remove black background
+// Helper to remove black background with edge smoothing
 const createTransparentImage = (src: string): HTMLImageElement => {
     const img = new Image();
     const raw = new Image();
+    raw.crossOrigin = "Anonymous";
     raw.src = src;
 
     raw.onload = () => {
@@ -252,15 +256,25 @@ const createTransparentImage = (src: string): HTMLImageElement => {
         ctx.drawImage(raw, 0, 0);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
-        const tolerance = 20; // Tolerance for compression artifacts
+
+        // "Magic Wand" tolerance
+        const tolerance = 40;
 
         for (let i = 0; i < data.length; i += 4) {
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
-            // If roughly black
-            if (r <= tolerance && g <= tolerance && b <= tolerance) {
-                data[i + 3] = 0;
+
+            // Calculate brightness
+            const brightness = (r + g + b) / 3;
+
+            // If dark background
+            if (r < tolerance && g < tolerance && b < tolerance) {
+                data[i + 3] = 0; // Transparent
+            }
+            // Anti-aliasing helper: Fade out semi-dark edges
+            else if (brightness < tolerance + 30) {
+                data[i + 3] = Math.max(0, (brightness - tolerance) * 5); // Smooth alpha
             }
         }
 
@@ -275,7 +289,7 @@ const createTransparentImage = (src: string): HTMLImageElement => {
 const preloadedImages: { [key: string]: HTMLImageElement } = {};
 const preloadImages = () => {
     // Assets that need transparency processing (black background removal)
-    const needsTransparency = ['player_walk', 'artifact'];
+    const needsTransparency = ['player_walk', 'player_jump', 'enemy_walk', 'statue_walk', 'boss_attack', 'artifact', 'bg_platform'];
 
     // Preload sprite sheets
     Object.entries(SPRITE_SHEETS).forEach(([entityType, animations]) => {
@@ -342,8 +356,8 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     // Game Mutable State (Ref to avoid re-renders in loop)
     const game = useRef({
         player: { x: 50, y: 50, width: 60, height: 80, vx: 0, vy: 0, isGrounded: false, isDead: false } as Entity,
-        keys: { left: false, right: false, up: false },
-        camera: { x: 0 },
+        keys: { left: false, right: false, up: false, jumpPressed: false }, // Track press state
+        camera: { x: 0, y: 0, shake: 0 },
         tiles: [] as GameTile[],
         particles: [] as Particle[],
         levelWidth: 0,
@@ -353,6 +367,11 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         playerAnimFrame: 0,
         lastFrameTime: 0,
         facingRight: true,
+        // Physics State AAA
+        coyoteTimer: 0,
+        jumpBufferTimer: 0,
+        squashY: 1, // Squash & Stretch
+        scaleX: 1,
     });
 
     // Player sprite based on character selection
@@ -390,6 +409,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     const die = useCallback(() => {
         game.current.player.isDead = true;
         setGameState('GAMEOVER');
+        game.current.camera.shake = 1.0; // TRIGGER SHAKE
         spawnParticles(game.current.player.x, game.current.player.y, theme.colors.player, 20);
     }, [theme, spawnParticles]);
 
@@ -529,29 +549,73 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         if (gameState !== 'PLAYING') return;
         const { player, keys, tiles } = game.current;
 
-        // --- 1. MOVEMENT & PHYSICS ---
+        // --- 1. MOVEMENT & PHYSICS (AAA FEEL) ---
+        // Acceleration
         if (keys.left) {
-            player.vx = -SPEED;
+            player.vx -= ACCELERATION;
             game.current.facingRight = false;
         }
         if (keys.right) {
-            player.vx = SPEED;
+            player.vx += ACCELERATION;
             game.current.facingRight = true;
         }
-        if (!keys.left && !keys.right) player.vx *= FRICTION;
 
-        // Jump
-        if (keys.up && player.isGrounded) {
-            player.vy = JUMP_FORCE;
-            player.isGrounded = false;
+        // Friction & Cap Speed
+        player.vx *= FRICTION;
+        if (player.vx > MAX_SPEED) player.vx = MAX_SPEED;
+        if (player.vx < -MAX_SPEED) player.vx = -MAX_SPEED;
+        if (Math.abs(player.vx) < 0.1) player.vx = 0;
+
+        // Gravity
+        player.vy += GRAVITY;
+
+        // GROUND CHECK / COYOTE TIME
+        if (player.isGrounded) {
+            game.current.coyoteTimer = COYOTE_TIME;
+        } else {
+            game.current.coyoteTimer--;
         }
 
-        player.vy += GRAVITY;
+        // JUMP BUFFERING
+        if (keys.up) {
+            // If just pressed (needs separate key tracking for 'just pressed' logic ideally, 
+            // but relying on rapid polling or keydown listener setting a short-lived 'pressed' state)
+            // Simplified: we assume keys.up is held.
+            game.current.jumpBufferTimer = JUMP_BUFFER;
+        } else {
+            game.current.jumpBufferTimer--;
+        }
+
+        // EXECUTE JUMP
+        if (game.current.jumpBufferTimer > 0 && game.current.coyoteTimer > 0) {
+            player.vy = JUMP_FORCE;
+            game.current.coyoteTimer = 0; // Consume jump
+            game.current.jumpBufferTimer = 0;
+            player.isGrounded = false;
+
+            // Squash on Jump
+            game.current.squashY = 1.3;
+            game.current.scaleX = 0.7;
+
+            // Spawn little cloud
+            spawnParticles(player.x + player.width / 2, player.y + player.height, '#FFF', 5);
+        }
+
+        // Variable Jump Height (Release jump key to fall faster)
+        if (!keys.up && player.vy < 0) {
+            player.vy *= 0.5;
+        }
+
+        // Recovery from Squash
+        game.current.squashY += (1 - game.current.squashY) * 0.15;
+        game.current.scaleX += (1 - game.current.scaleX) * 0.15;
+
 
         // --- ANIMATION FRAME UPDATE ---
         const now = performance.now();
         if (now - game.current.lastFrameTime > ANIMATION_FRAME_DURATION) {
             game.current.lastFrameTime = now;
+            // Only animate if moving significant amount
             if (Math.abs(player.vx) > 0.5) {
                 game.current.playerAnimFrame = (game.current.playerAnimFrame + 1) % 4;
             } else {
@@ -571,18 +635,38 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
 
         // --- 3. Y COLLISION ---
         player.y += player.vy;
+        const wasGrounded = player.isGrounded;
         player.isGrounded = false;
         checkCollision(player, tiles, 'y');
+
+        // Landing Impact (Squash)
+        if (!wasGrounded && player.isGrounded) {
+            game.current.squashY = 0.7;
+            game.current.scaleX = 1.3;
+            spawnParticles(player.x + player.width / 2, player.y + player.height, '#8D6E63', 4);
+        }
 
         // --- 4. GAME OVER/WIN CHECK ---
         if (player.y > game.current.levelHeight) {
             die();
         }
 
-        // --- 5. CAMERA ---
-        game.current.camera.x = player.x - 400;
+        // --- 5. CAMERA & SHAKE ---
+        // Smooth Follow
+        const targetCamX = player.x - 400 + (game.current.facingRight ? 100 : -100); // Look ahead
+        game.current.camera.x += (targetCamX - game.current.camera.x) * 0.1;
+
+        // Decay Shake
+        if (Math.abs(game.current.camera.shake) > 0.1) {
+            game.current.camera.shake *= 0.9;
+        } else {
+            game.current.camera.shake = 0;
+        }
+
+        // Clamp
         if (game.current.camera.x < 0) game.current.camera.x = 0;
-        if (game.current.camera.x > game.current.levelWidth - 800) game.current.camera.x = game.current.levelWidth - 800;
+        const maxScroll = Math.max(0, game.current.levelWidth - 800);
+        if (game.current.camera.x > maxScroll) game.current.camera.x = maxScroll;
 
         // --- 6. PARTICLES ---
         for (let i = game.current.particles.length - 1; i >= 0; i--) {
@@ -600,10 +684,11 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 if (!tile.vx) tile.vx = -2;
                 tile.x += tile.vx;
                 if (!tile.originX) tile.originX = tile.x;
-                if (tile.x < tile.originX - 100) tile.vx = 2;
+                if (tile.x < tile.originX - 100) tile.vx = 2; // AI Range
                 if (tile.x > tile.originX + 100) tile.vx = -2;
             }
             if (tile.type === 'B') {
+                // ... (Boss Logic kept same for now)
                 if (!tile.vx) tile.vx = 3;
                 tile.x += tile.vx;
                 if (!tile.originX) tile.originX = tile.x;
@@ -660,8 +745,12 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         ctx.fillStyle = vignetteGradient;
         ctx.fillRect(0, 0, canvasW, canvasH);
 
+        // Camera Shake
+        const shakeX = (Math.random() - 0.5) * game.current.camera.shake * 20;
+        const shakeY = (Math.random() - 0.5) * game.current.camera.shake * 20;
+
         ctx.save();
-        ctx.translate(-cameraX, 0);
+        ctx.translate(-cameraX + shakeX, shakeY);
 
         const platformImg = preloadedImages['platform'];
         const artifactImg = preloadedImages['artifact'];
@@ -743,11 +832,24 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
             }
         }
 
-        // Draw Player
+        // Draw Player with Squash & Glow
         if (!game.current.player.isDead) {
             const p = game.current.player;
             const isMoving = Math.abs(p.vx) > 0.5;
             const playerImg = playerSpriteRef.current;
+
+            // Squash Pivot (Bottom Center)
+            const squashX = p.x + p.width / 2;
+            const squashY = p.y + p.height;
+
+            ctx.save();
+            ctx.translate(squashX, squashY);
+            ctx.scale(game.current.scaleX, game.current.squashY);
+            ctx.translate(-squashX, -squashY);
+
+            // Glow Effect
+            ctx.shadowColor = 'white';
+            ctx.shadowBlur = 10;
 
             if (playerImg && playerImg.complete) {
                 const totalFrames = 4;
@@ -769,6 +871,8 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 ctx.fillStyle = selectedCharacter.color;
                 ctx.fillRect(p.x, p.y, p.width, p.height);
             }
+            ctx.shadowBlur = 0;
+            ctx.restore(); // Restore squash
         }
 
         // Particles
@@ -809,11 +913,9 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
 
     // Effects
     useEffect(() => {
-        const img = new Image();
-        img.src = selectedCharacter.sprite;
-        img.onload = () => {
-            playerSpriteRef.current = img;
-        };
+        // Apply transparency processing to the selected character sprite
+        const processedImg = createTransparentImage(selectedCharacter.sprite);
+        playerSpriteRef.current = processedImg;
     }, [selectedCharacter]);
 
     useEffect(() => {
