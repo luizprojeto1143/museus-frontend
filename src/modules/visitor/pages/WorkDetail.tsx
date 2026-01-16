@@ -12,6 +12,7 @@ import { WorkNote } from "../components/WorkNote";
 import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
 import { NavigationModal } from "../../../components/navigation/NavigationModal";
+import { useTerminology } from "../../../hooks/useTerminology";
 
 
 type WorkDetailData = {
@@ -48,6 +49,7 @@ export const WorkDetail: React.FC = () => {
   const [showShare, setShowShare] = useState(false);
   const [showNavigation, setShowNavigation] = useState(false);
   const { speak, cancel, isSpeaking } = useTTS();
+  const terms = useTerminology();
 
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -174,9 +176,9 @@ export const WorkDetail: React.FC = () => {
     return (
       <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
         <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>😕</div>
-        <h1 className="section-title">{t("visitor.artwork.notFound", "Obra não encontrada")}</h1>
+        <h1 className="section-title">{terms.work} não encontrada</h1>
         <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
-          {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : t("visitor.artwork.notFoundDesc", "Não conseguimos encontrar a obra que você está procurando.")}
+          {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : `Não conseguimos encontrar a ${terms.work.toLowerCase()} que você está procurando.`}
         </p>
         <button className="btn btn-secondary" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = "/obras"}>
           {t("common.back")}
@@ -214,13 +216,13 @@ export const WorkDetail: React.FC = () => {
         )}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div className="badge">{t("visitor.artwork.badge")}</div>
+            <div className="badge">{terms.work}</div>
             <h1 className="section-title">{work.title}</h1>
             <p className="section-subtitle">
               {work.artist} • {work.year} • {work.category}
             </p>
             <p style={{ fontSize: "0.9rem", color: "#9ca3af" }}>
-              {t("visitor.artwork.location")}: {work.room || t("visitor.artwork.unknownRoom")} • {work.floor || t("visitor.artwork.unknownFloor")}
+              {t("visitor.artwork.location")}: {work.room || terms.room} • {work.floor || terms.floor}
             </p>
           </div>
           <div style={{ display: "flex", gap: "0.5rem" }}>

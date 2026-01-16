@@ -34,6 +34,9 @@ interface MuseumSettings {
   secondaryColor: string;
   theme: "light" | "dark";
   historicalFont: boolean;
+
+  // Mode
+  isCityMode: boolean;
 }
 
 export const AdminMuseumSettings: React.FC = () => {
@@ -57,7 +60,8 @@ export const AdminMuseumSettings: React.FC = () => {
     primaryColor: "#d4af37",
     secondaryColor: "#cd7f32",
     theme: "dark",
-    historicalFont: true
+    historicalFont: true,
+    isCityMode: false
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -178,6 +182,51 @@ export const AdminMuseumSettings: React.FC = () => {
       <p className="section-subtitle">
         {t("admin.museumSettings.subtitle")}
       </p>
+
+      {/* MODO DE OPERAÇÃO */}
+      <div className="card" style={{ marginBottom: "2rem", borderLeft: "4px solid var(--primary)" }}>
+        <h2 className="card-title">⚙️ Modo de Operação</h2>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <h4 style={{ margin: 0 }}>Modo Cidade / Roteiro Turístico</h4>
+            <p style={{ margin: 0, fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+              Ative para adaptar a terminologia para cidades (Local, Roteiro, Bairro) ao invés de museus (Obra, Trilha, Sala).
+            </p>
+          </div>
+          <label style={{ position: "relative", display: "inline-block", width: "50px", height: "26px" }}>
+            <input
+              type="checkbox"
+              checked={settings.isCityMode}
+              onChange={(e) => setSettings({ ...settings, isCityMode: e.target.checked })}
+              style={{ opacity: 0, width: 0, height: 0 }}
+            />
+            <span
+              style={{
+                position: "absolute",
+                cursor: "pointer",
+                top: 0, left: 0, right: 0, bottom: 0,
+                backgroundColor: settings.isCityMode ? "var(--primary)" : "#ccc",
+                transition: "0.4s",
+                borderRadius: "34px"
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  content: '""',
+                  height: "18px",
+                  width: "18px",
+                  left: settings.isCityMode ? "26px" : "4px",
+                  bottom: "4px",
+                  backgroundColor: "white",
+                  transition: "0.4s",
+                  borderRadius: "50%"
+                }}
+              />
+            </span>
+          </label>
+        </div>
+      </div>
 
       {/* 2.1 DADOS DO MUSEU */}
       <div className="card" style={{ marginBottom: "2rem" }}>
