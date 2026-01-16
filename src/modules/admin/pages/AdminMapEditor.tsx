@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -6,15 +6,26 @@ import { useAuth } from "../../auth/AuthContext";
 interface Work {
     id: string;
     title: string;
+    floor?: string;
     latitude?: number; // 0-100 for indoor
     longitude?: number; // 0-100 for indoor
+}
+
+interface FloorPlan {
+    id: string;
+    name: string;
+    floor: number;
+    imageUrl: string;
+    order: number;
 }
 
 export const AdminMapEditor: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [works, setWorks] = useState<Work[]>([]);
-    const [mapUrl, setMapUrl] = useState<string>("");
+    const [floorPlans, setFloorPlans] = useState<FloorPlan[]>([]);
+    const [selectedFloorPlan, setSelectedFloorPlan] = useState<FloorPlan | null>(null);
+    const [legacyMapUrl, setLegacyMapUrl] = useState<string>(""); // Fallback to old single map
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -26,14 +37,23 @@ export const AdminMapEditor: React.FC = () => {
 
         const loadData = async () => {
             try {
-                const [worksRes, settingsRes] = await Promise.all([
+                const [worksRes, settingsRes, floorPlansRes] = await Promise.all([
                     api.get("/works", { params: { tenantId } }),
-                    api.get(`/tenants/${tenantId}/settings`)
+                    api.get(`/tenants/${tenantId}/settings`),
+                    api.get("/floor-plans", { params: { tenantId } })
                 ]);
 
                 // API returns { data: works[], pagination: {} }
                 setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
-                setMapUrl(settingsRes.data.mapImageUrl);
+                setLegacyMapUrl(settingsRes.data.mapImageUrl || "");
+
+                const plans = Array.isArray(floorPlansRes.data) ? floorPlansRes.data : [];
+                setFloorPlans(plans);
+
+                // Select first floor plan by default, or fallback to legacy
+                if (plans.length > 0) {
+                    setSelectedFloorPlan(plans[0]);
+                }
             } catch (error) {
                 console.error("Error loading data", error);
             } finally {
@@ -42,6 +62,10 @@ export const AdminMapEditor: React.FC = () => {
         };
         loadData();
     }, [tenantId]);
+
+    // Get current map URL based on selection
+    const currentMapUrl = selectedFloorPlan?.imageUrl || legacyMapUrl;
+
 
     const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!selectedWorkId) return;
@@ -99,6 +123,24 @@ export const AdminMapEditor: React.FC = () => {
             <div style={{ flex: 1, display: "flex", gap: "1rem", overflow: "hidden" }}>
                 {/* Works List */}
                 <div className="card" style={{ width: "300px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                    {/* Floor Selector */}
+                    {floorPlans.length > 0 && (
+                        <div style={{ marginBottom: "0.5rem" }}>
+                            <label style={{ fontSize: "0.85rem", fontWeight: "bold" }}>Andar:</label>
+                            <select
+                                value={selectedFloorPlan?.id || ""}
+                                onChange={(e) => {
+                                    const plan = floorPlans.find(p => p.id === e.target.value);
+                                    setSelectedFloorPlan(plan || null);
+                                }}
+                                style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
+                            >
+                                {floorPlans.map(plan => (
+                                    <option key={plan.id} value={plan.id}>{plan.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                     <h3>Obras</h3>
                     {works.map(w => {
                         const hasPos = w.latitude != null && w.longitude != null;
@@ -128,12 +170,12 @@ export const AdminMapEditor: React.FC = () => {
 
                 {/* Map Area */}
                 <div className="card" style={{ flex: 1, position: "relative", padding: 0, overflow: "hidden", background: "#333", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {mapUrl ? (
+                    {currentMapUrl ? (
                         <div
                             style={{ position: "relative", width: "100%", height: "100%", maxHeight: "100%" }}
                         >
                             <img
-                                src={mapUrl}
+                                src={currentMapUrl}
                                 alt="Map"
                                 style={{ width: "100%", height: "100%", objectFit: "contain" }}
                             // Check if user clicked on specific position

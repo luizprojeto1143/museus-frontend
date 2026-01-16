@@ -3,6 +3,13 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 
+interface FloorPlan {
+  id: string;
+  name: string;
+  floor: number;
+  imageUrl: string;
+  order: number;
+}
 interface MuseumSettings {
   // 2.1 Dados do Museu
   name: string;
@@ -55,7 +62,21 @@ export const AdminMuseumSettings: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Floor Plans state
+  const [floorPlans, setFloorPlans] = useState<FloorPlan[]>([]);
+  const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
+  const [editingFloorPlan, setEditingFloorPlan] = useState<FloorPlan | null>(null);
+  const [newFloorPlan, setNewFloorPlan] = useState({ name: "", floor: 0, imageUrl: "" });
 
+  const loadFloorPlans = React.useCallback(async () => {
+    if (!tenantId) return;
+    try {
+      const res = await api.get("/floor-plans", { params: { tenantId } });
+      setFloorPlans(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Erro ao carregar plantas", err);
+    }
+  }, [tenantId]);
 
   const loadSettings = React.useCallback(async () => {
     try {
@@ -70,7 +91,8 @@ export const AdminMuseumSettings: React.FC = () => {
 
   useEffect(() => {
     loadSettings();
-  }, [loadSettings]);
+    loadFloorPlans();
+  }, [loadSettings, loadFloorPlans]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -94,6 +116,56 @@ export const AdminMuseumSettings: React.FC = () => {
     } catch {
       alert(t("common.error"));
     }
+  };
+
+  // Floor Plan CRUD
+  const handleFloorPlanImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await api.post("/upload/image", formData);
+      setNewFloorPlan({ ...newFloorPlan, imageUrl: res.data.url });
+    } catch {
+      alert(t("common.error"));
+    }
+  };
+
+  const handleSaveFloorPlan = async () => {
+    if (!newFloorPlan.name || !newFloorPlan.imageUrl) {
+      alert("Nome e imagem são obrigatórios");
+      return;
+    }
+    try {
+      if (editingFloorPlan) {
+        await api.put(`/floor-plans/${editingFloorPlan.id}`, newFloorPlan);
+      } else {
+        await api.post("/floor-plans", { ...newFloorPlan, tenantId });
+      }
+      setShowFloorPlanModal(false);
+      setEditingFloorPlan(null);
+      setNewFloorPlan({ name: "", floor: 0, imageUrl: "" });
+      loadFloorPlans();
+    } catch (err) {
+      alert("Erro ao salvar planta");
+      console.error(err);
+    }
+  };
+
+  const handleDeleteFloorPlan = async (id: string) => {
+    if (!confirm("Deseja excluir esta planta?")) return;
+    try {
+      await api.delete(`/floor-plans/${id}`);
+      loadFloorPlans();
+    } catch (err) {
+      alert("Erro ao excluir planta");
+      console.error(err);
+    }
+  };
+
+  const openEditFloorPlan = (plan: FloorPlan) => {
+    setEditingFloorPlan(plan);
+    setNewFloorPlan({ name: plan.name, floor: plan.floor, imageUrl: plan.imageUrl });
+    setShowFloorPlanModal(true);
   };
 
   if (loading) {
@@ -381,6 +453,174 @@ export const AdminMuseumSettings: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* 2.4 PLANTAS DE ANDARES (MULTI-FLOOR) */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+          <div>
+            <h2 className="card-title">🏢 Plantas de Andares</h2>
+            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+              Adicione plantas para cada andar do museu
+            </p>
+          </div>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              setEditingFloorPlan(null);
+              setNewFloorPlan({ name: "", floor: 0, imageUrl: "" });
+              setShowFloorPlanModal(true);
+            }}
+          >
+            + Adicionar Andar
+          </button>
+        </div>
+
+        {floorPlans.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "2rem", background: "rgba(0,0,0,0.1)", borderRadius: "0.5rem" }}>
+            <p style={{ color: "var(--text-secondary)" }}>
+              Nenhuma planta cadastrada. Adicione plantas para cada andar.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
+            {floorPlans.map((plan) => (
+              <div
+                key={plan.id}
+                style={{
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: "0.5rem",
+                  overflow: "hidden",
+                  background: "var(--bg-card)"
+                }}
+              >
+                <div
+                  style={{
+                    height: "120px",
+                    background: plan.imageUrl ? `url(${plan.imageUrl}) center/cover` : "#333"
+                  }}
+                />
+                <div style={{ padding: "0.75rem" }}>
+                  <h4 style={{ marginBottom: "0.25rem" }}>{plan.name}</h4>
+                  <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                    Andar: {plan.floor}
+                  </p>
+                  <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+                    <button
+                      className="btn btn-secondary"
+                      style={{ flex: 1, padding: "0.4rem" }}
+                      onClick={() => openEditFloorPlan(plan)}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      style={{ flex: 1, padding: "0.4rem", color: "#ef4444" }}
+                      onClick={() => handleDeleteFloorPlan(plan.id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modal para adicionar/editar planta */}
+      {showFloorPlanModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}
+        >
+          <div className="card" style={{ width: "90%", maxWidth: "450px", padding: "1.5rem" }}>
+            <h3 style={{ marginBottom: "1rem" }}>
+              {editingFloorPlan ? "Editar Planta" : "Nova Planta de Andar"}
+            </h3>
+
+            <div className="form-group">
+              <label className="form-label">Nome do Andar *</label>
+              <input
+                type="text"
+                value={newFloorPlan.name}
+                onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })}
+                placeholder="Ex: Térreo, 1º Andar, Subsolo..."
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Número do Andar</label>
+              <input
+                type="number"
+                value={newFloorPlan.floor}
+                onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })}
+                placeholder="0 = Térreo, 1, 2, -1..."
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Imagem da Planta *</label>
+              <div
+                style={{
+                  width: "100%",
+                  height: "150px",
+                  border: "2px dashed var(--border-strong)",
+                  borderRadius: "0.5rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: newFloorPlan.imageUrl
+                    ? `url(${newFloorPlan.imageUrl}) center/contain no-repeat`
+                    : "rgba(42, 24, 16, 0.3)",
+                  cursor: "pointer"
+                }}
+                onClick={() => document.getElementById("floor-plan-upload")?.click()}
+              >
+                {!newFloorPlan.imageUrl && (
+                  <span style={{ fontSize: "0.85rem" }}>Clique para enviar imagem</span>
+                )}
+                <input
+                  id="floor-plan-upload"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.5rem" }}>
+              <button
+                className="btn btn-secondary"
+                style={{ flex: 1 }}
+                onClick={() => {
+                  setShowFloorPlanModal(false);
+                  setEditingFloorPlan(null);
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                className="btn btn-primary"
+                style={{ flex: 1 }}
+                onClick={handleSaveFloorPlan}
+              >
+                Salvar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2.2 CORES E TEMA */}
       <div className="card" style={{ marginBottom: "2rem" }}>
