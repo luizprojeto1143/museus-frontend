@@ -325,6 +325,38 @@ const preloadImages = () => {
 preloadImages();
 
 
+// Helper Component for Previewing Sprites (Cropped + Transparent)
+const CharacterPreview: React.FC<{ src: string; className?: string }> = ({ src, className }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Use the existing transparency logic
+        const img = createTransparentImage(src);
+
+        // Wait for processing to complete
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Assume 4 frames horizontal strip (standard for this game)
+            const frameW = img.width / 4;
+            const h = img.height;
+
+            canvas.width = frameW;
+            canvas.height = h;
+
+            // Draw 1st frame only
+            ctx.drawImage(img, 0, 0, frameW, h, 0, 0, frameW, h);
+        };
+    }, [src]);
+
+    return <canvas ref={canvasRef} className={className} />;
+};
+
+
 export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DEFAULT_THEME }> = ({ onClose, theme = DEFAULT_THEME }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const { tenantId } = useAuth(); // Need tenantId for leaderboard
@@ -1006,7 +1038,11 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                                         ${selectedCharacter.id === char.id ? 'bg-yellow-400/20' : 'bg-white/5'}
                                     `}>
                                         <div className="absolute inset-0 rounded-full border border-white/10"></div>
-                                        <img src={char.sprite} alt={char.name} className="w-16 h-16 object-contain drop-shadow-lg group-hover:scale-110 transition-transform" />
+                                        {/* Use Canvas Preview to show cropped/clean frame instead of raw sprite sheet */}
+                                        <CharacterPreview
+                                            src={char.sprite}
+                                            className="w-16 h-16 object-contain drop-shadow-lg group-hover:scale-110 transition-transform"
+                                        />
                                     </div>
 
                                     <h3 className={`text-xl font-bold mb-1 ${selectedCharacter.id === char.id ? 'text-yellow-400' : 'text-white'}`}>
