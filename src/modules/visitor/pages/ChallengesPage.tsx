@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Target, Trophy, Map, ChevronRight, Star, Clock, CheckCircle } from 'lucide-react';
 import { api } from '../../../api/client';
@@ -63,6 +64,8 @@ export const ChallengesPage: React.FC = () => {
         return Math.floor(xp / 500) + 1;
     };
 
+    const navigate = useNavigate();
+
     return (
         <div className="challenges-page">
             <header className="page-header">
@@ -92,7 +95,7 @@ export const ChallengesPage: React.FC = () => {
                         <h2 className="text-2xl font-black text-yellow-400 italic">ART RUN</h2>
                         <p className="text-indigo-200 mb-4">Jogue a nova aventura platformer! Colete moedas e ganhe XP real.</p>
                         <button
-                            onClick={() => window.location.href = '/arcade'}
+                            onClick={() => navigate('/arcade')}
                             className="bg-yellow-500 hover:bg-yellow-400 text-indigo-900 font-bold px-8 py-3 rounded-xl transition-transform hover:scale-105 shadow-lg shadow-yellow-500/30"
                         >
                             JOGAR AGORA
