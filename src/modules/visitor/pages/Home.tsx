@@ -171,7 +171,7 @@ export const Home: React.FC = () => {
                     background: "rgba(255,255,255,0.1)",
                     border: "1px solid rgba(255,255,255,0.2)"
                   }}>
-                    Acessível
+                    {t("visitor.home.accessible", "Acessível")}
                   </span>
                 </div>
                 <Link to={`/obras/${work.id}`} className="btn btn-secondary" style={{ marginTop: "1rem", width: "100%", textAlign: "center" }}>

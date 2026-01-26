@@ -9,15 +9,44 @@
         "search": "Buscar",
         "actions": "Acciones",
         "confirm": "Confirmar",
+        "confirmDelete": "¿Estás seguro de que quieres eliminar?",
         "success": "Éxito",
         "error": "Error",
-        "menu": "Menú"
+        "view": "Ver",
+        "solved": "¡Resuelto!",
+        "minutes": "minutos",
+        "next": "Siguiente",
+        "noData": "No se encontraron datos.",
+        "menu": "Menú",
+        "all": "Todos",
+        "images": "Imágenes",
+        "audios": "Audios",
+        "videos": "Videos",
+        "noResults": "No se encontraron resultados."
+    },
+    "dashboard": {
+        "title": "Panel de Control"
     },
     "welcome": {
         "title": "Cultura Viva",
         "subtitle": "Tu viaje cultural comienza aquí",
         "firstTime": "¡Bienvenido a Cultura Viva, {{name}}!",
-        "returning": "¡Qué bueno verte de nuevo, {{name}}!"
+        "selectTenantAlert": "¡Selecciona un museo!",
+        "errorSave": "Error al guardar el logro",
+        "errorUpload": "Error al subir la imagen",
+        "returning": "¡Qué bueno verte de nuevo, {{name}}!",
+        "explore": "Explorar",
+        "login": "Entrar"
+    },
+    "uploads": {
+        "title": "Archivos",
+        "subtitle": "Gestiona todas las imágenes, audios y videos almacenados.",
+        "newUpload": "Nuevo Archivo",
+        "stats": {
+            "total": "Archivos Totales",
+            "usedSpace": "Espacio Usado",
+            "images": "Imágenes"
+        }
     },
     "auth": {
         "login": {
@@ -37,7 +66,9 @@
             "submit": "Registrarse",
             "hasAccount": "¿Ya tienes cuenta? Entra"
         },
-        "errors": {}
+        "errors": {
+            "generic": "Error interno al registrarse. Inténtelo de nuevo más tarde."
+        }
     },
     "visitor": {
         "sidebar": {
@@ -50,9 +81,34 @@
             "aiChat": "Chat IA",
             "souvenir": "Souvenir",
             "passport": "Pasaporte",
+            "profile": "Mi Perfil",
             "achievements": "Logros",
+            "visualScanner": "Escáner Visual",
+            "leaderboard": "Ranking",
             "changeMuseum": "Cambiar Museo",
-            "logout": "Cerrar Sesión"
+            "logout": "Cerrar Sesión",
+            "scheduling": "Programación",
+            "smartItinerary": "Itinerario Inteligente",
+            "treasureHunt": "Búsqueda del Tesoro",
+            "guestbook": "Libro de Visitas",
+            "installApp": "Instalar App",
+            "scanner": "Escáner QR"
+        },
+        "noResults": "No se encontraron resultados.",
+        "dialer": {
+            "button": "Ingresar Código"
+        },
+        "chat": {
+            "title": "Guía Virtual",
+            "placeholder": "Escribe tu pregunta...",
+            "send": "Enviar",
+            "you": "Tú",
+            "guide": "Guía",
+            "welcome": "¡Hola! Soy tu guía virtual. ¡Pregúntame sobre las obras o el museo!",
+            "error": "Ocurrió un error. Inténtalo de nuevo."
+        },
+        "search": {
+            "title": "Buscar"
         },
         "home": {
             "badge": "Bienvenido",
@@ -92,19 +148,25 @@
             "location": "Ubicación",
             "unknownRoom": "Sala desconocida",
             "unknownFloor": "Piso desconocido",
-            "imagePlaceholder": "Marcador de posición de la imagen de la obra. En producción, cargue la imagen real desde la URL del backend (campo imageUrl).",
+            "imagePlaceholder": "Imagen de la obra.",
             "description": "Descripción",
             "noDescription": "Descripción no disponible",
             "stopReading": "Detener Lectura",
             "listenDescription": "Escuchar Descripción",
-            "defaultDescription": "Descripción completa de la obra, incluyendo contexto histórico, técnica utilizada, curiosidades y relación con la colección.",
+            "defaultDescription": "Descripción completa de la obra.",
             "accessibility": "Accesibilidad",
             "audioDescription": "Audiodescripción",
             "audioDescriptionText": "Narración que describe los elementos visuales de la obra para personas ciegas o con baja visión.",
             "libras": "Libras (Lengua de Señas)",
-            "librasText": "Video en Libras con la explicación principal sobre a obra, pensado para la comunidad sorda.",
-            "aiInteraction": "Interacción con IA (Conceptual)",
-            "logout": "Salir"
+            "librasText": "Video en Libras con la explicación principal sobre la obra.",
+            "aiInteraction": "Interacción con IA",
+            "aiInteractionText": "Chatea con nuestra Inteligencia Artificial para descubrir más detalles fascinantes sobre esta obra.",
+            "logout": "Salir",
+            "notFound": "Obra no encontrada",
+            "relatedWorks": "Obras Relacionadas",
+            "relatedWork": "Obra Relacionada",
+            "relatedArtist": "Artista Relacionado",
+            "viewDetails": "Ver Detalles"
         },
         "selectMuseum": {
             "title": "Selecciona el Museo",
@@ -139,24 +201,8 @@
         },
         "map": {
             "title": "Mapa Interativo",
-            "subtitle": "Navegue por el museo y la ciudad histórica.",
+            "subtitle": "Navegue por el museo y encuentre las obras",
             "legend": "Leyenda",
-            "placeholder": "El mapa se cargará aquí.",
-            "floorPlan": "Plano de Planta (Interior)",
-            "coordinates": "Coordenadas (Exterior)"
-        },
-        "chat": {
-            "title": "Chat con IA",
-            "error": "Ocurrió un error al procesar su mensaje.",
-            "you": "Tú",
-            "guide": "Guía",
-            "placeholder": "Escribe tu pregunta...",
-            "send": "Enviar"
-        },
-        "souvenir": {
-            "title": "Souvenir Digital",
-            "subtitle": "Genera un recuerdo único de tu visita",
-            "generating": "Generando...",
             "generate": "Generar Souvenir",
             "error": "Error al generar souvenir."
         },
@@ -171,7 +217,8 @@
             "loading": "Cargando ruta...",
             "about": "Sobre la ruta",
             "artworks": "Obras en esta ruta",
-            "clickDetails": "Clic para ver detalles"
+            "clickDetails": "Clic para ver detalles",
+            "notFound": "Ruta no encontrada"
         },
         "events": {
             "title": "Eventos",
@@ -195,9 +242,138 @@
         "achievements": {
             "title": "Logros",
             "subtitle": "Tus medallas y premios"
+        },
+        "visualScanner": {
+            "title": "Reconocimiento Visual",
+            "loadingModel": "Cargando modelo de IA...",
+            "loadingWorks": "Cargando obras para reconocimiento...",
+            "startCamera": "Iniciar Cámara",
+            "stopCamera": "Detener Cámara",
+            "noArtworks": "No hay obras registradas para reconocimiento.",
+            "instruction": "Apunta la cámara a una obra para identificarla.",
+            "analyzing": "Analizando...",
+            "confidence": "Confianza",
+            "viewDetails": "Ver Detalles"
+        },
+        "leaderboard": {
+            "title": "Ranking Global",
+            "subtitle": "Los mejores exploradores de la cultura",
+            "rank": "Posición",
+            "visitor": "Visitante",
+            "xp": "XP",
+            "loading": "Cargando ranking...",
+            "empty": "Ningún visitante ha puntuado aún."
+        },
+        "treasure": {
+            "title": "Búsqueda del Tesoro",
+            "subtitle": "¡Descifra los acertijos, encuentra las obras y gana recompensas!",
+            "noClues": "No hay pistas disponibles en este momento.",
+            "clue": "Pista",
+            "completed": "¡Encontraste el tesoro!"
+        },
+        "itinerary": {
+            "title": "Planea tu Visita",
+            "timeQuestion": "¿Cuánto tiempo tienes?",
+            "interestsQuestion": "¿Qué te gusta?",
+            "accessibilityQuestion": "Necesidades de Accesibilidad",
+            "generate": "Generar Itinerario"
+        },
+        "pwa": {
+            "install": {
+                "title": "Instalar App",
+                "desc": "Para una mejor experiencia, añade esta app a tu pantalla de inicio.",
+                "ios": {
+                    "step1": "Toque el botón Compartir",
+                    "step2": "Desplázate hacia abajo y selecciona",
+                    "step3": "Toque 'Añadir' en la esquina superior"
+                },
+                "android": {
+                    "step1": "Toque el icono de menú del navegador (3 puntos)",
+                    "step2": "Seleccione 'Instalar aplicación' o 'Añadir a pantalla de inicio'"
+                }
+            }
         }
     },
     "admin": {
+        "sidebar": {
+            "dashboard": "Panel de Control",
+            "artworks": "Obras",
+            "trails": "Rutas",
+            "events": "Eventos",
+            "qrcodes": "Códigos QR",
+            "categories": "Categorías",
+            "visitors": "Visitantes",
+            "achievements": "Logros",
+            "ai": "Asistente IA",
+            "analytics": "Analytics",
+            "uploads": "Archivos",
+            "users": "Usuarios",
+            "treasureHunt": "Búsqueda del Tesoro",
+            "settings": "Configuración",
+            "logout": "Cerrar Sesión"
+        },
+        "uploads": {
+            "title": "Gestor de Archivos",
+            "subtitle": "Ver y gestionar todos los archivos multimedia del museo",
+            "newUpload": "Nueva Carga",
+            "stats": {
+                "total": "Archivos Totales",
+                "usedSpace": "Espacio Usado",
+                "images": "Imágenes"
+            }
+        },
+        "museums": {
+            "title": "Visión General del Museo"
+        },
+        "museumSettings": {
+            "title": "Configuración del Museo",
+            "subtitle": "Personaliza la apariencia e información de tu museo",
+            "institutionalData": "Datos Institucionales",
+            "labels": {
+                "name": "Nombre del Museo",
+                "mission": "Misión / Descripción",
+                "address": "Dirección",
+                "openingHours": "Horario de Apertura",
+                "whatsapp": "WhatsApp",
+                "email": "Correo de Contacto",
+                "website": "Sitio Web Oficial"
+            },
+            "placeholders": {
+                "mission": "Describa la misión e historia del museo...",
+                "address": "Calle, Número, Barrio, Ciudad - Estado"
+            },
+            "images": {
+                "title": "Imágenes e Identidad Visual",
+                "logo": "Logo del Museo",
+                "cover": "Imagen de Portada (App)",
+                "appIcon": "Icono de la App",
+                "banner": "Banner Promocional",
+                "clickToUpload": "Clic para subir imagen"
+            },
+            "map": {
+                "title": "Configuración del Mapa",
+                "floorPlan": "Plano de Planta (Interior)",
+                "coordinates": "Coordenadas (Exterior)"
+            },
+            "colors": {
+                "title": "Colores y Tema",
+                "primary": "Color Primario",
+                "secondary": "Color Secundario",
+                "theme": "Tema Predeterminado",
+                "light": "Claro",
+                "dark": "Oscuro",
+                "historicalFont": "Usar fuente histórica (Serif)"
+            },
+            "preview": {
+                "title": "Vista Previa",
+                "text": "Este es un ejemplo de cómo se verá el texto en la aplicación con los colores seleccionados.",
+                "button": "Botón de Ejemplo"
+            },
+            "saving": "Guardando...",
+            "save": "Guardar Configuración",
+            "success": "¡Configuración guardada con éxito!",
+            "error": "Error al guardar la configuración."
+        },
         "trailForm": {
             "editTitle": "Editar Ruta",
             "newTitle": "Nueva Ruta",
@@ -220,6 +396,14 @@
         "dashboard": {
             "title": "Panel de Control",
             "subtitle": "Visión general del museo",
+            "select": "Seleccionar...",
+            "loading": "Cargando...",
+            "empty": "No se encontraron logros para este museo.",
+            "edit": "Editar",
+            "delete": "Eliminar",
+            "confirmDelete": "¿Estás seguro de que quieres eliminar este logro?",
+            "errorLoad": "Error al cargar logros",
+            "errorDelete": "Error al eliminar logro",
             "stats": {
                 "visitors": "Visitantes este mes",
                 "qrScans": "Escaneos de QR",

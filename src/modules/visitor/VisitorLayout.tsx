@@ -16,6 +16,7 @@ import "./VisitorLayout.css";
 
 // Use the custom hook for PWA installation
 import { usePWAInstall } from "../../hooks/usePWA";
+import { InstallGuideModal } from "./components/InstallGuideModal";
 
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
@@ -24,7 +25,22 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const { logout, name, email, tenantId } = useAuth();
 
   // Integrated PWA Hook
-  const { canInstall, promptInstall } = usePWAInstall();
+  const { canInstall, promptInstall, isInstalled } = usePWAInstall();
+  // Show manual install guide if native prompt isn't valid but user wants to install
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
+
+  // Logic: Show button if NOT installed.
+  // If canInstall (native) => promptInstall
+  // If NOT canInstall => showInstallGuide (iOS / Manual)
+  const shouldShowInstallButton = !isInstalled;
+
+  const handleInstallClick = () => {
+    if (canInstall) {
+      promptInstall();
+    } else {
+      setShowInstallGuide(true);
+    }
+  };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -155,9 +171,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         </nav>
 
         <div className="sidebar-footer" style={{ flexShrink: 0 }}>
-          {canInstall && (
+          {shouldShowInstallButton && (
             <button
-              onClick={promptInstall}
+              onClick={handleInstallClick}
               className="btn btn-primary"
               style={{ width: "100%", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
             >
@@ -222,6 +238,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <DialerModal isOpen={isDialerOpen} onClose={() => setIsDialerOpen(false)} />
       <GlobalAudioPlayer />
       {settings?.featureChatAI !== false && <AiChatWidget />}
+      <InstallGuideModal isOpen={showInstallGuide} onClose={() => setShowInstallGuide(false)} />
     </div>
   );
 };
