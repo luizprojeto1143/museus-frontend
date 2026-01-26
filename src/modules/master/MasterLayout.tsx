@@ -13,6 +13,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
     { to: "/master/users", label: "Usuários", icon: "👥" },
     { to: "/master/achievements", label: "Conquistas", icon: "🏆" },
     { to: "/master/audit-logs", label: "Logs de Auditoria", icon: "📋" },
+    { to: "/master/accessibility-requests", label: "Acessibilidade", icon: "♿" },
     { to: "/master/system-health", label: "Saúde do Sistema", icon: "🖥️" }
   ];
 

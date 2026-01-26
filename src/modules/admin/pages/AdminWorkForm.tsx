@@ -11,6 +11,10 @@ export const AdminWorkForm: React.FC = () => {
   const { tenantId } = useAuth();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const [showAccessModal, setShowAccessModal] = useState(false);
+  const [requestType, setRequestType] = useState<"LIBRAS" | "AUDIO_DESC" | "BOTH">("BOTH");
+  const [requestNotes, setRequestNotes] = useState("");
+  const [isRequesting, setIsRequesting] = useState(false);
 
   const [code, setCode] = useState("");
 
@@ -322,6 +326,102 @@ export const AdminWorkForm: React.FC = () => {
             {librasUrl && <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ {t("admin.workForm.success.libras")}</p>}
           </div>
         </div>
+
+        <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ borderColor: "#d4af37", color: "#d4af37" }}
+            onClick={() => setShowAccessModal(true)}
+          >
+            ♿ Solicitar Acessibilidade (Master)
+          </button>
+          <small style={{ color: "#9ca3af" }}>
+            Solicite ao time Master a produção de Libras/Audiodescrição.
+          </small>
+        </div>
+
+        {showAccessModal && (
+          <div className="modal-overlay" style={{
+            position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.8)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
+          }}>
+            <div className="card" style={{ width: "100%", maxWidth: "500px", padding: "1.5rem" }}>
+              <h3 className="section-title" style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>
+                Solicitar Acessibilidade
+              </h3>
+              <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
+                O time Master receberá sua solicitação e fará o upload dos arquivos diretamente nesta obra.
+              </p>
+
+              <div className="form-group">
+                <label>O que você precisa?</label>
+                <select
+                  className="input"
+                  value={requestType}
+                  onChange={(e) => setRequestType(e.target.value as any)}
+                  style={{ width: "100%" }}
+                >
+                  <option value="LIBRAS">Apenas Vídeo em Libras</option>
+                  <option value="AUDIO_DESC">Apenas Audiodescrição</option>
+                  <option value="BOTH">Ambos (Libras + Áudio)</option>
+                </select>
+              </div>
+
+              <div className="form-group" style={{ marginTop: "1rem" }}>
+                <label>Observações (Opcional)</label>
+                <textarea
+                  className="input"
+                  rows={3}
+                  value={requestNotes}
+                  onChange={e => setRequestNotes(e.target.value)}
+                  placeholder="Ex: Gostaria de uma interpretação mais didática..."
+                  style={{ width: "100%" }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.5rem", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowAccessModal(false)}
+                  disabled={isRequesting}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={async () => {
+                    if (!id) {
+                      alert("Salve a obra primeiro antes de solicitar acessibilidade.");
+                      setShowAccessModal(false);
+                      return;
+                    }
+                    try {
+                      setIsRequesting(true);
+                      await api.post("/accessibility", {
+                        workId: id,
+                        type: requestType,
+                        notes: requestNotes
+                      });
+                      alert("Solicitação enviada com sucesso!");
+                      setShowAccessModal(false);
+                    } catch (error) {
+                      console.error(error);
+                      alert("Erro ao enviar solicitação.");
+                    } finally {
+                      setIsRequesting(false);
+                    }
+                  }}
+                  disabled={isRequesting}
+                >
+                  {isRequesting ? "Enviando..." : "Enviar Solicitação"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem", alignItems: "center" }}>
           <label>

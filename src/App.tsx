@@ -90,6 +90,7 @@ import { MasterUserForm } from "./modules/master/pages/MasterUserForm";
 import { MasterAchievements } from "./modules/master/pages/MasterAchievements";
 import { MasterAchievementForm } from "./modules/master/pages/MasterAchievementForm";
 import { MasterAuditLogs } from "./modules/master/pages/MasterAuditLogs";
+import { MasterAccessibilityRequests } from "./modules/master/pages/MasterAccessibilityRequests";
 import { MasterSystemHealth } from "./modules/master/pages/MasterSystemHealth";
 
 const RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }> = ({
@@ -828,6 +829,16 @@ const App: React.FC = () => {
                 <RequireRole allowed={["master"]}>
                   <MasterLayout>
                     <MasterAchievementForm />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/accessibility-requests"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterAccessibilityRequests />
                   </MasterLayout>
                 </RequireRole>
               }
