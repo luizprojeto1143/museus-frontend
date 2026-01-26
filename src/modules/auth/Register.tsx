@@ -87,23 +87,8 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
         age: ageNum
       });
 
-      // Salvar dados do visitante e autenticação no localStorage
-      localStorage.setItem("museus_visitor", JSON.stringify({
-        name,
-        email,
-        age: ageNum,
-        tenantId,
-        photo: photoPreview
-      }));
-
-      localStorage.setItem("museus_auth_v1", JSON.stringify({
-        token: authData.accessToken,
-        role: authData.role,
-        tenantId: authData.tenantId
-      }));
-
-      // Redirecionar para home do visitante
-      window.location.href = "/";
+      // Redirecionar para login
+      window.location.href = "/login";
     } catch (err) {
       console.error("Registration Error:", err);
       // Axios puts response data in err.response.data

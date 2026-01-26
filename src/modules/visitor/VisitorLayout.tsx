@@ -14,11 +14,8 @@ import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
 
 import "./VisitorLayout.css";
 
-// Custom event for PWA install
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
-}
+// Use the custom hook for PWA installation
+import { usePWAInstall } from "../../hooks/usePWA";
 
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
@@ -26,13 +23,15 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const location = useLocation();
   const { logout, name, email, tenantId } = useAuth();
 
+  // Integrated PWA Hook
+  const { canInstall, promptInstall } = usePWAInstall();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
-  // Theme and Features State - MUST be declared before allLinks uses it
+  // Theme and Features State
   const [settings, setSettings] = useState<{
     primaryColor: string;
     secondaryColor: string;
@@ -61,27 +60,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         .catch(console.error);
     }
   }, [tenantId]);
-
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
-
-  const handleInstallClick = () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === "accepted") {
-          console.log("User accepted the install prompt");
-        }
-        setDeferredPrompt(null);
-      });
-    }
-  };
 
   const allLinks = [
     { to: "/home", label: t("visitor.sidebar.home"), icon: "🏠", feature: null }, // Always visible
@@ -176,10 +154,10 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           })}
         </nav>
 
-        <div className="sidebar-footer">
-          {deferredPrompt && (
+        <div className="sidebar-footer" style={{ flexShrink: 0 }}>
+          {canInstall && (
             <button
-              onClick={handleInstallClick}
+              onClick={promptInstall}
               className="btn btn-primary"
               style={{ width: "100%", marginBottom: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}
             >
