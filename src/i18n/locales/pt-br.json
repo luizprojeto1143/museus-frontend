@@ -295,6 +295,9 @@
             "users": "Usuários",
             "treasureHunt": "Caça ao Tesouro",
             "settings": "Configurações",
+            "reviews": "Moderação",
+            "shop": "Loja",
+            "scanner": "Scanner IA",
             "logout": "Sair"
         },
         "uploads": {
