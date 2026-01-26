@@ -104,11 +104,12 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
 
       // Redirecionar para home do visitante
       window.location.href = "/";
-    } catch (err: any) {
+    } catch (err) {
       console.error("Registration Error:", err);
       // Axios puts response data in err.response.data
-      const backendMessage = err.response?.data?.message;
-      const errorMsg = backendMessage || err.message || String(err);
+      const axiosErr = err as { response?: { data?: { message?: string } }; message?: string };
+      const backendMessage = axiosErr.response?.data?.message;
+      const errorMsg = backendMessage || axiosErr.message || String(err);
 
       setError(`Falha (v1.1): ${errorMsg}`);
     } finally {

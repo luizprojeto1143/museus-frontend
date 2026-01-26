@@ -198,7 +198,7 @@ export const MasterAchievementForm: React.FC = () => {
                                         // We need to make sure the API serves this static folder.
                                         // Assuming backend serves /uploads.
 
-                                        let url = res.data.url;
+                                        const url = res.data.url;
                                         if (url.startsWith("/uploads")) {
                                             // Make it a full URL for the frontend to display immediately
                                             // const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -231,7 +231,7 @@ export const MasterAchievementForm: React.FC = () => {
                                 src={formData.imageUrl.startsWith("http") ? formData.imageUrl : `${import.meta.env.VITE_API_URL}${formData.imageUrl}`}
                                 alt="Preview"
                                 className="h-16 w-16 object-cover rounded border"
-                                onError={(e) => {
+                                onError={() => {
                                     // Fallback if image fails to load (e.g. if it's a relative path but we didn't prepend API URL correctly)
                                     // (e.target as HTMLImageElement).src = 'placeholder.png';
                                 }}

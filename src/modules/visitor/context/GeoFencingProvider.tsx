@@ -115,7 +115,10 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             const worksArray = Array.isArray(res.data)
                 ? res.data
                 : (res.data?.data || res.data?.works || []);
-            const geoWorks = worksArray.filter((w: any): w is GeoWork => typeof w.latitude === 'number' && typeof w.longitude === 'number');
+            const geoWorks = worksArray.filter((w: unknown): w is GeoWork => {
+                const work = w as GeoWork;
+                return typeof work.latitude === 'number' && typeof work.longitude === 'number';
+            });
             setWorks(geoWorks);
         } catch (err) {
             console.error("Failed to load works for geofencing", err);

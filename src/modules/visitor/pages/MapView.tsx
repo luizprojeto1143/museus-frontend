@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { MuseumMap } from "../components/MuseumMap";
 import { api } from "../../../api/client";
@@ -15,40 +15,38 @@ export const MapView: React.FC = () => {
 
   const [pois, setPois] = useState<{ id: string; title: string; lat: number; lng: number; description: string }[]>([]);
 
-  useEffect(() => {
-    if (tenantId) {
-      setLoading(true);
-      // Fetch settings and works in parallel
-      Promise.all([
+  const fetchMapData = useCallback(async () => {
+    if (!tenantId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Fetch settings (works endpoint kept for future use)
+      const [settingsRes] = await Promise.all([
         api.get(`/tenants/${tenantId}/settings`),
         api.get(`/works`, { params: { tenantId } })
-      ])
-        .then(([settingsRes, worksRes]) => {
-          const s = settingsRes.data;
-          setMapSettings({
-            outdoorCenter: [s.latitude || -20.385574, s.longitude || -43.503578],
-            indoorImageUrl: s.mapImageUrl
-          });
+      ]);
 
-          // Map works to POIs if they have coordinates (simulated for now as works might not have x/y yet)
-          // In a real app, works would have x/y coordinates for the indoor map.
-          // For now, we filter works that might have location data or just show a few as example if we had the data.
-          // Since the backend Work model doesn't explicitly have x/y for indoor map yet, 
-          // we will just show an empty list or a placeholder if no works have location.
-          // But to make it "real", let's assume we might add x/y to works later. 
-          // For now, let's just use the works list to populate if we had the data.
+      const s = settingsRes.data;
+      setMapSettings({
+        outdoorCenter: [s.latitude || -20.385574, s.longitude || -43.503578],
+        indoorImageUrl: s.mapImageUrl
+      });
 
-          // As we don't have x/y in Work model yet, we will just leave POIs empty to be honest,
-          // or maybe map some if the description contains "Sala 1" etc?
-          // Let's keep it empty to avoid "fake" data, but ready to receive.
-          setPois([]);
-        })
-        .catch(err => console.error("Erro ao carregar dados do mapa", err))
-        .finally(() => setLoading(false));
-    } else {
+      // POIs will be populated when works have x/y coordinates
+      setPois([]);
+    } catch (err) {
+      console.error("Erro ao carregar dados do mapa", err);
+    } finally {
       setLoading(false);
     }
   }, [tenantId]);
+
+  useEffect(() => {
+    fetchMapData();
+  }, [fetchMapData]);
 
   if (loading) return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', gap: '1rem' }}>

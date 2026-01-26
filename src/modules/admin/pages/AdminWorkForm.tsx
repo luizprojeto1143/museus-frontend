@@ -18,7 +18,7 @@ export const AdminWorkForm: React.FC = () => {
   const [artist, setArtist] = useState("");
   const [year, setYear] = useState("");
   const [category, setCategory] = useState(""); // Stores categoryId now
-  const [categories, setCategories] = useState<any[]>([]); // List of available categories
+  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
   const [description, setDescription] = useState(
     t("admin.workForm.defaultDescription")
   );
@@ -27,7 +27,7 @@ export const AdminWorkForm: React.FC = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [librasUrl, setLibrasUrl] = useState("");
-  const [videoUrl, setVideoUrl] = useState(""); // Added missing videoUrl state
+
   const [published, setPublished] = useState(true);
   const [radius, setRadius] = useState(5);
 
@@ -60,7 +60,6 @@ export const AdminWorkForm: React.FC = () => {
         setImageUrl(data.imageUrl || "");
         setAudioUrl(data.audioUrl || "");
         setLibrasUrl(data.librasUrl || "");
-        setVideoUrl(data.videoUrl || "");
         setPublished(data.published ?? true);
         setRadius(data.radius || 5);
 
@@ -127,8 +126,9 @@ export const AdminWorkForm: React.FC = () => {
         await api.post("/works", payload);
       }
       navigate("/admin/obras");
-    } catch (error: any) {
-      console.error("Erro ao salvar obra", error);
+    } catch (err) {
+      const error = err as { response?: { data?: { message?: string } } };
+      console.error("Erro ao salvar obra", err);
       alert(error.response?.data?.message || t("common.error"));
     }
   };
@@ -241,7 +241,7 @@ export const AdminWorkForm: React.FC = () => {
               style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             >
               <option value="">{t("admin.dashboard.select")}</option>
-              {categories.map((cat: any) => (
+              {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>

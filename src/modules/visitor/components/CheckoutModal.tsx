@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Minus, Plus, Calendar, MapPin } from 'lucide-react';
+import { X, Minus, Plus, Calendar } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../../modules/auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -13,8 +13,14 @@ interface Ticket {
     sold: number;
 }
 
+interface EventInfo {
+    id: string;
+    title: string;
+    startDate: string;
+}
+
 interface CheckoutModalProps {
-    event: any;
+    event: EventInfo;
     tickets: Ticket[];
     onClose: () => void;
     onSuccess: () => void;
@@ -55,7 +61,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
         try {
             // Process each ticket type selection
             // In a real app we would bundle this in one robust API call
-            const items = Object.entries(quantities).filter(([_, qty]) => qty > 0);
+            const items = Object.entries(quantities).filter(([, qty]) => qty > 0);
 
             for (const [ticketId, qty] of items) {
                 for (let i = 0; i < qty; i++) {

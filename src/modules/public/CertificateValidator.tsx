@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../api/client';
 import { CheckCircle, XCircle, AlertTriangle, Download, Calendar, User, MapPin } from 'lucide-react';
@@ -20,11 +20,7 @@ export const CertificateValidator: React.FC = () => {
     const [status, setStatus] = useState<'loading' | 'valid' | 'invalid' | 'error'>('loading');
     const [data, setData] = useState<CertificateData | null>(null);
 
-    useEffect(() => {
-        if (code) validateCertificate();
-    }, [code]);
-
-    const validateCertificate = async () => {
+    const validateCertificate = useCallback(async () => {
         try {
             // Note: Use baseURL-less request or ensure API client handles relative paths correctly 
             // if this page is rendered outside the main app context. 
@@ -36,15 +32,23 @@ export const CertificateValidator: React.FC = () => {
             } else {
                 setStatus('invalid');
             }
-        } catch (err: any) {
+        } catch (err) {
             console.error(err);
-            if (err.response?.status === 404) {
+            const axiosErr = err as { response?: { status?: number } };
+            if (axiosErr.response?.status === 404) {
                 setStatus('invalid');
             } else {
                 setStatus('error');
             }
         }
-    };
+    }, [code]);
+
+    useEffect(() => {
+        if (code) {
+            const timer = setTimeout(() => validateCertificate(), 0);
+            return () => clearTimeout(timer);
+        }
+    }, [code, validateCertificate]);
 
     return (
         <div className="min-h-screen bg-[#1a1108] text-[#f5e6d3] font-serif flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -65,8 +69,8 @@ export const CertificateValidator: React.FC = () => {
 
                     {/* Status Header */}
                     <div className={`p-6 text-center border-b ${status === 'valid' ? 'bg-green-900/20 border-green-800' :
-                            status === 'invalid' ? 'bg-red-900/20 border-red-800' :
-                                'bg-gray-900/20 border-gray-800'
+                        status === 'invalid' ? 'bg-red-900/20 border-red-800' :
+                            'bg-gray-900/20 border-gray-800'
                         }`}>
                         {status === 'loading' && <div className="text-[#d4af37]">Verificando autenticidade...</div>}
 

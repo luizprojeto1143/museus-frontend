@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -12,42 +12,43 @@ type EventItem = {
   location?: string;
 };
 
+type ApiEvent = {
+  id: string;
+  title: string;
+  startDate?: string;
+  location?: string;
+};
+
 export const EventsList: React.FC = () => {
   const { t } = useTranslation();
-  type EventItem = {
-    id: string;
-    title: string;
-    date?: string;
-    time?: string;
-    location?: string;
-  };
-
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { tenantId } = useAuth();
 
-  useEffect(() => {
+  const fetchEvents = useCallback(async () => {
     if (!tenantId) return;
 
     setLoading(true);
-    api
-      .get("/events", { params: { tenantId } })
-      .then((res) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const apiEvents = (res.data as any[]).map((e) => ({
-          id: e.id,
-          title: e.title,
-          date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",
-          time: e.startDate ? new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
-          location: e.location ?? ""
-        }));
-        setEvents(apiEvents);
-      })
-      .catch(() => {
-        console.error("Failed to fetch events");
-      })
-      .finally(() => setLoading(false));
+    try {
+      const res = await api.get("/events", { params: { tenantId } });
+      const apiEvents = (res.data as ApiEvent[]).map((e) => ({
+        id: e.id,
+        title: e.title,
+        date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",
+        time: e.startDate ? new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
+        location: e.location ?? ""
+      }));
+      setEvents(apiEvents);
+    } catch {
+      console.error("Failed to fetch events");
+    } finally {
+      setLoading(false);
+    }
   }, [tenantId]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   return (
     <div>

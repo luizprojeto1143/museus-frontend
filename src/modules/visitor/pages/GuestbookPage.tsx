@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -16,17 +16,13 @@ type GuestbookEntry = {
 
 export const GuestbookPage: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId, isAuthenticated, name, email } = useAuth();
+    const { tenantId, isAuthenticated, email } = useAuth();
     const [entries, setEntries] = useState<GuestbookEntry[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    useEffect(() => {
-        fetchEntries();
-    }, [tenantId]);
-
-    const fetchEntries = async () => {
+    const fetchEntries = useCallback(async () => {
         if (!tenantId) return;
         setLoading(true);
         try {
@@ -37,7 +33,11 @@ export const GuestbookPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [tenantId]);
+
+    useEffect(() => {
+        fetchEntries();
+    }, [fetchEntries]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

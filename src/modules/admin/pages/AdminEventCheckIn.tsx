@@ -1,15 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { ArrowLeft, UserCheck, AlertTriangle } from 'lucide-react';
 import { api } from '../../../api/client';
+import { AxiosError } from 'axios';
+
+type ScanResult = {
+    guestName?: string;
+    code: string;
+};
 
 export const AdminEventCheckIn: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const [scanResult, setScanResult] = useState<any>(null);
+    const [scanResult, setScanResult] = useState<ScanResult | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    React.useEffect(() => {
+    const handleCheckIn = useCallback(async (code: string) => {
+        setError(null);
+        setScanResult(null);
+        try {
+            const res = await api.post('/registrations/checkin', { code });
+            setScanResult(res.data.registration);
+        } catch (err) {
+            const axiosErr = err as AxiosError<{ error?: string }>;
+            setError(axiosErr.response?.data?.error || "Erro ao fazer check-in");
+        }
+    }, []);
+
+    useEffect(() => {
         const scanner = new Html5QrcodeScanner(
             "reader",
             { fps: 10, qrbox: { width: 250, height: 250 } },
@@ -20,25 +38,14 @@ export const AdminEventCheckIn: React.FC = () => {
             // Handle scan
             handleCheckIn(decodedText);
             scanner.clear();
-        }, (err) => {
-            // console.log(err);
+        }, () => {
+            // Scan error - silently ignore
         });
 
         return () => {
             scanner.clear().catch(e => console.error("Scanner clear error", e));
         };
-    }, []);
-
-    const handleCheckIn = async (code: string) => {
-        setError(null);
-        setScanResult(null);
-        try {
-            const res = await api.post('/registrations/checkin', { code });
-            setScanResult(res.data.registration);
-        } catch (err: any) {
-            setError(err.response?.data?.error || "Erro ao fazer check-in");
-        }
-    };
+    }, [handleCheckIn]);
 
     return (
         <div className="max-w-md mx-auto p-6">

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { useAuth } from "../../auth/AuthContext";
 import { getFullUrl } from "../../../utils/url";
 
 type LeaderboardEntry = {
@@ -15,25 +14,30 @@ type LeaderboardEntry = {
 
 export const LeaderboardPage: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId } = useAuth();
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const fetchLeaderboard = useCallback(async () => {
         setLoading(true);
-        api.get("/leaderboard")
-            .then(res => {
-                if (res.data.ranking) {
-                    setEntries(res.data.ranking);
-                    setMyRank(res.data.myRank);
-                } else {
-                    setEntries(res.data);
-                }
-            })
-            .catch(err => console.error("Erro ao carregar ranking", err))
-            .finally(() => setLoading(false));
+        try {
+            const res = await api.get("/leaderboard");
+            if (res.data.ranking) {
+                setEntries(res.data.ranking);
+                setMyRank(res.data.myRank);
+            } else {
+                setEntries(res.data);
+            }
+        } catch (err) {
+            console.error("Erro ao carregar ranking", err);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchLeaderboard();
+    }, [fetchLeaderboard]);
 
     if (loading) return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', gap: '1rem' }}>

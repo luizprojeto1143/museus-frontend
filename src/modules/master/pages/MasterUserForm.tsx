@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { api, isDemoMode } from "../../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -17,30 +17,43 @@ export const MasterUserForm: React.FC = () => {
   const [tenants, setTenants] = useState<Array<{ id: string; name: string }>>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchTenants = useCallback(async () => {
     if (!isDemoMode) {
-      api.get("/tenants").then(res => setTenants(res.data)).catch(console.error);
+      try {
+        const res = await api.get("/tenants");
+        setTenants(res.data);
+      } catch (err) {
+        console.error(err);
+      }
     }
   }, []);
 
-  useEffect(() => {
+  const loadUser = useCallback(async () => {
     if (isEdit && id && !isDemoMode) {
       setLoading(true);
-      api.get(`/users/${id}`)
-        .then(res => {
-          const u = res.data;
-          setEmail(u.email);
-          setName(u.name);
-          setRole(u.role);
-          setTenantId(u.tenantId || "");
-        })
-        .catch(() => {
-          alert(t("common.errorLoad"));
-          navigate("/master/users");
-        })
-        .finally(() => setLoading(false));
+      try {
+        const res = await api.get(`/users/${id}`);
+        const u = res.data;
+        setEmail(u.email);
+        setName(u.name);
+        setRole(u.role);
+        setTenantId(u.tenantId || "");
+      } catch {
+        alert(t("common.errorLoad"));
+        navigate("/master/users");
+      } finally {
+        setLoading(false);
+      }
     }
   }, [isEdit, id, navigate, t]);
+
+  useEffect(() => {
+    fetchTenants();
+  }, [fetchTenants]);
+
+  useEffect(() => {
+    loadUser();
+  }, [loadUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

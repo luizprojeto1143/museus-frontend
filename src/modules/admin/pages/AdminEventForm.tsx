@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  Calendar, MapPin, Ticket, User, Image as ImageIcon,
+  Calendar, MapPin, Ticket, User,
   ChevronRight, ChevronLeft, Check, Plus, Trash2, Globe, Video
 } from 'lucide-react';
 
@@ -19,7 +18,7 @@ interface TicketData {
 }
 
 export const AdminEventForm: React.FC = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
   const isEdit = Boolean(id);
@@ -395,7 +394,7 @@ export const AdminEventForm: React.FC = () => {
                     <div className="form-group">
                       <label>Tipo</label>
                       <select className="input w-full" value={t.type} onChange={e => {
-                        const n = [...tickets]; n[idx].type = e.target.value as any; setTickets(n);
+                        const n = [...tickets]; n[idx].type = e.target.value as 'FREE' | 'PAID'; setTickets(n);
                       }}>
                         <option value="FREE">Gratuito</option>
                         <option value="PAID">Pago</option>

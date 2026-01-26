@@ -67,7 +67,7 @@ export const AdminTreasureHunt: React.FC = () => {
         try {
             await api.delete(`/clues/${id}`);
             loadData();
-        } catch (error) {
+        } catch {
             alert(t("admin.errors.delete"));
         }
     };
@@ -95,7 +95,7 @@ export const AdminTreasureHunt: React.FC = () => {
             setEditingClue(null);
             setFormData({ riddle: "", answer: "", workId: "", order: 0 });
             loadData();
-        } catch (error) {
+        } catch {
             alert(t("admin.errors.save"));
         }
     };

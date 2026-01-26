@@ -1,24 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { Plus, Edit, Trash, FileText } from 'lucide-react';
 
+interface CertificateTemplate {
+    id: string;
+    name: string;
+    backgroundUrl?: string;
+    elements?: unknown[];
+}
+
 export const CertificateTemplates: React.FC = () => {
     const navigate = useNavigate();
-    const [templates, setTemplates] = useState<any[]>([]);
+    const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
 
-    const loadTemplates = async () => {
+    const loadTemplates = useCallback(async () => {
         try {
             const res = await api.get('/certificate-templates');
             setTemplates(res.data);
         } catch (err) {
             console.error(err);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        loadTemplates();
-    }, []);
+        const timer = setTimeout(() => loadTemplates(), 0);
+        return () => clearTimeout(timer);
+    }, [loadTemplates]);
 
     const handleDelete = async (id: string) => {
         if (!confirm('Deseja excluir este modelo?')) return;

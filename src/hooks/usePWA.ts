@@ -52,7 +52,7 @@ export const usePWAInstall = () => {
     useEffect(() => {
         // Check if already installed
         if (window.matchMedia('(display-mode: standalone)').matches) {
-            setIsInstalled(true);
+            setTimeout(() => setIsInstalled(true), 0);
         }
 
         const handleBeforeInstall = (e: Event) => {

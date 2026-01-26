@@ -103,7 +103,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 // Map backend achievements to frontend structure
                 const backendAchievements = data.achievements || [];
                 const mergedAchievements = prev.achievements.map(localAch => {
-                    const found = backendAchievements.find((ba: any) => ba.code === localAch.id);
+                    const found = backendAchievements.find((ba: { code: string; unlockedAt?: string }) => ba.code === localAch.id);
                     if (found) {
                         return { ...localAch, unlockedAt: found.unlockedAt };
                     }

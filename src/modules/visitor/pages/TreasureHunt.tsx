@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useGamification } from "../../gamification/context/GamificationContext";
@@ -27,19 +27,23 @@ export const TreasureHunt: React.FC = () => {
 
     const { tenantId } = useAuth();
 
-    useEffect(() => {
-        if (tenantId) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setLoading(true);
-            api.get("/gamification/treasure-hunt", { params: { tenantId } })
-                .then(res => {
-                    setClues(res.data.clues || []);
-                    setSolvedClues(res.data.solved || []);
-                })
-                .catch(() => console.error("Error loading treasure hunt"))
-                .finally(() => setLoading(false));
+    const loadTreasureHunt = useCallback(async () => {
+        if (!tenantId) return;
+        setLoading(true);
+        try {
+            const res = await api.get("/gamification/treasure-hunt", { params: { tenantId } });
+            setClues(res.data.clues || []);
+            setSolvedClues(res.data.solved || []);
+        } catch {
+            console.error("Error loading treasure hunt");
+        } finally {
+            setLoading(false);
         }
     }, [tenantId]);
+
+    useEffect(() => {
+        loadTreasureHunt();
+    }, [loadTreasureHunt]);
 
     const handleSolveClick = (clueId: string) => {
         setAnsweringClueId(clueId);

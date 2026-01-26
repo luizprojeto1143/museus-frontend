@@ -11,7 +11,7 @@ interface WelcomeAnimationProps {
 export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email, onComplete }) => {
     const { t } = useTranslation();
     const [show, setShow] = useState(true);
-    const [isFirstTime, setIsFirstTime] = useState(() => {
+    const [isFirstTime] = useState(() => {
         const storageKey = `welcome_seen_${email}`;
         const hasSeen = localStorage.getItem(storageKey);
         if (!hasSeen) {

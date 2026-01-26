@@ -1,25 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { Button } from '../../../components/ui/Button';
 import { Plus, Trash, Zap } from 'lucide-react';
 
+interface CertificateRule {
+    id: string;
+    name: string;
+    triggerType: string;
+    active: boolean;
+    actionTemplate?: { name: string };
+}
+
 export const CertificateRules: React.FC = () => {
     const navigate = useNavigate();
-    const [rules, setRules] = useState<any[]>([]);
+    const [rules, setRules] = useState<CertificateRule[]>([]);
 
-    const loadRules = async () => {
+    const loadRules = useCallback(async () => {
         try {
             const res = await api.get('/certificate-rules');
             setRules(res.data);
         } catch (err) {
             console.error(err);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        loadRules();
-    }, []);
+        const timer = setTimeout(() => loadRules(), 0);
+        return () => clearTimeout(timer);
+    }, [loadRules]);
 
     return (
         <div className="p-6">

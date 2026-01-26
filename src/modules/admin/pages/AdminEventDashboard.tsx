@@ -2,18 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
-import { BarChart, Users, DollarSign, Calendar, Eye, Settings, QrCode } from 'lucide-react';
+import { Users, DollarSign, Calendar, Eye, Settings, QrCode } from 'lucide-react';
+
+interface EventData {
+    id: string;
+    title: string;
+    startDate: string;
+}
+
+interface TicketInfo {
+    id: string;
+    quantity: number;
+    sold: number;
+    price: number;
+}
 
 export const AdminEventDashboard: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { tenantId } = useAuth();
-    const [event, setEvent] = useState<any>(null);
+    const [event, setEvent] = useState<EventData | null>(null);
     const [stats, setStats] = useState({
         ticketsSold: 0,
         totalTickets: 0,
         revenue: 0,
         views: 1240, // Mocked for now
-        recentRegistrations: [] as any[]
+        recentRegistrations: [] as Array<{ id: string; name: string }>
     });
 
     useEffect(() => {
@@ -23,12 +36,12 @@ export const AdminEventDashboard: React.FC = () => {
 
             // Fetch Tickets to calc total
             api.get(`/events/${id}/tickets`).then(res => {
-                const tickets = res.data;
-                const total = tickets.reduce((acc: number, t: any) => acc + t.quantity, 0);
-                const sold = tickets.reduce((acc: number, t: any) => acc + t.sold, 0);
+                const tickets = res.data as TicketInfo[];
+                const total = tickets.reduce((acc: number, t) => acc + t.quantity, 0);
+                const sold = tickets.reduce((acc: number, t) => acc + t.sold, 0);
                 // Calculate simple revenue based on tickets sold (approx) if backend doesn't give precise
                 // Ideally backend gives this. We'll sum up price * sold for now.
-                const rev = tickets.reduce((acc: number, t: any) => acc + (t.sold * Number(t.price)), 0);
+                const rev = tickets.reduce((acc: number, t) => acc + (t.sold * Number(t.price)), 0);
 
                 setStats(prev => ({ ...prev, totalTickets: total, ticketsSold: sold, revenue: rev }));
             }).catch(console.error);
@@ -64,9 +77,7 @@ export const AdminEventDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Sales Analytics Widget (Sympla Killer) */}
-            {/* Sales Analytics Widget (Sympla Killer) */}
-            <DashboardSalesWidget />
+            {/* Sales Analytics - TODO: Implement widget */}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

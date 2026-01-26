@@ -63,9 +63,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [tenantId]);
 
   useEffect(() => {
-    const handler = (e: any) => {
+    const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
@@ -74,7 +74,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const handleInstallClick = () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult: any) => {
+      deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === "accepted") {
           console.log("User accepted the install prompt");
         }
@@ -103,27 +103,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const links = allLinks.filter(link => {
     if (!link.feature) return true; // Always show links without feature requirement
     if (!settings) return true; // Show all while loading
-    return (settings as any)[link.feature] !== false;
+    return (settings as Record<string, unknown>)[link.feature] !== false;
   });
-
-  const renderNavLinks = (mobile = false) => (
-    <>
-      {links.map((link) => {
-        const isActive = location.pathname === link.to;
-        return (
-          <Link
-            key={link.to}
-            to={link.to}
-            onClick={() => mobile && setIsMenuOpen(false)}
-            className={`app-sidebar-link ${isActive ? "active" : ""}`}
-          >
-            {link.icon && <span>{link.icon}</span>}
-            {link.label}
-          </Link>
-        );
-      })}
-    </>
-  );
 
   const themeStyles = settings ? {
     "--primary-color": settings.primaryColor,

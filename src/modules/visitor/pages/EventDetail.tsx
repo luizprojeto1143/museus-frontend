@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { api, isDemoMode } from "../../../api/client";
 import {
-  MapPin, Calendar, Globe, Share2, Ticket as TicketIcon,
-  User, CheckCircle, Video, Clock
+  MapPin, Calendar, Share2,
+  User, CheckCircle, Video
 } from "lucide-react";
 
 type Ticket = {
@@ -57,23 +57,20 @@ type EventDetail = {
 export const EventDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  // Navigation
-  // const navigate = useNavigate(); // IF needed
 
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [attendance, setAttendance] = useState<any>(null);
+  const [attendance, setAttendance] = useState<{ attended: boolean; attendance?: unknown } | null>(null);
 
   // Checkout State
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState<string>("");
-  const [ticketQuantity, setTicketQuantity] = useState(1);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
   // Demo Fallback
-  useEffect(() => {
+  const fetchEventData = useCallback(async () => {
     if (isDemoMode) {
       setEvent({
         id: "1", title: "Oficina de Aquarela",
@@ -87,27 +84,52 @@ export const EventDetail: React.FC = () => {
 
     if (id) {
       setLoading(true);
-      Promise.all([
-        api.get(`/events/${id}`),
-        api.get(`/events/${id}/tickets`).catch(() => ({ data: [] })),
-        api.get(`/events/${id}/my-attendance`).catch(() => ({ data: { attended: false } }))
-      ]).then(([evRes, tickRes, attRes]) => {
+      try {
+        const [evRes, tickRes, attRes] = await Promise.all([
+          api.get(`/events/${id}`),
+          api.get(`/events/${id}/tickets`).catch(() => ({ data: [] })),
+          api.get(`/events/${id}/my-attendance`).catch(() => ({ data: { attended: false } }))
+        ]);
         const evData = evRes.data;
 
         // Parse JSON fields if they come as strings (safe check)
         if (typeof evData.customFormSchema === 'string') {
-          try { evData.customFormSchema = JSON.parse(evData.customFormSchema); } catch (e) { evData.customFormSchema = []; }
+          try { evData.customFormSchema = JSON.parse(evData.customFormSchema); } catch { evData.customFormSchema = []; }
         }
         if (typeof evData.galleryUrls === 'string') {
-          try { evData.galleryUrls = JSON.parse(evData.galleryUrls); } catch (e) { evData.galleryUrls = []; }
+          try { evData.galleryUrls = JSON.parse(evData.galleryUrls); } catch { evData.galleryUrls = []; }
         }
 
         setEvent(evData);
         setTickets(tickRes.data);
-        if (attRes.data?.attended) setAttendance(attRes.data.attendance);
-      }).finally(() => setLoading(false));
+        if (attRes.data?.attended) setAttendance(attRes.data);
+      } finally {
+        setLoading(false);
+      }
     }
   }, [id]);
+
+  useEffect(() => {
+    fetchEventData();
+  }, [fetchEventData]);
+
+  const handleRegister = async () => {
+    if (!selectedTicketId || !id) return;
+    setSubmitting(true);
+    try {
+      await api.post(`/events/${id}/register`, {
+        ticketId: selectedTicketId,
+        answers
+      });
+      setIsCheckoutOpen(false);
+      fetchEventData(); // Refresh data
+    } catch (err) {
+      console.error("Registration failed", err);
+      alert(t("common.error", "Erro ao realizar inscrição"));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (loading) return <div className="p-8 text-center animate-pulse">Carregando detalhes...</div>;
   if (!event) return <div className="p-8 text-center">Evento não encontrado</div>;

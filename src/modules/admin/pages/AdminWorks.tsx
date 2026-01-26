@@ -31,7 +31,7 @@ export const AdminWorks: React.FC = () => {
         const worksList = responseData.data || [];
         const pagination = responseData.pagination || {};
 
-        const apiWorks = worksList.map((w: any) => ({
+        const apiWorks = worksList.map((w: { id: string; title: string; artist?: string; published?: boolean }) => ({
           id: w.id,
           title: w.title,
           artist: w.artist ?? "",

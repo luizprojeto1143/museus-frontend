@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
@@ -26,26 +26,27 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
 
     const { tenantId } = useAuth();
 
+    const performSearch = useCallback(async (searchQuery: string) => {
+        if (!tenantId) return;
+        try {
+            const res = await api.get(`/search`, {
+                params: { q: searchQuery, tenantId }
+            });
+            setResults(res.data);
+        } catch (error) {
+            console.error("Error searching items", error);
+        }
+    }, [tenantId]);
+
     useEffect(() => {
         if (isOpen && query.trim().length >= 2 && tenantId) {
-            const search = async () => {
-                try {
-                    const res = await api.get(`/search`, {
-                        params: { q: query, tenantId }
-                    });
-                    setResults(res.data);
-                } catch (error) {
-                    console.error("Error searching items", error);
-                }
-            };
-
             // Debounce manual
-            const timeoutId = setTimeout(search, 300);
+            const timeoutId = setTimeout(() => performSearch(query), 300);
             return () => clearTimeout(timeoutId);
         } else if (query.trim().length < 2) {
-            setResults([]);
+            setTimeout(() => setResults([]), 0);
         }
-    }, [isOpen, query, tenantId]);
+    }, [isOpen, query, tenantId, performSearch]);
 
     const handleSelect = (url: string) => {
         navigate(url);

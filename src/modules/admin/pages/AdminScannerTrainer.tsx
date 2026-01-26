@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import * as tf from "@tensorflow/tfjs";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import { api } from "../../../api/client";
@@ -17,6 +16,21 @@ export const AdminScannerTrainer: React.FC = () => {
     const [selectedWorkId, setSelectedWorkId] = useState<string>("");
     const [exampleCounts, setExampleCounts] = useState<Record<string, number>>({});
     const [training, setTraining] = useState(false);
+
+    const startCamera = useCallback(async () => {
+        if (videoRef.current) {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoRef.current.srcObject = stream;
+            videoRef.current.play();
+        }
+    }, []);
+
+    const stopCamera = useCallback(() => {
+        if (videoRef.current && videoRef.current.srcObject) {
+            const stream = videoRef.current.srcObject as MediaStream;
+            stream.getTracks().forEach(t => t.stop());
+        }
+    }, []);
 
     useEffect(() => {
         let isMounted = true;
@@ -62,25 +76,10 @@ export const AdminScannerTrainer: React.FC = () => {
                 }
                 return null;
             });
-            // MobileNet models don't have a simple dispose method exposed in this version usually, 
-            // but strict tensor management is key. For now classifier dispose is the most critical for KNN.
         };
-    }, [tenantId]);
+    }, [tenantId, startCamera, stopCamera]);
 
-    const startCamera = async () => {
-        if (videoRef.current) {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            videoRef.current.srcObject = stream;
-            videoRef.current.play();
-        }
-    };
 
-    const stopCamera = () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach(t => t.stop());
-        }
-    };
 
     const addExample = async () => {
         if (!selectedWorkId || !net || !classifier || !videoRef.current) return;
@@ -106,9 +105,9 @@ export const AdminScannerTrainer: React.FC = () => {
 
         const dataset = classifier.getClassifierDataset();
         // Convert tensors to arrays for storage
-        const datasetObj: Record<string, any> = {};
+        const datasetObj: Record<string, number[]> = {};
         Object.keys(dataset).forEach((key) => {
-            let data = dataset[key].dataSync();
+            const data = dataset[key].dataSync();
             // We need to convert Float32Array to normal array for JSON.stringify
             datasetObj[key] = Array.from(data);
         });

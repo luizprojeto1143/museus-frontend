@@ -10,8 +10,8 @@ interface AuditLogEntry {
     userId: string | null;
     userEmail: string | null;
     tenantId: string;
-    oldData: any;
-    newData: any;
+    oldData: Record<string, unknown> | null;
+    newData: Record<string, unknown> | null;
     ipAddress: string | null;
     userAgent: string | null;
     createdAt: string;

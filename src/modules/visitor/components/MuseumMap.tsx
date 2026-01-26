@@ -61,11 +61,10 @@ function deg2rad(deg: number) {
 export const MuseumMap: React.FC<MuseumMapProps> = ({
     outdoorCenter,
     indoorImageUrl,
-    indoorBounds = [[0, 0], [1000, 1000]],
+    // indoorBounds not used in current implementation
     pois
 }) => {
     const [mode, setMode] = useState<MapMode>("outdoor");
-    const [zoom] = useState(15);
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
     const [aspectRatio, setAspectRatio] = useState<number>(1);
 

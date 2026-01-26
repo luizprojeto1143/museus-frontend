@@ -1,56 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { getFullUrl } from "../../../utils/url";
 
+type WorkItem = {
+  id: string;
+  title: string;
+  artist: string;
+  year?: string;
+  category?: string;
+  accessible?: boolean;
+  imageUrl?: string | null;
+};
+
+type ApiWork = {
+  id: string;
+  title: string;
+  artist?: string;
+  year?: string;
+  category?: { name: string } | string;
+  imageUrl?: string;
+};
+
 export const WorksList: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
 
-  type WorkItem = {
-    id: string;
-    title: string;
-    artist: string;
-    year?: string;
-    category?: string;
-    accessible?: boolean;
-    imageUrl?: string | null;
-  };
-
   const [works, setWorks] = useState<WorkItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (tenantId) {
-      // setLoading(true); // Removed to avoid cascading update. Initial loading state is true.
-      api
-        .get("/works", { params: { tenantId } })
-        .then((res) => {
-          // API returns { data: works[], pagination: {} }
-          const rawData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+  const fetchWorks = useCallback(async () => {
+    if (!tenantId) return;
 
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const worksData = (rawData as any[]).map((w: any) => ({
-            id: w.id,
-            title: w.title,
-            artist: w.artist ?? "Artista desconhecido",
-            year: w.year ?? "",
-            category: w.category?.name ?? w.category ?? "Obra",
-            accessible: true,
-            imageUrl: getFullUrl(w.imageUrl)
-          }));
-          setWorks(worksData);
-        })
-        .catch((err) => {
-          console.error("Failed to fetch works", err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+    try {
+      const res = await api.get("/works", { params: { tenantId } });
+      // API returns { data: works[], pagination: {} }
+      const rawData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+
+      const worksData = (rawData as ApiWork[]).map((w) => ({
+        id: w.id,
+        title: w.title,
+        artist: w.artist ?? "Artista desconhecido",
+        year: w.year ?? "",
+        category: typeof w.category === 'object' ? w.category?.name : w.category ?? "Obra",
+        accessible: true,
+        imageUrl: getFullUrl(w.imageUrl)
+      }));
+      setWorks(worksData);
+    } catch (err) {
+      console.error("Failed to fetch works", err);
+    } finally {
+      setLoading(false);
     }
   }, [tenantId]);
+
+  useEffect(() => {
+    fetchWorks();
+  }, [fetchWorks]);
 
   if (!tenantId) {
     return <div className="p-8 text-center">{t("visitor.works.selectMuseum", "Selecione um museu para ver as obras.")}</div>;

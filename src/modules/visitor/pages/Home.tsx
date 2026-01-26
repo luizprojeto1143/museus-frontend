@@ -5,12 +5,27 @@ import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
 
+interface FeaturedWork {
+  id: string;
+  title: string;
+  artist?: string;
+  year?: string;
+  imageUrl?: string;
+  category?: { name: string } | string;
+}
+
+interface FeaturedTrail {
+  id: string;
+  title: string;
+  description?: string;
+}
+
 export const Home: React.FC = () => {
   const { t } = useTranslation();
   const { name, tenantId, role } = useAuth();
   const navigate = useNavigate();
-  const [featuredWorks, setFeaturedWorks] = useState<any[]>([]);
-  const [featuredTrails, setFeaturedTrails] = useState<any[]>([]);
+  const [featuredWorks, setFeaturedWorks] = useState<FeaturedWork[]>([]);
+  const [featuredTrails, setFeaturedTrails] = useState<FeaturedTrail[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -146,7 +161,7 @@ export const Home: React.FC = () => {
                       background: "rgba(255,255,255,0.1)",
                       border: "1px solid rgba(255,255,255,0.2)"
                     }}>
-                      {work.category.name || work.category}
+                      {typeof work.category === 'string' ? work.category : work.category?.name}
                     </span>
                   )}
                   <span className="chip" style={{

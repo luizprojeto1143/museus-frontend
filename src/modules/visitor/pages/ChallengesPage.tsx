@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Target, Trophy, Map, ChevronRight, Star, Clock, CheckCircle } from 'lucide-react';
+import { Target, Trophy, Map, ChevronRight, Star, Clock } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { DailyChallengeWidget, XpProgressBar } from '../../../components/gamification/ChallengeWidget';
@@ -16,10 +16,7 @@ interface ScavengerHunt {
     _count: { steps: number };
 }
 
-interface UserProgress {
-    currentStep: number;
-    completed: boolean;
-}
+// UserProgress type removed - not used in this component
 
 /**
  * Visitor Challenges Page

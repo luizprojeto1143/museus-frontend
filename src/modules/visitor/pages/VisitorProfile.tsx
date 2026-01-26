@@ -140,7 +140,7 @@ export const VisitorProfile: React.FC = () => {
                             certificates.map(cert => (
                                 <div key={cert.id} className="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
                                     <h4 className="font-bold text-gray-900 dark:text-white mb-1">
-                                        {cert.metadata?.title || (cert.type === 'EVENT' ? 'Certificado de Evento' : 'Certificado')}
+                                        {(cert.metadata?.title as string) || (cert.type === 'EVENT' ? 'Certificado de Evento' : 'Certificado')}
                                     </h4>
                                     <p className="text-xs text-gray-500 mb-3">
                                         Emitido em {new Date(cert.generatedAt).toLocaleDateString()} por {cert.tenant.name}
