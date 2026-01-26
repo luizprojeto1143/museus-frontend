@@ -141,6 +141,20 @@ export const AdminWorkForm: React.FC = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!id) return;
+    if (!confirm(t("common.confirmDelete") || "Tem certeza que deseja excluir esta obra?")) return;
+
+    try {
+      await api.delete(`/works/${id}`);
+      alert(t("common.success") || "Obra excluída com sucesso!");
+      navigate("/admin/obras");
+    } catch (error) {
+      console.error(error);
+      alert(t("common.error") || "Erro ao excluir obra.");
+    }
+  };
+
   return (
     <div>
       {isUploading && (
@@ -439,17 +453,30 @@ export const AdminWorkForm: React.FC = () => {
           </label>
         </div>
 
-        <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem" }}>
-          <button type="submit" className="btn">
-            {t("common.save")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => navigate("/admin/obras")}
-          >
-            {t("common.cancel")}
-          </button>
+        <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            <button type="submit" className="btn">
+              {t("common.save")}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => navigate("/admin/obras")}
+            >
+              {t("common.cancel")}
+            </button>
+          </div>
+
+          {isEdit && (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ borderColor: "#ef4444", color: "#ef4444" }}
+              onClick={handleDelete}
+            >
+              🗑️ {t("common.delete") || "Excluir"}
+            </button>
+          )}
         </div>
       </form>
     </div>
