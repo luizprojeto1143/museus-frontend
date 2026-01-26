@@ -32,7 +32,7 @@ export const AdminWorkForm: React.FC = () => {
   const [audioUrl, setAudioUrl] = useState("");
   const [librasUrl, setLibrasUrl] = useState("");
 
-  const [published, setPublished] = useState(true);
+  const [published, setPublished] = useState(false);
   const [radius, setRadius] = useState(5);
 
   // Fetch data on load
@@ -126,10 +126,14 @@ export const AdminWorkForm: React.FC = () => {
     try {
       if (id) {
         await api.put(`/works/${id}`, payload);
+        alert(t("common.success"));
+        navigate("/admin/obras");
       } else {
-        await api.post("/works", payload);
+        const res = await api.post("/works", payload);
+        alert("Obra criada! Agora você pode solicitar acessibilidade.");
+        // Stay on page (redirect to edit) to allow accessibility request
+        navigate(`/admin/obras/${res.data.id}`);
       }
-      navigate("/admin/obras");
     } catch (err) {
       const error = err as { response?: { data?: { message?: string } } };
       console.error("Erro ao salvar obra", err);
@@ -407,9 +411,10 @@ export const AdminWorkForm: React.FC = () => {
                       });
                       alert("Solicitação enviada com sucesso!");
                       setShowAccessModal(false);
-                    } catch (error) {
+                    } catch (error: any) {
                       console.error(error);
-                      alert("Erro ao enviar solicitação.");
+                      const msg = error.response?.data?.message || error.message || "Erro desconhecido";
+                      alert(`Erro ao enviar solicitação: ${msg}`);
                     } finally {
                       setIsRequesting(false);
                     }
