@@ -19,10 +19,12 @@ export const MasterAccessibilityRequests: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     // Upload State
+    // Upload State
     const [selectedRequest, setSelectedRequest] = useState<AccessRequest | null>(null);
-    const [uploadFile, setUploadFile] = useState<File | null>(null);
+    const [librasFile, setLibrasFile] = useState<File | null>(null);
+    const [audioFile, setAudioFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [fileType, setFileType] = useState<"LIBRAS" | "AUDIO">("LIBRAS");
+    const [progress, setProgress] = useState(0); // 0-100
 
     useEffect(() => {
         loadRequests();
@@ -41,33 +43,74 @@ export const MasterAccessibilityRequests: React.FC = () => {
     };
 
     const handleFulfill = async () => {
-        if (!selectedRequest || !uploadFile) return;
+        if (!selectedRequest) return;
+
+        // Validation
+        const needsLibras = selectedRequest.type === "LIBRAS" || selectedRequest.type === "BOTH";
+        const needsAudio = selectedRequest.type === "AUDIO_DESC" || selectedRequest.type === "BOTH";
+
+        if (needsLibras && !librasFile) return alert("Selecione o arquivo de Libras");
+        if (needsAudio && !audioFile) return alert("Selecione o arquivo de Áudio");
 
         try {
             setUploading(true);
+            setProgress(10);
 
-            // 1. Upload File
-            const formData = new FormData();
-            formData.append("file", uploadFile);
-            const uploadRes = await api.post(`/upload/${fileType === "LIBRAS" ? "video" : "audio"}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
-            });
-            const fileUrl = uploadRes.data.url;
+            // Upload Helpers
+            let uploadedLibrasUrl = "";
+            let uploadedAudioUrl = "";
 
-            // 2. Fulfill Request
+            // 1. Upload Libras if needed
+            if (librasFile) {
+                const formData = new FormData();
+                formData.append("file", librasFile);
+
+                const res = await api.post("/upload/video", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    onUploadProgress: (progressEvent) => {
+                        const p = progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0;
+                        // Map 0-100 to 10-50 range for first file or split progress
+                        setProgress(needsAudio ? Math.round(p / 2) : p);
+                    }
+                });
+                uploadedLibrasUrl = res.data.url;
+            }
+
+            // 2. Upload Audio if needed
+            if (audioFile) {
+                const formData = new FormData();
+                formData.append("file", audioFile);
+
+                const res = await api.post("/upload/audio", formData, {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    onUploadProgress: (progressEvent) => {
+                        const p = progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0;
+                        // Map to 50-100 range if both, or 0-100 if only audio
+                        setProgress(needsLibras ? 50 + Math.round(p / 2) : p);
+                    }
+                });
+                uploadedAudioUrl = res.data.url;
+            }
+
+            setProgress(95);
+
+            // 3. Fulfill Request
             await api.post(`/accessibility/${selectedRequest.id}/fulfill`, {
-                fileUrl,
-                fileType, // LIBRAS or AUDIO
-                masterNotes: "Arquivo enviado pelo Master via Painel"
+                librasUrl: uploadedLibrasUrl,
+                audioUrl: uploadedAudioUrl,
+                masterNotes: "Arquivos enviados pelo Master via Painel"
             });
 
-            alert("Arquivo enviado e obra atualizada!");
+            setProgress(100);
+            alert("Solicitação concluída com sucesso!");
             setSelectedRequest(null);
-            setUploadFile(null);
-            loadRequests(); // Refresh
+            setLibrasFile(null);
+            setAudioFile(null);
+            setProgress(0);
+            loadRequests();
         } catch (error) {
             console.error(error);
-            alert("Erro ao enviar arquivo");
+            alert("Erro ao enviar arquivos");
         } finally {
             setUploading(false);
         }
@@ -120,7 +163,9 @@ export const MasterAccessibilityRequests: React.FC = () => {
                                                         className="btn btn-sm"
                                                         onClick={() => {
                                                             setSelectedRequest(req);
-                                                            setFileType(req.type === "AUDIO_DESC" ? "AUDIO" : "LIBRAS");
+                                                            setLibrasFile(null);
+                                                            setAudioFile(null);
+                                                            setProgress(0);
                                                         }}
                                                     >
                                                         Atender
@@ -150,33 +195,51 @@ export const MasterAccessibilityRequests: React.FC = () => {
                 }}>
                     <div className="card" style={{ width: "100%", maxWidth: "500px", padding: "1.5rem" }}>
                         <h3 className="section-title" style={{ fontSize: "1.1rem" }}>
-                            Atender Solicitação: {selectedRequest.work.title}
+                            Atender: {selectedRequest.work.title}
                         </h3>
-                        <p style={{ marginBottom: "1rem", opacity: 0.8 }}>{selectedRequest.tenant.name}</p>
+                        <p style={{ marginBottom: "1rem", opacity: 0.8 }}>
+                            {selectedRequest.tenant.name} • Solicitado: <strong>{selectedRequest.type === "BOTH" ? "Libras + Áudio" : selectedRequest.type}</strong>
+                        </p>
 
-                        <div className="form-group">
-                            <label>Tipo de Arquivo a Enviar</label>
-                            <select
-                                className="input"
-                                value={fileType}
-                                onChange={e => setFileType(e.target.value as any)}
-                                style={{ width: "100%" }}
-                            >
-                                <option value="LIBRAS">Vídeo de Libras (.mp4)</option>
-                                <option value="AUDIO">Audiodescrição (.mp3)</option>
-                            </select>
-                        </div>
+                        {(selectedRequest.type === "LIBRAS" || selectedRequest.type === "BOTH") && (
+                            <div className="form-group" style={{ marginBottom: "1rem" }}>
+                                <label>Arquivo de Libras (.mp4)</label>
+                                <input
+                                    type="file"
+                                    className="input"
+                                    accept="video/*"
+                                    onChange={e => setLibrasFile(e.target.files?.[0] || null)}
+                                    style={{ width: "100%" }}
+                                />
+                                {librasFile && <small style={{ color: "#4ade80" }}>✓ Selecionado: {librasFile.name}</small>}
+                            </div>
+                        )}
 
-                        <div className="form-group" style={{ marginTop: "1rem" }}>
-                            <label>Selecionar Arquivo</label>
-                            <input
-                                type="file"
-                                className="input"
-                                onChange={e => setUploadFile(e.target.files?.[0] || null)}
-                                accept={fileType === "LIBRAS" ? "video/*" : "audio/*"}
-                                style={{ width: "100%" }}
-                            />
-                        </div>
+                        {(selectedRequest.type === "AUDIO_DESC" || selectedRequest.type === "BOTH") && (
+                            <div className="form-group" style={{ marginBottom: "1rem" }}>
+                                <label>Arquivo de Áudio (.mp3)</label>
+                                <input
+                                    type="file"
+                                    className="input"
+                                    accept="audio/*"
+                                    onChange={e => setAudioFile(e.target.files?.[0] || null)}
+                                    style={{ width: "100%" }}
+                                />
+                                {audioFile && <small style={{ color: "#4ade80" }}>✓ Selecionado: {audioFile.name}</small>}
+                            </div>
+                        )}
+
+                        {uploading && (
+                            <div style={{ marginTop: "1rem" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                                    <span>Enviando...</span>
+                                    <span>{progress}%</span>
+                                </div>
+                                <div style={{ width: "100%", height: "8px", backgroundColor: "#374151", borderRadius: "4px", overflow: "hidden" }}>
+                                    <div style={{ width: `${progress}%`, height: "100%", backgroundColor: "#d4af37", transition: "width 0.3s ease" }}></div>
+                                </div>
+                            </div>
+                        )}
 
                         <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.5rem", justifyContent: "flex-end" }}>
                             <button
@@ -189,9 +252,9 @@ export const MasterAccessibilityRequests: React.FC = () => {
                             <button
                                 className="btn"
                                 onClick={handleFulfill}
-                                disabled={!uploadFile || uploading}
+                                disabled={uploading || (selectedRequest.type === "BOTH" && (!librasFile || !audioFile)) || (selectedRequest.type === "LIBRAS" && !librasFile) || (selectedRequest.type === "AUDIO_DESC" && !audioFile)}
                             >
-                                {uploading ? "Enviando..." : "Enviar e Finalizar"}
+                                {uploading ? "Processando..." : "Concluir Solicitação"}
                             </button>
                         </div>
                     </div>
