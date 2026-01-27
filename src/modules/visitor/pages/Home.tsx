@@ -111,7 +111,10 @@ export const Home: React.FC = () => {
             : t("visitor.home.subtitle", "Explore a história e a cultura dos nossos museus com suporte a acessibilidade e guias inteligentes.")}
         </p>
 
-        <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
+          <Link to="/scanner" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem", background: "var(--accent-gold)", color: "black", borderColor: "var(--accent-gold)" }}>
+            📷 Scanner
+          </Link>
           {isCityMode ? (
             <Link to="/mapa" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
               {t("visitor.home.exploreMap", "Explorar Mapa 🗺️")}

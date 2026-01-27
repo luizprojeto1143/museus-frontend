@@ -35,6 +35,7 @@ import { QrVisit } from "./modules/visitor/pages/QrVisit";
 import TreasureHunt from "./modules/visitor/pages/TreasureHunt";
 import { SmartItineraryWizard } from "./modules/visitor/pages/SmartItineraryWizard";
 import { SmartItineraryResult } from "./modules/visitor/pages/SmartItineraryResult";
+import { ScannerHub } from "./modules/visitor/pages/ScannerHub";
 import { ScannerPage } from "./modules/visitor/pages/ScannerPage";
 import { SchedulingPage } from "./modules/visitor/pages/SchedulingPage";
 import { GuestbookPage } from "./modules/visitor/pages/GuestbookPage";
@@ -346,8 +347,19 @@ const App: React.FC = () => {
                 </RequireRole>
               }
             />
+            {/* SCANNER HUB & SUB-ROUTES */}
             <Route
               path="/scanner"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <ScannerHub />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/scanner/qr"
               element={
                 <RequireRole allowed={["visitor", "admin", "master"]}>
                   <VisitorLayout>
@@ -356,31 +368,8 @@ const App: React.FC = () => {
                 </RequireRole>
               }
             />
-
             <Route
-              path="/agendamento"
-              element={
-                <RequireRole allowed={["visitor", "admin", "master"]}>
-                  <VisitorLayout>
-                    <SchedulingPage />
-                  </VisitorLayout>
-                </RequireRole>
-              }
-            />
-
-            <Route
-              path="/livro-visitas"
-              element={
-                <RequireRole allowed={["visitor", "admin", "master"]}>
-                  <VisitorLayout>
-                    <GuestbookPage />
-                  </VisitorLayout>
-                </RequireRole>
-              }
-            />
-
-            <Route
-              path="/scanner-visual"
+              path="/scanner/ai"
               element={
                 <RequireRole allowed={["visitor", "admin", "master"]}>
                   <VisualScannerPage />

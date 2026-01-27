@@ -39,17 +39,17 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
     // Validação básica
     const nameParts = name.trim().split(" ");
     if (nameParts.length < 2) {
-      setError("Por favor, digite seu nome e sobrenome.");
+      setError(t("auth.errors.fullNameRequired", "Por favor, digite seu nome e sobrenome."));
       return;
     }
 
     if (!email.includes("@")) {
-      setError(t("auth.login.email") + " inválido");
+      setError(t("auth.login.email") + " " + t("common.invalid", "inválido"));
       return;
     }
 
     if (password.length < 6) {
-      setError("Senha muito curta (min 6)");
+      setError(t("auth.errors.passwordLength", "Senha muito curta (min 6)"));
       return;
     }
 
@@ -60,7 +60,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
 
     const ageNum = parseInt(age);
     if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
-      setError("Idade inválida");
+      setError(t("auth.errors.invalidAge", "Idade inválida"));
       return;
     }
 
@@ -77,8 +77,6 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
         role: "visitor"
       });
 
-      const authData = registerRes.data;
-
       // 2. Criar registro de visitante com idade (axios)
       await api.post("/visitors/register", {
         tenantId,
@@ -87,8 +85,8 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
         age: ageNum
       });
 
-      // Redirecionar para login
-      window.location.href = "/login";
+      // Redirecionar para login (SPA Navigation)
+      navigate("/login");
     } catch (err) {
       console.error("Registration Error:", err);
       // Axios puts response data in err.response.data
@@ -96,7 +94,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
       const backendMessage = axiosErr.response?.data?.message;
       const errorMsg = backendMessage || axiosErr.message || String(err);
 
-      setError(`Falha (v1.1): ${errorMsg}`);
+      setError(t("auth.errors.genericFail", "Falha no registro") + `: ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
     }

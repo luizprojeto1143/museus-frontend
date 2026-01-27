@@ -30,31 +30,31 @@ export const ChallengesPage: React.FC = () => {
     const [userXp, setUserXp] = useState(0);
 
     useEffect(() => {
+        const fetchHunts = async () => {
+            try {
+                const res = await api.get(`/challenges/hunts?tenantId=${tenantId}`);
+                setHunts(res.data);
+            } catch (error) {
+                console.error('Error fetching hunts:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const fetchUserStats = async () => {
+            try {
+                const res = await api.get('/visitors/me');
+                setUserXp(res.data.xp || 0);
+            } catch (error) {
+                console.error('Error fetching user stats:', error);
+            }
+        };
+
         if (tenantId) {
             fetchHunts();
             fetchUserStats();
         }
     }, [tenantId]);
-
-    const fetchHunts = async () => {
-        try {
-            const res = await api.get(`/challenges/hunts?tenantId=${tenantId}`);
-            setHunts(res.data);
-        } catch (error) {
-            console.error('Error fetching hunts:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchUserStats = async () => {
-        try {
-            const res = await api.get('/visitors/me');
-            setUserXp(res.data.xp || 0);
-        } catch (error) {
-            console.error('Error fetching user stats:', error);
-        }
-    };
 
     const calculateLevel = (xp: number) => {
         // Each level = 500 XP

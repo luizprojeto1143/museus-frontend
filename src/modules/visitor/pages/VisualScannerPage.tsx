@@ -46,12 +46,12 @@ export const VisualScannerPage: React.FC = () => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
                         loadedClassifier.setClassifierDataset(dataset);
-                        console.log("Modelo carregado com sucesso!");
+
                     } catch (e) {
                         console.error("Erro ao carregar modelo", e);
                     }
                 } else {
-                    console.warn("Nenhum modelo treinado encontrado.");
+
                     if (isMounted) setStatus("Nenhum modelo treinado encontrado. O scanner pode não funcionar.");
                 }
 
@@ -163,8 +163,8 @@ export const VisualScannerPage: React.FC = () => {
                     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.8)", zIndex: 10 }}>
                         <div style={{ textAlign: "center", padding: "1.5rem" }}>
                             <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>📷</div>
-                            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "0.5rem" }}>{t("visitor.visualScanner.title", "Reconhecimento Visual")}</h2>
-                            <p style={{ color: "#9ca3af", marginBottom: "1.5rem" }}>{t("visitor.visualScanner.instruction", "Aponte a câmera para uma obra")}</p>
+                            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "0.5rem" }}>{t("visitor.visualScanner.title", "Scanner de Obras (IA)")}</h2>
+                            <p style={{ color: "#9ca3af", marginBottom: "1.5rem" }}>{t("visitor.visualScanner.instruction", "A IA identificará a obra automaticamente (Requer treinamento)")}</p>
                             <button
                                 onClick={startCamera}
                                 style={{ backgroundColor: "white", color: "black", padding: "0.75rem 2rem", borderRadius: "9999px", fontWeight: "bold", cursor: "pointer", border: "none" }}

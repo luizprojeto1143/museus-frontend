@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ArrowLeft, RefreshCw, Trophy, ChevronRight, Star, CheckCircle, Gamepad2 as GamePadIcon } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trophy, ChevronRight, Star, CheckCircle, Gamepad2 as GamePadIcon, ArrowUp } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 
@@ -362,13 +362,14 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     const { tenantId } = useAuth(); // Need tenantId for leaderboard
 
     // Character Options
+    // Character Options
     const CHARACTERS = [
-        { id: 'male_light', name: 'Visitante 1', sprite: '/assets/characters/visitor_male_light.png', color: '#FFE0B2' },
-        { id: 'male_medium', name: 'Visitante 2', sprite: '/assets/characters/visitor_male_medium.png', color: '#BCAAA4' },
-        { id: 'male_dark', name: 'Visitante 3', sprite: '/assets/characters/visitor_male_dark.png', color: '#6D4C41' },
-        { id: 'female_light', name: 'Visitante 4', sprite: '/assets/characters/visitor_female_light.png', color: '#FFE0B2' },
-        { id: 'female_medium', name: 'Visitante 5', sprite: '/assets/characters/visitor_female_medium.png', color: '#BCAAA4' },
-        { id: 'female_dark', name: 'Visitante 6', sprite: '/assets/characters/visitor_female_dark.png', color: '#6D4C41' },
+        { id: 'male_light', name: 'O Explorador', sprite: '/assets/characters/visitor_male_light.png', color: '#FFE0B2', stats: 'Speed+' },
+        { id: 'male_medium', name: 'O Curador', sprite: '/assets/characters/visitor_male_medium.png', color: '#BCAAA4', stats: 'Jump+' },
+        { id: 'male_dark', name: 'O Arqueólogo', sprite: '/assets/characters/visitor_male_dark.png', color: '#6D4C41', stats: 'Defense+' },
+        { id: 'female_light', name: 'A Estudante', sprite: '/assets/characters/visitor_female_light.png', color: '#FFE0B2', stats: 'Agility+' },
+        { id: 'female_medium', name: 'A Artista', sprite: '/assets/characters/visitor_female_medium.png', color: '#BCAAA4', stats: 'Luck+' },
+        { id: 'female_dark', name: 'A Visionária', sprite: '/assets/characters/visitor_female_dark.png', color: '#6D4C41', stats: 'Score+' },
     ];
 
     // UI State
@@ -380,9 +381,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
     const [currentLevelIdx, setCurrentLevelIdx] = useState(0);
 
     const levels = React.useMemo(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const t = theme as any;
-        return t.levels || [t.level];
+        return theme.levels;
     }, [theme]);
 
     // Game Mutable State (Ref to avoid re-renders in loop)
@@ -431,12 +430,36 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         }
     }, []);
 
-    const saveProgress = useCallback(async () => {
-        console.log("Saving XP:", score);
+    const [gameToken, setGameToken] = useState<string | null>(null);
+
+    // Call this when entering PLAYING state
+    const startGameSession = useCallback(async () => {
         try {
-            await api.post('/gamification/xp', { amount: score + 500, reason: 'GAME_WIN' });
-        } catch (e) { console.error(e); }
-    }, [score]);
+            const res = await api.post('/gamification/session/start');
+            setGameToken(res.data.gameToken);
+        } catch (e) {
+            console.error("Failed to start secure session", e);
+        }
+    }, []);
+
+    const saveProgress = useCallback(async () => {
+        if (!gameToken) return;
+        console.log("Saving Secure XP:", score);
+        try {
+            await api.post('/gamification/session/end', {
+                gameToken,
+                score,
+                coins
+            });
+        } catch (e) { console.error("Cheat check failed or network error", e); }
+    }, [score, coins, gameToken]);
+
+    // Hook into start
+    useEffect(() => {
+        if (gameState === 'PLAYING' && !gameToken) {
+            startGameSession();
+        }
+    }, [gameState, gameToken, startGameSession]);
 
     const die = useCallback(() => {
         game.current.player.isDead = true;
@@ -730,7 +753,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                 if (tile.y < (tile.originY || 0)) tile.y += 1;
             }
         }
-    }, [gameState, die, checkCollision]);
+    }, [gameState, die, checkCollision, spawnParticles]);
 
     const draw = useCallback((ctx: CanvasRenderingContext2D) => {
         const canvasW = ctx.canvas.width;
@@ -956,26 +979,34 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
         }
     }, [gameState, fetchLeaderboard]);
 
+    // 1. Level Initialization Effect
     useEffect(() => {
         if (gameState === 'PLAYING') {
             initLevel(currentLevelIdx);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentLevelIdx, gameState]); // ONLY run when level or gamestate changes
+
+
+    // 2. Game Loop & Listeners Effect
+    useEffect(() => {
+        if (gameState === 'PLAYING') {
             window.addEventListener('keydown', handleKeyDown);
             window.addEventListener('keyup', handleKeyUp);
 
-            game.current.animationFrame = requestAnimationFrame(animate);
+            game.current.animationFrame = requestAnimationFrame(animateRef.current);
 
             return () => {
                 window.removeEventListener('keydown', handleKeyDown);
                 window.removeEventListener('keyup', handleKeyUp);
-                // eslint-disable-next-line react-hooks/exhaustive-deps
                 cancelAnimationFrame(game.current.animationFrame);
             };
         }
-    }, [currentLevelIdx, initLevel, handleKeyDown, handleKeyUp, animate, gameState]);
+    }, [gameState, handleKeyDown, handleKeyUp]); // Removed 'animate' dependency to prevent restart on re-render
 
     // --- RENDER UI ---
     return (
-        <div className="fixed inset-0 bg-gradient-to-b from-gray-950 to-gray-900 z-50 flex flex-col items-center justify-center p-4">
+        <div className="fixed inset-0 bg-gradient-to-b from-gray-950 to-gray-900 z-50 flex flex-col items-center justify-center p-4 select-none touch-none">
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
                 
@@ -1018,8 +1049,8 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                     </div>
 
                     {/* Character Cards Carousel */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full px-4 relative z-30">
-                        {CHARACTERS.slice(0, 3).map((char) => ( // Showing top 3 for layout symmetry, or mapped properly
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10 w-full px-4 relative z-30 max-w-4xl">
+                        {CHARACTERS.map((char) => (
                             <div
                                 key={char.id}
                                 onClick={() => setSelectedCharacter(char)}
@@ -1057,7 +1088,7 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                                     <div className="w-full h-1 bg-gray-700 rounded-full overflow-hidden">
                                         <div className="h-full bg-blue-500 w-3/4"></div>
                                     </div>
-                                    <p className="text-xs text-gray-400 mt-2 uppercase tracking-wider">Speed Class A</p>
+                                    <p className="text-xs text-yellow-500 font-bold mt-2 uppercase tracking-wider">{char.stats}</p>
                                 </div>
 
                                 {/* Selection Overlay */}
@@ -1261,26 +1292,28 @@ export const MuseumPlatformer: React.FC<{ onClose: () => void; theme?: typeof DE
                         Controls: Arrows / WASD to Move • SPACE to Jump
                     </div>
 
-                    {/* Mobile Touch Controls */}
-                    <div className="md:hidden w-full max-w-lg mt-4 flex justify-between gap-4 select-none">
-                        <div className="flex gap-2">
+                    {/* Mobile Touch Controls - ERGONOMIC REDESIGN */}
+                    <div className="md:hidden absolute bottom-8 left-0 right-0 px-6 flex justify-between items-end gap-4 select-none pointer-events-none">
+                        <div className="flex gap-4 pointer-events-auto">
                             <ControlBtn
                                 onDown={() => { game.current.keys.left = true; }}
                                 onUp={() => { game.current.keys.left = false; }}
-                                icon="←"
+                                icon={<ArrowLeft size={32} />}
                             />
                             <ControlBtn
                                 onDown={() => { game.current.keys.right = true; }}
                                 onUp={() => { game.current.keys.right = false; }}
-                                icon="→"
+                                icon={<ChevronRight size={32} />}
                             />
                         </div>
-                        <ControlBtn
-                            onDown={() => { game.current.keys.up = true; }}
-                            onUp={() => { game.current.keys.up = false; }}
-                            icon="JUMP"
-                            large
-                        />
+                        <div className="pointer-events-auto">
+                            <ControlBtn
+                                onDown={() => { game.current.keys.up = true; }}
+                                onUp={() => { game.current.keys.up = false; }}
+                                icon={<ArrowUp size={32} />}
+                                variant="jump"
+                            />
+                        </div>
                     </div>
                 </>
             )}
@@ -1292,19 +1325,23 @@ interface ControlBtnProps {
     onDown: () => void;
     onUp: () => void;
     icon: React.ReactNode;
-    large?: boolean;
+    variant?: 'default' | 'jump';
 }
 
-const ControlBtn: React.FC<ControlBtnProps> = ({ onDown, onUp, icon, large }) => (
+const ControlBtn: React.FC<ControlBtnProps> = ({ onDown, onUp, icon, variant = 'default' }) => (
     <button
         onPointerDown={(e) => { e.preventDefault(); onDown(); }}
         onPointerUp={(e) => { e.preventDefault(); onUp(); }}
         onPointerLeave={(e) => { e.preventDefault(); onUp(); }}
+        onContextMenu={(e) => e.preventDefault()}
         className={`
-            flex items-center justify-center rounded-2xl bg-white/10 active:bg-white/30 text-white font-bold backdrop-blur-sm border border-white/20 transition-all active:scale-95
-            ${large ? 'w-24 h-16 text-sm bg-blue-500/30' : 'w-16 h-16 text-2xl'}
+            flex items-center justify-center rounded-full shadow-lg backdrop-blur-md border border-white/20 transition-all active:scale-95 touch-none
+            ${variant === 'jump'
+                ? 'w-24 h-24 bg-blue-500/40 active:bg-blue-500/60 text-white border-blue-400/30'
+                : 'w-20 h-20 bg-white/10 active:bg-white/30 text-white'}
         `}
     >
         {icon}
     </button>
 );
+

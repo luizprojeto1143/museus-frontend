@@ -93,7 +93,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     { to: "/ranking", label: t("visitor.sidebar.leaderboard", "Ranking"), icon: "🏆", feature: "featureGamification" },
     { to: "/favoritos", label: t("visitor.sidebar.favorites", "Favoritos"), icon: "❤️", feature: "featureReviews" },
     { to: "/chat", label: t("visitor.sidebar.aiChat", "Chat IA"), icon: "🤖", feature: "featureChatAI" },
-    { to: "/scanner", label: t("visitor.sidebar.scanner"), icon: "📸", feature: "featureQRCodes" },
+    { to: "/scanner", label: t("visitor.sidebar.scanner", "Scanner"), icon: "📷", feature: "featureQRCodes" },
     { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤", feature: null }, // Always visible
     { to: "/livro-visitas", label: t("visitor.sidebar.guestbook"), icon: "✍️", feature: "featureGuestbook" },
   ];
