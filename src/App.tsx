@@ -80,6 +80,7 @@ import { AdminMapEditor } from "./modules/admin/pages/AdminMapEditor";
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
 import { TenantsList } from "./modules/master/pages/TenantsList";
 import { TenantForm } from "./modules/master/pages/TenantForm";
+import { MasterSeeder } from "./modules/master/pages/MasterSeeder";
 import { MasterUsers } from "./modules/master/pages/MasterUsers";
 import { MasterUserForm } from "./modules/master/pages/MasterUserForm";
 import { MasterAchievements } from "./modules/master/pages/MasterAchievements";
@@ -129,8 +130,9 @@ const App: React.FC = () => {
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/select-museum" element={<SelectMuseum />} />
             <Route path="/verify/:code" element={<CertificateValidator />} />
-            <Route path="/register" element={<RegisterWrapper />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="users" element={<MasterUsers />} />
+            <Route path="seeder" element={<MasterSeeder />} />
+            <Route path="tenants" element={<TenantsList />} />
 
             {/* VISITANTE */}
             <Route
