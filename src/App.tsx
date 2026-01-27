@@ -45,13 +45,7 @@ import { VisitorProfile } from "./modules/visitor/pages/VisitorProfile";
 import { CertificateValidator } from "./modules/public/CertificateValidator";
 import { ShopPage } from "./modules/visitor/pages/ShopPage";
 import { ChallengesPage } from "./modules/visitor/pages/ChallengesPage";
-import { MuseumPlatformer } from "./modules/visitor/pages/MuseumPlatformer";
-import { useNavigate } from "react-router-dom";
 
-const MuseumPlatformerPageWrapper = () => {
-  const navigate = useNavigate();
-  return <MuseumPlatformer onClose={() => navigate(-1)} />;
-};
 
 // Admin pages
 import { AdminDashboard } from "./modules/admin/pages/AdminDashboard";
@@ -258,14 +252,7 @@ const App: React.FC = () => {
               }
             />
 
-            <Route
-              path="/arcade"
-              element={
-                <RequireRole allowed={["visitor", "admin", "master"]}>
-                  <MuseumPlatformerPageWrapper />
-                </RequireRole>
-              }
-            />
+
 
             <Route
               path="/perfil"
