@@ -49,7 +49,7 @@ export const ScannerHub: React.FC = () => {
             </div>
 
             <div className="text-center mt-8 text-gray-500 text-sm">
-                <p>💡 Dica: O reconhecimento visual requer que a obra tenha sido treinada previamente.</p>
+
             </div>
         </div>
     );
