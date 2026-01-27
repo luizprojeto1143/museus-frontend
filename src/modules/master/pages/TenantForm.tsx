@@ -11,6 +11,7 @@ export const TenantForm: React.FC = () => {
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [isCityMode, setIsCityMode] = useState(false);
 
 
   const [adminEmail, setAdminEmail] = useState("");
@@ -40,6 +41,7 @@ export const TenantForm: React.FC = () => {
       const data = res.data;
       setName(data.name);
       setSlug(data.slug);
+      setIsCityMode(data.isCityMode ?? false);
 
       setPlan(data.plan || "START");
       setMaxWorks(data.maxWorks || 50);
@@ -82,6 +84,7 @@ export const TenantForm: React.FC = () => {
     interface TenantPayload {
       name: string;
       slug: string;
+      isCityMode?: boolean;
 
       adminEmail?: string;
       adminName?: string;
@@ -107,6 +110,7 @@ export const TenantForm: React.FC = () => {
     const payload: TenantPayload = {
       name,
       slug,
+      isCityMode,
 
       plan,
       maxWorks,
@@ -231,6 +235,47 @@ export const TenantForm: React.FC = () => {
         </div>
 
 
+
+        <div style={{ marginTop: "1.5rem", marginBottom: "1.5rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>
+          <h3 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>🗺️ Modo de Operação</h3>
+          <p style={{ fontSize: "0.85rem", color: "#6b7280", marginBottom: "1rem" }}>Defina se o projeto é um ambiente fechado (Museu) ou aberto (Cidade/Turismo).</p>
+
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <label style={{
+              display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer",
+              padding: "0.75rem", border: !isCityMode ? "2px solid #d4af37" : "1px solid #ddd", borderRadius: "0.5rem",
+              background: !isCityMode ? "#fffbeb" : "#fff", flex: 1
+            }}>
+              <input
+                type="radio"
+                name="mode"
+                checked={!isCityMode}
+                onChange={() => setIsCityMode(false)}
+              />
+              <div>
+                <strong style={{ display: "block", color: "#1f2937" }}>🏛️ Modo Museu</strong>
+                <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Interior, salas, andares</span>
+              </div>
+            </label>
+
+            <label style={{
+              display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer",
+              padding: "0.75rem", border: isCityMode ? "2px solid #2563eb" : "1px solid #ddd", borderRadius: "0.5rem",
+              background: isCityMode ? "#eff6ff" : "#fff", flex: 1
+            }}>
+              <input
+                type="radio"
+                name="mode"
+                checked={isCityMode}
+                onChange={() => setIsCityMode(true)}
+              />
+              <div>
+                <strong style={{ display: "block", color: "#1f2937" }}>🏙️ Modo Cidade</strong>
+                <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Geo-localização, roteiros, mapas</span>
+              </div>
+            </label>
+          </div>
+        </div>
 
         {/* Feature Flags Section */}
         <div style={{ marginTop: "1.5rem", marginBottom: "1.5rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>
