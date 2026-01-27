@@ -20,10 +20,15 @@ interface FeaturedTrail {
   description?: string;
 }
 
+import { useTerminology } from "../../../hooks/useTerminology";
+import { useIsCityMode } from "../../auth/TenantContext";
+
 export const Home: React.FC = () => {
   const { t } = useTranslation();
   const { name, tenantId, role } = useAuth();
   const navigate = useNavigate();
+  const term = useTerminology();
+  const isCityMode = useIsCityMode();
   const [featuredWorks, setFeaturedWorks] = useState<FeaturedWork[]>([]);
   const [featuredTrails, setFeaturedTrails] = useState<FeaturedTrail[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,15 +106,24 @@ export const Home: React.FC = () => {
           color: "#B0A090",
           fontStyle: "italic"
         }}>
-          {t("visitor.home.subtitle", "Explore a história e a cultura dos nossos museus com suporte a acessibilidade e guias inteligentes.")}
+          {isCityMode
+            ? t("visitor.home.subtitleCity", "Explore os pontos turísticos e a história da cidade com guias inteligentes.")
+            : t("visitor.home.subtitle", "Explore a história e a cultura dos nossos museus com suporte a acessibilidade e guias inteligentes.")}
         </p>
 
         <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
-          <Link to="/trilhas" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
-            {t("visitor.home.startTrail")}
-          </Link>
-          <Link to="/mapa" className="btn btn-secondary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
-            {t("visitor.home.viewMap")}
+          {isCityMode ? (
+            <Link to="/mapa" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
+              {t("visitor.home.exploreMap", "Explorar Mapa 🗺️")}
+            </Link>
+          ) : (
+            <Link to="/trilhas" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
+              {t("visitor.home.startTrail")}
+            </Link>
+          )}
+
+          <Link to={isCityMode ? "/trilhas" : "/mapa"} className="btn btn-secondary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
+            {isCityMode ? term.trails : t("visitor.home.viewMap")}
           </Link>
         </div>
       </section>
@@ -122,7 +136,7 @@ export const Home: React.FC = () => {
           fontFamily: "'Georgia', serif",
           marginBottom: "0.5rem"
         }}>
-          {t("visitor.home.featuredArtworks")}
+          {term.featuredWorks}
         </h2>
         <p className="section-subtitle" style={{ color: "#888", marginBottom: "1.5rem" }}>
           {t("visitor.home.featuredSubtitle")}

@@ -16,6 +16,8 @@ import "./VisitorLayout.css";
 
 // Use the custom hook for PWA installation
 import { usePWAInstall } from "../../hooks/usePWA";
+import { useTerminology } from "../../hooks/useTerminology";
+import { useIsCityMode } from "../auth/TenantContext";
 import { InstallGuideModal } from "./components/InstallGuideModal";
 
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -77,10 +79,13 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [tenantId]);
 
+  const term = useTerminology();
+  const isCityMode = useIsCityMode();
+
   const allLinks = [
     { to: "/home", label: t("visitor.sidebar.home"), icon: "🏠", feature: null }, // Always visible
-    { to: "/obras", label: t("visitor.sidebar.artworks"), icon: "🎨", feature: "featureWorks" },
-    { to: "/trilhas", label: t("visitor.sidebar.trails"), icon: "🗺️", feature: "featureTrails" },
+    { to: "/obras", label: term.works, icon: isCityMode ? "🏛️" : "🎨", feature: "featureWorks" },
+    { to: "/trilhas", label: term.trails, icon: "🗺️", feature: "featureTrails" },
     { to: "/mapa", label: t("visitor.sidebar.map", "Mapa"), icon: "📍", feature: null }, // Always visible
     { to: "/eventos", label: t("visitor.sidebar.events"), icon: "📅", feature: "featureEvents" },
     { to: "/desafios", label: t("visitor.sidebar.challenges", "Desafios"), icon: "🎯", feature: "featureGamification" },
