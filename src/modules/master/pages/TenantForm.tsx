@@ -270,8 +270,8 @@ export const TenantForm: React.FC = () => {
                 onChange={() => setIsCityMode(true)}
               />
               <div>
-                <strong style={{ display: "block", color: "#1f2937" }}>🏙️ Modo Cidade</strong>
-                <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>Geo-localização, roteiros, mapas</span>
+                <strong style={{ display: "block", color: "#1f2937" }}>🏙️ {t('master.tenant.modeCity', 'Modo Cidade')}</strong>
+                <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>{t('master.tenant.modeCityDesc', 'Geo-localização, roteiros, mapas')}</span>
               </div>
             </label>
           </div>

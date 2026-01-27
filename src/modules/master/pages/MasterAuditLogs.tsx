@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, User, Database, Filter, ChevronDown, ChevronRight } from 'lucide-react';
 import { api } from '../../../api/client';
+import { useTranslation } from 'react-i18next';
 
 interface AuditLogEntry {
     id: string;
@@ -18,6 +19,7 @@ interface AuditLogEntry {
 }
 
 export const MasterAuditLogs: React.FC = () => {
+    const { t } = useTranslation();
     const [logs, setLogs] = useState<AuditLogEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
@@ -69,8 +71,8 @@ export const MasterAuditLogs: React.FC = () => {
         <div className="audit-logs-page">
             <header className="page-header">
                 <div>
-                    <h1>📋 Logs de Auditoria</h1>
-                    <p className="subtitle">Histórico de todas as ações administrativas do sistema</p>
+                    <h1>📋 {t('master.audit.title', 'Logs de Auditoria')}</h1>
+                    <p className="subtitle">{t('master.audit.subtitle', 'Histórico de todas as ações administrativas do sistema')}</p>
                 </div>
                 <div className="stats-badge">
                     <span>{total}</span> registros
@@ -111,11 +113,11 @@ export const MasterAuditLogs: React.FC = () => {
             {/* Logs List */}
             <div className="logs-list">
                 {loading ? (
-                    <div className="loading-state">Carregando logs...</div>
+                    <div className="loading-state">{t('common.loading', 'Carregando logs...')}</div>
                 ) : logs.length === 0 ? (
                     <div className="empty-state">
                         <Database size={48} />
-                        <p>Nenhum log encontrado</p>
+                        <p>{t('master.audit.empty', 'Nenhum log encontrado')}</p>
                     </div>
                 ) : (
                     logs.map(log => (

@@ -72,7 +72,7 @@ export const SchedulingPage: React.FC = () => {
             await api.delete(`/bookings/${id}`);
             fetchBookings();
         } catch {
-            alert(t("visitor.scheduling.cancelError", "Erro ao cancelar."));
+            setMessage({ type: "error", text: t("visitor.scheduling.cancelError", "Erro ao cancelar.") });
         }
     };
 

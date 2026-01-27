@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import { api } from '../../../api/client';
+import { useTranslation } from 'react-i18next';
 
 interface HealthData {
     status: 'healthy' | 'unhealthy';
@@ -27,6 +28,7 @@ interface HealthData {
 }
 
 export const MasterSystemHealth: React.FC = () => {
+    const { t } = useTranslation();
     const [health, setHealth] = useState<HealthData | null>(null);
     const [loading, setLoading] = useState(true);
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -83,8 +85,8 @@ export const MasterSystemHealth: React.FC = () => {
         <div className="system-health-page">
             <header className="page-header">
                 <div>
-                    <h1>🖥️ Saúde do Sistema</h1>
-                    <p className="subtitle">Monitoramento em tempo real da infraestrutura</p>
+                    <h1>🖥️ {t('master.health.title', 'Saúde do Sistema')}</h1>
+                    <p className="subtitle">{t('master.health.subtitle', 'Monitoramento em tempo real da infraestrutura')}</p>
                 </div>
                 <div className="header-actions">
                     <label className="auto-refresh">
@@ -106,8 +108,8 @@ export const MasterSystemHealth: React.FC = () => {
             <div className={`status-banner ${isHealthy ? 'healthy' : 'unhealthy'}`}>
                 {isHealthy ? <CheckCircle size={32} /> : <XCircle size={32} />}
                 <div>
-                    <h2>{isHealthy ? 'Sistema Operacional' : 'Problemas Detectados'}</h2>
-                    <p>Última verificação: {lastUpdate?.toLocaleTimeString('pt-BR') || 'N/A'}</p>
+                    <h2>{isHealthy ? t('master.health.statusOk', 'Sistema Operacional') : t('master.health.statusError', 'Problemas Detectados')}</h2>
+                    <p>{t('master.health.lastCheck', 'Última verificação')}: {lastUpdate?.toLocaleTimeString('pt-BR') || 'N/A'}</p>
                 </div>
             </div>
 

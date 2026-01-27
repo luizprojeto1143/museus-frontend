@@ -96,7 +96,7 @@ export const LeaderboardPage: React.FC = () => {
 
             <div style={{ textAlign: 'right' }}>
                 <div className="item-xp">{entry.xp}</div>
-                <span className="item-xp-label">XP TOTAL</span>
+                <span className="item-xp-label">{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</span>
             </div>
         </div>
     );
@@ -124,7 +124,7 @@ export const LeaderboardPage: React.FC = () => {
 
                     <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-gold)' }}>{myRank.xp}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--fg-soft)', fontWeight: 'bold' }}>XP TOTAL</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--fg-soft)', fontWeight: 'bold' }}>{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</div>
                     </div>
                 </div>
             )}

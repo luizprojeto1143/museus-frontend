@@ -21,6 +21,7 @@ export const GuestbookPage: React.FC = () => {
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchEntries = useCallback(async () => {
         if (!tenantId) return;
@@ -41,6 +42,7 @@ export const GuestbookPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
         if (!newMessage.trim() || !tenantId) return;
 
         setSubmitting(true);
@@ -55,7 +57,7 @@ export const GuestbookPage: React.FC = () => {
             fetchEntries();
         } catch (error) {
             console.error("Failed to post message", error);
-            alert(t("visitor.guestbook.error", "Erro ao enviar mensagem."));
+            setError(t("visitor.guestbook.error", "Erro ao enviar mensagem."));
         } finally {
             setSubmitting(false);
         }
@@ -67,6 +69,12 @@ export const GuestbookPage: React.FC = () => {
             <p className="section-subtitle" style={{ marginBottom: "2rem" }}>
                 {t("visitor.guestbook.subtitle", "Deixe sua marca no museu! Compartilhe sua experiência.")}
             </p>
+
+            {error && (
+                <div style={{ padding: "1rem", backgroundColor: "#fee2e2", color: "#ef4444", borderRadius: "0.5rem", marginBottom: "1rem" }}>
+                    {error}
+                </div>
+            )}
 
             {/* Form */}
             {isAuthenticated ? (
