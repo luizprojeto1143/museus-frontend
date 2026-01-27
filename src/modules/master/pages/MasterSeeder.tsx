@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../api/client';
 import { Users, Trash2, PlayCircle, MessageSquare } from 'lucide-react';
-import { MasterLayout } from '../components/MasterLayout';
+
 
 export const MasterSeeder: React.FC = () => {
     const { t } = useTranslation();
