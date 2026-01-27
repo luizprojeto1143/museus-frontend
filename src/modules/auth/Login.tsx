@@ -140,20 +140,7 @@ export const Login: React.FC = () => {
         </div>
       </form>
 
-      <div style={{
-        marginTop: "2rem",
-        padding: "1rem",
-        background: "rgba(0,0,0,0.5)",
-        borderRadius: "0.5rem",
-        fontSize: "0.75rem",
-        color: "#aaa",
-        maxWidth: 380,
-        width: "100%"
-      }}>
-        <p><strong>Debug Info:</strong></p>
-        <p>API URL: {import.meta.env.VITE_API_URL || "(not set)"}</p>
-        <p>Mode: {import.meta.env.MODE}</p>
-      </div>
+
     </div>
   );
 };
