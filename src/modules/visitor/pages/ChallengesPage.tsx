@@ -82,28 +82,7 @@ export const ChallengesPage: React.FC = () => {
                 <XpProgressBar currentXp={userXp} level={calculateLevel(userXp)} />
             </section>
 
-            {/* Arcade Game Promo */}
-            <section className="section bg-gradient-to-r from-indigo-900 to-purple-900 rounded-2xl p-6 text-white relative overflow-hidden mb-8 shadow-xl border border-indigo-700">
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                    <div className="bg-white/20 p-4 rounded-full">
-                        <Gamepad2 size={40} className="text-yellow-400" />
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                        <h2 className="text-2xl font-black text-yellow-400 italic">ART RUN</h2>
-                        <p className="text-indigo-200 mb-4">Jogue a nova aventura platformer! Colete moedas e ganhe XP real.</p>
-                        <button
-                            onClick={() => navigate('/arcade')}
-                            className="bg-yellow-500 hover:bg-yellow-400 text-indigo-900 font-bold px-8 py-3 rounded-xl transition-transform hover:scale-105 shadow-lg shadow-yellow-500/30"
-                        >
-                            JOGAR AGORA
-                        </button>
-                    </div>
-                    {/* Decor */}
-                    <div className="hidden md:block opacity-20 transform rotate-12">
-                        <Trophy size={120} />
-                    </div>
-                </div>
-            </section>
+
 
 
 
