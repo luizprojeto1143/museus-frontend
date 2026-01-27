@@ -436,5 +436,37 @@
                 "sun": "Sun"
             }
         }
+    },
+    "master": {
+        "userForm": {
+            "editTitle": "Edit User",
+            "newTitle": "New User",
+            "subtitle": "Fill in the user data to grant access to the system.",
+            "labels": {
+                "name": "Full Name",
+                "email": "Access E-mail",
+                "password": "Password",
+                "role": "Access Level",
+                "tenant": "Linked to Museum (Tenant)"
+            },
+            "placeholders": {
+                "name": "Ex: John Doe",
+                "email": "john@email.com",
+                "password": "Secure password",
+                "selectTenant": "Select a museum..."
+            },
+            "roles": {
+                "master": "Master (Global Access)",
+                "admin": "Admin (Museum Manager)"
+            },
+            "helpers": {
+                "tenant": "ADMIN users must be linked to a specific museum. MASTER users have access to everything."
+            },
+            "alerts": {
+                "selectTenant": "Please select a museum for the Admin user.",
+                "errorSave": "Error saving user. Please try again."
+            },
+            "demoAlert": "This is a demo version. User creation is simulated."
+        }
     }
 }

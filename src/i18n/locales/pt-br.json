@@ -864,6 +864,36 @@
                 "save": "Salvar",
                 "cancel": "Cancelar"
             }
+        },
+        "userForm": {
+            "editTitle": "Editar Usuário",
+            "newTitle": "Novo Usuário",
+            "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
+            "labels": {
+                "name": "Nome Completo",
+                "email": "E-mail de Acesso",
+                "password": "Senha",
+                "role": "Nível de Acesso",
+                "tenant": "Vinculado ao Museu (Tenant)"
+            },
+            "placeholders": {
+                "name": "Ex: João Silva",
+                "email": "joao@email.com",
+                "password": "Senha segura",
+                "selectTenant": "Selecione um museu..."
+            },
+            "roles": {
+                "master": "Master (Acesso Global)",
+                "admin": "Admin (Gestor de Museu)"
+            },
+            "helpers": {
+                "tenant": "Usuários ADMIN devem estar vinculados a um museu específico. Usuários MASTER têm acesso a tudo."
+            },
+            "alerts": {
+                "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
+                "errorSave": "Erro ao salvar usuário. Tente novamente."
+            },
+            "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
         }
     }
 }
