@@ -880,6 +880,7 @@
                 "name": "Ex: João Silva",
                 "email": "joao@email.com",
                 "password": "Senha segura",
+                "passwordEdit": "Nova senha (opcional)",
                 "selectTenant": "Selecione um museu..."
             },
             "roles": {
@@ -887,7 +888,8 @@
                 "admin": "Admin (Gestor de Museu)"
             },
             "helpers": {
-                "tenant": "Usuários ADMIN devem estar vinculados a um museu específico. Usuários MASTER têm acesso a tudo."
+                "tenant": "Usuários ADMIN devem estar vinculados a um museu específico. Usuários MASTER têm acesso a tudo.",
+                "passwordEdit": "Deixe em branco para manter a senha atual."
             },
             "alerts": {
                 "selectTenant": "Por favor, selecione um museu para o usuário Admin.",

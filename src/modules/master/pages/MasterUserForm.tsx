@@ -78,7 +78,7 @@ export const MasterUserForm: React.FC = () => {
       role
     };
 
-    if (!isEdit) {
+    if (!isEdit || password) {
       payload.password = password;
     }
 
@@ -144,20 +144,23 @@ export const MasterUserForm: React.FC = () => {
           />
         </div>
 
-        {!isEdit && (
-          <div className="form-group">
-            <label htmlFor="password">{t("master.userForm.labels.password")}</label>
-            <input
-              id="password"
-              type="password"
-              className="input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={t("master.userForm.placeholders.password")}
-              required
-            />
-          </div>
-        )}
+        <div className="form-group">
+          <label htmlFor="password">{t("master.userForm.labels.password")}</label>
+          <input
+            id="password"
+            type="password"
+            className="input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={isEdit ? t("master.userForm.placeholders.passwordEdit") : t("master.userForm.placeholders.password")}
+            required={!isEdit}
+          />
+          {isEdit && (
+            <p style={{ fontSize: "0.8rem", color: "#9ca3af", marginTop: "0.25rem" }}>
+              {t("master.userForm.helpers.passwordEdit")}
+            </p>
+          )}
+        </div>
 
         <div className="form-group">
           <label htmlFor="role">{t("master.userForm.labels.role")}</label>

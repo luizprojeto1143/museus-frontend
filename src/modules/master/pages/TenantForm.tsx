@@ -11,9 +11,7 @@ export const TenantForm: React.FC = () => {
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
-  const [signatureUrl, setSignatureUrl] = useState("");
-  const [certificateBackgroundUrl, setCertificateBackgroundUrl] = useState("");
+
 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminName, setAdminName] = useState("");
@@ -42,9 +40,7 @@ export const TenantForm: React.FC = () => {
       const data = res.data;
       setName(data.name);
       setSlug(data.slug);
-      setLogoUrl(data.logoUrl || "");
-      setSignatureUrl(data.signatureUrl || "");
-      setCertificateBackgroundUrl(data.certificateBackgroundUrl || "");
+
       setPlan(data.plan || "START");
       setMaxWorks(data.maxWorks || 50);
       // Feature Flags
@@ -86,9 +82,7 @@ export const TenantForm: React.FC = () => {
     interface TenantPayload {
       name: string;
       slug: string;
-      logoUrl?: string;
-      signatureUrl?: string;
-      certificateBackgroundUrl?: string;
+
       adminEmail?: string;
       adminName?: string;
       adminPassword?: string;
@@ -113,9 +107,7 @@ export const TenantForm: React.FC = () => {
     const payload: TenantPayload = {
       name,
       slug,
-      logoUrl,
-      signatureUrl,
-      certificateBackgroundUrl,
+
       plan,
       maxWorks,
       // Feature Flags
@@ -238,49 +230,7 @@ export const TenantForm: React.FC = () => {
           </p>
         </div>
 
-        {/* Branding Section */}
-        <div style={{ marginTop: "1.5rem", marginBottom: "1.5rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>
-          <h3 style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>Branding & Certificados</h3>
 
-          <div className="form-group">
-            <label htmlFor="logoUrl">URL do Logo</label>
-            <input
-              id="logoUrl"
-              className="input"
-              value={logoUrl}
-              onChange={e => setLogoUrl(e.target.value)}
-              placeholder="https://..."
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="signatureUrl">URL da Assinatura (Certificados)</label>
-            <input
-              id="signatureUrl"
-              className="input"
-              value={signatureUrl}
-              onChange={e => setSignatureUrl(e.target.value)}
-              placeholder="https://..."
-            />
-            <p style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
-              Imagem da assinatura digital para ser inserida nos certificados.
-            </p>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="certificateBackgroundUrl">URL do Fundo do Certificado (Template)</label>
-            <input
-              id="certificateBackgroundUrl"
-              className="input"
-              value={certificateBackgroundUrl}
-              onChange={e => setCertificateBackgroundUrl(e.target.value)}
-              placeholder="https://..."
-            />
-            <p style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
-              Imagem A4 (Paisagem) que substituirá o fundo padrão. O texto será sobreposto a ela.
-            </p>
-          </div>
-        </div>
 
         {/* Feature Flags Section */}
         <div style={{ marginTop: "1.5rem", marginBottom: "1.5rem", borderTop: "1px solid #eee", paddingTop: "1rem" }}>

@@ -453,6 +453,7 @@
                 "name": "Ex: John Doe",
                 "email": "john@email.com",
                 "password": "Secure password",
+                "passwordEdit": "New password (optional)",
                 "selectTenant": "Select a museum..."
             },
             "roles": {
@@ -460,7 +461,8 @@
                 "admin": "Admin (Museum Manager)"
             },
             "helpers": {
-                "tenant": "ADMIN users must be linked to a specific museum. MASTER users have access to everything."
+                "tenant": "ADMIN users must be linked to a specific museum. MASTER users have access to everything.",
+                "passwordEdit": "Leave blank to keep current password."
             },
             "alerts": {
                 "selectTenant": "Please select a museum for the Admin user.",
