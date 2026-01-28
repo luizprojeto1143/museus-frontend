@@ -13,7 +13,8 @@ import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
 import { NavigationModal } from "../../../components/navigation/NavigationModal";
 import { useTerminology } from "../../../hooks/useTerminology";
-
+import { Compass, Share2, Star, Volume2, VolumeX } from "lucide-react";
+import "./WorkDetail.css";
 
 type WorkDetailData = {
   id: string;
@@ -37,11 +38,7 @@ export const WorkDetail: React.FC = () => {
   const { tenantId } = useAuth();
   const { t, i18n } = useTranslation();
 
-  // Helper to format URLs
-  // content removed - now using imported util
-
   const [relatedWorks, setRelatedWorks] = useState<WorkDetailData[]>([]);
-
   const [work, setWork] = useState<WorkDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -59,16 +56,7 @@ export const WorkDetail: React.FC = () => {
     setWork(null);
   }
 
-  // Check favorites during render or in the same effect block as id change logic?
-  // Since we already have a block for id change, we can reset isFavorite there too, but reading localStorage is synchronous.
-  // Best approach: Initialize state with function or use effect responsibly.
-  // To silent the warning and avoid cascade, we can check it in the reset block if we want, OR just ignore it because localStorage is external.
-  // However, let's try to initialize it correctly or use a useLayoutEffect pattern if needed.
-  // Simplest fix for "setState in effect": derive it during render if possible, or accept it runs once on mount/id change.
-  // To start with correct value without flash:
-
   useEffect(() => {
-    // This effect is actually fine for reading local storage, but to avoid the warning about synchronous set:
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
     const fav = favorites.some((f: { id: string; type: string }) => f.id === id && f.type === "work");
     if (fav !== isFavorite) setIsFavorite(fav);
@@ -78,7 +66,6 @@ export const WorkDetail: React.FC = () => {
   useEffect(() => {
     if (!id) return;
 
-    // Loading is set in render cycle if id changed
     api
       .get(`/works/${id}`)
       .then((res) => {
@@ -112,7 +99,6 @@ export const WorkDetail: React.FC = () => {
     if (work && work.id) {
       visitWork(work.id);
 
-      // Treasure Hunt Logic
       const clues = JSON.parse(localStorage.getItem("treasure_clues") || "[]");
       const solved = JSON.parse(localStorage.getItem("treasure_solved") || "[]");
 
@@ -121,14 +107,9 @@ export const WorkDetail: React.FC = () => {
       );
 
       if (matchedClue) {
-        // Mark as solved
         solved.push(matchedClue.id);
         localStorage.setItem("treasure_solved", JSON.stringify(solved));
-
-        // Award XP
         addXp(matchedClue.xpReward);
-
-        // Show notification
         setTreasureFound({ found: true, xp: matchedClue.xpReward });
       }
     }
@@ -138,7 +119,6 @@ export const WorkDetail: React.FC = () => {
     if (tenantId && id) {
       api.get(`/works?tenantId=${tenantId}`)
         .then((res) => {
-          // API returns { data: works[], pagination: {} }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const allWorks = (Array.isArray(res.data) ? res.data : (res.data.data || [])) as any[];
           const others = allWorks.filter((w) => w.id !== id);
@@ -150,7 +130,6 @@ export const WorkDetail: React.FC = () => {
             imageUrl: getFullUrl(w.imageUrl),
             audioUrl: getFullUrl(w.audioUrl),
             librasUrl: getFullUrl(w.librasUrl),
-            // minimal fields for card
           } as WorkDetailData));
           setRelatedWorks(selected);
         })
@@ -180,23 +159,22 @@ export const WorkDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
-        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+      <div className="work-loading">
+        <div className="work-spinner"></div>
         <p>{t("common.loading")}</p>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   if (error || !work) {
     return (
-      <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>😕</div>
-        <h1 className="section-title">{terms.work} não encontrada</h1>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
+      <div className="work-error">
+        <span className="error-icon">😕</span>
+        <h1>{terms.work} não encontrada</h1>
+        <p>
           {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : `Não conseguimos encontrar a ${terms.work.toLowerCase()} que você está procurando.`}
         </p>
-        <button className="btn btn-secondary" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = "/obras"}>
+        <button className="back-btn" onClick={() => window.history.length > 1 ? window.history.back() : window.location.href = "/obras"}>
           {t("common.back")}
         </button>
       </div>
@@ -204,69 +182,57 @@ export const WorkDetail: React.FC = () => {
   }
 
   return (
-    <div>
-      <header style={{ marginBottom: "1.75rem" }}>
+    <div className="work-detail-container">
+      {/* HEADER */}
+      <header className="work-header">
         {treasureFound && (
-          <div
-            style={{
-              backgroundColor: "#10b981",
-              color: "white",
-              padding: "1rem",
-              borderRadius: "0.5rem",
-              marginBottom: "1rem",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              animation: "slideDown 0.5s ease-out"
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "1.5rem" }}>🏴‍☠️</span>
-              <div>
+          <div className="treasure-notification">
+            <div className="treasure-content">
+              <span className="treasure-icon">🏴‍☠️</span>
+              <div className="treasure-text">
                 <strong>{t("visitor.treasure.foundTitle", "Tesouro Encontrado!")}</strong>
-                <div style={{ fontSize: "0.9rem" }}>{t("visitor.treasure.foundText", "Você resolveu uma pista!")}</div>
+                <span>{t("visitor.treasure.foundText", "Você resolveu uma pista!")}</span>
               </div>
             </div>
-            <div className="badge" style={{ backgroundColor: "white", color: "#10b981" }}>+{treasureFound.xp} XP</div>
+            <span className="treasure-xp">+{treasureFound.xp} XP</span>
           </div>
         )}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div>
-            <div className="badge">{terms.work}</div>
-            <h1 className="section-title">{work.title}</h1>
-            <p className="section-subtitle">
+
+        <div className="work-header-top">
+          <div className="work-header-info">
+            <span className="work-badge">{terms.work}</span>
+            <h1 className="work-main-title">{work.title}</h1>
+            <p className="work-meta">
               {work.artist} • {work.year} • {work.category}
             </p>
-            <p style={{ fontSize: "0.9rem", color: "#9ca3af" }}>
+            <p className="work-location">
               {t("visitor.artwork.location")}: {work.room || terms.room} • {work.floor || terms.floor}
             </p>
           </div>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            {/* Navigation button - only show if work has coordinates */}
+
+          <div className="work-actions">
             {work.latitude && work.longitude && (
               <button
                 onClick={() => setShowNavigation(true)}
-                className="btn btn-secondary"
-                style={{ fontSize: "1.2rem", padding: "0.5rem 0.75rem" }}
+                className="action-btn"
                 title={t("visitor.navigation.howToGet", "Como Chegar")}
               >
-                🧭
+                <Compass size={20} />
               </button>
             )}
             <button
               onClick={() => setShowShare(true)}
-              className="btn btn-secondary"
-              style={{ fontSize: "1.2rem", padding: "0.5rem 0.75rem" }}
+              className="action-btn"
               title={t("visitor.share.title", "Compartilhar")}
             >
-              📤
+              <Share2 size={20} />
             </button>
             <button
               onClick={toggleFavorite}
-              className="btn btn-secondary"
-              style={{ fontSize: "1.2rem", padding: "0.5rem 0.75rem", color: isFavorite ? "var(--primary-color)" : "inherit" }}
+              className={`action-btn ${isFavorite ? 'active' : ''}`}
+              title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
             >
-              {isFavorite ? "★" : "☆"}
+              <Star size={20} fill={isFavorite ? "#d4af37" : "none"} />
             </button>
           </div>
         </div>
@@ -279,7 +245,6 @@ export const WorkDetail: React.FC = () => {
         />
       )}
 
-      {/* Navigation Modal */}
       {showNavigation && work.latitude && work.longitude && (
         <NavigationModal
           isOpen={showNavigation}
@@ -292,94 +257,60 @@ export const WorkDetail: React.FC = () => {
         />
       )}
 
-      <section style={{ marginBottom: "1.75rem" }}>
+      {/* MAIN IMAGE */}
+      <section className="work-image-section">
         {work.imageUrl ? (
           <img
             src={work.imageUrl}
             alt={work.title}
-            style={{
-              width: "100%",
-              maxHeight: "500px",
-              objectFit: "contain",
-              borderRadius: "1rem",
-              backgroundColor: "rgba(0,0,0,0.2)"
-            }}
+            className="work-main-image"
           />
         ) : (
-          <div
-            style={{
-              width: "100%",
-              aspectRatio: "16 / 9",
-              borderRadius: "1rem",
-              background:
-                "linear-gradient(135deg, rgba(30,64,175,0.8), rgba(56,189,248,0.4))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#e5e7eb",
-              fontSize: "0.95rem",
-              textAlign: "center",
-              padding: "1rem"
-            }}
-          >
+          <div className="work-image-placeholder">
             {t("visitor.artwork.imagePlaceholder")}
           </div>
         )}
       </section>
 
-      <section style={{ marginBottom: "1.75rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-          <h2 className="section-title" style={{ margin: 0 }}>{t("visitor.artwork.description")}</h2>
+      {/* DESCRIPTION */}
+      <section className="work-description-section">
+        <div className="description-header">
+          <h2>{t("visitor.artwork.description")}</h2>
           <button
             onClick={() => isSpeaking ? cancel() : speak(work.description || t("visitor.artwork.noDescription"), i18n.language)}
-            style={{
-              background: isSpeaking ? "#ef4444" : "#d4af37",
-              color: "#1a1108",
-              border: "none",
-              borderRadius: "0.5rem",
-              padding: "0.5rem 1rem",
-              cursor: "pointer",
-              fontWeight: "bold",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              fontSize: "0.9rem"
-            }}
+            className={`tts-button ${isSpeaking ? 'speaking' : 'listening'}`}
           >
-            {isSpeaking ? `⏹ ${t("visitor.artwork.stopReading")}` : `🔊 ${t("visitor.artwork.listenDescription")}`}
+            {isSpeaking ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            {isSpeaking ? t("visitor.artwork.stopReading") : t("visitor.artwork.listenDescription")}
           </button>
         </div>
-        <p style={{ fontSize: "0.95rem", color: "#e5e7eb", lineHeight: 1.7 }}>
-          {work.description ||
-            t("visitor.artwork.defaultDescription")}
+        <p className="work-description-text">
+          {work.description || t("visitor.artwork.defaultDescription")}
         </p>
       </section>
 
-      <section style={{ marginBottom: "1.75rem" }}>
-        <h2 className="section-title">{t("visitor.artwork.accessibility")}</h2>
-        <div className="card-grid">
-          <article className="card">
-            <h3 className="card-title">{t("visitor.artwork.audioDescription")}</h3>
-            <p className="card-subtitle">
-              {t("visitor.artwork.audioDescriptionText")}
-            </p>
+      {/* ACCESSIBILITY */}
+      <section className="accessibility-section">
+        <h2>{t("visitor.artwork.accessibility")}</h2>
+        <div className="accessibility-grid">
+          <article className="accessibility-card">
+            <h3>{t("visitor.artwork.audioDescription")}</h3>
+            <p>{t("visitor.artwork.audioDescriptionText")}</p>
             <AudioDescriptionPlayer src={work.audioUrl} />
           </article>
 
-          <article className="card">
-            <h3 className="card-title">{t("visitor.artwork.libras")}</h3>
-            <p className="card-subtitle">
-              {t("visitor.artwork.librasText")}
-            </p>
+          <article className="accessibility-card">
+            <h3>{t("visitor.artwork.libras")}</h3>
+            <p>{t("visitor.artwork.librasText")}</p>
             <LibrasSection videoUrl={work.librasUrl} contentTitle={work.title} />
           </article>
         </div>
       </section>
 
-
-      <section style={{ marginBottom: "1.75rem" }}>
-        <h2 className="section-title">{t("visitor.artwork.aiInteraction")}</h2>
-        <p className="section-subtitle">
+      {/* AI CHAT */}
+      <section className="ai-section">
+        <h2>{t("visitor.artwork.aiInteraction")}</h2>
+        <p className="ai-section-subtitle">
           {t("visitor.artwork.aiInteractionText", "Converse com nossa Inteligência Artificial para descobrir mais detalhes fascinantes sobre esta obra.")}
         </p>
         <AiChatWidget
@@ -391,39 +322,41 @@ export const WorkDetail: React.FC = () => {
         />
       </section>
 
-      <section style={{ marginBottom: "1.75rem" }}>
+      {/* NOTES */}
+      <section className="notes-section">
         <WorkNote workId={work.id} />
       </section>
 
-      <section>
-        <h2 className="section-title">{t("visitor.artwork.relatedWorks")}</h2>
-        <div className="card-grid">
-          {relatedWorks.map((rw) => (
-            <article key={rw.id} className="card">
-              {rw.imageUrl && (
-                <div style={{ width: "100%", height: "150px", overflow: "hidden", borderRadius: "0.5rem", marginBottom: "0.5rem" }}>
-                  <img src={rw.imageUrl} alt={rw.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      {/* RELATED WORKS */}
+      <section className="related-section">
+        <h2>{t("visitor.artwork.relatedWorks")}</h2>
+        {relatedWorks.length > 0 ? (
+          <div className="related-grid">
+            {relatedWorks.map((rw) => (
+              <article key={rw.id} className="related-card">
+                {rw.imageUrl && (
+                  <img src={rw.imageUrl} alt={rw.title} className="related-image" />
+                )}
+                <div className="related-content">
+                  <h3 className="related-title">{rw.title}</h3>
+                  <p className="related-artist">{rw.artist}</p>
+                  <button
+                    className="related-btn"
+                    type="button"
+                    onClick={() => {
+                      navigate(`/obras/${rw.id}`);
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    {t("visitor.artwork.viewDetails")}
+                  </button>
                 </div>
-              )}
-              <h3 className="card-title">{rw.title}</h3>
-              <p className="card-subtitle">{rw.artist}</p>
-              <button
-                className="btn btn-secondary"
-                type="button"
-                style={{ marginTop: "0.75rem" }}
-                onClick={() => {
-                  navigate(`/obras/${rw.id}`);
-                  window.scrollTo(0, 0);
-                }}
-              >
-                {t("visitor.artwork.viewDetails")}
-              </button>
-            </article>
-          ))}
-          {relatedWorks.length === 0 && (
-            <p style={{ color: "#9ca3af", fontStyle: "italic" }}>{t("visitor.noResults")}</p>
-          )}
-        </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="no-related">{t("visitor.noResults")}</p>
+        )}
       </section>
     </div>
   );
