@@ -1,0 +1,342 @@
+/* Premium TreasureHunt Theme - Adventure Dark & Gold */
+
+.treasure-hunt-container {
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+    padding: 1rem;
+    padding-bottom: 6rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.treasure-hunt-header {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(180deg, rgba(26, 17, 8, 0) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-bottom: 1px solid rgba(70, 52, 32, 0.3);
+}
+
+.treasure-hunt-title {
+    font-size: 2rem;
+    color: #d4af37;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.treasure-hunt-title::before {
+    content: '🗝️';
+}
+
+.treasure-hunt-subtitle {
+    color: #c9b58c;
+    font-size: 1rem;
+    margin: 0;
+    font-style: italic;
+}
+
+/* ============================================
+   CLUE CARDS GRID
+   ============================================ */
+.treasure-clues-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* ============================================
+   CLUE CARD
+   ============================================ */
+.treasure-clue-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.treasure-clue-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #f59e0b 0%, #b8860b 100%);
+}
+
+.treasure-clue-card.solved::before {
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+}
+
+.treasure-clue-card.solved {
+    opacity: 0.85;
+}
+
+.treasure-clue-card:hover:not(.solved) {
+    transform: translateY(-3px);
+    border-color: #d4af37;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+}
+
+.treasure-clue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.treasure-clue-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.15rem;
+    color: #EAE0D5;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.treasure-clue-info h3.solved {
+    color: #10b981;
+}
+
+.treasure-clue-riddle {
+    font-size: 1rem;
+    color: #c9b58c;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.treasure-xp-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #d4af37 0%, #8b6914 100%);
+    color: #1a1108;
+    padding: 0.3rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.treasure-solved-message {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #10b981;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.treasure-solve-btn {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.treasure-solve-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* ============================================
+   ANSWER FORM
+   ============================================ */
+.treasure-answer-form {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #463420;
+    border-radius: 0.75rem;
+}
+
+.treasure-answer-label {
+    font-size: 0.9rem;
+    color: #c9b58c;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.treasure-answer-input-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.treasure-answer-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    color: #EAE0D5;
+    font-size: 1rem;
+    font-family: 'Georgia', serif;
+}
+
+.treasure-answer-input::placeholder {
+    color: #5c452b;
+}
+
+.treasure-answer-input:focus {
+    outline: none;
+    border-color: #d4af37;
+}
+
+.treasure-scan-btn {
+    padding: 0.75rem 1rem;
+    background: rgba(70, 52, 32, 0.6);
+    color: #d4af37;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.treasure-scan-btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: #d4af37;
+}
+
+.treasure-feedback {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: 0.35rem;
+}
+
+.treasure-feedback.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.treasure-feedback.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.treasure-answer-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.treasure-confirm-btn {
+    flex: 1;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.treasure-confirm-btn:hover {
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.treasure-cancel-btn {
+    padding: 0.75rem 1rem;
+    background: rgba(70, 52, 32, 0.5);
+    color: #c9b58c;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.treasure-cancel-btn:hover {
+    background: rgba(70, 52, 32, 0.8);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.treasure-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 2px dashed #463420;
+    border-radius: 1.5rem;
+}
+
+.treasure-empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.treasure-empty h3 {
+    font-size: 1.35rem;
+    color: #EAE0D5;
+    margin: 0 0 0.75rem 0;
+}
+
+.treasure-empty p {
+    color: #8b7355;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ============================================
+   LOADING
+   ============================================ */
+.treasure-loading {
+    padding: 3rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.treasure-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #463420;
+    border-top-color: #d4af37;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.treasure-loading p {
+    color: #c9b58c;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .treasure-hunt-title {
+        font-size: 1.5rem;
+    }
+
+    .treasure-clues-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Camera, Check } from "lucide-react";
+import "./TreasureHunt.css";
 
 interface Clue {
     id: string;
@@ -83,29 +85,28 @@ export const TreasureHunt: React.FC = () => {
 
     if (loading) {
         return (
-            <div style={{ padding: "2rem", textAlign: "center" }}>
-                <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid var(--border)", borderTopColor: "var(--primary)", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" }}></div>
+            <div className="treasure-loading">
+                <div className="treasure-spinner"></div>
                 <p>{t("common.loading")}</p>
-                <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
             </div>
         );
     }
 
     return (
-        <div className="page-container">
-            <h1 className="section-title">{t("visitor.treasure.title", "Caça ao Tesouro")}</h1>
-            <p className="section-subtitle">{t("visitor.treasure.subtitle", "Decifre as pistas e encontre as obras escondidas!")}</p>
+        <div className="treasure-hunt-container">
+            <header className="treasure-hunt-header">
+                <h1 className="treasure-hunt-title">{t("visitor.treasure.title", "Caça ao Tesouro")}</h1>
+                <p className="treasure-hunt-subtitle">{t("visitor.treasure.subtitle", "Decifre as pistas e encontre as obras escondidas!")}</p>
+            </header>
 
             {clues.length === 0 ? (
-                <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
-                    <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
+                <div className="treasure-empty">
+                    <span className="treasure-empty-icon">🗺️</span>
                     <h3>{t("visitor.treasure.noCluesTitle", "Sem pistas no momento")}</h3>
-                    <p style={{ color: "#6b7280" }}>
-                        {t("visitor.treasure.noClues", "O museu ainda não criou pistas para a caça ao tesouro. Volte mais tarde!")}
-                    </p>
+                    <p>{t("visitor.treasure.noClues", "O museu ainda não criou pistas para a caça ao tesouro. Volte mais tarde!")}</p>
                 </div>
             ) : (
-                <div className="card-grid">
+                <div className="treasure-clues-grid">
                     {clues.map((clue) => {
                         const isSolved = solvedClues.includes(clue.id);
                         const isAnswering = answeringClueId === clue.id;
@@ -113,25 +114,21 @@ export const TreasureHunt: React.FC = () => {
                         return (
                             <div
                                 key={clue.id}
-                                className="card"
-                                style={{
-                                    borderLeft: isSolved ? "4px solid #10b981" : "4px solid #f59e0b",
-                                    opacity: isSolved ? 0.8 : 1,
-                                    transition: "all 0.3s ease"
-                                }}
+                                className={`treasure-clue-card ${isSolved ? 'solved' : ''}`}
                             >
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
-                                    <div>
-                                        <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.1rem" }}>
-                                            {isSolved ? "✅ " + t("common.solved", "Resolvido!") : "🕵️ " + t("visitor.treasure.clue", "Pista")}
+                                <div className="treasure-clue-header">
+                                    <div className="treasure-clue-info">
+                                        <h3 className={isSolved ? 'solved' : ''}>
+                                            {isSolved ? <><Check size={18} /> {t("common.solved", "Resolvido!")}</> : <>🕵️ {t("visitor.treasure.clue", "Pista")}</>}
                                         </h3>
-                                        <p style={{ fontSize: "1rem", color: "var(--text-primary)" }}>{clue.riddle}</p>
+                                        <p className="treasure-clue-riddle">{clue.riddle}</p>
                                     </div>
-                                    <div className="badge badge-primary">+{clue.xpReward} XP</div>
+                                    <span className="treasure-xp-badge">+{clue.xpReward} XP</span>
                                 </div>
 
                                 {isSolved && (
-                                    <div style={{ marginTop: "1rem", fontSize: "0.9rem", color: "#10b981", fontWeight: "bold" }}>
+                                    <div className="treasure-solved-message">
+                                        <Check size={16} />
                                         {t("visitor.treasure.completed", "Você encontrou o tesouro!")}
                                     </div>
                                 )}
@@ -139,58 +136,51 @@ export const TreasureHunt: React.FC = () => {
                                 {!isSolved && !isAnswering && (
                                     <button
                                         onClick={() => handleSolveClick(clue.id)}
-                                        className="btn btn-primary"
-                                        style={{ marginTop: "1rem", width: "100%" }}
+                                        className="treasure-solve-btn"
                                     >
                                         {t("visitor.treasure.solve", "Responder")}
                                     </button>
                                 )}
 
                                 {isAnswering && (
-                                    <div style={{ marginTop: "1rem", padding: "1rem", background: "rgba(0,0,0,0.2)", borderRadius: "0.5rem" }}>
-                                        <p style={{ marginBottom: "0.5rem", fontSize: "0.9rem" }}>
+                                    <div className="treasure-answer-form">
+                                        <span className="treasure-answer-label">
                                             {t("visitor.treasure.enterId", "Digite o ID da obra ou escaneie o QR Code:")}
-                                        </p>
+                                        </span>
 
-                                        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                                        <div className="treasure-answer-input-row">
                                             <input
                                                 type="text"
-                                                className="input"
-                                                style={{ flex: 1 }}
+                                                className="treasure-answer-input"
                                                 placeholder="Ex: 1"
                                                 value={answerInput}
                                                 onChange={(e) => setAnswerInput(e.target.value)}
                                             />
                                             <button
                                                 onClick={() => navigate("/scanner")}
-                                                className="btn btn-secondary"
+                                                className="treasure-scan-btn"
                                                 title="Escanear QR Code"
                                             >
-                                                📷
+                                                <Camera size={18} />
                                             </button>
                                         </div>
 
                                         {feedback && (
-                                            <div style={{
-                                                marginBottom: "0.5rem",
-                                                color: feedback.type === 'success' ? '#10b981' : '#ef4444',
-                                                fontSize: "0.9rem"
-                                            }}>
+                                            <div className={`treasure-feedback ${feedback.type}`}>
                                                 {feedback.message}
                                             </div>
                                         )}
 
-                                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                                        <div className="treasure-answer-actions">
                                             <button
                                                 onClick={() => handleSubmitAnswer(clue)}
-                                                className="btn btn-primary"
-                                                style={{ flex: 1 }}
+                                                className="treasure-confirm-btn"
                                             >
                                                 {t("common.confirm", "Confirmar")}
                                             </button>
                                             <button
                                                 onClick={handleCancelAnswer}
-                                                className="btn btn-secondary"
+                                                className="treasure-cancel-btn"
                                             >
                                                 {t("common.cancel", "Cancelar")}
                                             </button>

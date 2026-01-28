@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MuseumMap } from "../components/MuseumMap";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import "./MapView.css";
 
 export const MapView: React.FC = () => {
   const { t } = useTranslation();
@@ -23,7 +24,6 @@ export const MapView: React.FC = () => {
 
     setLoading(true);
     try {
-      // Fetch settings (works endpoint kept for future use)
       const [settingsRes] = await Promise.all([
         api.get(`/tenants/${tenantId}/settings`),
         api.get(`/works`, { params: { tenantId } })
@@ -35,7 +35,6 @@ export const MapView: React.FC = () => {
         indoorImageUrl: s.mapImageUrl
       });
 
-      // POIs will be populated when works have x/y coordinates
       setPois([]);
     } catch (err) {
       console.error("Erro ao carregar dados do mapa", err);
@@ -49,25 +48,24 @@ export const MapView: React.FC = () => {
   }, [fetchMapData]);
 
   if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', gap: '1rem' }}>
-      <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid var(--border)", borderTopColor: "var(--primary)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+    <div className="map-view-loading">
+      <div className="map-view-spinner"></div>
       <p>{t("common.loading")}</p>
-      <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
     </div>
   );
 
-  if (!tenantId) return <div className="p-8 text-center">{t("visitor.map.selectMuseum", "Selecione um museu para ver o mapa.")}</div>;
+  if (!tenantId) return <div className="map-view-message">{t("visitor.map.selectMuseum", "Selecione um museu para ver o mapa.")}</div>;
 
-  if (!mapSettings) return <div className="p-8 text-center">{t("visitor.map.notConfigured", "Mapa não configurado para este museu.")}</div>;
+  if (!mapSettings) return <div className="map-view-message">{t("visitor.map.notConfigured", "Mapa não configurado para este museu.")}</div>;
 
   return (
-    <div>
-      <h1 className="section-title">{t("visitor.map.title")}</h1>
-      <p className="section-subtitle">
-        {t("visitor.map.subtitle")}
-      </p>
+    <div className="map-view-container">
+      <header className="map-view-header">
+        <h1 className="map-view-title">{t("visitor.map.title")}</h1>
+        <p className="map-view-subtitle">{t("visitor.map.subtitle")}</p>
+      </header>
 
-      <div style={{ marginTop: "1rem" }}>
+      <div className="map-view-map-wrapper">
         <MuseumMap
           outdoorCenter={mapSettings.outdoorCenter}
           indoorImageUrl={mapSettings.indoorImageUrl}
@@ -75,11 +73,15 @@ export const MapView: React.FC = () => {
         />
       </div>
 
-      <div className="card" style={{ marginTop: "1rem", padding: "1rem" }}>
+      <div className="map-view-legend">
         <h3>📍 {t("visitor.map.legend")}</h3>
-        <ul style={{ listStyle: "none", padding: 0, marginTop: "0.5rem" }}>
-          <li style={{ marginBottom: "0.5rem" }}>🏛️ <b>{t("visitor.map.legendMain", "Museu Principal")}</b>: {t("visitor.map.legendAddress", "Praça Tiradentes, 123")}</li>
-          <li>🎨 <b>{t("visitor.map.legendExhibition", "Exposição Permanente")}</b>: {t("visitor.map.legendFloors", "1º e 2º Andar")}</li>
+        <ul className="map-view-legend-list">
+          <li className="map-view-legend-item">
+            🏛️ <span><strong>{t("visitor.map.legendMain", "Museu Principal")}</strong>: {t("visitor.map.legendAddress", "Praça Tiradentes, 123")}</span>
+          </li>
+          <li className="map-view-legend-item">
+            🎨 <span><strong>{t("visitor.map.legendExhibition", "Exposição Permanente")}</strong>: {t("visitor.map.legendFloors", "1º e 2º Andar")}</span>
+          </li>
         </ul>
       </div>
     </div>
