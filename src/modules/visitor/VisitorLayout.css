@@ -181,6 +181,16 @@
     flex-direction: column;
     position: relative;
     /* Context for children */
+    z-index: 1;
+    /* Creates a stacking context so Map z-index (1000) stays inside */
+}
+
+.mobile-overlay {
+    z-index: 20000 !important;
+}
+
+.layout-sidebar {
+    z-index: 20001 !important;
 }
 
 .layout-header {
