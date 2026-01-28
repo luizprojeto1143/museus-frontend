@@ -72,8 +72,13 @@
 
 /* Sidebar Header */
 .sidebar-header {
-    padding: 1.5rem;
+    padding: 3rem 1.5rem 2rem 1.5rem;
+    /* More space on top (notch safe) and bottom */
     border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    min-height: 120px;
+    /* Ensure sufficient height for content */
 }
 
 .app-brand {
