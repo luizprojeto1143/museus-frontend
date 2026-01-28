@@ -43,9 +43,31 @@
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    z-index: 2000;
+    z-index: 9999;
+    /* Ensure it's above Leaflet (z-1000) */
     transition: transform 0.3s ease;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9000;
+    /* Below sidebar but above content */
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    backdrop-filter: blur(2px);
+}
+
+.mobile-overlay.open {
+    opacity: 1;
+    visibility: visible;
+
 }
 
 /* Sidebar Header */
