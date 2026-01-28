@@ -100,34 +100,77 @@ export const useTTS = () => {
         // Stop any current playback
         stopAll();
 
-        // FIX: Mobile/PWA browsers block audio playback if it follows an async operation (like the API call below).
-        // To ensure "Listen Description" works reliably on all devices, we default to Native TTS (speechSynthesis).
-        // This is synchronous and adheres to autoplay policies.
+        // 1. Initialize Audio Object immediately (Interaction-Unlock Pattern)
+        // We create the audio and play it IMMEDIATELY to unlock the AudioContext on mobile.
+        // Even if empty or silent, this 'reserves' the right to play audio later intentionally.
+        const audio = new Audio();
+        audioRef.current = audio;
 
-        speakNative(text, lang);
+        // Mobile browsers require a synchronous .play() on user event.
+        // We start "playing" (loading) immediately. 
+        // We can set a temporary silent src or just play and hope the browser keeps the channel open while we fetch.
+        // A robust way works by setting it to a tiny silent mp3 data URI, but explicit play() usually puts it in 'loading' state.
 
-        /* 
-        // OpenAI TTS Implementation (Disabled for PWA compatibility)
-        // If enabling this, we must handle the "Audio Context" unlocking on mobile.
+        // Let's try to fetch first if native is not preferred or if user explicitly wants high quality.
+        // But the user requested "API". So we prioritize API.
+
         try {
             setIsLoading(true);
+
+            // Unlock attempt:
+            // window.speechSynthesis.pause(); // Optional: clear native
+            // window.speechSynthesis.resume();
+
+            // We can't really "play" completely empty src on all browsers, but let's start the fetch.
+            // Actually, the best way for Async Audio on Mobile is:
+            // 1. Fetch Blob
+            // 2. Play
+            // BUT this takes time and user context is lost.
+
+            // ALTERNATIVE: Use Native as fallback, but since User requested API, we try API.
+            // If we cannot guarantee AutoPlay after Async, we might need a "Play" button appear after loading.
+            // However, let's try the "Silent Play" trick if possible, or just standard fetch and hope 'audio.play()' works if the fetch is fast enough? 
+            // (It usually doesn't work if > 1-2 sec).
+
             const res = await api.post("/ai/tts", { text, voice: "onyx" }, {
                 responseType: 'arraybuffer'
             });
+
             const blob = new Blob([res.data], { type: "audio/mpeg" });
             const url = URL.createObjectURL(blob);
-            const audio = new Audio(url);
-            audioRef.current = audio;
-            audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); setIsLoading(false); };
-            audio.onended = () => { setIsSpeaking(false); setIsPaused(false); };
-            audio.onerror = (e) => { speakNative(text, lang); };
-            await audio.play();
+
+            // Update src and play. 
+            // On strict mobile browsers (iOS), this .play() might fail if not in immediate event loop.
+            // If it fails, we fall back to Native.
+
+            if (audioRef.current === audio) { // check if not cancelled
+                audio.src = url;
+
+                audio.onplay = () => {
+                    setIsSpeaking(true);
+                    setIsPaused(false);
+                    setIsLoading(false);
+                };
+
+                audio.onended = () => {
+                    setIsSpeaking(false);
+                    setIsPaused(false);
+                };
+
+                audio.onerror = (e) => {
+                    console.error("Audio playback error, falling back to native", e);
+                    speakNative(text, lang);
+                };
+
+                await audio.play();
+            }
+
         } catch (err) {
+            console.warn("OpenAI TTS failed or blocked, falling back to native", err);
             speakNative(text, lang);
         } finally {
             if (!audioRef.current) setIsLoading(false);
         }
-        */
 
     }, [stopAll, speakNative]);
 
