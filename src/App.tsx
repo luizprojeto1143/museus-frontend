@@ -843,6 +843,7 @@ const App: React.FC = () => {
             />
 
             {/* AUTH */}
+            <Route path="/register" element={<RegisterWrapper />} />
             <Route path="/login" element={<Login />} />
 
             {/* 404 - Redireciona para Welcome se não autenticado, senão para home */}
