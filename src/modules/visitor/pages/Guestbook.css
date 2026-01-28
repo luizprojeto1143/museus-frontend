@@ -1,0 +1,270 @@
+.guestbook-container {
+    padding-bottom: 6rem;
+    font-family: 'Georgia', serif;
+    color: #2c1e10;
+    /* Dark ink color for readability on parchment */
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.guestbook-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 1rem;
+    background: linear-gradient(180deg, rgba(26, 17, 8, 0) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-bottom: 1px solid rgba(70, 52, 32, 0.2);
+}
+
+.guestbook-title {
+    font-size: 2.5rem;
+    color: #d4af37;
+    margin: 0 0 0.5rem 0;
+    font-family: 'Playfair Display', serif;
+    /* Or fallback to serif */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.guestbook-subtitle {
+    color: #c9b58c;
+    font-size: 1rem;
+    margin: 0;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+/* The Book Layout */
+.guestbook-book {
+    background: #fdf6e3;
+    /* Base parchment color */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4c5ad' fill-opacity='0.2'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' /%3E%3C/g%3E%3C/svg%3E");
+    border-radius: 4px;
+    box-shadow:
+        inset 20px 0 50px rgba(0, 0, 0, 0.1),
+        /* Spine shadow */
+        10px 10px 30px rgba(0, 0, 0, 0.5),
+        /* Book shadow */
+        -2px 0 5px rgba(255, 255, 255, 0.1);
+    /* Left highlight */
+    padding: 3rem 2rem 3rem 4rem;
+    /* Extra padding left for spine */
+    position: relative;
+    min-height: 600px;
+    overflow: hidden;
+}
+
+/* Simulated Spine/Binding */
+.guestbook-book::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 2rem;
+    background: linear-gradient(90deg, #2c1e10 0%, #463420 50%, #2c1e10 100%);
+    box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+.guestbook-book::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.8rem;
+    bottom: 0;
+    width: 2px;
+    border-left: 2px dashed rgba(212, 175, 55, 0.3);
+    /* Stitching */
+    z-index: 11;
+}
+
+/* Form Area */
+.guestbook-form-card {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(70, 52, 32, 0.1);
+    padding: 1.5rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.guestbook-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #a8a29e;
+    padding: 0.5rem;
+    font-family: 'Georgia', serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #2c1e10;
+    resize: vertical;
+    outline: none;
+    background-image: linear-gradient(transparent 95%, rgba(70, 52, 32, 0.1) 95%);
+    background-size: 100% 1.6rem;
+    margin-bottom: 1rem;
+}
+
+.guestbook-textarea:focus {
+    border-bottom: 2px solid #d4af37;
+}
+
+.guestbook-textarea::placeholder {
+    font-style: italic;
+    color: rgba(44, 30, 16, 0.4);
+}
+
+.guestbook-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.guestbook-char-count {
+    font-size: 0.8rem;
+    color: #8b7355;
+    font-style: italic;
+}
+
+.btn-quill {
+    background: #463420;
+    color: #d4af37;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-quill:hover:not(:disabled) {
+    background: #5c452b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.btn-quill:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Entries List */
+.guestbook-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.guestbook-entry {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(70, 52, 32, 0.1);
+    position: relative;
+}
+
+.guestbook-entry:last-child {
+    border-bottom: none;
+}
+
+.guestbook-message {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-style: italic;
+    color: #2c1e10;
+}
+
+.guestbook-author-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: #d4c5ad;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.author-info {
+    font-family: 'Courier New', monospace;
+    /* Stamped look for metadata */
+}
+
+.author-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #463420;
+    text-transform: uppercase;
+}
+
+.entry-date {
+    font-size: 0.75rem;
+    color: #8b7355;
+}
+
+/* Login Prompt */
+.login-prompt {
+    text-align: center;
+    padding: 2rem;
+    border: 1px dashed rgba(70, 52, 32, 0.3);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    margin-bottom: 2rem;
+}
+
+.login-prompt p {
+    color: #5c452b;
+    margin-bottom: 1rem;
+}
+
+.btn-login-gold {
+    background: transparent;
+    border: 1px solid #463420;
+    color: #463420;
+    padding: 0.5rem 1.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-login-gold:hover {
+    background: #463420;
+    color: #d4af37;
+}
+
+/* Empty & Loading */
+.guestbook-empty {
+    text-align: center;
+    padding: 3rem;
+    color: #8b7355;
+    font-style: italic;
+}
+
+.guestbook-loading {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.spinner-ink {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(70, 52, 32, 0.2);
+    border-top-color: #463420;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}

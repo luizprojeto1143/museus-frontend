@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { getFullUrl } from "../../../utils/url";
+import { PenTool, User } from "lucide-react";
+import "./Guestbook.css";
 
 type GuestbookEntry = {
     id: string;
@@ -12,6 +14,7 @@ type GuestbookEntry = {
         photoUrl: string | null;
     };
     createdAt: string;
+    isFake?: boolean; // Support for fake visitors if needed
 };
 
 export const GuestbookPage: React.FC = () => {
@@ -64,11 +67,13 @@ export const GuestbookPage: React.FC = () => {
     };
 
     return (
-        <div style={{ maxWidth: "800px", margin: "0 auto", padding: "1rem" }}>
-            <h1 className="section-title">{t("visitor.guestbook.title", "Livro de Visitas")}</h1>
-            <p className="section-subtitle" style={{ marginBottom: "2rem" }}>
-                {t("visitor.guestbook.subtitle", "Deixe sua marca no museu! Compartilhe sua experiência.")}
-            </p>
+        <div className="guestbook-container">
+            <header className="guestbook-header">
+                <h1 className="guestbook-title">{t("visitor.guestbook.title", "Livro de Visitas")}</h1>
+                <p className="guestbook-subtitle">
+                    {t("visitor.guestbook.subtitle", "Deixe sua marca no museu! Compartilhe sua experiência.")}
+                </p>
+            </header>
 
             {error && (
                 <div style={{ padding: "1rem", backgroundColor: "#fee2e2", color: "#ef4444", borderRadius: "0.5rem", marginBottom: "1rem" }}>
@@ -76,96 +81,86 @@ export const GuestbookPage: React.FC = () => {
                 </div>
             )}
 
-            {/* Form */}
-            {isAuthenticated ? (
-                <div className="card" style={{ padding: "1.5rem", marginBottom: "2rem" }}>
-                    <form onSubmit={handleSubmit}>
-                        <textarea
-                            className="input"
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder={t("visitor.guestbook.placeholder", "Escreva sua mensagem aqui...")}
-                            rows={3}
-                            style={{ resize: "vertical", marginBottom: "1rem" }}
-                            maxLength={500}
-                            required
-                        />
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
-                                {newMessage.length}/500
-                            </span>
-                            <button
-                                type="submit"
-                                className="btn btn-primary"
-                                disabled={submitting || !newMessage.trim()}
-                            >
-                                {submitting ? t("common.sending", "Enviando...") : t("visitor.guestbook.submit", "Assinar Livro")}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            ) : (
-                <div className="card" style={{ padding: "1.5rem", marginBottom: "2rem", textAlign: "center" }}>
-                    <p>{t("visitor.guestbook.loginRequired", "Faça login para deixar uma mensagem.")}</p>
-                    <button
-                        onClick={() => window.location.href = "/login"}
-                        className="btn btn-secondary"
-                        style={{ marginTop: "1rem" }}
-                    >
-                        {t("auth.login")}
-                    </button>
-                </div>
-            )}
+            <div className="guestbook-book">
+                {/* Simulated Content Area */}
 
-            {/* List */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {loading ? (
-                    <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
-                        <div className="spinner" style={{ width: "30px", height: "30px", border: "3px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
-                        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-                    </div>
-                ) : entries.length === 0 ? (
-                    <p style={{ textAlign: "center", color: "#9ca3af" }}>
-                        {t("visitor.guestbook.empty", "Seja o primeiro a assinar!")}
-                    </p>
-                ) : (
-                    entries.map((entry) => (
-                        <article key={entry.id} className="card" style={{ padding: "1.5rem" }}>
-                            <p style={{ fontSize: "1.1rem", lineHeight: 1.6, marginBottom: "1rem", fontStyle: "italic" }}>
-                                "{entry.message}"
-                            </p>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                                <div
-                                    style={{
-                                        width: "2.5rem",
-                                        height: "2.5rem",
-                                        borderRadius: "50%",
-                                        backgroundColor: "#374151",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: "1.2rem",
-                                        overflow: "hidden"
-                                    }}
+                {/* Writing Area */}
+                {isAuthenticated ? (
+                    <div className="guestbook-form-card">
+                        <form onSubmit={handleSubmit}>
+                            <textarea
+                                className="guestbook-textarea"
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                placeholder={t("visitor.guestbook.placeholder", "Escreva sua mensagem aqui...")}
+                                rows={3}
+                                maxLength={500}
+                                required
+                            />
+                            <div className="guestbook-controls">
+                                <span className="guestbook-char-count">
+                                    {newMessage.length}/500
+                                </span>
+                                <button
+                                    type="submit"
+                                    className="btn-quill"
+                                    disabled={submitting || !newMessage.trim()}
                                 >
-                                    {entry.visitor.photoUrl ? (
-                                        <img src={getFullUrl(entry.visitor.photoUrl) ?? undefined} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                    ) : (
-                                        "👤"
-                                    )}
-                                </div>
-                                <div>
-                                    <div style={{ fontWeight: "bold", fontSize: "0.9rem" }}>
-                                        {entry.visitor.name || t("common.anonymous")}
-                                    </div>
-                                    <div style={{ fontSize: "0.8rem", color: "#9ca3af" }}>
-                                        {new Date(entry.createdAt).toLocaleDateString()}
-                                    </div>
-                                </div>
+                                    <PenTool size={16} />
+                                    {submitting ? t("common.sending", "Escrevendo...") : t("visitor.guestbook.submit", "Assinar")}
+                                </button>
                             </div>
-                        </article>
-                    ))
+                        </form>
+                    </div>
+                ) : (
+                    <div className="login-prompt">
+                        <p>{t("visitor.guestbook.loginRequired", "Faça login para deixar uma mensagem.")}</p>
+                        <button
+                            onClick={() => window.location.href = "/login"}
+                            className="btn-login-gold"
+                        >
+                            {t("auth.login")}
+                        </button>
+                    </div>
                 )}
+
+                {/* Read Area */}
+                <div className="guestbook-entries">
+                    {loading ? (
+                        <div className="guestbook-loading">
+                            <div className="spinner-ink"></div>
+                        </div>
+                    ) : entries.length === 0 ? (
+                        <p className="guestbook-empty">
+                            {t("visitor.guestbook.empty", "Este livro ainda está em branco. Seja o primeiro a assinar!")}
+                        </p>
+                    ) : (
+                        entries.map((entry) => (
+                            <article key={entry.id} className="guestbook-entry animate-fadeIn">
+                                <p className="guestbook-message">
+                                    "{entry.message}"
+                                </p>
+                                <div className="guestbook-author-row">
+                                    <div className="author-avatar">
+                                        {entry.visitor.photoUrl ? (
+                                            <img src={getFullUrl(entry.visitor.photoUrl) ?? undefined} alt={entry.visitor.name || "Visitor"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                        ) : (
+                                            <User size={20} color="#463420" />
+                                        )}
+                                    </div>
+                                    <div className="author-info">
+                                        <div className="author-name">
+                                            {entry.visitor.name || t("common.anonymous")}
+                                        </div>
+                                        <div className="entry-date">
+                                            {new Date(entry.createdAt).toLocaleDateString()}
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );
