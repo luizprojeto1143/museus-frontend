@@ -121,172 +121,184 @@
     flex-direction: column;
     gap: 0.5rem;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Valid logic for older iOS momentum */
+    overscroll-behavior: contain;
+    /* Prevent body scroll when end of menu reached */
+    touch-action: pan-y;
+    /* Optimize for vertical scrolling */
 }
 
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: all 0.2s;
-    font-size: 0.95rem;
-    border: none;
-    background: none;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    font-family: 'Georgia', serif;
-    /* Match Admin font */
-}
-
-.nav-item:hover {
-    background-color: var(--bg-hover);
-    color: var(--primary-color);
-}
-
-.nav-item.active {
-    background-color: var(--bg-hover);
-    color: var(--primary-color);
-    border-left: 3px solid var(--primary-color);
-    /* Admin active indicator */
-}
-
-/* Action Buttons (Search, Dialer) */
-.sidebar-action-btn {
-    border: 1px solid var(--border-color);
-    margin-bottom: 0.5rem;
-}
-
-.sidebar-action-btn:hover {
-    border-color: var(--primary-color);
-}
-
-/* Sidebar Footer */
-.sidebar-footer {
-    padding: 1rem;
-    border-top: 1px solid var(--border-color);
-    background: rgba(0, 0, 0, 0.1);
-}
-
-/* MAIN CONTENT */
-.layout-main {
-    flex: 1;
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    /* Context for children */
-    z-index: 1;
-    /* Creates a stacking context so Map z-index (1000) stays inside */
-}
-
-.mobile-overlay {
-    z-index: 20000 !important;
-}
-
+/* Ensure the whole sidebar structure allows scrolling where needed */
 .layout-sidebar {
-    z-index: 20001 !important;
-}
+    /* ... existing styles ... */
+    overflow: hidden;
+    /* Prevent double scrollbars, only sidebar-content should scroll */
 
-.layout-header {
-    display: flex;
-    /* Always distinct from content */
-    height: var(--header-height);
-    padding: 0 2rem;
-    /* Match content padding */
-    align-items: center;
-    justify-content: flex-end;
-    /* Align user info to right */
-    background-color: transparent;
-    /* Seamless with body */
-    /* border-bottom: 1px solid var(--border-color); - Optional, maybe remove for cleaner look */
-    z-index: 900;
-}
-
-.layout-content {
-    padding: 0 2rem 2rem 2rem;
-    /* Left align: No auto margins */
-    flex: 1;
-    overflow-x: hidden;
-}
-
-.layout-content-inner {
-    /* REMOVED MAX-WIDTH and AUTO MARGINS to fix spacing */
-    width: 100%;
-    max-width: 1400px;
-    /* Optional cap for ultra-wide, but keeps it left */
-    margin: 0;
-    /* Left align */
-}
-
-/* Card Styles matching Admin */
-.card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.card-title {
-    color: var(--primary-color);
-    font-family: 'Georgia', serif;
-}
-
-.btn-primary,
-.btn {
-    background-color: var(--primary-color);
-    color: #1a1108;
-    font-weight: bold;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-}
-
-.btn-secondary {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .layout-sidebar {
-        transform: translateX(-100%);
-    }
-
-    .layout-sidebar.open {
-        transform: translateX(0);
-    }
-
-    .layout-main {
-        margin-left: 0;
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+        border: none;
+        background: none;
+        cursor: pointer;
         width: 100%;
-        padding-top: var(--header-height);
+        text-align: left;
+        font-family: 'Georgia', serif;
+        /* Match Admin font */
+    }
+
+    .nav-item:hover {
+        background-color: var(--bg-hover);
+        color: var(--primary-color);
+    }
+
+    .nav-item.active {
+        background-color: var(--bg-hover);
+        color: var(--primary-color);
+        border-left: 3px solid var(--primary-color);
+        /* Admin active indicator */
+    }
+
+    /* Action Buttons (Search, Dialer) */
+    .sidebar-action-btn {
+        border: 1px solid var(--border-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar-action-btn:hover {
+        border-color: var(--primary-color);
+    }
+
+    /* Sidebar Footer */
+    .sidebar-footer {
+        padding: 1rem;
+        border-top: 1px solid var(--border-color);
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* MAIN CONTENT */
+    .layout-main {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        width: calc(100% - var(--sidebar-width));
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        /* Context for children */
+        z-index: 1;
+        /* Creates a stacking context so Map z-index (1000) stays inside */
+    }
+
+    .mobile-overlay {
+        z-index: 20000 !important;
+    }
+
+    .layout-sidebar {
+        z-index: 20001 !important;
     }
 
     .layout-header {
-        justify-content: space-between;
-        /* Show toggle on mobile */
-        background-color: var(--bg-card);
-        /* Solid header on mobile */
-        padding: 0 1rem;
+        display: flex;
+        /* Always distinct from content */
+        height: var(--header-height);
+        padding: 0 2rem;
+        /* Match content padding */
+        align-items: center;
+        justify-content: flex-end;
+        /* Align user info to right */
+        background-color: transparent;
+        /* Seamless with body */
+        /* border-bottom: 1px solid var(--border-color); - Optional, maybe remove for cleaner look */
+        z-index: 900;
     }
 
     .layout-content {
-        padding: 1rem;
+        padding: 0 2rem 2rem 2rem;
+        /* Left align: No auto margins */
+        flex: 1;
+        overflow-x: hidden;
     }
-}
+
+    .layout-content-inner {
+        /* REMOVED MAX-WIDTH and AUTO MARGINS to fix spacing */
+        width: 100%;
+        max-width: 1400px;
+        /* Optional cap for ultra-wide, but keeps it left */
+        margin: 0;
+        /* Left align */
+    }
+
+    /* Card Styles matching Admin */
+    .card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        color: var(--primary-color);
+        font-family: 'Georgia', serif;
+    }
+
+    .btn-primary,
+    .btn {
+        background-color: var(--primary-color);
+        color: #1a1108;
+        font-weight: bold;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .layout-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .layout-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .layout-main {
+            margin-left: 0;
+            width: 100%;
+            padding-top: var(--header-height);
+        }
+
+        .layout-header {
+            justify-content: space-between;
+            /* Show toggle on mobile */
+            background-color: var(--bg-card);
+            /* Solid header on mobile */
+            padding: 0 1rem;
+        }
+
+        .layout-content {
+            padding: 1rem;
+        }
+    }
