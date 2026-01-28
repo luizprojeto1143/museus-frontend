@@ -47,7 +47,11 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(true);
+
+  // Fix: Check session storage so it doesn't show on every route change
+  const [showWelcome, setShowWelcome] = useState(() => {
+    return !sessionStorage.getItem("hasSeenWelcome");
+  });
 
   // Theme and Features State
   const [settings, setSettings] = useState<{
@@ -117,7 +121,10 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         <WelcomeAnimation
           name={name}
           email={email}
-          onComplete={() => setShowWelcome(false)}
+          onComplete={() => {
+            setShowWelcome(false);
+            sessionStorage.setItem("hasSeenWelcome", "true");
+          }}
         />
       )}
 
