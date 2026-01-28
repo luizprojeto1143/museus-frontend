@@ -62,6 +62,7 @@ export const AdminEventForm: React.FC = () => {
     // Certificate
     certificateBackgroundUrl: "",
     minMinutesForCertificate: "",
+    certificateRequiresSurvey: false,
 
     // Visibility
     visibility: "PUBLIC" // PUBLIC, PRIVATE
@@ -106,6 +107,7 @@ export const AdminEventForm: React.FC = () => {
             producerLogoUrl: data.producerLogoUrl || "",
             certificateBackgroundUrl: data.certificateBackgroundUrl || "",
             minMinutesForCertificate: data.minMinutesForCertificate || "",
+            certificateRequiresSurvey: data.certificateRequiresSurvey || false,
             visibility: data.visibility || "PUBLIC"
           });
 
@@ -152,7 +154,8 @@ export const AdminEventForm: React.FC = () => {
         startDate: new Date(formData.startDate).toISOString(),
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
         isOnline: formData.format === 'ONLINE',
-        minMinutesForCertificate: formData.minMinutesForCertificate ? Number(formData.minMinutesForCertificate) : null
+        minMinutesForCertificate: formData.minMinutesForCertificate ? Number(formData.minMinutesForCertificate) : null,
+        certificateRequiresSurvey: formData.certificateRequiresSurvey
       };
 
       let eventId = id;
@@ -437,6 +440,45 @@ export const AdminEventForm: React.FC = () => {
                 onChange={e => setFormData({ ...formData, producerDescription: e.target.value })}
                 placeholder="Conte um pouco sobre quem está organizando..."
               />
+            </div>
+
+            <hr className="my-6 border-gray-200" />
+
+            <h3 className="text-lg font-semibold mb-2">Certificado</h3>
+            <div className="space-y-4 mb-6">
+              <div className="form-group">
+                <label>Imagem de Fundo do Certificado (URL)</label>
+                <input
+                  className="input w-full"
+                  value={formData.certificateBackgroundUrl}
+                  onChange={e => setFormData({ ...formData, certificateBackgroundUrl: e.target.value })}
+                  placeholder="https://..."
+                />
+                <p className="text-xs text-gray-400 mt-1">Deixe em branco para usar o padrão do sistema.</p>
+              </div>
+              <div className="flex gap-4">
+                <div className="form-group flex-1">
+                  <label>Min. Minutos para Certificado</label>
+                  <input
+                    type="number"
+                    className="input w-full"
+                    value={formData.minMinutesForCertificate}
+                    onChange={e => setFormData({ ...formData, minMinutesForCertificate: e.target.value })}
+                    placeholder="Ex: 60"
+                  />
+                </div>
+                <div className="form-group flex-1 flex items-end pb-3">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                      checked={formData.certificateRequiresSurvey}
+                      onChange={e => setFormData({ ...formData, certificateRequiresSurvey: e.target.checked })}
+                    />
+                    <span className="text-gray-700">Exigir Pesquisa de Satisfação</span>
+                  </label>
+                </div>
+              </div>
             </div>
 
             <hr className="my-6 border-gray-200" />

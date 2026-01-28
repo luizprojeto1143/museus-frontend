@@ -21,6 +21,8 @@ export const AdminUploads: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<"all" | "image" | "audio" | "video">("all");
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const loadFiles = React.useCallback(async () => {
     try {
       const res = await api.get(`/upload?tenantId=${tenantId}`);
@@ -93,13 +95,14 @@ export const AdminUploads: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => document.getElementById("file-upload")?.click()}
+          onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
           className="btn btn-primary"
         >
           {uploading ? t("common.uploading") : "+ " + t("admin.uploads.newUpload")}
         </button>
         <input
+          ref={fileInputRef}
           id="file-upload"
           type="file"
           multiple

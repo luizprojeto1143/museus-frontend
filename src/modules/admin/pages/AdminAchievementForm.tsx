@@ -24,6 +24,8 @@ export const AdminAchievementForm: React.FC = () => {
   const { tenantId } = useAuth();
   const isEditing = !!id;
 
+  const iconInputRef = React.useRef<HTMLInputElement>(null);
+
   const [form, setForm] = useState<AchievementForm>({
     code: "",
     title: "",
@@ -179,11 +181,12 @@ export const AdminAchievementForm: React.FC = () => {
                 cursor: "pointer",
                 boxShadow: "0 4px 16px rgba(212, 175, 55, 0.4)"
               }}
-              onClick={() => document.getElementById("icon-upload")?.click()}
+              onClick={() => iconInputRef.current?.click()}
             >
               {!form.iconUrl && "🏆"}
             </div>
             <input
+              ref={iconInputRef}
               id="icon-upload"
               type="file"
               accept="image/*"

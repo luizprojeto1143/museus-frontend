@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -22,7 +22,6 @@ interface MuseumSettings {
   logoUrl: string;
   coverImageUrl: string;
   appIconUrl: string;
-  bannerUrl: string;
 
   // 2.3 Mapa
   mapImageUrl: string;
@@ -34,13 +33,19 @@ interface MuseumSettings {
   secondaryColor: string;
   theme: "light" | "dark";
   historicalFont: boolean;
-
-
 }
 
 export const AdminMuseumSettings: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
+
+  // Refs for File Inputs
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const iconInputRef = useRef<HTMLInputElement>(null);
+  const mapInputRef = useRef<HTMLInputElement>(null);
+  const floorPlanInputRef = useRef<HTMLInputElement>(null);
+
   const [settings, setSettings] = useState<MuseumSettings>({
     name: "",
     mission: "",
@@ -52,7 +57,6 @@ export const AdminMuseumSettings: React.FC = () => {
     logoUrl: "",
     coverImageUrl: "",
     appIconUrl: "",
-    bannerUrl: "",
     mapImageUrl: "",
     latitude: -20.385574, // Default Ouro Preto
     longitude: -43.503578,
@@ -60,7 +64,6 @@ export const AdminMuseumSettings: React.FC = () => {
     secondaryColor: "#cd7f32",
     theme: "dark",
     historicalFont: true,
-
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -182,8 +185,6 @@ export const AdminMuseumSettings: React.FC = () => {
         {t("admin.museumSettings.subtitle")}
       </p>
 
-
-
       {/* 2.1 DADOS DO MUSEU */}
       <div className="card" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">📋 {t("admin.museumSettings.institutionalData")}</h2>
@@ -282,11 +283,11 @@ export const AdminMuseumSettings: React.FC = () => {
                 cursor: "pointer",
                 position: "relative"
               }}
-              onClick={() => document.getElementById("logo-upload")?.click()}
+              onClick={() => logoInputRef.current?.click()}
             >
               {!settings.logoUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
               <input
-                id="logo-upload"
+                ref={logoInputRef}
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
@@ -310,11 +311,11 @@ export const AdminMuseumSettings: React.FC = () => {
                 background: settings.coverImageUrl ? `url(${settings.coverImageUrl}) center/cover no-repeat` : "rgba(42, 24, 16, 0.3)",
                 cursor: "pointer"
               }}
-              onClick={() => document.getElementById("cover-upload")?.click()}
+              onClick={() => coverInputRef.current?.click()}
             >
               {!settings.coverImageUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
               <input
-                id="cover-upload"
+                ref={coverInputRef}
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
@@ -338,11 +339,11 @@ export const AdminMuseumSettings: React.FC = () => {
                 background: settings.appIconUrl ? `url(${settings.appIconUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
                 cursor: "pointer"
               }}
-              onClick={() => document.getElementById("icon-upload")?.click()}
+              onClick={() => iconInputRef.current?.click()}
             >
               {!settings.appIconUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
               <input
-                id="icon-upload"
+                ref={iconInputRef}
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
@@ -350,38 +351,8 @@ export const AdminMuseumSettings: React.FC = () => {
               />
             </div>
           </div>
-
-          {/* Banner */}
-          <div>
-            <label className="form-label">{t("admin.museumSettings.images.banner")}</label>
-            <div
-              style={{
-                width: "100%",
-                height: "150px",
-                border: "2px dashed var(--border-strong)",
-                borderRadius: "var(--radius-md)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: settings.bannerUrl ? `url(${settings.bannerUrl}) center/cover no-repeat` : "rgba(42, 24, 16, 0.3)",
-                cursor: "pointer"
-              }}
-              onClick={() => document.getElementById("banner-upload")?.click()}
-            >
-              {!settings.bannerUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
-              <input
-                id="banner-upload"
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => e.target.files?.[0] && handleFileUpload("bannerUrl", e.target.files[0])}
-              />
-            </div>
-          </div>
         </div>
       </div>
-
-
 
       {/* 2.3 CONFIGURAÇÃO DE MAPA */}
       <div className="card" style={{ marginBottom: "2rem" }}>
@@ -404,11 +375,11 @@ export const AdminMuseumSettings: React.FC = () => {
                 cursor: "pointer",
                 marginBottom: "0.5rem"
               }}
-              onClick={() => document.getElementById("map-upload")?.click()}
+              onClick={() => mapInputRef.current?.click()}
             >
               {!settings.mapImageUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
               <input
-                id="map-upload"
+                ref={mapInputRef}
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
@@ -589,13 +560,13 @@ export const AdminMuseumSettings: React.FC = () => {
                     : "rgba(42, 24, 16, 0.3)",
                   cursor: "pointer"
                 }}
-                onClick={() => document.getElementById("floor-plan-upload")?.click()}
+                onClick={() => floorPlanInputRef.current?.click()}
               >
                 {!newFloorPlan.imageUrl && (
                   <span style={{ fontSize: "0.85rem" }}>Clique para enviar imagem</span>
                 )}
                 <input
-                  id="floor-plan-upload"
+                  ref={floorPlanInputRef}
                   type="file"
                   accept="image/*"
                   style={{ display: "none" }}
@@ -741,6 +712,6 @@ export const AdminMuseumSettings: React.FC = () => {
       >
         {saving ? t("admin.museumSettings.saving") : `💾 ${t("admin.museumSettings.save")}`}
       </button>
-    </div >
+    </div>
   );
 };

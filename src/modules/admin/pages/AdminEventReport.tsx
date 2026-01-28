@@ -8,6 +8,34 @@ import {
 } from 'lucide-react';
 // import { Bar, Doughnut } from 'react-chartjs-2'; // Adding chartjs might be too heavy, let's use simple HTML/CSS bars for MVP
 
+interface TicketBreakdown {
+    name: string;
+    sold: number;
+    revenue: number;
+}
+
+interface QuestionStats {
+    id: string;
+    question: string;
+    type: 'STARS' | 'TEXT' | 'CHOICE' | 'NPS';
+    totalResponses: number;
+    aggregation: {
+        average?: number;
+        npsScore?: number;
+        distribution?: Record<string, number>;
+        recentAnswers?: Array<{ answer: string; createdAt: string }>;
+    };
+}
+
+interface Participant {
+    id: string;
+    name: string;
+    email: string;
+    ticketName: string;
+    status: 'REGISTERED' | 'CHECKED_IN' | 'CANCELED';
+    checkInDate?: string;
+}
+
 interface ReportData {
     event: {
         title: string;
@@ -20,16 +48,16 @@ interface ReportData {
         totalCheckedIn: number;
         attendanceRate: number;
         totalRevenue: number;
-        ticketsBreakdown: any[];
+        ticketsBreakdown: TicketBreakdown[];
     };
     survey: {
         questionsCount: number;
         totalResponses: number;
         overallSatisfaction: number;
         uniqueRespondents: number;
-        questions: any[];
+        questions: QuestionStats[];
     };
-    participants: any[];
+    participants: Participant[];
 }
 
 export const AdminEventReport: React.FC = () => {

@@ -11,6 +11,13 @@ export const MasterSeeder: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
 
+    // Simulation State
+    const [simSettings, setSimSettings] = useState({
+        visitors: 5,
+        minVisits: 1,
+        maxVisits: 5
+    });
+
     const handleGenerate = async () => {
         if (!tenantId) return alert("Tenant ID required");
         setLoading(true);
@@ -37,6 +44,26 @@ export const MasterSeeder: React.FC = () => {
         } catch (error) {
             console.error(error);
             alert("Erro ao apagar");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSimulate = async () => {
+        if (!tenantId) return alert("Tenant ID required");
+
+        setLoading(true);
+        try {
+            const res = await api.post('/seeder/simulate-traffic', {
+                tenantId,
+                visitorCount: simSettings.visitors,
+                minVisits: simSettings.minVisits,
+                maxVisits: simSettings.maxVisits
+            });
+            alert(res.data.details);
+        } catch (e) {
+            console.error(e);
+            alert("Erro na simulação");
         } finally {
             setLoading(false);
         }
@@ -133,8 +160,8 @@ export const MasterSeeder: React.FC = () => {
                                 type="number"
                                 className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white"
                                 placeholder="Ex: 5"
-                                id="sim-visitors"
-                                defaultValue={5}
+                                value={simSettings.visitors}
+                                onChange={e => setSimSettings({ ...simSettings, visitors: Number(e.target.value) })}
                             />
                         </div>
                         <div>
@@ -143,8 +170,8 @@ export const MasterSeeder: React.FC = () => {
                                 type="number"
                                 className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white"
                                 placeholder="Ex: 1"
-                                id="sim-min"
-                                defaultValue={1}
+                                value={simSettings.minVisits}
+                                onChange={e => setSimSettings({ ...simSettings, minVisits: Number(e.target.value) })}
                             />
                         </div>
                         <div>
@@ -153,35 +180,14 @@ export const MasterSeeder: React.FC = () => {
                                 type="number"
                                 className="w-full bg-gray-900 border border-gray-700 rounded p-2 text-white"
                                 placeholder="Ex: 5"
-                                id="sim-max"
-                                defaultValue={5}
+                                value={simSettings.maxVisits}
+                                onChange={e => setSimSettings({ ...simSettings, maxVisits: Number(e.target.value) })}
                             />
                         </div>
                     </div>
 
                     <button
-                        onClick={async () => {
-                            if (!tenantId) return alert("Tenant ID required");
-                            const vCount = (document.getElementById('sim-visitors') as HTMLInputElement).value;
-                            const minV = (document.getElementById('sim-min') as HTMLInputElement).value;
-                            const maxV = (document.getElementById('sim-max') as HTMLInputElement).value;
-
-                            setLoading(true);
-                            try {
-                                const res = await api.post('/seeder/simulate-traffic', {
-                                    tenantId,
-                                    visitorCount: Number(vCount),
-                                    minVisits: Number(minV),
-                                    maxVisits: Number(maxV)
-                                });
-                                alert(res.data.details);
-                            } catch (e) {
-                                console.error(e);
-                                alert("Erro na simulação");
-                            } finally {
-                                setLoading(false);
-                            }
-                        }}
+                        onClick={handleSimulate}
                         disabled={loading}
                         className="mt-4 w-full bg-purple-900/50 hover:bg-purple-900 text-purple-200 border border-purple-800 font-bold py-2 px-4 rounded transition-colors disabled:opacity-50"
                     >

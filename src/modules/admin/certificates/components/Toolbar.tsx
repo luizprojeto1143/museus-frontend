@@ -11,6 +11,8 @@ export const Toolbar: React.FC = () => {
         zoom, setZoom
     } = useCertificate();
 
+    const bgInputRef = React.useRef<HTMLInputElement>(null);
+
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -337,7 +339,7 @@ export const Toolbar: React.FC = () => {
                     </h3>
                     <div
                         style={styles.bgUpload}
-                        onClick={() => document.getElementById('bg-upload-new')?.click()}
+                        onClick={() => bgInputRef.current?.click()}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.borderColor = 'rgba(212,175,55,0.5)';
                         }}
@@ -357,7 +359,7 @@ export const Toolbar: React.FC = () => {
                             </>
                         )}
                     </div>
-                    <input type="file" id="bg-upload-new" style={{ display: 'none' }} accept="image/*" onChange={handleFileUpload} />
+                    <input ref={bgInputRef} type="file" id="bg-upload-new" style={{ display: 'none' }} accept="image/*" onChange={handleFileUpload} />
                 </div>
             </div>
 

@@ -46,7 +46,8 @@ export const EventSurveyPage: React.FC = () => {
             if (user) {
                 try {
                     const myResp = await api.get(`/events/${id}/survey/my-responses`);
-                    const loadedAnswers: Record<string, any> = {};
+                    const loadedAnswers: Record<string, string | number> = {};
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     myResp.data.forEach((r: any) => {
                         loadedAnswers[r.questionId] = r.answer;
                     });
@@ -55,7 +56,9 @@ export const EventSurveyPage: React.FC = () => {
                         // All answered
                         setSuccess(true);
                     }
-                } catch (ignore) { }
+                } catch (error) {
+                    console.warn("Failed to load existing responses or none found", error);
+                }
             }
         } catch (error) {
             console.error(error);
@@ -79,8 +82,9 @@ export const EventSurveyPage: React.FC = () => {
 
             await api.post(`/events/${id}/survey/respond`, payload);
             setSuccess(true);
-        } catch (error: any) {
-            console.error(error);
+        } catch (err: unknown) {
+            console.error(err);
+            const error = err as { response?: { data?: { error?: string } } };
             alert(error.response?.data?.error || 'Erro ao enviar respostas.');
         } finally {
             setSubmitting(false);
