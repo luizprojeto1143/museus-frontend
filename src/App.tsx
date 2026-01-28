@@ -307,14 +307,22 @@ const App: React.FC = () => {
               }
             />
             <Route
-              path="/caca-tesouro"
+              path="/livro-visitas"
               element={
                 <RequireRole allowed={["visitor", "admin", "master"]}>
                   <VisitorLayout>
-                    <TreasureHunt />
+                    <GuestbookPage />
                   </VisitorLayout>
                 </RequireRole>
               }
+            />
+            element={
+              <RequireRole allowed={["visitor", "admin", "master"]}>
+                <VisitorLayout>
+                  <TreasureHunt />
+                </VisitorLayout>
+              </RequireRole>
+            }
             />
             <Route
               path="/roteiro-inteligente"
