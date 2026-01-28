@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Target, Trophy, Map, ChevronRight, Star, Clock } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { DailyChallengeWidget, XpProgressBar } from '../../../components/gamification/ChallengeWidget';
-
-import { Gamepad2 } from 'lucide-react';
+import './Challenges.css';
 
 interface ScavengerHunt {
     id: string;
@@ -16,12 +14,6 @@ interface ScavengerHunt {
     _count: { steps: number };
 }
 
-// UserProgress type removed - not used in this component
-
-/**
- * Visitor Challenges Page
- * Daily challenges and scavenger hunts
- */
 export const ChallengesPage: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
@@ -57,39 +49,31 @@ export const ChallengesPage: React.FC = () => {
     }, [tenantId]);
 
     const calculateLevel = (xp: number) => {
-        // Each level = 500 XP
         return Math.floor(xp / 500) + 1;
     };
 
-    const navigate = useNavigate();
-
     return (
-        <div className="challenges-page">
-            <header className="page-header">
-                <div className="header-icon">
+        <div className="challenges-container">
+            <header className="challenges-header">
+                <div className="challenges-header-icon">
                     <Target size={32} />
                 </div>
-                <div>
-                    <h1>{t('visitor.challenges.title', 'Desafios')}</h1>
-                    <p className="subtitle">
+                <div className="challenges-header-text">
+                    <h1 className="challenges-header-title">{t('visitor.challenges.title', 'Desafios')}</h1>
+                    <p className="challenges-header-subtitle">
                         {t('visitor.challenges.subtitle', 'Complete missões e ganhe XP!')}
                     </p>
                 </div>
             </header>
 
             {/* User XP */}
-            <section className="xp-section">
+            <section className="challenges-xp-section">
                 <XpProgressBar currentXp={userXp} level={calculateLevel(userXp)} />
             </section>
 
-
-
-
-
-
             {/* Daily Challenge */}
-            <section className="section">
-                <h2 className="section-title">
+            <section className="challenges-section">
+                <h2 className="challenges-section-title">
                     <Clock size={20} />
                     {t('visitor.challenges.daily', 'Desafio do Dia')}
                 </h2>
@@ -97,97 +81,28 @@ export const ChallengesPage: React.FC = () => {
             </section>
 
             {/* Scavenger Hunts */}
-            <section className="section">
-                <h2 className="section-title">
+            <section className="challenges-section">
+                <h2 className="challenges-section-title">
                     <Map size={20} />
                     {t('visitor.challenges.hunts', 'Caças ao Tesouro')}
                 </h2>
 
                 {loading ? (
-                    <div className="loading">Carregando...</div>
+                    <div className="challenges-loading">Carregando...</div>
                 ) : hunts.length === 0 ? (
-                    <div className="empty-state">
+                    <div className="challenges-empty">
                         <Trophy size={48} />
                         <h3>Nenhuma caça ativa</h3>
                         <p>Volte em breve para novas aventuras!</p>
                     </div>
                 ) : (
-                    <div className="hunts-list">
+                    <div className="hunts-list-premium">
                         {hunts.map(hunt => (
                             <HuntCard key={hunt.id} hunt={hunt} />
                         ))}
                     </div>
                 )}
             </section>
-
-            <style>{`
-                .challenges-page {
-                    padding: 20px;
-                }
-                
-                .page-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    margin-bottom: 24px;
-                }
-                
-                .header-icon {
-                    width: 64px;
-                    height: 64px;
-                    border-radius: 16px;
-                    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                }
-                
-                .page-header h1 {
-                    margin: 0;
-                    font-size: 1.5rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .subtitle {
-                    margin: 4px 0 0;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .xp-section {
-                    margin-bottom: 24px;
-                }
-                
-                .section {
-                    margin-bottom: 32px;
-                }
-                
-                .section-title {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    margin: 0 0 16px;
-                    font-size: 1.1rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .hunts-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 12px;
-                }
-                
-                .loading, .empty-state {
-                    text-align: center;
-                    padding: 40px 20px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .empty-state h3 {
-                    margin: 16px 0 8px;
-                    color: var(--fg-main, #f3f4f6);
-                }
-            `}</style>
         </div>
     );
 };
@@ -200,7 +115,6 @@ const HuntCard: React.FC<{ hunt: ScavengerHunt }> = ({ hunt }) => {
         setStarting(true);
         try {
             await api.post(`/challenges/hunts/${hunt.id}/start`);
-            // Navigate to hunt detail or show first clue
             window.location.href = `/desafios/cacas/${hunt.id}`;
         } catch (error) {
             console.error('Error starting hunt:', error);
@@ -210,91 +124,23 @@ const HuntCard: React.FC<{ hunt: ScavengerHunt }> = ({ hunt }) => {
     };
 
     return (
-        <div className="hunt-card">
-            <div className="hunt-icon">🗺️</div>
-            <div className="hunt-info">
-                <h4>{hunt.title}</h4>
-                <p>{hunt.description}</p>
-                <div className="hunt-meta">
-                    <span className="hunt-steps">
+        <div className="hunt-card-premium">
+            <div className="hunt-card-icon">🗺️</div>
+            <div className="hunt-card-info">
+                <h4 className="hunt-card-title">{hunt.title}</h4>
+                <p className="hunt-card-description">{hunt.description}</p>
+                <div className="hunt-card-meta">
+                    <span className="hunt-meta-item">
                         <Map size={14} /> {hunt._count.steps} pistas
                     </span>
-                    <span className="hunt-reward">
-                        <Star size={14} fill="#fbbf24" /> {hunt.xpReward} XP
+                    <span className="hunt-meta-item reward">
+                        <Star size={14} /> {hunt.xpReward} XP
                     </span>
                 </div>
             </div>
-            <button className="start-btn" onClick={handleStart} disabled={starting}>
+            <button className="hunt-start-btn" onClick={handleStart} disabled={starting}>
                 {starting ? '...' : <ChevronRight size={20} />}
             </button>
-
-            <style>{`
-                .hunt-card {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    padding: 16px;
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 16px;
-                    border: 1px solid var(--border-color, #374151);
-                }
-                
-                .hunt-icon {
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 12px;
-                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1.5rem;
-                }
-                
-                .hunt-info {
-                    flex: 1;
-                }
-                
-                .hunt-info h4 {
-                    margin: 0 0 4px;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .hunt-info p {
-                    margin: 0 0 8px;
-                    font-size: 0.85rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .hunt-meta {
-                    display: flex;
-                    gap: 16px;
-                }
-                
-                .hunt-steps, .hunt-reward {
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                    font-size: 0.8rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .hunt-reward {
-                    color: #fbbf24;
-                }
-                
-                .start-btn {
-                    width: 44px;
-                    height: 44px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, #8b5cf6, #6366f1);
-                    border: none;
-                    color: white;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-            `}</style>
         </div>
     );
 };

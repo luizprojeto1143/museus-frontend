@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
+import "./Trails.css";
 
 type TrailDetailData = {
   id: string;
@@ -36,7 +37,6 @@ export const TrailDetail: React.FC = () => {
   useEffect(() => {
     if (isDemo) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setApiLoading(true);
     setError(false);
     api
@@ -74,23 +74,22 @@ export const TrailDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", alignItems: "center" }}>
-        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid rgba(255,255,255,0.1)", borderTopColor: "var(--primary-color)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+      <div className="trail-detail-loading">
+        <div className="trail-detail-spinner"></div>
         <p>{t("common.loading")}</p>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   if (error || !trail) {
     return (
-      <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
-        <h1 className="section-title">{t("visitor.trailDetail.notFound", "Trilha não encontrada")}</h1>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>
+      <div className="trail-detail-error">
+        <span className="trail-detail-error-icon">🗺️</span>
+        <h1>{t("visitor.trailDetail.notFound", "Trilha não encontrada")}</h1>
+        <p>
           {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : t("visitor.trailDetail.notFoundDesc", "A trilha que você procura não existe ou foi removida.")}
         </p>
-        <button className="btn btn-secondary" onClick={() => window.history.back()}>
+        <button className="trail-back-btn" onClick={() => window.history.back()}>
           {t("common.back")}
         </button>
       </div>
@@ -98,50 +97,31 @@ export const TrailDetail: React.FC = () => {
   }
 
   return (
-    <div>
-      <header style={{ marginBottom: "1.5rem" }}>
-        <div className="badge">{t("visitor.trails.badge")}</div>
-        <h1 className="section-title">{trail.name}</h1>
-        <p className="section-subtitle">
+    <div className="trail-detail-container">
+      <header className="trail-detail-header">
+        <span className="trail-detail-badge">{t("visitor.trails.badge")}</span>
+        <h1 className="trail-detail-title">{trail.name}</h1>
+        <p className="trail-detail-meta">
           {trail.duration} • {trail.works.length} {t("visitor.sidebar.artworks")}
         </p>
       </header>
 
-      <section style={{ marginBottom: "1.75rem" }}>
-        <h2 className="section-title">{t("visitor.trailDetail.about")}</h2>
-        <p style={{ fontSize: "0.95rem", color: "#e5e7eb", lineHeight: 1.7 }}>
-          {trail.description}
-        </p>
+      <section className="trail-about-section">
+        <h2>{t("visitor.trailDetail.about")}</h2>
+        <p className="trail-about-text">{trail.description}</p>
       </section>
 
-      <section>
-        <h2 className="section-title">{t("visitor.trailDetail.artworks")}</h2>
+      <section className="trail-works-section">
+        <h2>{t("visitor.trailDetail.artworks")}</h2>
         {trail.works.length > 0 ? (
-          <div className="card-grid">
+          <div className="trail-works-grid">
             {trail.works.map((work, index) => (
-              <article key={work.id} className="card" style={{ position: "relative" }}>
-                <div style={{
-                  position: "absolute",
-                  top: "-0.75rem",
-                  left: "-0.75rem",
-                  width: "2rem",
-                  height: "2rem",
-                  background: "var(--primary-color)",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  color: "#1a1108",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
-                }}>
-                  {index + 1}
-                </div>
-                <h3 className="card-title" style={{ marginTop: "0.5rem" }}>{work.title}</h3>
-                <p className="card-subtitle">{t("visitor.trailDetail.clickDetails")}</p>
+              <article key={work.id} className="trail-work-card">
+                <div className="trail-work-number">{index + 1}</div>
+                <h3 className="trail-work-title">{work.title}</h3>
+                <p className="trail-work-subtitle">{t("visitor.trailDetail.clickDetails")}</p>
                 <button
-                  className="btn btn-secondary"
-                  style={{ marginTop: "1rem", width: "100%" }}
+                  className="trail-work-btn"
                   onClick={() => window.location.href = `/obras/${work.id}`}
                 >
                   {t("visitor.home.viewDetails")}
@@ -150,7 +130,7 @@ export const TrailDetail: React.FC = () => {
             ))}
           </div>
         ) : (
-          <p style={{ color: "#9ca3af", fontStyle: "italic" }}>{t("visitor.trailDetail.noWorks", "Esta trilha ainda não possui obras.")}</p>
+          <p className="trail-no-works">{t("visitor.trailDetail.noWorks", "Esta trilha ainda não possui obras.")}</p>
         )}
       </section>
     </div>

@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Camera, Keyboard, ArrowLeft } from "lucide-react";
+import "./Scanner.css";
 
 export const ScannerPage: React.FC = () => {
     const { t } = useTranslation();
@@ -11,7 +13,6 @@ export const ScannerPage: React.FC = () => {
     const [isScanning, setIsScanning] = useState(false);
     const scannerRef = useRef<Html5Qrcode | null>(null);
 
-    // Cleanup function
     const stopScanner = async () => {
         if (scannerRef.current && scannerRef.current.isScanning) {
             try {
@@ -60,7 +61,6 @@ export const ScannerPage: React.FC = () => {
 
         let workId = decodedText;
 
-        // Try to parse if it's JSON
         try {
             const data = JSON.parse(decodedText);
             if (data.id) workId = data.id;
@@ -68,7 +68,6 @@ export const ScannerPage: React.FC = () => {
             // Not JSON, assume string ID
         }
 
-        // If it's a full URL, extract ID
         if (workId.includes("/works/")) {
             workId = workId.split("/works/")[1];
         } else if (workId.includes("/qr/")) {
@@ -96,57 +95,59 @@ export const ScannerPage: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: "1rem", paddingBottom: "3rem", display: "flex", flexDirection: "column", alignItems: "center", maxWidth: "600px", margin: "0 auto" }}>
-            <h1 className="section-title">{t("visitor.scanner.title", "Scanner de Obras (QR)")}</h1>
-            <p style={{ marginBottom: "1.5rem", color: "#9ca3af", textAlign: "center" }}>
-                {t("visitor.scanner.instruction", "Aponte a câmera para o código QRCode ao lado da obra para ver detalhes.")}
-            </p>
+        <div className="scanner-container">
+            <header className="scanner-header">
+                <h1 className="scanner-title">
+                    <Camera size={28} />
+                    {t("visitor.scanner.title", "Scanner de Obras")}
+                </h1>
+                <p className="scanner-instruction">
+                    {t("visitor.scanner.instruction", "Aponte a câmera para o código QRCode ao lado da obra para ver detalhes.")}
+                </p>
+            </header>
 
             {/* Scanner Area */}
-            <div style={{ width: "100%", marginBottom: "2rem", position: "relative", minHeight: "300px", background: "rgba(0,0,0,0.2)", borderRadius: "1rem", overflow: "hidden" }}>
-                <div id="reader" style={{ width: "100%" }}></div>
+            <div className="scanner-area">
+                <div id="reader" className="scanner-reader"></div>
 
                 {!isScanning && !error && (
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <button onClick={startScanner} className="btn btn-primary">
-                            📷 {t("visitor.scanner.startCamera", "Iniciar Câmera")}
+                    <div className="scanner-start-overlay">
+                        <button onClick={startScanner} className="scanner-start-btn">
+                            <Camera size={24} />
+                            {t("visitor.scanner.startCamera", "Iniciar Câmera")}
                         </button>
                     </div>
                 )}
             </div>
 
             {error && (
-                <div style={{ padding: "1rem", backgroundColor: "rgba(239, 68, 68, 0.1)", color: "#ef4444", borderRadius: "0.5rem", marginBottom: "1rem", textAlign: "center" }}>
+                <div className="scanner-error">
                     {error}
                 </div>
             )}
 
             {/* Manual Input Fallback */}
-            <div style={{ width: "100%", padding: "1.5rem", backgroundColor: "rgba(255,255,255,0.05)", borderRadius: "1rem" }}>
-                <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "var(--accent-gold)" }}>
+            <div className="scanner-manual-section">
+                <h3 className="scanner-manual-title">
+                    <Keyboard size={18} />
                     {t("visitor.dialer.title", "Digitar Código")}
                 </h3>
-                <form onSubmit={handleManualSubmit} style={{ display: "flex", gap: "0.5rem" }}>
+                <form onSubmit={handleManualSubmit} className="scanner-manual-form">
                     <input
                         type="text"
                         value={manualCode}
                         onChange={(e) => setManualCode(e.target.value)}
                         placeholder={t("visitor.dialer.placeholder", "Ex: 1234")}
-                        className="input"
-                        style={{ flex: 1 }}
+                        className="scanner-manual-input"
                     />
-                    <button type="submit" className="btn btn-primary">
+                    <button type="submit" className="scanner-manual-submit">
                         {t("common.view", "Ver")}
                     </button>
                 </form>
             </div>
 
-            <button
-                onClick={() => navigate(-1)}
-                className="btn btn-secondary"
-                style={{ marginTop: "2rem", width: "100%" }}
-            >
-                {t("common.back", "Voltar")}
+            <button onClick={() => navigate(-1)} className="scanner-back-btn">
+                <ArrowLeft size={16} /> {t("common.back", "Voltar")}
             </button>
         </div>
     );

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { ArrowRight, Compass } from "lucide-react";
+import "./Trails.css";
 
 export const TrailsList: React.FC = () => {
   const { t } = useTranslation();
@@ -22,7 +24,6 @@ export const TrailsList: React.FC = () => {
   useEffect(() => {
     if (!tenantId) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     api
       .get("/trails", { params: { tenantId } })
@@ -30,7 +31,7 @@ export const TrailsList: React.FC = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const apiTrails = (res.data as any[]).map((t) => ({
           id: t.id,
-          name: t.title, // Backend returns title
+          name: t.title,
           description: t.description,
           duration: t.duration ? `${t.duration} min` : undefined,
           worksCount: Array.isArray(t.workIds) ? t.workIds.length : 0,
@@ -45,59 +46,51 @@ export const TrailsList: React.FC = () => {
   }, [tenantId]);
 
   return (
-    <div>
-      <h1 className="section-title">{t("visitor.trails.title")}</h1>
-      <p className="section-subtitle">
-        {t("visitor.trails.subtitle")}
-      </p>
+    <div className="trails-container">
+      <header className="trails-header">
+        <h1 className="trails-header-title">{t("visitor.trails.title")}</h1>
+        <p className="trails-header-subtitle">
+          {t("visitor.trails.subtitle")}
+        </p>
+      </header>
 
       {loading ? (
-        <div className="card-grid">
+        <div className="trails-skeleton-grid">
           {[1, 2, 3].map(i => (
-            <div key={i} className="card" style={{ height: "200px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+            <div key={i} className="trails-skeleton-card"></div>
           ))}
         </div>
       ) : trails.length > 0 ? (
-        <div className="card-grid">
+        <div className="trails-grid">
           {trails.map(trail => (
-            <article key={trail.id} className="card" style={{ display: "flex", flexDirection: "column" }}>
-              <h2 className="card-title">{trail.name}</h2>
+            <article key={trail.id} className="trail-card">
+              <h2 className="trail-card-title">{trail.name}</h2>
               {trail.description && (
-                <p className="card-subtitle" style={{ marginBottom: "1rem", flex: 1 }}>
+                <p className="trail-card-description">
                   {trail.description.length > 100 ? trail.description.substring(0, 100) + "..." : trail.description}
                 </p>
               )}
-              <div className="card-meta" style={{ marginTop: "auto" }}>
-                <span className="chip">⏱ {trail.duration || "Livre"}</span>
-                <span className="chip">🖼 {trail.worksCount} {t("visitor.sidebar.artworks")}</span>
+              <div className="trail-card-meta">
+                <span className="trail-chip">⏱ {trail.duration || "Livre"}</span>
+                <span className="trail-chip">🖼 {trail.worksCount} {t("visitor.sidebar.artworks")}</span>
               </div>
-              <Link
-                to={`/trilhas/${trail.id}`}
-                className="btn btn-secondary"
-                style={{ marginTop: "1rem", width: "100%", textAlign: "center" }}
-              >
-                {t("visitor.trails.viewDetails")}
+              <Link to={`/trilhas/${trail.id}`} className="trail-card-btn">
+                {t("visitor.trails.viewDetails")} <ArrowRight size={14} />
               </Link>
             </article>
           ))}
         </div>
       ) : (
-        <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🗺️</div>
+        <div className="trails-empty">
+          <span className="trails-empty-icon">🗺️</span>
           <h3>{t("visitor.trails.emptyTitle", "Nenhuma trilha disponível")}</h3>
-          <p style={{ color: "#9ca3af" }}>{t("visitor.trails.emptyDesc", "O museu ainda não criou trilhas guiadas. Explore as obras individualmente!")}</p>
-          <Link to="/obras" className="btn btn-primary" style={{ marginTop: "1rem", display: "inline-block" }}>
+          <p>{t("visitor.trails.emptyDesc", "O museu ainda não criou trilhas guiadas. Explore as obras individualmente!")}</p>
+          <Link to="/obras" className="trails-empty-btn">
+            <Compass size={18} />
             {t("visitor.home.viewArtworks", "Ver Obras")}
           </Link>
         </div>
       )}
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 0.6; }
-          50% { opacity: 0.3; }
-          100% { opacity: 0.6; }
-        }
-      `}</style>
     </div>
   );
 };
