@@ -1,0 +1,202 @@
+/* Premium QrVisit Theme - Recognition Dark & Gold */
+
+.qr-visit-container {
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+    padding: 1rem;
+    padding-bottom: 6rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.qr-visit-header {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.qr-visit-title {
+    font-size: 1.75rem;
+    color: #d4af37;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.qr-visit-subtitle {
+    color: #c9b58c;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.qr-visit-reward {
+    color: #10b981;
+    font-weight: bold;
+}
+
+/* ============================================
+   INFO CARD
+   ============================================ */
+.qr-visit-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.qr-visit-type {
+    font-size: 0.95rem;
+    color: #c9b58c;
+    margin: 0 0 0.75rem 0;
+}
+
+.qr-visit-type strong {
+    color: #EAE0D5;
+}
+
+.qr-visit-hint {
+    font-size: 0.9rem;
+    color: #8b7355;
+    margin: 0;
+}
+
+/* Feedback Messages */
+.qr-visit-feedback {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.qr-visit-feedback.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.qr-visit-feedback.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Register Button */
+.qr-visit-register-btn {
+    margin-top: 1.25rem;
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.qr-visit-register-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.qr-visit-register-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.qr-visit-register-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(26, 17, 8, 0.3);
+    border-top-color: #1a1108;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   ERROR STATE
+   ============================================ */
+.qr-visit-error-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.qr-visit-error-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.qr-visit-error-card h1 {
+    font-size: 1.5rem;
+    color: #d4af37;
+    margin: 0 0 0.75rem 0;
+}
+
+.qr-visit-error-card p {
+    color: #8b7355;
+    margin: 0 0 1.5rem 0;
+}
+
+.qr-visit-retry-btn {
+    padding: 0.85rem 1.5rem;
+    background: rgba(70, 52, 32, 0.5);
+    color: #d4af37;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.qr-visit-retry-btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: #d4af37;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+.qr-visit-loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    gap: 1rem;
+}
+
+.qr-visit-loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #463420;
+    border-top-color: #d4af37;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.qr-visit-loading p {
+    color: #c9b58c;
+}

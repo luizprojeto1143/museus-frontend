@@ -1,0 +1,177 @@
+/* Premium Souvenir Theme - Keepsake Dark & Gold */
+
+.souvenir-container {
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+    padding-bottom: 6rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.souvenir-header {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.souvenir-title {
+    font-size: 2rem;
+    color: #d4af37;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.souvenir-title::before {
+    content: '✨';
+}
+
+.souvenir-subtitle {
+    color: #c9b58c;
+    font-size: 1rem;
+    margin: 0;
+    font-style: italic;
+}
+
+/* ============================================
+   GENERATE CARD
+   ============================================ */
+.souvenir-generate-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+}
+
+.souvenir-description {
+    color: #8b7355;
+    margin: 0 0 2rem 0;
+    line-height: 1.6;
+}
+
+.souvenir-generate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.souvenir-generate-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.4);
+}
+
+.souvenir-generate-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.souvenir-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(26, 17, 8, 0.3);
+    border-top-color: #1a1108;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   RESULT CARD
+   ============================================ */
+.souvenir-result-card {
+    margin-top: 1.5rem;
+    padding: 2rem;
+    background:
+        linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 148, 31, 0.05) 100%),
+        linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 2px solid #d4af37;
+    border-radius: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.souvenir-result-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37, #b8860b, #d4af37);
+}
+
+.souvenir-result-title {
+    font-size: 1.25rem;
+    color: #d4af37;
+    margin: 0 0 1.25rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.souvenir-result-text {
+    white-space: pre-wrap;
+    line-height: 1.8;
+    color: #c9b58c;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Decorative corner */
+.souvenir-result-card::after {
+    content: '📜';
+    position: absolute;
+    bottom: -10px;
+    right: 10px;
+    font-size: 3rem;
+    opacity: 0.1;
+}
+
+/* Share Button */
+.souvenir-share-btn {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: rgba(70, 52, 32, 0.5);
+    color: #d4af37;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.souvenir-share-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #d4af37;
+}

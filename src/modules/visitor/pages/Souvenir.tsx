@@ -1,8 +1,9 @@
-
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Sparkles, Share2 } from "lucide-react";
+import "./Souvenir.css";
 
 export default function Souvenir() {
   const { t } = useTranslation();
@@ -23,33 +24,43 @@ export default function Souvenir() {
   }
 
   return (
-    <div>
-      <h1 className="section-title">{t("visitor.souvenir.title")}</h1>
-      <p className="section-subtitle">{t("visitor.souvenir.subtitle")}</p>
-      <div className="card" style={{ padding: "1.5rem", textAlign: "center" }}>
-        <p style={{ marginBottom: "1.5rem", color: "#6b7280" }}>
+    <div className="souvenir-container">
+      <header className="souvenir-header">
+        <h1 className="souvenir-title">{t("visitor.souvenir.title")}</h1>
+        <p className="souvenir-subtitle">{t("visitor.souvenir.subtitle")}</p>
+      </header>
+
+      <div className="souvenir-generate-card">
+        <p className="souvenir-description">
           {t("visitor.souvenir.description", "Gere um souvenir digital único baseado na sua visita de hoje!")}
         </p>
 
-        <button className="btn btn-primary" onClick={generate} disabled={loading} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+        <button className="souvenir-generate-btn" onClick={generate} disabled={loading}>
           {loading ? (
             <>
-              <span className="spinner" style={{ width: "16px", height: "16px", border: "2px solid white", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></span>
+              <span className="souvenir-spinner"></span>
               {t("visitor.souvenir.generating", "Gerando...")}
             </>
           ) : (
             <>
-              ✨ {t("visitor.souvenir.generate", "Gerar Souvenir")}
+              <Sparkles size={20} />
+              {t("visitor.souvenir.generate", "Gerar Souvenir")}
             </>
           )}
         </button>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
 
       {text && (
-        <div className="card" style={{ marginTop: "1rem", padding: "1.5rem", background: "linear-gradient(to bottom right, #fffbeb, #fef3c7)", border: "1px solid #fcd34d" }}>
-          <h3 style={{ marginTop: 0, color: "#92400e", marginBottom: "1rem" }}>📜 {t("visitor.souvenir.resultTitle", "Seu Souvenir")}</h3>
-          <p style={{ whiteSpace: "pre-wrap", lineHeight: "1.6", color: "#78350f" }}>{text}</p>
+        <div className="souvenir-result-card">
+          <h3 className="souvenir-result-title">
+            📜 {t("visitor.souvenir.resultTitle", "Seu Souvenir")}
+          </h3>
+          <p className="souvenir-result-text">{text}</p>
+
+          <button className="souvenir-share-btn">
+            <Share2 size={16} />
+            {t("common.share", "Compartilhar")}
+          </button>
         </div>
       )}
     </div>

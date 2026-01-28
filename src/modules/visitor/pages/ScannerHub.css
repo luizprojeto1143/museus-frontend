@@ -1,0 +1,160 @@
+/* Premium ScannerHub Theme - Central Dark & Gold */
+
+.scanner-hub-container {
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 80px);
+    padding: 2rem 1rem;
+    padding-bottom: 6rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.scanner-hub-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.scanner-hub-title {
+    font-size: 2rem;
+    color: #d4af37;
+    margin: 0 0 0.75rem 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.scanner-hub-subtitle {
+    color: #c9b58c;
+    font-size: 1rem;
+    margin: 0;
+    font-style: italic;
+}
+
+/* ============================================
+   OPTIONS GRID
+   ============================================ */
+.scanner-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ============================================
+   OPTION CARD
+   ============================================ */
+.scanner-hub-option {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 2px solid #463420;
+    border-radius: 1.25rem;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scanner-hub-option:hover {
+    transform: translateY(-5px);
+    border-color: #d4af37;
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.2);
+}
+
+.scanner-hub-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.scanner-hub-option:hover .scanner-hub-icon-wrapper {
+    transform: scale(1.1);
+}
+
+.scanner-hub-icon-wrapper.qr {
+    background: rgba(59, 130, 246, 0.15);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.scanner-hub-icon-wrapper.ai {
+    background: rgba(139, 92, 246, 0.15);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.scanner-hub-icon-wrapper svg {
+    width: 48px;
+    height: 48px;
+}
+
+.scanner-hub-icon-wrapper.qr svg {
+    color: #60a5fa;
+}
+
+.scanner-hub-icon-wrapper.ai svg {
+    color: #a78bfa;
+}
+
+.scanner-hub-option-info h2 {
+    font-size: 1.65rem;
+    color: #EAE0D5;
+    margin: 0 0 0.5rem 0;
+}
+
+.scanner-hub-option-info p {
+    color: #8b7355;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.scanner-hub-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.5rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.scanner-hub-cta.qr {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    color: #60a5fa;
+}
+
+.scanner-hub-cta.ai {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    color: #a78bfa;
+}
+
+.scanner-hub-option:hover .scanner-hub-cta {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: #d4af37;
+    color: #d4af37;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .scanner-hub-title {
+        font-size: 1.5rem;
+    }
+
+    .scanner-hub-option {
+        padding: 2rem 1.5rem;
+    }
+}

@@ -1,0 +1,168 @@
+/* Premium Welcome Theme - Grand Entrance Dark & Gold */
+
+.welcome-container {
+    font-family: 'Georgia', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(135deg, rgba(26, 17, 8, 0.97), rgba(45, 24, 16, 0.97)),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Texture Overlay */
+.welcome-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzJKCoAAAAASUVORK5CYII=");
+    opacity: 0.03;
+    pointer-events: none;
+}
+
+/* Language Switcher */
+.welcome-lang-switcher {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 10;
+}
+
+/* ============================================
+   LOGO / TITLE SECTION
+   ============================================ */
+.welcome-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+    animation: welcomeFadeIn 1.5s ease-out;
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-title {
+    font-size: 3rem;
+    color: #d4af37;
+    margin: 0 0 0.75rem 0;
+    text-shadow:
+        0 4px 16px rgba(212, 175, 55, 0.6),
+        0 0 40px rgba(212, 175, 55, 0.3);
+    letter-spacing: 2px;
+}
+
+.welcome-subtitle {
+    color: #c9b58c;
+    font-size: 1.15rem;
+    font-style: italic;
+    margin: 0;
+    opacity: 0.9;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.welcome-primary-btn {
+    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+    color: #1a1108;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 1rem 3rem;
+    border: 2px solid #d4af37;
+    border-radius: 0.8rem;
+    cursor: pointer;
+    box-shadow:
+        0 8px 32px rgba(212, 175, 55, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.welcome-primary-btn:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow:
+        0 12px 48px rgba(212, 175, 55, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.welcome-secondary-btn {
+    background: transparent;
+    color: #8b7355;
+    font-size: 0.95rem;
+    padding: 0.7rem 1.75rem;
+    border: 1px solid #8b7355;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.welcome-secondary-btn:hover {
+    color: #d4af37;
+    border-color: #d4af37;
+}
+
+/* ============================================
+   DECORATIONS
+   ============================================ */
+.welcome-decor {
+    position: absolute;
+    font-size: 5rem;
+    opacity: 0.08;
+    filter: sepia(1) hue-rotate(20deg);
+    pointer-events: none;
+}
+
+.welcome-decor.top-left {
+    top: 8%;
+    left: 8%;
+    transform: rotate(-15deg);
+}
+
+.welcome-decor.bottom-right {
+    bottom: 12%;
+    right: 8%;
+    transform: rotate(15deg);
+}
+
+/* Animation */
+@keyframes welcomeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .welcome-title {
+        font-size: 2rem;
+    }
+
+    .welcome-primary-btn {
+        font-size: 1rem;
+        padding: 0.85rem 2rem;
+    }
+
+    .welcome-decor {
+        font-size: 3rem;
+    }
+}

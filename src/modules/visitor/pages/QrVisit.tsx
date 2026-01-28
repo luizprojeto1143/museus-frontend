@@ -1,9 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { CheckCircle, AlertTriangle } from "lucide-react";
+import "./QrVisit.css";
 
 type QRCodeData = {
   id: string;
@@ -30,7 +31,6 @@ export const QrVisit: React.FC = () => {
   useEffect(() => {
     if (!code) return;
     if (isDemoMode) {
-      // Simulação em modo demo
       setData({
         id: "demo",
         code,
@@ -71,7 +71,6 @@ export const QrVisit: React.FC = () => {
     setError(null);
 
     try {
-      // Endpoint a ser implementado no backend para associar visita ao QR
       await api.post("/visitors/visit-from-qr", { code: data.code, email });
       setFeedback(t("visitor.qr.success", { xp: data.xpReward }));
     } catch (err) {
@@ -81,36 +80,35 @@ export const QrVisit: React.FC = () => {
       setRegistering(false);
     }
 
-    // Depois de registrar, redireciona conforme o tipo do QR
     if (data.type === "WORK" && data.referenceId) {
       navigate(`/obras/${data.referenceId}`);
     } else if (data.type === "TRAIL" && data.referenceId) {
       navigate(`/trilhas/${data.referenceId}`);
     } else if (data.type === "EVENT" && data.referenceId) {
-      // Redireciona para detalhes do evento
       navigate(`/eventos/${data.referenceId}`);
     }
   }
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', gap: '1rem' }}>
-        <div className="spinner" style={{ width: "40px", height: "40px", border: "4px solid var(--border)", borderTopColor: "var(--primary)", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+      <div className="qr-visit-loading">
+        <div className="qr-visit-loading-spinner"></div>
         <p>{t("visitor.qr.reading", "Lendo QR Code...")}</p>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="card" style={{ textAlign: "center", padding: "3rem" }}>
-        <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>⚠️</div>
-        <h1 className="section-title">{t("visitor.qr.title", "QR Code Inválido")}</h1>
-        <p style={{ color: "#9ca3af", marginBottom: "1.5rem" }}>{error || t("visitor.qr.invalid", "Não foi possível identificar este código.")}</p>
-        <button className="btn btn-secondary" onClick={() => navigate("/scanner")}>
-          {t("visitor.qr.tryAgain", "Tentar Novamente")}
-        </button>
+      <div className="qr-visit-container">
+        <div className="qr-visit-error-card">
+          <div className="qr-visit-error-icon"><AlertTriangle size={64} /></div>
+          <h1>{t("visitor.qr.title", "QR Code Inválido")}</h1>
+          <p>{error || t("visitor.qr.invalid", "Não foi possível identificar este código.")}</p>
+          <button className="qr-visit-retry-btn" onClick={() => navigate("/scanner")}>
+            {t("visitor.qr.tryAgain", "Tentar Novamente")}
+          </button>
+        </div>
       </div>
     );
   }
@@ -126,40 +124,43 @@ export const QrVisit: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1 className="section-title">{t("visitor.qr.scanned")}</h1>
-      <p className="section-subtitle">
-        {data.title} • {t("visitor.qr.reward", { xp: data.xpReward })}
-      </p>
+    <div className="qr-visit-container">
+      <header className="qr-visit-header">
+        <h1 className="qr-visit-title">
+          <CheckCircle size={28} />
+          {t("visitor.qr.scanned")}
+        </h1>
+        <p className="qr-visit-subtitle">
+          {data.title} • <span className="qr-visit-reward">{t("visitor.qr.reward", { xp: data.xpReward })}</span>
+        </p>
+      </header>
 
-      <div className="card" style={{ padding: "1rem", marginTop: "1rem" }}>
-        <p>
-          <strong>{t("visitor.qr.type")}:</strong>{" "}
-          {getTypeLabel(data.type)}
+      <div className="qr-visit-card">
+        <p className="qr-visit-type">
+          <strong>{t("visitor.qr.type")}:</strong> {getTypeLabel(data.type)}
         </p>
         {data.referenceId && (
-          <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#e5e7eb" }}>
+          <p className="qr-visit-hint">
             {t("visitor.qr.redirectHint")}
           </p>
         )}
 
         {feedback && (
-          <p style={{ marginTop: "0.75rem", color: "#4ade80", fontSize: "0.9rem" }}>{feedback}</p>
+          <div className="qr-visit-feedback success">{feedback}</div>
         )}
         {error && (
-          <p style={{ marginTop: "0.75rem", color: "#f97373", fontSize: "0.9rem" }}>{error}</p>
+          <div className="qr-visit-feedback error">{error}</div>
         )}
 
         <button
-          className="btn"
+          className="qr-visit-register-btn"
           type="button"
           onClick={handleRegisterAndOpen}
           disabled={registering}
-          style={{ marginTop: "1rem", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
         >
           {registering ? (
             <>
-              <span className="spinner" style={{ width: "16px", height: "16px", border: "2px solid white", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }}></span>
+              <span className="qr-visit-register-spinner"></span>
               {t("visitor.qr.registering", "Registrando...")}
             </>
           ) : t("visitor.qr.register", "Registrar Visita")}
