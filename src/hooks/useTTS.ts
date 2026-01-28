@@ -87,6 +87,10 @@ export const useTTS = () => {
                 window.speechSynthesis.onvoiceschanged = null; // cleanup
             };
         } else {
+            // Mobile Wake-up Hack:
+            // Some mobile browsers need a 'kick' to start the audio engine.
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
             play();
         }
 
