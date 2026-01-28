@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import React, { Component } from "react";
-import { withTranslation, WithTranslationProps } from "react-i18next";
-import { useNavigate, NavigateFunction } from "react-router-dom";
-import { AuthContextType, withAuth } from "../../auth/AuthContext"; // Assuming withAuth HOC
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { Ticket, Award, LogOut, ChevronRight, User, Star, Map } from 'lucide-react';
 import { TicketCard } from "../components/TicketCard";
@@ -34,57 +33,42 @@ interface Registration {
     }
 }
 
-// Define props for the class component, including those from HOCs
-interface VisitorProfileProps extends WithTranslationProps {
-    navigate: NavigateFunction;
-    auth: AuthContextType; // Assuming auth context is passed via HOC
-}
+export const VisitorProfile: React.FC = () => {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    const { name, email, logout } = useAuth();
 
-interface VisitorProfileState {
-    activeTab: 'info' | 'tickets' | 'certificates';
-    certificates: Certificate[];
-    registrations: Registration[];
-    loading: boolean;
-}
+    // Tabs: 'info' | 'tickets' | 'certificates'
+    const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates'>('info');
 
-class VisitorProfileClass extends Component<VisitorProfileProps, VisitorProfileState> {
-    constructor(props: VisitorProfileProps) {
-        super(props);
-        this.state = {
-            activeTab: 'info',
-            certificates: [],
-            registrations: [],
-            loading: false,
-        };
-    }
+    // Data
+    const [certificates, setCertificates] = useState<Certificate[]>([]);
+    const [registrations, setRegistrations] = useState<Registration[]>([]);
+    const [loading, setLoading] = useState(false);
 
-    handleTabChange = (tab: 'info' | 'tickets' | 'certificates') => {
-        this.setState({ activeTab: tab });
+    const handleTabChange = (tab: 'info' | 'tickets' | 'certificates') => {
+        setActiveTab(tab);
 
-        if (tab === 'certificates' && this.state.certificates.length === 0) {
-            this.setState({ loading: true });
+        if (tab === 'certificates' && certificates.length === 0) {
+            setLoading(true);
             api.get('/certificates/mine')
-                .then(res => this.setState({ certificates: res.data }))
+                .then(res => setCertificates(res.data))
                 .catch(console.error)
-                .finally(() => this.setState({ loading: false }));
+                .finally(() => setLoading(false));
         }
 
-        if (tab === 'tickets' && this.state.registrations.length === 0) {
-            this.setState({ loading: true });
+        if (tab === 'tickets' && registrations.length === 0) {
+            setLoading(true);
             api.get('/registrations/my-registrations')
-                .then(res => this.setState({ registrations: res.data }))
+                .then(res => setRegistrations(res.data))
                 .catch(async () => {
-                    this.setState({ registrations: [] });
+                    setRegistrations([]);
                 })
-                .finally(() => this.setState({ loading: false }));
+                .finally(() => setLoading(false));
         }
     };
 
-    renderContent = () => {
-        const { activeTab, loading, certificates, registrations } = this.state;
-        const { t, navigate, auth } = this.props;
-        const { name } = auth;
-
+    const renderContent = () => {
         if (loading) return (
             <div className="empty-state">
                 <p>Carregando...</p>
@@ -124,7 +108,7 @@ class VisitorProfileClass extends Component<VisitorProfileProps, VisitorProfileS
 
                         {/* Logout Section */}
                         <div className="logout-section">
-                            <button onClick={auth.logout} className="logout-btn">
+                            <button onClick={logout} className="logout-btn">
                                 <div className="logout-content">
                                     <div className="logout-icon">
                                         <LogOut size={20} />
@@ -220,6 +204,59 @@ class VisitorProfileClass extends Component<VisitorProfileProps, VisitorProfileS
         }
     };
 
+    return (
+        <div className="profile-container">
+            <div className="profile-header">
+                <h1 className="profile-title">{t("visitor.sidebar.profile")}</h1>
+                <p className="profile-subtitle">Gerencie sua conta e conquistas</p>
+            </div>
+
+            {/* VIP Card */}
+            <div className="profile-card-vip">
+                <div className="vip-decoration" />
+
+                <div className="profile-avatar-wrapper">
+                    <div className="profile-avatar">
+                        {name ? (
+                            <span>{name.charAt(0).toUpperCase()}</span>
+                        ) : (
+                            <User />
+                        )}
+                    </div>
+                </div>
+
+                <div className="profile-info">
+                    <h2 className="profile-name">{name || "Visitante"}</h2>
+                    <p className="profile-email">{email}</p>
+                    <div className="vip-badge">
+                        <Star size={12} fill="#c9b58c" /> Membro VIP
+                    </div>
+                </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="profile-tabs">
+                <button
+                    onClick={() => handleTabChange('info')}
+                    className={`profile-tab-btn ${activeTab === 'info' ? 'active' : ''}`}
+                >
+                    Informações
+                </button>
+                <button
+                    onClick={() => handleTabChange('tickets')}
+                    className={`profile-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`}
+                >
+                    Ingressos
+                </button>
+                <button
+                    onClick={() => handleTabChange('certificates')}
+                    className={`profile-tab-btn ${activeTab === 'certificates' ? 'active' : ''}`}
+                >
+                    Certificados
+                </button>
+            </div>
+
+            {renderContent()}
         </div>
     );
 };
