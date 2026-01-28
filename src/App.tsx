@@ -316,14 +316,6 @@ const App: React.FC = () => {
                 </RequireRole>
               }
             />
-            element={
-              <RequireRole allowed={["visitor", "admin", "master"]}>
-                <VisitorLayout>
-                  <TreasureHunt />
-                </VisitorLayout>
-              </RequireRole>
-            }
-            />
             <Route
               path="/roteiro-inteligente"
               element={
