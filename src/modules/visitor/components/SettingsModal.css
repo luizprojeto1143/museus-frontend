@@ -1,0 +1,92 @@
+/* Premium SettingsModal Theme - Configuration Dark & Gold */
+
+.settings-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.settings-modal {
+    font-family: 'Georgia', serif;
+    width: 100%;
+    max-width: 400px;
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 2rem;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.settings-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #8b7355;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.settings-close-btn:hover {
+    color: #d4af37;
+}
+
+.settings-title {
+    font-size: 1.5rem;
+    color: #d4af37;
+    margin: 0 0 2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-section {
+    margin-bottom: 1.75rem;
+}
+
+.settings-section-title {
+    font-size: 1rem;
+    color: #EAE0D5;
+    margin: 0 0 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-section-title svg {
+    color: #d4af37;
+}
+
+.settings-note {
+    color: #8b7355;
+    font-size: 0.9rem;
+    margin: 0;
+    font-style: italic;
+}
+
+.settings-footer-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: rgba(70, 52, 32, 0.5);
+    color: #c9b58c;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.settings-footer-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #d4af37;
+    color: #d4af37;
+}

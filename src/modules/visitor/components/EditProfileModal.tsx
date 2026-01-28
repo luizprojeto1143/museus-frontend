@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
+import { UserPen, X } from "lucide-react";
+import "./EditProfileModal.css";
 
 interface EditProfileModalProps {
     isOpen: boolean;
@@ -21,7 +23,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
         setLoading(true);
 
         try {
-            // Call backend to update
             const baseUrl = import.meta.env.VITE_API_URL || "";
             const response = await fetch(`${baseUrl}/visitors/me`, {
                 method: "PUT",
@@ -30,7 +31,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                     "Authorization": `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    email, // Current email to identify
+                    email,
                     tenantId,
                     name: newName,
                     newEmail: newEmail
@@ -38,16 +39,13 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
             });
 
             if (response.ok) {
-                // Update local session
                 if (token && role) {
                     updateSession(token, role, tenantId, newName);
 
-                    // Force update email in local storage
                     const user = JSON.parse(localStorage.getItem("user") || "{}");
                     user.email = newEmail;
                     localStorage.setItem("user", JSON.stringify(user));
 
-                    // Reload if email changed to ensure context updates
                     if (email !== newEmail) {
                         window.location.reload();
                     }
@@ -64,65 +62,49 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
     };
 
     return (
-        <div style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: "1rem"
-        }}>
-            <div className="card" style={{ width: "100%", maxWidth: "400px", position: "relative" }}>
-                <button
-                    onClick={onClose}
-                    style={{
-                        position: "absolute",
-                        top: "1rem",
-                        right: "1rem",
-                        background: "none",
-                        border: "none",
-                        fontSize: "1.5rem",
-                        cursor: "pointer"
-                    }}
-                >
-                    ×
+        <div className="edit-profile-backdrop">
+            <div className="edit-profile-modal">
+                <button onClick={onClose} className="edit-profile-close-btn">
+                    <X size={20} />
                 </button>
 
-                <h2 className="section-title" style={{ marginBottom: "1.5rem" }}>{t("visitor.profile.editTitle", "Editar Perfil")}</h2>
+                <h2 className="edit-profile-title">
+                    <UserPen size={24} />
+                    {t("visitor.profile.editTitle", "Editar Perfil")}
+                </h2>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label className="form-label">{t("visitor.profile.name", "Nome")}</label>
+                    <div className="edit-profile-form-group">
+                        <label className="edit-profile-label">
+                            {t("visitor.profile.name", "Nome")}
+                        </label>
                         <input
                             type="text"
-                            className="form-input"
+                            className="edit-profile-input"
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
                             required
                         />
                     </div>
 
-                    <div className="form-group" style={{ marginTop: "1rem" }}>
-                        <label className="form-label">{t("visitor.profile.email", "E-mail")}</label>
+                    <div className="edit-profile-form-group">
+                        <label className="edit-profile-label">
+                            {t("visitor.profile.email", "E-mail")}
+                        </label>
                         <input
                             type="email"
-                            className="form-input"
+                            className="edit-profile-input"
                             value={newEmail}
                             onChange={(e) => setNewEmail(e.target.value)}
                             required
                         />
                     </div>
 
-                    <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
-                        <button type="button" className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>
+                    <div className="edit-profile-actions">
+                        <button type="button" onClick={onClose} className="edit-profile-cancel-btn">
                             {t("common.cancel", "Cancelar")}
                         </button>
-                        <button type="submit" className="btn" disabled={loading} style={{ flex: 1 }}>
+                        <button type="submit" disabled={loading} className="edit-profile-save-btn">
                             {loading ? t("common.saving", "Salvando...") : t("common.save", "Salvar")}
                         </button>
                     </div>

@@ -1,0 +1,133 @@
+/* Premium ShareCard Theme - Social Dark & Gold */
+
+.share-card-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 1rem;
+}
+
+.share-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+}
+
+/* ============================================
+   THE CARD TO CAPTURE
+   ============================================ */
+.share-card-canvas {
+    width: 300px;
+    height: 500px;
+    background: linear-gradient(145deg, #1a1108 0%, #2c1e10 100%);
+    border-radius: 1rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 2px #d4af37;
+}
+
+.share-card-image-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d4af37;
+    font-size: 3rem;
+    background-size: cover;
+    background-position: center;
+}
+
+.share-card-text-area {
+    padding: 1.5rem;
+    background: linear-gradient(180deg, #1a1108 0%, #0f0a04 100%);
+    color: #EAE0D5;
+}
+
+.share-card-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    color: #d4af37;
+    font-family: 'Georgia', serif;
+}
+
+.share-card-artist {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #8b7355;
+}
+
+.share-card-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #463420;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.share-card-brand {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #d4af37;
+}
+
+.share-card-date {
+    font-size: 0.75rem;
+    color: #8b7355;
+}
+
+/* ============================================
+   ACTIONS
+   ============================================ */
+.share-card-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.share-card-close-btn {
+    padding: 0.85rem 1.5rem;
+    background: rgba(70, 52, 32, 0.5);
+    color: #c9b58c;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.share-card-close-btn:hover {
+    background: rgba(70, 52, 32, 0.8);
+}
+
+.share-card-download-btn {
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.share-card-download-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.share-card-download-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

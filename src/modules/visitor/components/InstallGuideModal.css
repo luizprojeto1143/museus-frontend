@@ -1,0 +1,125 @@
+/* Premium InstallGuideModal Theme - PWA Dark & Gold */
+
+.install-guide-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.install-guide-modal {
+    font-family: 'Georgia', serif;
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 2px solid #d4af37;
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 24rem;
+    width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    position: relative;
+}
+
+.install-guide-close-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: #d4af37;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.install-guide-close-btn:hover {
+    transform: scale(1.2);
+}
+
+.install-guide-title {
+    text-align: center;
+    color: #d4af37;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.install-guide-desc {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #c9b58c;
+    margin: 0 0 1.25rem 0;
+    line-height: 1.5;
+}
+
+/* ============================================
+   STEPS BOX
+   ============================================ */
+.install-guide-steps {
+    background: #1a1108;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid #463420;
+}
+
+.install-guide-steps ol {
+    list-style-type: decimal;
+    padding-left: 1.2rem;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #EAE0D5;
+}
+
+.install-guide-steps li {
+    margin-bottom: 0.65rem;
+}
+
+.install-guide-steps li:last-child {
+    margin-bottom: 0;
+}
+
+.install-guide-icon {
+    display: inline-block;
+    color: #60a5fa;
+    margin-left: 0.25rem;
+}
+
+.install-guide-strong {
+    color: #d4af37;
+    font-weight: bold;
+}
+
+/* ============================================
+   CONFIRM BUTTON
+   ============================================ */
+.install-guide-confirm-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    font-weight: bold;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.install-guide-confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}

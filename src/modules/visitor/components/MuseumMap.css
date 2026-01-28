@@ -1,0 +1,147 @@
+/* Premium MuseumMap Theme - Navigator Dark & Gold */
+
+.museum-map-container {
+    position: relative;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 2px solid #463420;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.museum-map-container.outdoor {
+    height: 500px;
+}
+
+/* ============================================
+   CONTROLS PANEL
+   ============================================ */
+.museum-map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-end;
+    border: 1px solid #463420;
+}
+
+.museum-map-mode-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.museum-map-mode-btn {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+}
+
+.museum-map-mode-btn.inactive {
+    background: rgba(70, 52, 32, 0.5);
+    color: #c9b58c;
+    border: 1px solid #463420;
+}
+
+.museum-map-mode-btn.inactive:hover {
+    background: rgba(70, 52, 32, 0.8);
+}
+
+.museum-map-mode-btn.active {
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: 1px solid #d4af37;
+}
+
+/* Destination Selector */
+.museum-map-destination-select {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.85rem;
+    width: 160px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    color: #EAE0D5;
+    cursor: pointer;
+}
+
+.museum-map-destination-select:focus {
+    outline: none;
+    border-color: #d4af37;
+}
+
+/* ============================================
+   POPUP STYLES
+   ============================================ */
+.museum-map-popup {
+    font-family: 'Georgia', serif;
+}
+
+.museum-map-popup-title {
+    font-weight: bold;
+    color: #1a1108;
+    margin: 0 0 0.25rem 0;
+}
+
+.museum-map-popup-desc {
+    font-size: 0.85rem;
+    color: #463420;
+    margin: 0;
+}
+
+.museum-map-popup-btn {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.5rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.35rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.museum-map-popup-btn:hover {
+    box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
+}
+
+/* ============================================
+   NO IMAGE MESSAGE
+   ============================================ */
+.museum-map-no-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    color: #8b7355;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Override Leaflet popup styles */
+.leaflet-popup-content-wrapper {
+    background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%) !important;
+    border: 1px solid #d4af37 !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+.leaflet-popup-tip {
+    background: #fef3c7 !important;
+    border: 1px solid #d4af37 !important;
+}

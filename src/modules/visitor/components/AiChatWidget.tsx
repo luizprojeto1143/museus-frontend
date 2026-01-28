@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Bot, X, Send } from "lucide-react";
+import "./AiChatWidget.css";
 
 interface Message {
     id: string;
@@ -49,7 +51,6 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
         setLoading(true);
 
         try {
-            // Se tiver contexto da obra, adicionamos na mensagem
             let fullMessage = userMsg.text;
             if (workContext && messages.length === 0) {
                 fullMessage = `[Contexto: O usuário está vendo a obra "${workContext.title}" de ${workContext.artist}. Descrição: ${workContext.description}] ${userMsg.text}`;
@@ -71,7 +72,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
             const errorMsg: Message = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
-                text: t("common.error") // "Ocorreu um erro. Tente novamente."
+                text: t("common.error")
             };
             setMessages((prev) => [...prev, errorMsg]);
         } finally {
@@ -81,92 +82,32 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
 
     if (!isOpen) {
         return (
-            <button
-                onClick={() => setIsOpen(true)}
-                className="btn btn-primary"
-                style={{
-                    position: "fixed",
-                    bottom: "2rem",
-                    right: "2rem",
-                    borderRadius: "50%",
-                    width: "60px",
-                    height: "60px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "1.5rem",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                    zIndex: 1000
-                }}
-            >
-                🤖
+            <button onClick={() => setIsOpen(true)} className="ai-chat-fab">
+                <Bot size={28} />
             </button>
         );
     }
 
     return (
-        <div
-            style={{
-                position: "fixed",
-                bottom: "2rem",
-                right: "2rem",
-                width: "350px",
-                height: "500px",
-                background: "linear-gradient(135deg, #1a1108 0%, #2a1810 100%)",
-                borderRadius: "1rem",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-                display: "flex",
-                flexDirection: "column",
-                zIndex: 1000,
-                border: "1px solid var(--accent-gold)",
-                overflow: "hidden"
-            }}
-        >
+        <div className="ai-chat-window">
             {/* Header */}
-            <div
-                style={{
-                    padding: "1rem",
-                    background: "var(--accent-gold)",
-                    color: "#1a1108",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    fontWeight: "bold"
-                }}
-            >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span>🤖</span>
+            <div className="ai-chat-header">
+                <div className="ai-chat-header-title">
+                    <Bot size={20} />
                     <span>{t("visitor.ai.chatTitle", "Guia Virtual")}</span>
                 </div>
-                <button
-                    onClick={() => setIsOpen(false)}
-                    style={{
-                        background: "none",
-                        border: "none",
-                        fontSize: "1.2rem",
-                        cursor: "pointer",
-                        color: "#1a1108"
-                    }}
-                >
-                    ✕
+                <button onClick={() => setIsOpen(false)} className="ai-chat-close-btn">
+                    <X size={20} />
                 </button>
             </div>
 
             {/* Messages */}
-            <div
-                style={{
-                    flex: 1,
-                    padding: "1rem",
-                    overflowY: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "1rem"
-                }}
-            >
+            <div className="ai-chat-messages">
                 {messages.length === 0 && (
-                    <div style={{ textAlign: "center", color: "var(--fg-soft)", marginTop: "2rem" }}>
-                        <p>👋 {t("visitor.ai.welcome", "Olá! Sou seu guia virtual.")}</p>
-                        <p style={{ fontSize: "0.9rem" }}>
+                    <div className="ai-chat-empty">
+                        <div className="ai-chat-empty-icon">👋</div>
+                        <p>{t("visitor.ai.welcome", "Olá! Sou seu guia virtual.")}</p>
+                        <p>
                             {workContext
                                 ? t("visitor.ai.askAboutWork", "Pergunte algo sobre esta obra!")
                                 : t("visitor.ai.askAnything", "Pergunte algo sobre o museu!")}
@@ -175,64 +116,38 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
                 )}
 
                 {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        style={{
-                            alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
-                            maxWidth: "80%",
-                            backgroundColor: msg.role === "user" ? "var(--accent-gold)" : "rgba(255,255,255,0.1)",
-                            color: msg.role === "user" ? "#1a1108" : "var(--fg-primary)",
-                            padding: "0.75rem",
-                            borderRadius: "0.5rem",
-                            borderBottomRightRadius: msg.role === "user" ? 0 : "0.5rem",
-                            borderBottomLeftRadius: msg.role === "assistant" ? 0 : "0.5rem",
-                            fontSize: "0.9rem",
-                            lineHeight: 1.4
-                        }}
-                    >
+                    <div key={msg.id} className={`ai-chat-message ${msg.role}`}>
                         {msg.text}
                     </div>
                 ))}
 
                 {loading && (
-                    <div style={{ alignSelf: "flex-start", color: "var(--fg-soft)", fontSize: "0.8rem" }}>
-                        {t("common.typing", "Digitando...")}
+                    <div className="ai-chat-typing">
+                        <div className="ai-chat-typing-dots">
+                            <span className="ai-chat-typing-dot"></span>
+                            <span className="ai-chat-typing-dot"></span>
+                            <span className="ai-chat-typing-dot"></span>
+                        </div>
                     </div>
                 )}
                 <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
-            <form
-                onSubmit={handleSend}
-                style={{
-                    padding: "1rem",
-                    borderTop: "1px solid var(--border-subtle)",
-                    display: "flex",
-                    gap: "0.5rem"
-                }}
-            >
+            <form onSubmit={handleSend} className="ai-chat-input-area">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={t("visitor.ai.placeholder", "Digite sua pergunta...")}
-                    style={{
-                        flex: 1,
-                        padding: "0.75rem",
-                        borderRadius: "0.5rem",
-                        border: "1px solid var(--border-subtle)",
-                        backgroundColor: "rgba(255,255,255,0.05)",
-                        color: "var(--fg-primary)"
-                    }}
+                    className="ai-chat-input"
                 />
                 <button
                     type="submit"
                     disabled={loading || !input.trim()}
-                    className="btn btn-primary"
-                    style={{ padding: "0.75rem" }}
+                    className="ai-chat-send-btn"
                 >
-                    ➤
+                    <Send size={18} />
                 </button>
             </form>
         </div>

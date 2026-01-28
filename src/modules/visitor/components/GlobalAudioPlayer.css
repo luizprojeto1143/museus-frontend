@@ -1,0 +1,196 @@
+/* Premium GlobalAudioPlayer Theme - Audio Dark & Gold */
+
+/* ============================================
+   MINIMIZED STATE (FAB)
+   ============================================ */
+.audio-player-fab {
+    position: fixed;
+    bottom: 80px;
+    right: 1rem;
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 50rem;
+    padding: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.audio-player-fab:hover {
+    border-color: #d4af37;
+    transform: scale(1.05);
+}
+
+.audio-player-fab-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.audio-player-fab-icon.playing {
+    animation: audioPulse 2s infinite;
+}
+
+@keyframes audioPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 12px rgba(212, 175, 55, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    }
+}
+
+/* ============================================
+   EXPANDED STATE
+   ============================================ */
+.audio-player-expanded {
+    position: fixed;
+    bottom: 70px;
+    left: 1rem;
+    right: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+    background: linear-gradient(145deg, #2c1e10 0%, rgba(26, 17, 8, 0.98) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 0.85rem;
+    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    border: 1px solid #463420;
+}
+
+.audio-player-main {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+/* ============================================
+   COVER
+   ============================================ */
+.audio-player-cover {
+    width: 52px;
+    height: 52px;
+    border-radius: 0.5rem;
+    background: rgba(70, 52, 32, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid #463420;
+}
+
+.audio-player-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.audio-player-cover-placeholder {
+    font-size: 1.5rem;
+}
+
+/* ============================================
+   INFO
+   ============================================ */
+.audio-player-info {
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.audio-player-title {
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: #EAE0D5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audio-player-time {
+    font-size: 0.75rem;
+    color: #8b7355;
+    margin-top: 0.15rem;
+}
+
+/* ============================================
+   CONTROLS
+   ============================================ */
+.audio-player-controls {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+}
+
+.audio-player-btn {
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: #c9b58c;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.audio-player-btn:hover {
+    color: #d4af37;
+}
+
+.audio-player-play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.audio-player-play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* ============================================
+   PROGRESS BAR
+   ============================================ */
+.audio-player-progress-container {
+    width: 100%;
+    height: 5px;
+    background: rgba(70, 52, 32, 0.5);
+    margin-top: 0.85rem;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.audio-player-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #d4af37 0%, #b8860b 100%);
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}

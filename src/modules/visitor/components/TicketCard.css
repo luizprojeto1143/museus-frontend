@@ -1,0 +1,154 @@
+/* Premium TicketCard Theme - Ticket Dark & Gold */
+
+.ticket-card-wrapper {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    font-family: 'Georgia', serif;
+}
+
+.ticket-card {
+    background: linear-gradient(145deg, #1a1108 0%, #2c1e10 50%, #1a1108 100%);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 2px #d4af37;
+}
+
+/* ============================================
+   QR CODE SECTION
+   ============================================ */
+.ticket-card-qr-section {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(180deg, #2c1e10 0%, #1a1108 100%);
+}
+
+.ticket-card-qr-container {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   WARNING BANNER
+   ============================================ */
+.ticket-card-warning {
+    background: rgba(212, 175, 55, 0.15);
+    border-top: 1px solid rgba(212, 175, 55, 0.3);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 1rem 1.5rem;
+    text-align: center;
+}
+
+.ticket-card-warning-title {
+    color: #d4af37;
+    font-weight: bold;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 0.25rem 0;
+}
+
+.ticket-card-warning-text {
+    color: #c9b58c;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+/* ============================================
+   EVENT INFO
+   ============================================ */
+.ticket-card-event-info {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #463420;
+}
+
+.ticket-card-event-title {
+    color: #EAE0D5;
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.ticket-card-event-subtitle {
+    color: #8b7355;
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0.5rem 0 0 0;
+}
+
+/* ============================================
+   DETAILS GRID
+   ============================================ */
+.ticket-card-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: #463420;
+}
+
+.ticket-card-detail {
+    background: #1a1108;
+    padding: 1rem;
+}
+
+.ticket-card-detail.full-width {
+    grid-column: span 2;
+}
+
+.ticket-card-detail-label {
+    color: #8b7355;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.35rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.ticket-card-detail-label svg {
+    width: 12px;
+    height: 12px;
+}
+
+.ticket-card-detail-value {
+    color: #EAE0D5;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.ticket-card-footer {
+    background: #0f0a04;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.ticket-card-code-label {
+    color: #8b7355;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.35rem 0;
+}
+
+.ticket-card-code-value {
+    color: #d4af37;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    margin: 0;
+}
