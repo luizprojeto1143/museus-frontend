@@ -48,25 +48,48 @@ export const useTTS = () => {
         window.speechSynthesis.cancel();
         setIsLoading(false);
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 1.0;
+        const play = () => {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = 1.0;
 
-        utterance.onstart = () => {
-            setIsSpeaking(true);
-            setIsPaused(false);
-        };
+            // Try to select a specific voice
+            const voices = window.speechSynthesis.getVoices();
+            // Prefer Google Voices or natural sounding ones if available
+            const preferredVoice = voices.find(v => v.lang === lang && (v.name.includes("Google") || v.name.includes("Natural"))) ||
+                voices.find(v => v.lang === lang);
 
-        utterance.onend = () => {
-            setIsSpeaking(false);
-            setIsPaused(false);
-        };
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
 
-        utterance.onerror = () => {
-            setIsSpeaking(false);
-        };
+            utterance.onstart = () => {
+                setIsSpeaking(true);
+                setIsPaused(false);
+            };
 
-        window.speechSynthesis.speak(utterance);
+            utterance.onend = () => {
+                setIsSpeaking(false);
+                setIsPaused(false);
+            };
+
+            utterance.onerror = (e) => {
+                console.error("TTS Error", e);
+                setIsSpeaking(false);
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        if (window.speechSynthesis.getVoices().length === 0) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                play();
+                window.speechSynthesis.onvoiceschanged = null; // cleanup
+            };
+        } else {
+            play();
+        }
+
     }, [nativeSupported]);
 
     const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
