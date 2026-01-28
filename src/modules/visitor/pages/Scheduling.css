@@ -1,0 +1,306 @@
+/* Premium Scheduling Theme - Appointment Dark & Gold */
+
+.scheduling-container {
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+    padding-bottom: 6rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.scheduling-header {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(180deg, rgba(26, 17, 8, 0) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-bottom: 1px solid rgba(70, 52, 32, 0.3);
+}
+
+.scheduling-title {
+    font-size: 2rem;
+    color: #d4af37;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.scheduling-title::before {
+    content: '📅';
+}
+
+/* ============================================
+   FORM CARD
+   ============================================ */
+.scheduling-form-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 1.75rem;
+    margin-bottom: 2.5rem;
+}
+
+.scheduling-form-title {
+    font-size: 1.25rem;
+    color: #d4af37;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.scheduling-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.scheduling-form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #c9b58c;
+    font-size: 0.95rem;
+}
+
+.scheduling-input,
+.scheduling-select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    color: #EAE0D5;
+    font-size: 1rem;
+    font-family: 'Georgia', serif;
+    transition: all 0.3s ease;
+}
+
+.scheduling-input:focus,
+.scheduling-select:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.scheduling-message {
+    padding: 0.85rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.scheduling-message.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.scheduling-message.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.scheduling-submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scheduling-submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.scheduling-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.scheduling-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(26, 17, 8, 0.3);
+    border-top-color: #1a1108;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   BOOKINGS SECTION
+   ============================================ */
+.scheduling-section-title {
+    font-size: 1.35rem;
+    color: #d4af37;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #463420;
+}
+
+.scheduling-bookings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+/* ============================================
+   BOOKING CARD
+   ============================================ */
+.scheduling-booking-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.scheduling-booking-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 1rem 0 0 1rem;
+}
+
+.scheduling-booking-card.confirmed::before {
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+}
+
+.scheduling-booking-card.cancelled::before {
+    background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+}
+
+.scheduling-booking-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.scheduling-booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.scheduling-booking-date {
+    font-size: 1.1rem;
+    color: #EAE0D5;
+    margin: 0 0 0.35rem 0;
+}
+
+.scheduling-booking-venue {
+    font-size: 0.9rem;
+    color: #8b7355;
+    margin: 0 0 0.75rem 0;
+}
+
+.scheduling-booking-badge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.scheduling-booking-badge.confirmed {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.scheduling-booking-badge.cancelled {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.scheduling-cancel-btn {
+    padding: 0.35rem 0.75rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 0.35rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scheduling-cancel-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+}
+
+/* ============================================
+   EMPTY / LOADING STATES
+   ============================================ */
+.scheduling-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 2px dashed #463420;
+    border-radius: 1rem;
+}
+
+.scheduling-empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.scheduling-empty h3 {
+    color: #EAE0D5;
+    margin: 0 0 0.75rem 0;
+}
+
+.scheduling-empty p {
+    color: #8b7355;
+    margin: 0;
+}
+
+.scheduling-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.scheduling-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #463420;
+    border-top-color: #d4af37;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.scheduling-loading p {
+    color: #c9b58c;
+}
