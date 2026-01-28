@@ -4,6 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
+import { useTerminology } from "../../../hooks/useTerminology";
+import { useIsCityMode } from "../../auth/TenantContext";
+import { Camera, Map, Compass, ArrowRight } from "lucide-react";
+import "./Home.css";
 
 interface FeaturedWork {
   id: string;
@@ -19,9 +23,6 @@ interface FeaturedTrail {
   title: string;
   description?: string;
 }
-
-import { useTerminology } from "../../../hooks/useTerminology";
-import { useIsCityMode } from "../../auth/TenantContext";
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -52,7 +53,6 @@ export const Home: React.FC = () => {
           api.get(`/works?tenantId=${tenantId}&limit=3`),
           api.get(`/trails?tenantId=${tenantId}&limit=2`)
         ]);
-        // API returns { data: works[], pagination: {} }
         setFeaturedWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         setFeaturedTrails(Array.isArray(trailsRes.data) ? trailsRes.data : (trailsRes.data.data || trailsRes.data || []));
       } catch (err) {
@@ -68,180 +68,132 @@ export const Home: React.FC = () => {
   }, [tenantId]);
 
   return (
-    <div style={{ maxWidth: '1200px' }}> {/* Limit width for readability but align left via layout */}
+    <div className="home-container">
 
-      {/* HERO SECTION - Premium Gold */}
-      <section style={{
-        marginBottom: "3rem",
-        paddingBottom: "2rem",
-        borderBottom: "1px solid var(--border-color)"
-      }}>
-        <div style={{
-          display: "inline-block",
-          padding: "0.25rem 0.75rem",
-          borderRadius: "99px",
-          background: "rgba(212, 175, 55, 0.1)",
-          color: "var(--primary-color)",
-          fontSize: "0.85rem",
-          fontWeight: "bold",
-          marginBottom: "1rem",
-          border: "1px solid var(--primary-color)"
-        }}>
-          {t("visitor.home.badge", "Modo Visitante")}
-        </div>
+      {/* HERO SECTION */}
+      <section className="home-hero">
+        <div className="hero-content">
+          <span className="hero-badge">
+            ✨ {t("visitor.home.badge", "Modo Visitante")}
+          </span>
 
-        <h1 className="section-title" style={{
-          fontSize: "2.5rem",
-          color: "var(--primary-color)",
-          marginBottom: "0.5rem",
-          fontFamily: "'Georgia', serif"
-        }}>
-          {t("visitor.home.title", { name: name || t("common.visitor", "Visitante") })}
-        </h1>
+          <h1 className="hero-title">
+            {t("visitor.home.title", { name: name || t("common.visitor", "Visitante") })}
+          </h1>
 
-        <p className="section-subtitle" style={{
-          maxWidth: "800px",
-          fontSize: "1.1rem",
-          lineHeight: "1.6",
-          color: "#B0A090",
-          fontStyle: "italic"
-        }}>
-          {isCityMode
-            ? t("visitor.home.subtitleCity", "Explore os pontos turísticos e a história da cidade com guias inteligentes.")
-            : t("visitor.home.subtitle", "Explore a história e a cultura dos nossos museus com suporte a acessibilidade e guias inteligentes.")}
-        </p>
+          <p className="hero-subtitle">
+            {isCityMode
+              ? t("visitor.home.subtitleCity", "Explore os pontos turísticos e a história da cidade com guias inteligentes.")
+              : t("visitor.home.subtitle", "Explore a história e a cultura dos nossos museus com suporte a acessibilidade e guias inteligentes.")}
+          </p>
 
-        <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
-          <Link to="/scanner" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem", background: "var(--accent-gold)", color: "black", borderColor: "var(--accent-gold)" }}>
-            📷 Scanner
-          </Link>
-          {isCityMode ? (
-            <Link to="/mapa" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
-              {t("visitor.home.exploreMap", "Explorar Mapa 🗺️")}
+          <div className="hero-actions">
+            <Link to="/scanner" className="hero-btn hero-btn-primary">
+              <Camera size={18} />
+              Scanner
             </Link>
-          ) : (
-            <Link to="/trilhas" className="btn btn-primary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
-              {t("visitor.home.startTrail")}
+            {isCityMode ? (
+              <Link to="/mapa" className="hero-btn hero-btn-primary">
+                <Map size={18} />
+                {t("visitor.home.exploreMap", "Explorar Mapa")}
+              </Link>
+            ) : (
+              <Link to="/trilhas" className="hero-btn hero-btn-primary">
+                <Compass size={18} />
+                {t("visitor.home.startTrail")}
+              </Link>
+            )}
+            <Link to={isCityMode ? "/trilhas" : "/mapa"} className="hero-btn hero-btn-secondary">
+              {isCityMode ? term.trails : t("visitor.home.viewMap")}
             </Link>
-          )}
-
-          <Link to={isCityMode ? "/trilhas" : "/mapa"} className="btn btn-secondary" style={{ padding: "0.8rem 2rem", fontSize: "1rem" }}>
-            {isCityMode ? term.trails : t("visitor.home.viewMap")}
-          </Link>
+          </div>
         </div>
       </section>
 
-      {/* FEATURED ARTWORKS */}
-      <section style={{ marginBottom: "3rem" }}>
-        <h2 className="section-title" style={{
-          fontSize: "2rem",
-          color: "var(--primary-color)",
-          fontFamily: "'Georgia', serif",
-          marginBottom: "0.5rem"
-        }}>
-          {term.featuredWorks}
-        </h2>
-        <p className="section-subtitle" style={{ color: "#888", marginBottom: "1.5rem" }}>
-          {t("visitor.home.featuredSubtitle")}
-        </p>
+      {/* FEATURED WORKS */}
+      <section className="works-section">
+        <div className="section-header">
+          <h2>{term.featuredWorks}</h2>
+          <p>{t("visitor.home.featuredSubtitle")}</p>
+        </div>
 
         {loading ? (
-          <div className="card-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
+          <div className="skeleton-grid">
             {[1, 2, 3].map(i => (
-              <div key={i} className="card" style={{ height: "250px", animation: "pulse 1.5s infinite", background: "rgba(255,255,255,0.05)" }}></div>
+              <div key={i} className="skeleton-card"></div>
             ))}
           </div>
         ) : featuredWorks.length > 0 ? (
-          <div className="card-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
+          <div className="works-grid">
             {featuredWorks.map(work => (
-              <article key={work.id} className="card" style={{ display: "flex", flexDirection: "column" }}>
+              <article key={work.id} className="work-card">
                 {work.imageUrl && (
-                  <div style={{
-                    height: "180px",
-                    width: "100%",
-                    marginBottom: "1rem",
-                    borderRadius: "4px",
-                    background: `url(${getFullUrl(work.imageUrl)}) center/cover no-repeat`,
-                    backgroundColor: "#000"
-                  }} />
+                  <div
+                    className="work-image"
+                    style={{ backgroundImage: `url(${getFullUrl(work.imageUrl)})` }}
+                  />
                 )}
-                <h3 className="card-title" style={{ fontSize: "1.4rem", marginBottom: "0.5rem" }}>{work.title}</h3>
-                <p className="card-subtitle" style={{ fontSize: "0.9rem", color: "#ccc", fontStyle: "italic", marginBottom: "1rem" }}>
-                  {work.artist} {work.year ? `• ${work.year}` : ''}
-                </p>
-                <div className="card-meta" style={{ display: "flex", gap: "0.5rem", marginBottom: "auto" }}>
-                  {work.category && (
-                    <span className="chip" style={{
-                      fontSize: "0.75rem",
-                      padding: "2px 8px",
-                      borderRadius: "12px",
-                      background: "rgba(255,255,255,0.1)",
-                      border: "1px solid rgba(255,255,255,0.2)"
-                    }}>
-                      {typeof work.category === 'string' ? work.category : work.category?.name}
+                <div className="work-content">
+                  <h3 className="work-title">{work.title}</h3>
+                  <p className="work-artist">
+                    {work.artist} {work.year ? `• ${work.year}` : ''}
+                  </p>
+                  <div className="work-chips">
+                    {work.category && (
+                      <span className="work-chip">
+                        {typeof work.category === 'string' ? work.category : work.category?.name}
+                      </span>
+                    )}
+                    <span className="work-chip">
+                      {t("visitor.home.accessible", "Acessível")}
                     </span>
-                  )}
-                  <span className="chip" style={{
-                    fontSize: "0.75rem",
-                    padding: "2px 8px",
-                    borderRadius: "12px",
-                    background: "rgba(255,255,255,0.1)",
-                    border: "1px solid rgba(255,255,255,0.2)"
-                  }}>
-                    {t("visitor.home.accessible", "Acessível")}
-                  </span>
+                  </div>
+                  <Link to={`/obras/${work.id}`} className="work-btn">
+                    {t("visitor.home.viewDetails")} <ArrowRight size={14} />
+                  </Link>
                 </div>
-                <Link to={`/obras/${work.id}`} className="btn btn-secondary" style={{ marginTop: "1rem", width: "100%", textAlign: "center" }}>
-                  {t("visitor.home.viewDetails")}
-                </Link>
               </article>
             ))}
           </div>
         ) : (
-          <div className="card" style={{ textAlign: "center", padding: "3rem", background: "rgba(0,0,0,0.2)", border: "1px dashed rgba(255,255,255,0.1)" }}>
-            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem", opacity: 0.5 }}>🎨</span>
-            <p style={{ color: "#aaa" }}>{t("common.noResults", "Nenhuma obra em destaque no momento.")}</p>
+          <div className="empty-state">
+            <span className="empty-icon">🎨</span>
+            <p>{t("common.noResults", "Nenhuma obra em destaque no momento.")}</p>
           </div>
         )}
       </section>
 
       {/* RECOMMENDED TRAILS */}
-      <section>
-        <h2 className="section-title" style={{
-          fontSize: "2rem",
-          color: "var(--primary-color)",
-          fontFamily: "'Georgia', serif",
-          marginBottom: "0.5rem"
-        }}>
-          {t("visitor.home.recommendedTrails")}
-        </h2>
+      <section className="trails-section">
+        <div className="section-header">
+          <h2>{t("visitor.home.recommendedTrails")}</h2>
+        </div>
 
         {loading ? (
-          <div style={{ height: "100px" }}>Loading...</div>
+          <div className="skeleton-grid">
+            {[1, 2].map(i => (
+              <div key={i} className="skeleton-card skeleton-card-small"></div>
+            ))}
+          </div>
         ) : featuredTrails.length > 0 ? (
-          <div className="card-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem", marginTop: "1rem" }}>
+          <div className="trails-grid">
             {featuredTrails.map(trail => (
-              <article key={trail.id} className="card">
-                <h3 className="card-title" style={{ fontSize: "1.3rem" }}>{trail.title}</h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0.5rem 0" }}>{trail.description}</p>
-                <Link to={`/trilhas/${trail.id}`} className="btn btn-secondary" style={{ marginTop: "1rem" }}>
-                  {t("visitor.home.viewTrails")}
+              <article key={trail.id} className="trail-card">
+                <h3 className="trail-title">{trail.title}</h3>
+                <p className="trail-description">{trail.description}</p>
+                <Link to={`/trilhas/${trail.id}`} className="trail-btn">
+                  {t("visitor.home.viewTrails")} <ArrowRight size={14} />
                 </Link>
               </article>
             ))}
           </div>
         ) : (
-          <p style={{ color: "#666" }}>{t("common.noResults", "Nenhuma trilha encontrada.")}</p>
+          <div className="empty-state">
+            <span className="empty-icon">🛤️</span>
+            <p>{t("common.noResults", "Nenhuma trilha encontrada.")}</p>
+          </div>
         )}
       </section>
-
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 0.6; }
-          50% { opacity: 0.3; }
-          100% { opacity: 0.6; }
-        }
-      `}</style>
     </div>
   );
 };

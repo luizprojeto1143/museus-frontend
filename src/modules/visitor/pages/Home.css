@@ -1,0 +1,402 @@
+/* Premium Home Theme - Dark & Gold Dashboard */
+
+.home-container {
+    max-width: 1200px;
+    padding-bottom: 6rem;
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+}
+
+/* ============================================
+   HERO SECTION - Welcome Banner
+   ============================================ */
+.home-hero {
+    position: relative;
+    margin-bottom: 3rem;
+    padding: 2.5rem 1.5rem;
+    background: linear-gradient(135deg, rgba(44, 30, 16, 0.9) 0%, rgba(26, 17, 8, 0.95) 100%);
+    border: 1px solid #463420;
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+.home-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1rem;
+    border-radius: 99px;
+    background: rgba(212, 175, 55, 0.12);
+    color: #d4af37;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.hero-title {
+    font-size: 2.25rem;
+    color: #d4af37;
+    margin: 0 0 0.75rem 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    max-width: 700px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #c9b58c;
+    margin: 0;
+    font-style: italic;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.75rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.hero-btn-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.hero-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.hero-btn-secondary {
+    background: rgba(70, 52, 32, 0.6);
+    color: #d4af37;
+    border: 1px solid #463420;
+}
+
+.hero-btn-secondary:hover {
+    background: rgba(70, 52, 32, 0.9);
+    border-color: #d4af37;
+}
+
+/* ============================================
+   SECTION HEADERS
+   ============================================ */
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.75rem;
+    color: #d4af37;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-header h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.5rem;
+    background: linear-gradient(180deg, #d4af37, #8b6914);
+    border-radius: 2px;
+}
+
+.section-header p {
+    color: #8b7355;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* ============================================
+   FEATURED WORKS GRID
+   ============================================ */
+.works-section {
+    margin-bottom: 3rem;
+}
+
+.works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.work-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.work-card:hover {
+    transform: translateY(-4px);
+    border-color: #d4af37;
+    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.15);
+}
+
+.work-image {
+    height: 200px;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #0f0a05;
+    position: relative;
+}
+
+.work-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, #1a1108 0%, transparent 100%);
+}
+
+.work-content {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.work-title {
+    font-size: 1.25rem;
+    color: #EAE0D5;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.3;
+}
+
+.work-artist {
+    font-size: 0.9rem;
+    color: #8b7355;
+    font-style: italic;
+    margin: 0 0 1rem 0;
+}
+
+.work-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.work-chip {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 1rem;
+    background: rgba(212, 175, 55, 0.1);
+    color: #c9b58c;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.work-btn {
+    margin-top: auto;
+    padding: 0.75rem 1rem;
+    background: rgba(70, 52, 32, 0.5);
+    color: #d4af37;
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.work-btn:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: #d4af37;
+}
+
+/* ============================================
+   TRAILS SECTION
+   ============================================ */
+.trails-section {
+    margin-bottom: 3rem;
+}
+
+.trails-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.trail-card {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.trail-card::before {
+    content: '🛤️';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 4rem;
+    opacity: 0.08;
+    transform: rotate(15deg);
+}
+
+.trail-card:hover {
+    transform: translateY(-3px);
+    border-color: #d4af37;
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.1);
+}
+
+.trail-title {
+    font-size: 1.2rem;
+    color: #EAE0D5;
+    margin: 0 0 0.75rem 0;
+}
+
+.trail-description {
+    font-size: 0.9rem;
+    color: #8b7355;
+    line-height: 1.5;
+    margin: 0 0 1.25rem 0;
+}
+
+.trail-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.trail-btn:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: #d4af37;
+}
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(44, 30, 16, 0.3);
+    border: 2px dashed #463420;
+    border-radius: 1rem;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    color: #8b7355;
+    margin: 0;
+}
+
+/* ============================================
+   LOADING SKELETONS
+   ============================================ */
+.skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.skeleton-card {
+    height: 300px;
+    background: linear-gradient(90deg, #2c1e10 0%, #463420 50%, #2c1e10 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 1rem;
+    border: 1px solid #463420;
+}
+
+.skeleton-card-small {
+    height: 150px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .home-hero {
+        padding: 1.5rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 1.75rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .hero-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .works-grid,
+    .trails-grid {
+        grid-template-columns: 1fr;
+    }
+}
