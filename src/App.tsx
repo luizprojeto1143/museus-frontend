@@ -75,6 +75,7 @@ import { AdminReviews } from "./modules/admin/pages/AdminReviews";
 
 import { AdminScannerTrainer } from "./modules/admin/pages/AdminScannerTrainer";
 import { AdminMapEditor } from "./modules/admin/pages/AdminMapEditor";
+import { AdminTicketVerifier } from "./modules/admin/pages/AdminTicketVerifier";
 
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
@@ -709,6 +710,16 @@ const App: React.FC = () => {
               }
             />
 
+            <Route
+              path="/admin/verificar-ingressos"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminTicketVerifier />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
 
             {/* MASTER (multi-tenant) */}
             <Route

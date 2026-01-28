@@ -15,6 +15,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { to: "/admin/obras", label: t("admin.sidebar.artworks"), icon: "🖼️" },
     { to: "/admin/trilhas", label: t("admin.sidebar.trails"), icon: "🧭" },
     { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭" },
+    { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫" },
     { to: "/admin/certificates", label: "Certificados", icon: "🎓" },
     { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱" },
     { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️" },
