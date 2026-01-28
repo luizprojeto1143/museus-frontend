@@ -135,7 +135,7 @@ export const AdminTrailForm: React.FC = () => {
       title: name,
       description,
       active,
-      works: selectedWorks.map(w => w.id), // enviar IDs na ordem
+      workIds: selectedWorks.map(w => w.id), // enviar IDs na ordem
       tenantId
     };
 
