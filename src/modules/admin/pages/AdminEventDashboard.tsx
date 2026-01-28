@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
-import { Users, DollarSign, Calendar, Eye, Settings, QrCode } from 'lucide-react';
+import { Users, DollarSign, Calendar, Eye, Settings, QrCode, Printer, CheckSquare } from 'lucide-react';
 
 interface EventData {
     id: string;
@@ -68,6 +68,12 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex gap-3">
+                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center gap-2 px-4 py-2 rounded-lg">
+                        <Printer className="w-4 h-4" /> Relatório
+                    </Link>
+                    <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
+                        <CheckSquare className="w-4 h-4" /> Pesquisa
+                    </Link>
                     <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">
                         <QrCode className="w-4 h-4" /> Check-in
                     </Link>

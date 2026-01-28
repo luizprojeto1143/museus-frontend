@@ -45,6 +45,7 @@ import { VisitorProfile } from "./modules/visitor/pages/VisitorProfile";
 import { CertificateValidator } from "./modules/public/CertificateValidator";
 import { ShopPage } from "./modules/visitor/pages/ShopPage";
 import { ChallengesPage } from "./modules/visitor/pages/ChallengesPage";
+import { EventSurveyPage } from "./modules/visitor/pages/EventSurveyPage";
 
 
 // Admin pages
@@ -76,6 +77,8 @@ import { AdminReviews } from "./modules/admin/pages/AdminReviews";
 import { AdminScannerTrainer } from "./modules/admin/pages/AdminScannerTrainer";
 import { AdminMapEditor } from "./modules/admin/pages/AdminMapEditor";
 import { AdminTicketVerifier } from "./modules/admin/pages/AdminTicketVerifier";
+import { AdminEventSurvey } from "./modules/admin/pages/AdminEventSurvey";
+import { AdminEventReport } from "./modules/admin/pages/AdminEventReport";
 
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
@@ -220,6 +223,16 @@ const App: React.FC = () => {
                 <RequireRole allowed={["visitor", "admin", "master"]}>
                   <VisitorLayout>
                     <EventDetail />
+                  </VisitorLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/eventos/:id/pesquisa"
+              element={
+                <RequireRole allowed={["visitor", "admin", "master"]}>
+                  <VisitorLayout>
+                    <EventSurveyPage />
                   </VisitorLayout>
                 </RequireRole>
               }
@@ -716,6 +729,27 @@ const App: React.FC = () => {
                 <RequireRole allowed={["admin"]}>
                   <AdminLayout>
                     <AdminTicketVerifier />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/admin/eventos/:id/pesquisa"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEventSurvey />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/eventos/:id/relatorio"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminEventReport />
                   </AdminLayout>
                 </RequireRole>
               }
