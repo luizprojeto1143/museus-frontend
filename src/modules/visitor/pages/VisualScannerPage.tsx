@@ -6,6 +6,8 @@ import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Camera, ArrowLeft, StopCircle } from "lucide-react";
+import "./VisualScanner.css";
 
 export const VisualScannerPage: React.FC = () => {
     const { t } = useTranslation();
@@ -26,7 +28,6 @@ export const VisualScannerPage: React.FC = () => {
             try {
                 if (!tenantId) return;
 
-
                 const loadedNet = await mobilenet.load();
                 const loadedClassifier = knnClassifier.create();
 
@@ -36,7 +37,6 @@ export const VisualScannerPage: React.FC = () => {
                     setStatus(t("visitor.visualScanner.loadingWorks", "Carregando modelo treinado..."));
                 }
 
-                // Load trained model from localStorage
                 const savedModel = localStorage.getItem(`scanner_model_${tenantId}`);
                 if (savedModel) {
                     try {
@@ -46,12 +46,10 @@ export const VisualScannerPage: React.FC = () => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
                         loadedClassifier.setClassifierDataset(dataset);
-
                     } catch (e) {
                         console.error("Erro ao carregar modelo", e);
                     }
                 } else {
-
                     if (isMounted) setStatus("Nenhum modelo treinado encontrado. O scanner pode não funcionar.");
                 }
 
@@ -83,7 +81,6 @@ export const VisualScannerPage: React.FC = () => {
                 videoRef.current.srcObject = stream;
                 videoRef.current.play();
                 setScanning(true);
-                // Start loop
                 requestAnimationFrame(scanLoop);
             } catch (err) {
                 console.error("Error accessing camera:", err);
@@ -107,19 +104,18 @@ export const VisualScannerPage: React.FC = () => {
             return;
         }
 
-        // Check if we have a classifier with examples
         if (classifier && classifier.getNumClasses() > 0 && net) {
             try {
                 const activation = net.infer(videoRef.current, true);
                 const result = await classifier.predictClass(activation);
 
                 const confidence = result.confidences[result.label] || 0;
-                if (confidence > 0.8) { // 80% confidence threshold
+                if (confidence > 0.8) {
                     setMatch({ label: result.label, conf: confidence });
                 } else {
                     setMatch(null);
                 }
-                activation.dispose(); // Important: dispose tensor to avoid memory leak
+                activation.dispose();
             } catch (e) {
                 console.error("Error predicting", e);
             }
@@ -132,7 +128,7 @@ export const VisualScannerPage: React.FC = () => {
 
     useEffect(() => {
         if (tenantId) {
-            api.get("/works", { params: { tenantId, limit: 100 } }) // Fetch top 100 for scanner mapping
+            api.get("/works", { params: { tenantId, limit: 100 } })
                 .then(res => {
                     const list = res.data.data || [];
                     const mapping: Record<string, string> = {};
@@ -147,28 +143,26 @@ export const VisualScannerPage: React.FC = () => {
         return () => stopCamera();
     }, [tenantId]);
 
-    if (!tenantId) return <div style={{ padding: "2rem", textAlign: "center" }}>Selecione um museu.</div>;
+    if (!tenantId) return <div className="visual-scanner-no-tenant">Selecione um museu.</div>;
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", height: "100vh", backgroundColor: "black", color: "white" }}>
-            <div style={{ position: "relative", flex: 1, overflow: "hidden" }}>
+        <div className="visual-scanner-container">
+            <div className="visual-scanner-video-area">
                 <video
                     ref={videoRef}
-                    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                    className="visual-scanner-video"
                     playsInline
                     muted
                 />
 
                 {!scanning && !loading && (
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0,0,0,0.8)", zIndex: 10 }}>
-                        <div style={{ textAlign: "center", padding: "1.5rem" }}>
-                            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>📷</div>
-                            <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "0.5rem" }}>{t("visitor.visualScanner.title", "Scanner de Obras (IA)")}</h2>
-                            <p style={{ color: "#9ca3af", marginBottom: "1.5rem" }}>{t("visitor.visualScanner.instruction", "A IA identificará a obra automaticamente (Requer treinamento)")}</p>
-                            <button
-                                onClick={startCamera}
-                                style={{ backgroundColor: "white", color: "black", padding: "0.75rem 2rem", borderRadius: "9999px", fontWeight: "bold", cursor: "pointer", border: "none" }}
-                            >
+                    <div className="visual-scanner-start-overlay">
+                        <div className="visual-scanner-start-content">
+                            <div className="visual-scanner-start-icon">🤖</div>
+                            <h2 className="visual-scanner-start-title">{t("visitor.visualScanner.title", "Scanner de Obras (IA)")}</h2>
+                            <p className="visual-scanner-start-instruction">{t("visitor.visualScanner.instruction", "A IA identificará a obra automaticamente (Requer treinamento)")}</p>
+                            <button onClick={startCamera} className="visual-scanner-start-btn">
+                                <Camera size={22} />
                                 {t("visitor.visualScanner.startCamera", "Iniciar Câmera")}
                             </button>
                         </div>
@@ -176,21 +170,22 @@ export const VisualScannerPage: React.FC = () => {
                 )}
 
                 {loading && (
-                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "black", zIndex: 20, flexDirection: "column" }}>
-                        <div className="spinner" style={{ width: "50px", height: "50px", border: "4px solid #333", borderTopColor: "white", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "1rem" }}></div>
-                        <p style={{ color: "white" }}>{status}</p>
-                        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                    <div className="visual-scanner-loading-overlay">
+                        <div className="visual-scanner-spinner"></div>
+                        <p className="visual-scanner-loading-text">{status}</p>
                     </div>
                 )}
 
                 {match && (
-                    <div style={{ position: "absolute", bottom: "2.5rem", left: "1rem", right: "1rem", backgroundColor: "white", color: "black", padding: "1rem", borderRadius: "0.75rem", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}>
-                        <h3 style={{ fontWeight: "bold", fontSize: "1.125rem" }}>{worksMap[match.label] || "Obra Detectada"}</h3>
-                        <p style={{ fontSize: "0.75rem", color: "#999" }}>ID: {match.label}</p>
-                        <p style={{ fontSize: "0.875rem", color: "#4b5563" }}>Confiança: {(match.conf * 100).toFixed(0)}%</p>
+                    <div className="visual-scanner-match-card">
+                        <h3 className="visual-scanner-match-title">{worksMap[match.label] || "Obra Detectada"}</h3>
+                        <p className="visual-scanner-match-id">ID: {match.label}</p>
+                        <p className="visual-scanner-match-confidence">
+                            Confiança: <span className="visual-scanner-confidence-value">{(match.conf * 100).toFixed(0)}%</span>
+                        </p>
                         <button
-                            onClick={() => navigate(`/obras/${match.label}`)} // Assuming label is ID
-                            style={{ marginTop: "0.5rem", width: "100%", backgroundColor: "#2563eb", color: "white", padding: "0.5rem", borderRadius: "0.5rem", fontWeight: "500", border: "none", cursor: "pointer" }}
+                            onClick={() => navigate(`/obras/${match.label}`)}
+                            className="visual-scanner-view-btn"
                         >
                             {t("visitor.visualScanner.viewDetails", "Ver Detalhes")}
                         </button>
@@ -198,13 +193,13 @@ export const VisualScannerPage: React.FC = () => {
                 )}
             </div>
 
-            <div style={{ padding: "1rem", backgroundColor: "black", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <button onClick={() => navigate(-1)} style={{ color: "white", padding: "0.5rem", background: "transparent", border: "none", cursor: "pointer" }}>
-                    {t("common.back", "Voltar")}
+            <div className="visual-scanner-footer">
+                <button onClick={() => navigate(-1)} className="visual-scanner-back-btn">
+                    <ArrowLeft size={16} /> {t("common.back", "Voltar")}
                 </button>
                 {scanning && (
-                    <button onClick={stopCamera} style={{ color: "#ef4444", fontWeight: "bold", padding: "0.5rem", background: "transparent", border: "none", cursor: "pointer" }}>
-                        {t("visitor.visualScanner.stopCamera", "Parar")}
+                    <button onClick={stopCamera} className="visual-scanner-stop-btn">
+                        <StopCircle size={16} /> {t("visitor.visualScanner.stopCamera", "Parar")}
                     </button>
                 )}
             </div>
