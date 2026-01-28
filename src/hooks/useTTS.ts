@@ -73,51 +73,34 @@ export const useTTS = () => {
         // Stop any current playback
         stopAll();
 
-        // 1. Try Backend OpenAI TTS first
+        // FIX: Mobile/PWA browsers block audio playback if it follows an async operation (like the API call below).
+        // To ensure "Listen Description" works reliably on all devices, we default to Native TTS (speechSynthesis).
+        // This is synchronous and adheres to autoplay policies.
+
+        speakNative(text, lang);
+
+        /* 
+        // OpenAI TTS Implementation (Disabled for PWA compatibility)
+        // If enabling this, we must handle the "Audio Context" unlocking on mobile.
         try {
             setIsLoading(true);
-
-            // Get tenantId from local storage or context if possible, but here we might not have it easily directly in hook without context.
-            // Works/Public endpoints usually infer tenant or we pass it. 
-            // The /ai/tts endpoint only needs openai key on backend.
-
             const res = await api.post("/ai/tts", { text, voice: "onyx" }, {
                 responseType: 'arraybuffer'
             });
-
             const blob = new Blob([res.data], { type: "audio/mpeg" });
             const url = URL.createObjectURL(blob);
-
             const audio = new Audio(url);
             audioRef.current = audio;
-
-            audio.onplay = () => {
-                setIsSpeaking(true);
-                setIsPaused(false);
-                setIsLoading(false);
-            };
-
-            audio.onended = () => {
-                setIsSpeaking(false);
-                setIsPaused(false);
-            };
-
-            audio.onerror = (e) => {
-                console.error("Audio playback error", e);
-                setIsSpeaking(false);
-                setIsLoading(false);
-                // Fallback to native if audio fails?
-                speakNative(text, lang);
-            };
-
+            audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); setIsLoading(false); };
+            audio.onended = () => { setIsSpeaking(false); setIsPaused(false); };
+            audio.onerror = (e) => { speakNative(text, lang); };
             await audio.play();
-
         } catch (err) {
-            console.warn("OpenAI TTS failed, falling back to native", err);
             speakNative(text, lang);
         } finally {
             if (!audioRef.current) setIsLoading(false);
         }
+        */
 
     }, [stopAll, speakNative]);
 
