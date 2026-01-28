@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
+import "./Leaderboard.css";
 
 type LeaderboardEntry = {
     id: string;
@@ -40,134 +41,126 @@ export const LeaderboardPage: React.FC = () => {
     }, [fetchLeaderboard]);
 
     if (loading) return (
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '50vh', gap: '1rem' }}>
-            <div style={{ width: '40px', height: '40px', border: '3px solid var(--accent-gold)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+        <div className="leaderboard-loading">
+            <div className="leaderboard-spinner"></div>
             <p>{t("common.loading")}</p>
-            <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
         </div>
     );
 
-    const top3 = entries.slice(0, 3);
     const rest = entries.slice(3);
 
     const renderPodiumItem = (entry: LeaderboardEntry, place: number) => {
         const placeClass = place === 1 ? 'first' : place === 2 ? 'second' : 'third';
 
         return (
-            <div key={entry.id} className={`podium-item ${placeClass}`}>
-                <div className="podium-avatar-container">
+            <div key={entry.id} className={`podium-item-premium ${placeClass}`}>
+                <div className="podium-avatar-wrapper">
                     {entry.photoUrl ? (
-                        <img src={getFullUrl(entry.photoUrl) ?? undefined} alt={entry.name || "User"} className="podium-avatar" />
+                        <img src={getFullUrl(entry.photoUrl) ?? undefined} alt={entry.name || "User"} className="podium-avatar-img" />
                     ) : (
-                        <div className="podium-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>👤</div>
+                        <div className="podium-avatar-placeholder">👤</div>
                     )}
-                    <div className="podium-rank-badge">
-                        {place}
-                    </div>
+                    <div className="podium-rank-number">{place}</div>
                 </div>
-                <div className="podium-name">
+                <div className="podium-user-name">
                     {entry.name || t("common.anonymous", "Anônimo")}
                 </div>
-                <div className="podium-xp">
+                <div className="podium-user-xp">
                     {entry.xp} XP
                 </div>
             </div>
         );
     };
 
-    const renderListItem = (entry: LeaderboardEntry, index: number, isMe: boolean = false) => (
-        <div key={entry.id || index} className={`leaderboard-item ${isMe ? 'is-me' : ''}`}>
-            <div className="item-rank">
+    const renderListItem = (entry: LeaderboardEntry, isMe: boolean = false) => (
+        <div key={entry.id} className={`ranking-item ${isMe ? 'is-current-user' : ''}`}>
+            <div className="ranking-position">
                 #{entry.rank}
             </div>
 
             {entry.photoUrl ? (
-                <img src={getFullUrl(entry.photoUrl) ?? undefined} alt={entry.name || "User"} className="item-avatar" />
+                <img src={getFullUrl(entry.photoUrl) ?? undefined} alt={entry.name || "User"} className="ranking-avatar" />
             ) : (
-                <div className="item-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', background: 'var(--bg-elevated)' }}>👤</div>
+                <div className="ranking-avatar-placeholder">👤</div>
             )}
 
-            <div className="item-info">
-                <div className="item-name">
+            <div className="ranking-info">
+                <div className="ranking-name">
                     {entry.name || t("common.anonymous", "Anônimo")}
-                    {isMe && <span className="item-me-tag">{t("common.you", "(Você)")}</span>}
+                    {isMe && <span className="ranking-me-tag">{t("common.you", "(Você)")}</span>}
                 </div>
             </div>
 
-            <div style={{ textAlign: 'right' }}>
-                <div className="item-xp">{entry.xp}</div>
-                <span className="item-xp-label">{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</span>
+            <div className="ranking-xp-container">
+                <div className="ranking-xp-value">{entry.xp}</div>
+                <span className="ranking-xp-label">{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</span>
             </div>
         </div>
     );
 
     return (
-        <div className="page-container" style={{ paddingBottom: '100px' }}>
-            <div className="leaderboard-header">
-                <h1 className="section-title" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{t("visitor.leaderboard.title", "Ranking Global")}</h1>
-                <p className="section-subtitle" style={{ fontSize: '1.1rem' }}>{t("visitor.leaderboard.subtitle", "Os maiores exploradores da cultura")}</p>
-            </div>
+        <div className="leaderboard-container">
+            <header className="leaderboard-page-header">
+                <h1 className="leaderboard-page-title">{t("visitor.leaderboard.title", "Ranking Global")}</h1>
+                <p className="leaderboard-page-subtitle">{t("visitor.leaderboard.subtitle", "Os maiores exploradores da cultura")}</p>
+            </header>
 
-            {/* My Rank Top Card */}
+            {/* My Rank Card */}
             {myRank && (
-                <div className="my-rank-card">
-                    <div className="my-rank-info">
-                        <div className="my-rank-number">
-                            <span className="rank-label">RANK</span>
-                            <span className="rank-value">#{myRank.rank}</span>
+                <div className="my-rank-card-premium">
+                    <div className="my-rank-left">
+                        <div className="my-rank-circle">
+                            <span className="my-rank-label">RANK</span>
+                            <span className="my-rank-value">#{myRank.rank}</span>
                         </div>
-                        <div>
-                            <div style={{ fontSize: '0.9rem', color: 'var(--fg-muted)', textTransform: 'uppercase' }}>{t("visitor.leaderboard.myRank", "Sua Posição")}</div>
-                            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--fg-main)' }}>{myRank.name}</div>
+                        <div className="my-rank-info-text">
+                            <span className="my-rank-position-label">{t("visitor.leaderboard.myRank", "Sua Posição")}</span>
+                            <span className="my-rank-name">{myRank.name}</span>
                         </div>
                     </div>
 
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent-gold)' }}>{myRank.xp}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--fg-soft)', fontWeight: 'bold' }}>{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</div>
+                    <div className="my-rank-right">
+                        <div className="my-rank-xp">{myRank.xp}</div>
+                        <div className="my-rank-xp-label">{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</div>
                     </div>
                 </div>
             )}
 
             {/* Podium */}
             {entries.length > 0 && (
-                <div className="leaderboard-podium">
+                <div className="podium-container">
                     {entries[1] && renderPodiumItem(entries[1], 2)}
                     {entries[0] && renderPodiumItem(entries[0], 1)}
                     {entries[2] && renderPodiumItem(entries[2], 3)}
                 </div>
             )}
 
-            {/* List */}
-            <div className="leaderboard-list">
-                {rest.length === 0 && top3.length === 0 ? (
-                    <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
-                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏆</div>
-                        <p style={{ color: 'var(--fg-muted)' }}>{t("visitor.leaderboard.empty", "Nenhum visitante pontuou ainda.")}</p>
+            {/* Ranking List */}
+            <div className="ranking-list">
+                {rest.length === 0 && entries.length === 0 ? (
+                    <div className="ranking-empty">
+                        <span className="ranking-empty-icon">🏆</span>
+                        <p>{t("visitor.leaderboard.empty", "Nenhum visitante pontuou ainda.")}</p>
                     </div>
                 ) : (
-                    rest.map((entry) => renderListItem(entry, -1))
+                    rest.map((entry) => renderListItem(entry))
                 )}
             </div>
 
-            {/* Sticky User Rank (Bottom) */}
+            {/* Sticky User Rank Bar */}
             {myRank && (
-                <div className="sticky-rank-bar">
-                    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{
-                                width: '40px', height: '40px', borderRadius: '50%',
-                                background: 'var(--accent-gold)', color: 'var(--bg-page)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'
-                            }}>
+                <div className="sticky-rank-bottom">
+                    <div className="sticky-rank-content">
+                        <div className="sticky-rank-left">
+                            <div className="sticky-rank-circle">
                                 #{myRank.rank}
                             </div>
-                            <div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--fg-muted)' }}>{t("visitor.leaderboard.myRank", "Sua Posição")}</div>
-                                <div style={{ fontWeight: 'bold' }}>{t("common.you", "Você")}</div>
+                            <div className="sticky-rank-text">
+                                <span className="sticky-rank-label">{t("visitor.leaderboard.myRank", "Sua Posição")}</span>
+                                <span className="sticky-rank-name">{t("common.you", "Você")}</span>
                             </div>
                         </div>
-                        <div style={{ fontWeight: 'bold', color: 'var(--accent-gold)', fontSize: '1.2rem' }}>
+                        <div className="sticky-rank-xp">
                             {myRank.xp} XP
                         </div>
                     </div>
