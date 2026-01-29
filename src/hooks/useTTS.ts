@@ -79,54 +79,57 @@ export const useTTS = () => {
     }, [nativeSupported]);
 
     const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
+        // ALERT DEBUG: Remove after testing
+        alert(`[DEBUG] Clicked Speak. Text len: ${text.length}`);
+
         stopAll();
 
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio) {
+            alert("[DEBUG] Error: No audio element found");
+            return;
+        }
 
         // 1. SILENT UNLOCK (Crucial for Mobile)
-        // We play a silent file *immediately* on the user thread (click).
-        // This puts the element in a "playing" state (even if silent).
-        // Most browsers will keep this session alive while we await the fetch.
         try {
             audio.src = SILENT_MP3;
-            // Depending on browser, playing a data URI might be instant.
             await audio.play();
-            // We now have an "blessed" audio element.
+            // alert("[DEBUG] Silent unlock success");
         } catch (e) {
-            console.warn("Silent unlock failed", e);
-            // If unlock fails, we might as well fallback to native immediately? 
-            // Or try continuing.
+            alert(`[DEBUG] Silent unlock failed: ${e}`);
         }
 
         try {
             setIsLoading(true);
 
-            // 2. Fetch the real audio
+            // 2. Fetch
+            alert("[DEBUG] Fetching API...");
             const res = await api.post("/ai/tts", { text, voice: "onyx" }, {
                 responseType: 'arraybuffer'
             });
+            alert(`[DEBUG] API Success. Bytes: ${res.data.byteLength}`);
 
             const blob = new Blob([res.data], { type: "audio/mpeg" });
             const url = URL.createObjectURL(blob);
 
             // 3. Swap the source
-            // Note: On some strict iOS versions, swapping src might pause it. 
-            // But usually if we call play() immediately after, it works because the interaction stack is preserved or the session is active.
             audio.src = url;
 
             // Setup events
             audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); setIsLoading(false); };
             audio.onended = () => { setIsSpeaking(false); setIsPaused(false); };
             audio.onerror = (e) => {
+                alert("[DEBUG] Audio playback error event");
                 console.error("Audio playback error", e);
                 speakNative(text, lang);
             };
 
             // 4. Play the real content
             await audio.play();
+            alert("[DEBUG] Calling play() on real audio");
 
-        } catch (err) {
+        } catch (err: any) {
+            alert(`[DEBUG] API Failed: ${err.message || err}`);
             console.warn("API TTS fetch/play failed", err);
             speakNative(text, lang);
         } finally {
