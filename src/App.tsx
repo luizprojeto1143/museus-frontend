@@ -135,7 +135,7 @@ const App: React.FC = () => {
             <Route path="/select-museum" element={<SelectMuseum />} />
             <Route path="/verify/:code" element={<CertificateValidator />} />
             <Route path="users" element={<MasterUsers />} />
-            <Route path="seeder" element={<MasterSeeder />} />
+
             <Route path="tenants" element={<TenantsList />} />
 
             {/* VISITANTE */}
@@ -802,6 +802,16 @@ const App: React.FC = () => {
                 <RequireRole allowed={["master"]}>
                   <MasterLayout>
                     <MasterUsers />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/seeder"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterSeeder />
                   </MasterLayout>
                 </RequireRole>
               }
