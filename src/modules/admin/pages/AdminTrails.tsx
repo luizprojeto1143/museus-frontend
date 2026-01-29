@@ -22,10 +22,11 @@ export const AdminTrails: React.FC = () => {
     api
       .get("/trails", { params: { tenantId } })
       .then((res) => {
-        const apiTrails = (res.data as { id: string; title?: string; name: string; works?: { length: number }[]; active?: boolean }[]).map((tr) => ({
+        // Backend returns workIds as string[] array, not works objects
+        const apiTrails = (res.data as { id: string; title?: string; name?: string; workIds?: string[]; active?: boolean }[]).map((tr) => ({
           id: tr.id,
-          name: tr.title ?? tr.name,
-          worksCount: tr.works?.length ?? 0,
+          name: tr.title ?? tr.name ?? "Sem nome",
+          worksCount: tr.workIds?.length ?? 0,
           active: tr.active ?? true
         }));
         setTrails(apiTrails);
