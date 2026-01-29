@@ -301,62 +301,6 @@ export const AdminMuseumSettings: React.FC = () => {
               />
             </div>
           </div>
-
-          {/* Capa */}
-          <div>
-            <label className="form-label">{t("admin.museumSettings.images.cover")}</label>
-            <div
-              style={{
-                width: "100%",
-                height: "150px",
-                border: "2px dashed var(--border-strong)",
-                borderRadius: "var(--radius-md)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: settings.coverImageUrl ? `url(${settings.coverImageUrl}) center/cover no-repeat` : "rgba(42, 24, 16, 0.3)",
-                cursor: "pointer"
-              }}
-              onClick={() => coverInputRef.current?.click()}
-            >
-              {!settings.coverImageUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
-              <input
-                ref={coverInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => e.target.files?.[0] && handleFileUpload("coverImageUrl", e.target.files[0])}
-              />
-            </div>
-          </div>
-
-          {/* Ícone App */}
-          <div>
-            <label className="form-label">{t("admin.museumSettings.images.appIcon")}</label>
-            <div
-              style={{
-                width: "100%",
-                height: "150px",
-                border: "2px dashed var(--border-strong)",
-                borderRadius: "var(--radius-md)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: settings.appIconUrl ? `url(${settings.appIconUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
-                cursor: "pointer"
-              }}
-              onClick={() => iconInputRef.current?.click()}
-            >
-              {!settings.appIconUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
-              <input
-                ref={iconInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => e.target.files?.[0] && handleFileUpload("appIconUrl", e.target.files[0])}
-              />
-            </div>
-          </div>
         </div>
       </div>
 
