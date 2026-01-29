@@ -46,7 +46,7 @@ export const WorkDetail: React.FC = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showNavigation, setShowNavigation] = useState(false);
-  const { prepare, playPrepared, isReady, cancel, isSpeaking, isLoading } = useTTS();
+  const { speak, cancel, isSpeaking } = useTTS();
   const terms = useTerminology();
 
   if (id !== prevId) {
@@ -276,31 +276,13 @@ export const WorkDetail: React.FC = () => {
       <section className="work-description-section">
         <div className="description-header">
           <h2>{t("visitor.artwork.description")}</h2>
-          {/* Two-step TTS for iOS compatibility */}
-          {isSpeaking ? (
-            <button onClick={cancel} className="tts-button speaking">
-              <VolumeX size={18} />
-              {t("visitor.artwork.stopReading")}
-            </button>
-          ) : isReady ? (
-            <button onClick={playPrepared} className="tts-button ready">
-              <Volume2 size={18} />
-              {t("visitor.artwork.playAudio") || "Reproduzir"}
-            </button>
-          ) : isLoading ? (
-            <button disabled className="tts-button loading">
-              <Volume2 size={18} className="animate-pulse" />
-              {t("visitor.artwork.loadingAudio") || "Carregando..."}
-            </button>
-          ) : (
-            <button
-              onClick={() => prepare(work.description || t("visitor.artwork.noDescription"))}
-              className="tts-button listening"
-            >
-              <Volume2 size={18} />
-              {t("visitor.artwork.listenDescription")}
-            </button>
-          )}
+          <button
+            onClick={() => isSpeaking ? cancel() : speak(work.description || t("visitor.artwork.noDescription"), i18n.language)}
+            className={`tts-button ${isSpeaking ? 'speaking' : 'listening'}`}
+          >
+            {isSpeaking ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            {isSpeaking ? t("visitor.artwork.stopReading") : t("visitor.artwork.listenDescription")}
+          </button>
         </div>
         <p className="work-description-text">
           {work.description || t("visitor.artwork.defaultDescription")}
