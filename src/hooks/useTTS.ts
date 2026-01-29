@@ -113,7 +113,8 @@ export const useTTS = () => {
             setIsLoading(false);
 
             return true; // Success
-        } catch (err) {
+        } catch (err: any) {
+            alert(`[DEBUG] Erro ao carregar: ${err.message || err}`);
             console.warn("API TTS fetch failed", err);
             setIsLoading(false);
             return false; // Failed
