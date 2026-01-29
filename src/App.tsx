@@ -73,6 +73,7 @@ import { AdminUploads } from "./modules/admin/pages/AdminUploads";
 import { AdminInternalUsers } from "./modules/admin/pages/AdminInternalUsers";
 import { AdminCertificates } from "./modules/admin/certificates";
 import { AdminReviews } from "./modules/admin/pages/AdminReviews";
+import { AdminShop } from "./modules/admin/pages/AdminShop";
 
 import { AdminScannerTrainer } from "./modules/admin/pages/AdminScannerTrainer";
 import { AdminMapEditor } from "./modules/admin/pages/AdminMapEditor";
@@ -697,6 +698,17 @@ const App: React.FC = () => {
                 <RequireRole allowed={["admin"]}>
                   <AdminLayout>
                     <AdminReviews />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+
+            <Route
+              path="/admin/loja"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AdminShop />
                   </AdminLayout>
                 </RequireRole>
               }
