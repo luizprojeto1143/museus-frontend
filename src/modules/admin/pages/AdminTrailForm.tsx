@@ -70,6 +70,8 @@ export const AdminTrailForm: React.FC = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [active, setActive] = useState(true);
+  const [audioUrl, setAudioUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
   const [allWorks, setAllWorks] = useState<{ id: string; title: string }[]>([]);
   const [selectedWorks, setSelectedWorks] = useState<{ id: string; title: string }[]>([]);
   const [workToAdd, setWorkToAdd] = useState("");
@@ -87,9 +89,11 @@ export const AdminTrailForm: React.FC = () => {
     if (isEdit) {
       api.get(`/trails/${id}`)
         .then(res => {
-          const t = res.data as { title: string; description: string; works?: { work: { id: string; title: string } }[] };
+          const t = res.data as { title: string; description: string; audioUrl?: string; videoUrl?: string; works?: { work: { id: string; title: string } }[] };
           setName(t.title);
           setDescription(t.description);
+          setAudioUrl(t.audioUrl || "");
+          setVideoUrl(t.videoUrl || "");
           if (t.works) {
             setSelectedWorks(t.works.map(tw => ({
               id: tw.work.id,
@@ -135,6 +139,8 @@ export const AdminTrailForm: React.FC = () => {
       title: name,
       description,
       active,
+      audioUrl: audioUrl || null,
+      videoUrl: videoUrl || null,
       workIds: selectedWorks.map(w => w.id), // enviar IDs na ordem
       tenantId
     };
@@ -193,6 +199,39 @@ export const AdminTrailForm: React.FC = () => {
             />
             <span className="form-label" style={{ marginBottom: 0 }}>{t("admin.trails.status.active")}</span>
           </label>
+        </div>
+
+        {/* MULTIMEDIA SECTION */}
+        <div style={{ borderTop: "1px solid rgba(148, 163, 184, 0.2)", marginTop: "1.5rem", paddingTop: "1.5rem" }}>
+          <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--primary-color, #d4af37)", marginBottom: "1rem" }}>
+            🎧 Áudio-Guia da Trilha
+          </h3>
+          <div className="form-group">
+            <label htmlFor="audioUrl">URL do Áudio (MP3)</label>
+            <input
+              id="audioUrl"
+              className="input"
+              value={audioUrl}
+              onChange={(e) => setAudioUrl(e.target.value)}
+              placeholder="https://exemplo.com/audio-trilha.mp3"
+            />
+            <small style={{ color: "#94a3b8", fontSize: "0.75rem" }}>
+              Áudio de introdução da trilha que será reproduzido para os visitantes.
+            </small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="videoUrl">URL do Vídeo (MP4 ou YouTube)</label>
+            <input
+              id="videoUrl"
+              className="input"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder="https://youtube.com/watch?v=..."
+            />
+            <small style={{ color: "#94a3b8", fontSize: "0.75rem" }}>
+              Vídeo de apresentação da trilha.
+            </small>
+          </div>
         </div>
 
         <div className="form-group">

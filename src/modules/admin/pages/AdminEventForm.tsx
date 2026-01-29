@@ -65,7 +65,11 @@ export const AdminEventForm: React.FC = () => {
     certificateRequiresSurvey: false,
 
     // Visibility
-    visibility: "PUBLIC" // PUBLIC, PRIVATE
+    visibility: "PUBLIC", // PUBLIC, PRIVATE
+
+    // Audio Guide
+    audioUrl: "",
+    videoUrl: ""
   });
 
   const [tickets, setTickets] = useState<TicketData[]>([]);
@@ -108,7 +112,9 @@ export const AdminEventForm: React.FC = () => {
             certificateBackgroundUrl: data.certificateBackgroundUrl || "",
             minMinutesForCertificate: data.minMinutesForCertificate || "",
             certificateRequiresSurvey: data.certificateRequiresSurvey || false,
-            visibility: data.visibility || "PUBLIC"
+            visibility: data.visibility || "PUBLIC",
+            audioUrl: data.audioUrl || "",
+            videoUrl: data.videoUrl || ""
           });
 
           // Fetch tickets
@@ -499,6 +505,32 @@ export const AdminEventForm: React.FC = () => {
                   <div className="text-sm text-gray-500">Apenas quem tem o link</div>
                 </div>
               </label>
+            </div>
+
+            <hr className="my-6 border-gray-200" />
+
+            <h3 className="text-lg font-semibold mb-2">🎧 Áudio-Guia do Evento</h3>
+            <div className="space-y-4 mb-6">
+              <div className="form-group">
+                <label>URL do Áudio Introdutório (MP3)</label>
+                <input
+                  className="input w-full"
+                  value={formData.audioUrl}
+                  onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
+                  placeholder="https://exemplo.com/audio-evento.mp3"
+                />
+                <p className="text-xs text-gray-400 mt-1">Áudio que os visitantes poderão ouvir sobre o evento.</p>
+              </div>
+              <div className="form-group">
+                <label>URL do Vídeo Promocional</label>
+                <input
+                  className="input w-full"
+                  value={formData.videoUrl}
+                  onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+                  placeholder="https://youtube.com/watch?v=..."
+                />
+                <p className="text-xs text-gray-400 mt-1">Vídeo de divulgação do evento.</p>
+              </div>
             </div>
           </div>
         );

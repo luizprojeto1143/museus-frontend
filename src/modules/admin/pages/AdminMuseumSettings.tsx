@@ -33,6 +33,10 @@ interface MuseumSettings {
   secondaryColor: string;
   theme: "light" | "dark";
   historicalFont: boolean;
+
+  // Welcome Media
+  welcomeAudioUrl?: string;
+  welcomeVideoUrl?: string;
 }
 
 export const AdminMuseumSettings: React.FC = () => {
@@ -64,6 +68,8 @@ export const AdminMuseumSettings: React.FC = () => {
     secondaryColor: "#cd7f32",
     theme: "dark",
     historicalFont: true,
+    welcomeAudioUrl: "",
+    welcomeVideoUrl: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -351,6 +357,40 @@ export const AdminMuseumSettings: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* WELCOME AUDIO/VIDEO */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <h2 className="card-title">🎧 Boas-Vindas Multimídia</h2>
+        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "1rem" }}>
+          Áudio e vídeo de boas-vindas reproduzidos na tela inicial para os visitantes.
+        </p>
+
+        <div className="form-group">
+          <label className="form-label">URL do Áudio de Boas-Vindas (MP3)</label>
+          <input
+            type="url"
+            value={settings.welcomeAudioUrl || ""}
+            onChange={(e) => setSettings({ ...settings, welcomeAudioUrl: e.target.value })}
+            placeholder="https://exemplo.com/audio-boas-vindas.mp3"
+          />
+          <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+            Narração introdutória sobre o museu, sua história e missão.
+          </p>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">URL do Vídeo Institucional</label>
+          <input
+            type="url"
+            value={settings.welcomeVideoUrl || ""}
+            onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })}
+            placeholder="https://youtube.com/watch?v=... ou URL direta de MP4"
+          />
+          <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+            Vídeo de apresentação do museu, exibido na página inicial.
+          </p>
         </div>
       </div>
 

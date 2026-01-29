@@ -7,6 +7,7 @@ import { getFullUrl } from "../../../utils/url";
 import { useTerminology } from "../../../hooks/useTerminology";
 import { useIsCityMode } from "../../auth/TenantContext";
 import { Camera, Map, Compass, ArrowRight } from "lucide-react";
+import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import "./Home.css";
 
 interface FeaturedWork {
@@ -32,6 +33,8 @@ export const Home: React.FC = () => {
   const isCityMode = useIsCityMode();
   const [featuredWorks, setFeaturedWorks] = useState<FeaturedWork[]>([]);
   const [featuredTrails, setFeaturedTrails] = useState<FeaturedTrail[]>([]);
+  const [welcomeAudioUrl, setWelcomeAudioUrl] = useState<string | null>(null);
+  const [museumName, setMuseumName] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,12 +52,19 @@ export const Home: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [worksRes, trailsRes] = await Promise.all([
+        const [worksRes, trailsRes, settingsRes] = await Promise.all([
           api.get(`/works?tenantId=${tenantId}&limit=3`),
-          api.get(`/trails?tenantId=${tenantId}&limit=2`)
+          api.get(`/trails?tenantId=${tenantId}&limit=2`),
+          api.get(`/tenants/${tenantId}/settings`).catch(() => ({ data: {} }))
         ]);
         setFeaturedWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         setFeaturedTrails(Array.isArray(trailsRes.data) ? trailsRes.data : (trailsRes.data.data || trailsRes.data || []));
+
+        // Welcome audio from tenant settings
+        if (settingsRes.data?.welcomeAudioUrl) {
+          setWelcomeAudioUrl(getFullUrl(settingsRes.data.welcomeAudioUrl));
+          setMuseumName(settingsRes.data.name || "");
+        }
       } catch (err) {
         console.error("Error fetching home data", err);
       } finally {
@@ -109,6 +119,16 @@ export const Home: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* WELCOME AUDIO GUIDE */}
+      {welcomeAudioUrl && (
+        <section style={{ padding: "0 1.5rem", marginTop: "-1rem", marginBottom: "1.5rem" }}>
+          <NarrativeAudioGuide
+            audioUrl={welcomeAudioUrl}
+            title={museumName || t("visitor.home.welcomeAudio", "Boas-vindas ao Museu")}
+          />
+        </section>
+      )}
 
       {/* FEATURED WORKS */}
       <section className="works-section">
