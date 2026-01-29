@@ -7,6 +7,8 @@ import {
   MapPin, Calendar, Share2,
   User, CheckCircle, Video, ArrowLeft
 } from "lucide-react";
+import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
+import { getFullUrl } from "../../../utils/url";
 import "./EventDetail.css";
 
 type Ticket = {
@@ -47,6 +49,7 @@ type EventDetailType = {
   customFormSchema?: FormField[];
   galleryUrls?: string[];
   tenant?: { name: string };
+  audioUrl?: string | null;
 };
 
 export const EventDetail: React.FC = () => {
@@ -92,7 +95,10 @@ export const EventDetail: React.FC = () => {
           try { evData.galleryUrls = JSON.parse(evData.galleryUrls); } catch { evData.galleryUrls = []; }
         }
 
-        setEvent(evData);
+        setEvent({
+          ...evData,
+          audioUrl: getFullUrl(evData.audioUrl)
+        });
         setTickets(tickRes.data);
         if (attRes.data?.attended) setAttendance(attRes.data);
       } finally {
@@ -189,6 +195,12 @@ export const EventDetail: React.FC = () => {
                   {event.description || "Sem descrição."}
                 </div>
               </div>
+
+              {/* AUDIO GUIDE */}
+              <NarrativeAudioGuide
+                audioUrl={event.audioUrl}
+                title={event.title}
+              />
 
               {/* Producer */}
               {event.producerDescription && (

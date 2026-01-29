@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
+import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
+import { getFullUrl } from "../../../utils/url";
 import "./Trails.css";
 
 type TrailDetailData = {
   id: string;
   name: string;
+  title?: string;
   description?: string;
   duration?: string;
+  audioUrl?: string | null;
   works: { id: string; title: string }[];
 };
 
@@ -55,9 +59,11 @@ export const TrailDetail: React.FC = () => {
 
         const mapped: TrailDetailData = {
           id: t.id,
-          name: t.name,
+          name: t.title || t.name,
+          title: t.title || t.name,
           description: t.description ?? mock.description,
           duration: t.durationLabel ?? t.duration ?? mock.duration,
+          audioUrl: getFullUrl(t.audioUrl),
           works
         };
         setApiTrail(mapped);
@@ -110,6 +116,12 @@ export const TrailDetail: React.FC = () => {
         <h2>{t("visitor.trailDetail.about")}</h2>
         <p className="trail-about-text">{trail.description}</p>
       </section>
+
+      {/* AUDIO GUIDE */}
+      <NarrativeAudioGuide
+        audioUrl={trail.audioUrl}
+        title={trail.name}
+      />
 
       <section className="trail-works-section">
         <h2>{t("visitor.trailDetail.artworks")}</h2>
