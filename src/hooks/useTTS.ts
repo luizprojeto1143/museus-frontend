@@ -1,7 +1,5 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
-// Assumes api client is available at ../api/client or similar - adjusting import path based on file location
-// src/hooks/useTTS.ts -> ../api/client
 import { api } from "../api/client";
 
 export const useTTS = () => {
@@ -9,38 +7,55 @@ export const useTTS = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Audio Context for reliable mobile playback
+    // Platform detection
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Audio Context (Mobile Only)
     const audioContextRef = useRef<AudioContext | null>(null);
     const sourceRef = useRef<AudioBufferSourceNode | null>(null);
-    const startTimeRef = useRef<number>(0);
-    const pausedAtRef = useRef<number>(0);
     const bufferRef = useRef<AudioBuffer | null>(null);
+    const startTimeRef = useRef<number>(0);
 
-    // Fallback support (always keep native ready)
+    // HTML5 Audio (Desktop Only)
+    const htmlAudioRef = useRef<HTMLAudioElement | null>(null);
+
+    // Native fallback
     const [nativeSupported] = useState(() => "speechSynthesis" in window);
 
-    // Initialize AudioContext
+    // Initialize AudioContext ONLY on Mobile
     useEffect(() => {
-        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-        if (AudioContextClass) {
-            audioContextRef.current = new AudioContextClass();
+        if (isMobile) {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (AudioContextClass) {
+                audioContextRef.current = new AudioContextClass();
+            }
         }
         return () => {
-            // Cleanup
             if (audioContextRef.current) {
                 audioContextRef.current.close();
             }
+            if (htmlAudioRef.current) {
+                htmlAudioRef.current.pause();
+                htmlAudioRef.current = null;
+            }
             window.speechSynthesis.cancel();
         };
-    }, []);
+    }, [isMobile]);
 
     const stopAll = useCallback(() => {
+        // Mobile clean
         if (sourceRef.current) {
             try { sourceRef.current.stop(); } catch (e) { /**/ }
             sourceRef.current = null;
         }
-        pausedAtRef.current = 0;
 
+        // Desktop clean
+        if (htmlAudioRef.current) {
+            htmlAudioRef.current.pause();
+            htmlAudioRef.current = null;
+        }
+
+        // Native clean
         if (nativeSupported) {
             window.speechSynthesis.cancel();
         }
@@ -68,21 +83,32 @@ export const useTTS = () => {
             window.speechSynthesis.speak(utterance);
         }
 
+        // Simple Mobile check for native hack
+        if (isMobile && window.speechSynthesis.getVoices().length > 0) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+        }
+
         if (window.speechSynthesis.getVoices().length === 0) {
             window.speechSynthesis.onvoiceschanged = () => {
                 play();
                 window.speechSynthesis.onvoiceschanged = null;
             };
         } else {
-            // Wake up mobile audio engine
-            window.speechSynthesis.pause();
-            window.speechSynthesis.resume();
             play();
         }
-    }, [nativeSupported]);
+    }, [nativeSupported, isMobile]);
 
-    const playBuffer = useCallback((buffer: AudioBuffer, offset: number = 0) => {
+    const playMobileWebAudio = useCallback(async (data: ArrayBuffer) => {
         if (!audioContextRef.current) return;
+
+        // Ensure context is running
+        if (audioContextRef.current.state === 'suspended') {
+            await audioContextRef.current.resume();
+        }
+
+        const audioData = await audioContextRef.current.decodeAudioData(data);
+        bufferRef.current = audioData;
 
         // Stop previous
         if (sourceRef.current) {
@@ -90,92 +116,98 @@ export const useTTS = () => {
         }
 
         const source = audioContextRef.current.createBufferSource();
-        source.buffer = buffer;
+        source.buffer = audioData;
         source.connect(audioContextRef.current.destination);
-        source.start(0, offset);
+        source.start(0);
 
         sourceRef.current = source;
-        startTimeRef.current = audioContextRef.current.currentTime - offset;
+        startTimeRef.current = audioContextRef.current.currentTime;
 
-        source.onended = () => {
-            // Only clear state if we naturally ended (not manually stopped/paused)
-            // But checking 'isSpeaking' is tricky inside callback.
-            // Simplified:
-            // setIsSpeaking(false); 
-            // We rely on external control for stopping state, or check time?
-            // "onended" fires even on stop().
-        };
+        // Manual end detection
+        const duration = audioData.duration;
+        const checkEnd = setInterval(() => {
+            if (audioContextRef.current && audioContextRef.current.currentTime >= startTimeRef.current + duration - 0.2) {
+                setIsSpeaking(false);
+                clearInterval(checkEnd);
+            }
+        }, 500);
 
         setIsSpeaking(true);
         setIsPaused(false);
     }, []);
 
+    const playDesktopAudio = useCallback((blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        htmlAudioRef.current = audio;
+
+        audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); setIsLoading(false); };
+        audio.onended = () => { setIsSpeaking(false); setIsPaused(false); };
+        audio.onerror = () => {
+            console.error("Desktop Audio Error");
+            setIsSpeaking(false);
+        };
+
+        audio.play().catch(e => {
+            console.error("Desktop Autoplay Blocked?", e);
+            setIsSpeaking(false);
+        });
+    }, []);
+
     const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
         stopAll();
 
-        // 1. Resume AudioContext immediately (Unlock Mobile Audio)
-        // This is THE crucial step for mobile support.
-        if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-            await audioContextRef.current.resume();
+        // 1. Mobile Unlock Pre-Fetch
+        if (isMobile && audioContextRef.current && audioContextRef.current.state === 'suspended') {
+            try { await audioContextRef.current.resume(); } catch (e) { console.error("Resume failed", e); }
         }
 
-        // Try API
         try {
             setIsLoading(true);
             const res = await api.post("/ai/tts", { text, voice: "onyx" }, {
                 responseType: 'arraybuffer'
             });
 
-            if (!audioContextRef.current) throw new Error("AudioContext not supported");
-
-            const audioData = await audioContextRef.current.decodeAudioData(res.data);
-            bufferRef.current = audioData;
-            playBuffer(audioData);
+            if (isMobile) {
+                await playMobileWebAudio(res.data);
+            } else {
+                const blob = new Blob([res.data], { type: "audio/mpeg" });
+                playDesktopAudio(blob);
+            }
             setIsLoading(false);
 
-            // Hook into onended manually?
-            // Since onended fires on stop(), we handle state carefully.
-            sourceRef.current!.onended = () => {
-                // If context time > duration + start time, it finished naturally
-                const ctx = audioContextRef.current;
-                if (ctx && ctx.currentTime >= startTimeRef.current + audioData.duration - 0.1) {
-                    setIsSpeaking(false);
-                    setIsPaused(false);
-                }
-            };
-
         } catch (err) {
-            console.warn("WebAudio API failed, fallback to native", err);
+            console.warn("API TTS failed, fallback to native", err);
             speakNative(text, lang);
-        } finally {
-            // isLoading set to false in success path or failure path
         }
 
-    }, [stopAll, speakNative, playBuffer]);
+    }, [stopAll, speakNative, isMobile, playMobileWebAudio, playDesktopAudio]);
 
     const pause = useCallback(() => {
-        if (audioContextRef.current && isSpeaking) {
-            if (audioContextRef.current.state === 'running') {
-                audioContextRef.current.suspend();
-                setIsPaused(true);
-            }
-        }
-        else if (nativeSupported && window.speechSynthesis.speaking) {
+        if (isMobile && audioContextRef.current?.state === 'running') {
+            audioContextRef.current.suspend();
+            setIsPaused(true);
+        } else if (!isMobile && htmlAudioRef.current) {
+            htmlAudioRef.current.pause();
+            setIsPaused(true);
+        } else {
             window.speechSynthesis.pause();
             setIsPaused(true);
         }
-    }, [isSpeaking, nativeSupported]);
+    }, [isMobile]);
 
     const resume = useCallback(() => {
-        if (audioContextRef.current && isPaused) {
+        if (isMobile && audioContextRef.current?.state === 'suspended') {
             audioContextRef.current.resume();
             setIsPaused(false);
-        }
-        else if (nativeSupported && window.speechSynthesis.paused) {
+        } else if (!isMobile && htmlAudioRef.current) {
+            htmlAudioRef.current.play();
+            setIsPaused(false);
+        } else {
             window.speechSynthesis.resume();
             setIsPaused(false);
         }
-    }, [isPaused, nativeSupported]);
+    }, [isMobile]);
 
     const cancel = useCallback(() => {
         stopAll();
