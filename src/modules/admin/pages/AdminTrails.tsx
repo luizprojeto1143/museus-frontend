@@ -16,8 +16,7 @@ export const AdminTrails: React.FC = () => {
   const { tenantId } = useAuth();
   const [trails, setTrails] = useState<AdminTrailItem[]>([]);
 
-
-  React.useEffect(() => {
+  const fetchTrails = React.useCallback(() => {
     if (!tenantId) return;
 
     api
@@ -35,7 +34,25 @@ export const AdminTrails: React.FC = () => {
         console.error("Failed to fetch trails", err);
         setTrails([]);
       });
-  }, [tenantId, t]);
+  }, [tenantId]);
+
+  React.useEffect(() => {
+    fetchTrails();
+  }, [fetchTrails]);
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!window.confirm(t("admin.trails.confirmDelete", { name }) || `Tem certeza que deseja excluir a trilha "${name}"?`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/trails/${id}`);
+      fetchTrails();
+    } catch (err) {
+      console.error("Failed to delete trail", err);
+      alert(t("common.error") || "Erro ao excluir trilha");
+    }
+  };
 
   return (
     <div>
@@ -68,10 +85,17 @@ export const AdminTrails: React.FC = () => {
               <td>
                 <span className="chip">{trail.active ? t("admin.trails.status.active") : t("admin.trails.status.inactive")}</span>
               </td>
-              <td style={{ textAlign: "right" }}>
+              <td style={{ textAlign: "right", display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                 <Link to={`/admin/trilhas/${trail.id}`} className="btn btn-secondary">
                   {t("common.edit")}
                 </Link>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(trail.id, trail.name)}
+                  style={{ backgroundColor: "#dc3545", color: "white", border: "none" }}
+                >
+                  {t("common.delete") || "Excluir"}
+                </button>
               </td>
             </tr>
           ))}
