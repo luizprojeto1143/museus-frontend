@@ -1,0 +1,224 @@
+/* ============================================
+   NARRATIVE AUDIO GUIDE - Premium Museum Experience
+   ============================================ */
+
+.narrative-guide-section {
+    margin-bottom: 2rem;
+}
+
+.narrative-guide-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.narrative-guide-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    border-radius: 50%;
+    color: #1a1108;
+}
+
+.narrative-guide-header h2 {
+    font-size: 1.5rem;
+    color: #d4af37;
+    margin: 0;
+}
+
+.narrative-guide-header p {
+    font-size: 0.9rem;
+    color: #8b7355;
+    margin: 0.25rem 0 0 0;
+}
+
+/* PLAYER CARD */
+.narrative-guide-player {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    text-align: center;
+}
+
+.player-artwork {
+    margin-bottom: 1.25rem;
+}
+
+.artwork-pulse {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.1);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50%;
+    color: #d4af37;
+    transition: all 0.3s ease;
+}
+
+.artwork-pulse.playing {
+    animation: pulse 2s ease-in-out infinite;
+    background: rgba(212, 175, 55, 0.2);
+    border-color: #d4af37;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px 10px rgba(212, 175, 55, 0.1);
+    }
+}
+
+.player-info {
+    margin-bottom: 1.25rem;
+}
+
+.player-title {
+    font-size: 1.25rem;
+    color: #EAE0D5;
+    margin: 0 0 0.25rem 0;
+}
+
+.player-artist {
+    font-size: 0.95rem;
+    color: #c9b58c;
+    margin: 0;
+    font-style: italic;
+}
+
+/* PROGRESS BAR */
+.player-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.time-current,
+.time-total {
+    font-size: 0.8rem;
+    color: #8b7355;
+    min-width: 40px;
+    font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(212, 175, 55, 0.2);
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #d4af37;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(212, 175, 55, 0.4);
+}
+
+.progress-bar::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #d4af37;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+/* CONTROLS */
+.player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.control-btn.primary {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+    color: #1a1108;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.control-btn.primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+}
+
+.control-btn.secondary {
+    width: 44px;
+    height: 44px;
+    background: rgba(70, 52, 32, 0.6);
+    color: #c9b58c;
+    border: 1px solid #463420;
+}
+
+.control-btn.secondary:hover {
+    background: rgba(212, 175, 55, 0.15);
+    color: #d4af37;
+    border-color: #d4af37;
+}
+
+.player-tip {
+    font-size: 0.85rem;
+    color: #8b7355;
+    margin: 0;
+}
+
+/* EMPTY STATE */
+.narrative-guide-empty {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px dashed #463420;
+    border-radius: 1rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    color: #8b7355;
+}
+
+.narrative-guide-empty svg {
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.narrative-guide-empty p {
+    font-size: 1rem;
+    color: #c9b58c;
+    margin: 0 0 0.5rem 0;
+}
+
+.narrative-guide-empty span {
+    font-size: 0.85rem;
+    color: #8b7355;
+}

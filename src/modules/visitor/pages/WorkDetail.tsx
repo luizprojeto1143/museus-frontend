@@ -4,6 +4,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { AudioDescriptionPlayer } from "../../../components/accessibility/AudioDescriptionPlayer";
 import { LibrasSection } from "../../../components/accessibility/LibrasPlayer";
+import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { useTTS } from "../../../hooks/useTTS";
 import { useTranslation } from "react-i18next";
 import { getFullUrl } from "../../../utils/url";
@@ -13,7 +14,7 @@ import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
 import { NavigationModal } from "../../../components/navigation/NavigationModal";
 import { useTerminology } from "../../../hooks/useTerminology";
-import { Compass, Share2, Star, Volume2, VolumeX } from "lucide-react";
+import { Compass, Share2, Star, Volume2, VolumeX, PlayCircle } from "lucide-react";
 import "./WorkDetail.css";
 
 type WorkDetailData = {
@@ -28,6 +29,7 @@ type WorkDetailData = {
   imageUrl?: string | null;
   audioUrl?: string | null;
   librasUrl?: string | null;
+  videoUrl?: string | null;
   latitude?: number;
   longitude?: number;
 };
@@ -81,7 +83,10 @@ export const WorkDetail: React.FC = () => {
           floor: w.floor ?? "",
           imageUrl: getFullUrl(w.imageUrl),
           audioUrl: getFullUrl(w.audioUrl),
-          librasUrl: getFullUrl(w.librasUrl)
+          librasUrl: getFullUrl(w.librasUrl),
+          videoUrl: getFullUrl(w.videoUrl),
+          latitude: w.latitude,
+          longitude: w.longitude
         };
         setWork(mapped);
       })
@@ -289,16 +294,43 @@ export const WorkDetail: React.FC = () => {
         </p>
       </section>
 
+      {/* AUDIO GUIDE - Premium Narrative Experience */}
+      <NarrativeAudioGuide
+        audioUrl={work.audioUrl}
+        title={work.title}
+        artist={work.artist}
+      />
+
+      {/* VIDEO SECTION */}
+      {work.videoUrl && (
+        <section className="video-section">
+          <div className="video-header">
+            <div className="video-icon">
+              <PlayCircle size={28} />
+            </div>
+            <div>
+              <h2>{t('visitor.artwork.videoTitle', 'Vídeo Explicativo')}</h2>
+              <p>{t('visitor.artwork.videoSubtitle', 'Descubra curiosidades e contexto histórico')}</p>
+            </div>
+          </div>
+          <div className="video-container">
+            <video
+              controls
+              preload="metadata"
+              poster={work.imageUrl || undefined}
+              className="video-player"
+            >
+              <source src={work.videoUrl} type="video/mp4" />
+              {t('visitor.artwork.videoNotSupported', 'Seu navegador não suporta vídeos.')}
+            </video>
+          </div>
+        </section>
+      )}
+
       {/* ACCESSIBILITY */}
       <section className="accessibility-section">
         <h2>{t("visitor.artwork.accessibility")}</h2>
         <div className="accessibility-grid">
-          <article className="accessibility-card">
-            <h3>{t("visitor.artwork.audioDescription")}</h3>
-            <p>{t("visitor.artwork.audioDescriptionText")}</p>
-            <AudioDescriptionPlayer src={work.audioUrl} />
-          </article>
-
           <article className="accessibility-card">
             <h3>{t("visitor.artwork.libras")}</h3>
             <p>{t("visitor.artwork.librasText")}</p>

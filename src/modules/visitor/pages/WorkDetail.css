@@ -275,6 +275,57 @@
 }
 
 /* ============================================
+   VIDEO SECTION
+   ============================================ */
+.video-section {
+    margin-bottom: 2rem;
+}
+
+.video-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.video-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border-radius: 50%;
+    color: white;
+}
+
+.video-header h2 {
+    font-size: 1.5rem;
+    color: #d4af37;
+    margin: 0;
+}
+
+.video-header p {
+    font-size: 0.9rem;
+    color: #8b7355;
+    margin: 0.25rem 0 0 0;
+}
+
+.video-container {
+    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.video-player {
+    width: 100%;
+    max-height: 400px;
+    display: block;
+    background: #0f0a05;
+}
+
+/* ============================================
    AI CHAT SECTION
    ============================================ */
 .ai-section {
