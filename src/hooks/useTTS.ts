@@ -2,25 +2,27 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { api } from "../api/client";
 
-// Tiny silent MP3 to "unlock" the audio element on mobile interaction
-const SILENT_MP3 = "data:audio/mp3;base64,SUQzBAAAAAAAI1RTS1UAAAAOAAADTGF2ZjU4LjIwLjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAJAAAB3AAZvLm9ub29ub29vb29vb29vb29vb29vb29vb29vb29vb29vb29//OEAAAAAAAAAAAAAAAAAAAAAAAAMGluZgAAAA8AAAAJAAAB3AAZvLm9ub29ub29vb29vb29vb29vb29vb29vb29vb29vb29vb29//OEAAAAAAAAAAAAAAAAAAAAAAAATGF2YzU4LjY1LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP//OEAAAAAAAAAAAAAAAAAAAAAAAAP";
-
 export const useTTS = () => {
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isReady, setIsReady] = useState(false); // NEW: Audio is ready to play
     const [nativeSupported] = useState(() => "speechSynthesis" in window);
 
     // Single unified audio element for consistency
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const preparedUrlRef = useRef<string | null>(null);
 
     useEffect(() => {
         // Initialize the audio element once
         const audio = new Audio();
-        // Important properties for mobile
         audio.preload = "auto";
-        audio.autoplay = false;
         audioRef.current = audio;
+
+        // Setup event handlers
+        audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); };
+        audio.onended = () => { setIsSpeaking(false); setIsPaused(false); setIsReady(false); };
+        audio.onerror = () => { setIsSpeaking(false); setIsReady(false); };
 
         // Cleanup
         return () => {
@@ -28,6 +30,9 @@ export const useTTS = () => {
                 audioRef.current.pause();
                 audioRef.current.src = "";
                 audioRef.current = null;
+            }
+            if (preparedUrlRef.current) {
+                URL.revokeObjectURL(preparedUrlRef.current);
             }
             window.speechSynthesis.cancel();
         };
@@ -37,7 +42,6 @@ export const useTTS = () => {
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
-            audioRef.current.loop = false; // Reset loop just in case
         }
         if (nativeSupported) {
             window.speechSynthesis.cancel();
@@ -45,6 +49,7 @@ export const useTTS = () => {
         setIsSpeaking(false);
         setIsPaused(false);
         setIsLoading(false);
+        // Note: We keep isReady = true if audio was prepared
     }, [nativeSupported]);
 
     const speakNative = useCallback((text: string, lang: string) => {
@@ -65,79 +70,76 @@ export const useTTS = () => {
             window.speechSynthesis.speak(utterance);
         }
 
-        // Standard mobile wake-up for native
         if (window.speechSynthesis.getVoices().length === 0) {
             window.speechSynthesis.onvoiceschanged = () => {
                 play();
                 window.speechSynthesis.onvoiceschanged = null;
             };
         } else {
-            // Just in case
             window.speechSynthesis.pause();
             window.speechSynthesis.resume();
             play();
         }
     }, [nativeSupported]);
 
-    const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
+    // STEP 1: Prepare the audio (fetch from API)
+    const prepare = useCallback(async (text: string) => {
         stopAll();
-
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        // 1. SILENT UNLOCK & KEEP-ALIVE
-        // We set loop=true so the audio channel stays "hot" (active) 
-        // while we wait for the network request.
-        // Otherwise, if the silent file finishes and the network lags, iOS suspends the session.
-        try {
-            audio.loop = true;
-            audio.src = SILENT_MP3;
-            await audio.play();
-        } catch (e) {
-            console.warn("Silent unlock failed", e);
-            // Non-fatal, we try to proceed anyway or fallback
-        }
+        setIsReady(false);
 
         try {
             setIsLoading(true);
 
-            // 2. Fetch voice from API
             const res = await api.post("/ai/tts", { text, voice: "onyx" }, {
                 responseType: 'arraybuffer'
             });
 
             const blob = new Blob([res.data], { type: "audio/mpeg" });
-            const url = URL.createObjectURL(blob);
 
-            // 3. Swap and Play
-            // Crucial: Stop looping, pause, swap, play.
-
-            audio.pause(); // Pause the silent loop
-            audio.loop = false; // Disable loop for the speech
-            audio.src = url;
-
-            audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); setIsLoading(false); };
-            audio.onended = () => { setIsSpeaking(false); setIsPaused(false); };
-            audio.onerror = (e) => {
-                console.error("Audio playback error", e);
-                speakNative(text, lang);
-            };
-
-            await audio.play();
-
-        } catch (err) {
-            console.warn("API TTS fetch/play failed", err);
-            speakNative(text, lang);
-        } finally {
-            // If we failed and are still looping the silent track, stop it.
-            if (audio.loop) {
-                audio.pause();
-                audio.loop = false;
+            // Revoke old URL if exists
+            if (preparedUrlRef.current) {
+                URL.revokeObjectURL(preparedUrlRef.current);
             }
-            if (audio.paused && !isSpeaking) setIsLoading(false);
-        }
 
-    }, [stopAll, speakNative, isSpeaking]);
+            const url = URL.createObjectURL(blob);
+            preparedUrlRef.current = url;
+
+            // Set the audio source (but don't play yet!)
+            if (audioRef.current) {
+                audioRef.current.src = url;
+            }
+
+            setIsReady(true);
+            setIsLoading(false);
+
+            return true; // Success
+        } catch (err) {
+            console.warn("API TTS fetch failed", err);
+            setIsLoading(false);
+            return false; // Failed
+        }
+    }, [stopAll]);
+
+    // STEP 2: Play the prepared audio (must be called from user gesture!)
+    const playPrepared = useCallback(() => {
+        if (!audioRef.current || !isReady) return;
+
+        audioRef.current.play().catch(err => {
+            console.error("Playback failed", err);
+        });
+    }, [isReady]);
+
+    // Legacy combined function - prepares and immediately attempts play
+    // Works on desktop, may fail on strict mobile
+    const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
+        const prepared = await prepare(text);
+        if (prepared) {
+            playPrepared();
+        } else {
+            // Fallback to native if API failed
+            speakNative(text, lang);
+        }
+    }, [prepare, playPrepared, speakNative]);
 
     const pause = useCallback(() => {
         if (audioRef.current && !audioRef.current.paused) {
@@ -161,10 +163,23 @@ export const useTTS = () => {
 
     const cancel = useCallback(() => {
         stopAll();
+        setIsReady(false);
+        if (preparedUrlRef.current) {
+            URL.revokeObjectURL(preparedUrlRef.current);
+            preparedUrlRef.current = null;
+        }
     }, [stopAll]);
 
     return {
+        // New two-step API (recommended for mobile)
+        prepare,        // Step 1: Load audio from API
+        playPrepared,   // Step 2: Play loaded audio (call on user click!)
+        isReady,        // True when audio is ready to play
+
+        // Legacy one-step API (works on desktop)
         speak,
+
+        // Common controls
         cancel,
         pause,
         resume,
