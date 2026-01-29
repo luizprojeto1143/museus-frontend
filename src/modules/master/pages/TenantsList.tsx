@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
+import { PlusCircle, Trash2, Edit, Building2 } from "lucide-react";
+import "./MasterShared.css";
 
 type TenantItem = {
   id: string;
@@ -67,55 +69,91 @@ export const TenantsList: React.FC = () => {
   };
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-        <div>
-          <h1 className="section-title">{t("master.tenants.title")}</h1>
-          <p className="section-subtitle">
-            {t("master.tenants.subtitle")}
+    <div className="master-page-container">
+      {/* HERO SECTION */}
+      <section className="master-hero">
+        <div className="master-hero-content">
+          <span className="master-badge">
+            🏢 Museus & Cidades
+          </span>
+          <h1 className="master-title">
+            Gerenciar Clientes
+          </h1>
+          <p className="master-subtitle">
+            Crie novos tenants, gerencie assinaturas e controle o acesso de cada instituição.
           </p>
+
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem" }}>
+            <Link to="/master/tenants/novo">
+              <button className="master-btn btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }}>
+                <PlusCircle size={18} />
+                {t("master.tenants.new")}
+              </button>
+            </Link>
+
+            <button
+              onClick={handleCleanDemo}
+              className="master-btn btn-danger"
+              style={{ width: 'auto', padding: '0.75rem 2rem', marginTop: '1rem' }}
+            >
+              <Trash2 size={18} />
+              Limpar Demos
+            </button>
+          </div>
         </div>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          <button onClick={handleCleanDemo} className="btn" style={{ background: "#ef4444", borderColor: "#ef4444" }}>
-            Trash Demo Data
-          </button>
-          <Link to="/master/tenants/novo" className="btn">
-            {t("master.tenants.new")}
-          </Link>
+      </section>
+
+      <div className="master-card">
+        <div className="master-card-header">
+          <div className="master-icon-wrapper master-icon-blue">
+            <Building2 size={24} />
+          </div>
+          <h3>Lista de Museus ({tenants.length})</h3>
+        </div>
+
+        <div className="master-table-container">
+          <table className="master-table">
+            <thead>
+              <tr>
+                <th>{t("master.tenants.table.name")}</th>
+                <th>{t("master.tenants.table.slug")}</th>
+                <th>{t("master.tenants.table.createdAt")}</th>
+                <th style={{ textAlign: "right" }}>{t("master.tenants.table.actions")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tenants.map(tenant => (
+                <tr key={tenant.id}>
+                  <td>
+                    <div style={{ fontWeight: 600, color: '#fff' }}>{tenant.name}</div>
+                  </td>
+                  <td>
+                    <span style={{ padding: '0.25rem 0.5rem', background: '#334155', borderRadius: '4px', fontSize: '0.8rem', fontFamily: 'monospace' }}>
+                      {tenant.slug}
+                    </span>
+                  </td>
+                  <td>{tenant.createdAt}</td>
+                  <td style={{ textAlign: "right", display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+                    <Link to={`/master/tenants/${tenant.id}`} title="Editar">
+                      <button className="master-btn btn-outline" style={{ width: '40px', height: '40px', padding: 0, marginTop: 0 }}>
+                        <Edit size={16} />
+                      </button>
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(tenant.id)}
+                      className="master-btn btn-danger"
+                      style={{ width: '40px', height: '40px', padding: 0, marginTop: 0 }}
+                      title="Excluir"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <table className="table">
-        <thead>
-          <tr>
-            <th>{t("master.tenants.table.name")}</th>
-            <th>{t("master.tenants.table.slug")}</th>
-            <th>{t("master.tenants.table.createdAt")}</th>
-            <th style={{ textAlign: "right" }}>{t("master.tenants.table.actions")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tenants.map(tenant => (
-            <tr key={tenant.id}>
-              <td>{tenant.name}</td>
-              <td><code>{tenant.slug}</code></td>
-              <td>{tenant.createdAt}</td>
-              <td style={{ textAlign: "right" }}>
-                <Link to={`/master/tenants/${tenant.id}`} className="btn btn-secondary" style={{ marginRight: "0.5rem" }}>
-                  {t("master.tenants.table.edit")}
-                </Link>
-                <button
-                  onClick={() => handleDelete(tenant.id)}
-                  className="btn btn-secondary"
-                  style={{ borderColor: "#ef4444", color: "#ef4444" }}
-                >
-                  🗑️
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

@@ -1,12 +1,13 @@
-/* MasterSeeder.css */
-.seeder-container {
+/* MasterShared.css */
+/* Base Page Container */
+.master-page-container {
     padding: 2rem;
     color: #e2e8f0;
     min-height: 100%;
 }
 
 /* HERO SECTION */
-.seeder-hero {
+.master-hero {
     margin-bottom: 3rem;
     text-align: center;
     position: relative;
@@ -16,7 +17,7 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.seeder-badge {
+.master-badge {
     display: inline-block;
     padding: 0.5rem 1rem;
     background: rgba(59, 130, 246, 0.1);
@@ -28,7 +29,7 @@
     border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
-.seeder-title {
+.master-title {
     font-size: 2.5rem;
     font-weight: 800;
     margin-bottom: 1rem;
@@ -38,7 +39,7 @@
     letter-spacing: -0.05em;
 }
 
-.seeder-subtitle {
+.master-subtitle {
     font-size: 1.125rem;
     color: #94a3b8;
     max-width: 600px;
@@ -46,15 +47,21 @@
     line-height: 1.6;
 }
 
-/* GRID */
-.seeder-grid {
+/* GRID LAYOUTS */
+.master-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.master-grid-3 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
 }
 
 /* CARDS */
-.seeder-card {
+.master-card {
     background: #1e293b;
     border-radius: 20px;
     padding: 1.5rem;
@@ -67,7 +74,7 @@
     overflow: hidden;
 }
 
-.seeder-card::before {
+.master-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -78,20 +85,20 @@
     opacity: 0.5;
 }
 
-.seeder-card:hover {
+.master-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-.card-header {
+.master-card-header {
     display: flex;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
 }
 
-.icon-wrapper {
+.master-icon-wrapper {
     width: 48px;
     height: 48px;
     border-radius: 14px;
@@ -100,14 +107,39 @@
     justify-content: center;
 }
 
-.seeder-card h3 {
+.master-icon-blue {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+}
+
+.master-icon-purple {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+}
+
+.master-icon-red {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.master-icon-green {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+}
+
+.master-icon-yellow {
+    background: rgba(234, 179, 8, 0.2);
+    color: #facc15;
+}
+
+.master-card h3 {
     font-size: 1.25rem;
     font-weight: 700;
     color: #fff;
     margin: 0;
 }
 
-.card-desc {
+.master-card-desc {
     color: #94a3b8;
     font-size: 0.95rem;
     margin-bottom: 1.5rem;
@@ -116,13 +148,13 @@
 }
 
 /* FORMS */
-.card-form {
+.master-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.input-group label {
+.master-input-group label {
     display: block;
     font-size: 0.85rem;
     color: #cbd5e1;
@@ -130,7 +162,9 @@
     font-weight: 500;
 }
 
-.input-group input {
+.master-input-group input,
+.master-input-group select,
+.master-input-group textarea {
     width: 100%;
     background: #0f172a;
     border: 1px solid #334155;
@@ -141,38 +175,15 @@
     transition: border-color 0.2s;
 }
 
-.input-group input:focus {
+.master-input-group input:focus,
+.master-input-group select:focus,
+.master-input-group textarea:focus {
     border-color: #60a5fa;
     outline: none;
 }
 
-/* Sim Stats Grid */
-.sim-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.5rem;
-}
-
-.stat-item label {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    margin-bottom: 0.25rem;
-    display: block;
-}
-
-.stat-item input {
-    width: 100%;
-    background: #0f172a;
-    border: 1px solid #334155;
-    padding: 0.5rem;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
 /* BUTTONS */
-.seeder-btn {
+.master-btn {
     width: 100%;
     padding: 0.875rem;
     border-radius: 12px;
@@ -188,11 +199,11 @@
     margin-top: 1rem;
 }
 
-.seeder-btn:active {
+.master-btn:active {
     transform: scale(0.98);
 }
 
-.seeder-btn:disabled {
+.master-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
@@ -210,9 +221,6 @@
 }
 
 .btn-danger {
-    background: #ef4444;
-    color: white;
-    /* Changed from red-200 to white for contrast */
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.2);
@@ -220,4 +228,53 @@
 
 .btn-danger:hover {
     background: rgba(239, 68, 68, 0.2);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #cbd5e1;
+}
+
+.btn-outline:hover {
+    border-color: #94a3b8;
+    color: #fff;
+}
+
+/* TABLES */
+.master-table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+}
+
+.master-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+}
+
+.master-table th {
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    color: #94a3b8;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.master-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+}
+
+.master-table tr:last-child td {
+    border-bottom: none;
+}
+
+.master-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
 }

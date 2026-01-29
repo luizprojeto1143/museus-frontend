@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, User, Database, Filter, ChevronDown, ChevronRight } from 'lucide-react';
+import { Clock, User, Database, Filter, ChevronDown, ChevronRight, Activity, Search } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useTranslation } from 'react-i18next';
+import "./MasterShared.css";
 
 interface AuditLogEntry {
     id: string;
@@ -55,9 +56,18 @@ export const MasterAuditLogs: React.FC = () => {
 
     const getActionColor = (action: string) => {
         switch (action.toUpperCase()) {
-            case 'CREATE': return '#22c55e';
-            case 'UPDATE': return '#3b82f6';
-            case 'DELETE': return '#ef4444';
+            case 'CREATE': return 'rgba(34, 197, 94, 0.2)';
+            case 'UPDATE': return 'rgba(59, 130, 246, 0.2)';
+            case 'DELETE': return 'rgba(239, 68, 68, 0.2)';
+            default: return 'rgba(156, 163, 175, 0.2)';
+        }
+    };
+
+    const getActionTextColor = (action: string) => {
+        switch (action.toUpperCase()) {
+            case 'CREATE': return '#4ade80';
+            case 'UPDATE': return '#60a5fa';
+            case 'DELETE': return '#f87171';
             default: return '#9ca3af';
         }
     };
@@ -68,262 +78,202 @@ export const MasterAuditLogs: React.FC = () => {
     };
 
     return (
-        <div className="audit-logs-page">
-            <header className="page-header">
-                <div>
-                    <h1>📋 {t('master.audit.title', 'Logs de Auditoria')}</h1>
-                    <p className="subtitle">{t('master.audit.subtitle', 'Histórico de todas as ações administrativas do sistema')}</p>
+        <div className="master-page-container">
+            {/* HERO SECTION */}
+            <section className="master-hero">
+                <div className="master-hero-content">
+                    <span className="master-badge">
+                        🔍 Segurança & Auditoria
+                    </span>
+                    <h1 className="master-title">
+                        Logs do Sistema
+                    </h1>
+                    <p className="master-subtitle">
+                        Monitore todas as ações realizadas no painel administrativo para segurança e conformidade.
+                    </p>
                 </div>
-                <div className="stats-badge">
-                    <span>{total}</span> registros
-                </div>
-            </header>
 
-            {/* Filters */}
-            <div className="filters-bar">
-                <div className="filter-group">
-                    <Filter size={18} />
-                    <select
-                        value={filters.entity}
-                        onChange={(e) => setFilters(f => ({ ...f, entity: e.target.value }))}
-                    >
-                        <option value="">Todas Entidades</option>
-                        <option value="Work">Obras</option>
-                        <option value="Event">Eventos</option>
-                        <option value="Visitor">Visitantes</option>
-                        <option value="User">Usuários</option>
-                        <option value="Trail">Trilhas</option>
-                        <option value="Product">Produtos</option>
-                    </select>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <Activity size={24} color="#a78bfa" />
+                    <div>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>{total}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Registros</div>
+                    </div>
                 </div>
-                <div className="filter-group">
-                    <select
-                        value={filters.action}
-                        onChange={(e) => setFilters(f => ({ ...f, action: e.target.value }))}
-                    >
-                        <option value="">Todas Ações</option>
-                        <option value="CREATE">Criar</option>
-                        <option value="UPDATE">Atualizar</option>
-                        <option value="DELETE">Excluir</option>
-                        <option value="LOGIN">Login</option>
-                    </select>
+            </section>
+
+            {/* FILTERS CARD */}
+            <div className="master-card" style={{ marginBottom: '2rem' }}>
+                <div className="master-card-header">
+                    <div className="master-icon-wrapper master-icon-blue">
+                        <Filter size={24} />
+                    </div>
+                    <h3>Filtros de Busca</h3>
+                </div>
+                <div className="master-grid-3">
+                    <div className="master-input-group">
+                        <label>Entidade</label>
+                        <select
+                            value={filters.entity}
+                            onChange={(e) => setFilters(f => ({ ...f, entity: e.target.value }))}
+                        >
+                            <option value="">Todas Entidades</option>
+                            <option value="Work">Obras</option>
+                            <option value="Event">Eventos</option>
+                            <option value="Visitor">Visitantes</option>
+                            <option value="User">Usuários</option>
+                            <option value="Trail">Trilhas</option>
+                            <option value="Product">Produtos</option>
+                        </select>
+                    </div>
+
+                    <div className="master-input-group">
+                        <label>Ação</label>
+                        <select
+                            value={filters.action}
+                            onChange={(e) => setFilters(f => ({ ...f, action: e.target.value }))}
+                        >
+                            <option value="">Todas Ações</option>
+                            <option value="CREATE">Criar</option>
+                            <option value="UPDATE">Atualizar</option>
+                            <option value="DELETE">Excluir</option>
+                            <option value="LOGIN">Login</option>
+                        </select>
+                    </div>
+
+                    <div className="master-input-group" style={{ display: 'flex', alignItems: 'flex-end' }}>
+                        <button className="master-btn btn-primary" onClick={fetchLogs} style={{ height: '42px', marginTop: 0 }}>
+                            <Search size={18} />
+                            Atualizar
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Logs List */}
-            <div className="logs-list">
+            {/* LOGS LIST */}
+            <div className="master-card">
+                <div className="master-card-header">
+                    <div className="master-icon-wrapper master-icon-purple">
+                        <Database size={24} />
+                    </div>
+                    <h3>Histórico de Ações</h3>
+                </div>
+
                 {loading ? (
-                    <div className="loading-state">{t('common.loading', 'Carregando logs...')}</div>
+                    <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+                        {t('common.loading', 'Carregando logs...')}
+                    </div>
                 ) : logs.length === 0 ? (
-                    <div className="empty-state">
-                        <Database size={48} />
+                    <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
                         <p>{t('master.audit.empty', 'Nenhum log encontrado')}</p>
                     </div>
                 ) : (
-                    logs.map(log => (
-                        <div
-                            key={log.id}
-                            className={`log-entry ${expandedLog === log.id ? 'expanded' : ''}`}
-                        >
-                            <div
-                                className="log-header"
-                                onClick={() => setExpandedLog(expandedLog === log.id ? null : log.id)}
-                            >
-                                <div className="log-action" style={{ backgroundColor: getActionColor(log.action) }}>
-                                    {log.action}
-                                </div>
-                                <div className="log-entity">
-                                    {log.entity}
-                                    {log.entityId && <span className="entity-id">#{log.entityId.slice(0, 8)}</span>}
-                                </div>
-                                <div className="log-user">
-                                    <User size={14} />
-                                    {log.userEmail || 'Sistema'}
-                                </div>
-                                <div className="log-time">
-                                    <Clock size={14} />
-                                    {formatDate(log.createdAt)}
-                                </div>
-                                <div className="expand-icon">
-                                    {expandedLog === log.id ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                                </div>
-                            </div>
+                    <div className="master-table-container">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {logs.map(log => (
+                                <div
+                                    key={log.id}
+                                    style={{
+                                        background: 'rgba(255,255,255,0.02)',
+                                        border: '1px solid rgba(255,255,255,0.05)',
+                                        borderRadius: '8px',
+                                        overflow: 'hidden'
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            padding: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '1rem',
+                                            cursor: 'pointer',
+                                            flexWrap: 'wrap'
+                                        }}
+                                        onClick={() => setExpandedLog(expandedLog === log.id ? null : log.id)}
+                                    >
+                                        <span style={{
+                                            padding: '0.25rem 0.6rem',
+                                            borderRadius: '4px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 700,
+                                            background: getActionColor(log.action),
+                                            color: getActionTextColor(log.action),
+                                            minWidth: '70px',
+                                            textAlign: 'center'
+                                        }}>
+                                            {log.action}
+                                        </span>
 
-                            {expandedLog === log.id && (
-                                <div className="log-details">
-                                    <div className="detail-row">
-                                        <strong>IP:</strong> {log.ipAddress || 'N/A'}
-                                    </div>
-                                    <div className="detail-row">
-                                        <strong>User Agent:</strong> {log.userAgent?.slice(0, 50) || 'N/A'}...
-                                    </div>
-                                    {log.oldData && (
-                                        <div className="detail-section">
-                                            <strong>Dados Anteriores:</strong>
-                                            <pre>{JSON.stringify(log.oldData, null, 2)}</pre>
+                                        <div style={{ flex: 1, color: '#e2e8f0', fontWeight: 500 }}>
+                                            {log.entity}
+                                            {log.entityId && <span style={{ marginLeft: '0.5rem', fontSize: '0.8rem', color: '#64748b', fontFamily: 'monospace' }}>#{log.entityId.slice(0, 8)}</span>}
                                         </div>
-                                    )}
-                                    {log.newData && (
-                                        <div className="detail-section">
-                                            <strong>Novos Dados:</strong>
-                                            <pre>{JSON.stringify(log.newData, null, 2)}</pre>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#94a3b8' }}>
+                                            <User size={14} />
+                                            {log.userEmail || 'Sistema'}
+                                        </div>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#94a3b8', minWidth: '150px', justifyContent: 'flex-end' }}>
+                                            <Clock size={14} />
+                                            {formatDate(log.createdAt)}
+                                        </div>
+
+                                        <div style={{ color: '#64748b' }}>
+                                            {expandedLog === log.id ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                                        </div>
+                                    </div>
+
+                                    {expandedLog === log.id && (
+                                        <div style={{
+                                            padding: '1rem',
+                                            background: 'rgba(0,0,0,0.2)',
+                                            borderTop: '1px solid rgba(255,255,255,0.05)',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                                                <div><strong style={{ color: '#94a3b8' }}>IP:</strong> <span style={{ color: '#e2e8f0' }}>{log.ipAddress || 'N/A'}</span></div>
+                                                <div><strong style={{ color: '#94a3b8' }}>Agent:</strong> <span style={{ color: '#e2e8f0' }}>{log.userAgent?.slice(0, 30) || 'N/A'}...</span></div>
+                                            </div>
+
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                                {log.oldData && (
+                                                    <div>
+                                                        <div style={{ marginBottom: '0.5rem', color: '#f87171', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Dados Anteriores</div>
+                                                        <pre style={{
+                                                            background: '#0f172a',
+                                                            padding: '1rem',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid rgba(255,255,255,0.05)',
+                                                            overflowX: 'auto',
+                                                            fontSize: '0.8rem',
+                                                            color: '#94a3b8'
+                                                        }}>{JSON.stringify(log.oldData, null, 2)}</pre>
+                                                    </div>
+                                                )}
+                                                {log.newData && (
+                                                    <div>
+                                                        <div style={{ marginBottom: '0.5rem', color: '#4ade80', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase' }}>Novos Dados</div>
+                                                        <pre style={{
+                                                            background: '#0f172a',
+                                                            padding: '1rem',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid rgba(255,255,255,0.05)',
+                                                            overflowX: 'auto',
+                                                            fontSize: '0.8rem',
+                                                            color: '#e2e8f0'
+                                                        }}>{JSON.stringify(log.newData, null, 2)}</pre>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
-                            )}
+                            ))}
                         </div>
-                    ))
+                    </div>
                 )}
             </div>
-
-            <style>{`
-                .audit-logs-page {
-                    padding: 24px;
-                }
-                
-                .page-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-bottom: 24px;
-                }
-                
-                .page-header h1 {
-                    margin: 0;
-                    font-size: 1.75rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .subtitle {
-                    margin: 4px 0 0;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .stats-badge {
-                    padding: 8px 16px;
-                    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-                    border-radius: 20px;
-                    color: white;
-                    font-weight: bold;
-                }
-                
-                .filters-bar {
-                    display: flex;
-                    gap: 12px;
-                    margin-bottom: 20px;
-                    flex-wrap: wrap;
-                }
-                
-                .filter-group {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .filter-group select {
-                    padding: 10px 16px;
-                    background: var(--bg-card, #1f2937);
-                    border: 1px solid var(--border-color, #374151);
-                    border-radius: 8px;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .logs-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                }
-                
-                .log-entry {
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 12px;
-                    overflow: hidden;
-                }
-                
-                .log-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    padding: 16px;
-                    cursor: pointer;
-                    transition: background 0.2s;
-                }
-                
-                .log-header:hover {
-                    background: var(--bg-elevated, #374151);
-                }
-                
-                .log-action {
-                    padding: 4px 12px;
-                    border-radius: 6px;
-                    font-size: 0.75rem;
-                    font-weight: bold;
-                    color: white;
-                    text-transform: uppercase;
-                }
-                
-                .log-entity {
-                    flex: 1;
-                    font-weight: 600;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .entity-id {
-                    margin-left: 8px;
-                    font-weight: normal;
-                    font-size: 0.85rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .log-user, .log-time {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 0.85rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .expand-icon {
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .log-details {
-                    padding: 16px;
-                    background: var(--bg-elevated, #374151);
-                    border-top: 1px solid var(--border-color, #4b5563);
-                }
-                
-                .detail-row {
-                    margin-bottom: 8px;
-                    font-size: 0.9rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .detail-section {
-                    margin-top: 12px;
-                }
-                
-                .detail-section pre {
-                    margin: 8px 0 0;
-                    padding: 12px;
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 8px;
-                    font-size: 0.8rem;
-                    overflow-x: auto;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .loading-state, .empty-state {
-                    text-align: center;
-                    padding: 60px 20px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .empty-state p {
-                    margin: 16px 0 0;
-                }
-            `}</style>
         </div>
     );
 };

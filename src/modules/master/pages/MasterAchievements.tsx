@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
+import { Trophy, PlusCircle, Edit, Trash2, Image as ImageIcon } from "lucide-react";
+import "./MasterShared.css";
 
 interface Tenant {
     id: string;
@@ -13,11 +15,11 @@ interface Achievement {
     code: string;
     title: string;
     description: string;
+    imageUrl?: string;
 }
 
 export const MasterAchievements: React.FC = () => {
     const { t } = useTranslation();
-    // const navigate = useNavigate(); // Unused
     const [tenants, setTenants] = useState<Tenant[]>([]);
     const [selectedTenantId, setSelectedTenantId] = useState<string>("");
     const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -73,67 +75,111 @@ export const MasterAchievements: React.FC = () => {
     };
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-slate-800">{t("master.achievements.title")}</h1>
-                <Link
-                    to={`/master/achievements/novo?tenantId=${selectedTenantId}`}
-                    className="btn btn-primary"
-                >
-                    + {t("master.achievements.new")}
-                </Link>
-            </div>
+        <div className="master-page-container">
+            {/* HERO SECTION */}
+            <section className="master-hero">
+                <div className="master-hero-content">
+                    <span className="master-badge">
+                        🏆 Gamificação
+                    </span>
+                    <h1 className="master-title">
+                        Conquistas e Medalhas
+                    </h1>
+                    <p className="master-subtitle">
+                        Gerencie as recompensas, conquistas e medalhas que os visitantes podem desbloquear.
+                    </p>
 
-            <div className="bg-white p-4 rounded-lg shadow mb-6">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                    {t("master.achievements.selectTenant")}
-                </label>
-                <select
-                    className="form-input w-full md:w-1/2"
-                    value={selectedTenantId}
-                    onChange={(e) => setSelectedTenantId(e.target.value)}
-                >
-                    <option value="">{t("master.achievements.select")}</option>
-                    {tenants.map((t) => (
-                        <option key={t.id} value={t.id}>
-                            {t.name}
-                        </option>
-                    ))}
-                </select>
+                    <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem" }}>
+                        <Link to={`/master/achievements/novo?tenantId=${selectedTenantId}`}>
+                            <button className="master-btn btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }}>
+                                <PlusCircle size={18} />
+                                {t("master.achievements.new")}
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* FILTER CARD */}
+            <div className="master-card" style={{ marginBottom: "2rem" }}>
+                <div className="master-form">
+                    <div className="master-input-group">
+                        <label>{t("master.achievements.selectTenant")}</label>
+                        <select
+                            value={selectedTenantId}
+                            onChange={(e) => setSelectedTenantId(e.target.value)}
+                            style={{ maxWidth: '400px' }}
+                        >
+                            <option value="">{t("master.achievements.select")}</option>
+                            {tenants.map((t) => (
+                                <option key={t.id} value={t.id}>
+                                    {t.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
             </div>
 
             {loading ? (
-                <div className="text-center py-8 text-slate-500">{t("master.achievements.loading")}</div>
+                <div className="master-card">
+                    <p style={{ textAlign: "center", color: "#94a3b8" }}>{t("master.achievements.loading")}</p>
+                </div>
             ) : achievements.length === 0 ? (
-                <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200">
-                    <p className="text-slate-500">{t("master.achievements.empty")}</p>
+                <div className="master-card" style={{ textAlign: "center", padding: "4rem" }}>
+                    <div className="master-icon-wrapper master-icon-yellow" style={{ margin: "0 auto 1.5rem auto" }}>
+                        <Trophy size={32} />
+                    </div>
+                    <h3 style={{ fontSize: "1.25rem", color: "#fff", marginBottom: "0.5rem" }}>Nenhuma conquista encontrada</h3>
+                    <p className="master-card-desc" style={{ marginBottom: 0 }}>
+                        {t("master.achievements.empty")}
+                    </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="master-grid-3">
                     {achievements.map((ach) => (
-                        <div key={ach.id} className="bg-white p-4 rounded-lg shadow border border-slate-100 flex flex-col">
-                            <div className="flex items-start justify-between mb-2">
-                                <div className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded uppercase">
+                        <article key={ach.id} className="master-card">
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
+                                <div className="master-badge" style={{ margin: 0, fontSize: "0.75rem" }}>
                                     {ach.code}
                                 </div>
-                                <div className="flex gap-2">
-                                    <Link
-                                        to={`/master/achievements/${ach.id}`}
-                                        className="text-blue-600 hover:text-blue-800 text-sm"
-                                    >
-                                        {t("master.achievements.edit")}
+                                <div style={{ display: "flex", gap: "0.5rem" }}>
+                                    <Link to={`/master/achievements/${ach.id}`}>
+                                        <button className="master-btn btn-outline" style={{ padding: "0.4rem", width: "auto", marginTop: 0 }}>
+                                            <Edit size={14} />
+                                        </button>
                                     </Link>
                                     <button
                                         onClick={() => handleDelete(ach.id)}
-                                        className="text-red-600 hover:text-red-800 text-sm"
+                                        className="master-btn btn-danger"
+                                        style={{ padding: "0.4rem", width: "auto", marginTop: 0 }}
                                     >
-                                        {t("master.achievements.delete")}
+                                        <Trash2 size={14} />
                                     </button>
                                 </div>
                             </div>
-                            <h3 className="font-bold text-lg text-slate-800 mb-1">{ach.title}</h3>
-                            <p className="text-slate-600 text-sm flex-1">{ach.description}</p>
-                        </div>
+
+                            <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "1rem", marginBottom: "1rem" }}>
+                                {ach.imageUrl ? (
+                                    <img
+                                        src={ach.imageUrl.startsWith("http") ? ach.imageUrl : `${import.meta.env.VITE_API_URL}${ach.imageUrl}`}
+                                        alt={ach.title}
+                                        style={{ width: "80px", height: "80px", objectFit: "contain", background: "rgba(0,0,0,0.2)", borderRadius: "12px", padding: "0.5rem" }}
+                                    />
+                                ) : (
+                                    <div className="master-icon-wrapper master-icon-yellow" style={{ width: "80px", height: "80px", borderRadius: "50%" }}>
+                                        <Trophy size={40} />
+                                    </div>
+                                )}
+
+                                <div>
+                                    <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem", color: "#fff" }}>{ach.title}</h3>
+                                    <p style={{ fontSize: "0.9rem", color: "#94a3b8", lineHeight: "1.4" }}>
+                                        {ach.description}
+                                    </p>
+                                </div>
+                            </div>
+                        </article>
                     ))}
                 </div>
             )}

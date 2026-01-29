@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useTranslation } from 'react-i18next';
+import "./MasterShared.css";
 
 interface HealthData {
     status: 'healthy' | 'unhealthy';
@@ -82,286 +83,193 @@ export const MasterSystemHealth: React.FC = () => {
     const isHealthy = health?.status === 'healthy';
 
     return (
-        <div className="system-health-page">
-            <header className="page-header">
-                <div>
-                    <h1>🖥️ {t('master.health.title', 'Saúde do Sistema')}</h1>
-                    <p className="subtitle">{t('master.health.subtitle', 'Monitoramento em tempo real da infraestrutura')}</p>
+        <div className="master-page-container">
+            {/* HERO SECTION */}
+            <section className="master-hero">
+                <div className="master-hero-content">
+                    <span className="master-badge">
+                        🖥️ Monitoramento
+                    </span>
+                    <h1 className="master-title">
+                        Saúde do Sistema
+                    </h1>
+                    <p className="master-subtitle">
+                        Acompanhe o status dos serviços, uso de recursos e conectividade em tempo real.
+                    </p>
                 </div>
-                <div className="header-actions">
-                    <label className="auto-refresh">
+
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <label className="master-card" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0, cursor: 'pointer' }}>
                         <input
                             type="checkbox"
                             checked={autoRefresh}
                             onChange={(e) => setAutoRefresh(e.target.checked)}
+                            style={{ width: '16px', height: '16px' }}
                         />
-                        Auto-atualizar
+                        <span style={{ fontSize: '0.9rem', color: '#e2e8f0' }}>Auto-atualizar</span>
                     </label>
-                    <button className="refresh-btn" onClick={fetchHealth} disabled={loading}>
+
+                    <button
+                        className="master-btn btn-primary"
+                        onClick={fetchHealth}
+                        disabled={loading}
+                        style={{ width: 'auto', marginTop: 0 }}
+                    >
                         <RefreshCw size={18} className={loading ? 'spinning' : ''} />
                         Atualizar
                     </button>
-                </div>
-            </header>
 
-            {/* Main Status */}
-            <div className={`status-banner ${isHealthy ? 'healthy' : 'unhealthy'}`}>
-                {isHealthy ? <CheckCircle size={32} /> : <XCircle size={32} />}
+                    <style>{`
+                        .spinning { animation: spin 1s linear infinite; }
+                        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                    `}</style>
+                </div>
+            </section>
+
+            {/* MAIN STATUS BANNER */}
+            <div
+                className="master-card"
+                style={{
+                    marginBottom: '2rem',
+                    background: isHealthy ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05))' : 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05))',
+                    border: isHealthy ? '1px solid rgba(34, 197, 94, 0.2)' : '1px solid rgba(239, 68, 68, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1.5rem',
+                    padding: '2rem'
+                }}
+            >
+                <div className="master-icon-wrapper" style={{ background: isHealthy ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: isHealthy ? '#4ade80' : '#f87171', width: '64px', height: '64px' }}>
+                    {isHealthy ? <CheckCircle size={32} /> : <XCircle size={32} />}
+                </div>
                 <div>
-                    <h2>{isHealthy ? t('master.health.statusOk', 'Sistema Operacional') : t('master.health.statusError', 'Problemas Detectados')}</h2>
-                    <p>{t('master.health.lastCheck', 'Última verificação')}: {lastUpdate?.toLocaleTimeString('pt-BR') || 'N/A'}</p>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: isHealthy ? '#4ade80' : '#f87171', marginBottom: '0.5rem' }}>
+                        {isHealthy ? 'Sistema Operacional e Estável' : 'Atenção: Problemas Detectados'}
+                    </h2>
+                    <p style={{ color: '#94a3b8', margin: 0 }}>
+                        Última verificação: <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{lastUpdate?.toLocaleTimeString('pt-BR') || 'N/A'}</span>
+                    </p>
                 </div>
             </div>
 
-            {/* Metrics Grid */}
-            <div className="metrics-grid">
+            {/* METRICS GRID */}
+            <div className="master-grid-3">
                 {/* Database */}
-                <div className="metric-card">
-                    <div className="metric-header">
-                        <Database size={24} />
-                        <span>Banco de Dados</span>
-                    </div>
-                    <div className={`metric-status ${health?.services?.database?.status === 'connected' ? 'ok' : 'error'}`}>
-                        {health?.services?.database?.status === 'connected' ? '✅ Conectado' : '❌ Desconectado'}
-                    </div>
-                    {health?.services?.database?.latency && (
-                        <div className="metric-detail">
-                            Latência: <strong>{health?.services?.database?.latency}</strong>
+                <div className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-purple">
+                            <Database size={24} />
                         </div>
-                    )}
-                    {health?.services?.database?.error && (
-                        <div className="metric-error">{health?.services?.database?.error}</div>
-                    )}
+                        <h3>Banco de Dados</h3>
+                    </div>
+
+                    <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                        <div style={{
+                            fontSize: '1.25rem',
+                            fontWeight: 700,
+                            color: health?.services?.database?.status === 'connected' ? '#4ade80' : '#f87171',
+                            marginBottom: '0.5rem'
+                        }}>
+                            {health?.services?.database?.status === 'connected' ? '✅ Conectado' : '❌ Desconectado'}
+                        </div>
+                        {health?.services?.database?.latency && (
+                            <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                                Latência: <strong style={{ color: '#e2e8f0' }}>{health?.services?.database?.latency}</strong>
+                            </div>
+                        )}
+                        {health?.services?.database?.error && (
+                            <div style={{ color: '#f87171', fontSize: '0.85rem', marginTop: '0.5rem' }}>
+                                {health?.services?.database?.error}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Uptime */}
-                <div className="metric-card">
-                    <div className="metric-header">
-                        <Activity size={24} />
-                        <span>Uptime</span>
+                <div className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-blue">
+                            <Activity size={24} />
+                        </div>
+                        <h3>Tempo de Atividade</h3>
                     </div>
-                    <div className="metric-value">
-                        {health ? formatUptime(health.uptime) : '-'}
-                    </div>
-                    <div className="metric-detail">
-                        Versão: <strong>{health?.version || 'N/A'}</strong>
-                    </div>
-                </div>
 
-                {/* Memory */}
-                <div className="metric-card">
-                    <div className="metric-header">
-                        <HardDrive size={24} />
-                        <span>Memória</span>
-                    </div>
-                    <div className="metric-value">{health?.system?.memory?.used || '-'}</div>
-                    <div className="memory-bar">
-                        <div
-                            className="memory-used"
-                            style={{
-                                width: (health?.system?.memory?.used && health?.system?.memory?.total) ?
-                                    `${(parseInt(health?.system?.memory?.used || '0') / parseInt(health?.system?.memory?.total || '1')) * 100}%`
-                                    : '0%'
-                            }}
-                        />
-                    </div>
-                    <div className="metric-detail">
-                        de {health?.system?.memory?.total || '-'} total
-                    </div>
-                </div>
-
-                {/* CPU */}
-                <div className="metric-card">
-                    <div className="metric-header">
-                        <Cpu size={24} />
-                        <span>CPU</span>
-                    </div>
-                    <div className="metric-value">{health?.system?.cpu || '-'}</div>
-                    <div className="metric-detail">
-                        Plataforma: <strong>{health?.system?.platform || 'N/A'}</strong>
+                    <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                        <div style={{ fontSize: '2rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '0.5rem' }}>
+                            {health ? formatUptime(health.uptime) : '-'}
+                        </div>
+                        <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                            Versão: <strong style={{ color: '#e2e8f0' }}>{health?.version || 'N/A'}</strong>
+                        </div>
                     </div>
                 </div>
 
                 {/* Server */}
-                <div className="metric-card">
-                    <div className="metric-header">
-                        <Server size={24} />
-                        <span>Servidor</span>
+                <div className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-yellow">
+                            <Server size={24} />
+                        </div>
+                        <h3>Servidor</h3>
                     </div>
-                    <div className="metric-value hostname">{health?.system?.hostname || '-'}</div>
-                    <div className="metric-detail">
-                        Ambiente: <strong>{import.meta.env.MODE || 'development'}</strong>
+
+                    <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 600, color: '#e2e8f0', marginBottom: '0.5rem', wordBreak: 'break-all' }}>
+                            {health?.system?.hostname || '-'}
+                        </div>
+                        <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                            Ambiente: <strong style={{ color: '#e2e8f0', textTransform: 'uppercase' }}>{import.meta.env.MODE || 'development'}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Memory */}
+                <div className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-pink">
+                            <HardDrive size={24} />
+                        </div>
+                        <h3>Memória</h3>
+                    </div>
+
+                    <div style={{ padding: '0.5rem 0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: '#e2e8f0' }}>
+                            <span>Usado: <strong>{health?.system?.memory?.used || '0Mb'}</strong></span>
+                            <span>Total: <span style={{ color: '#94a3b8' }}>{health?.system?.memory?.total || '-'}</span></span>
+                        </div>
+
+                        <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{
+                                width: (health?.system?.memory?.used && health?.system?.memory?.total) ?
+                                    `${(parseInt(health?.system?.memory?.used || '0') / parseInt(health?.system?.memory?.total || '1')) * 100}%`
+                                    : '0%',
+                                height: '100%',
+                                background: 'linear-gradient(90deg, #ec4899, #be185d)',
+                                transition: 'width 0.5s ease'
+                            }} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* CPU */}
+                <div className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper" style={{ background: 'rgba(14, 165, 233, 0.2)', color: '#38bdf8' }}>
+                            <Cpu size={24} />
+                        </div>
+                        <h3>Processador</h3>
+                    </div>
+
+                    <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#e2e8f0', marginBottom: '0.5rem' }}>
+                            {health?.system?.cpu || '-'}
+                        </div>
+                        <div style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                            Plataforma: <strong style={{ color: '#e2e8f0' }}>{health?.system?.platform || 'N/A'}</strong>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <style>{`
-                .system-health-page {
-                    padding: 24px;
-                }
-                
-                .page-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-bottom: 24px;
-                }
-                
-                .page-header h1 {
-                    margin: 0;
-                    font-size: 1.75rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .subtitle {
-                    margin: 4px 0 0;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .header-actions {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                }
-                
-                .auto-refresh {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    color: var(--fg-muted, #9ca3af);
-                    font-size: 0.9rem;
-                }
-                
-                .refresh-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 10px 20px;
-                    background: var(--bg-card, #1f2937);
-                    border: 1px solid var(--border-color, #374151);
-                    border-radius: 8px;
-                    color: var(--fg-main, #f3f4f6);
-                    cursor: pointer;
-                }
-                
-                .refresh-btn:disabled {
-                    opacity: 0.6;
-                }
-                
-                .spinning {
-                    animation: spin 1s linear infinite;
-                }
-                
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-                
-                .status-banner {
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    padding: 24px;
-                    border-radius: 16px;
-                    margin-bottom: 24px;
-                }
-                
-                .status-banner.healthy {
-                    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.1));
-                    border: 1px solid rgba(34, 197, 94, 0.3);
-                    color: #22c55e;
-                }
-                
-                .status-banner.unhealthy {
-                    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
-                    border: 1px solid rgba(239, 68, 68, 0.3);
-                    color: #ef4444;
-                }
-                
-                .status-banner h2 {
-                    margin: 0;
-                    font-size: 1.25rem;
-                    color: inherit;
-                }
-                
-                .status-banner p {
-                    margin: 4px 0 0;
-                    font-size: 0.9rem;
-                    opacity: 0.8;
-                }
-                
-                .metrics-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 16px;
-                }
-                
-                .metric-card {
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 16px;
-                    padding: 20px;
-                }
-                
-                .metric-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    margin-bottom: 16px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .metric-status {
-                    font-size: 1.1rem;
-                    font-weight: 600;
-                    margin-bottom: 8px;
-                }
-                
-                .metric-status.ok {
-                    color: #22c55e;
-                }
-                
-                .metric-status.error {
-                    color: #ef4444;
-                }
-                
-                .metric-value {
-                    font-size: 1.75rem;
-                    font-weight: bold;
-                    color: var(--fg-main, #f3f4f6);
-                    margin-bottom: 8px;
-                }
-                
-                .metric-value.hostname {
-                    font-size: 1.1rem;
-                    word-break: break-all;
-                }
-                
-                .metric-detail {
-                    font-size: 0.9rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .metric-error {
-                    font-size: 0.85rem;
-                    color: #ef4444;
-                    margin-top: 8px;
-                }
-                
-                .memory-bar {
-                    height: 8px;
-                    background: var(--bg-elevated, #374151);
-                    border-radius: 4px;
-                    overflow: hidden;
-                    margin: 8px 0;
-                }
-                
-                .memory-used {
-                    height: 100%;
-                    background: linear-gradient(90deg, #22c55e, #16a34a);
-                    border-radius: 4px;
-                    transition: width 0.3s;
-                }
-            `}</style>
         </div>
     );
 };

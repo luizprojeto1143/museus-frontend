@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
+import { BarChart3, Users, Eye } from "lucide-react";
+import "./MasterShared.css";
 
 type TenantSummary = {
   tenantId: string;
@@ -63,69 +65,106 @@ export const MasterDashboard: React.FC = () => {
   const totalVisits = summaries.reduce((acc, s) => acc + (s.visitsCount || 0), 0);
 
   return (
-    <div>
-      <h1 className="section-title">{t("master.dashboard.title")}</h1>
-      <p className="section-subtitle">
-        {t("master.dashboard.subtitle")}
-      </p>
+    <div className="master-page-container">
+      {/* HERO SECTION */}
+      <section className="master-hero">
+        <div className="master-hero-content">
+          <span className="master-badge">
+            📊 Dashboard Central
+          </span>
+          <h1 className="master-title">
+            Visão Geral do Sistema
+          </h1>
+          <p className="master-subtitle">
+            Monitore o desempenho de todos os museus, visitantes e acessos em tempo real.
+          </p>
+        </div>
+      </section>
 
-      {loading && <p>{t("common.loading")}</p>}
+      {loading && <p className="text-center text-gray-400">Carregando dados...</p>}
 
       {!loading && (
         <>
-          <div className="card-grid" style={{ marginBottom: "1.5rem" }}>
-            <article className="card">
-              <h2 className="card-title">{t("master.dashboard.totalVisitors")}</h2>
-              <p style={{ fontSize: "2.2rem", fontWeight: 600 }}>{totalVisitors}</p>
-              <p className="card-subtitle">
-                {t("master.dashboard.totalVisitorsDesc")}
-              </p>
+          {/* STATS GRID */}
+          <div className="master-grid-2" style={{ marginBottom: "2rem" }}>
+            <article className="master-card">
+              <div className="master-card-header">
+                <div className="master-icon-wrapper master-icon-blue">
+                  <Users size={24} />
+                </div>
+                <h3>{t("master.dashboard.totalVisitors")}</h3>
+              </div>
+              <div style={{ flexGrow: 1 }}>
+                <p style={{ fontSize: "3rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                  {totalVisitors.toLocaleString()}
+                </p>
+                <p className="master-card-desc">
+                  {t("master.dashboard.totalVisitorsDesc")}
+                </p>
+              </div>
             </article>
 
-            <article className="card">
-              <h2 className="card-title">{t("master.dashboard.totalVisits")}</h2>
-              <p style={{ fontSize: "2.2rem", fontWeight: 600 }}>{totalVisits}</p>
-              <p className="card-subtitle">
-                {t("master.dashboard.totalVisitsDesc")}
-              </p>
+            <article className="master-card">
+              <div className="master-card-header">
+                <div className="master-icon-wrapper master-icon-green">
+                  <Eye size={24} />
+                </div>
+                <h3>{t("master.dashboard.totalVisits")}</h3>
+              </div>
+              <div style={{ flexGrow: 1 }}>
+                <p style={{ fontSize: "3rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+                  {totalVisits.toLocaleString()}
+                </p>
+                <p className="master-card-desc">
+                  {t("master.dashboard.totalVisitsDesc")}
+                </p>
+              </div>
             </article>
           </div>
 
-          <div className="card">
-            <h2 className="card-title">{t("master.dashboard.summaryByTenant")}</h2>
-            <table
-              style={{
-                width: "100%",
-                marginTop: "0.75rem",
-                borderCollapse: "collapse",
-                fontSize: "0.9rem"
-              }}
-            >
-              <thead>
-                <tr>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.client")}</th>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.slug")}</th>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.works")}</th>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.trails")}</th>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.events")}</th>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.visitors")}</th>
-                  <th style={{ textAlign: "left", padding: "0.5rem" }}>{t("master.dashboard.table.visits")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {summaries.map((s) => (
-                  <tr key={s.tenantId}>
-                    <td style={{ padding: "0.5rem" }}>{s.name}</td>
-                    <td style={{ padding: "0.5rem" }}>{s.slug}</td>
-                    <td style={{ padding: "0.5rem" }}>{s.worksCount}</td>
-                    <td style={{ padding: "0.5rem" }}>{s.trailsCount}</td>
-                    <td style={{ padding: "0.5rem" }}>{s.eventsCount}</td>
-                    <td style={{ padding: "0.5rem" }}>{s.visitorsCount}</td>
-                    <td style={{ padding: "0.5rem" }}>{s.visitsCount}</td>
+          {/* TABLE CARD */}
+          <div className="master-card">
+            <div className="master-card-header">
+              <div className="master-icon-wrapper master-icon-purple">
+                <BarChart3 size={24} />
+              </div>
+              <h3>{t("master.dashboard.summaryByTenant")}</h3>
+            </div>
+
+            <div className="master-table-container">
+              <table className="master-table">
+                <thead>
+                  <tr>
+                    <th>{t("master.dashboard.table.client")}</th>
+                    <th>{t("master.dashboard.table.slug")}</th>
+                    <th>{t("master.dashboard.table.works")}</th>
+                    <th>{t("master.dashboard.table.trails")}</th>
+                    <th>{t("master.dashboard.table.events")}</th>
+                    <th>{t("master.dashboard.table.visitors")}</th>
+                    <th>{t("master.dashboard.table.visits")}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {summaries.map((s) => (
+                    <tr key={s.tenantId}>
+                      <td>
+                        <span style={{ fontWeight: 600, color: '#fff' }}>{s.name}</span>
+                      </td>
+                      <td>
+                        <span style={{ padding: '0.25rem 0.5rem', background: '#334155', borderRadius: '4px', fontSize: '0.8rem' }}>
+                          {s.slug}
+                        </span>
+                      </td>
+                      <td>{s.worksCount}</td>
+                      <td>{s.trailsCount}</td>
+                      <td>{s.eventsCount}</td>
+                      <td>{s.visitorsCount}</td>
+                      <td>{s.visitsCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </>
       )}

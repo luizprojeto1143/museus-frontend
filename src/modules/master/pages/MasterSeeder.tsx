@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../api/client';
 import { Users, Trash2, PlayCircle, Activity, Zap, ShieldAlert } from 'lucide-react';
-import "./MasterSeeder.css"; // We will create this css file next
+import "./MasterShared.css";
 
 export const MasterSeeder: React.FC = () => {
     const { t } = useTranslation();
@@ -67,37 +67,37 @@ export const MasterSeeder: React.FC = () => {
     };
 
     return (
-        <div className="seeder-container">
+        <div className="master-page-container">
             {/* HERO SECTION */}
-            <section className="seeder-hero">
-                <div className="seeder-hero-content">
-                    <span className="seeder-badge">
+            <section className="master-hero">
+                <div className="master-hero-content">
+                    <span className="master-badge">
                         ✨ Traffic Generator
                     </span>
-                    <h1 className="seeder-title">
+                    <h1 className="master-title">
                         Simulador de Tráfego
                     </h1>
-                    <p className="seeder-subtitle">
+                    <p className="master-subtitle">
                         Crie vida no seu museu. Gere visitantes virtuais e simule interações reais para testar dashboards e recursos.
                     </p>
                 </div>
             </section>
 
             {/* MAIN GRID */}
-            <div className="seeder-grid">
+            <div className="master-grid-3">
 
                 {/* CARD 1: GENERATE */}
-                <article className="seeder-card generate-card">
-                    <div className="card-header">
-                        <div className="icon-wrapper bg-blue-500/20 text-blue-400">
+                <article className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-blue">
                             <Users size={24} />
                         </div>
                         <h3>Gerar Visitantes</h3>
                     </div>
-                    <p className="card-desc">Crie perfis brasileiros realistas com fotos e dados mockados.</p>
+                    <p className="master-card-desc">Crie perfis brasileiros realistas com fotos e dados mockados.</p>
 
-                    <div className="card-form">
-                        <div className="input-group">
+                    <div className="master-form">
+                        <div className="master-input-group">
                             <label>ID do Museu (UUID)</label>
                             <input
                                 value={tenantId}
@@ -105,7 +105,7 @@ export const MasterSeeder: React.FC = () => {
                                 placeholder="Cole o ID do Tenant aqui..."
                             />
                         </div>
-                        <div className="input-group">
+                        <div className="master-input-group">
                             <label>Quantidade ({count})</label>
                             <input
                                 type="range"
@@ -117,7 +117,7 @@ export const MasterSeeder: React.FC = () => {
                         <button
                             onClick={handleGenerate}
                             disabled={loading}
-                            className="seeder-btn btn-primary"
+                            className="master-btn btn-primary"
                         >
                             {loading ? <Activity className="animate-spin" /> : <Zap size={18} />}
                             Gerar {count} Visitantes
@@ -126,34 +126,37 @@ export const MasterSeeder: React.FC = () => {
                 </article>
 
                 {/* CARD 2: SIMULATE */}
-                <article className="seeder-card simulate-card">
-                    <div className="card-header">
-                        <div className="icon-wrapper bg-purple-500/20 text-purple-400">
+                <article className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-purple">
                             <PlayCircle size={24} />
                         </div>
                         <h3>Simular Atividade</h3>
                     </div>
-                    <p className="card-desc">Faça os visitantes "andarem" pelo museu e interagirem com obras.</p>
+                    <p className="master-card-desc">Faça os visitantes "andarem" pelo museu e interagirem com obras.</p>
 
-                    <div className="card-form">
-                        <div className="sim-stats">
-                            <div className="stat-item">
-                                <label>Ativos</label>
+                    <div className="master-form">
+                        <div className="sim-stats" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+                            <div className="stat-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                                <label style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Ativos</label>
                                 <input
+                                    style={{ width: '100%', background: '#0f172a', border: '1px solid #334155', padding: '0.5rem', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', textAlign: 'center' }}
                                     type="number" value={simSettings.visitors}
                                     onChange={e => setSimSettings({ ...simSettings, visitors: Number(e.target.value) })}
                                 />
                             </div>
-                            <div className="stat-item">
-                                <label>Min Obras</label>
+                            <div className="stat-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                                <label style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Min Obras</label>
                                 <input
+                                    style={{ width: '100%', background: '#0f172a', border: '1px solid #334155', padding: '0.5rem', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', textAlign: 'center' }}
                                     type="number" value={simSettings.minVisits}
                                     onChange={e => setSimSettings({ ...simSettings, minVisits: Number(e.target.value) })}
                                 />
                             </div>
-                            <div className="stat-item">
-                                <label>Max Obras</label>
+                            <div className="stat-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                                <label style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Max Obras</label>
                                 <input
+                                    style={{ width: '100%', background: '#0f172a', border: '1px solid #334155', padding: '0.5rem', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', textAlign: 'center' }}
                                     type="number" value={simSettings.maxVisits}
                                     onChange={e => setSimSettings({ ...simSettings, maxVisits: Number(e.target.value) })}
                                 />
@@ -163,7 +166,7 @@ export const MasterSeeder: React.FC = () => {
                         <button
                             onClick={handleSimulate}
                             disabled={loading}
-                            className="seeder-btn btn-purple"
+                            className="master-btn btn-purple"
                         >
                             {loading ? <Activity className="animate-spin" /> : <PlayCircle size={18} />}
                             Rodar Simulação
@@ -172,19 +175,19 @@ export const MasterSeeder: React.FC = () => {
                 </article>
 
                 {/* CARD 3: CLEANUP */}
-                <article className="seeder-card danger-card">
-                    <div className="card-header">
-                        <div className="icon-wrapper bg-red-500/20 text-red-400">
+                <article className="master-card">
+                    <div className="master-card-header">
+                        <div className="master-icon-wrapper master-icon-red">
                             <Trash2 size={24} />
                         </div>
                         <h3>Zona de Perigo</h3>
                     </div>
-                    <p className="card-desc">Limpeza de dados. remove apenas usuários marcados como `isFake`.</p>
+                    <p className="master-card-desc">Limpeza de dados. remove apenas usuários marcados como `isFake`.</p>
 
                     <button
                         onClick={handleBulkDelete}
                         disabled={loading}
-                        className="seeder-btn btn-danger"
+                        className="master-btn btn-danger"
                     >
                         <ShieldAlert size={18} />
                         Apagar Fakes
@@ -195,4 +198,3 @@ export const MasterSeeder: React.FC = () => {
         </div>
     );
 };
-
