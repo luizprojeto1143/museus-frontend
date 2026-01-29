@@ -89,15 +89,17 @@ export const AdminTrailForm: React.FC = () => {
     if (isEdit) {
       api.get(`/trails/${id}`)
         .then(res => {
-          const t = res.data as { title: string; description: string; audioUrl?: string; videoUrl?: string; works?: { work: { id: string; title: string } }[] };
-          setName(t.title);
-          setDescription(t.description);
-          setAudioUrl(t.audioUrl || "");
-          setVideoUrl(t.videoUrl || "");
-          if (t.works) {
-            setSelectedWorks(t.works.map(tw => ({
-              id: tw.work.id,
-              title: tw.work.title
+          const trail = res.data as { title: string; description: string; active?: boolean; audioUrl?: string; videoUrl?: string; works?: { id: string; title: string }[] };
+          setName(trail.title);
+          setDescription(trail.description);
+          setActive(trail.active !== false);
+          setAudioUrl(trail.audioUrl || "");
+          setVideoUrl(trail.videoUrl || "");
+          if (trail.works && Array.isArray(trail.works)) {
+            // Backend returns works as flat array: [{ id, title, ... }]
+            setSelectedWorks(trail.works.map(w => ({
+              id: w.id,
+              title: w.title
             })));
           }
         })
