@@ -37,6 +37,7 @@ export const useTTS = () => {
         if (audioRef.current) {
             audioRef.current.pause();
             audioRef.current.currentTime = 0;
+            audioRef.current.loop = false; // Reset loop just in case
         }
         if (nativeSupported) {
             window.speechSynthesis.cancel();
@@ -79,61 +80,60 @@ export const useTTS = () => {
     }, [nativeSupported]);
 
     const speak = useCallback(async (text: string, lang: string = "pt-BR") => {
-        // ALERT DEBUG: Remove after testing
-        alert(`[DEBUG] Clicked Speak. Text len: ${text.length}`);
-
         stopAll();
 
         const audio = audioRef.current;
-        if (!audio) {
-            alert("[DEBUG] Error: No audio element found");
-            return;
-        }
+        if (!audio) return;
 
-        // 1. SILENT UNLOCK (Crucial for Mobile)
+        // 1. SILENT UNLOCK & KEEP-ALIVE
+        // We set loop=true so the audio channel stays "hot" (active) 
+        // while we wait for the network request.
+        // Otherwise, if the silent file finishes and the network lags, iOS suspends the session.
         try {
+            audio.loop = true;
             audio.src = SILENT_MP3;
             await audio.play();
-            // alert("[DEBUG] Silent unlock success");
         } catch (e) {
-            alert(`[DEBUG] Silent unlock failed: ${e}`);
+            console.warn("Silent unlock failed", e);
+            // Non-fatal, we try to proceed anyway or fallback
         }
 
         try {
             setIsLoading(true);
 
-            // 2. Fetch
-            alert("[DEBUG] Fetching API...");
+            // 2. Fetch voice from API
             const res = await api.post("/ai/tts", { text, voice: "onyx" }, {
                 responseType: 'arraybuffer'
             });
-            alert(`[DEBUG] API Success. Bytes: ${res.data.byteLength}`);
 
             const blob = new Blob([res.data], { type: "audio/mpeg" });
             const url = URL.createObjectURL(blob);
 
-            // 3. Swap the source
+            // 3. Swap and Play
+            // Crucial: Stop looping, pause, swap, play.
+
+            audio.pause(); // Pause the silent loop
+            audio.loop = false; // Disable loop for the speech
             audio.src = url;
 
-            // Setup events
             audio.onplay = () => { setIsSpeaking(true); setIsPaused(false); setIsLoading(false); };
             audio.onended = () => { setIsSpeaking(false); setIsPaused(false); };
             audio.onerror = (e) => {
-                alert("[DEBUG] Audio playback error event");
                 console.error("Audio playback error", e);
                 speakNative(text, lang);
             };
 
-            // 4. Play the real content
             await audio.play();
-            alert("[DEBUG] Calling play() on real audio");
 
-        } catch (err: any) {
-            alert(`[DEBUG] API Failed: ${err.message || err}`);
+        } catch (err) {
             console.warn("API TTS fetch/play failed", err);
             speakNative(text, lang);
         } finally {
-            // Only clear loading if we aren't speaking (error case handled above)
+            // If we failed and are still looping the silent track, stop it.
+            if (audio.loop) {
+                audio.pause();
+                audio.loop = false;
+            }
             if (audio.paused && !isSpeaking) setIsLoading(false);
         }
 
