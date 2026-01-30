@@ -331,7 +331,12 @@ export const AdminWorkForm: React.FC = () => {
               onChange={handleAudioUpload}
               style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             />
-            {audioUrl && <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ {t("admin.workForm.success.audio")}</p>}
+            {audioUrl && (
+              <div style={{ marginTop: "0.5rem" }}>
+                <audio controls src={audioUrl} style={{ width: "100%", marginTop: "0.5rem" }} />
+                <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ {t("admin.workForm.success.audio")}</p>
+              </div>
+            )}
           </div>
           <div>
             <label>{t("admin.workForm.labels.libras")}</label>
@@ -341,7 +346,12 @@ export const AdminWorkForm: React.FC = () => {
               onChange={handleLibrasUpload}
               style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             />
-            {librasUrl && <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ {t("admin.workForm.success.libras")}</p>}
+            {librasUrl && (
+              <div style={{ marginTop: "0.5rem" }}>
+                <video controls src={librasUrl} style={{ width: "100%", maxHeight: "150px", borderRadius: "0.5rem", marginTop: "0.5rem" }} />
+                <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ {t("admin.workForm.success.libras")}</p>
+              </div>
+            )}
           </div>
         </div>
 
