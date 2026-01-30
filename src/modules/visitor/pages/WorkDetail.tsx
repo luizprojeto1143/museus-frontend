@@ -37,7 +37,7 @@ type WorkDetailData = {
 export const WorkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tenantId } = useAuth();
+  const { tenantId, email } = useAuth();
   const { t, i18n } = useTranslation();
 
   const [relatedWorks, setRelatedWorks] = useState<WorkDetailData[]>([]);
@@ -122,13 +122,11 @@ export const WorkDetail: React.FC = () => {
 
   useEffect(() => {
     if (tenantId && id) {
-      api.get(`/works?tenantId=${tenantId}`)
+      const emailParam = email ? `&visitorEmail=${encodeURIComponent(email)}` : '';
+      api.get(`/works/${id}/related?tenantId=${tenantId}${emailParam}`)
         .then((res) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const allWorks = (Array.isArray(res.data) ? res.data : (res.data.data || [])) as any[];
-          const others = allWorks.filter((w) => w.id !== id);
-          const shuffled = others.sort(() => 0.5 - Math.random());
-          const selected = shuffled.slice(0, 2).map((w) => ({
+          const works = Array.isArray(res.data) ? res.data : [];
+          const mapped = works.map((w: any) => ({
             id: w.id,
             title: w.title,
             artist: w.artist ?? "Artista desconhecido",
@@ -136,11 +134,11 @@ export const WorkDetail: React.FC = () => {
             audioUrl: getFullUrl(w.audioUrl),
             librasUrl: getFullUrl(w.librasUrl),
           } as WorkDetailData));
-          setRelatedWorks(selected);
+          setRelatedWorks(mapped);
         })
         .catch(console.error);
     }
-  }, [tenantId, id]);
+  }, [tenantId, id, email]);
 
   const toggleFavorite = () => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
