@@ -160,6 +160,29 @@ export const AdminTrailForm: React.FC = () => {
     }
   };
 
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "audio", setter: (val: string) => void) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        setIsUploading(true);
+        const res = await api.post(`/upload/${type}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        setter(res.data.url);
+      } catch (error) {
+        console.error(`Error uploading ${type}`, error);
+        alert("Erro ao enviar arquivo.");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
   return (
     <div>
       <h1 className="section-title">
@@ -209,14 +232,20 @@ export const AdminTrailForm: React.FC = () => {
             🎧 Áudio-Guia da Trilha
           </h3>
           <div className="form-group">
-            <label htmlFor="audioUrl">URL do Áudio (MP3)</label>
+            <label htmlFor="audioUrl">Áudio-Guia da Trilha (Arquivo)</label>
             <input
-              id="audioUrl"
-              className="input"
-              value={audioUrl}
-              onChange={(e) => setAudioUrl(e.target.value)}
-              placeholder="https://exemplo.com/audio-trilha.mp3"
+              type="file"
+              accept="audio/*"
+              onChange={(e) => handleFileUpload(e, "audio", setAudioUrl)}
+              style={{ width: "100%", padding: "0.5rem", borderRadius: "0.6rem" }}
             />
+            {isUploading && <p style={{ fontSize: "0.8rem", color: "#d4af37" }}>Enviando arquivo...</p>}
+            {audioUrl && (
+              <div style={{ marginTop: "0.5rem" }}>
+                <audio controls src={audioUrl} style={{ width: "100%" }} />
+                <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ Áudio carregado</p>
+              </div>
+            )}
             <small style={{ color: "#94a3b8", fontSize: "0.75rem" }}>
               Áudio de introdução da trilha que será reproduzido para os visitantes.
             </small>

@@ -130,6 +130,18 @@ export const AdminMuseumSettings: React.FC = () => {
     }
   };
 
+  const handleWelcomeAudioUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const res = await api.post("/upload/audio", formData);
+      setSettings(prev => ({ ...prev, welcomeAudioUrl: res.data.url }));
+      alert("Áudio enviado com sucesso!");
+    } catch {
+      alert(t("common.error"));
+    }
+  };
+
   // Floor Plan CRUD
   const handleFloorPlanImageUpload = async (file: File) => {
     const formData = new FormData();
@@ -312,13 +324,19 @@ export const AdminMuseumSettings: React.FC = () => {
         </p>
 
         <div className="form-group">
-          <label className="form-label">URL do Áudio de Boas-Vindas (MP3)</label>
+          <label className="form-label">Áudio de Boas-Vindas (Arquivo)</label>
           <input
-            type="url"
-            value={settings.welcomeAudioUrl || ""}
-            onChange={(e) => setSettings({ ...settings, welcomeAudioUrl: e.target.value })}
-            placeholder="https://exemplo.com/audio-boas-vindas.mp3"
+            type="file"
+            accept="audio/*"
+            onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])}
+            style={{ width: "100%", padding: "0.5rem" }}
           />
+          {settings.welcomeAudioUrl && (
+            <div style={{ marginTop: "0.5rem" }}>
+              <audio controls src={settings.welcomeAudioUrl} style={{ width: "100%" }} />
+              <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ Áudio configurado</p>
+            </div>
+          )}
           <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
             Narração introdutória sobre o museu, sua história e missão.
           </p>
