@@ -9,6 +9,8 @@ import { MasterLayout } from "./modules/master/MasterLayout";
 // Auth
 import { Login } from "./modules/auth/Login";
 import { RegisterWrapper } from "./modules/auth/RegisterWrapper";
+import { RegisterProducer } from "./modules/auth/RegisterProducer"; // NEW
+import { LandingPage } from "./modules/public/LandingPage"; // NEW
 import { GamificationProvider } from "./modules/gamification/context/GamificationContext";
 import { GeoFencingProvider } from "./modules/visitor/context/GeoFencingProvider";
 import { AudioProvider } from "./modules/visitor/context/AudioContext";
@@ -139,9 +141,15 @@ const App: React.FC = () => {
 
             <Route path="tenants" element={<TenantsList />} />
 
-            {/* VISITANTE */}
+            {/* Landing Page Institucional (Raiz) */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Cadastro de Produtor - Novo Fluxo */}
+            <Route path="/sou-produtor" element={<RegisterProducer />} />
+
+            {/* Redirecionamento legado para quem já está logado ou quer ir direto pro app */}
             <Route
-              path="/"
+              path="/app"
               element={
                 <RequireRole allowed={["visitor", "admin", "master"]}>
                   <RootRedirector />
