@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Smartphone, Globe, Ear, Eye, Award, ArrowRight, Layout, Menu, X, Mail, Instagram, MapPin } from "lucide-react";
+import { ContactForm } from "./ContactForm";
 
 export const LandingPage: React.FC = () => {
     const navigate = useNavigate();
@@ -248,7 +249,7 @@ export const LandingPage: React.FC = () => {
                         <p style={{ marginBottom: "2rem", fontFamily: "sans-serif", opacity: 0.8 }}>
                             Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.
                         </p>
-                        <button style={{
+                        <button onClick={() => scrollToSection("contato")} style={{
                             padding: "1rem 2rem",
                             background: "transparent",
                             border: "1px solid #d4af37",
@@ -288,6 +289,15 @@ export const LandingPage: React.FC = () => {
                         <p style={{ fontFamily: "sans-serif", opacity: 0.7 }}>Museu disponível no digital</p>
                     </div>
                 </div>
+            </section>
+
+            {/* CONTACT FORM SECTION */}
+            <section id="contato" style={{ padding: "6rem 2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+                    <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>Fale com um Especialista</h2>
+                    <p style={{ opacity: 0.7, fontFamily: "sans-serif" }}>Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.</p>
+                </div>
+                <ContactForm />
             </section>
 
             {/* PRODUCER CTA */}
