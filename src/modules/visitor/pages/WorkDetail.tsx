@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { AudioDescriptionPlayer } from "../../../components/accessibility/AudioDescriptionPlayer";
@@ -14,7 +14,7 @@ import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
 import { NavigationModal } from "../../../components/navigation/NavigationModal";
 import { useTerminology } from "../../../hooks/useTerminology";
-import { Compass, Share2, Star, Volume2, VolumeX, PlayCircle } from "lucide-react";
+import { Compass, Share2, Star, Volume2, VolumeX, PlayCircle, ChevronLeft, ChevronRight, Map } from "lucide-react";
 import "./WorkDetail.css";
 
 type WorkDetailData = {
@@ -50,6 +50,31 @@ export const WorkDetail: React.FC = () => {
   const [showNavigation, setShowNavigation] = useState(false);
   const { speak, cancel, isSpeaking } = useTTS();
   const terms = useTerminology();
+  const [searchParams] = useSearchParams();
+  const trailId = searchParams.get("trailId");
+  const [trailWorks, setTrailWorks] = useState<string[]>([]);
+  const [trailTitle, setTrailTitle] = useState("");
+
+  useEffect(() => {
+    if (trailId) {
+      api.get(`/trails/${trailId}`)
+        .then(res => {
+          if (res.data.works) {
+            setTrailWorks(res.data.works.map((w: any) => w.id));
+            setTrailTitle(res.data.title);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [trailId]);
+
+  const currentIndex = trailWorks.indexOf(id || "");
+  const prevWorkId = currentIndex > 0 ? trailWorks[currentIndex - 1] : null;
+  const nextWorkId = currentIndex >= 0 && currentIndex < trailWorks.length - 1 ? trailWorks[currentIndex + 1] : null;
+
+  const navigateToWork = (workId: string) => {
+    navigate(`/obras/${workId}?trailId=${trailId}`);
+  };
 
   if (id !== prevId) {
     setPrevId(id);
@@ -240,6 +265,47 @@ export const WorkDetail: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* TRAIL NAVIGATION */}
+      {trailId && trailWorks.length > 0 && (
+        <div style={{
+          margin: "1rem 1.5rem",
+          padding: "1rem",
+          background: "rgba(212, 175, 55, 0.1)",
+          borderRadius: "1rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          border: "1px solid rgba(212, 175, 55, 0.3)"
+        }}>
+          <button
+            className="action-btn"
+            onClick={() => prevWorkId ? navigateToWork(prevWorkId) : navigate('/trilhas')}
+            style={{ width: "auto", padding: "0.5rem 1rem", fontSize: "0.9rem", opacity: prevWorkId ? 1 : 0.7 }}
+          >
+            <ChevronLeft size={16} style={{ marginRight: "0.5rem" }} />
+            {prevWorkId ? "Anterior" : "Voltar à Trilha"}
+          </button>
+
+          <div style={{ textAlign: "center", fontSize: "0.9rem", color: "#d4af37", fontWeight: 600 }}>
+            <Map size={16} style={{ display: "inline", marginBottom: "-3px", marginRight: "0.5rem" }} />
+            {trailTitle}
+            <div style={{ fontSize: "0.75rem", fontWeight: 400, opacity: 0.8 }}>
+              Obra {currentIndex + 1} de {trailWorks.length}
+            </div>
+          </div>
+
+          <button
+            className="action-btn"
+            disabled={!nextWorkId}
+            onClick={() => nextWorkId && navigateToWork(nextWorkId)}
+            style={{ width: "auto", padding: "0.5rem 1rem", fontSize: "0.9rem", opacity: nextWorkId ? 1 : 0.3, cursor: nextWorkId ? "pointer" : "default" }}
+          >
+            Próxima
+            <ChevronRight size={16} style={{ marginLeft: "0.5rem" }} />
+          </button>
+        </div>
+      )}
 
       {showShare && work && (
         <ShareCard
