@@ -47,7 +47,7 @@ export const LandingPage: React.FC = () => {
 
                 <div style={{ display: "flex", gap: "1rem" }} className="desktop-actions">
                     <button
-                        onClick={() => navigate("/select-museum")}
+                        onClick={() => navigate("/login")}
                         style={{ padding: "0.5rem 1rem", border: "1px solid #d4af37", background: "transparent", color: "#d4af37", borderRadius: "0.5rem", cursor: "pointer", fontFamily: "sans-serif", fontSize: "0.9rem" }}
                     >
                         Sou Visitante
@@ -77,7 +77,7 @@ export const LandingPage: React.FC = () => {
                     <button onClick={() => scrollToSection("casos")} style={{ background: "none", border: "none", color: "#d4af37", fontSize: "1.2rem", textAlign: "left" }}>Benefícios</button>
                     <hr style={{ borderColor: "rgba(255,255,255,0.1)" }} />
                     <button onClick={() => scrollToSection("contato")} style={{ padding: "1rem", background: "#d4af37", color: "#000", borderRadius: "0.5rem", fontWeight: "bold" }}>Sou Produtor Cultural</button>
-                    <button onClick={() => navigate("/select-museum")} style={{ padding: "1rem", border: "1px solid #d4af37", background: "transparent", color: "#d4af37", borderRadius: "0.5rem" }}>Sou Visitante</button>
+                    <button onClick={() => navigate("/login")} style={{ padding: "1rem", border: "1px solid #d4af37", background: "transparent", color: "#d4af37", borderRadius: "0.5rem" }}>Sou Visitante</button>
                 </div>
             )}
 
