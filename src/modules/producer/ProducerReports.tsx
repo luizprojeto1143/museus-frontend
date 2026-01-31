@@ -29,6 +29,37 @@ export const ProducerReports: React.FC = () => {
             .catch(err => console.error("Error fetching reports", err));
     }, [tenantId]);
 
+    const handleDownload = (type: 'financial' | 'accessibility') => {
+        const date = new Date().toISOString().split('T')[0];
+        let content = "";
+        let filename = "";
+
+        if (type === 'financial') {
+            content = "Relatório Financeiro\n\n";
+            content += `Data: ${date}\n`;
+            content += `Receita Total: R$ ${stats.revenue.toFixed(2)}\n`;
+            content += `Ingressos Vendidos: ${stats.ticketsSold}\n`;
+            content += `Check-ins: ${stats.checkIns}\n`;
+            content += `Conversão: ${stats.conversion}%\n`;
+            filename = `financeiro-${date}.csv`;
+        } else {
+            content = "Relatório de Acessibilidade\n\n";
+            content += `Data: ${date}\n`;
+            content += "Recursos Ativos: Audiodescrição, LIBRAS, Fontes para Dislexia\n";
+            content += "Solicitações de Assistência: 0\n";
+            filename = `acessibilidade-${date}.csv`;
+        }
+
+        const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="producer-reports">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "3rem" }}>
@@ -77,7 +108,9 @@ export const ProducerReports: React.FC = () => {
                     <p style={{ fontSize: "0.9rem", opacity: 0.7, marginBottom: "1.5rem", lineHeight: "1.5" }}>
                         {t("producer.reports.accessibility.desc")}
                     </p>
-                    <button style={{ width: "100%", padding: "0.8rem", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "white", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
+                    <button
+                        onClick={() => handleDownload('accessibility')}
+                        style={{ width: "100%", padding: "0.8rem", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "white", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
                         <Download size={16} /> {t("producer.reports.accessibility.download")}
                     </button>
                 </div>
@@ -96,7 +129,9 @@ export const ProducerReports: React.FC = () => {
                     <p style={{ fontSize: "0.9rem", opacity: 0.7, marginBottom: "1.5rem", lineHeight: "1.5" }}>
                         {t("producer.reports.financial.desc")}
                     </p>
-                    <button style={{ width: "100%", padding: "0.8rem", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "white", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
+                    <button
+                        onClick={() => handleDownload('financial')}
+                        style={{ width: "100%", padding: "0.8rem", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "white", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
                         <Download size={16} /> {t("producer.reports.financial.download")}
                     </button>
                 </div>

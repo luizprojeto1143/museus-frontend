@@ -38,6 +38,29 @@ export const ProducerAudience: React.FC = () => {
             .finally(() => setLoading(false));
     }, []);
 
+    const handleExport = () => {
+        const header = ["ID", "Nome", "Email", "Evento", "Ingresso", "Status", "Data"];
+        const rows = participants.map(p => [
+            p.id,
+            `"${p.name}"`,
+            p.email,
+            `"${p.event}"`,
+            p.ticketType,
+            p.status,
+            p.date
+        ]);
+
+        const csvContent = [header.join(","), ...rows.map(r => r.join(","))].join("\n");
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `publico-crm-${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="producer-audience">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "2.5rem" }}>
@@ -45,11 +68,13 @@ export const ProducerAudience: React.FC = () => {
                     <h1 style={{ fontSize: "2rem", color: "#d4af37", marginBottom: "0.5rem" }}>Meu Público (CRM)</h1>
                     <p style={{ opacity: 0.7 }}>Visualize quem são seus visitantes e exporte dados para marketing.</p>
                 </div>
-                <button className="btn-premium" style={{
-                    background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)",
-                    padding: "0.8rem 1.5rem", borderRadius: "0.5rem", fontWeight: "bold",
-                    display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer"
-                }}>
+                <button
+                    onClick={handleExport}
+                    className="btn-premium" style={{
+                        background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)",
+                        padding: "0.8rem 1.5rem", borderRadius: "0.5rem", fontWeight: "bold",
+                        display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer"
+                    }}>
                     <Download size={20} /> Exportar CSV
                 </button>
             </div>
