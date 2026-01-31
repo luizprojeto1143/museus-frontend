@@ -92,6 +92,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 body: `"${point.title}" está a ${Math.round(distance)}m de você.`,
                 icon: point.imageUrl || "/pwa-192x192.png",
                 tag: point.id, // Prevents duplicate notifications
+                // @ts-ignore
                 renotify: false
             });
         } else if (typeof Notification !== "undefined" && Notification.permission !== "denied") {
@@ -148,7 +149,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 const tenantsRes = await api.get("/tenants/public");
                 const tenants = Array.isArray(tenantsRes.data) ? tenantsRes.data : [];
 
-                tenants.forEach((t: { id: string; name: string; latitude?: number; longitude?: number; logoUrl?: string }) => {
+                tenants.forEach((t: { id: string; name: string; latitude?: number; longitude?: number; logoUrl?: string | null }) => {
                     if (typeof t.latitude === 'number' && typeof t.longitude === 'number') {
                         points.push({
                             id: `tenant-${t.id}`,
@@ -158,7 +159,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                             latitude: t.latitude,
                             longitude: t.longitude,
                             radius: 100, // 100m for museums
-                            imageUrl: t.logoUrl,
+                            imageUrl: t.logoUrl || undefined,
                             url: `/museu/${t.id}`
                         });
                     }
@@ -172,7 +173,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     ? worksRes.data
                     : (worksRes.data?.data || worksRes.data?.works || []);
 
-                worksArray.forEach((w: { id: string; title: string; artist?: string; latitude?: number; longitude?: number; imageUrl?: string }) => {
+                worksArray.forEach((w: { id: string; title: string; artist?: string; latitude?: number; longitude?: number; imageUrl?: string | null }) => {
                     if (typeof w.latitude === 'number' && typeof w.longitude === 'number') {
                         points.push({
                             id: `work-${w.id}`,
@@ -182,7 +183,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                             latitude: w.latitude,
                             longitude: w.longitude,
                             radius: 10, // 10m for works
-                            imageUrl: w.imageUrl,
+                            imageUrl: w.imageUrl || undefined,
                             url: `/obras/${w.id}`
                         });
                     }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { AudioDescriptionPlayer } from "../../../components/accessibility/AudioDescriptionPlayer";
+// AudioDescriptionPlayer removed (unused)
 import { LibrasSection } from "../../../components/accessibility/LibrasPlayer";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { useTTS } from "../../../hooks/useTTS";
@@ -60,7 +60,7 @@ export const WorkDetail: React.FC = () => {
       api.get(`/trails/${trailId}`)
         .then(res => {
           if (res.data.works) {
-            setTrailWorks(res.data.works.map((w: any) => w.id));
+            setTrailWorks(res.data.works.map((w: { id: string }) => w.id));
             setTrailTitle(res.data.title);
           }
         })
@@ -151,7 +151,7 @@ export const WorkDetail: React.FC = () => {
       api.get(`/works/${id}/related?tenantId=${tenantId}${emailParam}`)
         .then((res) => {
           const works = Array.isArray(res.data) ? res.data : [];
-          const mapped = works.map((w: any) => ({
+          const mapped = works.map((w: WorkDetailData) => ({
             id: w.id,
             title: w.title,
             artist: w.artist ?? "Artista desconhecido",

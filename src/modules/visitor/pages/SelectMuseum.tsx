@@ -10,7 +10,52 @@ interface Tenant {
   id: string;
   name: string;
   slug: string;
+  type?: "MUSEUM" | "PRODUCER";
 }
+
+import { Calendar, MapPin } from "lucide-react";
+
+export const CityAgendaCarousel: React.FC<{ onSelectTenant: (tenant: Tenant) => void }> = ({ onSelectTenant }) => {
+  const [events, setEvents] = useState<any[]>([]);
+
+  useEffect(() => {
+    const baseUrl = import.meta.env.VITE_API_URL as string;
+    fetch(baseUrl + "/events?discovery=true")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setEvents(data);
+      })
+      .catch(err => console.error("Error fetching agenda", err));
+  }, []);
+
+  if (events.length === 0) return (
+    <div style={{ opacity: 0.6, fontSize: '0.9rem', fontStyle: 'italic' }}>
+      Nenhum evento agendado para os próximos dias.
+    </div>
+  );
+
+  return (
+    <>
+      {events.map(event => (
+        <div key={event.id} className="event-card-discovery" onClick={() => onSelectTenant(event.tenant)}>
+          <div className="event-card-image" style={{ backgroundImage: event.coverImageUrl ? `url(${event.coverImageUrl})` : undefined }}>
+            <div className="event-date-badge">
+              {new Date(event.startDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+            </div>
+          </div>
+          <div className="event-card-content">
+            <h4 className="event-title">{event.title}</h4>
+            <div className="event-producer">{event.producerName || event.tenant?.name}</div>
+            <div className="event-location">
+              <MapPin size={12} color="#d4af37" />
+              {event.location || "Local a confirmar"}
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+};
 
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
@@ -114,11 +159,28 @@ export const SelectMuseum: React.FC = () => {
         {/* Cabeçalho */}
         <div className="select-museum-header">
           <h1 className="select-museum-title">
-            🏛 {t("visitor.selectMuseum.title")}
+            {t("visitor.selectMuseum.title", "Selecione uma Experiência")}
           </h1>
           <p className="select-museum-subtitle">
-            {t("visitor.selectMuseum.subtitle")}
+            {t("visitor.selectMuseum.subtitle", "Explore museus, eventos culturais e roteiros exclusivos da cidade.")}
           </p>
+        </div>
+
+        {/* AGENDA GLOBAL DA CIDADE (City Agenda) */}
+        {!loading && (
+          <div className="agenda-section">
+            <div className="section-title">
+              <span>📅</span> Agenda da Cidade
+            </div>
+            <div className="agenda-grid">
+              <CityAgendaCarousel onSelectTenant={(tenant) => handleSelectMuseum(tenant)} />
+            </div>
+          </div>
+        )}
+
+        {/* SEÇÃO: INSTITUIÇÕES */}
+        <div className="section-title">
+          <span>🏛</span> Parceiros Oficiais
         </div>
 
         {/* Grid de museus */}
@@ -137,13 +199,20 @@ export const SelectMuseum: React.FC = () => {
                 onClick={() => handleSelectMuseum(tenant)}
                 className="museum-card"
               >
-                {/* Moldura decorativa */}
-                <div className="museum-card-frame" />
-
                 {/* Ícone */}
-                <div className="museum-card-icon">
-                  🏛
+                <div className="museum-card-icon" style={{
+                  color: tenant.type === "PRODUCER" ? "#d4af37" : "#fff",
+                  borderColor: tenant.type === "PRODUCER" ? "#d4af37" : "rgba(255,255,255,0.2)"
+                }}>
+                  {tenant.type === "PRODUCER" ? "🎭" : "🏛"}
                 </div>
+
+                {/* Tipo Badge */}
+                {tenant.type === "PRODUCER" && (
+                  <span className="producer-badge">
+                    PRODUTOR
+                  </span>
+                )}
 
                 {/* Nome do museu */}
                 <h3 className="museum-card-title">
@@ -152,7 +221,7 @@ export const SelectMuseum: React.FC = () => {
 
                 {/* Slug */}
                 <p className="museum-card-slug">
-                  {tenant.slug}
+                  @{tenant.slug}
                 </p>
               </div>
             ))}

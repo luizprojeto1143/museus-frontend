@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { ArrowRight, Compass } from "lucide-react";
+import { SmartRouteGenerator } from "../components/SmartRouteGenerator";
 import "./Trails.css";
 
 export const TrailsList: React.FC = () => {
@@ -24,10 +25,14 @@ export const TrailsList: React.FC = () => {
   useEffect(() => {
     if (!tenantId) return;
 
+    let mounted = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
+
     api
       .get("/trails", { params: { tenantId } })
       .then((res) => {
+        if (!mounted) return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const apiTrails = (res.data as any[]).map((t) => ({
           id: t.id,
@@ -42,8 +47,15 @@ export const TrailsList: React.FC = () => {
       .catch(() => {
         console.error("Failed to fetch trails");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, [tenantId]);
+
 
   return (
     <div className="trails-container">
@@ -53,6 +65,8 @@ export const TrailsList: React.FC = () => {
           {t("visitor.trails.subtitle")}
         </p>
       </header>
+
+      <SmartRouteGenerator />
 
       {loading ? (
         <div className="trails-skeleton-grid">

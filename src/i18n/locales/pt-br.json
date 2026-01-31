@@ -112,6 +112,14 @@
             "installApp": "Instalar App",
             "scanner": "Scanner"
         },
+        "smartRoute": {
+            "title": "Roteiro Inteligente",
+            "subtitle": "Diga quanto tempo você tem, e nós criamos o trajeto.",
+            "generate": "✨ Gerar Meu Roteiro",
+            "tryAgain": "Tentar Outro",
+            "start": "Iniciar",
+            "works": "Obras"
+        },
         "noResults": "Nenhum resultado encontrado.",
         "dialer": {
             "button": "Digitar Código"
@@ -519,11 +527,57 @@
             "newTitle": "Novo Evento",
             "subtitle": "Preencha os dados do evento",
             "labels": {
-                "title": "Título",
+                "title": "Nome do Evento",
+                "category": "Assunto / Categoria",
+                "format": "Formato",
                 "description": "Descrição",
                 "location": "Local",
                 "startDate": "Início",
-                "endDate": "Fim"
+                "endDate": "Fim",
+                "coverImage": "Imagem de Capa (URL)",
+                "zipCode": "CEP",
+                "city": "Cidade",
+                "state": "Estado",
+                "address": "Endereço",
+                "number": "Número",
+                "platform": "Plataforma",
+                "meetingLink": "Link da Transmissão",
+                "producerName": "Nome do Produtor",
+                "producerDescription": "Descrição do Produtor",
+                "certificateBg": "Imagem de Fundo do Certificado",
+                "minMinutes": "Min. Minutos para Certificado",
+                "surveyRequired": "Exigir Pesquisa de Satisfação",
+                "visibility": "Visibilidade",
+                "audioUrl": "URL do Áudio Introdutório",
+                "videoUrl": "URL do Vídeo Promocional"
+            },
+            "steps": {
+                "basic": "Informações Básicas",
+                "whenWhere": "Quando e Onde",
+                "tickets": "Ingressos",
+                "promotion": "Divulgação"
+            },
+            "formats": {
+                "presential": "Presencial",
+                "online": "Online"
+            },
+            "visibility": {
+                "public": "Público",
+                "private": "Privado",
+                "publicDesc": "Visível para todos na busca",
+                "privateDesc": "Apenas quem tem o link"
+            },
+            "tickets": {
+                "title": "Ingressos",
+                "create": "Criar Ingresso",
+                "empty": "Nenhum ingresso criado ainda.",
+                "itemTitle": "Ingresso",
+                "name": "Nome",
+                "quantity": "Quantidade",
+                "type": "Tipo",
+                "price": "Preço",
+                "free": "Gratuito",
+                "paid": "Pago"
             },
             "placeholders": {
                 "title": "Ex: Oficina de Arte",
@@ -799,121 +853,184 @@
             "newTitle": "Novo Tenant",
             "subtitle": "Crie um novo museu/cidade na plataforma e configure o administrador.",
             "labels": {
-                "name": "Nome do museu/cidade",
-                "plan": "Plano de Assinatura",
-                "customPlan": "Nome do Plano (ex: Start, Pro...)",
-                "maxWorks": "Limite de Obras (Personalizado)",
-                "slug": "Slug (identificador único)",
-                "adminSection": "Administrador do Tenant",
-                "adminName": "Nome do admin",
-                "adminEmail": "E-mail do admin",
-                "adminPassword": "Senha do admin"
-            },
-            "placeholders": {
-                "name": "Ex.: Museu de Arte Moderna",
-                "customPlan": "Nome do Plano",
-                "slug": "ex.: museu-arte-moderna",
-                "adminName": "Ex.: Maria Silva",
-                "adminEmail": "admin@museu.com",
-                "adminPassword": "Senha forte"
-            },
-            "helpers": {
-                "plan": "Selecione um plano padrão ou digite um nome personalizado abaixo.",
-                "maxWorks": "Você pode alterar este valor manualmente para criar ofertas personalizadas.",
-                "slug": "Use apenas letras minúsculas, números e hífens"
-            },
-            "plans": {
-                "start": "Start",
-                "pro": "Pro",
-                "enterprise": "Enterprise",
-                "custom": "Personalizado (Digitar)"
-            },
-            "demoAlert": "Simulação de criação de tenant (modo demo).",
-            "errorSave": "Erro ao salvar tenant."
-        },
-        "users": {
-            "title": "Usuários Administrativos",
-            "subtitle": "Gerencie administradores de museus (ADMIN) e gestores da plataforma (MASTER).",
-            "new": "Novo Usuário",
-            "table": {
                 "name": "Nome",
-                "email": "E-mail",
-                "role": "Perfil",
-                "tenant": "Museu / Tenant",
-                "actions": "Ações",
-                "edit": "Editar"
+                "slug": "Slug (URL)",
+                "adminEmail": "Email do Administrador",
+                "adminName": "Nome do Administrador",
+                "adminPassword": "Senha Inicial",
+                "type": "Tipo de Tenant"
+            },
+            "types": {
+                "museum": "Museu / Espaço Cultural",
+                "producer": "Produtora / Organizador de Eventos"
             }
-        },
-        "achievements": {
-            "title": "Gestão de Conquistas",
-            "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
-            "selectTenant": "Selecione um cliente para ver as conquistas",
-            "select": "Selecione...",
-            "empty": "Nenhuma conquista encontrada.",
-            "errorLoad": "Erro ao carregar conquistas.",
-            "new": "Nova Conquista",
-            "table": {
-                "icon": "Ícone",
-                "title": "Título",
-                "description": "Descrição",
-                "xp": "XP",
-                "actions": "Ações"
-            },
-            "form": {
-                "newTitle": "Nova Conquista",
-                "editTitle": "Editar Conquista",
-                "tenant": "Museu (Opcional)",
-                "select": "Selecione...",
-                "code": "Código (ID único)",
-                "codePlaceholder": "Ex: PRIMEIRA_VISITA",
-                "codeHelp": "Código único em maiúsculas (ex: VISITOR_100)",
-                "title": "Título",
-                "titlePlaceholder": "Ex: Explorador Iniciante",
-                "description": "Descrição",
-                "descriptionPlaceholder": "Descreva como ganhar esta conquista...",
-                "imageUrl": "Imagem / Ícone",
-                "imageUrlPlaceholder": "https://...",
-                "upload": "Enviar Arquivo",
-                "uploading": "Enviando...",
-                "saving": "Salvando...",
-                "selectTenantAlert": "Selecione um museu!",
-                "errorSave": "Erro ao salvar conquista",
-                "errorUpload": "Erro ao fazer upload da imagem",
-                "save": "Salvar",
-                "cancel": "Cancelar"
-            }
-        },
-        "userForm": {
-            "editTitle": "Editar Usuário",
-            "newTitle": "Novo Usuário",
-            "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
-            "labels": {
-                "name": "Nome Completo",
-                "email": "E-mail de Acesso",
-                "password": "Senha",
-                "role": "Nível de Acesso",
-                "tenant": "Vinculado ao Museu (Tenant)"
-            },
-            "placeholders": {
-                "name": "Ex: João Silva",
-                "email": "joao@email.com",
-                "password": "Senha segura",
-                "passwordEdit": "Nova senha (opcional)",
-                "selectTenant": "Selecione um museu..."
-            },
-            "roles": {
-                "master": "Master (Acesso Global)",
-                "admin": "Admin (Gestor de Museu)"
-            },
-            "helpers": {
-                "tenant": "Usuários ADMIN devem estar vinculados a um museu específico. Usuários MASTER têm acesso a tudo.",
-                "passwordEdit": "Deixe em branco para manter a senha atual."
-            },
-            "alerts": {
-                "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
-                "errorSave": "Erro ao salvar usuário. Tente novamente."
-            },
-            "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
         }
+    },
+    "producer": {
+        "layout": {
+            "title": "Área do Produtor",
+            "menu": {
+                "overview": "Visão Geral",
+                "projects": "Meus Projetos",
+                "tickets": "Bilheteria",
+                "audience": "Meu Público",
+                "services": "Contratar Serviços",
+                "reports": "Prestação de Contas",
+                "management": "Gestão"
+            },
+            "logout": "Sair"
+        },
+        "dashboard": {
+            "title": "Visão Geral do Produtor",
+            "subtitle": "Acompanhe o desempenho dos seus projetos em tempo real.",
+            "metrics": {
+                "revenue": "Receita de Ingressos",
+                "ticketsSold": "Ingressos Vendidos",
+                "activeEvents": "Eventos Ativos",
+                "rouanet": "Cota Rouanet",
+                "vsLastMonth": "vs mês anterior",
+                "accumulated": "Total acumulado",
+                "createNew": "Criar Novo",
+                "used": "da verba utilizada"
+            },
+            "nextEvents": {
+                "title": "Próximos Eventos",
+                "viewAll": "Ver todos",
+                "sales": "Vendas",
+                "manage": "Gerenciar",
+                "create": "Criar Novo Evento"
+            },
+            "services": {
+                "lbiTitle": "Pendências LBI",
+                "lbiText": "Seu evento precisa de audiodescrição para cumprir a lei.",
+                "hire": "Contratar Serviço",
+                "reports": "Relatórios",
+                "minc": "Prestação de Contas (MinC)",
+                "participants": "Exportar Lista de Participantes"
+            }
+        },
+        "tickets": {
+            "title": "Bilheteria",
+            "subtitle": "Gerencie lotes, preços e disponibilidade de ingressos.",
+            "newBatch": "Novo Lote",
+            "loading": "Carregando bilheteria...",
+            "status": {
+                "active": "Vendas Ativas",
+                "paused": "Pausado"
+            },
+            "price": "Preço",
+            "sold": "Vendidos",
+            "revenue": "Receita",
+            "free": "Grátis"
+        },
+        "reports": {
+            "title": "Prestação de Contas",
+            "subtitle": "Relatórios financeiros e de acessibilidade para Lei Rouanet.",
+            "metrics": {
+                "revenue": "Captação (Receita)",
+                "tickets": "Vendas de Ingressos",
+                "ticketsSold": "Ingressos Vendidos",
+                "totalIssued": "Total emitido",
+                "audience": "Público Presente",
+                "checkIns": "Total de check-ins realizados"
+            },
+            "available": "Relatórios Disponíveis",
+            "accessibility": {
+                "title": "Relatório de Acessibilidade",
+                "subtitle": "Compliance LBI (Lei 13.146)",
+                "desc": "Documento técnico comprovando a oferta de Libras, Audiodescrição e Acessibilidade Física no evento.",
+                "download": "Baixar PDF"
+            },
+            "financial": {
+                "title": "Prestação Financeira",
+                "subtitle": "Anexo IV - Execução",
+                "desc": "Exportação de todas as transações de bilheteria e vendas formatadas para o sistema Salic.",
+                "download": "Baixar Excel"
+            }
+        }
+    },
+    "users": {
+        "title": "Usuários Administrativos",
+        "subtitle": "Gerencie administradores de museus (ADMIN) e gestores da plataforma (MASTER).",
+        "new": "Novo Usuário",
+        "table": {
+            "name": "Nome",
+            "email": "E-mail",
+            "role": "Perfil",
+            "tenant": "Museu / Tenant",
+            "actions": "Ações",
+            "edit": "Editar"
+        }
+    },
+    "achievements": {
+        "title": "Gestão de Conquistas",
+        "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
+        "selectTenant": "Selecione um cliente para ver as conquistas",
+        "select": "Selecione...",
+        "empty": "Nenhuma conquista encontrada.",
+        "errorLoad": "Erro ao carregar conquistas.",
+        "new": "Nova Conquista",
+        "table": {
+            "icon": "Ícone",
+            "title": "Título",
+            "description": "Descrição",
+            "xp": "XP",
+            "actions": "Ações"
+        },
+        "form": {
+            "newTitle": "Nova Conquista",
+            "editTitle": "Editar Conquista",
+            "tenant": "Museu (Opcional)",
+            "select": "Selecione...",
+            "code": "Código (ID único)",
+            "codePlaceholder": "Ex: PRIMEIRA_VISITA",
+            "codeHelp": "Código único em maiúsculas (ex: VISITOR_100)",
+            "title": "Título",
+            "titlePlaceholder": "Ex: Explorador Iniciante",
+            "description": "Descrição",
+            "descriptionPlaceholder": "Descreva como ganhar esta conquista...",
+            "imageUrl": "Imagem / Ícone",
+            "imageUrlPlaceholder": "https://...",
+            "upload": "Enviar Arquivo",
+            "uploading": "Enviando...",
+            "saving": "Salvando...",
+            "selectTenantAlert": "Selecione um museu!",
+            "errorSave": "Erro ao salvar conquista",
+            "errorUpload": "Erro ao fazer upload da imagem",
+            "save": "Salvar",
+            "cancel": "Cancelar"
+        }
+    },
+    "userForm": {
+        "editTitle": "Editar Usuário",
+        "newTitle": "Novo Usuário",
+        "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
+        "labels": {
+            "name": "Nome Completo",
+            "email": "E-mail de Acesso",
+            "password": "Senha",
+            "role": "Nível de Acesso",
+            "tenant": "Vinculado ao Museu (Tenant)"
+        },
+        "placeholders": {
+            "name": "Ex: João Silva",
+            "email": "joao@email.com",
+            "password": "Senha segura",
+            "passwordEdit": "Nova senha (opcional)",
+            "selectTenant": "Selecione um museu..."
+        },
+        "roles": {
+            "master": "Master (Acesso Global)",
+            "admin": "Admin (Gestor de Museu)"
+        },
+        "helpers": {
+            "tenant": "Usuários ADMIN devem estar vinculados a um museu específico. Usuários MASTER têm acesso a tudo.",
+            "passwordEdit": "Deixe em branco para manter a senha atual."
+        },
+        "alerts": {
+            "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
+            "errorSave": "Erro ao salvar usuário. Tente novamente."
+        },
+        "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
     }
 }

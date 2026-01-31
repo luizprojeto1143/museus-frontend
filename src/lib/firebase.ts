@@ -46,7 +46,7 @@ export const getFCMToken = async (): Promise<string | null> => {
         const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
         const token = await getToken(messaging, { vapidKey });
 
-        console.log('FCM Token:', token);
+        // console.debug('FCM Token:', token);
         return token;
     } catch (error) {
         console.error('Error getting FCM token:', error);
@@ -59,7 +59,7 @@ export const onForegroundMessage = (callback: (payload: unknown) => void) => {
     if (!messaging) return () => { };
 
     return onMessage(messaging, (payload) => {
-        console.log('Foreground message received:', payload);
+        // console.debug('Foreground message received:', payload);
         callback(payload);
     });
 };

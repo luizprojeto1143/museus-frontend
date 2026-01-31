@@ -47,7 +47,7 @@ export const usePushNotifications = () => {
         try {
             // Register the Firebase service worker
             const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-            console.log('Firebase SW registered:', registration);
+            // console.debug('Firebase SW registered:', registration);
 
             // Get FCM token
             const token = await getFCMToken();
@@ -60,7 +60,7 @@ export const usePushNotifications = () => {
                         platform: 'web',
                         userAgent: navigator.userAgent
                     });
-                    console.log('FCM token registered on backend');
+                    // console.debug('Firebase SW registered:', registration);
                 } catch (err) {
                     console.warn('Failed to register token on backend:', err);
                 }

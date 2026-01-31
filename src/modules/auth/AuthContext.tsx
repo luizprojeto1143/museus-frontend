@@ -11,6 +11,7 @@ interface StoredAuth {
   token: string;
   role: Role;
   tenantId: string | null;
+  tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
 }
@@ -20,9 +21,10 @@ interface AuthContextValue {
   role: Role | null;
   token: string | null;
   tenantId: string | null;
+  tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
-  login: (params: { email: string; password: string }) => Promise<Role>;
+  login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null }>;
   logout: () => void;
   updateSession: (newToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => void;
 }
@@ -64,6 +66,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const parsed = JSON.parse(stored) as StoredAuth;
         return parsed.tenantId ?? null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+
+  const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | null>(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as StoredAuth;
+        return parsed.tenantType ?? null;
       } catch {
         return null;
       }
@@ -116,6 +131,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         accessToken?: string;
         role?: string;
         tenantId?: string | null;
+        tenantType?: "MUSEUM" | "PRODUCER" | null;
         user?: { email: string; name?: string };
       };
 
@@ -126,22 +142,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const backendRole = (data.role || "").toUpperCase();
 
-
-
       let mappedRole: Role = "visitor";
       if (backendRole === "MASTER") mappedRole = "master";
       else if (backendRole === "ADMIN") mappedRole = "admin";
       else if (backendRole === "VISITOR") mappedRole = "visitor";
 
-
-
       const receivedTenantId = data.tenantId ?? null;
+      const receivedTenantType = data.tenantType ?? "MUSEUM"; // Default to MUSEUM
       const receivedEmail = data.user?.email ?? email;
       const receivedName = data.user?.name ?? null;
 
       setToken(receivedToken);
       setRole(mappedRole);
       setTenantId(receivedTenantId);
+      setTenantType(receivedTenantType);
       setEmail(receivedEmail);
       setName(receivedName);
 
@@ -149,21 +163,25 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         token: receivedToken,
         role: mappedRole,
         tenantId: receivedTenantId,
+        tenantType: receivedTenantType,
         email: receivedEmail,
         name: receivedName
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
 
-      return mappedRole;
+      return { role: mappedRole, tenantType: receivedTenantType };
     } else {
       // modo demo
       const simulatedRole: Role =
         email.includes("master") ? "master" : "admin";
 
+      const simulatedTenantType = email.includes("producer") ? "PRODUCER" : "MUSEUM";
+
       const fakeToken = "demo-token";
       setToken(fakeToken);
       setRole(simulatedRole);
       setTenantId(null);
+      setTenantType(simulatedTenantType);
       setEmail(email);
       setName("Usuário Demo");
 
@@ -171,12 +189,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         token: fakeToken,
         role: simulatedRole,
         tenantId: null,
+        tenantType: simulatedTenantType,
         email: email,
         name: "Usuário Demo"
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
 
-      return simulatedRole;
+      return { role: simulatedRole, tenantType: simulatedTenantType };
     }
   };
 
@@ -184,6 +203,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setToken(null);
     setRole(null);
     setTenantId(null);
+    setTenantType(null);
     setEmail(null);
     setName(null);
     window.localStorage.removeItem(STORAGE_KEY);
@@ -202,12 +222,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setRole(mappedRole);
     setTenantId(newTenantId);
     if (newName !== undefined) setName(newName ?? null);
-    // Manter email atual
+
+    // Maintain existing tenantType or default to MUSEUM if updating session without re-login
+    const currentTenantType = tenantType ?? "MUSEUM";
 
     const toStore: StoredAuth = {
       token: newToken,
       role: mappedRole,
       tenantId: newTenantId,
+      tenantType: currentTenantType,
       email: email || "",
       name: newName !== undefined ? (newName ?? null) : name
     };
@@ -221,6 +244,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         role,
         token,
         tenantId,
+        tenantType,
         email,
         name,
         login,

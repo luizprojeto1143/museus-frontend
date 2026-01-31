@@ -417,7 +417,7 @@ export const ProductGrid: React.FC = () => {
     };
 
     const handleCheckout = () => {
-        // TODO: Implement checkout flow
+        // Checkout em desenvolvimento
         alert('Checkout em desenvolvimento. Aguarde a integração com pagamentos.');
     };
 

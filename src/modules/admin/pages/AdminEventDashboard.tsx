@@ -83,7 +83,7 @@ export const AdminEventDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Sales Analytics - TODO: Implement widget */}
+            {/* Sales Analytics */}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

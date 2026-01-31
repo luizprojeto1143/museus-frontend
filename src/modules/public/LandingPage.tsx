@@ -61,7 +61,7 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Mobile Toggle */}
-                <button className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: "none", border: "none", color: "#d4af37" }}>
+                <button className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: "none", border: "none", color: "#d4af37" }} aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}>
                     {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
             </nav>
@@ -76,7 +76,7 @@ export const LandingPage: React.FC = () => {
                     <button onClick={() => scrollToSection("acessibilidade")} style={{ background: "none", border: "none", color: "#d4af37", fontSize: "1.2rem", textAlign: "left" }}>Acessibilidade</button>
                     <button onClick={() => scrollToSection("casos")} style={{ background: "none", border: "none", color: "#d4af37", fontSize: "1.2rem", textAlign: "left" }}>Benefícios</button>
                     <hr style={{ borderColor: "rgba(255,255,255,0.1)" }} />
-                    <button onClick={() => navigate("/sou-produtor")} style={{ padding: "1rem", background: "#d4af37", color: "#000", borderRadius: "0.5rem", fontWeight: "bold" }}>Sou Produtor Cultural</button>
+                    <button onClick={() => scrollToSection("contato")} style={{ padding: "1rem", background: "#d4af37", color: "#000", borderRadius: "0.5rem", fontWeight: "bold" }}>Sou Produtor Cultural</button>
                     <button onClick={() => navigate("/select-museum")} style={{ padding: "1rem", border: "1px solid #d4af37", background: "transparent", color: "#d4af37", borderRadius: "0.5rem" }}>Sou Visitante</button>
                 </div>
             )}
@@ -124,7 +124,7 @@ export const LandingPage: React.FC = () => {
 
                 <div style={{ display: "flex", gap: "1rem", flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
                     <button
-                        onClick={() => navigate("/sou-produtor")}
+                        onClick={() => scrollToSection("contato")}
                         style={{
                             padding: "1rem 2.5rem",
                             background: "linear-gradient(135deg, #d4af37, #b8941f)",
@@ -214,21 +214,21 @@ export const LandingPage: React.FC = () => {
 
                         <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                             <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ background: "rgba(212,175,55,0.1)", p: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Ear size={20} color="#d4af37" /></div>
+                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Ear size={20} color="#d4af37" /></div>
                                 <div>
                                     <strong style={{ display: "block", fontSize: "1.1rem" }}>Libras (Língua de Sinais)</strong>
                                     <span style={{ fontSize: "0.9rem", opacity: 0.6, fontFamily: "sans-serif" }}>Janela de vídeo integrada ao player</span>
                                 </div>
                             </li>
                             <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ background: "rgba(212,175,55,0.1)", p: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Eye size={20} color="#d4af37" /></div>
+                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Eye size={20} color="#d4af37" /></div>
                                 <div>
                                     <strong style={{ display: "block", fontSize: "1.1rem" }}>Audiodescrição</strong>
                                     <span style={{ fontSize: "0.9rem", opacity: 0.6, fontFamily: "sans-serif" }}>Narração descritiva para deficientes visuais</span>
                                 </div>
                             </li>
                             <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ background: "rgba(212,175,55,0.1)", p: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Shield size={20} color="#d4af37" /></div>
+                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Shield size={20} color="#d4af37" /></div>
                                 <div>
                                     <strong style={{ display: "block", fontSize: "1.1rem" }}>Relatórios Automáticos</strong>
                                     <span style={{ fontSize: "0.9rem", opacity: 0.6, fontFamily: "sans-serif" }}>Gere comprovantes de acessibilidade em 1 clique</span>
@@ -308,7 +308,7 @@ export const LandingPage: React.FC = () => {
                     Crie seu espaço agora mesmo.
                 </p>
                 <button
-                    onClick={() => navigate("/sou-produtor")}
+                    onClick={() => scrollToSection("contato")}
                     style={{
                         padding: "1.2rem 3.5rem",
                         background: "#d4af37",

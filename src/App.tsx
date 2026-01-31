@@ -9,7 +9,8 @@ import { MasterLayout } from "./modules/master/MasterLayout";
 // Auth
 import { Login } from "./modules/auth/Login";
 import { RegisterWrapper } from "./modules/auth/RegisterWrapper";
-import { RegisterProducer } from "./modules/auth/RegisterProducer"; // NEW
+import { RegisterWrapper } from "./modules/auth/RegisterWrapper";
+// import { RegisterProducer } from "./modules/auth/RegisterProducer"; // REMOVED: Managed by Master only
 import { LandingPage } from "./modules/public/LandingPage"; // NEW
 import { GamificationProvider } from "./modules/gamification/context/GamificationContext";
 import { GeoFencingProvider } from "./modules/visitor/context/GeoFencingProvider";
@@ -94,9 +95,18 @@ import { MasterAchievements } from "./modules/master/pages/MasterAchievements";
 import { MasterAchievementForm } from "./modules/master/pages/MasterAchievementForm";
 import { MasterAuditLogs } from "./modules/master/pages/MasterAuditLogs";
 import { MasterAccessibilityRequests } from "./modules/master/pages/MasterAccessibilityRequests";
-import { MasterAccessibilityRequests } from "./modules/master/pages/MasterAccessibilityRequests";
 import { MasterSystemHealth } from "./modules/master/pages/MasterSystemHealth";
 import { MasterMessages } from "./modules/master/MasterMessages";
+
+// Producer pages
+import { ProducerLayout } from "./modules/producer/ProducerLayout";
+import { ProducerDashboard } from "./modules/producer/ProducerDashboard";
+import { ProducerEvents } from "./modules/producer/ProducerEvents";
+import { ProducerEventForm } from "./modules/producer/ProducerEventForm";
+import { ProducerServices } from "./modules/producer/ProducerServices";
+import { ProducerTickets } from "./modules/producer/ProducerTickets";
+import { ProducerAudience } from "./modules/producer/ProducerAudience";
+import { ProducerReports } from "./modules/producer/ProducerReports";
 
 const RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }> = ({
   allowed,
@@ -147,7 +157,8 @@ const App: React.FC = () => {
             <Route path="/" element={<LandingPage />} />
 
             {/* Cadastro de Produtor - Novo Fluxo */}
-            <Route path="/sou-produtor" element={<RegisterProducer />} />
+            {/* Cadastro de Produtor - Novo Fluxo (Desativado: Apenas via Contato/Master) */}
+            {/* <Route path="/sou-produtor" element={<RegisterProducer />} /> */}
 
             {/* Redirecionamento legado para quem já está logado ou quer ir direto pro app */}
             <Route
@@ -808,6 +819,100 @@ const App: React.FC = () => {
                 </RequireRole>
               }
             />
+
+            {/* ROTAS DO PRODUTOR (NOVO) */}
+            <Route
+              path="/producer"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerDashboard />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/events"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerEvents />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/events/new"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerEventForm />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/events/:id"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerEventForm />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/services"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerServices />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            {/* Stubs Replaced with Real Components */}
+            <Route
+              path="/producer/tickets"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerTickets />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/audience"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerAudience />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/reports"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerReports />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/producer/*"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <ProducerLayout>
+                    <ProducerDashboard />
+                  </ProducerLayout>
+                </RequireRole>
+              }
+            />
+
             <Route
               path="/master/tenants/novo"
               element={

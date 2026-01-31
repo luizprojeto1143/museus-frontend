@@ -27,7 +27,8 @@ api.interceptors.request.use((config) => {
 });
 
 // Log API URL for debugging
-console.log(`🔌 API Client Initialized with baseURL: ${baseURL}`);
+// Log API URL for debugging (Removed for production)
+// console.debug(`🔌 API Client Initialized with baseURL: ${baseURL}`);
 
 // Global Error Handler for API
 api.interceptors.response.use(

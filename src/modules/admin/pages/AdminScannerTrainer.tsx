@@ -43,7 +43,7 @@ export const AdminScannerTrainer: React.FC = () => {
                 if (isMounted) {
                     setNet(loadedNet);
                     setClassifier(loadedClassifier);
-                    console.log("Model loaded");
+                    // console.debug("Model loaded");
                 } else {
                     // Cleanup if unmounted before load finish
                     loadedClassifier.dispose();
@@ -72,7 +72,7 @@ export const AdminScannerTrainer: React.FC = () => {
             setClassifier(prev => {
                 if (prev) {
                     prev.dispose();
-                    console.log("Classifier disposed");
+                    // console.debug("Classifier disposed");
                 }
                 return null;
             });

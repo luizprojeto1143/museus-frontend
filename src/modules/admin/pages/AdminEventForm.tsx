@@ -18,7 +18,7 @@ interface TicketData {
 }
 
 export const AdminEventForm: React.FC = () => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
   const isEdit = Boolean(id);
@@ -26,6 +26,16 @@ export const AdminEventForm: React.FC = () => {
 
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  // ... (continuing state lines not shown here, just ensuring t is available)
+
+  const steps = [
+    { id: 1, label: t("admin.eventForm.steps.basic"), icon: <Calendar className="w-5 h-5" /> },
+    { id: 2, label: t("admin.eventForm.steps.whenWhere"), icon: <MapPin className="w-5 h-5" /> },
+    { id: 3, label: t("admin.eventForm.steps.tickets"), icon: <Ticket className="w-5 h-5" /> },
+    { id: 4, label: t("admin.eventForm.steps.promotion"), icon: <User className="w-5 h-5" /> }
+  ];
+
+
   const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
 
   // Form State
@@ -193,33 +203,29 @@ export const AdminEventForm: React.FC = () => {
     }
   };
 
-  const steps = [
-    { id: 1, label: "Informações Básicas", icon: <Calendar className="w-5 h-5" /> },
-    { id: 2, label: "Quando e Onde", icon: <MapPin className="w-5 h-5" /> },
-    { id: 3, label: "Ingressos", icon: <Ticket className="w-5 h-5" /> },
-    { id: 4, label: "Divulgação", icon: <User className="w-5 h-5" /> }
-  ];
+
 
   const renderStepContent = () => {
     switch (step) {
       case 1:
         return (
           <div className="space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold mb-4">Informações Básicas</h2>
+            <h2 className="text-2xl font-bold mb-4">{t("admin.eventForm.steps.basic")}</h2>
 
             <div className="form-group">
-              <label>Nome do Evento *</label>
+              <label>{t("admin.eventForm.labels.title")} *</label>
               <input
                 className="input w-full text-lg font-medium"
                 value={formData.title}
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Ex: Workshop de Fotografia"
+                required
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="form-group">
-                <label>Assunto / Categoria</label>
+                <label>{t("admin.eventForm.labels.category")}</label>
                 <select
                   className="input w-full"
                   value={formData.categoryId}
@@ -230,26 +236,26 @@ export const AdminEventForm: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label>Formato</label>
+                <label>{t("admin.eventForm.labels.format")}</label>
                 <div className="flex gap-2">
                   <button
                     className={`flex-1 btn ${formData.format === 'PRESENTIAL' ? 'btn-primary' : 'bg-gray-200 text-gray-700'}`}
                     onClick={() => setFormData({ ...formData, format: 'PRESENTIAL' })}
                   >
-                    <MapPin className="w-4 h-4 mr-2" /> Presencial
+                    <MapPin className="w-4 h-4 mr-2" /> {t("admin.eventForm.formats.presential")}
                   </button>
                   <button
                     className={`flex-1 btn ${formData.format === 'ONLINE' ? 'btn-primary' : 'bg-gray-200 text-gray-700'}`}
                     onClick={() => setFormData({ ...formData, format: 'ONLINE' })}
                   >
-                    <Video className="w-4 h-4 mr-2" /> Online
+                    <Video className="w-4 h-4 mr-2" /> {t("admin.eventForm.formats.online")}
                   </button>
                 </div>
               </div>
             </div>
 
             <div className="form-group">
-              <label>Imagem de Capa (URL)</label>
+              <label>{t("admin.eventForm.labels.coverImage")}</label>
               <div className="flex gap-2">
                 <input
                   className="input flex-1"
@@ -258,12 +264,12 @@ export const AdminEventForm: React.FC = () => {
                   placeholder="https://..."
                 />
                 <div className="w-20 h-10 bg-gray-100 rounded overflow-hidden border">
-                  {formData.coverImageUrl && <img src={formData.coverImageUrl} className="w-full h-full object-cover" />}
+                  {formData.coverImageUrl && <img src={formData.coverImageUrl} alt="Capa do evento" className="w-full h-full object-cover" />}
                 </div>
               </div>
             </div>
             <div className="form-group">
-              <label>Descrição</label>
+              <label>{t("admin.eventForm.labels.description")}</label>
               <textarea
                 className="input w-full"
                 rows={5}
@@ -277,15 +283,15 @@ export const AdminEventForm: React.FC = () => {
       case 2:
         return (
           <div className="space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold mb-4">Quando e Onde?</h2>
+            <h2 className="text-2xl font-bold mb-4">{t("admin.eventForm.steps.whenWhere")}</h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="form-group">
-                <label>Data de Início *</label>
-                <input type="datetime-local" className="input w-full" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} />
+                <label>{t("admin.eventForm.labels.startDate")} *</label>
+                <input type="datetime-local" className="input w-full" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required />
               </div>
               <div className="form-group">
-                <label>Data de Término</label>
+                <label>{t("admin.eventForm.labels.endDate")}</label>
                 <input type="datetime-local" className="input w-full" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} />
               </div>
             </div>
@@ -358,19 +364,19 @@ export const AdminEventForm: React.FC = () => {
         return (
           <div className="space-y-6 animate-fadeIn">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Ingressos</h2>
+              <h2 className="text-2xl font-bold">{t("admin.eventForm.tickets.title")}</h2>
               <button
                 className="btn flex items-center gap-2"
                 onClick={() => setTickets([...tickets, { name: 'Novo Ingresso', type: 'FREE', price: 0, quantity: 100, absorbFee: false }])}
               >
-                <Plus className="w-4 h-4" /> Criar Ingresso
+                <Plus className="w-4 h-4" /> {t("admin.eventForm.tickets.create")}
               </button>
             </div>
 
             {tickets.length === 0 && (
               <div className="text-center py-10 bg-gray-50 rounded-lg border border-dashed border-gray-300">
                 <Ticket className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500">Nenhum ingresso criado ainda.</p>
+                <p className="text-gray-500">{t("admin.eventForm.tickets.empty")}</p>
               </div>
             )}
 
@@ -378,7 +384,7 @@ export const AdminEventForm: React.FC = () => {
               {tickets.map((t, idx) => (
                 <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col gap-4">
                   <div className="flex justify-between items-start">
-                    <h4 className="font-semibold text-gray-700">Ingresso #{idx + 1}</h4>
+                    <h4 className="font-semibold text-gray-700">{t("admin.eventForm.tickets.itemTitle")} #{idx + 1}</h4>
                     <button className="text-red-500 hover:bg-red-50 p-1 rounded" onClick={() => {
                       const n = [...tickets]; n.splice(idx, 1); setTickets(n);
                     }}>
@@ -387,13 +393,13 @@ export const AdminEventForm: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="form-group">
-                      <label>Nome</label>
+                      <label>{t("admin.eventForm.tickets.name")}</label>
                       <input className="input w-full" value={t.name} onChange={e => {
                         const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
                       }} />
                     </div>
                     <div className="form-group">
-                      <label>Quantidade</label>
+                      <label>{t("admin.eventForm.tickets.quantity")}</label>
                       <input type="number" className="input w-full" value={t.quantity} onChange={e => {
                         const n = [...tickets]; n[idx].quantity = Number(e.target.value); setTickets(n);
                       }} />
@@ -401,17 +407,17 @@ export const AdminEventForm: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="form-group">
-                      <label>Tipo</label>
+                      <label>{t("admin.eventForm.tickets.type")}</label>
                       <select className="input w-full" value={t.type} onChange={e => {
                         const n = [...tickets]; n[idx].type = e.target.value as 'FREE' | 'PAID'; setTickets(n);
                       }}>
-                        <option value="FREE">Gratuito</option>
-                        <option value="PAID">Pago</option>
+                        <option value="FREE">{t("admin.eventForm.tickets.free")}</option>
+                        <option value="PAID">{t("admin.eventForm.tickets.paid")}</option>
                       </select>
                     </div>
                     {t.type === 'PAID' && (
                       <div className="form-group">
-                        <label>Preço (R$)</label>
+                        <label>{t("admin.eventForm.tickets.price")} (R$)</label>
                         <input type="number" step="0.01" className="input w-full" value={t.price} onChange={e => {
                           const n = [...tickets]; n[idx].price = Number(e.target.value); setTickets(n);
                         }} />
@@ -426,10 +432,10 @@ export const AdminEventForm: React.FC = () => {
       case 4:
         return (
           <div className="space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold mb-4">Produtor & Divulgação</h2>
+            <h2 className="text-2xl font-bold mb-4">{t("admin.eventForm.steps.promotion")}</h2>
 
             <div className="form-group">
-              <label>Nome do Produtor / Organizador</label>
+              <label>{t("admin.eventForm.labels.producerName")}</label>
               <input
                 className="input w-full"
                 value={formData.producerName}
@@ -438,7 +444,7 @@ export const AdminEventForm: React.FC = () => {
               />
             </div>
             <div className="form-group">
-              <label>Descrição do Produtor</label>
+              <label>{t("admin.eventForm.labels.producerDescription")}</label>
               <textarea
                 className="input w-full"
                 rows={4}
@@ -453,7 +459,7 @@ export const AdminEventForm: React.FC = () => {
             <h3 className="text-lg font-semibold mb-2">Certificado</h3>
             <div className="space-y-4 mb-6">
               <div className="form-group">
-                <label>Imagem de Fundo do Certificado (URL)</label>
+                <label>{t("admin.eventForm.labels.certificateBg")}</label>
                 <input
                   className="input w-full"
                   value={formData.certificateBackgroundUrl}
@@ -464,7 +470,7 @@ export const AdminEventForm: React.FC = () => {
               </div>
               <div className="flex gap-4">
                 <div className="form-group flex-1">
-                  <label>Min. Minutos para Certificado</label>
+                  <label>{t("admin.eventForm.labels.minMinutes")}</label>
                   <input
                     type="number"
                     className="input w-full"
@@ -481,7 +487,7 @@ export const AdminEventForm: React.FC = () => {
                       checked={formData.certificateRequiresSurvey}
                       onChange={e => setFormData({ ...formData, certificateRequiresSurvey: e.target.checked })}
                     />
-                    <span className="text-gray-700">Exigir Pesquisa de Satisfação</span>
+                    <span className="text-gray-700">{t("admin.eventForm.labels.surveyRequired")}</span>
                   </label>
                 </div>
               </div>
@@ -489,20 +495,20 @@ export const AdminEventForm: React.FC = () => {
 
             <hr className="my-6 border-gray-200" />
 
-            <h3 className="text-lg font-semibold mb-2">Visibilidade</h3>
+            <h3 className="text-lg font-semibold mb-2">{t("admin.eventForm.labels.visibility")}</h3>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer border p-4 rounded-lg flex-1 hover:bg-gray-50">
                 <input type="radio" name="visibility" checked={formData.visibility !== "PRIVATE"} onChange={() => setFormData({ ...formData, visibility: "PUBLIC" })} />
                 <div>
-                  <div className="font-bold flex items-center gap-1"><Globe className="w-4 h-4" /> Público</div>
-                  <div className="text-sm text-gray-500">Visível para todos na busca</div>
+                  <div className="font-bold flex items-center gap-1"><Globe className="w-4 h-4" /> {t("admin.eventForm.visibility.public")}</div>
+                  <div className="text-sm text-gray-500">{t("admin.eventForm.visibility.publicDesc")}</div>
                 </div>
               </label>
               <label className="flex items-center gap-2 cursor-pointer border p-4 rounded-lg flex-1 hover:bg-gray-50">
                 <input type="radio" name="visibility" checked={formData.visibility === "PRIVATE"} onChange={() => setFormData({ ...formData, visibility: "PRIVATE" })} />
                 <div>
-                  <div className="font-bold flex items-center gap-1"><Check className="w-4 h-4" /> Privado</div>
-                  <div className="text-sm text-gray-500">Apenas quem tem o link</div>
+                  <div className="font-bold flex items-center gap-1"><Check className="w-4 h-4" /> {t("admin.eventForm.visibility.private")}</div>
+                  <div className="text-sm text-gray-500">{t("admin.eventForm.visibility.privateDesc")}</div>
                 </div>
               </label>
             </div>
@@ -512,7 +518,7 @@ export const AdminEventForm: React.FC = () => {
             <h3 className="text-lg font-semibold mb-2">🎧 Áudio-Guia do Evento</h3>
             <div className="space-y-4 mb-6">
               <div className="form-group">
-                <label>URL do Áudio Introdutório (MP3)</label>
+                <label>{t("admin.eventForm.labels.audioUrl")} (MP3)</label>
                 <input
                   className="input w-full"
                   value={formData.audioUrl}
@@ -522,7 +528,7 @@ export const AdminEventForm: React.FC = () => {
                 <p className="text-xs text-gray-400 mt-1">Áudio que os visitantes poderão ouvir sobre o evento.</p>
               </div>
               <div className="form-group">
-                <label>URL do Vídeo Promocional</label>
+                <label>{t("admin.eventForm.labels.videoUrl")}</label>
                 <input
                   className="input w-full"
                   value={formData.videoUrl}
