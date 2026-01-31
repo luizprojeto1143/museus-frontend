@@ -170,7 +170,7 @@ export const SelectMuseum: React.FC = () => {
         {!loading && (
           <div className="agenda-section">
             <div className="section-title">
-              <span>📅</span> Agenda da Cidade
+              <span>📅</span> Agenda de Eventos
             </div>
             <div className="agenda-grid">
               <CityAgendaCarousel onSelectTenant={(tenant) => handleSelectMuseum(tenant)} />
