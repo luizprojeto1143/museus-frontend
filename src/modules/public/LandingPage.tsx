@@ -35,7 +35,8 @@ export const LandingPage: React.FC = () => {
                 backdropFilter: "blur(10px)"
             }}>
                 <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#d4af37", display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }} onClick={() => window.scrollTo(0, 0)}>
-                    <Layout size={28} /> Cultura Viva
+                    <img src="/logo-culturaviva.jpg" alt="Cultura Viva" style={{ height: "40px", borderRadius: "50%" }} />
+                    <span className="logo-text">Cultura Viva</span>
                 </div>
 
                 {/* Desktop Menu */}
