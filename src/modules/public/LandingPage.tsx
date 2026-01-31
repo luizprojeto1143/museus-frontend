@@ -347,14 +347,7 @@ export const LandingPage: React.FC = () => {
                         </ul>
                     </div>
 
-                    <div>
-                        <h4 style={{ color: "#fff", marginBottom: "1rem" }}>Contato</h4>
-                        <ul style={{ listStyle: "none", padding: 0, opacity: 0.7, fontSize: "0.95rem", display: "flex", flexDirection: "column", gap: "0.5rem", fontFamily: "sans-serif" }}>
-                            <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><Mail size={16} /> contato@culturaviva.com</li>
-                            <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><Instagram size={16} /> @culturaviva</li>
-                            <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><MapPin size={16} /> São Paulo, SP</li>
-                        </ul>
-                    </div>
+
                 </div>
                 <div style={{ textAlign: "center", marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid rgba(255,255,255,0.05)", opacity: 0.4, fontSize: "0.8rem", fontFamily: "sans-serif" }}>
                     &copy; {new Date().getFullYear()} Cultura Viva Tecnologia. Todos os direitos reservados.
