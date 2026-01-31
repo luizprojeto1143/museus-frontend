@@ -45,7 +45,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
           <div className="app-brand">
-            <span className="app-logo">AD</span>
+            <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
             <div>
               <div className="app-title">{t("dashboard.title")}</div>
               <div className="app-subtitle">{t("admin.museums.title")}</div>

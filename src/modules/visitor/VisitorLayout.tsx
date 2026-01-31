@@ -141,7 +141,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             {settings?.logoUrl ? (
               <img src={settings.logoUrl} alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
             ) : (
-              <span className="app-logo">CV</span>
+              <img src="/logo-culturaviva.jpg" alt="Logo" className="app-logo-img" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
             )}
             <div>
               <div className="app-title">{settings?.name || "Cultura Viva"}</div>
