@@ -68,6 +68,29 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
     setError(null);
 
     try {
+      let finalPhotoUrl = null;
+
+      // 0. Se tiver foto, fazer upload primeiro
+      if (photoPreview && photoPreview.startsWith("data:")) {
+        // Converter dataURI para Blob
+        const fetchRes = await fetch(photoPreview);
+        const blob = await fetchRes.blob();
+        const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const uploadRes = await api.post("/upload/image", formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+          });
+          finalPhotoUrl = uploadRes.data.url;
+        } catch (uploadErr) {
+          console.error("Falha ao subir foto de perfil via Register", uploadErr);
+          // Não bloquear o cadastro por isso, mas logar
+        }
+      }
+
       // 1. Criar conta de usuário visitante com api axios
       const registerRes = await api.post("/auth/register", {
         tenantId,
@@ -77,12 +100,13 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
         role: "visitor"
       });
 
-      // 2. Criar registro de visitante com idade (axios)
+      // 2. Criar registro de visitante com idade e foto (axios)
       await api.post("/visitors/register", {
         tenantId,
         name,
         email,
-        age: ageNum
+        age: ageNum,
+        photoUrl: finalPhotoUrl
       });
 
       // Redirecionar para login (SPA Navigation)
