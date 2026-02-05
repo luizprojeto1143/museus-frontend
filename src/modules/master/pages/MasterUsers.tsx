@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
-import { Users, UserPlus, Edit, ShieldCheck, Database } from "lucide-react";
+import { api } from "../../../api/client";
+import { Users, Edit, ShieldCheck, Database, Trash2 } from "lucide-react";
 import "./MasterShared.css";
 
 type UserItem = {
@@ -10,6 +10,7 @@ type UserItem = {
   name: string;
   email: string;
   role: string;
+  active?: boolean;
   termsAcceptedAt?: string;
   termsAcceptedIp?: string;
   tenant?: {
@@ -19,21 +20,50 @@ type UserItem = {
 
 export const MasterUsers: React.FC = () => {
   const { t } = useTranslation();
-  const [apiUsers, setApiUsers] = useState<UserItem[]>([]);
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const mock: UserItem[] = [
-    { id: "1", name: "Admin Museu A", email: "admin@museua.com", role: "ADMIN", tenant: { name: "Museu A" }, termsAcceptedAt: "2024-01-01", termsAcceptedIp: "127.0.0.1" },
-    { id: "2", name: "Master da plataforma", email: "master@plataforma.com", role: "MASTER" }
-  ];
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get("/users");
+      setUsers(res.data);
+    } catch (error) {
+      console.error("Failed to load users", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // ... (useEffect remains the same)
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   return (
     <div className="master-page-container">
-      {/* ... (Hero section remains the same) */}
+      {/* HERO SECTION */}
+      <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem' }}>
+        <div className="master-hero-content">
+          <span className="master-badge">
+            <Users size={14} style={{ marginRight: '0.5rem' }} />
+            Gestão Global
+          </span>
+          <h1 className="master-title">
+            {t("master.users.title", "Usuários do Sistema")}
+          </h1>
+        </div>
+      </section>
 
       <div className="master-card">
-        {/* ... (Header remains the same) */}
+        <div className="master-card-header">
+          <div className="master-icon-wrapper master-icon-purple">
+            <Users size={24} />
+          </div>
+          <div>
+            <h3>Todos os Usuários</h3>
+            <p>Lista geral de todos os usuários cadastrados na plataforma</p>
+          </div>
+        </div>
 
         <div className="master-table-container">
           <table className="master-table">
@@ -85,7 +115,13 @@ export const MasterUsers: React.FC = () => {
                     {u.termsAcceptedIp ? <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>{u.termsAcceptedIp}</span> : <span style={{ opacity: 0.3 }}>-</span>}
                   </td>
                   <td style={{ textAlign: "right" }}>
-                    {/* ... actions */}
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+                      <Link to={`/master/users/${u.id}`} title="Editar">
+                        <button className="master-btn btn-outline" style={{ width: 'auto', display: 'inline-flex', padding: '0.5rem', height: 'auto', marginTop: 0 }}>
+                          <Edit size={16} />
+                        </button>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -94,20 +130,5 @@ export const MasterUsers: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-<Link to={`/master/users/${u.id}`} title="Editar">
-  <button className="master-btn btn-outline" style={{ width: 'auto', display: 'inline-flex', padding: '0.5rem', height: 'auto', marginTop: 0 }}>
-    <Edit size={16} />
-  </button>
-</Link>
-                  </td >
-                </tr >
-              ))}
-            </tbody >
-          </table >
-        </div >
-      </div >
-    </div >
   );
 };

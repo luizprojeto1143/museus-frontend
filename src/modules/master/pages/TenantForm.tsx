@@ -142,7 +142,6 @@ export const TenantForm: React.FC = () => {
       featureReviews,
       featureGuestbook,
       featureAccessibility,
-      featureAccessibility,
       featureMinigames,
 
       termsOfUse,

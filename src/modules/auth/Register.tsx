@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { api } from "../../api/client";
 
 interface RegisterProps {
@@ -16,11 +15,16 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [age, setAge] = useState("");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsText, setTermsText] = useState("");
   const [privacyText, setPrivacyText] = useState("");
   const [showTermsModal, setShowTermsModal] = useState(false);
+
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   React.useEffect(() => {
     if (tenantId) {
@@ -33,175 +37,149 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
     }
   }, [tenantId]);
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
-    // ... validations
     if (!termsAccepted) {
       setError(t("auth.errors.termsRequired", "Você precisa aceitar os Termos de Uso."));
       return;
     }
-    // ... rest of submit
-    // ... inside JSX form
-    {/* Termos de Uso */ }
-    <div style={{ marginBottom: "1.5rem" }}>
-      <label style={{ display: "flex", alignItems: "start", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#f5e6d3" }}>
+
+    if (password !== confirmPassword) {
+      setError(t("auth.errors.passwordMismatch", "As senhas não conferem."));
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      // Register User
+      await api.post("/auth/register", {
+        tenantId,
+        name,
+        email,
+        password,
+        age: age ? parseInt(age) : undefined,
+        photoUrl: photoPreview // Note: In a real app, upload first. Assuming base64 or handled by backend for now.
+      });
+
+      // Auto login or redirect
+      navigate("/login");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.message || t("auth.errors.registerFailed", "Falha ao registrar."));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{
+      width: "100%",
+      maxWidth: "400px",
+      padding: "2rem",
+      background: "linear-gradient(180deg, rgba(26,17,8,0.95) 0%, rgba(42,24,16,0.95) 100%)",
+      borderRadius: "1rem",
+      border: "1px solid #8b7355",
+      boxShadow: "0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.1)",
+      position: "relative",
+      backdropFilter: "blur(10px)"
+    }}>
+      {/* Ornamento superior */}
+      <div style={{
+        position: "absolute",
+        top: "-1px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "80%",
+        height: "2px",
+        background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
+      }} />
+
+      <h2 className="text-2xl font-bold text-[var(--accent-gold)] text-center mb-6" style={{ fontFamily: "Georgia, serif" }}>
+        {t("auth.register.title")} <small style={{ fontSize: "0.6em", opacity: 0.5 }}>v1.2</small>
+      </h2>
+
+      <p style={{
+        textAlign: "center",
+        color: "#c9b58c",
+        fontSize: "0.9rem",
+        marginBottom: "2rem",
+        lineHeight: "1.5"
+      }}>
+        {t("welcome.subtitle")} <strong>{tenantName}</strong>.
+      </p>
+
+      {/* Foto (opcional) */}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        marginBottom: "1.5rem"
+      }}>
+        <label
+          htmlFor="photo-input"
+          style={{
+            width: "120px",
+            height: "120px",
+            borderRadius: "50%",
+            border: "3px solid #d4af37",
+            overflow: "hidden",
+            cursor: "pointer",
+            background: photoPreview
+              ? `url(${photoPreview}) center/cover`
+              : "linear-gradient(135deg, #3a2818, #2a1810)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.5), inset 0 2px 8px rgba(212,175,55,0.2)",
+            transition: "transform 0.2s",
+            position: "relative"
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
+          onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+        >
+          {!photoPreview && (
+            <span style={{
+              fontSize: "2.5rem",
+              opacity: 0.6,
+              filter: "sepia(1) hue-rotate(20deg)"
+            }}>
+              📸
+            </span>
+          )}
+        </label>
         <input
-          type="checkbox"
-          checked={termsAccepted}
-          onChange={e => setTermsAccepted(e.target.checked)}
-          style={{ marginTop: "0.2rem" }}
+          id="photo-input"
+          type="file"
+          accept="image/*"
+          onChange={handlePhotoChange}
+          style={{ display: "none" }}
         />
-        <span>
-          Li e aceito os{" "}
-          <button
-            type="button"
-            onClick={() => setShowTermsModal(true)}
-            style={{ background: "none", border: "none", padding: 0, color: "#d4af37", textDecoration: "underline", cursor: "pointer", fontWeight: "bold" }}
-          >
-            Termos de Uso
-          </button>
-        </span>
-      </label>
-    </div>
+      </div>
 
-    {
-      error && (
-        <div style={{ color: "#ef4444", marginTop: "1rem", textAlign: "center", padding: "0.5rem", background: "rgba(239, 68, 68, 0.1)", borderRadius: "4px" }}>
-          {error}
-        </div>
-      )
-    }
+      <p style={{
+        textAlign: "center",
+        fontSize: "0.8rem",
+        color: "#8b7355",
+        marginBottom: "1.5rem"
+      }}>
+        {photoPreview ? "Foto adicionada ✓" : "Clique para adicionar foto (opcional)"}
+      </p>
 
-    <button //... submit
-    >
-            //...
-    </button>
-
-    {/* Modal Termos */ }
-    {
-      showTermsModal && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          background: "rgba(0,0,0,0.8)", zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem"
-        }}>
-          <div style={{
-            background: "#1a1108", border: "1px solid #d4af37", borderRadius: "0.5rem",
-            width: "100%", maxWidth: "600px", maxHeight: "80vh", display: "flex", flexDirection: "column"
-          }}>
-            <div style={{ padding: "1rem", borderBottom: "1px solid #333", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h3 style={{ color: "#d4af37", margin: 0 }}>Termos de Uso</h3>
-              <button type="button" onClick={() => setShowTermsModal(false)} style={{ background: "none", border: "none", color: "#fff", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
-            </div>
-            <div style={{ padding: "1rem", overflowY: "auto", color: "#ddd", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
-              {termsText || "Termos de uso padrão da plataforma..."}
-              {privacyText && (
-                <>
-                  <h4 style={{ color: "#d4af37", marginTop: "1rem" }}>Política de Privacidade</h4>
-                  {privacyText}
-                </>
-              )}
-            </div>
-            <div style={{ padding: "1rem", borderTop: "1px solid #333", display: "flex", justifyContent: "flex-end" }}>
-              <button
-                type="button"
-                onClick={() => { setTermsAccepted(true); setShowTermsModal(false); }}
-                style={{ background: "#d4af37", color: "#000", border: "none", padding: "0.5rem 1rem", borderRadius: "0.25rem", fontWeight: "bold", cursor: "pointer" }}
-              >
-                Aceitar e Fechar
-              </button>
-            </div>
-          </div>
-        </div>
-      )
-    }
-      </form >
-    </div >
-  );
-};
-{/* Ornamento superior */ }
-        <div style={{
-          position: "absolute",
-          top: "-1px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "80%",
-          height: "2px",
-          background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
-        }} />
-
-        <h2 className="text-2xl font-bold text-[var(--accent-gold)] text-center mb-6" style={{ fontFamily: "Georgia, serif" }}>
-          {t("auth.register.title")} <small style={{ fontSize: "0.6em", opacity: 0.5 }}>v1.2</small>
-        </h2>
-
-        <p style={{
-          textAlign: "center",
-          color: "#c9b58c",
-          fontSize: "0.9rem",
-          marginBottom: "2rem",
-          lineHeight: "1.5"
-        }}>
-          {t("welcome.subtitle")} <strong>{tenantName}</strong>.
-        </p>
-
-{/* Foto (opcional) */ }
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "1.5rem"
-        }}>
-          <label
-            htmlFor="photo-input"
-            style={{
-              width: "120px",
-              height: "120px",
-              borderRadius: "50%",
-              border: "3px solid #d4af37",
-              overflow: "hidden",
-              cursor: "pointer",
-              background: photoPreview
-                ? `url(${photoPreview}) center/cover`
-                : "linear-gradient(135deg, #3a2818, #2a1810)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.5), inset 0 2px 8px rgba(212,175,55,0.2)",
-              transition: "transform 0.2s",
-              position: "relative"
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-          >
-            {!photoPreview && (
-              <span style={{
-                fontSize: "2.5rem",
-                opacity: 0.6,
-                filter: "sepia(1) hue-rotate(20deg)"
-              }}>
-                📸
-              </span>
-            )}
-          </label>
-          <input
-            id="photo-input"
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            style={{ display: "none" }}
-          />
-        </div>
-
-        <p style={{
-          textAlign: "center",
-          fontSize: "0.8rem",
-          color: "#8b7355",
-          marginBottom: "1.5rem"
-        }}>
-          {photoPreview ? "Foto adicionada ✓" : "Clique para adicionar foto (opcional)"}
-        </p>
-
-{/* Nome completo */ }
+      <form onSubmit={handleSubmit}>
+        {/* Nome completo */}
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -229,7 +207,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-{/* E-mail */ }
+        {/* E-mail */}
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -256,7 +234,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-{/* Senha */ }
+        {/* Senha */}
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -283,7 +261,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-{/* Confirmar Senha */ }
+        {/* Confirmar Senha */}
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -310,7 +288,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-{/* Idade */ }
+        {/* Idade */}
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -339,21 +317,41 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-{
-  error && (
-    <p style={{
-      color: "#ff6b6b",
-      fontSize: "0.85rem",
-      marginBottom: "1rem",
-      textAlign: "center",
-      background: "rgba(255,107,107,0.1)",
-      padding: "0.5rem",
-      borderRadius: "0.5rem"
-    }}>
-      {error}
-    </p>
-  )
-}
+        {/* Termos de Uso */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <label style={{ display: "flex", alignItems: "start", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#f5e6d3" }}>
+            <input
+              type="checkbox"
+              checked={termsAccepted}
+              onChange={e => setTermsAccepted(e.target.checked)}
+              style={{ marginTop: "0.2rem" }}
+            />
+            <span>
+              Li e aceito os{" "}
+              <button
+                type="button"
+                onClick={() => setShowTermsModal(true)}
+                style={{ background: "none", border: "none", padding: 0, color: "#d4af37", textDecoration: "underline", cursor: "pointer", fontWeight: "bold" }}
+              >
+                Termos de Uso
+              </button>
+            </span>
+          </label>
+        </div>
+
+        {error && (
+          <p style={{
+            color: "#ff6b6b",
+            fontSize: "0.85rem",
+            marginBottom: "1rem",
+            textAlign: "center",
+            background: "rgba(255,107,107,0.1)",
+            padding: "0.5rem",
+            borderRadius: "0.5rem"
+          }}>
+            {error}
+          </p>
+        )}
 
         <button
           className="btn"
@@ -397,17 +395,54 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           </p>
         </div>
 
-{/* Ornamento inferior */ }
-<div style={{
-  position: "absolute",
-  bottom: "-1px",
-  left: "50%",
-  transform: "translateX(-50%)",
-  width: "80%",
-  height: "2px",
-  background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
-}} />
-      </form >
-    </div >
+        {/* Ornamento inferior */}
+        <div style={{
+          position: "absolute",
+          bottom: "-1px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "80%",
+          height: "2px",
+          background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
+        }} />
+      </form>
+
+      {/* Modal Termos */}
+      {showTermsModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(0,0,0,0.8)", zIndex: 9999,
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem"
+        }}>
+          <div style={{
+            background: "#1a1108", border: "1px solid #d4af37", borderRadius: "0.5rem",
+            width: "100%", maxWidth: "600px", maxHeight: "80vh", display: "flex", flexDirection: "column"
+          }}>
+            <div style={{ padding: "1rem", borderBottom: "1px solid #333", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ color: "#d4af37", margin: 0 }}>Termos de Uso</h3>
+              <button type="button" onClick={() => setShowTermsModal(false)} style={{ background: "none", border: "none", color: "#fff", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
+            </div>
+            <div style={{ padding: "1rem", overflowY: "auto", color: "#ddd", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
+              {termsText || "Termos de uso padrão da plataforma..."}
+              {privacyText && (
+                <>
+                  <h4 style={{ color: "#d4af37", marginTop: "1rem" }}>Política de Privacidade</h4>
+                  {privacyText}
+                </>
+              )}
+            </div>
+            <div style={{ padding: "1rem", borderTop: "1px solid #333", display: "flex", justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                onClick={() => { setTermsAccepted(true); setShowTermsModal(false); }}
+                style={{ background: "#d4af37", color: "#000", border: "none", padding: "0.5rem 1rem", borderRadius: "0.25rem", fontWeight: "bold", cursor: "pointer" }}
+              >
+                Aceitar e Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
