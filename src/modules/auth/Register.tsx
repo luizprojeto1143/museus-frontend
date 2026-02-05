@@ -67,8 +67,10 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
 
     {
       error && (
-            // ...
-        )
+        <div style={{ color: "#ef4444", marginTop: "1rem", textAlign: "center", padding: "0.5rem", background: "rgba(239, 68, 68, 0.1)", borderRadius: "4px" }}>
+          {error}
+        </div>
+      )
     }
 
     <button //... submit
