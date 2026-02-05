@@ -14,13 +14,18 @@ export const TenantForm: React.FC = () => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [isCityMode, setIsCityMode] = useState(false);
-
+  const [termsOfUse, setTermsOfUse] = useState("");
+  const [privacyPolicy, setPrivacyPolicy] = useState("");
 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminName, setAdminName] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [plan, setPlan] = useState("START");
   const [maxWorks, setMaxWorks] = useState(50);
+  // ...
+  // In loadTenant:
+  // setTermsOfUse(data.termsOfUse || "");
+  // setPrivacyPolicy(data.privacyPolicy || "");
 
   // Feature Flags
   const [featureWorks, setFeatureWorks] = useState(true);
@@ -47,6 +52,7 @@ export const TenantForm: React.FC = () => {
 
       setPlan(data.plan || "START");
       setMaxWorks(data.maxWorks || 50);
+
       // Feature Flags
       setFeatureWorks(data.featureWorks ?? true);
       setFeatureTrails(data.featureTrails ?? true);
@@ -60,7 +66,11 @@ export const TenantForm: React.FC = () => {
       setFeatureReviews(data.featureReviews ?? true);
       setFeatureGuestbook(data.featureGuestbook ?? true);
       setFeatureAccessibility(data.featureAccessibility ?? true);
+      setFeatureAccessibility(data.featureAccessibility ?? true);
       setFeatureMinigames(data.featureMinigames ?? false);
+
+      setTermsOfUse(data.termsOfUse || "");
+      setPrivacyPolicy(data.privacyPolicy || "");
     } catch {
       console.error("Failed to load tenant");
       alert(t("common.errorLoad"));
@@ -107,6 +117,9 @@ export const TenantForm: React.FC = () => {
       featureGuestbook?: boolean;
       featureAccessibility?: boolean;
       featureMinigames?: boolean;
+
+      termsOfUse?: string;
+      privacyPolicy?: string;
     }
 
     const payload: TenantPayload = {
@@ -129,7 +142,11 @@ export const TenantForm: React.FC = () => {
       featureReviews,
       featureGuestbook,
       featureAccessibility,
-      featureMinigames
+      featureAccessibility,
+      featureMinigames,
+
+      termsOfUse,
+      privacyPolicy
     };
 
     if (!isEdit) {
@@ -153,10 +170,10 @@ export const TenantForm: React.FC = () => {
   };
 
   return (
-    <div className="master-page-container">
+    <div className="master-page-container" >
 
       {/* HERO SECTION */}
-      <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem' }}>
+      < section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem' }} >
         <div className="master-hero-content">
           <button
             onClick={() => navigate('/master/tenants')}
@@ -174,7 +191,7 @@ export const TenantForm: React.FC = () => {
             {isEdit ? name : t("master.tenantForm.newTitle")}
           </h1>
         </div>
-      </section>
+      </section >
 
 
       <form onSubmit={handleSubmit} className="master-card" style={{ maxWidth: 800, margin: '0 auto' }}>
@@ -301,6 +318,43 @@ export const TenantForm: React.FC = () => {
           </div>
         </div>
 
+
+
+        <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
+
+        {/* LEGAL & TERMS */}
+        <div className="master-card-header">
+          <div className="master-icon-wrapper master-icon-yellow">
+            <Shield size={24} />
+          </div>
+          <h3>Termos e Privacidade (LGPD)</h3>
+        </div>
+
+        <div className="master-form">
+          <div className="master-input-group">
+            <label htmlFor="termsOfUse">Termos de Uso</label>
+            <textarea
+              id="termsOfUse"
+              rows={6}
+              value={termsOfUse}
+              onChange={e => setTermsOfUse(e.target.value)}
+              placeholder="Digite os termos de uso aqui..."
+              style={{ width: "100%", padding: "0.75rem", background: "#0f172a", border: "1px solid #334155", borderRadius: "0.5rem", color: "#e2e8f0", fontFamily: "monospace" }}
+            />
+          </div>
+          <div className="master-input-group">
+            <label htmlFor="privacyPolicy">Política de Privacidade</label>
+            <textarea
+              id="privacyPolicy"
+              rows={6}
+              value={privacyPolicy}
+              onChange={e => setPrivacyPolicy(e.target.value)}
+              placeholder="Digite a política de privacidade..."
+              style={{ width: "100%", padding: "0.75rem", background: "#0f172a", border: "1px solid #334155", borderRadius: "0.5rem", color: "#e2e8f0", fontFamily: "monospace" }}
+            />
+          </div>
+        </div>
+
         <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
 
         {/* FEATURE FLAGS */}
@@ -360,56 +414,58 @@ export const TenantForm: React.FC = () => {
           </label>
         </div>
 
-        {!isEdit && (
-          <>
-            <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
+        {
+          !isEdit && (
+            <>
+              <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
 
-            <div className="master-card-header">
-              <div className="master-icon-wrapper master-icon-red">
-                <Shield size={24} />
-              </div>
-              <h3>Administrador Inicial</h3>
-            </div>
-
-            <div className="master-form">
-              <div className="master-input-group">
-                <label htmlFor="adminName">{t("master.tenantForm.labels.adminName")}</label>
-                <input
-                  id="adminName"
-                  value={adminName}
-                  onChange={e => setAdminName(e.target.value)}
-                  placeholder={t("master.tenantForm.placeholders.adminName")}
-                  required
-                />
+              <div className="master-card-header">
+                <div className="master-icon-wrapper master-icon-red">
+                  <Shield size={24} />
+                </div>
+                <h3>Administrador Inicial</h3>
               </div>
 
-              <div className="master-grid-2">
+              <div className="master-form">
                 <div className="master-input-group">
-                  <label htmlFor="adminEmail">{t("master.tenantForm.labels.adminEmail")}</label>
+                  <label htmlFor="adminName">{t("master.tenantForm.labels.adminName")}</label>
                   <input
-                    id="adminEmail"
-                    type="email"
-                    value={adminEmail}
-                    onChange={e => setAdminEmail(e.target.value)}
-                    placeholder={t("master.tenantForm.placeholders.adminEmail")}
+                    id="adminName"
+                    value={adminName}
+                    onChange={e => setAdminName(e.target.value)}
+                    placeholder={t("master.tenantForm.placeholders.adminName")}
                     required
                   />
                 </div>
-                <div className="master-input-group">
-                  <label htmlFor="adminPassword">{t("master.tenantForm.labels.adminPassword")}</label>
-                  <input
-                    id="adminPassword"
-                    type="password"
-                    value={adminPassword}
-                    onChange={e => setAdminPassword(e.target.value)}
-                    placeholder={t("master.tenantForm.placeholders.adminPassword")}
-                    required
-                  />
+
+                <div className="master-grid-2">
+                  <div className="master-input-group">
+                    <label htmlFor="adminEmail">{t("master.tenantForm.labels.adminEmail")}</label>
+                    <input
+                      id="adminEmail"
+                      type="email"
+                      value={adminEmail}
+                      onChange={e => setAdminEmail(e.target.value)}
+                      placeholder={t("master.tenantForm.placeholders.adminEmail")}
+                      required
+                    />
+                  </div>
+                  <div className="master-input-group">
+                    <label htmlFor="adminPassword">{t("master.tenantForm.labels.adminPassword")}</label>
+                    <input
+                      id="adminPassword"
+                      type="password"
+                      value={adminPassword}
+                      onChange={e => setAdminPassword(e.target.value)}
+                      placeholder={t("master.tenantForm.placeholders.adminPassword")}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )
+        }
 
         <div style={{ marginTop: "2rem", display: "flex", gap: "0.75rem" }}>
           <button type="submit" className="master-btn btn-primary">

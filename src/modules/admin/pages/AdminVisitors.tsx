@@ -29,9 +29,12 @@ export const AdminVisitors: React.FC = () => {
   const loadVisitors = React.useCallback(async () => {
     try {
       const res = await api.get(`/visitors?tenantId=${tenantId}`);
-      setVisitors(res.data);
+      // The API returns { data: Visitor[], pagination: ... }
+      // We need to extract the data array
+      setVisitors(res.data.data || []);
     } catch (err) {
       console.error("Erro ao carregar visitantes", err);
+      setVisitors([]); // Ensure it's always an array on error
     } finally {
       setLoading(false);
     }

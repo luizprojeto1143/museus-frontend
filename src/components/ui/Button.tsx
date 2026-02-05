@@ -1,38 +1,44 @@
-import React from 'react';
+import React, { ButtonHTMLAttributes, forwardRef } from 'react';
+import { Loader2 } from 'lucide-react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
     size?: 'sm' | 'md' | 'lg';
+    isLoading?: boolean;
+    leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     children,
     className = '',
     variant = 'primary',
     size = 'md',
+    isLoading = false,
+    disabled,
+    leftIcon,
+    rightIcon,
     ...props
-}) => {
-    const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+}, ref) => {
 
-    const variants = {
-        primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500",
-        outline: "border border-gray-300 bg-transparent hover:bg-gray-50 text-gray-700",
-        ghost: "bg-transparent hover:bg-gray-100 text-gray-700"
-    };
-
-    const sizes = {
-        sm: "h-8 px-3 text-xs",
-        md: "h-10 px-4 py-2",
-        lg: "h-12 px-8 text-lg"
-    };
+    // Mapeamento para as classes globais definidas em src/styles.css
+    const variantClass = `btn-${variant}`;
+    const sizeClass = size === 'md' ? '' : `btn-${size}`; // md é o padrão na classe .btn
 
     return (
         <button
-            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+            ref={ref}
+            className={`btn ${variantClass} ${sizeClass} ${className}`}
+            disabled={disabled || isLoading}
+            aria-busy={isLoading}
             {...props}
         >
+            {isLoading && <Loader2 className="animate-spin" size={16} aria-hidden="true" />}
+            {!isLoading && leftIcon && <span className="mr-2" aria-hidden="true">{leftIcon}</span>}
             {children}
+            {!isLoading && rightIcon && <span className="ml-2" aria-hidden="true">{rightIcon}</span>}
         </button>
     );
-};
+});
+
+Button.displayName = "Button";

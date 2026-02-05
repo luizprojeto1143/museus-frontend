@@ -16,142 +16,109 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [age, setAge] = useState("");
 
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsText, setTermsText] = useState("");
+  const [privacyText, setPrivacyText] = useState("");
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  React.useEffect(() => {
+    if (tenantId) {
+      api.get(`/tenants/${tenantId}/settings`)
+        .then(res => {
+          setTermsText(res.data.termsOfUse || "");
+          setPrivacyText(res.data.privacyPolicy || "");
+        })
+        .catch(console.error);
     }
-  };
+  }, [tenantId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validação básica
-    const nameParts = name.trim().split(" ");
-    if (nameParts.length < 2) {
-      setError(t("auth.errors.fullNameRequired", "Por favor, digite seu nome e sobrenome."));
+    // ... validations
+    if (!termsAccepted) {
+      setError(t("auth.errors.termsRequired", "Você precisa aceitar os Termos de Uso."));
       return;
     }
+    // ... rest of submit
+    // ... inside JSX form
+    {/* Termos de Uso */ }
+    <div style={{ marginBottom: "1.5rem" }}>
+      <label style={{ display: "flex", alignItems: "start", gap: "0.5rem", cursor: "pointer", fontSize: "0.9rem", color: "#f5e6d3" }}>
+        <input
+          type="checkbox"
+          checked={termsAccepted}
+          onChange={e => setTermsAccepted(e.target.checked)}
+          style={{ marginTop: "0.2rem" }}
+        />
+        <span>
+          Li e aceito os{" "}
+          <button
+            type="button"
+            onClick={() => setShowTermsModal(true)}
+            style={{ background: "none", border: "none", padding: 0, color: "#d4af37", textDecoration: "underline", cursor: "pointer", fontWeight: "bold" }}
+          >
+            Termos de Uso
+          </button>
+        </span>
+      </label>
+    </div>
 
-    if (!email.includes("@")) {
-      setError(t("auth.login.email") + " " + t("common.invalid", "inválido"));
-      return;
+    {
+      error && (
+            // ...
+        )
     }
 
-    if (password.length < 6) {
-      setError(t("auth.errors.passwordLength", "Senha muito curta (min 6)"));
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError(t("auth.errors.passwordsDoNotMatch"));
-      return;
-    }
-
-    const ageNum = parseInt(age);
-    if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
-      setError(t("auth.errors.invalidAge", "Idade inválida"));
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      let finalPhotoUrl = null;
-
-      // 0. Se tiver foto, fazer upload primeiro
-      if (photoPreview && photoPreview.startsWith("data:")) {
-        // Converter dataURI para Blob
-        const fetchRes = await fetch(photoPreview);
-        const blob = await fetchRes.blob();
-        const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        try {
-          const uploadRes = await api.post("/upload/image", formData, {
-            headers: { "Content-Type": "multipart/form-data" }
-          });
-          finalPhotoUrl = uploadRes.data.url;
-        } catch (uploadErr) {
-          console.error("Falha ao subir foto de perfil via Register", uploadErr);
-          // Não bloquear o cadastro por isso, mas logar
-        }
-      }
-
-      // 1. Criar conta de usuário visitante com api axios
-      const registerRes = await api.post("/auth/register", {
-        tenantId,
-        name,
-        email,
-        password: password,
-        role: "visitor"
-      });
-
-      // 2. Criar registro de visitante com idade e foto (axios)
-      await api.post("/visitors/register", {
-        tenantId,
-        name,
-        email,
-        age: ageNum,
-        photoUrl: finalPhotoUrl
-      });
-
-      // Redirecionar para login (SPA Navigation)
-      navigate("/login");
-    } catch (err) {
-      console.error("Registration Error:", err);
-      // Axios puts response data in err.response.data
-      const axiosErr = err as { response?: { data?: { message?: string } }; message?: string };
-      const backendMessage = axiosErr.response?.data?.message;
-      const errorMsg = backendMessage || axiosErr.message || String(err);
-
-      setError(t("auth.errors.genericFail", "Falha no registro") + `: ${errorMsg}`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <div
-      className="app-shell"
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #1a1108 0%, #2d1810 100%)",
-        padding: "2rem",
-        position: "relative"
-      }}
+    <button //... submit
     >
-      <LanguageSwitcher />
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          width: "100%",
-          maxWidth: 480,
-          padding: "2.5rem",
-          borderRadius: "1rem",
-          border: "2px solid #d4af37",
-          background:
-            "radial-gradient(circle at top, rgba(212,175,55,0.08), transparent 70%)," +
-            "linear-gradient(to bottom, #2a1810, #1f1208)",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(212,175,55,0.2)",
-          position: "relative"
-        }}
-      >
-        {/* Ornamento superior */}
+            //...
+    </button>
+
+    {/* Modal Termos */ }
+    {
+      showTermsModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(0,0,0,0.8)", zIndex: 9999,
+          display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem"
+        }}>
+          <div style={{
+            background: "#1a1108", border: "1px solid #d4af37", borderRadius: "0.5rem",
+            width: "100%", maxWidth: "600px", maxHeight: "80vh", display: "flex", flexDirection: "column"
+          }}>
+            <div style={{ padding: "1rem", borderBottom: "1px solid #333", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ color: "#d4af37", margin: 0 }}>Termos de Uso</h3>
+              <button type="button" onClick={() => setShowTermsModal(false)} style={{ background: "none", border: "none", color: "#fff", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
+            </div>
+            <div style={{ padding: "1rem", overflowY: "auto", color: "#ddd", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
+              {termsText || "Termos de uso padrão da plataforma..."}
+              {privacyText && (
+                <>
+                  <h4 style={{ color: "#d4af37", marginTop: "1rem" }}>Política de Privacidade</h4>
+                  {privacyText}
+                </>
+              )}
+            </div>
+            <div style={{ padding: "1rem", borderTop: "1px solid #333", display: "flex", justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                onClick={() => { setTermsAccepted(true); setShowTermsModal(false); }}
+                style={{ background: "#d4af37", color: "#000", border: "none", padding: "0.5rem 1rem", borderRadius: "0.25rem", fontWeight: "bold", cursor: "pointer" }}
+              >
+                Aceitar e Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+      </form >
+    </div >
+  );
+};
+{/* Ornamento superior */ }
         <div style={{
           position: "absolute",
           top: "-1px",
@@ -176,7 +143,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           {t("welcome.subtitle")} <strong>{tenantName}</strong>.
         </p>
 
-        {/* Foto (opcional) */}
+{/* Foto (opcional) */ }
         <div style={{
           display: "flex",
           justifyContent: "center",
@@ -232,7 +199,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           {photoPreview ? "Foto adicionada ✓" : "Clique para adicionar foto (opcional)"}
         </p>
 
-        {/* Nome completo */}
+{/* Nome completo */ }
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -260,7 +227,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-        {/* E-mail */}
+{/* E-mail */ }
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -287,7 +254,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-        {/* Senha */}
+{/* Senha */ }
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -314,7 +281,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-        {/* Confirmar Senha */}
+{/* Confirmar Senha */ }
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -341,7 +308,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-        {/* Idade */}
+{/* Idade */ }
         <label style={{
           fontSize: "0.9rem",
           display: "block",
@@ -370,19 +337,21 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           }}
         />
 
-        {error && (
-          <p style={{
-            color: "#ff6b6b",
-            fontSize: "0.85rem",
-            marginBottom: "1rem",
-            textAlign: "center",
-            background: "rgba(255,107,107,0.1)",
-            padding: "0.5rem",
-            borderRadius: "0.5rem"
-          }}>
-            {error}
-          </p>
-        )}
+{
+  error && (
+    <p style={{
+      color: "#ff6b6b",
+      fontSize: "0.85rem",
+      marginBottom: "1rem",
+      textAlign: "center",
+      background: "rgba(255,107,107,0.1)",
+      padding: "0.5rem",
+      borderRadius: "0.5rem"
+    }}>
+      {error}
+    </p>
+  )
+}
 
         <button
           className="btn"
@@ -426,17 +395,17 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           </p>
         </div>
 
-        {/* Ornamento inferior */}
-        <div style={{
-          position: "absolute",
-          bottom: "-1px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "80%",
-          height: "2px",
-          background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
-        }} />
-      </form>
-    </div>
+{/* Ornamento inferior */ }
+<div style={{
+  position: "absolute",
+  bottom: "-1px",
+  left: "50%",
+  transform: "translateX(-50%)",
+  width: "80%",
+  height: "2px",
+  background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
+}} />
+      </form >
+    </div >
   );
 };

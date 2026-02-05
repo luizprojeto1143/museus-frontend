@@ -23,14 +23,14 @@ export const AdminEvents: React.FC = () => {
     api
       .get("/events", { params: { tenantId } })
       .then((res) => {
-        const apiEvents = (res.data as { id: string; title: string; date?: string; startsAt?: string; time?: string; active?: boolean }[]).map((e) => ({
+        const events = res.data.map((e: any) => ({
           id: e.id,
           title: e.title,
-          date: e.date ?? e.startsAt ?? "",
-          time: e.time ?? "",
+          date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",
+          time: e.startDate ? new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
           active: e.active ?? true
         }));
-        setEvents(apiEvents);
+        setEvents(events);
       })
       .catch((err) => {
         console.error("Failed to fetch events", err);

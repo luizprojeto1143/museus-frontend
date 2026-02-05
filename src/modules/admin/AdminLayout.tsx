@@ -1,37 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
+import { api } from "../../api/client";
+
+interface TenantFeatures {
+  featureWorks: boolean;
+  featureTrails: boolean;
+  featureEvents: boolean;
+  featureGamification: boolean;
+  featureQRCodes: boolean;
+  featureChatAI: boolean;
+  featureShop: boolean;
+  featureCertificates: boolean;
+  featureReviews: boolean;
+  featureGuestbook: boolean;
+  featureAccessibility: boolean;
+}
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { logout, name } = useAuth();
+  const { logout, name, tenantId } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [features, setFeatures] = useState<TenantFeatures | null>(null);
 
-  const links = [
-    { to: "/admin", label: t("admin.sidebar.dashboard"), icon: "📊" },
-    { to: "/admin/obras", label: t("admin.sidebar.artworks"), icon: "🖼️" },
-    { to: "/admin/trilhas", label: t("admin.sidebar.trails"), icon: "🧭" },
-    { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭" },
-    { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫" },
-    { to: "/admin/certificates", label: "Certificados", icon: "🎓" },
-    { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱" },
-    { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️" },
-    { to: "/admin/visitantes", label: t("admin.sidebar.visitors"), icon: "👥" },
-    { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐" },
-    { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️" },
-    { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅" },
-    { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "🛒" },
-    { to: "/admin/ia", label: t("admin.sidebar.ai", "Assistente IA"), icon: "🤖" },
-    { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈" },
-    { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂" },
-    { to: "/admin/usuarios", label: t("admin.sidebar.users", "Usuários"), icon: "👤" },
-    { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️" },
-    { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍" },
-    { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️" }
+  useEffect(() => {
+    if (tenantId) {
+      api.get(`/tenants/${tenantId}`)
+        .then(res => setFeatures(res.data))
+        .catch(err => console.error("Error loading tenant features", err));
+    }
+  }, [tenantId]);
+
+  const allLinks = [
+    { to: "/admin", label: t("admin.sidebar.dashboard"), icon: "📊", show: true },
+    { to: "/admin/obras", label: t("admin.sidebar.artworks"), icon: "🖼️", show: features?.featureWorks ?? true },
+    { to: "/admin/trilhas", label: t("admin.sidebar.trails"), icon: "🧭", show: features?.featureTrails ?? true },
+    { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: features?.featureEvents ?? true },
+    { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫", show: features?.featureEvents ?? true },
+    { to: "/admin/certificates", label: "Certificados", icon: "🎓", show: features?.featureCertificates ?? true },
+    { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱", show: features?.featureQRCodes ?? true },
+    { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️", show: true },
+    { to: "/admin/visitantes", label: t("admin.sidebar.visitors"), icon: "👥", show: true },
+    { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐", show: (features?.featureReviews || features?.featureGuestbook) ?? true },
+    { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️", show: features?.featureGamification ?? true },
+    { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅", show: features?.featureGamification ?? true },
+    { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "🛒", show: features?.featureShop ?? true },
+    { to: "/admin/ia", label: t("admin.sidebar.ai", "Assistente IA"), icon: "🤖", show: features?.featureChatAI ?? true },
+    { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈", show: true },
+    { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂", show: true },
+    { to: "/admin/usuarios", label: t("admin.sidebar.users", "Usuários"), icon: "👤", show: true },
+    { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
+    { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
+    { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true }
   ];
+
+  const links = allLinks.filter(l => l.show);
 
   return (
     <div className="layout-wrapper">

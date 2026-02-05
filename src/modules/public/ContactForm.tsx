@@ -29,50 +29,67 @@ export const ContactForm: React.FC = () => {
 
     if (status === "success") {
         return (
-            <div style={{ textAlign: "center", padding: "3rem", background: "rgba(76, 217, 100, 0.1)", borderRadius: "1rem", border: "1px solid #4cd964" }}>
-                <CheckCircle size={48} color="#4cd964" style={{ marginBottom: "1rem" }} />
-                <h3 style={{ color: "#4cd964", marginBottom: "0.5rem" }}>Mensagem Enviada!</h3>
-                <p>Nossa equipe entrará em contato em breve.</p>
-                <button onClick={() => setStatus("idle")} style={{ marginTop: "1rem", background: "transparent", border: "1px solid #4cd964", padding: "0.5rem 1rem", borderRadius: "0.5rem", color: "#4cd964", cursor: "pointer" }}>Enviar outra</button>
+            <div role="alert" style={{ textAlign: "center", padding: "3rem", background: "rgba(34, 197, 94, 0.1)", borderRadius: "var(--radius-lg)", border: "1px solid var(--status-success)" }}>
+                <CheckCircle size={48} color="var(--status-success)" style={{ marginBottom: "1rem" }} aria-hidden="true" />
+                <h3 style={{ color: "var(--status-success)", marginBottom: "0.5rem" }}>Mensagem Enviada!</h3>
+                <p style={{ fontFamily: "var(--font-body)" }}>Nossa equipe entrará em contato em breve.</p>
+                <button
+                    onClick={() => setStatus("idle")}
+                    style={{
+                        marginTop: "1rem",
+                        background: "transparent",
+                        border: "1px solid var(--status-success)",
+                        padding: "0.5rem 1rem",
+                        borderRadius: "var(--radius-md)",
+                        color: "var(--status-success)",
+                        cursor: "pointer",
+                        fontFamily: "var(--font-body)"
+                    }}
+                >
+                    Enviar outra
+                </button>
             </div>
         );
     }
 
     return (
-        <form onSubmit={handleSubmit} style={{ background: "rgba(255,255,255,0.03)", padding: "2rem", borderRadius: "1rem", border: "1px solid rgba(212,175,55,0.2)" }}>
-            <h3 style={{ color: "#d4af37", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <Mail size={20} /> Fale com um Consultor
+        <form onSubmit={handleSubmit} style={{ background: "var(--bg-surface)", padding: "2rem", borderRadius: "1rem", border: "1px solid var(--border-default)" }}>
+            <h3 style={{ color: "var(--accent-primary)", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <Mail size={20} aria-hidden="true" /> Fale com um Consultor
             </h3>
 
             <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8 }}>Nome</label>
+                <label htmlFor="contact-name" style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8, fontFamily: "var(--font-body)" }}>Nome</label>
                 <input
+                    id="contact-name"
                     required
                     value={name}
                     onChange={e => setName(e.target.value)}
-                    style={{ width: "100%", padding: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "#fff" }}
+                    style={{ width: "100%", padding: "0.8rem", background: "var(--bg-page)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", color: "var(--fg-main)", fontFamily: "var(--font-body)" }}
                     placeholder="Seu nome"
                 />
             </div>
 
             <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8 }}>Email Profissional</label>
+                <label htmlFor="contact-email" style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8, fontFamily: "var(--font-body)" }}>Email Profissional</label>
                 <input
+                    id="contact-email"
                     required
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    style={{ width: "100%", padding: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "#fff" }}
+                    style={{ width: "100%", padding: "0.8rem", background: "var(--bg-page)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", color: "var(--fg-main)", fontFamily: "var(--font-body)" }}
                     placeholder="seu@empresa.com"
                 />
             </div>
 
             <div style={{ marginBottom: "1rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8 }}>Assunto</label>
+                <label htmlFor="contact-subject" style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8, fontFamily: "var(--font-body)" }}>Assunto</label>
                 <select
+                    id="contact-subject"
                     value={subject}
                     onChange={e => setSubject(e.target.value)}
-                    style={{ width: "100%", padding: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "#fff" }}
+                    style={{ width: "100%", padding: "0.8rem", background: "var(--bg-page)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", color: "var(--fg-main)", fontFamily: "var(--font-body)" }}
                 >
                     <option value="Consultoria LBI">Adequação Lei Rouanet (LBI)</option>
                     <option value="Comercial">Planos e Preços</option>
@@ -81,29 +98,45 @@ export const ContactForm: React.FC = () => {
             </div>
 
             <div style={{ marginBottom: "1.5rem" }}>
-                <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8 }}>Mensagem</label>
+                <label htmlFor="contact-message" style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", opacity: 0.8, fontFamily: "var(--font-body)" }}>Mensagem</label>
                 <textarea
+                    id="contact-message"
                     required
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                     rows={4}
-                    style={{ width: "100%", padding: "0.8rem", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.5rem", color: "#fff", resize: "vertical" }}
+                    style={{ width: "100%", padding: "0.8rem", background: "var(--bg-page)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", color: "var(--fg-main)", resize: "vertical", fontFamily: "var(--font-body)" }}
                     placeholder="Como podemos ajudar?"
                 />
             </div>
 
             {status === "error" && (
-                <div style={{ padding: "0.8rem", background: "rgba(255,0,0,0.1)", border: "1px solid #ff4444", borderRadius: "0.5rem", color: "#ff8888", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <AlertCircle size={16} /> Erro ao enviar. Tente novamente.
+                <div role="alert" style={{ padding: "0.8rem", background: "rgba(239, 68, 68, 0.1)", border: "1px solid var(--status-error)", borderRadius: "var(--radius-md)", color: "#ff8888", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <AlertCircle size={16} aria-hidden="true" /> Erro ao enviar. Tente novamente.
                 </div>
             )}
 
             <button
                 type="submit"
                 disabled={status === "submitting"}
-                style={{ width: "100%", padding: "1rem", background: "#d4af37", color: "#000", border: "none", borderRadius: "0.5rem", fontWeight: "bold", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem", opacity: status === "submitting" ? 0.7 : 1 }}
+                style={{
+                    width: "100%",
+                    padding: "1rem",
+                    background: "var(--accent-primary)",
+                    color: "var(--color-neutral-950)",
+                    border: "none",
+                    borderRadius: "var(--radius-md)",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    opacity: status === "submitting" ? 0.7 : 1,
+                    fontFamily: "var(--font-body)"
+                }}
             >
-                {status === "submitting" ? "Enviando..." : <>Enviar Mensagem <Send size={18} /></>}
+                {status === "submitting" ? "Enviando..." : <>Enviar Mensagem <Send size={18} aria-hidden="true" /></>}
             </button>
         </form>
     );

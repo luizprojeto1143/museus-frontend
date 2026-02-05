@@ -30,10 +30,65 @@ api.interceptors.request.use((config) => {
 // Log API URL for debugging (Removed for production)
 // console.debug(`🔌 API Client Initialized with baseURL: ${baseURL}`);
 
-// Global Error Handler for API
+
+interface StoredAuth {
+  token: string;
+  refreshToken: string;
+  role: string;
+  tenantId: string | null;
+  tenantType: "MUSEUM" | "PRODUCER" | null;
+  email: string | null;
+  name: string | null;
+}
+
+// Global Error Handler for API & Token Refresh Logic
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Se erro for 401 e ainda não tentamos retry
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const raw = window.localStorage.getItem("museus_auth_v1");
+        if (!raw) throw new Error("No token stored");
+
+        const stored = JSON.parse(raw) as StoredAuth;
+        const refreshToken = stored.refreshToken;
+
+        if (!refreshToken) throw new Error("No refresh token");
+
+        // Tentar renovar token (usar axios limpo para evitar loop)
+        const response = await axios.post(baseURL + "/auth/refresh", { refreshToken });
+
+        if (response.status === 200) {
+          const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+          // Atualizar Storage
+          const updatedStorage: StoredAuth = {
+            ...stored,
+            token: accessToken,
+            refreshToken: newRefreshToken
+          };
+          window.localStorage.setItem("museus_auth_v1", JSON.stringify(updatedStorage));
+
+          // Atualizar Header da requisição original
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
+          // Re-executar requisição original
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error("Session expired or refresh failed", refreshError);
+        // Logout forçado
+        window.localStorage.removeItem("museus_auth_v1");
+        // Opcional: Redirecionar para login
+        // window.location.href = "/login";
+      }
+    }
+
     console.error("❌ API Error:", {
       url: error.config?.url,
       method: error.config?.method,

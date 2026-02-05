@@ -4,11 +4,13 @@ import React, {
   useState,
   ReactNode
 } from "react";
+import { api } from "../../api/client";
 
 export type Role = "visitor" | "admin" | "master";
 
 interface StoredAuth {
   token: string;
+  refreshToken: string; // [NEW]
   role: Role;
   tenantId: string | null;
   tenantType: "MUSEUM" | "PRODUCER" | null;
@@ -20,13 +22,14 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   role: Role | null;
   token: string | null;
+  refreshToken: string | null; // [NEW]
   tenantId: string | null;
   tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
   login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null }>;
   logout: () => void;
-  updateSession: (newToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => void;
+  updateSession: (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,6 +43,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const parsed = JSON.parse(stored) as StoredAuth;
         return parsed.token;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as StoredAuth;
+        return parsed.refreshToken || null;
       } catch {
         return null;
       }
@@ -129,6 +145,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const data = (await res.json()) as {
         accessToken?: string;
+        refreshToken?: string;
         role?: string;
         tenantId?: string | null;
         tenantType?: "MUSEUM" | "PRODUCER" | null;
@@ -136,6 +153,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       const receivedToken = data.accessToken;
+      const receivedRefreshToken = data.refreshToken || ""; // Fallback logic
       if (!receivedToken) {
         throw new Error("Token não recebido do backend");
       }
@@ -148,11 +166,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       else if (backendRole === "VISITOR") mappedRole = "visitor";
 
       const receivedTenantId = data.tenantId ?? null;
-      const receivedTenantType = data.tenantType ?? "MUSEUM"; // Default to MUSEUM
+      const receivedTenantType = data.tenantType ?? "MUSEUM";
       const receivedEmail = data.user?.email ?? email;
       const receivedName = data.user?.name ?? null;
 
       setToken(receivedToken);
+      setRefreshToken(receivedRefreshToken);
       setRole(mappedRole);
       setTenantId(receivedTenantId);
       setTenantType(receivedTenantType);
@@ -161,6 +180,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const toStore: StoredAuth = {
         token: receivedToken,
+        refreshToken: receivedRefreshToken,
         role: mappedRole,
         tenantId: receivedTenantId,
         tenantType: receivedTenantType,
@@ -171,14 +191,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { role: mappedRole, tenantType: receivedTenantType };
     } else {
-      // modo demo
+      // modo demo (mock)
       const simulatedRole: Role =
         email.includes("master") ? "master" : "admin";
-
       const simulatedTenantType = email.includes("producer") ? "PRODUCER" : "MUSEUM";
 
-      const fakeToken = "demo-token";
+      const fakeToken = "demo-access-token";
+      const fakeRefToken = "demo-refresh-token";
+
       setToken(fakeToken);
+      setRefreshToken(fakeRefToken);
       setRole(simulatedRole);
       setTenantId(null);
       setTenantType(simulatedTenantType);
@@ -187,6 +209,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const toStore: StoredAuth = {
         token: fakeToken,
+        refreshToken: fakeRefToken,
         role: simulatedRole,
         tenantId: null,
         tenantType: simulatedTenantType,
@@ -199,18 +222,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Tenta avisar o backend para revogar token
+    try {
+      if (refreshToken) {
+        // Usar fetch direto para evitar ciclo de dependência com api client se ele usar context
+        const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
+        if (baseUrl) {
+          await fetch(baseUrl + "/auth/logout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken })
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Erro ao notificar logout", e);
+    }
+
     setToken(null);
+    setRefreshToken(null);
     setRole(null);
     setTenantId(null);
     setTenantType(null);
     setEmail(null);
     setName(null);
     window.localStorage.removeItem(STORAGE_KEY);
+
+    // Forçar recarga ou limpeza de cache se necessário
+    // window.location.href = "/login"; // Opcional
   };
 
-  const updateSession = (newToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => {
-    // Normalizar role para lowercase para garantir compatibilidade
+  const updateSession = (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => {
     let mappedRole: Role = "visitor";
     const upperRole = (newRole || "").toUpperCase();
 
@@ -219,15 +262,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     else if (upperRole === "VISITOR") mappedRole = "visitor";
 
     setToken(newToken);
+    setRefreshToken(newRefreshToken);
     setRole(mappedRole);
     setTenantId(newTenantId);
     if (newName !== undefined) setName(newName ?? null);
 
-    // Maintain existing tenantType or default to MUSEUM if updating session without re-login
     const currentTenantType = tenantType ?? "MUSEUM";
 
     const toStore: StoredAuth = {
       token: newToken,
+      refreshToken: newRefreshToken,
       role: mappedRole,
       tenantId: newTenantId,
       tenantType: currentTenantType,
@@ -243,6 +287,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isAuthenticated: !!token,
         role,
         token,
+        refreshToken,
         tenantId,
         tenantType,
         email,

@@ -12,8 +12,21 @@ export const SmartRouteGenerator: React.FC = () => {
 
     const [loading, setLoading] = useState(false);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [result, setResult] = useState<any | null>(null);
+    const [result, setResult] = useState<any[] | null>(null);
     const [time, setTime] = useState(30);
+    const [interests, setInterests] = useState<string[]>([]);
+
+    const availableInterests = [
+        "História", "Arte Moderna", "Esculturas", "Pintura", "Curiosidades", "Fotografia"
+    ];
+
+    const toggleInterest = (interest: string) => {
+        setInterests(prev =>
+            prev.includes(interest)
+                ? prev.filter(i => i !== interest)
+                : [...prev, interest]
+        );
+    };
 
     const handleGenerate = async () => {
         if (!tenantId) return;
@@ -21,9 +34,14 @@ export const SmartRouteGenerator: React.FC = () => {
         setResult(null);
 
         try {
-            const res = await api.post("/trails/generate", {
+            // Using REAL AI Endpoint
+            const res = await api.post("/ai/itinerary", {
                 tenantId,
-                minutes: time
+                preferences: {
+                    timeAvailable: time,
+                    interests: interests.length > 0 ? interests : ["Destaques"],
+                    accessibility: []
+                }
             });
             setResult(res.data);
         } catch (err) {
@@ -34,14 +52,9 @@ export const SmartRouteGenerator: React.FC = () => {
     };
 
     const handleStart = () => {
-        if (result) {
-            // In a real implementation, we might save this trail first OR pass state
-            // For MVP, we pass the workIds via state or URL if possible. 
-            // Since our system expects a :id for trails, we might need to handle this.
-            // Option: "Play" just goes to the first work of the list.
-            if (result.workIds && result.workIds.length > 0) {
-                navigate(`/obras/${result.workIds[0]}`);
-            }
+        if (result && result.length > 0) {
+            // Navigate to first work
+            navigate(`/obras/${result[0].id}`);
         }
     };
 
@@ -70,23 +83,46 @@ export const SmartRouteGenerator: React.FC = () => {
 
             {!result ? (
                 <div>
-                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
+                    <p style={{ fontSize: "0.85rem", marginBottom: "0.5rem", color: "#aaa" }}>Tempo Disponível:</p>
+                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
                         {[15, 30, 45, 60, 90, 120].map(m => (
                             <button
                                 key={m}
                                 onClick={() => setTime(m)}
                                 style={{
-                                    padding: "0.6rem 1.2rem",
+                                    padding: "0.5rem 1rem",
                                     borderRadius: "2rem",
                                     border: time === m ? "1px solid #d4af37" : "1px solid rgba(255,255,255,0.1)",
                                     background: time === m ? "#d4af37" : "transparent",
                                     color: time === m ? "black" : "white",
                                     fontWeight: time === m ? "bold" : "normal",
                                     cursor: "pointer",
-                                    transition: "all 0.2s"
+                                    transition: "all 0.2s",
+                                    whiteSpace: "nowrap"
                                 }}
                             >
                                 {m} min
+                            </button>
+                        ))}
+                    </div>
+
+                    <p style={{ fontSize: "0.85rem", marginBottom: "0.5rem", color: "#aaa" }}>Interesses:</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1.5rem" }}>
+                        {availableInterests.map(i => (
+                            <button
+                                key={i}
+                                onClick={() => toggleInterest(i)}
+                                style={{
+                                    padding: "0.4rem 0.8rem",
+                                    borderRadius: "8px",
+                                    border: interests.includes(i) ? "1px solid #8b5cf6" : "1px solid rgba(255,255,255,0.1)",
+                                    background: interests.includes(i) ? "rgba(139, 92, 246, 0.2)" : "rgba(255,255,255,0.05)",
+                                    color: interests.includes(i) ? "#a78bfa" : "white",
+                                    cursor: "pointer",
+                                    fontSize: "0.85rem"
+                                }}
+                            >
+                                {i}
                             </button>
                         ))}
                     </div>
@@ -116,15 +152,17 @@ export const SmartRouteGenerator: React.FC = () => {
             ) : (
                 <div className="smart-route-result animate-fade-in">
                     <div style={{ background: "rgba(255,255,255,0.05)", borderRadius: "0.8rem", padding: "1rem", marginBottom: "1rem" }}>
-                        <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>{result.title}</h3>
-                        <p style={{ fontSize: "0.9rem", color: "#ccc", marginBottom: "1rem" }}>{result.description}</p>
+                        <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Roteiro Sugerido</h3>
+                        <p style={{ fontSize: "0.9rem", color: "#ccc", marginBottom: "1rem" }}>
+                            Baseado em {interests.join(", ") || "seus interesses"} e {time} min.
+                        </p>
 
                         <div style={{ display: "flex", gap: "1rem", fontSize: "0.9rem", color: "#d4af37" }}>
                             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                                <Clock size={16} /> {result.duration} min
+                                <Clock size={16} /> ~{time} min
                             </span>
                             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                                <MapPin size={16} /> {result.works?.length || 0} {t("visitor.smartRoute.works")}
+                                <MapPin size={16} /> {result.length} obras
                             </span>
                         </div>
                     </div>

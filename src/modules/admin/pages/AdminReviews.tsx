@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, CheckCircle, XCircle, User, Clock, Filter, MessageCircle } from 'lucide-react';
+import { Star, CheckCircle, XCircle, User, Clock, Filter, MessageCircle, BookOpen, Eye, EyeOff } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 
@@ -17,23 +17,44 @@ interface Review {
     event?: { title: string };
 }
 
+interface GuestbookEntry {
+    id: string;
+    message: string;
+    isVisible: boolean;
+    createdAt: string;
+    visitor: {
+        name: string;
+        photoUrl: string | null;
+    };
+}
+
+type TabMode = 'reviews' | 'guestbook';
+
 export const AdminReviews: React.FC = () => {
     const { tenantId } = useAuth();
+    const [mode, setMode] = useState<TabMode>('reviews');
+
+    // Reviews State
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'approved'>('pending');
+
+    // Guestbook State
+    const [guestbook, setGuestbook] = useState<GuestbookEntry[]>([]);
+
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('pending');
 
     useEffect(() => {
-        fetchReviews();
-    }, [tenantId, filter]);
+        if (mode === 'reviews') fetchReviews();
+        else fetchGuestbook();
+    }, [tenantId, mode, reviewFilter]);
 
     const fetchReviews = async () => {
         if (!tenantId) return;
         setLoading(true);
         try {
-            const approved = filter === 'all' ? 'all' : filter === 'approved' ? 'true' : 'false';
+            const approved = reviewFilter === 'all' ? 'all' : reviewFilter === 'approved' ? 'true' : 'false';
             const res = await api.get(`/reviews?tenantId=${tenantId}&approved=${approved}`);
-            setReviews(res.data.reviews);
+            setReviews(res.data.reviews || []);
         } catch (error) {
             console.error('Error fetching reviews:', error);
         } finally {
@@ -41,22 +62,56 @@ export const AdminReviews: React.FC = () => {
         }
     };
 
-    const handleApprove = async (id: string) => {
+    const fetchGuestbook = async () => {
+        if (!tenantId) return;
+        setLoading(true);
+        try {
+            const res = await api.get(`/guestbook?tenantId=${tenantId}&includeHidden=true`);
+            setGuestbook(res.data);
+        } catch (error) {
+            console.error('Error fetching guestbook:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Review Actions
+    const handleApproveReview = async (id: string) => {
         try {
             await api.patch(`/reviews/${id}/approve`);
             setReviews(prev => prev.map(r => r.id === id ? { ...r, approved: true } : r));
         } catch (error) {
-            console.error('Error approving review:', error);
+            alert('Erro ao aprovar');
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Tem certeza que deseja excluir esta avaliação?')) return;
+    const handleDeleteReview = async (id: string) => {
+        if (!confirm('Excluir avaliação?')) return;
         try {
             await api.delete(`/reviews/${id}`);
             setReviews(prev => prev.filter(r => r.id !== id));
         } catch (error) {
-            console.error('Error deleting review:', error);
+            alert('Erro ao excluir');
+        }
+    };
+
+    // Guestbook Actions
+    const handleToggleVisibility = async (id: string, currentStatus: boolean) => {
+        try {
+            await api.patch(`/guestbook/${id}/visibility`, { isVisible: !currentStatus });
+            setGuestbook(prev => prev.map(g => g.id === id ? { ...g, isVisible: !currentStatus } : g));
+        } catch (error) {
+            alert('Erro ao atualizar');
+        }
+    };
+
+    const handleDeleteGuestbook = async (id: string) => {
+        if (!confirm('Excluir mensagem do livro de visitas?')) return;
+        try {
+            await api.delete(`/guestbook/${id}`);
+            setGuestbook(prev => prev.filter(g => g.id !== id));
+        } catch (error) {
+            alert('Erro ao excluir');
         }
     };
 
@@ -77,296 +132,228 @@ export const AdminReviews: React.FC = () => {
         <div className="admin-reviews-page">
             <header className="page-header">
                 <div>
-                    <h1>⭐ Moderação de Avaliações</h1>
-                    <p className="subtitle">Aprove ou rejeite avaliações dos visitantes</p>
+                    <h1>🛡️ Central de Moderação</h1>
+                    <p className="subtitle">Gerencie avaliações e mensagens da comunidade</p>
                 </div>
-                {pendingCount > 0 && (
-                    <div className="pending-badge">
-                        {pendingCount} pendente{pendingCount > 1 ? 's' : ''}
-                    </div>
-                )}
             </header>
 
-            {/* Filters */}
-            <div className="filters-bar">
+            {/* Mode Tabs */}
+            <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "1rem" }}>
                 <button
-                    className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
-                    onClick={() => setFilter('pending')}
+                    onClick={() => setMode('reviews')}
+                    style={{
+                        background: "transparent",
+                        border: "none",
+                        borderBottom: mode === "reviews" ? "2px solid #d4af37" : "none",
+                        color: mode === "reviews" ? "#d4af37" : "#aaa",
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                        padding: "0.5rem 1rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        gap: "0.5rem"
+                    }}
                 >
-                    <Clock size={16} /> Pendentes
+                    <Star size={18} /> Avaliações {pendingCount > 0 && <span className='badge-count'>{pendingCount}</span>}
                 </button>
                 <button
-                    className={`filter-btn ${filter === 'approved' ? 'active' : ''}`}
-                    onClick={() => setFilter('approved')}
+                    onClick={() => setMode('guestbook')}
+                    style={{
+                        background: "transparent",
+                        border: "none",
+                        borderBottom: mode === "guestbook" ? "2px solid #d4af37" : "none",
+                        color: mode === "guestbook" ? "#d4af37" : "#aaa",
+                        fontSize: "1.1rem",
+                        fontWeight: "bold",
+                        padding: "0.5rem 1rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        gap: "0.5rem"
+                    }}
                 >
-                    <CheckCircle size={16} /> Aprovadas
-                </button>
-                <button
-                    className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
-                    onClick={() => setFilter('all')}
-                >
-                    <Filter size={16} /> Todas
+                    <BookOpen size={18} /> Livro de Visitas
                 </button>
             </div>
 
-            {/* Reviews List */}
-            <div className="reviews-list">
-                {loading ? (
-                    <div className="loading-state">Carregando avaliações...</div>
-                ) : reviews.length === 0 ? (
-                    <div className="empty-state">
-                        <MessageCircle size={48} />
-                        <h3>Nenhuma avaliação {filter === 'pending' ? 'pendente' : ''}</h3>
-                        <p>As avaliações dos visitantes aparecerão aqui</p>
+            {mode === 'reviews' && (
+                <>
+                    {/* Filters */}
+                    <div className="filters-bar">
+                        <button
+                            className={`filter-btn ${reviewFilter === 'pending' ? 'active' : ''}`}
+                            onClick={() => setReviewFilter('pending')}
+                        >
+                            <Clock size={16} /> Pendentes
+                        </button>
+                        <button
+                            className={`filter-btn ${reviewFilter === 'approved' ? 'active' : ''}`}
+                            onClick={() => setReviewFilter('approved')}
+                        >
+                            <CheckCircle size={16} /> Aprovadas
+                        </button>
+                        <button
+                            className={`filter-btn ${reviewFilter === 'all' ? 'active' : ''}`}
+                            onClick={() => setReviewFilter('all')}
+                        >
+                            <Filter size={16} /> Todas
+                        </button>
                     </div>
-                ) : (
-                    reviews.map(review => (
-                        <div key={review.id} className={`review-card ${review.approved ? 'approved' : 'pending'}`}>
-                            <div className="review-header">
-                                <div className="visitor-info">
-                                    <div className="visitor-avatar">
-                                        {review.visitor.photoUrl ? (
-                                            <img src={review.visitor.photoUrl} alt="" />
-                                        ) : (
-                                            <User size={20} />
+
+                    {/* Reviews List */}
+                    <div className="reviews-list">
+                        {loading ? (
+                            <div className="loading-state">Carregando avaliações...</div>
+                        ) : reviews.length === 0 ? (
+                            <div className="empty-state">
+                                <MessageCircle size={48} />
+                                <h3>Nenhuma avaliação {reviewFilter === 'pending' ? 'pendente' : ''}</h3>
+                            </div>
+                        ) : (
+                            reviews.map(review => (
+                                <div key={review.id} className={`review-card ${review.approved ? 'approved' : 'pending'}`}>
+                                    <div className="review-header">
+                                        <div className="visitor-info">
+                                            <div className="visitor-avatar">
+                                                {review.visitor.photoUrl ? (
+                                                    <img src={review.visitor.photoUrl} alt="" />
+                                                ) : (
+                                                    <User size={20} />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <span className="visitor-name">{review.visitor.name}</span>
+                                                <span className="review-date">
+                                                    {new Date(review.createdAt).toLocaleDateString('pt-BR')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="review-rating">
+                                            {renderStars(review.rating)}
+                                        </div>
+                                    </div>
+
+                                    <div className="review-target">
+                                        {review.work ? `📷 ${review.work.title}` : review.event ? `🎭 ${review.event.title}` : ''}
+                                    </div>
+
+                                    {review.comment && (
+                                        <p className="review-comment">"{review.comment}"</p>
+                                    )}
+
+                                    <div className="review-actions">
+                                        {!review.approved && (
+                                            <button className="approve-btn" onClick={() => handleApproveReview(review.id)}>
+                                                <CheckCircle size={16} /> Aprovar
+                                            </button>
+                                        )}
+                                        <button className="delete-btn" onClick={() => handleDeleteReview(review.id)}>
+                                            <XCircle size={16} /> Excluir
+                                        </button>
+                                        {review.approved && (
+                                            <span className="approved-badge">✓ Publicada</span>
                                         )}
                                     </div>
-                                    <div>
-                                        <span className="visitor-name">{review.visitor.name}</span>
-                                        <span className="review-date">
-                                            {new Date(review.createdAt).toLocaleDateString('pt-BR')}
-                                        </span>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </>
+            )}
+
+            {mode === 'guestbook' && (
+                <div className="guestbook-list" style={{ display: 'grid', gap: '1rem' }}>
+                    {loading ? (
+                        <div className="loading-state">Carregando livro de visitas...</div>
+                    ) : guestbook.length === 0 ? (
+                        <div className="empty-state">
+                            <BookOpen size={48} />
+                            <h3>Livro de visitas vazio</h3>
+                        </div>
+                    ) : (
+                        guestbook.map(entry => (
+                            <div key={entry.id} style={{
+                                background: "var(--bg-card, #1f2937)",
+                                borderRadius: "1rem",
+                                padding: "1.5rem",
+                                border: entry.isVisible ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(239, 68, 68, 0.3)",
+                                opacity: entry.isVisible ? 1 : 0.7
+                            }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                                        <div className="visitor-avatar">
+                                            {entry.visitor.photoUrl ? <img src={entry.visitor.photoUrl} /> : <User size={20} />}
+                                        </div>
+                                        <div>
+                                            <span style={{ fontWeight: "bold", display: "block" }}>{entry.visitor.name || "Visitante"}</span>
+                                            <span style={{ fontSize: "0.85rem", opacity: 0.6 }}>{new Date(entry.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                                        <button
+                                            onClick={() => handleToggleVisibility(entry.id, entry.isVisible)}
+                                            style={{
+                                                background: entry.isVisible ? "rgba(255,255,255,0.1)" : "#d4af37",
+                                                color: entry.isVisible ? "white" : "black",
+                                                border: "none", padding: "0.5rem", borderRadius: "0.5rem", cursor: "pointer"
+                                            }}
+                                            title={entry.isVisible ? "Ocultar" : "Exibir"}
+                                        >
+                                            {entry.isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteGuestbook(entry.id)}
+                                            style={{ background: "rgba(239, 68, 68, 0.2)", color: "#ef4444", border: "none", padding: "0.5rem", borderRadius: "0.5rem", cursor: "pointer" }}
+                                            title="Excluir"
+                                        >
+                                            <XCircle size={18} />
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="review-rating">
-                                    {renderStars(review.rating)}
-                                </div>
-                            </div>
 
-                            <div className="review-target">
-                                {review.work ? `📷 ${review.work.title}` : review.event ? `🎭 ${review.event.title}` : ''}
-                            </div>
+                                <p style={{ fontStyle: "italic", fontSize: "1.1rem", marginBottom: "1rem" }}>"{entry.message}"</p>
 
-                            {review.comment && (
-                                <p className="review-comment">"{review.comment}"</p>
-                            )}
-
-                            <div className="review-actions">
-                                {!review.approved && (
-                                    <button
-                                        className="approve-btn"
-                                        onClick={() => handleApprove(review.id)}
-                                    >
-                                        <CheckCircle size={16} /> Aprovar
-                                    </button>
-                                )}
-                                <button
-                                    className="delete-btn"
-                                    onClick={() => handleDelete(review.id)}
-                                >
-                                    <XCircle size={16} /> Excluir
-                                </button>
-                                {review.approved && (
-                                    <span className="approved-badge">✓ Publicada</span>
+                                {!entry.isVisible && (
+                                    <span style={{ fontSize: "0.8rem", color: "#ef4444", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                                        <EyeOff size={12} /> Oculto para o público
+                                    </span>
                                 )}
                             </div>
-                        </div>
-                    ))
-                )}
-            </div>
+                        ))
+                    )}
+                </div>
+            )}
 
             <style>{`
-                .admin-reviews-page {
-                    padding: 24px;
-                }
+                .admin-reviews-page { padding: 24px; }
+                .page-header { margin-bottom: 24px; }
+                .page-header h1 { margin: 0; font-size: 1.75rem; color: #f3f4f6; }
+                .subtitle { margin: 4px 0 0; color: #9ca3af; }
+                .badge-count { background: #ef4444; color: white; padding: 2px 6px; borderRadius: 10px; fontSize: 0.7rem; verticalAlign: top; }
                 
-                .page-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-bottom: 24px;
-                }
+                .filters-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+                .filter-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #374151; border: none; border-radius: 8px; color: #9ca3af; cursor: pointer; transition: all 0.2s; }
+                .filter-btn.active { background: #d4af37; color: black; }
                 
-                .page-header h1 {
-                    margin: 0;
-                    font-size: 1.75rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
+                .reviews-list { display: flex; flex-direction: column; gap: 16px; }
+                .review-card { background: #1f2937; border-radius: 12px; padding: 20px; border-left: 4px solid transparent; }
+                .review-card.pending { border-left-color: #f59e0b; }
+                .review-card.approved { border-left-color: #22c55e; }
                 
-                .subtitle {
-                    margin: 4px 0 0;
-                    color: var(--fg-muted, #9ca3af);
-                }
+                .review-header { display: flex; justifyContent: space-between; margin-bottom: 12px; }
+                .visitor-info { display: flex; align-items: center; gap: 12px; }
+                .visitor-avatar { width: 40px; height: 40px; border-radius: 50%; background: #374151; display: flex; alignItems: center; justifyContent: center; overflow: hidden; }
+                .visitor-avatar img { width: 100%; height: 100%; objectFit: cover; }
+                .visitor-name { font-weight: 600; color: #f3f4f6; }
+                .review-date { font-size: 0.85rem; color: #9ca3af; display: block; }
                 
-                .pending-badge {
-                    padding: 8px 16px;
-                    background: linear-gradient(135deg, #f59e0b, #d97706);
-                    border-radius: 20px;
-                    color: white;
-                    font-weight: bold;
-                }
+                .review-comment { font-style: italic; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
+                .review-actions { display: flex; gap: 12px; align-items: center; }
                 
-                .filters-bar {
-                    display: flex;
-                    gap: 8px;
-                    margin-bottom: 20px;
-                }
+                .approve-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+                .delete-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+                .approved-badge { margin-left: auto; color: #22c55e; font-weight: bold; font-size: 0.9rem; }
                 
-                .filter-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 10px 20px;
-                    background: var(--bg-card, #1f2937);
-                    border: 1px solid var(--border-color, #374151);
-                    border-radius: 8px;
-                    color: var(--fg-muted, #9ca3af);
-                    cursor: pointer;
-                    transition: all 0.2s;
-                }
-                
-                .filter-btn.active {
-                    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-                    border-color: transparent;
-                    color: white;
-                }
-                
-                .reviews-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                }
-                
-                .review-card {
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 16px;
-                    padding: 20px;
-                    border-left: 4px solid transparent;
-                }
-                
-                .review-card.pending {
-                    border-left-color: #f59e0b;
-                }
-                
-                .review-card.approved {
-                    border-left-color: #22c55e;
-                }
-                
-                .review-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-bottom: 12px;
-                }
-                
-                .visitor-info {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                }
-                
-                .visitor-avatar {
-                    width: 40px;
-                    height: 40px;
-                    border-radius: 50%;
-                    background: var(--bg-elevated, #374151);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    overflow: hidden;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .visitor-avatar img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-                
-                .visitor-name {
-                    display: block;
-                    font-weight: 600;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .review-date {
-                    font-size: 0.85rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .review-rating {
-                    display: flex;
-                    gap: 2px;
-                }
-                
-                .review-target {
-                    font-size: 0.9rem;
-                    color: var(--fg-muted, #9ca3af);
-                    margin-bottom: 12px;
-                }
-                
-                .review-comment {
-                    font-style: italic;
-                    color: var(--fg-main, #f3f4f6);
-                    margin: 0 0 16px;
-                    padding: 12px;
-                    background: var(--bg-elevated, #374151);
-                    border-radius: 8px;
-                    line-height: 1.6;
-                }
-                
-                .review-actions {
-                    display: flex;
-                    gap: 12px;
-                    align-items: center;
-                }
-                
-                .approve-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 8px 16px;
-                    background: #22c55e;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    cursor: pointer;
-                }
-                
-                .delete-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    padding: 8px 16px;
-                    background: rgba(239, 68, 68, 0.2);
-                    color: #ef4444;
-                    border: none;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    cursor: pointer;
-                }
-                
-                .approved-badge {
-                    margin-left: auto;
-                    padding: 6px 12px;
-                    background: rgba(34, 197, 94, 0.2);
-                    color: #22c55e;
-                    border-radius: 20px;
-                    font-size: 0.85rem;
-                    font-weight: 600;
-                }
-                
-                .loading-state, .empty-state {
-                    text-align: center;
-                    padding: 60px 20px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .empty-state h3 {
-                    margin: 16px 0 8px;
-                    color: var(--fg-main, #f3f4f6);
-                }
+                .loading-state, .empty-state { text-align: center; padding: 40px; color: #6b7280; }
             `}</style>
         </div>
     );

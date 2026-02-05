@@ -70,7 +70,7 @@ export const EventDetail: React.FC = () => {
     if (isDemoMode) {
       setEvent({
         id: "1", title: "Oficina de Aquarela",
-        description: "Aprenda técnicas. Lorem ipsum dolor sit amet...",
+        description: "Aprenda técnicas fundamentais de aquarela, desde a mistura de cores até o controle da água. Material incluído. Venha explorar sua criatividade em um ambiente inspirador.",
         location: "Atelier 1", startDate: new Date().toISOString(),
         isOnline: false, coverImageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f"
       });

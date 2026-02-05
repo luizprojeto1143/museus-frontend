@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 
 interface Clue {
     id: string;
@@ -22,6 +23,7 @@ interface Work {
 
 export const AdminTreasureHunt: React.FC = () => {
     const { t } = useTranslation();
+    const { tenantId } = useAuth(); // Hook adicionado
     const [clues, setClues] = useState<Clue[]>([]);
     const [works, setWorks] = useState<Work[]>([]);
     const [loading, setLoading] = useState(true);
@@ -42,15 +44,17 @@ export const AdminTreasureHunt: React.FC = () => {
     });
 
     useEffect(() => {
-        loadData();
-    }, []);
+        if (tenantId) {
+            loadData();
+        }
+    }, [tenantId]);
 
     const loadData = async () => {
         try {
             setLoading(true);
             const [cluesRes, worksRes] = await Promise.all([
-                api.get("/clues"),
-                api.get("/works")
+                api.get("/clues", { params: { tenantId } }), // Passando tenantId
+                api.get("/works", { params: { tenantId, limit: 100 } }) // Passando tenantId e limite alto
             ]);
             // Handle paginated responses
             setClues(Array.isArray(cluesRes.data) ? cluesRes.data : (cluesRes.data.data || []));
