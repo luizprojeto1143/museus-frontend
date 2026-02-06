@@ -95,6 +95,12 @@ import { AdminAccessibilityForm } from "./modules/admin/pages/AdminAccessibility
 import { AdminEquipments } from "./modules/admin/pages/AdminEquipments";
 import { AdminReports } from "./modules/admin/pages/AdminReports";
 
+// Governance / Executive Pages
+import SecretaryDashboard from "./modules/admin/pages/SecretaryDashboard";
+import LegalCompliance from "./modules/admin/pages/LegalCompliance";
+import AccessibilityTimeline from "./modules/admin/pages/AccessibilityTimeline";
+import AIUsageDashboard from "./modules/admin/pages/AIUsageDashboard";
+
 // Master pages
 import { MasterDashboard } from "./modules/master/pages/MasterDashboard";
 import { TenantsList } from "./modules/master/pages/TenantsList";
@@ -108,6 +114,7 @@ import { MasterAuditLogs } from "./modules/master/pages/MasterAuditLogs";
 import { MasterAccessibilityRequests } from "./modules/master/pages/MasterAccessibilityRequests";
 import { MasterSystemHealth } from "./modules/master/pages/MasterSystemHealth";
 import { MasterMessages } from "./modules/master/MasterMessages";
+import MasterPlans from "./modules/master/pages/MasterPlans";
 
 import { GlobalEvents } from "./modules/public/GlobalEvents";
 import { ForgotPassword } from "./modules/auth/ForgotPassword";
@@ -949,6 +956,48 @@ const App: React.FC = () => {
               }
             />
 
+            {/* GOVERNANCE / EXECUTIVE ROUTES */}
+            <Route
+              path="/admin/secretaria"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <SecretaryDashboard />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/conformidade-legal"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <LegalCompliance />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/timeline-acessibilidade"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AccessibilityTimeline />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/admin/uso-ia"
+              element={
+                <RequireRole allowed={["admin"]}>
+                  <AdminLayout>
+                    <AIUsageDashboard />
+                  </AdminLayout>
+                </RequireRole>
+              }
+            />
+
             <Route
               path="/master"
               element={
@@ -975,6 +1024,16 @@ const App: React.FC = () => {
                 <RequireRole allowed={["master"]}>
                   <MasterLayout>
                     <MasterMessages />
+                  </MasterLayout>
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/master/plans"
+              element={
+                <RequireRole allowed={["master"]}>
+                  <MasterLayout>
+                    <MasterPlans />
                   </MasterLayout>
                 </RequireRole>
               }
@@ -1118,7 +1177,7 @@ const App: React.FC = () => {
               element={
                 <RequireRole allowed={["admin", "producer"]}>
                   <ProducerLayout>
-                    <AdminGamification />
+                    <AdminAchievements />
                   </ProducerLayout>
                 </RequireRole>
               }
