@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
 import { useTranslation } from "react-i18next";
 import { Search, Filter, Plus, FileText, ArrowRight } from "lucide-react";
-// import "./ProducerNotices.css"; // Reuse existing styles or inline
+import { useAuth } from "../auth/AuthContext";
 
 interface Notice {
     id: string;
@@ -18,25 +18,25 @@ interface Notice {
 export const ProducerNotices: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { tenantId } = useAuth();
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
+    const [canSubmit, setCanSubmit] = useState(false);
 
     useEffect(() => {
-        // Fetch OPEN notices
-        // Assuming we have an endpoint that returns notices visible to public/producers
-        // or we filter by tenant if logged in (Producer is linked to a tenant)
+        if (tenantId) {
+            api.get(`/tenants/${tenantId}/features`)
+                .then(res => setCanSubmit(!!res.data.featureEditaisSubmission))
+                .catch(err => console.error("Error fetching features", err));
+        }
+
         api.get("/notices?status=INSCRIPTIONS_OPEN")
             .then(res => setNotices(Array.isArray(res.data) ? res.data : []))
             .catch(console.error)
             .finally(() => setLoading(false));
-    }, []);
+    }, [tenantId]);
 
     const handleApply = (noticeId: string) => {
-        // Redirect to create project with noticeId pre-filled
-        navigate(`/producer/events/new?noticeId=${noticeId}`); // Using 'events' route temporarily or create 'projects' route?
-        // Wait, 'ProducerEvents' was existing, but we want 'ProducerProjects'.
-        // Let's assume we map /producer/events to Projects or create a new route /producer/projects
-        // The implementation plan says "ProducerProjects". Let's stick to that.
         navigate(`/producer/projects/new?noticeId=${noticeId}`);
     };
 
@@ -74,13 +74,19 @@ export const ProducerNotices: React.FC = () => {
                                 <div><strong>Fim:</strong> {new Date(notice.registrationEndDate).toLocaleDateString()}</div>
                             </div>
 
-                            <button
-                                onClick={() => handleApply(notice.id)}
-                                className="btn-primary"
-                                style={{ width: "100%", justifyContent: "center" }}
-                            >
-                                Inscrever Projeto <ArrowRight size={16} />
-                            </button>
+                            {canSubmit ? (
+                                <button
+                                    onClick={() => handleApply(notice.id)}
+                                    className="btn-primary"
+                                    style={{ width: "100%", justifyContent: "center" }}
+                                >
+                                    Inscrever Projeto <ArrowRight size={16} />
+                                </button>
+                            ) : (
+                                <div style={{ textAlign: "center", padding: "0.5rem", color: "#888", fontSize: "0.85rem", background: "rgba(0,0,0,0.2)", borderRadius: "0.5rem" }}>
+                                    Submissão sob consulta
+                                </div>
+                            )}
                         </div>
                     ))
                 )}
