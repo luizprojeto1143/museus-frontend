@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
 
@@ -96,6 +97,16 @@ api.interceptors.response.use(
       data: error.response?.data,
       message: error.message
     });
+
+    // Show user-friendly toast for API errors
+    const errorMessage = error.response?.data?.message || error.message || "Erro de conexão";
+    const status = error.response?.status;
+
+    // Don't show toast for 401 (handled by refresh) or network errors during page load
+    if (status !== 401 && error.config?.url) {
+      toast.error(errorMessage, { id: `api-error-${status}` });
+    }
+
     return Promise.reject(error);
   }
 );
