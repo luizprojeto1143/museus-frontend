@@ -47,7 +47,9 @@
                 "trail": "Trilha",
                 "trails": "Trilhas",
                 "room": "Sala",
-                "floor": "Andar"
+                "rooms": "Salas",
+                "floor": "Andar",
+                "floors": "Andares"
             },
             "city": {
                 "work": "Ponto Turístico",
@@ -55,9 +57,14 @@
                 "trail": "Roteiro",
                 "trails": "Roteiros",
                 "room": "Região",
-                "floor": "Bairro"
+                "rooms": "Regiões",
+                "floor": "Bairro",
+                "floors": "Bairros"
             }
         }
+    },
+    "museum": {
+        "featuredWorks": "Obras em Destaque"
     },
     "dashboard": {
         "title": "Painel de Controle"
@@ -902,11 +909,39 @@
                 "adminEmail": "Email do Administrador",
                 "adminName": "Nome do Administrador",
                 "adminPassword": "Senha Inicial",
-                "type": "Tipo de Instituição"
+                "type": "Tipo de Instituição",
+                "plan": "Plano de Assinatura",
+                "maxWorks": "Limite de Obras"
             },
             "types": {
                 "museum": "Museu / Espaço Cultural",
                 "producer": "Produtora / Organizador de Eventos"
+            },
+            "placeholders": {
+                "name": "Ex: Museu de Arte Moderna",
+                "slug": "Ex: mam-sp",
+                "adminName": "Nome do Gestor",
+                "adminEmail": "email@museu.com",
+                "adminPassword": "Senha forte"
+            },
+            "helpers": {
+                "slug": "Identificador único na URL (ex: meumuseu.com/app/slug)"
+            },
+            "labels": {
+                "name": "Nome",
+                "slug": "Link Personalizado (URL)",
+                "adminEmail": "Email do Administrador",
+                "adminName": "Nome do Administrador",
+                "adminPassword": "Senha Inicial",
+                "type": "Tipo de Instituição",
+                "plan": "Plano de Assinatura",
+                "maxWorks": "Limite de Obras"
+            },
+            "plans": {
+                "start": "Start (50 obras)",
+                "pro": "Pro (200 obras)",
+                "enterprise": "Enterprise (500 obras)",
+                "custom": "Personalizado"
             }
         }
     },
