@@ -90,7 +90,7 @@ export const ProducerServices: React.FC = () => {
                             <div style={{ fontSize: "1.3rem", fontWeight: "bold", color: "#fff", marginBottom: "1.5rem" }}>{service.price}</div>
 
                             <button
-                                onClick={() => window.open(`https://wa.me/5511999999999?text=Ol%C3%A1%2C%20gostaria%20de%20um%20or%C3%A7amento%20para%20${encodeURIComponent(service.title)}.`, "_blank")}
+                                onClick={() => window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '5511999999999'}?text=Ol%C3%A1%2C%20gostaria%20de%20um%20or%C3%A7amento%20para%20${encodeURIComponent(service.title)}.`, "_blank")}
                                 style={{
                                     width: "100%",
                                     padding: "1rem",
@@ -125,7 +125,7 @@ export const ProducerServices: React.FC = () => {
                     </p>
                 </div>
                 <button
-                    onClick={() => window.open("https://wa.me/5511999999999?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20consultoria%20personalizada%20para%20meu%20projeto%20cultural.", "_blank")}
+                    onClick={() => window.open(`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '5511999999999'}?text=Ol%C3%A1%2C%20tenho%20interesse%20em%20consultoria%20personalizada%20para%20meu%20projeto%20cultural.`, "_blank")}
                     style={{ marginLeft: "auto", whiteSpace: "nowrap", padding: "1rem 2rem", background: "transparent", border: "1px solid #d4af37", color: "#d4af37", borderRadius: "0.5rem", fontWeight: "bold", cursor: "pointer" }}>
                     Falar no WhatsApp
                 </button>

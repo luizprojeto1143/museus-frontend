@@ -40,7 +40,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
 
             if (response.ok) {
                 if (token && role) {
-                    updateSession(token, role, tenantId, newName);
+                    updateSession(token, role, tenantId ?? "", newName);
 
                     const user = JSON.parse(localStorage.getItem("user") || "{}");
                     user.email = newEmail;

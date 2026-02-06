@@ -102,7 +102,7 @@ export const SelectMuseum: React.FC = () => {
 
         if (res.ok) {
           const data = await res.json();
-          updateSession(data.accessToken, data.role, data.tenantId);
+          updateSession(data.accessToken, data.role, data.tenantId, data.name);
           navigate("/");
           return;
         } else {

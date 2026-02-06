@@ -25,14 +25,20 @@ export const AdminEventDashboard: React.FC = () => {
         ticketsSold: 0,
         totalTickets: 0,
         revenue: 0,
-        views: 1240, // Mocked for now
+        views: 0, // TODO: Implement event view tracking
         recentRegistrations: [] as Array<{ id: string; name: string }>
     });
 
     useEffect(() => {
         if (id && tenantId) {
+            // Track View
+            api.post(`/events/${id}/view`).catch(console.error);
+
             // Fetch Event
-            api.get(`/events/${id}`).then(res => setEvent(res.data)).catch(console.error);
+            api.get(`/events/${id}`).then(res => {
+                setEvent(res.data);
+                setStats(prev => ({ ...prev, views: res.data.views || 0 }));
+            }).catch(console.error);
 
             // Fetch Tickets to calc total
             api.get(`/events/${id}/tickets`).then(res => {

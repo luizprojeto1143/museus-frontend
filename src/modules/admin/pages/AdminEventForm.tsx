@@ -6,6 +6,7 @@ import {
   Calendar, MapPin, Ticket, User,
   ChevronRight, ChevronLeft, Check, Plus, Trash2, Globe, Video
 } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 // Types
 interface TicketData {
@@ -381,7 +382,7 @@ export const AdminEventForm: React.FC = () => {
             )}
 
             <div className="space-y-4">
-              {tickets.map((t, idx) => (
+              {tickets.map((ticket, idx) => (
                 <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col gap-4">
                   <div className="flex justify-between items-start">
                     <h4 className="font-semibold text-gray-700">{t("admin.eventForm.tickets.itemTitle")} #{idx + 1}</h4>
@@ -394,13 +395,13 @@ export const AdminEventForm: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="form-group">
                       <label>{t("admin.eventForm.tickets.name")}</label>
-                      <input className="input w-full" value={t.name} onChange={e => {
+                      <input className="input w-full" value={ticket.name} onChange={e => {
                         const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
                       }} />
                     </div>
                     <div className="form-group">
                       <label>{t("admin.eventForm.tickets.quantity")}</label>
-                      <input type="number" className="input w-full" value={t.quantity} onChange={e => {
+                      <input type="number" className="input w-full" value={ticket.quantity} onChange={e => {
                         const n = [...tickets]; n[idx].quantity = Number(e.target.value); setTickets(n);
                       }} />
                     </div>
@@ -408,17 +409,17 @@ export const AdminEventForm: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="form-group">
                       <label>{t("admin.eventForm.tickets.type")}</label>
-                      <select className="input w-full" value={t.type} onChange={e => {
+                      <select className="input w-full" value={ticket.type} onChange={e => {
                         const n = [...tickets]; n[idx].type = e.target.value as 'FREE' | 'PAID'; setTickets(n);
                       }}>
                         <option value="FREE">{t("admin.eventForm.tickets.free")}</option>
                         <option value="PAID">{t("admin.eventForm.tickets.paid")}</option>
                       </select>
                     </div>
-                    {t.type === 'PAID' && (
+                    {ticket.type === 'PAID' && (
                       <div className="form-group">
                         <label>{t("admin.eventForm.tickets.price")} (R$)</label>
-                        <input type="number" step="0.01" className="input w-full" value={t.price} onChange={e => {
+                        <input type="number" step="0.01" className="input w-full" value={ticket.price} onChange={e => {
                           const n = [...tickets]; n[idx].price = Number(e.target.value); setTickets(n);
                         }} />
                       </div>

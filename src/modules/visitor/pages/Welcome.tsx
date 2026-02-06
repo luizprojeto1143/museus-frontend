@@ -31,6 +31,16 @@ export const Welcome: React.FC = () => {
         <Smartphone size={22} /> {t("welcome.explore")}
       </button>
 
+      <button
+        onClick={() => navigate("/events")}
+        className="welcome-secondary-btn"
+        style={{ marginTop: "1rem", borderColor: "#d4af37", color: "#d4af37" }}
+      >
+        <span style={{ marginRight: "0.5rem" }}>📅</span> Agenda Cultural Unificada
+      </button>
+
+
+
       {/* Botão secundário */}
       <button
         onClick={() => navigate("/login")}

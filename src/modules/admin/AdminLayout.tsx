@@ -17,6 +17,15 @@ interface TenantFeatures {
   featureReviews: boolean;
   featureGuestbook: boolean;
   featureAccessibility: boolean;
+  // Municipal Features
+  featureEditais: boolean;
+  featureProjects: boolean;
+  featureAccessibilityMgmt: boolean;
+  featureProviders: boolean;
+  featureInstitutionalReports: boolean;
+  // Hierarchy
+  type: string;
+  parentId: string | null;
 }
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -54,6 +63,14 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { to: "/admin/usuarios", label: t("admin.sidebar.users", "Usuários"), icon: "👤", show: true },
     { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
     { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
+    // Municipal Management
+    { to: "/admin/editais", label: "Editais", icon: "📋", show: features?.featureEditais ?? false },
+    { to: "/admin/projetos", label: "Projetos Culturais", icon: "🎨", show: features?.featureProjects ?? false },
+    { to: "/admin/prestadores", label: "Prestadores", icon: "👷", show: features?.featureProviders ?? false },
+    { to: "/admin/acessibilidade-gestao", label: "Gestão Acessibilidade", icon: "♿", show: features?.featureAccessibilityMgmt ?? false },
+    { to: "/admin/relatorios", label: "Relatórios Institucionais", icon: "📊", show: features?.featureInstitutionalReports ?? false },
+    // Children management (for CITY/SECRETARIA types)
+    { to: "/admin/equipamentos", label: "Equipamentos Culturais", icon: "🏛️", show: (features?.type === "CITY" || features?.type === "SECRETARIA") ?? false },
     { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true }
   ];
 

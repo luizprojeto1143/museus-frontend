@@ -61,8 +61,27 @@ export const AdminAnalytics: React.FC = () => {
     a.click();
   };
 
-  const handleExportPDF = () => {
-    alert("Exportação PDF em desenvolvimento");
+  const handleExportPDF = async () => {
+    try {
+      const response = await api.get("/reports/financial", {
+        responseType: 'blob',
+        params: {
+          startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString(),
+          endDate: new Date().toISOString()
+        }
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `relatorio_financeiro_${new Date().toISOString().split('T')[0]}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Erro ao baixar PDF", error);
+      alert("Erro ao gerar relatório PDF. Tente novamente.");
+    }
   };
 
   if (loading) {

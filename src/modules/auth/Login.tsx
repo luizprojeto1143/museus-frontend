@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
@@ -111,6 +111,10 @@ export const Login: React.FC = () => {
             color: "#e5e7eb"
           }}
         />
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', marginTop: '-0.5rem' }}>
+          <Link to="/forgot-password" style={{ color: '#d4af37', fontSize: '0.85rem', textDecoration: 'none' }}>Esqueceu a senha?</Link>
+        </div>
 
         {import.meta.env.VITE_DEMO_MODE === "true" && (
           <p style={{ fontSize: "0.75rem", color: "#9ca3af", marginBottom: "0.75rem" }}>

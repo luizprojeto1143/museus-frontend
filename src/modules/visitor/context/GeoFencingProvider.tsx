@@ -105,7 +105,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             type: point.type,
             title: point.title,
             subtitle: point.subtitle,
-            imageUrl: point.imageUrl ? getFullUrl(point.imageUrl) : undefined,
+            imageUrl: (point.imageUrl ? getFullUrl(point.imageUrl) : undefined) ?? undefined,
             distance,
             url: point.url
         };

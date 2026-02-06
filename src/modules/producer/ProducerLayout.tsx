@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { api } from "../../api/client";
 import {
     LayoutDashboard,
     Calendar,
@@ -11,24 +12,56 @@ import {
     FileText,
     LogOut,
     Menu,
-    Briefcase
+    Briefcase,
+    Image,
+    Trophy,
+    Settings
 } from "lucide-react";
 import "./ProducerLayout.css";
 
 export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { t } = useTranslation();
-    const { logout, name } = useAuth();
+    const { logout, name, tenantId } = useAuth();
     const location = useLocation();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const [features, setFeatures] = useState<any>({
+        featureProjects: true,
+        featureTickets: false,
+        featureServices: true,
+        featureReports: true
+    });
+
+    React.useEffect(() => {
+        if (tenantId) {
+            // We need an endpoint to get the *current* tenant's features.
+            // Assuming /tenants/:id or /auth/me returns it. 
+            // Ideally /tenants/me if implemented, or just /tenants/${tenantId}
+            // For now, let's try reading from a dedicated endpoint or catching it if stored.
+            // Since we don't have it in context, we fetch.
+            // Note: Visitor doesn't have permissions to view tenant details usually? 
+            // Producer IS admin of their tenant, so they should.
+            api.get(`/tenants/${tenantId}`).then(res => {
+                setFeatures(res.data);
+            }).catch(err => console.warn("Could not load producer features", err));
+        }
+    }, [tenantId]);
 
     const links = [
-        { to: "/producer", label: t("producer.layout.menu.overview"), icon: <LayoutDashboard size={20} /> },
-        { to: "/producer/events", label: t("producer.layout.menu.projects"), icon: <Calendar size={20} /> },
-        { to: "/producer/tickets", label: t("producer.layout.menu.tickets"), icon: <Ticket size={20} /> },
-        { to: "/producer/audience", label: t("producer.layout.menu.audience"), icon: <Users size={20} /> },
-        { to: "/producer/services", label: t("producer.layout.menu.services"), icon: <Briefcase size={20} /> }, // Marketplace
-        { to: "/producer/reports", label: t("producer.layout.menu.reports"), icon: <FileText size={20} /> },
-    ];
+        { to: "/producer", label: t("producer.layout.menu.overview"), icon: <LayoutDashboard size={20} />, show: true },
+        { to: "/producer/projects", label: "Meus Projetos", icon: <FileText size={20} />, show: features.featureProjects },
+        { to: "/producer/events", label: "Meus Eventos", icon: <Calendar size={20} />, show: true },
+
+        // Museum Features provided to Producer (Guarded by Flags)
+        { to: "/producer/works", label: "Acervo", icon: <Image size={20} />, show: features.featureWorks },
+        { to: "/producer/gamification", label: "Gamificação", icon: <Trophy size={20} />, show: features.featureGamification },
+
+        { to: "/producer/tickets", label: t("producer.layout.menu.tickets"), icon: <Ticket size={20} />, show: features.featureTickets },
+        { to: "/producer/audience", label: t("producer.layout.menu.audience"), icon: <Users size={20} />, show: features.featureTickets }, // Audience usually tied to tickets/events
+        { to: "/producer/services", label: t("producer.layout.menu.services"), icon: <Briefcase size={20} />, show: features.featureServices },
+        { to: "/producer/reports", label: t("producer.layout.menu.reports"), icon: <FileText size={20} />, show: true },
+        { to: "/producer/profile", label: "Meu Perfil", icon: <Users size={20} />, show: true },
+        { to: "/producer/settings", label: "Configurações", icon: <Settings size={20} />, show: true },
+    ].filter(l => l.show);
 
     return (
         <div id="producer-layout" className="layout-wrapper">

@@ -16,7 +16,7 @@ export const ProducerDashboard: React.FC = () => {
         ticketsSold: 0,
         revenue: "R$ 0,00",
         activeEvents: 0,
-        rouanetUsed: "0%" // Placeholder as we don't have this endpoint yet
+        raisedAmount: "R$ 0,00"
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [nextEvents, setNextEvents] = React.useState<any[]>([]);
@@ -34,6 +34,7 @@ export const ProducerDashboard: React.FC = () => {
 
                 const sold = salesRes.data.ticketsSold || 0;
                 const rev = salesRes.data.totalRevenue || 0;
+                const raised = salesRes.data.raisedAmount || 0;
 
                 // Process events
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,7 +58,7 @@ export const ProducerDashboard: React.FC = () => {
                     ticketsSold: sold,
                     revenue: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(rev),
                     activeEvents: activeCount,
-                    rouanetUsed: "0%"
+                    raisedAmount: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(raised)
                 });
                 setNextEvents(upcoming);
             } catch (err) {
@@ -111,11 +112,11 @@ export const ProducerDashboard: React.FC = () => {
 
                 <div style={{ background: "rgba(255,255,255,0.03)", padding: "1.5rem", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.1)" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-                        <span style={{ opacity: 0.7 }}>{t("producer.dashboard.metrics.rouanet")}</span>
+                        <span style={{ opacity: 0.7 }}>{t("producer.dashboard.metrics.raisedAmount", "Valor Captado")}</span>
                         <BarChart3 color="#ef4444" />
                     </div>
-                    <h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.rouanetUsed}</h2>
-                    <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>{t("producer.dashboard.metrics.used")}</span>
+                    <h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.raisedAmount}</h2>
+                    <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>{t("producer.dashboard.metrics.approvedProjects", "Em projetos aprovados")}</span>
                 </div>
             </div>
 

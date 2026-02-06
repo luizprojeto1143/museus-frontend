@@ -14,19 +14,32 @@ export const ProducerReports: React.FC = () => {
         conversion: 0
     });
 
+    const [accessStats, setAccessStats] = useState({ executions: 0, requests: 0 });
+
     useEffect(() => {
         if (!tenantId) return;
-        api.get("/analytics/sales-summary")
-            .then(res => {
-                const data = res.data;
-                setStats({
-                    revenue: data.totalRevenue || 0,
-                    ticketsSold: data.ticketsSold || 0,
-                    checkIns: data.checkInCount || 0,
-                    conversion: data.conversionRate || 0
+
+        // Parallel fetch
+        Promise.all([
+            api.get("/analytics/sales-summary"),
+            api.get("/analytics/accessibility-summary")
+        ]).then(([salesRes, accessRes]) => {
+            const data = salesRes.data;
+            setStats({
+                revenue: data.totalRevenue || 0,
+                ticketsSold: data.ticketsSold || 0,
+                checkIns: data.checkInCount || 0,
+                conversion: data.conversionRate || 0
+            });
+
+            if (accessRes.data) {
+                setAccessStats({
+                    executions: accessRes.data.executions || 0,
+                    requests: accessRes.data.requests || 0
                 });
-            })
-            .catch(err => console.error("Error fetching reports", err));
+            }
+        }).catch(err => console.error("Error fetching reports", err));
+
     }, [tenantId]);
 
     const handleDownload = (type: 'financial' | 'accessibility') => {
@@ -46,7 +59,8 @@ export const ProducerReports: React.FC = () => {
             content = "Relatório de Acessibilidade\n\n";
             content += `Data: ${date}\n`;
             content += "Recursos Ativos: Audiodescrição, LIBRAS, Fontes para Dislexia\n";
-            content += "Solicitações de Assistência: 0\n";
+            content += `Execuções Realizadas: ${accessStats.executions}\n`;
+            content += `Solicitações de Assistência: ${accessStats.requests}\n`;
             filename = `acessibilidade-${date}.csv`;
         }
 
@@ -102,7 +116,7 @@ export const ProducerReports: React.FC = () => {
                         </div>
                         <div>
                             <div style={{ fontWeight: "bold" }}>{t("producer.reports.accessibility.title")}</div>
-                            <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{t("producer.reports.accessibility.subtitle")}</div>
+                            <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{accessStats.executions} execuções registradas</div>
                         </div>
                     </div>
                     <p style={{ fontSize: "0.9rem", opacity: 0.7, marginBottom: "1.5rem", lineHeight: "1.5" }}>

@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { api } from "../../api/client";
 
-export type Role = "visitor" | "admin" | "master";
+export type Role = "visitor" | "admin" | "master" | "producer";
 
 interface StoredAuth {
   token: string;
@@ -163,6 +163,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       let mappedRole: Role = "visitor";
       if (backendRole === "MASTER") mappedRole = "master";
       else if (backendRole === "ADMIN") mappedRole = "admin";
+      else if (backendRole === "PRODUCER") mappedRole = "producer";
       else if (backendRole === "VISITOR") mappedRole = "visitor";
 
       const receivedTenantId = data.tenantId ?? null;
@@ -259,6 +260,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (upperRole === "MASTER") mappedRole = "master";
     else if (upperRole === "ADMIN") mappedRole = "admin";
+    else if (upperRole === "PRODUCER") mappedRole = "producer";
     else if (upperRole === "VISITOR") mappedRole = "visitor";
 
     setToken(newToken);

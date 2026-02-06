@@ -27,9 +27,8 @@ export const AdminInternalUsers: React.FC = () => {
       const endpoint = isMaster ? "/users" : `/users?tenantId=${tenantId}`;
       const res = await api.get(endpoint);
       const usersData = res.data as InternalUser[];
-      // Filter to show ONLY Visitors as requested by the user
-      // "nessa página de usuários no painel do museu, tem que aparecer só os visitantes outros tipos de perfil não"
-      setUsers(usersData.filter(u => u.role === 'VISITOR'));
+      // Show MASTER and ADMIN users (internal users only)
+      setUsers(usersData);
     } catch {
       console.error("Erro ao carregar usuários");
     } finally {
