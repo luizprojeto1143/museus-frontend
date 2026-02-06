@@ -99,7 +99,7 @@ export const AdminAIAssistant: React.FC = () => {
         {t("admin.aiAssistant.subtitle")}
       </p>
 
-      {/* System Prompt */}
+      {/* Instruções da IA */}
       <div className="card" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">💬 {t("admin.aiAssistant.sections.prompt")}</h2>
         <p className="card-subtitle">

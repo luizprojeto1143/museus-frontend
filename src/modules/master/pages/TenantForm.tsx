@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
@@ -13,9 +13,13 @@ export const TenantForm: React.FC = () => {
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [isCityMode, setIsCityMode] = useState(false);
   const [termsOfUse, setTermsOfUse] = useState("");
   const [privacyPolicy, setPrivacyPolicy] = useState("");
+
+  // Tenant Type and Hierarchy
+  const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE">("MUSEUM");
+  const [parentId, setParentId] = useState<string | null>(null);
+  const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminName, setAdminName] = useState("");
@@ -49,6 +53,8 @@ export const TenantForm: React.FC = () => {
       setName(data.name);
       setSlug(data.slug);
       setIsCityMode(data.isCityMode ?? false);
+      setTenantType(data.type || "MUSEUM");
+      setParentId(data.parentId || null);
 
       setPlan(data.plan || "START");
       setMaxWorks(data.maxWorks || 50);
@@ -84,6 +90,16 @@ export const TenantForm: React.FC = () => {
     }
   }, [isEdit, id]);
 
+  // Load cities for parent selector
+  React.useEffect(() => {
+    api.get("/tenants/public")
+      .then(res => {
+        const cityTenants = res.data.filter((t: any) => t.type === "CITY" || t.type === "SECRETARIA");
+        setCities(cityTenants);
+      })
+      .catch(console.error);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -97,6 +113,8 @@ export const TenantForm: React.FC = () => {
       name: string;
       slug: string;
       isCityMode?: boolean;
+      type?: string;
+      parentId?: string | null;
 
       adminEmail?: string;
       adminName?: string;
@@ -125,7 +143,9 @@ export const TenantForm: React.FC = () => {
     const payload: TenantPayload = {
       name,
       slug,
-      isCityMode,
+      isCityMode: tenantType === "CITY",
+      type: tenantType,
+      parentId: parentId || null,
 
       plan,
       maxWorks,
@@ -184,7 +204,7 @@ export const TenantForm: React.FC = () => {
           </button>
 
           <span className="master-badge">
-            {isEdit ? '✏️ Editar Museu' : '✨ Novo Museu'}
+            {isEdit ? 'âœï¸ Editar Museu' : 'âœ¨ Novo Museu'}
           </span>
           <h1 className="master-title">
             {isEdit ? name : t("master.tenantForm.newTitle")}
@@ -200,7 +220,7 @@ export const TenantForm: React.FC = () => {
           <div className="master-icon-wrapper master-icon-blue">
             <Building2 size={24} />
           </div>
-          <h3>Informações Básicas</h3>
+          <h3>InformaÃ§Ãµes BÃ¡sicas</h3>
         </div>
 
         <div className="master-form">
@@ -237,7 +257,7 @@ export const TenantForm: React.FC = () => {
           <div className="master-icon-wrapper master-icon-green">
             <Package size={24} />
           </div>
-          <h3>Plano e Operação</h3>
+          <h3>Plano e OperaÃ§Ã£o</h3>
         </div>
 
         <div className="master-form">
@@ -272,49 +292,68 @@ export const TenantForm: React.FC = () => {
             </div>
           </div>
 
-          {/* MODE SELECTION */}
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+          {/* TENANT TYPE SELECTION */}
+          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
             <label className="master-input-group" style={{ marginBottom: '1rem', display: 'block', fontWeight: 600 }}>
-              🌐 Modo de Operação
+              ðŸ—ï¸ Tipo de Tenant
             </label>
-            <div style={{ display: "flex", gap: "1rem" }}>
-              <label style={{
-                display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer",
-                padding: "0.75rem", border: !isCityMode ? "2px solid #3b82f6" : "1px solid #334155", borderRadius: "0.5rem",
-                background: !isCityMode ? "rgba(59, 130, 246, 0.1)" : "transparent", flex: 1
-              }}>
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={!isCityMode}
-                  onChange={() => setIsCityMode(false)}
-                  style={{ width: 'auto' }}
-                />
-                <div>
-                  <strong style={{ display: "block", color: "#fff" }}>🏛️ Modo Museu</strong>
-                  <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Interior, salas, andares</span>
-                </div>
-              </label>
-
-              <label style={{
-                display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer",
-                padding: "0.75rem", border: isCityMode ? "2px solid #3b82f6" : "1px solid #334155", borderRadius: "0.5rem",
-                background: isCityMode ? "rgba(59, 130, 246, 0.1)" : "transparent", flex: 1
-              }}>
-                <input
-                  type="radio"
-                  name="mode"
-                  checked={isCityMode}
-                  onChange={() => setIsCityMode(true)}
-                  style={{ width: 'auto' }}
-                />
-                <div>
-                  <strong style={{ display: "block", color: "#fff" }}>🏙️ {t('master.tenant.modeCity', 'Modo Cidade')}</strong>
-                  <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>{t('master.tenant.modeCityDesc', 'Geo-localização, roteiros, mapas')}</span>
-                </div>
-              </label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
+              {[
+                { value: "MUSEUM", icon: "ðŸ›ï¸", label: "Museu", desc: "Interior, salas, andares" },
+                { value: "CITY", icon: "ðŸ™ï¸", label: "Cidade/Secretaria", desc: "Geo-localizaÃ§Ã£o, roteiros" },
+                { value: "PRODUCER", icon: "ðŸŽ¬", label: "Produtor Cultural", desc: "Projetos, eventos, editais" },
+                { value: "CULTURAL_SPACE", icon: "ðŸŽ­", label: "EspaÃ§o Cultural", desc: "Centro cultural, biblioteca" }
+              ].map(opt => (
+                <label key={opt.value} style={{
+                  display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer",
+                  padding: "1rem", border: tenantType === opt.value ? "2px solid #3b82f6" : "1px solid #334155", borderRadius: "0.75rem",
+                  background: tenantType === opt.value ? "rgba(59, 130, 246, 0.1)" : "transparent",
+                  transition: "all 0.2s"
+                }}>
+                  <input
+                    type="radio"
+                    name="tenantType"
+                    checked={tenantType === opt.value}
+                    onChange={() => setTenantType(opt.value as any)}
+                    style={{ width: 'auto' }}
+                  />
+                  <div>
+                    <strong style={{ display: "block", color: "#fff" }}>{opt.icon} {opt.label}</strong>
+                    <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>{opt.desc}</span>
+                  </div>
+                </label>
+              ))}
             </div>
           </div>
+
+          {/* PARENT TENANT (for linking) */}
+          {(tenantType === "MUSEUM" || tenantType === "PRODUCER" || tenantType === "CULTURAL_SPACE") && (
+            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', marginTop: '1rem' }}>
+              <label className="master-input-group" style={{ marginBottom: '1rem', display: 'block', fontWeight: 600 }}>
+                ðŸ”— VÃ­nculo HierÃ¡rquico (opcional)
+              </label>
+              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>
+                Vincule este tenant a uma Cidade/Secretaria para aparecer nos relatÃ³rios consolidados.
+              </p>
+              <select
+                value={parentId || ""}
+                onChange={e => setParentId(e.target.value || null)}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  background: "#0f172a",
+                  border: "1px solid #334155",
+                  borderRadius: "0.5rem",
+                  color: "#e2e8f0"
+                }}
+              >
+                <option value="">Sem vÃ­nculo (independente)</option>
+                {cities.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
 
@@ -342,13 +381,13 @@ export const TenantForm: React.FC = () => {
             />
           </div>
           <div className="master-input-group">
-            <label htmlFor="privacyPolicy">Política de Privacidade</label>
+            <label htmlFor="privacyPolicy">PolÃ­tica de Privacidade</label>
             <textarea
               id="privacyPolicy"
               rows={6}
               value={privacyPolicy}
               onChange={e => setPrivacyPolicy(e.target.value)}
-              placeholder="Digite a política de privacidade..."
+              placeholder="Digite a polÃ­tica de privacidade..."
               style={{ width: "100%", padding: "0.75rem", background: "#0f172a", border: "1px solid #334155", borderRadius: "0.5rem", color: "#e2e8f0", fontFamily: "monospace" }}
             />
           </div>
@@ -371,45 +410,45 @@ export const TenantForm: React.FC = () => {
         }}>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureWorks} onChange={e => setFeatureWorks(e.target.checked)} />
-            🎨 Obras/Artefatos
+            ðŸŽ¨ Obras/Artefatos
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureTrails} onChange={e => setFeatureTrails(e.target.checked)} />
-            🗺️ Trilhas/Roteiros
+            ðŸ—ºï¸ Trilhas/Roteiros
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureEvents} onChange={e => setFeatureEvents(e.target.checked)} />
-            📅 Eventos
+            ðŸ“… Eventos
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureGamification} onChange={e => setFeatureGamification(e.target.checked)} />
-            🏆 Gamificação
+            ðŸ† GamificaÃ§Ã£o
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureQRCodes} onChange={e => setFeatureQRCodes(e.target.checked)} />
-            📸 QR Codes
+            ðŸ“¸ QR Codes
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureCertificates} onChange={e => setFeatureCertificates(e.target.checked)} />
-            📜 Certificados
+            ðŸ“œ Certificados
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureAccessibility} onChange={e => setFeatureAccessibility(e.target.checked)} />
-            ♿ Acessibilidade
+            â™¿ Acessibilidade
           </label>
           <label className="feature-checkbox">
             <input type="checkbox" checked={featureMinigames} onChange={e => setFeatureMinigames(e.target.checked)} />
-            🎮 Minigame
+            ðŸŽ® Minigame
           </label>
 
           {/* Premium Features */}
           <label className="feature-checkbox premium">
             <input type="checkbox" checked={featureChatAI} onChange={e => setFeatureChatAI(e.target.checked)} />
-            🤖 Chat IA ⭐
+            ðŸ¤– Chat IA â­
           </label>
           <label className="feature-checkbox premium">
             <input type="checkbox" checked={featureShop} onChange={e => setFeatureShop(e.target.checked)} />
-            🛒 Loja Virtual ⭐
+            ðŸ›’ Loja Virtual â­
           </label>
         </div>
 
@@ -476,3 +515,4 @@ export const TenantForm: React.FC = () => {
     </div>
   );
 };
+

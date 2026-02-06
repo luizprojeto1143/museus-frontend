@@ -160,7 +160,7 @@ const MasterPlans: React.FC = () => {
                             {/* Tenants count */}
                             <div style={{ marginTop: 16, padding: 12, backgroundColor: "#f3f4f6", borderRadius: 8, textAlign: "center" }}>
                                 <span style={{ color: "#6b7280" }}>
-                                    {plan._count?.tenants || 0} tenant(s) usando este plano
+                                    {plan._count?.tenants || 0} instituições usando este plano
                                 </span>
                             </div>
 

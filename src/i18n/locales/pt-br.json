@@ -22,7 +22,24 @@
         "images": "Imagens",
         "audios": "Áudios",
         "videos": "Vídeos",
-        "noResults": "Nenhum resultado encontrado.",
+        "uploading": "Enviando...",
+        "errorLoad": "Erro ao carregar dados",
+        "anonymous": "Anônimo",
+        "createdAt": "Criado em",
+        "date": "Data",
+        "activity": "Atividade",
+        "errorUpload": "Erro no upload",
+        "saving": "Salvando...",
+        "generating": "Gerando...",
+        "remove": "Remover",
+        "sending": "Enviando...",
+        "details": "Detalhes",
+        "share": "Compartilhar",
+        "errorConnection": "Erro de conexão",
+        "visitor": "Visitante",
+        "you": "Você",
+        "cancelled": "Cancelado",
+        "confirmed": "Confirmado",
         "modes": {
             "museum": {
                 "work": "Obra",
@@ -57,7 +74,7 @@
         "login": "Login"
     },
     "uploads": {
-        "title": "Arquivos",
+        "title": "Galeria de Mídia",
         "subtitle": "Gerencie todas as imagens, áudios e vídeos armazenados.",
         "newUpload": "Novo Arquivo",
         "stats": {
@@ -85,10 +102,20 @@
             "hasAccount": "Já tem uma conta? Entre"
         },
         "errors": {
-            "generic": "Erro interno ao realizar cadastro. Tente novamente mais tarde."
+            "generic": "Erro interno ao realizar cadastro. Tente novamente mais tarde.",
+            "termsRequired": "Você precisa aceitar os termos.",
+            "passwordMismatch": "As senhas não conferem.",
+            "registerFailed": "Falha no cadastro. Verifique os dados."
         }
     },
     "visitor": {
+        "ai": {
+            "chatTitle": "Chat IA",
+            "welcome": "Olá! Sou o guia virtual do museu. Pergunte-me sobre obras, horários ou curiosidades!",
+            "askAboutWork": "Me fale sobre esta obra...",
+            "askAnything": "Pergunte qualquer coisa...",
+            "placeholder": "Digite sua pergunta aqui..."
+        },
         "sidebar": {
             "home": "Início",
             "artworks": "Obras",
@@ -110,7 +137,7 @@
             "treasureHunt": "Caça ao Tesouro",
             "guestbook": "Livro de Visitas",
             "installApp": "Instalar App",
-            "scanner": "Scanner"
+            "scanner": "Leitor QR"
         },
         "smartRoute": {
             "title": "Roteiro Inteligente",
@@ -316,18 +343,33 @@
             "visitors": "Visitantes",
             "achievements": "Conquistas",
             "ai": "Assistente IA",
-            "analytics": "Analytics",
-            "uploads": "Arquivos",
+            "analytics": "Estatísticas",
+            "uploads": "Galeria de Mídia",
             "users": "Usuários",
             "treasureHunt": "Caça ao Tesouro",
             "settings": "Configurações",
             "reviews": "Moderação",
             "shop": "Loja",
-            "scanner": "Scanner IA",
+            "scanner": "Leitor IA",
             "logout": "Sair"
         },
+        "scanner": {
+            "title": "Treinamento do Scanner IA",
+            "subtitle": "Gerencie as classes e treine o modelo para reconhecer obras."
+        },
+        "errors": {
+            "delete": "Erro ao excluir item",
+            "save": "Erro ao salvar dados"
+        },
+        "treasure": {
+            "title": "Caça ao Tesouro",
+            "subtitle": "Gerencie as pistas e recompensas.",
+            "add": "Nova Pista",
+            "automatedTitle": "Título Automático",
+            "automatedDescription": "Descrição Automática"
+        },
         "uploads": {
-            "title": "Gerenciador de Arquivos",
+            "title": "Galeria de Mídia",
             "subtitle": "Visualize e gerencie todos os arquivos de mídia do museu",
             "newUpload": "Novo Upload",
             "stats": {
@@ -494,6 +536,7 @@
         "trails": {
             "title": "Trilhas",
             "subtitle": "Gerencie os roteiros do museu",
+            "confirmDelete": "Tem certeza que deseja excluir esta trilha?",
             "new": "Nova Trilha",
             "table": {
                 "name": "Nome",
@@ -648,6 +691,7 @@
         "visitors": {
             "title": "Visitantes",
             "subtitle": "Gerencie e acompanhe todos os visitantes do museu",
+            "history": "Histórico de Visitas",
             "exportCSV": "Exportar CSV",
             "totalVisitors": "Total de Visitantes",
             "avgXP": "XP Médio",
@@ -758,7 +802,7 @@
             "title": "Assistente IA",
             "subtitle": "Configure a personalidade e comportamento do chat IA do museu",
             "sections": {
-                "prompt": "Prompt do Sistema",
+                "prompt": "Instruções da IA",
                 "promptSubtitle": "Instruções principais que definem a personalidade e conhecimento da IA",
                 "context": "Contexto Histórico",
                 "references": "Referências Internas",
@@ -768,13 +812,13 @@
                 "testSubtitle": "Faça perguntas para ver como a IA responde com as configurações atuais"
             },
             "labels": {
-                "systemPrompt": "System Prompt Completo",
+                "systemPrompt": "Instruções Completas",
                 "tone": "Tom de Voz",
                 "style": "Estilo de Fala",
                 "context": "Informações sobre o Museu e Acervo",
                 "references": "Lista de Referências (uma por linha)",
-                "temperature": "Temperature",
-                "maxTokens": "Tokens Máximos",
+                "temperature": "Criatividade",
+                "maxTokens": "Tamanho da Resposta",
                 "testMessage": "Mensagem de Teste"
             },
             "placeholders": {
@@ -828,7 +872,7 @@
             "summaryByTenant": "Resumo por Cliente",
             "table": {
                 "client": "Cliente",
-                "slug": "Slug",
+                "slug": "Link (URL)",
                 "works": "Obras",
                 "trails": "Trilhas",
                 "events": "Eventos",
@@ -837,28 +881,28 @@
             }
         },
         "tenants": {
-            "title": "Museus / Tenants",
-            "subtitle": "Gerencie todos os museus e cidades da plataforma. Crie novos tenants e configure admins.",
-            "new": "Novo Tenant",
+            "title": "Instituições / Contas",
+            "subtitle": "Gerencie todas as instituições e cidades da plataforma.",
+            "new": "Nova Instituição",
             "table": {
                 "name": "Nome",
-                "slug": "Slug",
+                "slug": "Link (URL)",
                 "createdAt": "Criado em",
                 "actions": "Ações",
                 "edit": "Editar"
             }
         },
         "tenantForm": {
-            "editTitle": "Editar Tenant",
-            "newTitle": "Novo Tenant",
-            "subtitle": "Crie um novo museu/cidade na plataforma e configure o administrador.",
+            "editTitle": "Editar Instituição",
+            "newTitle": "Nova Instituição",
+            "subtitle": "Crie uma nova instituição ou cidade na plataforma.",
             "labels": {
                 "name": "Nome",
-                "slug": "Slug (URL)",
+                "slug": "Link Personalizado (URL)",
                 "adminEmail": "Email do Administrador",
                 "adminName": "Nome do Administrador",
                 "adminPassword": "Senha Inicial",
-                "type": "Tipo de Tenant"
+                "type": "Tipo de Instituição"
             },
             "types": {
                 "museum": "Museu / Espaço Cultural",
@@ -947,90 +991,112 @@
                 "desc": "Exportação de todas as transações de bilheteria e vendas formatadas para o sistema Salic.",
                 "download": "Baixar Excel"
             }
-        }
-    },
-    "users": {
-        "title": "Usuários Administrativos",
-        "subtitle": "Gerencie administradores de museus (ADMIN) e gestores da plataforma (MASTER).",
-        "new": "Novo Usuário",
-        "table": {
-            "name": "Nome",
-            "email": "E-mail",
-            "role": "Perfil",
-            "tenant": "Museu / Tenant",
-            "actions": "Ações",
-            "edit": "Editar"
-        }
-    },
-    "achievements": {
-        "title": "Gestão de Conquistas",
-        "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
-        "selectTenant": "Selecione um cliente para ver as conquistas",
-        "select": "Selecione...",
-        "empty": "Nenhuma conquista encontrada.",
-        "errorLoad": "Erro ao carregar conquistas.",
-        "new": "Nova Conquista",
-        "table": {
-            "icon": "Ícone",
-            "title": "Título",
-            "description": "Descrição",
-            "xp": "XP",
-            "actions": "Ações"
         },
-        "form": {
-            "newTitle": "Nova Conquista",
-            "editTitle": "Editar Conquista",
-            "tenant": "Museu (Opcional)",
+        "accessibility": {
+            "errorLoad": "Erro ao carregar solicitações",
+            "uploadCheckLibras": "Comprovante Libras",
+            "uploadCheckAudio": "Comprovante Audiodescrição",
+            "success": "Solicitação atualizada com sucesso",
+            "errorSubmit": "Erro ao atualizar solicitação"
+        },
+        "users": {
+            "title": "Usuários Administrativos",
+            "subtitle": "Gerencie administradores de museus (ADMIN) e gestores da plataforma (MASTER).",
+            "new": "Novo Usuário",
+            "table": {
+                "name": "Nome",
+                "email": "E-mail",
+                "role": "Perfil",
+                "tenant": "Instituição",
+                "actions": "Ações",
+                "edit": "Editar"
+            }
+        },
+        "achievements": {
+            "title": "Gestão de Conquistas",
+            "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
+            "selectTenant": "Selecione um cliente para ver as conquistas",
             "select": "Selecione...",
-            "code": "Código (ID único)",
-            "codePlaceholder": "Ex: PRIMEIRA_VISITA",
-            "codeHelp": "Código único em maiúsculas (ex: VISITOR_100)",
-            "title": "Título",
-            "titlePlaceholder": "Ex: Explorador Iniciante",
-            "description": "Descrição",
-            "descriptionPlaceholder": "Descreva como ganhar esta conquista...",
-            "imageUrl": "Imagem / Ícone",
-            "imageUrlPlaceholder": "https://...",
-            "upload": "Enviar Arquivo",
-            "uploading": "Enviando...",
-            "saving": "Salvando...",
-            "selectTenantAlert": "Selecione um museu!",
-            "errorSave": "Erro ao salvar conquista",
-            "errorUpload": "Erro ao fazer upload da imagem",
-            "save": "Salvar",
-            "cancel": "Cancelar"
+            "empty": "Nenhuma conquista encontrada.",
+            "errorLoad": "Erro ao carregar conquistas.",
+            "new": "Nova Conquista",
+            "table": {
+                "icon": "Ícone",
+                "title": "Título",
+                "description": "Descrição",
+                "xp": "XP",
+                "actions": "Ações"
+            },
+            "form": {
+                "newTitle": "Nova Conquista",
+                "editTitle": "Editar Conquista",
+                "tenant": "Museu (Opcional)",
+                "select": "Selecione...",
+                "code": "Código (ID único)",
+                "codePlaceholder": "Ex: PRIMEIRA_VISITA",
+                "codeHelp": "Código único em maiúsculas (ex: VISITOR_100)",
+                "title": "Título",
+                "titlePlaceholder": "Ex: Explorador Iniciante",
+                "description": "Descrição",
+                "descriptionPlaceholder": "Descreva como ganhar esta conquista...",
+                "imageUrl": "Imagem / Ícone",
+                "imageUrlPlaceholder": "https://...",
+                "upload": "Enviar Arquivo",
+                "uploading": "Enviando...",
+                "saving": "Salvando...",
+                "selectTenantAlert": "Selecione um museu!",
+                "errorSave": "Erro ao salvar conquista",
+                "errorUpload": "Erro ao fazer upload da imagem",
+                "save": "Salvar",
+                "cancel": "Cancelar"
+            }
+        },
+        "userForm": {
+            "editTitle": "Editar Usuário",
+            "newTitle": "Novo Usuário",
+            "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
+            "labels": {
+                "name": "Nome Completo",
+                "email": "E-mail de Acesso",
+                "password": "Senha",
+                "role": "Nível de Acesso",
+                "tenant": "Vinculado à Instituição"
+            },
+            "placeholders": {
+                "name": "Ex: João Silva",
+                "email": "joao@email.com",
+                "password": "Senha segura",
+                "passwordEdit": "Nova senha (opcional)",
+                "selectTenant": "Selecione um museu..."
+            },
+            "roles": {
+                "master": "Master (Acesso Global)",
+                "admin": "Admin (Gestor de Museu)"
+            },
+            "helpers": {
+                "tenant": "Usuários ADMIN devem estar vinculados a uma instituição. Usuários MASTER têm acesso a tudo.",
+                "passwordEdit": "Deixe em branco para manter a senha atual."
+            },
+            "alerts": {
+                "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
+                "errorSave": "Erro ao salvar usuário. Tente novamente."
+            },
+            "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
         }
     },
-    "userForm": {
-        "editTitle": "Editar Usuário",
-        "newTitle": "Novo Usuário",
-        "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
-        "labels": {
-            "name": "Nome Completo",
-            "email": "E-mail de Acesso",
-            "password": "Senha",
-            "role": "Nível de Acesso",
-            "tenant": "Vinculado ao Museu (Tenant)"
-        },
-        "placeholders": {
-            "name": "Ex: João Silva",
-            "email": "joao@email.com",
-            "password": "Senha segura",
-            "passwordEdit": "Nova senha (opcional)",
-            "selectTenant": "Selecione um museu..."
-        },
-        "roles": {
-            "master": "Master (Acesso Global)",
-            "admin": "Admin (Gestor de Museu)"
-        },
-        "helpers": {
-            "tenant": "Usuários ADMIN devem estar vinculados a um museu específico. Usuários MASTER têm acesso a tudo.",
-            "passwordEdit": "Deixe em branco para manter a senha atual."
-        },
-        "alerts": {
-            "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
-            "errorSave": "Erro ao salvar usuário. Tente novamente."
-        },
-        "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
+    "pwa": {
+        "install": {
+            "title": "Instalar Aplicativo",
+            "desc": "Instale nosso app para uma melhor experiência!",
+            "ios": {
+                "step1": "Toque no botão Compartilhar",
+                "step2": "Role para baixo",
+                "step3": "Selecione 'Adicionar à Tela de Início'"
+            },
+            "android": {
+                "step1": "Toque no menu (três pontos)",
+                "step2": "Selecione 'Instalar aplicativo'"
+            }
+        }
     }
 }

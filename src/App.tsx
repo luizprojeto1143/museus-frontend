@@ -68,6 +68,7 @@ import { EventSurveyPage } from "./modules/visitor/pages/EventSurveyPage";
 
 // Admin pages
 import { AdminDashboard } from "./modules/admin/pages/AdminDashboard";
+import { ConditionalAdminDashboard } from "./modules/admin/pages/ConditionalAdminDashboard";
 import { AdminWorks } from "./modules/admin/pages/AdminWorks";
 import { AdminWorkForm } from "./modules/admin/pages/AdminWorkForm";
 import { AdminTrails } from "./modules/admin/pages/AdminTrails";
@@ -489,7 +490,7 @@ const App: React.FC = () => {
                   element={
                     <RequireRole allowed={["admin"]}>
                       <AdminLayout>
-                        <AdminDashboard />
+                        <ConditionalAdminDashboard />
                       </AdminLayout>
                     </RequireRole>
                   }

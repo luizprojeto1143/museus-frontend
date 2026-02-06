@@ -22,7 +22,25 @@
         "images": "Imágenes",
         "audios": "Audios",
         "videos": "Videos",
-        "noResults": "No se encontraron resultados."
+        "noResults": "No se encontraron resultados.",
+        "modes": {
+            "museum": {
+                "work": "Obra",
+                "works": "Obras",
+                "trail": "Ruta",
+                "trails": "Rutas",
+                "room": "Sala",
+                "floor": "Planta"
+            },
+            "city": {
+                "work": "Punto de Interés",
+                "works": "Puntos de Interés",
+                "trail": "Recorrido",
+                "trails": "Recorridos",
+                "room": "Barrio",
+                "floor": "Zona"
+            }
+        }
     },
     "dashboard": {
         "title": "Panel de Control"

@@ -4,6 +4,8 @@ import { useAuth } from "../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { api } from "../../api/client";
+import { useTerminology } from "../../hooks/useTerminology";
+import { useIsCityMode } from "../auth/TenantContext";
 
 interface TenantFeatures {
   featureWorks: boolean;
@@ -35,6 +37,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [features, setFeatures] = useState<TenantFeatures | null>(null);
 
+  // City Mode hooks
+  const isCityMode = useIsCityMode();
+  const term = useTerminology();
+
   useEffect(() => {
     if (tenantId) {
       api.get(`/tenants/${tenantId}`)
@@ -44,15 +50,15 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [tenantId]);
 
   const allLinks = [
-    { to: "/admin", label: t("admin.sidebar.dashboard"), icon: "📊", show: true },
-    { to: "/admin/obras", label: t("admin.sidebar.artworks"), icon: "🖼️", show: features?.featureWorks ?? true },
-    { to: "/admin/trilhas", label: t("admin.sidebar.trails"), icon: "🧭", show: features?.featureTrails ?? true },
+    { to: "/admin", label: isCityMode ? "Secretaria de Cultura" : t("admin.sidebar.dashboard"), icon: "📊", show: true },
+    { to: "/admin/obras", label: term.works, icon: isCityMode ? "🏛️" : "🖼️", show: features?.featureWorks ?? true },
+    { to: "/admin/trilhas", label: term.trails, icon: isCityMode ? "🗺️" : "🧭", show: features?.featureTrails ?? true },
     { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: features?.featureEvents ?? true },
     { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫", show: features?.featureEvents ?? true },
     { to: "/admin/certificates", label: "Certificados", icon: "🎓", show: features?.featureCertificates ?? true },
     { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱", show: features?.featureQRCodes ?? true },
     { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️", show: true },
-    { to: "/admin/visitantes", label: t("admin.sidebar.visitors"), icon: "👥", show: true },
+    { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "👥", show: true },
     { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐", show: (features?.featureReviews || features?.featureGuestbook) ?? true },
     { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️", show: features?.featureGamification ?? true },
     { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅", show: features?.featureGamification ?? true },
@@ -90,8 +96,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           <div className="app-brand">
             <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
             <div>
-              <div className="app-title">{t("dashboard.title")}</div>
-              <div className="app-subtitle">{t("admin.museums.title")}</div>
+              <div className="app-title">{isCityMode ? "Secretaria de Cultura" : t("dashboard.title")}</div>
+              <div className="app-subtitle">{isCityMode ? "Gestão Municipal" : t("admin.museums.title")}</div>
             </div>
           </div>
         </div>

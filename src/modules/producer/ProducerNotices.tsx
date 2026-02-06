@@ -46,14 +46,14 @@ export const ProducerNotices: React.FC = () => {
         <div className="producer-notices">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                 <div>
-                    <h1 className="page-title">Editais Abertos</h1>
-                    <p className="page-subtitle">Inscreva seus projetos nos editais disponíveis</p>
+                    <h1 style={{ fontSize: "1.8rem", color: "#d4af37", marginBottom: "0.5rem" }}>📋 Editais Abertos</h1>
+                    <p style={{ color: "#B0A090" }}>Inscreva seus projetos nos editais disponíveis</p>
                 </div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
                 {notices.length === 0 ? (
-                    <p style={{ color: "#888" }}>Nenhum edital com inscrições abertas no momento.</p>
+                    <p style={{ color: "#B0A090" }}>Nenhum edital com inscrições abertas no momento.</p>
                 ) : (
                     notices.map(notice => (
                         <div key={notice.id} className="card" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -67,9 +67,9 @@ export const ProducerNotices: React.FC = () => {
                                 </div>
                             </div>
 
-                            <p style={{ color: "#aaa", fontSize: "0.9rem", flex: 1 }}>{notice.description?.substring(0, 120)}...</p>
+                            <p style={{ color: "#B0A090", fontSize: "0.9rem", flex: 1 }}>{notice.description?.substring(0, 120)}...</p>
 
-                            <div style={{ padding: "1rem", background: "rgba(0,0,0,0.2)", borderRadius: "0.5rem", fontSize: "0.85rem" }}>
+                            <div style={{ padding: "1rem", background: "rgba(44, 30, 16, 0.5)", borderRadius: "0.5rem", fontSize: "0.85rem" }}>
                                 <div><strong>Início:</strong> {new Date(notice.registrationStartDate).toLocaleDateString()}</div>
                                 <div><strong>Fim:</strong> {new Date(notice.registrationEndDate).toLocaleDateString()}</div>
                             </div>
@@ -83,7 +83,7 @@ export const ProducerNotices: React.FC = () => {
                                     Inscrever Projeto <ArrowRight size={16} />
                                 </button>
                             ) : (
-                                <div style={{ textAlign: "center", padding: "0.5rem", color: "#888", fontSize: "0.85rem", background: "rgba(0,0,0,0.2)", borderRadius: "0.5rem" }}>
+                                <div style={{ textAlign: "center", padding: "0.5rem", color: "#B0A090", fontSize: "0.85rem", background: "rgba(44, 30, 16, 0.5)", borderRadius: "0.5rem" }}>
                                     Submissão sob consulta
                                 </div>
                             )}

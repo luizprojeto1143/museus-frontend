@@ -80,7 +80,7 @@ export const TenantsList: React.FC = () => {
             Gerenciar Clientes
           </h1>
           <p className="master-subtitle">
-            Crie novos tenants, gerencie assinaturas e controle o acesso de cada instituição.
+            Crie novas instituições, gerencie assinaturas e controle o acesso de cada conta.
           </p>
 
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem" }}>
@@ -108,7 +108,7 @@ export const TenantsList: React.FC = () => {
           <div className="master-icon-wrapper master-icon-blue">
             <Building2 size={24} />
           </div>
-          <h3>Lista de Museus ({tenants.length})</h3>
+          <h3>Instituições Cadastradas ({tenants.length})</h3>
         </div>
 
         <div className="master-table-container">
