@@ -50,6 +50,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
         { to: "/producer", label: t("producer.layout.menu.overview"), icon: <LayoutDashboard size={20} />, show: true },
         { to: "/producer/projects", label: "Meus Projetos", icon: <FileText size={20} />, show: features.featureProjects },
         { to: "/producer/events", label: "Meus Eventos", icon: <Calendar size={20} />, show: true },
+        { to: "/producer/editais", label: "Editais Disponíveis", icon: <Briefcase size={20} />, show: features.featureEditaisSubmission },
 
         // Museum Features provided to Producer (Guarded by Flags)
         { to: "/producer/works", label: "Acervo", icon: <Image size={20} />, show: features.featureWorks },
