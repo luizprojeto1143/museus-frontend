@@ -5,9 +5,9 @@ import L from "leaflet";
 import { Building, Map as MapIcon } from "lucide-react";
 import "./MuseumMap.css";
 
-// Fix default icon issue in Leaflet + React
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
+// Local assets from public folder
+const icon = "/images/leaflet/marker-icon.png";
+const iconShadow = "/images/leaflet/marker-shadow.png";
 
 const DefaultIcon = L.icon({
     iconUrl: icon,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -26,40 +26,13 @@ type ApiWork = {
   imageUrl?: string;
 };
 
+import { useWorks } from "../hooks/useWorks";
+
 export const WorksList: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
 
-  const [works, setWorks] = useState<WorkItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchWorks = useCallback(async () => {
-    if (!tenantId) return;
-
-    try {
-      const res = await api.get("/works", { params: { tenantId } });
-      const rawData = Array.isArray(res.data) ? res.data : (res.data.data || []);
-
-      const worksData = (rawData as ApiWork[]).map((w) => ({
-        id: w.id,
-        title: w.title,
-        artist: w.artist ?? "Artista desconhecido",
-        year: w.year ?? "",
-        category: typeof w.category === 'object' ? w.category?.name : w.category ?? "Obra",
-        accessible: true,
-        imageUrl: getFullUrl(w.imageUrl)
-      }));
-      setWorks(worksData);
-    } catch (err) {
-      console.error("Failed to fetch works", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [tenantId]);
-
-  useEffect(() => {
-    fetchWorks();
-  }, [fetchWorks]);
+  const { data: works = [], isLoading: loading } = useWorks();
 
   if (!tenantId) {
     return <div className="workslist-no-tenant">{t("visitor.works.selectMuseum", "Selecione um museu para ver as obras.")}</div>;
