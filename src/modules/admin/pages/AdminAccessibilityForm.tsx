@@ -3,24 +3,29 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { ArrowLeft, Save, User, Calendar, DollarSign, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Input, Select, Textarea, Button } from "../../../components/ui";
+import {
+    ArrowLeft, Save, User, Calendar, DollarSign,
+    CheckCircle, Clock, AlertCircle, Headphones,
+    Type, HandMetal, Eye, FileText, Layers, Box
+} from "lucide-react";
 
 const ACCESSIBILITY_SERVICES = [
-    { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: "🤟" },
-    { value: "AUDIO_DESCRIPTION", label: "Audiodescrição", icon: "🎧" },
-    { value: "CAPTIONING", label: "Legendagem", icon: "📝" },
-    { value: "BRAILLE", label: "Material em Braille", icon: "⠿" },
-    { value: "TACTILE_MODEL", label: "Maquete Tátil", icon: "🖐️" },
-    { value: "EASY_READING", label: "Leitura Fácil", icon: "📖" }
+    { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: <HandMetal size={24} />, description: "Tradução simultânea para língua de sinais" },
+    { value: "AUDIO_DESCRIPTION", label: "Audiodescrição", icon: <Headphones size={24} />, description: "Narração descritiva para deficientes visuais" },
+    { value: "CAPTIONING", label: "Legendagem", icon: <Type size={24} />, description: "Legendas para vídeos e conteúdos" },
+    { value: "BRAILLE", label: "Material em Braille", icon: <Layers size={24} />, description: "Impressão e adaptação tátil" },
+    { value: "TACTILE_MODEL", label: "Maquete Tátil", icon: <Box size={24} />, description: "Reprodução física para toque" },
+    { value: "EASY_READING", label: "Leitura Fácil", icon: <Eye size={24} />, description: "Adaptação de textos para compreensão simplificada" }
 ];
 
 const STATUS_OPTIONS = [
-    { value: "PENDING", label: "Pendente", color: "#f59e0b", icon: Clock },
-    { value: "APPROVED", label: "Aprovado", color: "#22c55e", icon: CheckCircle },
-    { value: "IN_PROGRESS", label: "Em Andamento", color: "#3b82f6", icon: Clock },
-    { value: "DELIVERED", label: "Entregue", color: "#8b5cf6", icon: CheckCircle },
-    { value: "VALIDATED", label: "Validado", color: "#06b6d4", icon: CheckCircle },
-    { value: "REJECTED", label: "Rejeitado", color: "#ef4444", icon: AlertCircle }
+    { value: "PENDING", label: "Pendente", color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+    { value: "APPROVED", label: "Aprovado", color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+    { value: "IN_PROGRESS", label: "Em Andamento", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+    { value: "DELIVERED", label: "Entregue", color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+    { value: "VALIDATED", label: "Validado", color: "text-cyan-500", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
+    { value: "REJECTED", label: "Rejeitado", color: "text-red-500", bg: "bg-red-500/10", border: "border-red-500/20" }
 ];
 
 interface Provider {
@@ -94,8 +99,7 @@ export const AdminAccessibilityForm: React.FC = () => {
         }
     }, [id, tenantId, searchParams]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         if (!tenantId) return;
 
         setSaving(true);
@@ -137,193 +141,234 @@ export const AdminAccessibilityForm: React.FC = () => {
     );
 
     if (loading) {
-        return <div className="loading">Carregando...</div>;
+        return <div className="text-white text-center py-20">Carregando...</div>;
     }
 
     return (
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <div className="max-w-5xl mx-auto pb-20">
             {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-                <button
+            <div className="flex items-center gap-4 mb-8">
+                <Button
+                    variant="ghost"
                     onClick={() => navigate("/admin/acessibilidade")}
-                    style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0.5rem" }}
+                    className="h-10 w-10 p-0 rounded-full"
                 >
                     <ArrowLeft size={24} />
-                </button>
+                </Button>
                 <div>
-                    <h1 className="section-title">{isEdit ? "Editar Solicitação" : "Nova Solicitação de Acessibilidade"}</h1>
-                    <p className="section-subtitle">
-                        {isEdit ? "Atualize os dados da solicitação" : "Registre uma nova demanda de acessibilidade"}
+                    <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
+                        {isEdit ? "Editar Solicitação" : "Nova Solicitação de Acessibilidade"}
+                    </h1>
+                    <p className="text-slate-400 mt-1">
+                        {isEdit ? "Atualize os dados da solicitação" : "Registre uma nova demanda de recursos acessíveis"}
                     </p>
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
-                {/* Tipo de Serviço */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title">♿ Tipo de Serviço</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* COLUNA ESQUERDA - TIPO DE SERVIÇO */}
+                <div className="lg:col-span-2 space-y-8">
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}>
-                        {ACCESSIBILITY_SERVICES.map(service => (
-                            <button
-                                key={service.value}
-                                type="button"
-                                onClick={() => setFormData({ ...formData, serviceType: service.value, providerId: "" })}
-                                style={{
-                                    padding: "1rem",
-                                    borderRadius: "0.75rem",
-                                    border: "2px solid",
-                                    borderColor: formData.serviceType === service.value ? "#3b82f6" : "#e5e7eb",
-                                    background: formData.serviceType === service.value ? "rgba(59, 130, 246, 0.05)" : "white",
-                                    cursor: "pointer",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "0.75rem",
-                                    textAlign: "left"
-                                }}
-                            >
-                                <span style={{ fontSize: "1.5rem" }}>{service.icon}</span>
-                                <span style={{
-                                    color: formData.serviceType === service.value ? "#3b82f6" : "#374151",
-                                    fontWeight: formData.serviceType === service.value ? 600 : 400
-                                }}>
-                                    {service.label}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <span className="text-blue-400">♿</span> Tipo de Serviço
+                        </h2>
 
-                {/* Detalhes */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><User size={20} /> Detalhes da Solicitação</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {ACCESSIBILITY_SERVICES.map(service => (
+                                <div
+                                    key={service.value}
+                                    onClick={() => setFormData({ ...formData, serviceType: service.value, providerId: "" })}
+                                    className={`
+                                        cursor-pointer p-4 rounded-2xl border transition-all duration-200 relative overflow-hidden group
+                                        ${formData.serviceType === service.value
+                                            ? 'bg-blue-600/20 border-blue-500/50 shadow-[0_0_30px_-10px_rgba(37,99,235,0.3)]'
+                                            : 'bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5'}
+                                    `}
+                                >
+                                    <div className={`mb-3 ${formData.serviceType === service.value ? 'text-blue-400' : 'text-slate-400 group-hover:text-white'}`}>
+                                        {service.icon}
+                                    </div>
+                                    <h3 className={`font-bold text-sm mb-1 ${formData.serviceType === service.value ? 'text-white' : 'text-slate-200'}`}>
+                                        {service.label}
+                                    </h3>
+                                    <p className="text-xs text-slate-500 leading-relaxed">
+                                        {service.description}
+                                    </p>
 
-                    <div className="form-group">
-                        <label>Solicitante</label>
-                        <input
-                            type="text"
-                            className="input"
-                            value={formData.requestedBy}
-                            onChange={e => setFormData({ ...formData, requestedBy: e.target.value })}
-                            placeholder="Nome do solicitante ou departamento"
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label>Projeto Vinculado</label>
-                        <select
-                            className="input"
-                            value={formData.projectId}
-                            onChange={e => setFormData({ ...formData, projectId: e.target.value })}
-                        >
-                            <option value="">Nenhum projeto vinculado</option>
-                            {projects.map(project => (
-                                <option key={project.id} value={project.id}>{project.title}</option>
+                                    {formData.serviceType === service.value && (
+                                        <div className="absolute top-4 right-4 text-blue-400">
+                                            <CheckCircle size={18} className="fill-blue-500/20" />
+                                        </div>
+                                    )}
+                                </div>
                             ))}
-                        </select>
+                        </div>
                     </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div className="form-group">
-                            <label>Status</label>
-                            <select
-                                className="input"
-                                value={formData.status}
-                                onChange={e => setFormData({ ...formData, status: e.target.value })}
-                            >
-                                {STATUS_OPTIONS.map(opt => (
-                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label><DollarSign size={16} /> Orçamento Aprovado (R$)</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                className="input"
-                                value={formData.approvedBudget}
-                                onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
-                                placeholder="1500.00"
+                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <FileText className="text-emerald-400" size={24} /> Detalhes da Solicitação
+                        </h2>
+
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <Input
+                                    label="Solicitante / Departamento"
+                                    value={formData.requestedBy}
+                                    onChange={e => setFormData({ ...formData, requestedBy: e.target.value })}
+                                    placeholder="Ex: Educativo, Curadoria..."
+                                    leftIcon={<User size={16} />}
+                                    className="bg-black/20"
+                                />
+                                <Select
+                                    label="Projeto Vinculado"
+                                    value={formData.projectId}
+                                    onChange={e => setFormData({ ...formData, projectId: e.target.value })}
+                                    options={[
+                                        { value: "", label: "Nenhum projeto vinculado" },
+                                        ...projects.map(p => ({ value: p.id, label: p.title }))
+                                    ]}
+                                    className="bg-black/20"
+                                />
+                            </div>
+
+                            <Textarea
+                                label="Descrição dos Entregáveis"
+                                value={formData.deliverables}
+                                onChange={e => setFormData({ ...formData, deliverables: e.target.value })}
+                                placeholder="Descreva detalhadamente o que deve ser entregue..."
+                                rows={4}
+                                className="bg-black/20"
                             />
                         </div>
                     </div>
                 </div>
 
-                {/* Prestador */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title">👤 Prestador Designado</h2>
+                {/* COLUNA DIREITA - STATUS E PRESTADOR */}
+                <div className="space-y-8">
 
-                    {filteredProviders.length === 0 ? (
-                        <p style={{ color: "#f59e0b", fontSize: "0.875rem" }}>
-                            ⚠️ Nenhum prestador cadastrado para este tipo de serviço.{" "}
-                            <a href="/admin/prestadores/novo" style={{ color: "#3b82f6" }}>Cadastrar prestador</a>
-                        </p>
-                    ) : (
-                        <div className="form-group">
-                            <label>Selecionar Prestador</label>
-                            <select
-                                className="input"
-                                value={formData.providerId}
-                                onChange={e => setFormData({ ...formData, providerId: e.target.value })}
-                            >
-                                <option value="">Sem prestador designado</option>
-                                {filteredProviders.map(provider => (
-                                    <option key={provider.id} value={provider.id}>{provider.name}</option>
-                                ))}
-                            </select>
+                    {/* Status Card */}
+                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
+                        <h2 className="text-xl font-bold text-white mb-6">Status e Orçamento</h2>
+
+                        <div className="space-y-6">
+                            <div>
+                                <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Situação Atual</label>
+                                <div className="grid grid-cols-1 gap-2">
+                                    {STATUS_OPTIONS.map(opt => (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            onClick={() => setFormData({ ...formData, status: opt.value })}
+                                            className={`
+                                                flex items-center gap-3 p-3 rounded-xl border transition-all text-sm font-medium
+                                                ${formData.status === opt.value
+                                                    ? `${opt.bg} ${opt.border} ${opt.color}`
+                                                    : 'bg-black/20 border-transparent text-slate-500 hover:bg-white/5'}
+                                            `}
+                                        >
+                                            <div className={`w-2 h-2 rounded-full ${formData.status === opt.value ? 'bg-current' : 'bg-slate-600'}`} />
+                                            {opt.label}
+                                            {formData.status === opt.value && <CheckCircle size={14} className="ml-auto" />}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="pt-6 border-t border-white/5">
+                                <Input
+                                    label="Orçamento Aprovado (R$)"
+                                    type="number"
+                                    value={formData.approvedBudget}
+                                    onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
+                                    leftIcon={<DollarSign size={16} />}
+                                    className="bg-black/20 font-mono text-lg"
+                                    placeholder="0,00"
+                                />
+                            </div>
+
+                            <div className="pt-4">
+                                <Input
+                                    label="Status da Validação"
+                                    value={formData.validationStatus}
+                                    onChange={e => setFormData({ ...formData, validationStatus: e.target.value })}
+                                    placeholder="Ex: Aprovado pelo especialista"
+                                    leftIcon={<CheckCircle size={16} />}
+                                    className="bg-black/20"
+                                />
+                            </div>
                         </div>
-                    )}
-                </div>
-
-                {/* Entregáveis */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title">📦 Entregáveis e Validação</h2>
-
-                    <div className="form-group">
-                        <label>Descrição dos Entregáveis</label>
-                        <textarea
-                            className="input"
-                            rows={3}
-                            value={formData.deliverables}
-                            onChange={e => setFormData({ ...formData, deliverables: e.target.value })}
-                            placeholder="Descreva os materiais ou serviços entregues..."
-                        />
                     </div>
 
-                    <div className="form-group">
-                        <label>Status da Validação</label>
-                        <input
-                            type="text"
-                            className="input"
-                            value={formData.validationStatus}
-                            onChange={e => setFormData({ ...formData, validationStatus: e.target.value })}
-                            placeholder="Ex: Aprovado, Pendente de ajustes..."
-                        />
-                    </div>
-                </div>
+                    {/* Prestador Card */}
+                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
+                        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <User className="text-purple-400" size={20} /> Prestador
+                        </h2>
 
-                {/* Ações */}
-                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-                    <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={() => navigate("/admin/acessibilidade")}
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={saving}
-                        style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-                    >
-                        <Save size={18} />
-                        {saving ? "Salvando..." : (isEdit ? "Salvar Alterações" : "Criar Solicitação")}
-                    </button>
+                        {filteredProviders.length === 0 ? (
+                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
+                                <AlertCircle className="mx-auto text-amber-500 mb-2" size={24} />
+                                <p className="text-xs text-amber-200 mb-3">
+                                    Nenhum prestador encontrado para {ACCESSIBILITY_SERVICES.find(s => s.value === formData.serviceType)?.label}.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    className="w-full text-xs h-8 border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                                    onClick={() => navigate("/admin/prestadores/novo")}
+                                >
+                                    Cadastrar Prestador
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <Select
+                                    label="Prestador Designado"
+                                    value={formData.providerId}
+                                    onChange={e => setFormData({ ...formData, providerId: e.target.value })}
+                                    options={[
+                                        { value: "", label: "Selecione um prestador..." },
+                                        ...filteredProviders.map(p => ({ value: p.id, label: p.name }))
+                                    ]}
+                                    className="bg-black/20"
+                                />
+                                {formData.providerId && (
+                                    <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-lg">
+                                            {filteredProviders.find(p => p.id === formData.providerId)?.name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-white">
+                                                {filteredProviders.find(p => p.id === formData.providerId)?.name}
+                                            </p>
+                                            <p className="text-xs text-purple-300">Prestador Habilitado</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
-            </form>
+            </div>
+
+            {/* Floating Action Bar */}
+            <div className="fixed bottom-6 w-full left-0 z-50 pointer-events-none px-4 flex justify-center">
+                <div className="bg-[#0f172a] border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center gap-4 shadow-2xl pointer-events-auto transform translate-y-0 transition-transform">
+                    <span className="text-xs text-slate-500 font-medium ml-2 hidden sm:block">
+                        {isEdit ? "Edição de registro" : "Novo registro"}
+                    </span>
+                    <Button
+                        onClick={handleSubmit}
+                        isLoading={saving}
+                        className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
+                        leftIcon={<Save size={18} />}
+                    >
+                        Salvar Solicitação
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };
