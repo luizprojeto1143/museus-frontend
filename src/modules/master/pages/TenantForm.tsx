@@ -282,36 +282,36 @@ export const TenantForm: React.FC = () => {
                 <Palette className="text-purple-400" size={20} /> Tipo de Instituição
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {typeOptions.map(opt => (
-                  <label key={opt.value} className={`
-                                        relative flex flex-col p-5 rounded-2xl cursor-pointer border transition-all duration-300 group
-                                        ${tenantType === opt.value
-                      ? 'bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border-blue-500/50 shadow-lg shadow-blue-500/10'
-                      : 'bg-[#12121e] border-white/5 hover:border-white/10 hover:bg-white/5'}
-                                    `}>
-                    <input
-                      type="radio"
-                      name="tenantType"
-                      className="hidden"
-                      checked={tenantType === opt.value}
-                      onChange={() => setTenantType(opt.value as any)}
-                    />
-                    <div className={`mb-3 p-3 w-fit rounded-xl transition-colors ${tenantType === opt.value ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 group-hover:bg-white/10 group-hover:text-white'}`}>
-                      {opt.icon}
-                    </div>
-                    <span className={`font-bold text-lg mb-1 transition-colors ${tenantType === opt.value ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
-                      {opt.label}
-                    </span>
-                    <span className="text-xs text-slate-500 leading-relaxed">
-                      {opt.desc}
-                    </span>
-                    {tenantType === opt.value && (
-                      <div className="absolute top-4 right-4 text-blue-500 animate-in zoom-in duration-200">
-                        <CheckCircle2 size={20} fill="currentColor" className="text-blue-500 bg-white rounded-full" />
+                {typeOptions.map(opt => {
+                  const isSelected = tenantType === opt.value;
+                  return (
+                    <div
+                      key={opt.value}
+                      onClick={() => setTenantType(opt.value as any)}
+                      className={`
+                          relative flex flex-col p-5 rounded-2xl cursor-pointer border transition-all duration-300 group
+                          ${isSelected
+                          ? 'bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border-blue-500/50 shadow-lg shadow-blue-500/10'
+                          : 'bg-[#12121e] border-white/5 hover:border-white/10 hover:bg-white/5'}
+                        `}
+                    >
+                      <div className={`mb-3 p-3 w-fit rounded-xl transition-colors ${isSelected ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 group-hover:bg-white/10 group-hover:text-white'}`}>
+                        {opt.icon}
                       </div>
-                    )}
-                  </label>
-                ))}
+                      <div className={`font-bold text-lg mb-1 transition-colors ${isSelected ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                        {opt.label}
+                      </div>
+                      <div className="text-xs text-slate-500 leading-relaxed">
+                        {opt.desc}
+                      </div>
+                      {isSelected && (
+                        <div className="absolute top-4 right-4 text-blue-500 animate-in zoom-in duration-200">
+                          <CheckCircle2 size={24} fill="currentColor" className="text-blue-500 bg-white rounded-full" />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -339,8 +339,8 @@ export const TenantForm: React.FC = () => {
                   required
                   leftIcon={<Globe size={18} />}
                   className="h-12 font-mono text-sm bg-black/20"
-                  helperText="Usado na URL (ex: museus.app/seu-slug)"
                 />
+                <div className="text-xs text-slate-500 ml-1 mt-1">Usado na URL (ex: museus.app/seu-slug)</div>
               </div>
 
               {(tenantType === "MUSEUM" || tenantType === "PRODUCER" || tenantType === "CULTURAL_SPACE") && (
@@ -385,31 +385,30 @@ export const TenantForm: React.FC = () => {
                       {group.title}
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 relative z-10">
-                      {group.items.map((feat, idx) => (
-                        <label key={idx} className={`
-                                                    flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-white/5 hover:translate-x-1
-                                                    ${feat.state
-                            ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-100'
-                            : 'bg-transparent border-white/5 text-slate-500 line-through decoration-slate-600'}
-                                                    ${feat.premium ? 'ring-1 ring-yellow-500/20' : ''}
-                                                `}>
+                      {group.items.map((feat: any, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => feat.setter(!feat.state)}
+                          className={`
+                            flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-white/5 hover:translate-x-1
+                            ${feat.state
+                              ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-100'
+                              : 'bg-transparent border-white/5 text-slate-500 line-through decoration-slate-600'}
+                            ${feat.premium ? 'ring-1 ring-yellow-500/20' : ''}
+                          `}
+                        >
                           <div className={`
-                                                        w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
-                                                        ${feat.state ? 'bg-emerald-500 border-emerald-500' : 'border-white/20 bg-transparent'}
-                                                    `}>
+                            w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
+                            ${feat.state ? 'bg-emerald-500 border-emerald-500' : 'border-white/20 bg-transparent'}
+                          `}>
                             {feat.state && <CheckCircle2 size={12} className="text-black" />}
                           </div>
-                          <input
-                            type="checkbox"
-                            className="hidden"
-                            checked={feat.state}
-                            onChange={e => feat.setter(e.target.checked)}
-                          />
-                          <span className="text-sm font-medium truncate">
+
+                          <span className="text-sm font-medium truncate select-none">
                             {feat.label}
                           </span>
                           {feat.premium && <span className="text-[9px] bg-yellow-500 text-black font-black px-1.5 py-0.5 rounded ml-auto">PRO</span>}
-                        </label>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -456,8 +455,8 @@ export const TenantForm: React.FC = () => {
                   onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
                   leftIcon={<Building2 size={16} />}
                   className="bg-black/30 border-white/10"
-                  helperText="Teto de itens no acervo."
                 />
+                <div className="text-xs text-slate-500 ml-1">Teto de itens no acervo.</div>
 
                 <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-xs text-slate-400 leading-relaxed">
                   <div className="flex items-center gap-2 text-white font-bold mb-1">
