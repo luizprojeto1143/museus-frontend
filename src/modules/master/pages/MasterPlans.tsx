@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
-import { Link } from "react-router-dom";
+import { Plus, Edit, Trash2, Shield, Zap, FileText, CheckCircle2, DollarSign } from "lucide-react";
+import { Button, Input, Select, Textarea, Card } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 
 type Plan = {
     id: string;
@@ -38,171 +40,133 @@ const slaTierLabels: Record<string, string> = {
 };
 
 const MasterPlans: React.FC = () => {
+    const { addToast } = useToast();
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
 
-    useEffect(() => {
-        fetchPlans();
-    }, []);
-
-    const fetchPlans = async () => {
+    const fetchPlans = useCallback(async () => {
         try {
             const response = await api.get("/plans");
             setPlans(response.data);
         } catch (err) {
             console.error("Erro ao carregar planos", err);
+            addToast("Erro ao carregar planos", "error");
         } finally {
             setLoading(false);
         }
-    };
+    }, [addToast]);
+
+    useEffect(() => {
+        fetchPlans();
+    }, [fetchPlans]);
 
     const deletePlan = async (id: string) => {
-        if (!confirm("Tem certeza que deseja excluir este plano?")) return;
+        if (!window.confirm("Tem certeza que deseja excluir este plano?")) return;
         try {
             await api.delete(`/plans/${id}`);
+            addToast("Plano removido com sucesso!", "success");
             fetchPlans();
         } catch (err: any) {
-            alert(err.response?.data?.message || "Erro ao excluir plano");
+            addToast(err.response?.data?.message || "Erro ao excluir plano", "error");
         }
     };
 
     if (loading) {
-        return <div style={{ padding: 32, textAlign: "center" }}>Carregando...</div>;
+        return (
+            <div className="flex justify-center items-center h-64">
+                <p className="animate-pulse opacity-50 text-slate-400">Carregando planos...</p>
+            </div>
+        );
     }
 
     return (
-        <div style={{ padding: 24 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                <h1 style={{ fontSize: 24, fontWeight: 700 }}>Planos Contratuais</h1>
-                <button
+        <div className="master-page-container">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                <div>
+                    <h1 className="text-3xl font-bold">Planos Contratuais</h1>
+                    <p className="opacity-70 mt-1">Gerencie camadas de serviço e limites para instituições</p>
+                </div>
+                <Button
                     onClick={() => { setEditingPlan(null); setShowForm(true); }}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#7c3aed",
-                        color: "white",
-                        border: "none",
-                        borderRadius: 8,
-                        cursor: "pointer",
-                        fontWeight: 600
-                    }}
+                    leftIcon={<Plus size={18} />}
+                    className="w-full md:w-auto"
                 >
-                    + Novo Plano
-                </button>
+                    Novo Plano
+                </Button>
             </div>
 
-            {/* Plans Grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: 24 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {plans.map((plan) => (
-                    <div
-                        key={plan.id}
-                        style={{
-                            backgroundColor: "white",
-                            borderRadius: 12,
-                            overflow: "hidden",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
-                        }}
-                    >
-                        <div style={{ backgroundColor: "#7c3aed", color: "white", padding: 16 }}>
-                            <h2 style={{ fontSize: 20, fontWeight: 700 }}>{plan.name}</h2>
-                            {plan.monthlyPrice && (
-                                <div style={{ fontSize: 24, fontWeight: 700, marginTop: 8 }}>
-                                    R$ {plan.monthlyPrice.toLocaleString("pt-BR")}/mês
+                    <div key={plan.id} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:ring-2 hover:ring-blue-500/50 transition-all">
+                        <div className="bg-blue-600/20 p-6 border-b border-white/5 relative">
+                            <div className="flex justify-between items-start">
+                                <h2 className="text-xl font-bold text-white">{plan.name}</h2>
+                                <Shield className="text-blue-400" size={20} />
+                            </div>
+                            {plan.monthlyPrice !== undefined && (
+                                <div className="text-2xl font-black mt-4 flex items-baseline gap-1">
+                                    <span className="text-sm font-normal opacity-70">R$</span>
+                                    {plan.monthlyPrice.toLocaleString("pt-BR")}
+                                    <span className="text-sm font-normal opacity-70">/mês</span>
                                 </div>
                             )}
                         </div>
 
-                        <div style={{ padding: 16 }}>
+                        <div className="p-6 flex-1 flex flex-col">
                             {plan.description && (
-                                <p style={{ color: "#6b7280", marginBottom: 16 }}>{plan.description}</p>
+                                <p className="text-slate-400 text-sm mb-6 line-clamp-2 italic">
+                                    "{plan.description}"
+                                </p>
                             )}
 
-                            <div style={{ fontSize: 14, color: "#374151" }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>Obras</span>
-                                    <strong>{plan.maxWorks}</strong>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>Eventos</span>
-                                    <strong>{plan.maxEvents}</strong>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>Projetos Ativos</span>
-                                    <strong>{plan.maxActiveProjects}</strong>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>Usuários</span>
-                                    <strong>{plan.maxUsers}</strong>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>Equipamentos Filhos</span>
-                                    <strong>{plan.maxChildTenants}</strong>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>IA</span>
-                                    <strong>{aiTierLabels[plan.aiTier]}</strong>
-                                </div>
-                                <div style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: "1px solid #e5e7eb" }}>
-                                    <span>SLA</span>
-                                    <strong>{slaTierLabels[plan.slaTier]}</strong>
-                                </div>
+                            <div className="space-y-2 text-sm">
+                                <FeatureRow label="Obras" value={plan.maxWorks} />
+                                <FeatureRow label="Eventos" value={plan.maxEvents} />
+                                <FeatureRow label="Projetos Ativos" value={plan.maxActiveProjects} />
+                                <FeatureRow label="Usuários" value={plan.maxUsers} />
+                                <FeatureRow label="Equipamentos Filhos" value={plan.maxChildTenants} />
+                                <FeatureRow label="Nível IA" value={aiTierLabels[plan.aiTier]} />
+                                <FeatureRow label="SLA" value={slaTierLabels[plan.slaTier]} />
                             </div>
 
-                            {/* Features */}
-                            <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", gap: 8 }}>
-                                {plan.hasExecutiveReports && <Badge label="Relatórios Executivos" />}
-                                {plan.hasLegalCompliance && <Badge label="Conformidade Legal" />}
-                                {plan.hasAPIAccess && <Badge label="API" />}
-                                {plan.hasWhiteLabel && <Badge label="White Label" />}
+                            <div className="mt-6 flex flex-wrap gap-1.5">
+                                {plan.hasExecutiveReports && <FeatureBadge label="Executivo" />}
+                                {plan.hasLegalCompliance && <FeatureBadge label="Jurídico" />}
+                                {plan.hasAPIAccess && <FeatureBadge label="API" />}
+                                {plan.hasWhiteLabel && <FeatureBadge label="White Label" />}
                             </div>
 
-                            {/* Tenants count */}
-                            <div style={{ marginTop: 16, padding: 12, backgroundColor: "#f3f4f6", borderRadius: 8, textAlign: "center" }}>
-                                <span style={{ color: "#6b7280" }}>
+                            <div className="mt-6 p-4 bg-white/5 rounded-xl text-center">
+                                <span className="text-xs text-slate-500 font-medium">
                                     {plan._count?.tenants || 0} instituições usando este plano
                                 </span>
                             </div>
 
-                            {/* Actions */}
-                            <div style={{ marginTop: 16, display: "flex", gap: 12 }}>
-                                <button
+                            <div className="mt-8 flex gap-3">
+                                <Button
+                                    variant="outline"
                                     onClick={() => { setEditingPlan(plan); setShowForm(true); }}
-                                    style={{
-                                        flex: 1,
-                                        padding: 10,
-                                        backgroundColor: "#e0e7ff",
-                                        color: "#4338ca",
-                                        border: "none",
-                                        borderRadius: 6,
-                                        cursor: "pointer",
-                                        fontWeight: 500
-                                    }}
+                                    className="flex-1"
+                                    leftIcon={<Edit size={16} />}
                                 >
                                     Editar
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant="outline"
                                     onClick={() => deletePlan(plan.id)}
-                                    style={{
-                                        flex: 1,
-                                        padding: 10,
-                                        backgroundColor: "#fee2e2",
-                                        color: "#dc2626",
-                                        border: "none",
-                                        borderRadius: 6,
-                                        cursor: "pointer",
-                                        fontWeight: 500
-                                    }}
+                                    className="flex-1 border-red-500/50 text-red-500 hover:bg-red-500/10"
+                                    leftIcon={<Trash2 size={16} />}
                                 >
                                     Excluir
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Form Modal */}
             {showForm && (
                 <PlanFormModal
                     plan={editingPlan}
@@ -214,20 +178,21 @@ const MasterPlans: React.FC = () => {
     );
 };
 
-const Badge: React.FC<{ label: string }> = ({ label }) => (
-    <span style={{
-        padding: "4px 10px",
-        backgroundColor: "#ddd6fe",
-        color: "#6d28d9",
-        borderRadius: 999,
-        fontSize: 12,
-        fontWeight: 500
-    }}>
+const FeatureRow: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
+    <div className="flex justify-between py-1.5 border-b border-white/5">
+        <span className="text-slate-500">{label}</span>
+        <span className="font-bold text-white uppercase text-xs">{value}</span>
+    </div>
+);
+
+const FeatureBadge: React.FC<{ label: string }> = ({ label }) => (
+    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded text-[10px] font-bold uppercase tracking-wider">
         {label}
     </span>
 );
 
 const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: () => void }> = ({ plan, onClose, onSave }) => {
+    const { addToast } = useToast();
     const [form, setForm] = useState({
         name: plan?.name || "",
         description: plan?.description || "",
@@ -256,225 +221,158 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
         try {
             if (plan) {
                 await api.put(`/plans/${plan.id}`, form);
+                addToast("Plano atualizado com sucesso!", "success");
             } else {
                 await api.post("/plans", form);
+                addToast("Plano criado com sucesso!", "success");
             }
             onSave();
         } catch (err: any) {
-            alert(err.response?.data?.message || "Erro ao salvar plano");
+            addToast(err.response?.data?.message || "Erro ao salvar plano", "error");
         } finally {
             setSaving(false);
         }
     };
 
     return (
-        <div style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000
-        }}>
-            <div style={{
-                backgroundColor: "white",
-                borderRadius: 12,
-                padding: 24,
-                width: "100%",
-                maxWidth: 600,
-                maxHeight: "90vh",
-                overflow: "auto"
-            }}>
-                <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24 }}>
-                    {plan ? "Editar Plano" : "Novo Plano"}
-                </h2>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <div className="bg-[#0f172a] border border-white/10 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                <div className="p-6 border-b border-white/10">
+                    <h2 className="text-xl font-bold flex items-center gap-2">
+                        {plan ? <Edit size={20} /> : <Plus size={20} />}
+                        {plan ? "Editar Plano" : "Novo Plano"}
+                    </h2>
+                </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-                        <div style={{ gridColumn: "span 2" }}>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Nome</label>
-                            <input
-                                type="text"
+                <form onSubmit={handleSubmit} className="p-6 overflow-y-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div className="col-span-1 sm:col-span-2">
+                            <Input
+                                label="Nome do Plano"
                                 value={form.name}
                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                                 required
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
                             />
                         </div>
-
-                        <div style={{ gridColumn: "span 2" }}>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Descrição</label>
-                            <textarea
+                        <div className="col-span-1 sm:col-span-2">
+                            <Textarea
+                                label="Descrição"
                                 value={form.description}
                                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
+                                rows={3}
                             />
                         </div>
 
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Preço Mensal (R$)</label>
-                            <input
-                                type="number"
-                                value={form.monthlyPrice}
-                                onChange={(e) => setForm({ ...form, monthlyPrice: Number(e.target.value) })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
+                        <Input
+                            label="Preço Mensal (R$)"
+                            type="number"
+                            value={form.monthlyPrice}
+                            onChange={(e) => setForm({ ...form, monthlyPrice: Number(e.target.value) })}
+                            leftIcon={<DollarSign size={16} />}
+                        />
+                        <Input
+                            label="Max Obras"
+                            type="number"
+                            value={form.maxWorks}
+                            onChange={(e) => setForm({ ...form, maxWorks: Number(e.target.value) })}
+                            leftIcon={<Zap size={16} />}
+                        />
+                        <Input
+                            label="Max Eventos"
+                            type="number"
+                            value={form.maxEvents}
+                            onChange={(e) => setForm({ ...form, maxEvents: Number(e.target.value) })}
+                        />
+                        <Input
+                            label="Max Projetos Ativos"
+                            type="number"
+                            value={form.maxActiveProjects}
+                            onChange={(e) => setForm({ ...form, maxActiveProjects: Number(e.target.value) })}
+                            leftIcon={<FileText size={16} />}
+                        />
+                        <Input
+                            label="Max Usuários"
+                            type="number"
+                            value={form.maxUsers}
+                            onChange={(e) => setForm({ ...form, maxUsers: Number(e.target.value) })}
+                        />
+                        <Input
+                            label="Max Equipamentos Filhos"
+                            type="number"
+                            value={form.maxChildTenants}
+                            onChange={(e) => setForm({ ...form, maxChildTenants: Number(e.target.value) })}
+                        />
+
+                        <Select
+                            label="Tier IA"
+                            value={form.aiTier}
+                            onChange={(e) => setForm({ ...form, aiTier: e.target.value })}
+                        >
+                            <option value="BASIC">Básico</option>
+                            <option value="CONTINUOUS">Contínuo</option>
+                            <option value="ADVANCED">Avançado</option>
+                        </Select>
+
+                        <Select
+                            label="SLA de Suporte"
+                            value={form.slaTier}
+                            onChange={(e) => setForm({ ...form, slaTier: e.target.value })}
+                        >
+                            <option value="STANDARD">Padrão (48h)</option>
+                            <option value="EXTENDED">Estendido (24h)</option>
+                            <option value="DEDICATED">Dedicado (4h)</option>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-3 p-4 bg-white/5 rounded-xl mb-8">
+                        <p className="text-xs font-bold uppercase text-slate-500 mb-2">Recursos Inclusos</p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <CheckboxField
+                                label="Relatórios Executivos"
+                                checked={form.hasExecutiveReports}
+                                onChange={(v) => setForm({ ...form, hasExecutiveReports: v })}
                             />
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Max Obras</label>
-                            <input
-                                type="number"
-                                value={form.maxWorks}
-                                onChange={(e) => setForm({ ...form, maxWorks: Number(e.target.value) })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
+                            <CheckboxField
+                                label="Conformidade Jurídica"
+                                checked={form.hasLegalCompliance}
+                                onChange={(v) => setForm({ ...form, hasLegalCompliance: v })}
                             />
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Max Eventos</label>
-                            <input
-                                type="number"
-                                value={form.maxEvents}
-                                onChange={(e) => setForm({ ...form, maxEvents: Number(e.target.value) })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
+                            <CheckboxField
+                                label="Acesso via API"
+                                checked={form.hasAPIAccess}
+                                onChange={(v) => setForm({ ...form, hasAPIAccess: v })}
                             />
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Max Projetos Ativos</label>
-                            <input
-                                type="number"
-                                value={form.maxActiveProjects}
-                                onChange={(e) => setForm({ ...form, maxActiveProjects: Number(e.target.value) })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
+                            <CheckboxField
+                                label="Marca Branca (WL)"
+                                checked={form.hasWhiteLabel}
+                                onChange={(v) => setForm({ ...form, hasWhiteLabel: v })}
                             />
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Max Usuários</label>
-                            <input
-                                type="number"
-                                value={form.maxUsers}
-                                onChange={(e) => setForm({ ...form, maxUsers: Number(e.target.value) })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
-                            />
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Max Equipamentos Filhos</label>
-                            <input
-                                type="number"
-                                value={form.maxChildTenants}
-                                onChange={(e) => setForm({ ...form, maxChildTenants: Number(e.target.value) })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
-                            />
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Tier IA</label>
-                            <select
-                                value={form.aiTier}
-                                onChange={(e) => setForm({ ...form, aiTier: e.target.value })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
-                            >
-                                <option value="BASIC">Básico</option>
-                                <option value="CONTINUOUS">Contínuo</option>
-                                <option value="ADVANCED">Avançado</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label style={{ display: "block", marginBottom: 4, fontWeight: 500 }}>Tier SLA</label>
-                            <select
-                                value={form.slaTier}
-                                onChange={(e) => setForm({ ...form, slaTier: e.target.value })}
-                                style={{ width: "100%", padding: 10, border: "1px solid #d1d5db", borderRadius: 6 }}
-                            >
-                                <option value="STANDARD">Padrão (48h)</option>
-                                <option value="EXTENDED">Estendido (24h)</option>
-                                <option value="DEDICATED">Dedicado (4h)</option>
-                            </select>
-                        </div>
-
-                        {/* Checkboxes */}
-                        <div style={{ gridColumn: "span 2", display: "flex", flexWrap: "wrap", gap: 16, marginTop: 8 }}>
-                            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                                <input
-                                    type="checkbox"
-                                    checked={form.hasExecutiveReports}
-                                    onChange={(e) => setForm({ ...form, hasExecutiveReports: e.target.checked })}
-                                />
-                                Relatórios Executivos
-                            </label>
-                            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                                <input
-                                    type="checkbox"
-                                    checked={form.hasLegalCompliance}
-                                    onChange={(e) => setForm({ ...form, hasLegalCompliance: e.target.checked })}
-                                />
-                                Conformidade Legal
-                            </label>
-                            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                                <input
-                                    type="checkbox"
-                                    checked={form.hasAPIAccess}
-                                    onChange={(e) => setForm({ ...form, hasAPIAccess: e.target.checked })}
-                                />
-                                Acesso API
-                            </label>
-                            <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-                                <input
-                                    type="checkbox"
-                                    checked={form.hasWhiteLabel}
-                                    onChange={(e) => setForm({ ...form, hasWhiteLabel: e.target.checked })}
-                                />
-                                White Label
-                            </label>
                         </div>
                     </div>
 
-                    <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            style={{
-                                flex: 1,
-                                padding: 12,
-                                backgroundColor: "#f3f4f6",
-                                border: "none",
-                                borderRadius: 8,
-                                cursor: "pointer",
-                                fontWeight: 500
-                            }}
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            style={{
-                                flex: 1,
-                                padding: 12,
-                                backgroundColor: "#7c3aed",
-                                color: "white",
-                                border: "none",
-                                borderRadius: 8,
-                                cursor: "pointer",
-                                fontWeight: 600
-                            }}
-                        >
-                            {saving ? "Salvando..." : "Salvar"}
-                        </button>
+                    <div className="flex gap-4 pt-4 border-t border-white/10 sticky bottom-0 bg-[#0f172a]">
+                        <Button variant="outline" type="button" onClick={onClose} className="flex-1">Cancelar</Button>
+                        <Button type="submit" disabled={saving} className="flex-1">
+                            {saving ? "Salvando..." : "Salvar Plano"}
+                        </Button>
                     </div>
                 </form>
             </div>
         </div>
     );
 };
+
+const CheckboxField: React.FC<{ label: string; checked: boolean; onChange: (v: boolean) => void }> = ({ label, checked, onChange }) => (
+    <button
+        type="button"
+        onClick={() => onChange(!checked)}
+        className={`flex items-center gap-3 p-3 rounded-lg border transition-all text-left ${checked ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-transparent border-white/10 text-slate-400 hover:border-white/20'}`}
+    >
+        <div className={`w-4 h-4 rounded border flex items-center justify-center ${checked ? 'bg-blue-500 border-blue-500' : 'border-white/20'}`}>
+            {checked && <CheckCircle2 size={12} className="text-white" />}
+        </div>
+        <span className="text-xs font-medium">{label}</span>
+    </button>
+);
 
 export default MasterPlans;

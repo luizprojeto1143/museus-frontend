@@ -6,13 +6,16 @@ import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Camera, ArrowLeft, StopCircle } from "lucide-react";
+import { Camera, ArrowLeft, StopCircle, Brain, Loader2 } from "lucide-react";
+import { Button } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 import "./VisualScanner.css";
 
 export const VisualScannerPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
+    const { addToast } = useToast();
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState(t("visitor.visualScanner.loadingModel", "Carregando modelo de IA..."));
@@ -50,7 +53,7 @@ export const VisualScannerPage: React.FC = () => {
                         console.error("Erro ao carregar modelo", e);
                     }
                 } else {
-                    if (isMounted) setStatus("Nenhum modelo treinado encontrado. O scanner pode não funcionar.");
+                    if (isMounted) setStatus("Scan offline disponível.");
                 }
 
                 if (isMounted) {
@@ -84,7 +87,7 @@ export const VisualScannerPage: React.FC = () => {
                 requestAnimationFrame(scanLoop);
             } catch (err) {
                 console.error("Error accessing camera:", err);
-                alert(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"));
+                addToast(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"), "error");
             }
         }
     };
@@ -146,7 +149,7 @@ export const VisualScannerPage: React.FC = () => {
     if (!tenantId) return <div className="visual-scanner-no-tenant">Selecione um museu.</div>;
 
     return (
-        <div className="visual-scanner-container">
+        <div className="visual-scanner-container bg-[#0a0a0c]">
             <div className="visual-scanner-video-area">
                 <video
                     ref={videoRef}
@@ -156,51 +159,71 @@ export const VisualScannerPage: React.FC = () => {
                 />
 
                 {!scanning && !loading && (
-                    <div className="visual-scanner-start-overlay">
-                        <div className="visual-scanner-start-content">
-                            <div className="visual-scanner-start-icon">🤖</div>
-                            <h2 className="visual-scanner-start-title">{t("visitor.visualScanner.title", "Scanner de Obras (IA)")}</h2>
-                            <p className="visual-scanner-start-instruction">{t("visitor.visualScanner.instruction", "A IA identificará a obra automaticamente (Requer treinamento)")}</p>
-                            <button onClick={startCamera} className="visual-scanner-start-btn">
-                                <Camera size={22} />
+                    <div className="visual-scanner-start-overlay backdrop-blur-md">
+                        <div className="visual-scanner-start-content flex flex-col items-center">
+                            <div className="bg-blue-500/20 p-6 rounded-full mb-6">
+                                <Brain size={48} className="text-blue-400" />
+                            </div>
+                            <h2 className="text-2xl font-bold text-white mb-2">{t("visitor.visualScanner.title", "Scanner de Obras (IA)")}</h2>
+                            <p className="text-slate-400 text-center max-w-[280px] mb-8 leading-relaxed">
+                                {t("visitor.visualScanner.instruction", "Aponte para uma obra para que nossa IA a identifique automaticamente.")}
+                            </p>
+                            <Button
+                                onClick={startCamera}
+                                leftIcon={<Camera size={22} />}
+                                className="w-full max-w-[240px] py-6 text-lg rounded-2xl shadow-xl shadow-blue-500/20"
+                            >
                                 {t("visitor.visualScanner.startCamera", "Iniciar Câmera")}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
 
                 {loading && (
-                    <div className="visual-scanner-loading-overlay">
-                        <div className="visual-scanner-spinner"></div>
-                        <p className="visual-scanner-loading-text">{status}</p>
+                    <div className="visual-scanner-loading-overlay backdrop-blur-sm">
+                        <Loader2 className="animate-spin text-blue-500 mb-4" size={48} />
+                        <p className="text-white font-medium">{status}</p>
                     </div>
                 )}
 
                 {match && (
-                    <div className="visual-scanner-match-card">
-                        <h3 className="visual-scanner-match-title">{worksMap[match.label] || "Obra Detectada"}</h3>
-                        <p className="visual-scanner-match-id">ID: {match.label}</p>
-                        <p className="visual-scanner-match-confidence">
-                            Confiança: <span className="visual-scanner-confidence-value">{(match.conf * 100).toFixed(0)}%</span>
-                        </p>
-                        <button
+                    <div className="visual-scanner-match-card animate-slideUp">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="bg-green-500/10 p-2 rounded-lg">
+                                <Brain className="text-green-400" size={20} />
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                                <h3 className="text-lg font-bold text-white truncate">{worksMap[match.label] || "Obra Detectada"}</h3>
+                                <p className="text-xs text-slate-500">IA Confidence: {(match.conf * 100).toFixed(0)}%</p>
+                            </div>
+                        </div>
+                        <Button
                             onClick={() => navigate(`/obras/${match.label}`)}
-                            className="visual-scanner-view-btn"
+                            className="w-full py-4 rounded-xl"
                         >
                             {t("visitor.visualScanner.viewDetails", "Ver Detalhes")}
-                        </button>
+                        </Button>
                     </div>
                 )}
             </div>
 
-            <div className="visual-scanner-footer">
-                <button onClick={() => navigate(-1)} className="visual-scanner-back-btn">
-                    <ArrowLeft size={16} /> {t("common.back", "Voltar")}
-                </button>
+            <div className="visual-scanner-footer flex justify-between p-6">
+                <Button
+                    variant="outline"
+                    onClick={() => navigate(-1)}
+                    leftIcon={<ArrowLeft size={18} />}
+                    className="w-auto px-6 border-white/10 text-white/70 hover:bg-white/5"
+                >
+                    {t("common.back", "Voltar")}
+                </Button>
                 {scanning && (
-                    <button onClick={stopCamera} className="visual-scanner-stop-btn">
-                        <StopCircle size={16} /> {t("visitor.visualScanner.stopCamera", "Parar")}
-                    </button>
+                    <Button
+                        onClick={stopCamera}
+                        leftIcon={<StopCircle size={18} />}
+                        className="w-auto px-6 bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30"
+                    >
+                        {t("visitor.visualScanner.stopCamera", "Parar")}
+                    </Button>
                 )}
             </div>
         </div>

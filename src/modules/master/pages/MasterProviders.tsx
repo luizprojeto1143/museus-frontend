@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
-import { Trash2, Plus, Search, CheckCircle, ShieldCheck, Star } from "lucide-react";
+import { Trash2, Plus, Search, CheckCircle, ShieldCheck, Star, Mail, Phone, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Button, Input, Textarea, EmptyState } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 
 type Provider = {
     id: string;
@@ -18,6 +20,7 @@ type Provider = {
 
 export const MasterProviders: React.FC = () => {
     const { t } = useTranslation();
+    const { addToast } = useToast();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
@@ -48,17 +51,20 @@ export const MasterProviders: React.FC = () => {
         "EASY_READING": "Leitura Simples"
     };
 
-    const fetchProviders = () => {
+    const fetchProviders = useCallback(() => {
         setLoading(true);
         api.get("/providers")
             .then(res => setProviders(res.data))
-            .catch(err => console.error("Error fetching providers", err))
+            .catch(err => {
+                console.error("Error fetching providers", err);
+                addToast("Erro ao carregar prestadores", "error");
+            })
             .finally(() => setLoading(false));
-    };
+    }, [addToast]);
 
     useEffect(() => {
         fetchProviders();
-    }, []);
+    }, [fetchProviders]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -67,10 +73,10 @@ export const MasterProviders: React.FC = () => {
             setModalOpen(false);
             setFormData({ name: "", description: "", email: "", phone: "", services: [], tenantId: "" });
             fetchProviders();
-            alert("Prestador cadastrado com sucesso!");
+            addToast("Prestador cadastrado com sucesso!", "success");
         } catch (err) {
             console.error("Error creating provider", err);
-            alert("Erro ao cadastrar prestador");
+            addToast("Erro ao cadastrar prestador", "error");
         }
     };
 
@@ -79,9 +85,10 @@ export const MasterProviders: React.FC = () => {
         try {
             await api.delete(`/providers/${id}`);
             setProviders(providers.filter(p => p.id !== id));
+            addToast("Prestador removido com sucesso!", "success");
         } catch (err) {
             console.error("Error deleting provider", err);
-            alert("Erro ao remover prestador");
+            addToast("Erro ao remover prestador", "error");
         }
     };
 
@@ -97,55 +104,70 @@ export const MasterProviders: React.FC = () => {
 
     return (
         <div className="master-providers">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
-                    <h1 className="section-title">🛠️ Prestadores de Acessibilidade</h1>
-                    <p className="section-subtitle">Gerencie os parceiros homologados para serviços de acessibilidade</p>
+                    <h1 className="text-3xl font-bold flex items-center gap-2">🛠️ Prestadores de Acessibilidade</h1>
+                    <p className="opacity-70 mt-1">Gerencie os parceiros homologados para serviços de acessibilidade</p>
                 </div>
-                <button onClick={() => setModalOpen(true)} className="btn btn-primary">
-                    <Plus size={18} /> Novo Prestador
-                </button>
+                <Button onClick={() => setModalOpen(true)} leftIcon={<Plus size={18} />} className="w-full md:w-auto">
+                    Novo Prestador
+                </Button>
             </div>
 
             {loading ? (
-                <p>Carregando...</p>
-            ) : providers.length === 0 ? (
-                <div className="empty-state">
-                    <p>Nenhum prestador cadastrado.</p>
+                <div className="flex justify-center p-12">
+                    <p className="animate-pulse opacity-50">Carregando...</p>
                 </div>
+            ) : providers.length === 0 ? (
+                <EmptyState
+                    title="Nenhum prestador cadastrado"
+                    description="Comece cadastrando um novo parceiro de acessibilidade."
+                    icon={ShieldCheck}
+                />
             ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {providers.map(provider => (
-                        <div key={provider.id} className="card" style={{ position: "relative" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-                                <h3 style={{ fontSize: "1.2rem", fontWeight: "bold" }}>{provider.name}</h3>
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    {provider.active && <CheckCircle size={18} color="#4cd964" />}
-                                    <button onClick={() => handleDelete(provider.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#ff4444" }}>
+                        <div key={provider.id} className="card relative group hover:ring-2 hover:ring-blue-500/50 transition-all bg-white/5 border-white/10 p-6 rounded-2xl">
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 className="text-lg font-bold text-white leading-tight">{provider.name}</h3>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                                            <Star size={14} fill="currentColor" />
+                                            <span>{provider.rating?.toFixed(1) || "Novo"}</span>
+                                        </div>
+                                        <span className="text-xs text-slate-400">• {provider.completedJobs} jobs</span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    {provider.active && <CheckCircle size={18} className="text-green-500" />}
+                                    <button
+                                        onClick={() => handleDelete(provider.id)}
+                                        className="text-red-500 hover:bg-red-500/10 p-1.5 rounded-lg transition-colors"
+                                        title="Remover"
+                                    >
                                         <Trash2 size={18} />
                                     </button>
                                 </div>
                             </div>
 
-                            <div style={{ fontSize: "0.9rem", opacity: 0.7, marginBottom: "1rem" }}>
-                                <p>📧 {provider.email || "Sem email"}</p>
-                                <p>📞 {provider.phone || "Sem telefone"}</p>
+                            <div className="space-y-2 text-sm text-slate-400 mb-6">
+                                <p className="flex items-center gap-2"><Mail size={14} /> {provider.email || "Sem email"}</p>
+                                <p className="flex items-center gap-2"><Phone size={14} /> {provider.phone || "Sem telefone"}</p>
                             </div>
 
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+                            <div className="flex flex-wrap gap-1.5 mb-6">
                                 {provider.services.map(s => (
-                                    <span key={s} className="chip" style={{ fontSize: "0.75rem" }}>
+                                    <span key={s} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md text-[10px] uppercase font-bold tracking-wider">
                                         {serviceLabels[s] || s}
                                     </span>
                                 ))}
                             </div>
 
-                            <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "1rem", display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                                    <Star size={14} color="#ffd700" fill="#ffd700" />
-                                    <span>{provider.rating?.toFixed(1) || "New"}</span>
-                                </div>
-                                <div>{provider.completedJobs} jobs</div>
+                            <div className="mt-auto border-t border-white/5 pt-4">
+                                <p className="text-xs text-slate-500 line-clamp-2 italic">
+                                    {provider.description || "Sem descrição informada."}
+                                </p>
                             </div>
                         </div>
                     ))}
@@ -153,56 +175,52 @@ export const MasterProviders: React.FC = () => {
             )}
 
             {modalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal">
-                        <h2>Novo Prestador</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Nome</label>
-                                <input required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
-                            </div>
-                            <div className="form-group">
-                                <label>Descrição</label>
-                                <textarea
-                                    value={formData.description}
-                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    rows={3}
-                                    style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white", borderRadius: "4px", padding: "0.5rem" }}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Email</label>
-                                <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
-                            </div>
-                            <div className="form-group">
-                                <label>Telefone</label>
-                                <input value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-[#0f172a] border border-white/10 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                        <div className="p-6 border-b border-white/10">
+                            <h2 className="text-xl font-bold">Novo Prestador</h2>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4">
+                            <Input label="Nome" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+
+                            <Textarea
+                                label="Descrição"
+                                value={formData.description}
+                                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                rows={3}
+                                placeholder="Breve resumo dos serviços..."
+                            />
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <Input label="Email" type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                                <Input label="Telefone" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
                             </div>
 
-                            <div className="form-group">
-                                <label>Serviços Oferecidos</label>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold flex items-center gap-2"><Info size={14} /> Serviços Oferecidos</label>
+                                <div className="grid grid-cols-2 gap-2">
                                     {serviceOptions.map(opt => (
-                                        <div key={opt}
+                                        <button
+                                            key={opt}
+                                            type="button"
                                             onClick={() => handleToggleService(opt)}
-                                            style={{
-                                                padding: "0.5rem",
-                                                border: "1px solid rgba(255,255,255,0.2)",
-                                                borderRadius: "4px",
-                                                background: formData.services.includes(opt) ? "rgba(255,255,255,0.1)" : "transparent",
-                                                cursor: "pointer",
-                                                display: "flex", alignItems: "center", gap: "0.5rem"
-                                            }}>
-                                            <div style={{ width: "16px", height: "16px", border: "1px solid #ccc", background: formData.services.includes(opt) ? "#4cd964" : "transparent" }}></div>
-                                            <span style={{ fontSize: "0.9rem" }}>{serviceLabels[opt]}</span>
-                                        </div>
+                                            className={`
+                                                flex items-center gap-2 p-3 text-left border rounded-xl transition-all
+                                                ${formData.services.includes(opt) ? 'bg-blue-500/10 border-blue-500' : 'bg-white/5 border-white/10 hover:border-white/20'}
+                                            `}
+                                        >
+                                            <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.services.includes(opt) ? 'bg-blue-500 border-blue-500' : 'border-white/20'}`}>
+                                                {formData.services.includes(opt) && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                                            </div>
+                                            <span className="text-xs">{serviceLabels[opt]}</span>
+                                        </button>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="modal-actions">
-                                <button type="button" onClick={() => setModalOpen(false)} className="btn btn-secondary">Cancelar</button>
-                                <button type="submit" className="btn btn-primary">Salvar</button>
+                            <div className="flex gap-4 pt-4 sticky bottom-0 bg-[#0f172a] border-t border-white/10">
+                                <Button variant="outline" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
+                                <Button type="submit" className="flex-1">Salvar</Button>
                             </div>
                         </form>
                     </div>

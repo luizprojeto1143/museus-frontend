@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
-import { Star, Send, CheckCircle, MessageSquare } from 'lucide-react';
+import { Star, Send, CheckCircle, MessageSquare, Loader2, Mail } from 'lucide-react';
+import { Button, Input, Textarea } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 
 interface SurveyQuestion {
     id: string;
@@ -14,10 +16,11 @@ interface SurveyQuestion {
 
 export const EventSurveyPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { isAuthenticated, email, tenantId } = useAuth();
+    const { isAuthenticated, email: authEmail } = useAuth();
     const navigate = useNavigate();
+    const { addToast } = useToast();
 
-    const user = isAuthenticated ? { email: email || "" } : null;
+    const currentUser = isAuthenticated ? { email: authEmail || "" } : null;
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -28,13 +31,7 @@ export const EventSurveyPage: React.FC = () => {
     const [answers, setAnswers] = useState<Record<string, any>>({});
     const [guestEmail, setGuestEmail] = useState("");
 
-    useEffect(() => {
-        if (id) {
-            loadSurvey();
-        }
-    }, [id]);
-
-    const loadSurvey = async () => {
+    const loadSurvey = useCallback(async () => {
         try {
             const eventRes = await api.get(`/events/${id}`);
             setEventTitle(eventRes.data.title);
@@ -42,18 +39,15 @@ export const EventSurveyPage: React.FC = () => {
             const surveyRes = await api.get(`/events/${id}/survey`);
             setQuestions(surveyRes.data);
 
-            // If user is logged in, try to load existing responses
-            if (user) {
+            if (currentUser) {
                 try {
                     const myResp = await api.get(`/events/${id}/survey/my-responses`);
                     const loadedAnswers: Record<string, string | number> = {};
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     myResp.data.forEach((r: any) => {
                         loadedAnswers[r.questionId] = r.answer;
                     });
                     setAnswers(loadedAnswers);
                     if (myResp.data.length > 0 && myResp.data.length === surveyRes.data.length) {
-                        // All answered
                         setSuccess(true);
                     }
                 } catch (error) {
@@ -62,10 +56,17 @@ export const EventSurveyPage: React.FC = () => {
             }
         } catch (error) {
             console.error(error);
+            addToast("Falha ao carregar a pesquisa.", "error");
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, currentUser, addToast]);
+
+    useEffect(() => {
+        if (id) {
+            loadSurvey();
+        }
+    }, [id, loadSurvey]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -77,15 +78,15 @@ export const EventSurveyPage: React.FC = () => {
                     questionId: qId,
                     answer: String(val)
                 })),
-                guestEmail: user ? undefined : guestEmail
+                guestEmail: currentUser ? undefined : guestEmail
             };
 
             await api.post(`/events/${id}/survey/respond`, payload);
             setSuccess(true);
-        } catch (err: unknown) {
+            addToast("Pesquisa enviada com sucesso!", "success");
+        } catch (err: any) {
             console.error(err);
-            const error = err as { response?: { data?: { error?: string } } };
-            alert(error.response?.data?.error || 'Erro ao enviar respostas.');
+            addToast(err.response?.data?.error || 'Erro ao enviar respostas.', "error");
         } finally {
             setSubmitting(false);
         }
@@ -95,18 +96,25 @@ export const EventSurveyPage: React.FC = () => {
         setAnswers(prev => ({ ...prev, [qId]: value }));
     };
 
-    if (loading) return <div className="p-8 text-center">Carregando pesquisa...</div>;
+    if (loading) return (
+        <div className="min-h-screen flex items-center justify-center">
+            <Loader2 className="animate-spin text-blue-500 mr-2" />
+            <span className="text-slate-400">Carregando pesquisa...</span>
+        </div>
+    );
 
     if (success) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center animate-fadeIn">
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Obrigado!</h2>
-                    <p className="text-gray-600 mb-6">Suas respostas foram enviadas com sucesso.</p>
-                    <button onClick={() => navigate('/')} className="btn btn-primary w-full">
+            <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4">
+                <div className="bg-white/5 border border-white/10 p-10 rounded-2xl shadow-2xl max-w-md w-full text-center animate-fadeIn">
+                    <div className="bg-green-500/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CheckCircle className="w-10 h-10 text-green-500" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2">Obrigado!</h2>
+                    <p className="text-slate-400 mb-8 leading-relaxed">Suas respostas foram enviadas com sucesso e nos ajudarão a melhorar cada vez mais.</p>
+                    <Button onClick={() => navigate('/')} className="w-full py-4 text-lg">
                         Voltar para o Início
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -114,72 +122,72 @@ export const EventSurveyPage: React.FC = () => {
 
     if (questions.length === 0) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4">
                 <div className="text-center">
-                    <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                    <p className="text-gray-500">Este evento não possui uma pesquisa ativa.</p>
+                    <MessageSquare className="w-16 h-16 text-white/10 mx-auto mb-4" />
+                    <p className="text-slate-500 italic">Este evento não possui uma pesquisa ativa no momento.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="min-h-screen bg-[#0a0a0c] py-12 px-4">
             <div className="max-w-2xl mx-auto">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="bg-blue-600 p-8 text-white">
-                        <h1 className="text-2xl font-bold mb-2">{eventTitle}</h1>
-                        <p className="text-blue-100">Pesquisa de Satisfação</p>
+                <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+                    <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-10 text-white">
+                        <h1 className="text-3xl font-bold mb-2">{eventTitle}</h1>
+                        <p className="text-blue-100/70 font-medium uppercase tracking-wider text-sm">Pesquisa de Satisfação</p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="p-8 space-y-8">
-                        {!user && (
-                            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 mb-6">
-                                <label className="blocks text-sm font-bold text-yellow-800 mb-1">Seu E-mail *</label>
-                                <input
+                    <form onSubmit={handleSubmit} className="p-10 space-y-10">
+                        {!currentUser && (
+                            <div className="bg-blue-500/10 p-6 rounded-2xl border border-blue-500/20 mb-8 space-y-4">
+                                <Input
+                                    label="Seu E-mail *"
                                     type="email"
                                     required
-                                    className="input w-full border-yellow-300 focus:ring-yellow-500"
                                     value={guestEmail}
                                     onChange={e => setGuestEmail(e.target.value)}
                                     placeholder="nome@email.com"
+                                    leftIcon={<Mail size={16} />}
                                 />
-                                <p className="text-xs text-yellow-700 mt-1">Necessário para identificar sua participação.</p>
+                                <p className="text-xs text-blue-400 font-medium">Para validar sua participação, informe seu e-mail.</p>
                             </div>
                         )}
 
                         {questions.map((q) => (
-                            <div key={q.id} className="space-y-3">
-                                <label className="block font-medium text-gray-900">
+                            <div key={q.id} className="space-y-4">
+                                <label className="block text-lg font-bold text-white flex gap-2">
                                     {q.question} {q.required && <span className="text-red-500">*</span>}
                                 </label>
 
                                 {q.type === 'STARS' && (
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-1.5">
                                         {[1, 2, 3, 4, 5].map(star => (
                                             <button
                                                 key={star}
                                                 type="button"
                                                 onClick={() => handleAnswer(q.id, star)}
-                                                className={`p-2 rounded-lg transition-colors ${answers[q.id] >= star ? 'text-yellow-400' : 'text-gray-300'
+                                                className={`p-3 rounded-xl transition-all hover:scale-110 ${answers[q.id] >= star ? 'text-yellow-400 bg-yellow-400/10 lg:bg-transparent' : 'text-white/10 hover:text-white/20'
                                                     }`}
                                             >
-                                                <Star className="w-8 h-8 fill-current" />
+                                                <Star className={`w-10 h-10 ${answers[q.id] >= star ? 'fill-current' : 'fill-none'}`} />
                                             </button>
                                         ))}
                                     </div>
                                 )}
 
                                 {q.type === 'NPS' && (
-                                    <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                                    <div className="flex flex-wrap gap-2">
                                         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => (
                                             <button
                                                 key={score}
                                                 type="button"
                                                 onClick={() => handleAnswer(q.id, score)}
-                                                className={`w-10 h-10 rounded-lg font-bold border transition-all ${String(answers[q.id]) === String(score)
-                                                    ? 'bg-blue-600 text-white border-blue-600 scale-110'
-                                                    : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+                                                className={`w-11 h-11 rounded-xl font-black border transition-all ${String(answers[q.id]) === String(score)
+                                                    ? 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-600/30 -translate-y-1'
+                                                    : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30'
                                                     }`}
                                             >
                                                 {score}
@@ -189,42 +197,46 @@ export const EventSurveyPage: React.FC = () => {
                                 )}
 
                                 {q.type === 'CHOICE' && (
-                                    <div className="space-y-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         {q.options?.map((opt, idx) => (
-                                            <label key={idx} className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
-                                                <input
-                                                    type="radio"
-                                                    name={q.id}
-                                                    value={opt}
-                                                    checked={answers[q.id] === opt}
-                                                    onChange={() => handleAnswer(q.id, opt)}
-                                                    className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                                                />
-                                                <span className="text-gray-700">{opt}</span>
-                                            </label>
+                                            <button
+                                                key={idx}
+                                                type="button"
+                                                onClick={() => handleAnswer(q.id, opt)}
+                                                className={`flex items-center gap-3 p-4 rounded-xl border transition-all text-left ${answers[q.id] === opt
+                                                    ? 'bg-blue-600/10 border-blue-500 text-blue-400 shadow-md'
+                                                    : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
+                                                    }`}
+                                            >
+                                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${answers[q.id] === opt ? 'bg-blue-500 border-blue-500' : 'border-white/20'}`}>
+                                                    {answers[q.id] === opt && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                                                </div>
+                                                <span className="font-medium">{opt}</span>
+                                            </button>
                                         ))}
                                     </div>
                                 )}
 
                                 {q.type === 'TEXT' && (
-                                    <textarea
-                                        className="input w-full min-h-[100px]"
+                                    <Textarea
                                         value={answers[q.id] || ''}
                                         onChange={e => handleAnswer(q.id, e.target.value)}
-                                        placeholder="Digite sua resposta aqui..."
+                                        placeholder="Sua opinião é importante para nós..."
+                                        rows={4}
                                     />
                                 )}
                             </div>
                         ))}
 
-                        <div className="pt-6">
-                            <button
+                        <div className="pt-10">
+                            <Button
                                 type="submit"
                                 disabled={submitting}
-                                className="btn btn-primary w-full py-3 text-lg font-bold shadow-lg shadow-blue-200"
+                                className="w-full py-6 text-xl rounded-2xl shadow-2xl shadow-blue-500/20"
+                                leftIcon={<Send size={22} />}
                             >
-                                {submitting ? 'Enviando...' : 'Enviar Avaliação'} <Send className="w-5 h-5 ml-2" />
-                            </button>
+                                {submitting ? 'Enviando...' : 'Enviar Avaliação'}
+                            </Button>
                         </div>
                     </form>
                 </div>

@@ -3,6 +3,8 @@ import { api, isDemoMode } from "../../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { User, Lock, Mail, Building, ArrowLeft, Save, Shield } from "lucide-react";
+import { Button, Input, Select } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 import "./MasterShared.css";
 
 export const MasterUserForm: React.FC = () => {
@@ -10,6 +12,7 @@ export const MasterUserForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,13 +44,13 @@ export const MasterUserForm: React.FC = () => {
         setRole(u.role);
         setTenantId(u.tenantId || "");
       } catch {
-        alert(t("common.errorLoad"));
+        addToast(t("common.errorLoad"), "error");
         navigate("/master/users");
       } finally {
         setLoading(false);
       }
     }
-  }, [isEdit, id, navigate, t]);
+  }, [isEdit, id, navigate, t, addToast]);
 
   useEffect(() => {
     fetchTenants();
@@ -61,8 +64,13 @@ export const MasterUserForm: React.FC = () => {
     e.preventDefault();
 
     if (isDemoMode) {
-      alert(t("master.userForm.demoAlert"));
+      addToast(t("master.userForm.demoAlert"), "info");
       navigate("/master/users");
+      return;
+    }
+
+    if (role === "ADMIN" && !tenantId) {
+      addToast(t("master.userForm.alerts.selectTenant"), "info");
       return;
     }
 
@@ -77,40 +85,33 @@ export const MasterUserForm: React.FC = () => {
     const payload: UserPayload = {
       email,
       name,
-      role
+      role,
+      tenantId: role === "ADMIN" ? tenantId : null
     };
 
     if (!isEdit || password) {
       payload.password = password;
     }
 
-    if (role === "ADMIN") {
-      if (!tenantId) {
-        alert(t("master.userForm.alerts.selectTenant"));
-        return;
-      }
-      payload.tenantId = tenantId;
-    } else {
-      payload.tenantId = null;
-    }
-
     try {
       if (id) {
         await api.put(`/users/${id}`, payload);
+        addToast("Usuário atualizado com sucesso!", "success");
       } else {
         await api.post("/users", payload);
+        addToast("Usuário criado com sucesso!", "success");
       }
       navigate("/master/users");
     } catch (error) {
       console.error("Erro ao salvar usuário", error);
-      alert(t("master.userForm.alerts.errorSave"));
+      addToast(t("master.userForm.alerts.errorSave"), "error");
     }
   };
 
   if (loading) {
     return (
-      <div className="master-page-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <p style={{ color: '#94a3b8' }}>{t("common.loading")}</p>
+      <div className="master-page-container flex justify-center items-center">
+        <p className="text-slate-400">{t("common.loading")}</p>
       </div>
     );
   }
@@ -118,16 +119,16 @@ export const MasterUserForm: React.FC = () => {
   return (
     <div className="master-page-container">
       {/* HERO SECTION */}
-      <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem' }}>
+      <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem', position: 'relative' }}>
         <div className="master-hero-content">
-          <button
+          <Button
+            variant="outline"
             onClick={() => navigate('/master/users')}
-            className="master-btn btn-outline"
-            style={{ width: 'auto', position: 'absolute', top: '1rem', left: '1rem', marginTop: 0, padding: '0.5rem 1rem' }}
+            className="absolute top-4 left-4 w-auto h-auto py-2 px-4 text-xs"
+            leftIcon={<ArrowLeft size={16} />}
           >
-            <ArrowLeft size={16} />
             {t("common.back")}
-          </button>
+          </Button>
 
           <span className="master-badge">
             {isEdit ? '✏️ Editar Usuário' : '✨ Novo Usuário'}
@@ -139,7 +140,6 @@ export const MasterUserForm: React.FC = () => {
       </section>
 
       <form onSubmit={handleSubmit} className="master-card" style={{ maxWidth: 600, margin: '0 auto' }}>
-
         <div className="master-card-header">
           <div className="master-icon-wrapper master-icon-blue">
             <User size={24} />
@@ -147,104 +147,73 @@ export const MasterUserForm: React.FC = () => {
           <h3>Dados do Usuário</h3>
         </div>
 
-        <div className="master-form">
-          <div className="master-input-group">
-            <label htmlFor="name">{t("master.userForm.labels.name")}</label>
-            <div style={{ position: 'relative' }}>
-              <User size={16} style={{ position: 'absolute', top: '14px', left: '12px', color: '#64748b' }} />
-              <input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t("master.userForm.placeholders.name")}
-                required
-                style={{ paddingLeft: '2.5rem' }}
-              />
-            </div>
-          </div>
+        <div className="master-form space-y-4">
+          <Input
+            label={t("master.userForm.labels.name")}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("master.userForm.placeholders.name")}
+            required
+            leftIcon={<User size={16} />}
+          />
 
-          <div className="master-input-group">
-            <label htmlFor="email">{t("master.userForm.labels.email")}</label>
-            <div style={{ position: 'relative' }}>
-              <Mail size={16} style={{ position: 'absolute', top: '14px', left: '12px', color: '#64748b' }} />
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("master.userForm.placeholders.email")}
-                required
-                style={{ paddingLeft: '2.5rem' }}
-              />
-            </div>
-          </div>
+          <Input
+            label={t("master.userForm.labels.email")}
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t("master.userForm.placeholders.email")}
+            required
+            leftIcon={<Mail size={16} />}
+          />
 
-          <div className="master-input-group">
-            <label htmlFor="password">{t("master.userForm.labels.password")}</label>
-            <div style={{ position: 'relative' }}>
-              <Lock size={16} style={{ position: 'absolute', top: '14px', left: '12px', color: '#64748b' }} />
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={isEdit ? t("master.userForm.placeholders.passwordEdit") : t("master.userForm.placeholders.password")}
-                required={!isEdit}
-                style={{ paddingLeft: '2.5rem' }}
-              />
-            </div>
-            {isEdit && (
-              <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.25rem" }}>
-                {t("master.userForm.helpers.passwordEdit")}
-              </p>
-            )}
-          </div>
+          <Input
+            label={t("master.userForm.labels.password")}
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={isEdit ? t("master.userForm.placeholders.passwordEdit") : t("master.userForm.placeholders.password")}
+            required={!isEdit}
+            leftIcon={<Lock size={16} />}
+            helperText={isEdit ? t("master.userForm.helpers.passwordEdit") : undefined}
+          />
 
-          <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '1rem 0' }} />
+          <hr className="border-white/10 my-4" />
 
-          <div className="master-input-group">
-            <label htmlFor="role">{t("master.userForm.labels.role")}</label>
-            <div style={{ position: 'relative' }}>
-              <Shield size={16} style={{ position: 'absolute', top: '14px', left: '12px', color: '#64748b' }} />
-              <select
-                id="role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                style={{ paddingLeft: '2.5rem' }}
-              >
-                <option value="MASTER">{t("master.userForm.roles.master")}</option>
-                <option value="ADMIN">{t("master.userForm.roles.admin")}</option>
-              </select>
-            </div>
-          </div>
+          <Select
+            label={t("master.userForm.labels.role")}
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            leftIcon={<Shield size={16} />}
+          >
+            <option value="MASTER">{t("master.userForm.roles.master")}</option>
+            <option value="ADMIN">{t("master.userForm.roles.admin")}</option>
+          </Select>
 
           {role === "ADMIN" && (
-            <div className="master-input-group">
-              <label htmlFor="tenantId">{t("master.userForm.labels.tenant")}</label>
-              <div style={{ position: 'relative' }}>
-                <Building size={16} style={{ position: 'absolute', top: '14px', left: '12px', color: '#64748b' }} />
-                <select
-                  id="tenantId"
-                  value={tenantId}
-                  onChange={(e) => setTenantId(e.target.value)}
-                  required
-                  style={{ paddingLeft: '2.5rem' }}
-                >
-                  <option value="">{t("master.userForm.placeholders.selectTenant")}</option>
-                  {tenants.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+            <Select
+              label={t("master.userForm.labels.tenant")}
+              value={tenantId}
+              onChange={(e) => setTenantId(e.target.value)}
+              required
+              leftIcon={<Building size={16} />}
+            >
+              <option value="">{t("master.userForm.placeholders.selectTenant")}</option>
+              {tenants.map(t => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </Select>
           )}
         </div>
 
-        <div style={{ display: "flex", gap: "0.75rem", marginTop: "2rem" }}>
-          <button type="submit" className="master-btn btn-primary">
-            <Save size={18} />
+        <div className="mt-8">
+          <Button
+            type="submit"
+            className="w-full"
+            leftIcon={<Save size={18} />}
+          >
             {t("common.save")}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

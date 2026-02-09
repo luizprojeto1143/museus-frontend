@@ -1,8 +1,10 @@
-﻿import React, { useState } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
 import { Building2, Save, ArrowLeft, Package, Map, Settings, Shield } from "lucide-react";
+import { Button, Input, Select, Textarea } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 import "./MasterShared.css";
 
 export const TenantForm: React.FC = () => {
@@ -10,6 +12,7 @@ export const TenantForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -26,10 +29,6 @@ export const TenantForm: React.FC = () => {
   const [adminPassword, setAdminPassword] = useState("");
   const [plan, setPlan] = useState("START");
   const [maxWorks, setMaxWorks] = useState(50);
-  // ...
-  // In loadTenant:
-  // setTermsOfUse(data.termsOfUse || "");
-  // setPrivacyPolicy(data.privacyPolicy || "");
 
   // Feature Flags
   const [featureWorks, setFeatureWorks] = useState(true);
@@ -50,9 +49,8 @@ export const TenantForm: React.FC = () => {
     try {
       const res = await api.get(`/tenants/${id}`);
       const data = res.data;
-      setName(data.name);
-      setSlug(data.slug);
-      setIsCityMode(data.isCityMode ?? false);
+      setName(data.name || "");
+      setSlug(data.slug || "");
       setTenantType(data.type || "MUSEUM");
       setParentId(data.parentId || null);
 
@@ -72,26 +70,24 @@ export const TenantForm: React.FC = () => {
       setFeatureReviews(data.featureReviews ?? true);
       setFeatureGuestbook(data.featureGuestbook ?? true);
       setFeatureAccessibility(data.featureAccessibility ?? true);
-      setFeatureAccessibility(data.featureAccessibility ?? true);
       setFeatureMinigames(data.featureMinigames ?? false);
 
       setTermsOfUse(data.termsOfUse || "");
       setPrivacyPolicy(data.privacyPolicy || "");
     } catch {
-      console.error("Failed to load tenant");
-      alert(t("common.errorLoad"));
+      addToast(t("common.errorLoad"), "error");
       navigate("/master/tenants");
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isEdit && id) {
       loadTenant();
     }
   }, [isEdit, id]);
 
   // Load cities for parent selector
-  React.useEffect(() => {
+  useEffect(() => {
     api.get("/tenants/public")
       .then(res => {
         const cityTenants = res.data.filter((t: any) => t.type === "CITY" || t.type === "SECRETARIA");
@@ -104,7 +100,7 @@ export const TenantForm: React.FC = () => {
     e.preventDefault();
 
     if (isDemoMode) {
-      alert(t("master.tenantForm.demoAlert"));
+      addToast(t("master.tenantForm.demoAlert"), "info");
       navigate("/master/tenants");
       return;
     }
@@ -178,76 +174,67 @@ export const TenantForm: React.FC = () => {
     try {
       if (id) {
         await api.put(`/tenants/${id}`, payload);
+        addToast("Instituição atualizada com sucesso!", "success");
       } else {
         await api.post("/tenants", payload);
+        addToast("Instituição criada com sucesso!", "success");
       }
       navigate("/master/tenants");
     } catch (error) {
       console.error("Erro ao salvar tenant", error);
-      alert(t("master.tenantForm.errorSave"));
+      addToast(t("master.tenantForm.errorSave"), "error");
     }
   };
 
   return (
-    <div className="master-page-container" >
-
+    <div className="master-page-container">
       {/* HERO SECTION */}
-      < section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem' }} >
+      <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem', position: 'relative' }}>
         <div className="master-hero-content">
-          <button
+          <Button
+            variant="outline"
             onClick={() => navigate('/master/tenants')}
-            className="master-btn btn-outline"
-            style={{ width: 'auto', position: 'absolute', top: '1rem', left: '1rem', marginTop: 0, padding: '0.5rem 1rem' }}
+            className="absolute top-4 left-4 w-auto h-auto py-2 px-4"
+            leftIcon={<ArrowLeft size={16} />}
           >
-            <ArrowLeft size={16} />
             {t("common.back")}
-          </button>
+          </Button>
 
           <span className="master-badge">
-            {isEdit ? 'âœï¸ Editar Museu' : 'âœ¨ Novo Museu'}
+            {isEdit ? '📝 Editar Instituição' : '✨ Nova Instituição'}
           </span>
           <h1 className="master-title">
             {isEdit ? name : t("master.tenantForm.newTitle")}
           </h1>
         </div>
-      </section >
-
+      </section>
 
       <form onSubmit={handleSubmit} className="master-card" style={{ maxWidth: 800, margin: '0 auto' }}>
-
         {/* BASIC INFO */}
         <div className="master-card-header">
           <div className="master-icon-wrapper master-icon-blue">
             <Building2 size={24} />
           </div>
-          <h3>InformaÃ§Ãµes BÃ¡sicas</h3>
+          <h3>Informações Básicas</h3>
         </div>
 
-        <div className="master-form">
-          <div className="master-input-group">
-            <label htmlFor="name">{t("master.tenantForm.labels.name")}</label>
-            <input
-              id="name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder={t("master.tenantForm.placeholders.name")}
-              required
-            />
-          </div>
+        <div className="master-form space-y-4">
+          <Input
+            label={t("master.tenantForm.labels.name")}
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder={t("master.tenantForm.placeholders.name")}
+            required
+          />
 
-          <div className="master-input-group">
-            <label htmlFor="slug">{t("master.tenantForm.labels.slug")}</label>
-            <input
-              id="slug"
-              value={slug}
-              onChange={e => setSlug(e.target.value)}
-              placeholder={t("master.tenantForm.placeholders.slug")}
-              required
-            />
-            <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.25rem" }}>
-              {t("master.tenantForm.helpers.slug")}
-            </p>
-          </div>
+          <Input
+            label={t("master.tenantForm.labels.slug")}
+            value={slug}
+            onChange={e => setSlug(e.target.value)}
+            placeholder={t("master.tenantForm.placeholders.slug")}
+            required
+            helperText={t("master.tenantForm.helpers.slug")}
+          />
         </div>
 
         <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
@@ -257,69 +244,64 @@ export const TenantForm: React.FC = () => {
           <div className="master-icon-wrapper master-icon-green">
             <Package size={24} />
           </div>
-          <h3>Plano e OperaÃ§Ã£o</h3>
+          <h3>Plano e Operação</h3>
         </div>
 
-        <div className="master-form">
-          <div className="master-grid-2">
-            <div className="master-input-group">
-              <label htmlFor="plan">{t("master.tenantForm.labels.plan")}</label>
-              <select
-                id="plan"
-                value={plan}
-                onChange={e => {
-                  setPlan(e.target.value);
-                  if (e.target.value === "START") setMaxWorks(50);
-                  if (e.target.value === "PRO") setMaxWorks(200);
-                  if (e.target.value === "ENTERPRISE") setMaxWorks(500);
-                }}
-              >
-                <option value="START">{t("master.tenantForm.plans.start")}</option>
-                <option value="PRO">{t("master.tenantForm.plans.pro")}</option>
-                <option value="ENTERPRISE">{t("master.tenantForm.plans.enterprise")}</option>
-                <option value="CUSTOM">{t("master.tenantForm.plans.custom")}</option>
-              </select>
-            </div>
+        <div className="master-form space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Select
+              label={t("master.tenantForm.labels.plan")}
+              value={plan}
+              onChange={e => {
+                const newPlan = e.target.value;
+                setPlan(newPlan);
+                if (newPlan === "START") setMaxWorks(50);
+                else if (newPlan === "PRO") setMaxWorks(200);
+                else if (newPlan === "ENTERPRISE") setMaxWorks(500);
+              }}
+            >
+              <option value="START">{t("master.tenantForm.plans.start")}</option>
+              <option value="PRO">{t("master.tenantForm.plans.pro")}</option>
+              <option value="ENTERPRISE">{t("master.tenantForm.plans.enterprise")}</option>
+              <option value="CUSTOM">{t("master.tenantForm.plans.custom")}</option>
+            </Select>
 
-            <div className="master-input-group">
-              <label htmlFor="maxWorks">{t("master.tenantForm.labels.maxWorks")}</label>
-              <input
-                id="maxWorks"
-                type="number"
-                value={maxWorks}
-                onChange={e => setMaxWorks(parseInt(e.target.value))}
-              />
-            </div>
+            <Input
+              label={t("master.tenantForm.labels.maxWorks")}
+              type="number"
+              value={maxWorks}
+              onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
+            />
           </div>
 
           {/* TENANT TYPE SELECTION */}
-          <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-            <label className="master-input-group" style={{ marginBottom: '1rem', display: 'block', fontWeight: 600 }}>
-              ðŸ—ï¸ Tipo de Tenant
+          <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+            <label className="block text-sm font-semibold mb-4">
+              🏗️ Tipo de Instituição
             </label>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1rem" }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
-                { value: "MUSEUM", icon: "ðŸ›ï¸", label: "Museu", desc: "Interior, salas, andares" },
-                { value: "CITY", icon: "ðŸ™ï¸", label: "Cidade/Secretaria", desc: "Geo-localizaÃ§Ã£o, roteiros" },
-                { value: "PRODUCER", icon: "ðŸŽ¬", label: "Produtor Cultural", desc: "Projetos, eventos, editais" },
-                { value: "CULTURAL_SPACE", icon: "ðŸŽ­", label: "EspaÃ§o Cultural", desc: "Centro cultural, biblioteca" }
+                { value: "MUSEUM", icon: "🏛️", label: "Museu", desc: "Interior, salas, andares" },
+                { value: "CITY", icon: "🏙️", label: "Cidade/Secretaria", desc: "Geo-localização, roteiros" },
+                { value: "PRODUCER", icon: "🎬", label: "Produtor Cultural", desc: "Projetos, eventos, editais" },
+                { value: "CULTURAL_SPACE", icon: "🎨", label: "Espaço Cultural", desc: "Centro cultural, biblioteca" }
               ].map(opt => (
-                <label key={opt.value} style={{
-                  display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer",
-                  padding: "1rem", border: tenantType === opt.value ? "2px solid #3b82f6" : "1px solid #334155", borderRadius: "0.75rem",
-                  background: tenantType === opt.value ? "rgba(59, 130, 246, 0.1)" : "transparent",
-                  transition: "all 0.2s"
-                }}>
+                <label key={opt.value} className={`
+                                    flex items-center gap-4 p-4 rounded-xl cursor-pointer border transition-all
+                                    ${tenantType === opt.value ? 'bg-blue-500/10 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'bg-transparent border-white/10 hover:border-white/20'}
+                                `}>
                   <input
                     type="radio"
                     name="tenantType"
+                    className="w-4 h-4 text-blue-600"
                     checked={tenantType === opt.value}
                     onChange={() => setTenantType(opt.value as any)}
-                    style={{ width: 'auto' }}
                   />
-                  <div>
-                    <strong style={{ display: "block", color: "#fff" }}>{opt.icon} {opt.label}</strong>
-                    <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>{opt.desc}</span>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-white flex items-center gap-2">
+                      <span>{opt.icon}</span> {opt.label}
+                    </span>
+                    <span className="text-xs text-slate-400">{opt.desc}</span>
                   </div>
                 </label>
               ))}
@@ -328,35 +310,25 @@ export const TenantForm: React.FC = () => {
 
           {/* PARENT TENANT (for linking) */}
           {(tenantType === "MUSEUM" || tenantType === "PRODUCER" || tenantType === "CULTURAL_SPACE") && (
-            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', marginTop: '1rem' }}>
-              <label className="master-input-group" style={{ marginBottom: '1rem', display: 'block', fontWeight: 600 }}>
-                ðŸ”— VÃ­nculo HierÃ¡rquico (opcional)
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+              <label className="block text-sm font-semibold mb-1">
+                🔗 Vínculo Hierárquico (opcional)
               </label>
-              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginBottom: "1rem" }}>
-                Vincule este tenant a uma Cidade/Secretaria para aparecer nos relatÃ³rios consolidados.
+              <p className="text-xs text-slate-400 mb-4">
+                Vincule esta instituição a uma Cidade/Secretaria para aparecer nos relatórios consolidados.
               </p>
-              <select
+              <Select
                 value={parentId || ""}
                 onChange={e => setParentId(e.target.value || null)}
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  background: "#0f172a",
-                  border: "1px solid #334155",
-                  borderRadius: "0.5rem",
-                  color: "#e2e8f0"
-                }}
               >
-                <option value="">Sem vÃ­nculo (independente)</option>
+                <option value="">Sem vínculo (independente)</option>
                 {cities.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           )}
         </div>
-
-
 
         <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
 
@@ -368,29 +340,23 @@ export const TenantForm: React.FC = () => {
           <h3>Termos e Privacidade (LGPD)</h3>
         </div>
 
-        <div className="master-form">
-          <div className="master-input-group">
-            <label htmlFor="termsOfUse">Termos de Uso</label>
-            <textarea
-              id="termsOfUse"
-              rows={6}
-              value={termsOfUse}
-              onChange={e => setTermsOfUse(e.target.value)}
-              placeholder="Digite os termos de uso aqui..."
-              style={{ width: "100%", padding: "0.75rem", background: "#0f172a", border: "1px solid #334155", borderRadius: "0.5rem", color: "#e2e8f0", fontFamily: "monospace" }}
-            />
-          </div>
-          <div className="master-input-group">
-            <label htmlFor="privacyPolicy">PolÃ­tica de Privacidade</label>
-            <textarea
-              id="privacyPolicy"
-              rows={6}
-              value={privacyPolicy}
-              onChange={e => setPrivacyPolicy(e.target.value)}
-              placeholder="Digite a polÃ­tica de privacidade..."
-              style={{ width: "100%", padding: "0.75rem", background: "#0f172a", border: "1px solid #334155", borderRadius: "0.5rem", color: "#e2e8f0", fontFamily: "monospace" }}
-            />
-          </div>
+        <div className="master-form space-y-4">
+          <Textarea
+            label="Termos de Uso"
+            rows={6}
+            value={termsOfUse}
+            onChange={e => setTermsOfUse(e.target.value)}
+            placeholder="Digite os termos de uso aqui..."
+            className="font-mono text-sm"
+          />
+          <Textarea
+            label="Política de Privacidade"
+            rows={6}
+            value={privacyPolicy}
+            onChange={e => setPrivacyPolicy(e.target.value)}
+            placeholder="Digite a política de privacidade..."
+            className="font-mono text-sm"
+          />
         </div>
 
         <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
@@ -403,116 +369,89 @@ export const TenantForm: React.FC = () => {
           <h3>Funcionalidades</h3>
         </div>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "1rem"
-        }}>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureWorks} onChange={e => setFeatureWorks(e.target.checked)} />
-            ðŸŽ¨ Obras/Artefatos
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureTrails} onChange={e => setFeatureTrails(e.target.checked)} />
-            ðŸ—ºï¸ Trilhas/Roteiros
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureEvents} onChange={e => setFeatureEvents(e.target.checked)} />
-            ðŸ“… Eventos
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureGamification} onChange={e => setFeatureGamification(e.target.checked)} />
-            ðŸ† GamificaÃ§Ã£o
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureQRCodes} onChange={e => setFeatureQRCodes(e.target.checked)} />
-            ðŸ“¸ QR Codes
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureCertificates} onChange={e => setFeatureCertificates(e.target.checked)} />
-            ðŸ“œ Certificados
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureAccessibility} onChange={e => setFeatureAccessibility(e.target.checked)} />
-            â™¿ Acessibilidade
-          </label>
-          <label className="feature-checkbox">
-            <input type="checkbox" checked={featureMinigames} onChange={e => setFeatureMinigames(e.target.checked)} />
-            ðŸŽ® Minigame
-          </label>
-
-          {/* Premium Features */}
-          <label className="feature-checkbox premium">
-            <input type="checkbox" checked={featureChatAI} onChange={e => setFeatureChatAI(e.target.checked)} />
-            ðŸ¤– Chat IA â­
-          </label>
-          <label className="feature-checkbox premium">
-            <input type="checkbox" checked={featureShop} onChange={e => setFeatureShop(e.target.checked)} />
-            ðŸ›’ Loja Virtual â­
-          </label>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {[
+            { label: "🎨 Obras/Artefatos", state: featureWorks, setter: setFeatureWorks },
+            { label: "🗺️ Trilhas/Roteiros", state: featureTrails, setter: setFeatureTrails },
+            { label: "📅 Eventos", state: featureEvents, setter: setFeatureEvents },
+            { label: "🏆 Gamificação", state: featureGamification, setter: setFeatureGamification },
+            { label: "📷 QR Codes", state: featureQRCodes, setter: setFeatureQRCodes },
+            { label: "📜 Certificados", state: featureCertificates, setter: setFeatureCertificates },
+            { label: "♿ Acessibilidade", state: featureAccessibility, setter: setFeatureAccessibility },
+            { label: "🎮 Minigame", state: featureMinigames, setter: setFeatureMinigames },
+            { label: "🤖 Chat IA ⭐", state: featureChatAI, setter: setFeatureChatAI, premium: true },
+            { label: "🛒 Loja Virtual ⭐", state: featureShop, setter: setFeatureShop, premium: true },
+          ].map((feat, idx) => (
+            <label key={idx} className={`
+                            flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors
+                            ${feat.state ? 'bg-purple-500/10 border-purple-500/50' : 'bg-transparent border-white/10 hover:border-white/20'}
+                            ${feat.premium ? 'ring-1 ring-yellow-500/30' : ''}
+                        `}>
+              <input
+                type="checkbox"
+                className="w-4 h-4 rounded border-white/20 text-purple-600 focus:ring-purple-500 bg-transparent"
+                checked={feat.state}
+                onChange={e => feat.setter(e.target.checked)}
+              />
+              <span className={`text-sm ${feat.state ? 'text-white' : 'text-slate-400'}`}>
+                {feat.label}
+              </span>
+            </label>
+          ))}
         </div>
 
-        {
-          !isEdit && (
-            <>
-              <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
+        {!isEdit && (
+          <>
+            <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
 
-              <div className="master-card-header">
-                <div className="master-icon-wrapper master-icon-red">
-                  <Shield size={24} />
-                </div>
-                <h3>Administrador Inicial</h3>
+            <div className="master-card-header">
+              <div className="master-icon-wrapper master-icon-red">
+                <Shield size={24} />
               </div>
+              <h3>Administrador Inicial</h3>
+            </div>
 
-              <div className="master-form">
-                <div className="master-input-group">
-                  <label htmlFor="adminName">{t("master.tenantForm.labels.adminName")}</label>
-                  <input
-                    id="adminName"
-                    value={adminName}
-                    onChange={e => setAdminName(e.target.value)}
-                    placeholder={t("master.tenantForm.placeholders.adminName")}
-                    required
-                  />
-                </div>
+            <div className="master-form space-y-4">
+              <Input
+                label={t("master.tenantForm.labels.adminName")}
+                value={adminName}
+                onChange={e => setAdminName(e.target.value)}
+                placeholder={t("master.tenantForm.placeholders.adminName")}
+                required
+              />
 
-                <div className="master-grid-2">
-                  <div className="master-input-group">
-                    <label htmlFor="adminEmail">{t("master.tenantForm.labels.adminEmail")}</label>
-                    <input
-                      id="adminEmail"
-                      type="email"
-                      value={adminEmail}
-                      onChange={e => setAdminEmail(e.target.value)}
-                      placeholder={t("master.tenantForm.placeholders.adminEmail")}
-                      required
-                    />
-                  </div>
-                  <div className="master-input-group">
-                    <label htmlFor="adminPassword">{t("master.tenantForm.labels.adminPassword")}</label>
-                    <input
-                      id="adminPassword"
-                      type="password"
-                      value={adminPassword}
-                      onChange={e => setAdminPassword(e.target.value)}
-                      placeholder={t("master.tenantForm.placeholders.adminPassword")}
-                      required
-                    />
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label={t("master.tenantForm.labels.adminEmail")}
+                  type="email"
+                  value={adminEmail}
+                  onChange={e => setAdminEmail(e.target.value)}
+                  placeholder={t("master.tenantForm.placeholders.adminEmail")}
+                  required
+                />
+                <Input
+                  label={t("master.tenantForm.labels.adminPassword")}
+                  type="password"
+                  value={adminPassword}
+                  onChange={e => setAdminPassword(e.target.value)}
+                  placeholder={t("master.tenantForm.placeholders.adminPassword")}
+                  required
+                />
               </div>
-            </>
-          )
-        }
+            </div>
+          </>
+        )}
 
-        <div style={{ marginTop: "2rem", display: "flex", gap: "0.75rem" }}>
-          <button type="submit" className="master-btn btn-primary">
-            <Save size={18} />
+        <div className="mt-8 pt-8 border-t border-white/10">
+          <Button
+            type="submit"
+            className="w-full md:w-auto min-w-[200px]"
+            leftIcon={<Save size={18} />}
+          >
             {t("common.save")}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
   );
 };
-

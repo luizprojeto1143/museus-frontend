@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../api/client";
-import { CheckCircle, MessageSquare, Mic, Ear, ShieldCheck, ArrowRight, PlayCircle, Star, Phone } from "lucide-react";
-import { EmptyState } from "../../components/EmptyState";
+import { CheckCircle, MessageSquare, Mic, Ear, ShieldCheck, ArrowRight, PlayCircle, Star, Phone, Loader2 } from "lucide-react";
+import { EmptyState, Button } from "../../components/ui";
+import { useToast } from "../../contexts/ToastContext";
 
 type Provider = {
     id: string;
@@ -15,6 +16,7 @@ type Provider = {
 };
 
 export const ProducerServices: React.FC = () => {
+    const { addToast } = useToast();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -28,20 +30,27 @@ export const ProducerServices: React.FC = () => {
     };
 
     const serviceIcons: Record<string, React.ReactNode> = {
-        "LIBRAS_INTERPRETATION": <Ear size={40} color="#d4af37" />,
-        "AUDIO_DESCRIPTION": <Mic size={40} color="#d4af37" />,
-        "CAPTIONING": <MessageSquare size={40} color="#d4af37" />,
-        "BRAILLE": <ShieldCheck size={40} color="#d4af37" />,
-        "TACTILE_MODEL": <PlayCircle size={40} color="#d4af37" />,
-        "EASY_READING": <ArrowRight size={40} color="#d4af37" />
+        "LIBRAS_INTERPRETATION": <Ear size={40} className="text-yellow-500" />,
+        "AUDIO_DESCRIPTION": <Mic size={40} className="text-yellow-500" />,
+        "CAPTIONING": <MessageSquare size={40} className="text-yellow-500" />,
+        "BRAILLE": <ShieldCheck size={40} className="text-yellow-500" />,
+        "TACTILE_MODEL": <PlayCircle size={40} className="text-yellow-500" />,
+        "EASY_READING": <ArrowRight size={40} className="text-yellow-500" />
     };
 
-    useEffect(() => {
+    const fetchProviders = useCallback(() => {
         api.get("/providers")
             .then(res => setProviders(res.data))
-            .catch(err => console.error("Error fetching providers", err))
+            .catch(err => {
+                console.error("Error fetching providers", err);
+                addToast("Erro ao carregar prestadores.", "error");
+            })
             .finally(() => setLoading(false));
-    }, []);
+    }, [addToast]);
+
+    useEffect(() => {
+        fetchProviders();
+    }, [fetchProviders]);
 
     const handleWhatsApp = (provider: Provider) => {
         const message = `Olá ${provider.name}, vi seu perfil na plataforma Museus e gostaria de um orçamento para serviços de acessibilidade.`;
@@ -49,22 +58,27 @@ export const ProducerServices: React.FC = () => {
         if (phone) {
             window.open(`https://wa.me/55${phone}?text=${encodeURIComponent(message)}`, "_blank");
         } else {
-            alert("Telefone não cadastrado para este prestador.");
+            addToast("Telefone não cadastrado para este prestador.", "info");
         }
     };
 
     return (
-        <div className="producer-services">
-            <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-                <h1 style={{ fontSize: "2.5rem", color: "#d4af37", marginBottom: "1rem" }}>Marketplace de Acessibilidade</h1>
-                <p style={{ maxWidth: "700px", margin: "0 auto", opacity: 0.7, fontSize: "1.1rem", lineHeight: "1.6" }}>
+        <div className="producer-services py-12 px-4 max-w-7xl mx-auto">
+            <div className="text-center mb-16 space-y-4">
+                <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+                    Marketplace de Acessibilidade
+                </h1>
+                <p className="max-w-2xl mx-auto opacity-70 text-lg leading-relaxed">
                     Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais.
-                    Contrate direto pela plataforma.
+                    Contrate direto pela plataforma através de canais seguros.
                 </p>
             </div>
 
             {loading ? (
-                <p style={{ textAlign: "center", opacity: 0.7 }}>Carregando prestadores...</p>
+                <div className="flex flex-col items-center justify-center py-20 gap-4">
+                    <Loader2 className="animate-spin text-yellow-500" size={48} />
+                    <p className="opacity-50 font-medium">Carregando parceiros homologados...</p>
+                </div>
             ) : providers.length === 0 ? (
                 <EmptyState
                     title="Nenhum prestador disponível"
@@ -72,69 +86,45 @@ export const ProducerServices: React.FC = () => {
                     icon={ShieldCheck}
                 />
             ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {providers.map(provider => (
-                        <div key={provider.id} style={{
-                            background: "linear-gradient(145deg, #1e1e24, #15151a)",
-                            borderRadius: "1.5rem",
-                            padding: "2rem",
-                            border: "1px solid rgba(255,255,255,0.05)",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "1rem"
-                        }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                <div>
-                                    <h3 style={{ fontSize: "1.3rem", fontWeight: "bold", color: "#fff" }}>{provider.name}</h3>
-                                    <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.9rem", color: "#ffd700", marginTop: "0.2rem" }}>
-                                        <Star size={14} fill="#ffd700" />
-                                        <span>{provider.rating?.toFixed(1) || "Novo"}</span>
-                                        <span style={{ opacity: 0.5, color: "#fff", marginLeft: "0.5rem" }}>({provider.completedJobs} jobs)</span>
+                        <div key={provider.id} className="group relative bg-[#15151a] border border-white/5 rounded-[2rem] p-8 flex flex-col hover:border-yellow-500/30 transition-all hover:shadow-2xl hover:shadow-yellow-500/5">
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-bold text-white group-hover:text-yellow-500 transition-colors uppercase tracking-tight">{provider.name}</h3>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1 text-yellow-500 text-sm font-bold">
+                                            <Star size={14} fill="currentColor" />
+                                            <span>{provider.rating?.toFixed(1) || "Novo"}</span>
+                                        </div>
+                                        <span className="text-xs text-slate-500 font-medium">• {provider.completedJobs} jobs concluídos</span>
                                     </div>
                                 </div>
-                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.8rem", borderRadius: "50%" }}>
-                                    {serviceIcons[provider.services[0]] || <ShieldCheck size={24} color="#d4af37" />}
+                                <div className="bg-yellow-500/10 p-4 rounded-2xl group-hover:bg-yellow-500/20 transition-colors">
+                                    {serviceIcons[provider.services[0]] || <ShieldCheck size={32} className="text-yellow-500" />}
                                 </div>
                             </div>
 
-                            <p style={{ opacity: 0.8, fontSize: "0.95rem", lineHeight: "1.5", color: "#ddd" }}>
-                                {provider.description || "Prestador especializado em acessibilidade cultural."}
+                            <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3">
+                                {provider.description || "Prestador especializado em acessibilidade cultural com ampla experiência em projetos públicos e privados."}
                             </p>
 
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+                            <div className="flex flex-wrap gap-1.5 mb-8">
                                 {provider.services.map(s => (
-                                    <span key={s} style={{
-                                        background: "rgba(255,255,255,0.05)",
-                                        padding: "0.3rem 0.8rem",
-                                        borderRadius: "1rem",
-                                        fontSize: "0.8rem",
-                                        border: "1px solid rgba(255,255,255,0.1)"
-                                    }}>
+                                    <span key={s} className="px-3 py-1 bg-white/5 text-xs font-bold text-slate-400 border border-white/10 rounded-full uppercase tracking-widest">
                                         {serviceLabels[s] || s}
                                     </span>
                                 ))}
                             </div>
 
-                            <div style={{ marginTop: "auto", paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-                                <button
+                            <div className="mt-auto pt-6 border-t border-white/5">
+                                <Button
                                     onClick={() => handleWhatsApp(provider)}
-                                    style={{
-                                        width: "100%",
-                                        padding: "0.8rem",
-                                        background: "#25D366", // WhatsApp Green
-                                        color: "#fff",
-                                        border: "none",
-                                        borderRadius: "0.5rem",
-                                        fontWeight: "bold",
-                                        cursor: "pointer",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        gap: "0.5rem",
-                                        transition: "all 0.2s"
-                                    }}>
-                                    <Phone size={18} /> Contatar no WhatsApp
-                                </button>
+                                    className="w-full py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white border-none rounded-2xl font-black text-sm uppercase tracking-wider"
+                                    leftIcon={<Phone size={18} fill="currentColor" />}
+                                >
+                                    Contatar no WhatsApp
+                                </Button>
                             </div>
                         </div>
                     ))}

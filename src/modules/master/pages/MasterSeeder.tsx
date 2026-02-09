@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../api/client';
 import { Users, Trash2, PlayCircle, Activity, Zap, ShieldAlert } from 'lucide-react';
+import { Button, Input } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 import "./MasterShared.css";
 
 export const MasterSeeder: React.FC = () => {
     const { t } = useTranslation();
+    const { addToast } = useToast();
     const [tenantId, setTenantId] = useState('');
     const [count, setCount] = useState(10);
     const [loading, setLoading] = useState(false);
@@ -18,36 +21,45 @@ export const MasterSeeder: React.FC = () => {
     });
 
     const handleGenerate = async () => {
-        if (!tenantId) return alert("Tenant ID required");
+        if (!tenantId) {
+            addToast("Tenant ID required", "info");
+            return;
+        }
         setLoading(true);
         try {
             const res = await api.post('/seeder/generate', { tenantId, count });
-            alert(`🎉 Sucesso! ${res.data.message}`);
+            addToast(`🎉 Sucesso! ${res.data.message}`, "success");
         } catch (error) {
             console.error(error);
-            alert("❌ Erro ao gerar");
+            addToast("❌ Erro ao gerar", "error");
         } finally {
             setLoading(false);
         }
     };
 
     const handleBulkDelete = async () => {
-        if (!confirm("Tem certeza? Isso apagará TODOS os visitantes FALSOS deste tenant.")) return;
-        if (!tenantId) return alert("Tenant ID required");
+        if (!window.confirm("Tem certeza? Isso apagará TODOS os visitantes FALSOS deste tenant.")) return;
+        if (!tenantId) {
+            addToast("Tenant ID required", "info");
+            return;
+        }
         setLoading(true);
         try {
             const res = await api.delete('/seeder/bulk', { data: { tenantId } });
-            alert(`🗑️ ${res.data.message}`);
+            addToast(`🗑️ ${res.data.message}`, "success");
         } catch (error) {
             console.error(error);
-            alert("❌ Erro ao apagar");
+            addToast("❌ Erro ao apagar", "error");
         } finally {
             setLoading(false);
         }
     };
 
     const handleSimulate = async () => {
-        if (!tenantId) return alert("Tenant ID required");
+        if (!tenantId) {
+            addToast("Tenant ID required", "info");
+            return;
+        }
 
         setLoading(true);
         try {
@@ -57,10 +69,10 @@ export const MasterSeeder: React.FC = () => {
                 minVisits: simSettings.minVisits,
                 maxVisits: simSettings.maxVisits
             });
-            alert(`🎭 ${res.data.details}`);
+            addToast(`🎭 ${res.data.details}`, "success");
         } catch (e) {
             console.error(e);
-            alert("❌ Erro na simulação");
+            addToast("❌ Erro na simulação", "error");
         } finally {
             setLoading(false);
         }
@@ -96,32 +108,31 @@ export const MasterSeeder: React.FC = () => {
                     </div>
                     <p className="master-card-desc">Crie perfis brasileiros realistas com fotos e dados mockados.</p>
 
-                    <div className="master-form">
+                    <div className="master-form space-y-4">
+                        <Input
+                            label="ID do Museu (UUID)"
+                            value={tenantId}
+                            onChange={e => setTenantId(e.target.value)}
+                            placeholder="Cole o ID do Tenant aqui..."
+                        />
                         <div className="master-input-group">
-                            <label>ID do Museu (UUID)</label>
-                            <input
-                                value={tenantId}
-                                onChange={e => setTenantId(e.target.value)}
-                                placeholder="Cole o ID do Tenant aqui..."
-                            />
-                        </div>
-                        <div className="master-input-group">
-                            <label>Quantidade ({count})</label>
+                            <label className="text-sm font-semibold mb-2 block">Quantidade ({count})</label>
                             <input
                                 type="range"
                                 min="1" max="50"
                                 value={count}
                                 onChange={e => setCount(Number(e.target.value))}
+                                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500"
                             />
                         </div>
-                        <button
+                        <Button
                             onClick={handleGenerate}
                             disabled={loading}
-                            className="master-btn btn-primary"
+                            className="w-full"
+                            leftIcon={loading ? <Activity className="animate-spin" size={18} /> : <Zap size={18} />}
                         >
-                            {loading ? <Activity className="animate-spin" /> : <Zap size={18} />}
                             Gerar {count} Visitantes
-                        </button>
+                        </Button>
                     </div>
                 </article>
 
@@ -135,42 +146,39 @@ export const MasterSeeder: React.FC = () => {
                     </div>
                     <p className="master-card-desc">Faça os visitantes "andarem" pelo museu e interagirem com obras.</p>
 
-                    <div className="master-form">
-                        <div className="sim-stats" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
-                            <div className="stat-item" style={{ display: 'flex', flexDirection: 'column' }}>
-                                <label style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Ativos</label>
-                                <input
-                                    style={{ width: '100%', background: '#0f172a', border: '1px solid #334155', padding: '0.5rem', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', textAlign: 'center' }}
-                                    type="number" value={simSettings.visitors}
-                                    onChange={e => setSimSettings({ ...simSettings, visitors: Number(e.target.value) })}
-                                />
-                            </div>
-                            <div className="stat-item" style={{ display: 'flex', flexDirection: 'column' }}>
-                                <label style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Min Obras</label>
-                                <input
-                                    style={{ width: '100%', background: '#0f172a', border: '1px solid #334155', padding: '0.5rem', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', textAlign: 'center' }}
-                                    type="number" value={simSettings.minVisits}
-                                    onChange={e => setSimSettings({ ...simSettings, minVisits: Number(e.target.value) })}
-                                />
-                            </div>
-                            <div className="stat-item" style={{ display: 'flex', flexDirection: 'column' }}>
-                                <label style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Max Obras</label>
-                                <input
-                                    style={{ width: '100%', background: '#0f172a', border: '1px solid #334155', padding: '0.5rem', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', textAlign: 'center' }}
-                                    type="number" value={simSettings.maxVisits}
-                                    onChange={e => setSimSettings({ ...simSettings, maxVisits: Number(e.target.value) })}
-                                />
-                            </div>
+                    <div className="master-form space-y-4">
+                        <div className="grid grid-cols-3 gap-2">
+                            <Input
+                                label="Ativos"
+                                type="number"
+                                value={simSettings.visitors}
+                                onChange={e => setSimSettings({ ...simSettings, visitors: Number(e.target.value) })}
+                                className="text-center"
+                            />
+                            <Input
+                                label="Min Obras"
+                                type="number"
+                                value={simSettings.minVisits}
+                                onChange={e => setSimSettings({ ...simSettings, minVisits: Number(e.target.value) })}
+                                className="text-center"
+                            />
+                            <Input
+                                label="Max Obras"
+                                type="number"
+                                value={simSettings.maxVisits}
+                                onChange={e => setSimSettings({ ...simSettings, maxVisits: Number(e.target.value) })}
+                                className="text-center"
+                            />
                         </div>
 
-                        <button
+                        <Button
                             onClick={handleSimulate}
                             disabled={loading}
-                            className="master-btn btn-purple"
+                            className="w-full bg-purple-600 hover:bg-purple-700 border-none"
+                            leftIcon={loading ? <Activity className="animate-spin" size={18} /> : <PlayCircle size={18} />}
                         >
-                            {loading ? <Activity className="animate-spin" /> : <PlayCircle size={18} />}
                             Rodar Simulação
-                        </button>
+                        </Button>
                     </div>
                 </article>
 
@@ -184,14 +192,15 @@ export const MasterSeeder: React.FC = () => {
                     </div>
                     <p className="master-card-desc">Limpeza de dados. remove apenas usuários marcados como `isFake`.</p>
 
-                    <button
+                    <Button
                         onClick={handleBulkDelete}
                         disabled={loading}
-                        className="master-btn btn-danger"
+                        variant="outline"
+                        className="w-full border-red-500/50 text-red-500 hover:bg-red-500/10"
+                        leftIcon={<ShieldAlert size={18} />}
                     >
-                        <ShieldAlert size={18} />
                         Apagar Fakes
-                    </button>
+                    </Button>
                 </article>
 
             </div>
