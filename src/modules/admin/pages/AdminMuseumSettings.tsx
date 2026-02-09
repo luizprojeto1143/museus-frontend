@@ -2,6 +2,12 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Input, Button, Textarea, Select } from "../../../components/ui";
+import {
+  Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
+  Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
+  Plus, Edit, Trash2, Palette, Save
+} from "lucide-react";
 
 interface FloorPlan {
   id: string;
@@ -197,523 +203,408 @@ export const AdminMuseumSettings: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1 className="section-title">🏛 {t("admin.museumSettings.title")}</h1>
-      <p className="section-subtitle">
-        {t("admin.museumSettings.subtitle")}
-      </p>
-
-      {/* 2.1 DADOS DO MUSEU */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">📋 {t("admin.museumSettings.institutionalData")}</h2>
-
-        <div className="form-group">
-          <label className="form-label">{t("admin.museumSettings.labels.name")} *</label>
-          <input
-            type="text"
-            value={settings.name}
-            onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-            placeholder="Ex: Museu Histórico de Ouro Preto"
-          />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">{t("admin.museumSettings.labels.mission")}</label>
-          <textarea
-            value={settings.mission}
-            onChange={(e) => setSettings({ ...settings, mission: e.target.value })}
-            placeholder={t("admin.museumSettings.placeholders.mission")}
-            rows={4}
-          />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">{t("admin.museumSettings.labels.address")}</label>
-          <input
-            type="text"
-            value={settings.address}
-            onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-            placeholder={t("admin.museumSettings.placeholders.address")}
-          />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">{t("admin.museumSettings.labels.openingHours")}</label>
-          <input
-            type="text"
-            value={settings.openingHours}
-            onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })}
-            placeholder="Ex: Seg-Sex 9h-17h, Sáb 10h-14h"
-          />
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
-          <div className="form-group">
-            <label className="form-label">{t("admin.museumSettings.labels.whatsapp")}</label>
-            <input
-              type="text"
-              value={settings.whatsapp}
-              onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
-              placeholder="(31) 99999-9999"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">{t("admin.museumSettings.labels.email")}</label>
-            <input
-              type="email"
-              value={settings.email}
-              onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-              placeholder="contato@museu.com.br"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">{t("admin.museumSettings.labels.website")}</label>
-            <input
-              type="url"
-              value={settings.website}
-              onChange={(e) => setSettings({ ...settings, website: e.target.value })}
-              placeholder="https://museu.com.br"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* UPLOADS */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">🖼 {t("admin.museumSettings.images.title")}</h2>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
-          {/* Logo */}
-          <div>
-            <label className="form-label">{t("admin.museumSettings.images.logo")}</label>
-            <div
-              style={{
-                width: "100%",
-                height: "150px",
-                border: "2px dashed var(--border-strong)",
-                borderRadius: "var(--radius-md)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: settings.logoUrl ? `url(${settings.logoUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
-                cursor: "pointer",
-                position: "relative"
-              }}
-              onClick={() => logoInputRef.current?.click()}
-            >
-              {!settings.logoUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
-              <input
-                ref={logoInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* WELCOME AUDIO/VIDEO */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">🎧 Boas-Vindas Multimídia</h2>
-        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "1rem" }}>
-          Áudio e vídeo de boas-vindas reproduzidos na tela inicial para os visitantes.
-        </p>
-
-        <div className="form-group">
-          <label className="form-label">Áudio de Boas-Vindas (Arquivo)</label>
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])}
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-          {settings.welcomeAudioUrl && (
-            <div style={{ marginTop: "0.5rem" }}>
-              <audio controls src={settings.welcomeAudioUrl} style={{ width: "100%" }} />
-              <p style={{ fontSize: "0.8rem", color: "#10b981", marginTop: "0.25rem" }}>✓ Áudio configurado</p>
-            </div>
-          )}
-          <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
-            Narração introdutória sobre o museu, sua história e missão.
-          </p>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">URL do Vídeo Institucional</label>
-          <input
-            type="url"
-            value={settings.welcomeVideoUrl || ""}
-            onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })}
-            placeholder="https://youtube.com/watch?v=... ou URL direta de MP4"
-          />
-          <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
-            Vídeo de apresentação do museu, exibido na página inicial.
+    <div className="max-w-5xl mx-auto pb-20">
+      <div className="flex items-center gap-4 mb-8">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
+            <Settings size={28} className="text-gold" /> Configurações do Museu
+          </h1>
+          <p className="text-slate-400 mt-1">
+            Personalize a identidade visual, informações institucionais e recursos multimídia.
           </p>
         </div>
       </div>
 
-      {/* 2.3 CONFIGURAÇÃO DE MAPA */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">📍 {t("admin.museumSettings.map.title") || "Configuração de Mapa"}</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* COLUNA ESQUERDA - DADOS E MIDIA */}
+        <div className="lg:col-span-2 space-y-8">
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
-          {/* Planta Baixa */}
-          <div>
-            <label className="form-label">{t("admin.museumSettings.map.floorPlan") || "Planta Baixa (Indoor)"}</label>
-            <div
-              style={{
-                width: "100%",
-                height: "200px",
-                border: "2px dashed var(--border-strong)",
-                borderRadius: "var(--radius-md)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: settings.mapImageUrl ? `url(${settings.mapImageUrl}) center/contain no-repeat` : "rgba(42, 24, 16, 0.3)",
-                cursor: "pointer",
-                marginBottom: "0.5rem"
-              }}
-              onClick={() => mapInputRef.current?.click()}
-            >
-              {!settings.mapImageUrl && <span style={{ fontSize: "0.85rem" }}>{t("admin.museumSettings.images.clickToUpload")}</span>}
-              <input
-                ref={mapInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={(e) => e.target.files?.[0] && handleFileUpload("mapImageUrl", e.target.files[0])}
+          {/* DADOS INSTITUCIONAIS */}
+          <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Building2 className="text-blue-400" size={24} /> Dados Institucionais
+            </h2>
+
+            <div className="space-y-5">
+              <Input
+                label={t("admin.museumSettings.labels.name") + " *"}
+                value={settings.name}
+                onChange={(e) => setSettings({ ...settings, name: e.target.value })}
+                placeholder="Ex: Museu Histórico"
+                className="bg-black/20"
               />
-            </div>
-            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-              Use uma imagem de alta resolução da planta do museu.
-            </p>
-          </div>
 
-          {/* Coordenadas */}
-          <div>
-            <label className="form-label">{t("admin.museumSettings.map.coordinates") || "Coordenadas (Outdoor)"}</label>
-            <div className="form-group">
-              <label style={{ fontSize: "0.85rem" }}>Latitude</label>
-              <input
-                type="number"
-                step="any"
-                value={settings.latitude}
-                onChange={(e) => setSettings({ ...settings, latitude: parseFloat(e.target.value) })}
-                placeholder="-20.385574"
+              <Textarea
+                label={t("admin.museumSettings.labels.mission")}
+                value={settings.mission}
+                onChange={(e) => setSettings({ ...settings, mission: e.target.value })}
+                rows={3}
+                className="bg-black/20"
               />
-            </div>
-            <div className="form-group">
-              <label style={{ fontSize: "0.85rem" }}>Longitude</label>
-              <input
-                type="number"
-                step="any"
-                value={settings.longitude}
-                onChange={(e) => setSettings({ ...settings, longitude: parseFloat(e.target.value) })}
-                placeholder="-43.503578"
-              />
-            </div>
-            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-              Defina a localização exata do museu para o mapa da cidade.
-              <br />
-              <a
-                href="https://www.google.com/maps"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "var(--primary)" }}
-              >
-                Consultar no Google Maps
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* 2.4 PLANTAS DE ANDARES (MULTI-FLOOR) */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-          <div>
-            <h2 className="card-title">🏢 Plantas de Andares</h2>
-            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
-              Adicione plantas para cada andar do museu
-            </p>
-          </div>
-          <button
-            className="btn btn-primary"
-            onClick={() => {
-              setEditingFloorPlan(null);
-              setNewFloorPlan({ name: "", floor: 0, imageUrl: "" });
-              setShowFloorPlanModal(true);
-            }}
-          >
-            + Adicionar Andar
-          </button>
-        </div>
-
-        {floorPlans.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "2rem", background: "rgba(0,0,0,0.1)", borderRadius: "0.5rem" }}>
-            <p style={{ color: "var(--text-secondary)" }}>
-              Nenhuma planta cadastrada. Adicione plantas para cada andar.
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
-            {floorPlans.map((plan) => (
-              <div
-                key={plan.id}
-                style={{
-                  border: "1px solid var(--border-subtle)",
-                  borderRadius: "0.5rem",
-                  overflow: "hidden",
-                  background: "var(--bg-card)"
-                }}
-              >
-                <div
-                  style={{
-                    height: "120px",
-                    background: plan.imageUrl ? `url(${plan.imageUrl}) center/cover` : "#333"
-                  }}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <Input
+                  label={t("admin.museumSettings.labels.address")}
+                  value={settings.address}
+                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                  leftIcon={<MapPin size={16} />}
+                  className="bg-black/20"
                 />
-                <div style={{ padding: "0.75rem" }}>
-                  <h4 style={{ marginBottom: "0.25rem" }}>{plan.name}</h4>
-                  <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                    Andar: {plan.floor}
-                  </p>
-                  <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
-                    <button
-                      className="btn btn-secondary"
-                      style={{ flex: 1, padding: "0.4rem" }}
-                      onClick={() => openEditFloorPlan(plan)}
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      className="btn btn-secondary"
-                      style={{ flex: 1, padding: "0.4rem", color: "#ef4444" }}
-                      onClick={() => handleDeleteFloorPlan(plan.id)}
-                    >
-                      🗑️
-                    </button>
+                <Input
+                  label={t("admin.museumSettings.labels.openingHours")}
+                  value={settings.openingHours}
+                  onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })}
+                  leftIcon={<Clock size={16} />}
+                  className="bg-black/20"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <Input
+                  label={t("admin.museumSettings.labels.whatsapp")}
+                  value={settings.whatsapp}
+                  onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
+                  leftIcon={<Phone size={16} />}
+                  className="bg-black/20"
+                />
+                <Input
+                  label={t("admin.museumSettings.labels.email")}
+                  value={settings.email}
+                  onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                  leftIcon={<Mail size={16} />}
+                  className="bg-black/20"
+                />
+                <Input
+                  label={t("admin.museumSettings.labels.website")}
+                  value={settings.website}
+                  onChange={(e) => setSettings({ ...settings, website: e.target.value })}
+                  leftIcon={<Globe size={16} />}
+                  className="bg-black/20"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* MULTIMIDIA E BOAS VINDAS */}
+          <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <Volume2 className="text-pink-400" size={24} /> Boas-vindas Multimídia
+            </h2>
+            <p className="text-sm text-slate-400 mb-6">Conteúdo reproduzido automaticamente na tela inicial do app.</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-slate-300">Áudio de Narração</label>
+                <div
+                  onClick={() => document.getElementById('welcome-audio-upload')?.click()}
+                  className="border-2 border-dashed border-white/10 rounded-xl p-4 hover:bg-white/5 transition-colors cursor-pointer text-center"
+                >
+                  <Upload size={24} className="mx-auto text-slate-500 mb-2" />
+                  <span className="text-xs text-slate-400">Clique para enviar áudio (MP3)</span>
+                  <input
+                    id="welcome-audio-upload"
+                    type="file"
+                    accept="audio/*"
+                    className="hidden"
+                    onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])}
+                  />
+                </div>
+                {settings.welcomeAudioUrl && (
+                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+                      <Headphones size={14} className="text-emerald-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-emerald-400 truncate">Áudio configurado</p>
+                      <audio controls src={settings.welcomeAudioUrl} className="h-6 w-full mt-1" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <Input
+                  label="Vídeo de Apresentação (URL)"
+                  value={settings.welcomeVideoUrl || ""}
+                  onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })}
+                  placeholder="https://..."
+                  leftIcon={<Video size={16} />}
+                  className="bg-black/20"
+                />
+                <div className="aspect-video bg-black/40 rounded-lg flex items-center justify-center border border-white/5">
+                  {settings.welcomeVideoUrl ? (
+                    <video src={settings.welcomeVideoUrl} controls className="w-full h-full rounded-lg" />
+                  ) : (
+                    <div className="text-center text-slate-600">
+                      <Video size={32} className="mx-auto mb-2 opacity-50" />
+                      <span className="text-xs">Preview do vídeo</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* MAPAS E PLANTAS */}
+          <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <MapIcon size={24} className="text-emerald-400" /> Plantas e Localização
+              </h2>
+              <Button variant="ghost" className="text-xs h-8" onClick={() => setShowFloorPlanModal(true)}>
+                <Plus size={14} className="mr-1" /> Adicionar Andar
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* PLANTA GERAL (LEGADO/OUTDOOR) */}
+              <div className="space-y-4">
+                <label className="text-sm font-bold text-slate-300">Mapa Outdoor / Capa do Mapa</label>
+                <div
+                  onClick={() => mapInputRef.current?.click()}
+                  className="aspect-[4/3] rounded-xl border-2 border-dashed border-white/10 hover:border-white/20 hover:bg-white/5 transition-all cursor-pointer relative overflow-hidden group"
+                >
+                  {settings.mapImageUrl ? (
+                    <img src={settings.mapImageUrl} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500">
+                      <ImageIcon size={32} className="mb-2" />
+                      <span className="text-xs">Enviar Mapa Geral</span>
+                    </div>
+                  )}
+                  <input ref={mapInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("mapImageUrl", e.target.files[0])} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    label="Latitude"
+                    type="number"
+                    step="any"
+                    value={settings.latitude}
+                    onChange={(e) => setSettings({ ...settings, latitude: parseFloat(e.target.value) })}
+                    className="bg-black/20 h-9"
+                  />
+                  <Input
+                    label="Longitude"
+                    type="number"
+                    step="any"
+                    value={settings.longitude}
+                    onChange={(e) => setSettings({ ...settings, longitude: parseFloat(e.target.value) })}
+                    className="bg-black/20 h-9"
+                  />
+                </div>
+              </div>
+
+              {/* LISTA DE ANDARES */}
+              <div className="space-y-3">
+                <label className="text-sm font-bold text-slate-300">Plantas dos Andares (Indoor)</label>
+                <div className="bg-black/20 rounded-xl p-2 max-h-[300px] overflow-y-auto space-y-2">
+                  {floorPlans.length === 0 && (
+                    <div className="text-center py-8 text-slate-500 text-sm">
+                      Nenhuma planta cadastrada.
+                    </div>
+                  )}
+                  {floorPlans.map(plan => (
+                    <div key={plan.id} className="bg-white/5 p-3 rounded-lg flex items-center gap-3 border border-white/5">
+                      <div className="w-12 h-12 bg-black rounded overflow-hidden shrink-0">
+                        <img src={plan.imageUrl} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-sm text-white truncate">{plan.name}</div>
+                        <div className="text-xs text-slate-400">Andar: {plan.floor}</div>
+                      </div>
+                      <div className="flex gap-1">
+                        <button onClick={() => openEditFloorPlan(plan)} className="p-1.5 hover:bg-white/10 rounded text-blue-400">
+                          <Edit size={14} />
+                        </button>
+                        <button onClick={() => handleDeleteFloorPlan(plan.id)} className="p-1.5 hover:bg-white/10 rounded text-red-400">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* COLUNA DIREITA - VISUAL */}
+        <div className="space-y-8">
+
+          {/* IDENTIDADE VISUAL */}
+          <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
+            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+              <Palette className="text-purple-400" size={24} /> Identidade Visual
+            </h2>
+
+            <div className="space-y-6">
+              {/* LOGO */}
+              <div className="text-center">
+                <div
+                  onClick={() => logoInputRef.current?.click()}
+                  className="w-32 h-32 mx-auto rounded-full border-2 border-dashed border-white/20 hover:border-white/40 cursor-pointer overflow-hidden flex items-center justify-center bg-black/40 group relative"
+                >
+                  {settings.logoUrl ? (
+                    <img src={settings.logoUrl} className="w-full h-full object-contain" />
+                  ) : (
+                    <Upload size={24} className="text-slate-500 group-hover:text-white" />
+                  )}
+                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])} />
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-xs font-bold uppercase">Trocar Logo</span>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-400 mt-2">Logomarca Principal</p>
+              </div>
+
+              {/* CORES */}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Cor Primária</label>
+                  <div className="flex gap-2">
+                    <div className="w-10 h-10 rounded-lg border border-white/10 overflow-hidden shrink-0 relative">
+                      <input type="color" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} className="absolute -top-2 -left-2 w-16 h-16 cursor-pointer" />
+                    </div>
+                    <Input value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} className="h-10 font-mono text-center" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Cor Secundária</label>
+                  <div className="flex gap-2">
+                    <div className="w-10 h-10 rounded-lg border border-white/10 overflow-hidden shrink-0 relative">
+                      <input type="color" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} className="absolute -top-2 -left-2 w-16 h-16 cursor-pointer" />
+                    </div>
+                    <Input value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} className="h-10 font-mono text-center" />
                   </div>
                 </div>
               </div>
-            ))}
+
+              {/* TEMA E FONTE */}
+              <div className="p-4 bg-black/20 rounded-xl space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Tema Escuro</span>
+                  <div
+                    onClick={() => setSettings({ ...settings, theme: settings.theme === 'dark' ? 'light' : 'dark' })}
+                    className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.theme === 'dark' ? 'bg-blue-600' : 'bg-slate-700'}`}
+                  >
+                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${settings.theme === 'dark' ? 'left-7' : 'left-1'}`} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Fonte Histórica (Serif)</span>
+                  <div
+                    onClick={() => setSettings({ ...settings, historicalFont: !settings.historicalFont })}
+                    className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-gold' : 'bg-slate-700'}`}
+                  >
+                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
-        )}
+
+          {/* PREVIEW CARD */}
+          <div
+            className="rounded-3xl p-6 relative overflow-hidden shadow-2xl transition-all duration-300"
+            style={{
+              backgroundColor: settings.theme === 'dark' ? '#121212' : '#ffffff',
+              color: settings.theme === 'dark' ? '#ffffff' : '#121212',
+              fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
+            }}
+          >
+            <div className="absolute top-0 left-0 right-0 h-32 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
+
+            <div className="relative z-10 text-center">
+              <img src={settings.logoUrl || "https://via.placeholder.com/100"} className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
+
+              <h3 className="text-xl font-bold mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Nome do Museu"}</h3>
+              <p className="text-xs opacity-70 mb-6 line-clamp-3">{settings.mission || "Missão e descrição..."}</p>
+
+              <button
+                className="w-full py-3 rounded-xl font-bold text-sm shadow-lg mb-4"
+                style={{ background: settings.primaryColor, color: settings.theme === 'dark' ? '#000' : '#fff' }}
+              >
+                Ingressos
+              </button>
+
+              <div className="flex justify-center gap-4 text-xs opacity-60">
+                <span className="flex items-center gap-1"><Clock size={12} /> Aberto agora</span>
+                <span className="flex items-center gap-1"><MapPin size={12} /> Navegar</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      {/* Modal para adicionar/editar planta */}
+      {/* ACTION BAR */}
+      <div className="fixed bottom-6 w-full left-0 z-50 pointer-events-none px-4 flex justify-center">
+        <div className="bg-[#0f172a] border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center gap-4 shadow-2xl pointer-events-auto transform translate-y-0 transition-transform">
+          <span className="text-xs text-slate-500 font-medium ml-2">
+            Alterações não salvas
+          </span>
+          <Button
+            onClick={handleSave}
+            isLoading={saving}
+            className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
+            leftIcon={<Save size={18} />}
+          >
+            Salvar Configurações
+          </Button>
+        </div>
+      </div>
+
+      {/* Modal para adicionar/editar planta - Mantido simples mas estilizado */}
       {showFloorPlanModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.8)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000
-          }}
-        >
-          <div className="card" style={{ width: "90%", maxWidth: "450px", padding: "1.5rem" }}>
-            <h3 style={{ marginBottom: "1rem" }}>
-              {editingFloorPlan ? "Editar Planta" : "Nova Planta de Andar"}
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h3 className="text-xl font-bold text-white mb-6">
+              {editingFloorPlan ? "Editar Andar" : "Novo Andar"}
             </h3>
 
-            <div className="form-group">
-              <label className="form-label">Nome do Andar *</label>
-              <input
-                type="text"
+            <div className="space-y-4">
+              <Input
+                label="Nome do Andar"
                 value={newFloorPlan.name}
                 onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })}
-                placeholder="Ex: Térreo, 1º Andar, Subsolo..."
+                placeholder="Ex: Térreo"
               />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Número do Andar</label>
-              <input
+              <Input
+                label="Número (Ordem)"
                 type="number"
                 value={newFloorPlan.floor}
                 onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })}
-                placeholder="0 = Térreo, 1, 2, -1..."
               />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Imagem da Planta *</label>
               <div
-                style={{
-                  width: "100%",
-                  height: "150px",
-                  border: "2px dashed var(--border-strong)",
-                  borderRadius: "0.5rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: newFloorPlan.imageUrl
-                    ? `url(${newFloorPlan.imageUrl}) center/contain no-repeat`
-                    : "rgba(42, 24, 16, 0.3)",
-                  cursor: "pointer"
-                }}
                 onClick={() => floorPlanInputRef.current?.click()}
+                className="aspect-video rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors"
               >
-                {!newFloorPlan.imageUrl && (
-                  <span style={{ fontSize: "0.85rem" }}>Clique para enviar imagem</span>
+                {newFloorPlan.imageUrl ? (
+                  <img src={newFloorPlan.imageUrl} className="w-full h-full object-contain" />
+                ) : (
+                  <div className="text-center text-slate-500">
+                    <Upload size={24} className="mx-auto mb-2" />
+                    <span className="text-sm">Imagem da Planta</span>
+                  </div>
                 )}
-                <input
-                  ref={floorPlanInputRef}
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])}
-                />
+                <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "0.5rem", marginTop: "1.5rem" }}>
-              <button
-                className="btn btn-secondary"
-                style={{ flex: 1 }}
-                onClick={() => {
-                  setShowFloorPlanModal(false);
-                  setEditingFloorPlan(null);
-                }}
-              >
+            <div className="flex gap-3 mt-8">
+              <Button variant="ghost" onClick={() => setShowFloorPlanModal(false)} className="flex-1">
                 Cancelar
-              </button>
-              <button
-                className="btn btn-primary"
-                style={{ flex: 1 }}
-                onClick={handleSaveFloorPlan}
-              >
+              </Button>
+              <Button onClick={handleSaveFloorPlan} className="flex-1">
                 Salvar
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 2.2 CORES E TEMA */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">🎨 {t("admin.museumSettings.colors.title")}</h2>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
-          <div className="form-group">
-            <label className="form-label">{t("admin.museumSettings.colors.primary")}</label>
-            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <input
-                type="color"
-                value={settings.primaryColor}
-                onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
-                style={{ width: "60px", height: "40px", cursor: "pointer" }}
-              />
-              <input
-                type="text"
-                value={settings.primaryColor}
-                onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
-                placeholder="#d4af37"
-                style={{ flex: 1 }}
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">{t("admin.museumSettings.colors.secondary")}</label>
-            <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <input
-                type="color"
-                value={settings.secondaryColor}
-                onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })}
-                style={{ width: "60px", height: "40px", cursor: "pointer" }}
-              />
-              <input
-                type="text"
-                value={settings.secondaryColor}
-                onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })}
-                placeholder="#cd7f32"
-                style={{ flex: 1 }}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">{t("admin.museumSettings.colors.theme")}</label>
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-              <input
-                type="radio"
-                checked={settings.theme === "light"}
-                onChange={() => setSettings({ ...settings, theme: "light" })}
-              />
-              <span>{t("admin.museumSettings.colors.light")}</span>
-            </label>
-            <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-              <input
-                type="radio"
-                checked={settings.theme === "dark"}
-                onChange={() => setSettings({ ...settings, theme: "dark" })}
-              />
-              <span>{t("admin.museumSettings.colors.dark")}</span>
-            </label>
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={settings.historicalFont}
-              onChange={(e) => setSettings({ ...settings, historicalFont: e.target.checked })}
-            />
-            <span className="form-label" style={{ marginBottom: 0 }}>{t("admin.museumSettings.colors.historicalFont")}</span>
-          </label>
-        </div>
-
-        {/* Preview */}
-        <div
-          style={{
-            marginTop: "1.5rem",
-            padding: "1.5rem",
-            borderRadius: "var(--radius-md)",
-            background: settings.theme === "dark" ? "#1a1108" : "#f5f5f5",
-            color: settings.theme === "dark" ? "#f5e6d3" : "#1a1108",
-            fontFamily: settings.historicalFont ? "Georgia, serif" : "system-ui",
-            border: "2px solid var(--border-subtle)"
-          }}
-        >
-          <h3 style={{ color: settings.primaryColor, marginBottom: "0.5rem" }}>{t("admin.museumSettings.preview.title")}</h3>
-          <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
-            {t("admin.museumSettings.preview.text")}
-          </p>
-          <button
-            className="btn"
-            style={{
-              background: `linear-gradient(135deg, ${settings.primaryColor}, ${settings.secondaryColor})`,
-              color: settings.theme === "dark" ? "#1a1108" : "#fff"
-            }}
-          >
-            {t("admin.museumSettings.preview.button")}
-          </button>
-        </div>
-      </div>
-
-      {/* Botão Salvar */}
-      <button
-        className="btn btn-primary"
-        onClick={handleSave}
-        disabled={saving}
-        style={{ width: "100%", padding: "1rem", fontSize: "1rem" }}
-      >
-        {saving ? t("admin.museumSettings.saving") : `💾 ${t("admin.museumSettings.save")}`}
-      </button>
     </div>
   );
 };
