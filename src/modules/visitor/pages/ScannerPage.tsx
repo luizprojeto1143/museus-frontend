@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Camera, Keyboard, ArrowLeft } from "lucide-react";
+import { Camera, Keyboard, ArrowLeft, ArrowRight, ScanLine } from "lucide-react";
+import { Input, Button } from "../../../components/ui";
+import { useToast } from "../../../contexts/ToastContext";
 import "./Scanner.css";
 
 export const ScannerPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { addToast } = useToast();
     const [manualCode, setManualCode] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
@@ -52,6 +55,7 @@ export const ScannerPage: React.FC = () => {
         } catch (err) {
             console.error("Error starting scanner", err);
             setError("Não foi possível acessar a câmera. Verifique se você permitiu o acesso.");
+            addToast("Erro ao acessar câmera", "error");
             setIsScanning(false);
         }
     };
@@ -72,6 +76,12 @@ export const ScannerPage: React.FC = () => {
             workId = workId.split("/works/")[1];
         } else if (workId.includes("/qr/")) {
             workId = workId.split("/qr/")[1];
+        }
+
+        // Limpar URL completa se houver
+        if (workId.startsWith("http")) {
+            const parts = workId.split("/");
+            workId = parts[parts.length - 1];
         }
 
         if (decodedText.includes("/qr/")) {
@@ -95,60 +105,84 @@ export const ScannerPage: React.FC = () => {
     };
 
     return (
-        <div className="scanner-container">
-            <header className="scanner-header">
-                <h1 className="scanner-title">
-                    <Camera size={28} />
+        <div className="max-w-md mx-auto p-4 min-h-screen flex flex-col">
+            <header className="text-center mb-8 pt-4">
+                <h1 className="text-2xl font-bold text-gold flex items-center justify-center gap-2 mb-2">
+                    <ScanLine size={28} />
                     {t("visitor.scanner.title", "Scanner de Obras")}
                 </h1>
-                <p className="scanner-instruction">
-                    {t("visitor.scanner.instruction", "Aponte a câmera para o código QRCode ao lado da obra para ver detalhes.")}
+                <p className="text-gray-400 text-sm">
+                    {t("visitor.scanner.instruction", "Aponte a câmera para o QRCode da obra ou digite o código abaixo.")}
                 </p>
             </header>
 
             {/* Scanner Area */}
-            <div className="scanner-area">
-                <div id="reader" className="scanner-reader"></div>
+            <div className="relative bg-black rounded-3xl overflow-hidden aspect-square mb-8 ring-2 ring-gray-800 shadow-2xl">
+                <div id="reader" className="w-full h-full object-cover"></div>
 
                 {!isScanning && !error && (
-                    <div className="scanner-start-overlay">
-                        <button onClick={startScanner} className="scanner-start-btn">
-                            <Camera size={24} />
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm z-10">
+                        <Button
+                            onClick={startScanner}
+                            leftIcon={<Camera size={24} />}
+                            className="bg-gold hover:bg-gold/90 text-black font-bold py-3 px-6 rounded-full transform transition hover:scale-105"
+                        >
                             {t("visitor.scanner.startCamera", "Iniciar Câmera")}
-                        </button>
+                        </Button>
+                    </div>
+                )}
+
+                {isScanning && (
+                    <div className="absolute inset-0 pointer-events-none">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-gold/50 rounded-lg">
+                            <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-gold -mt-1 -ml-1"></div>
+                            <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-gold -mt-1 -mr-1"></div>
+                            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-gold -mb-1 -ml-1"></div>
+                            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-gold -mb-1 -mr-1"></div>
+                        </div>
+                        <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm animate-pulse">
+                            Procurando código...
+                        </div>
                     </div>
                 )}
             </div>
 
             {error && (
-                <div className="scanner-error">
+                <div className="bg-red-500/10 border border-red-500/50 text-red-200 p-4 rounded-lg mb-6 text-center text-sm">
                     {error}
                 </div>
             )}
 
             {/* Manual Input Fallback */}
-            <div className="scanner-manual-section">
-                <h3 className="scanner-manual-title">
-                    <Keyboard size={18} />
+            <div className="card bg-gray-900/50 border-gray-800">
+                <h3 className="text-gray-300 font-medium flex items-center gap-2 mb-4">
+                    <Keyboard size={18} className="text-gold" />
                     {t("visitor.dialer.title", "Digitar Código")}
                 </h3>
-                <form onSubmit={handleManualSubmit} className="scanner-manual-form">
-                    <input
-                        type="text"
+                <form onSubmit={handleManualSubmit} className="flex gap-2">
+                    <Input
                         value={manualCode}
                         onChange={(e) => setManualCode(e.target.value)}
-                        placeholder={t("visitor.dialer.placeholder", "Ex: 1234")}
-                        className="scanner-manual-input"
+                        placeholder="Ex: OBRA-001"
+                        containerClassName="flex-1 mb-0"
+                        className="h-full"
                     />
-                    <button type="submit" className="scanner-manual-submit">
+                    <Button type="submit" leftIcon={<ArrowRight size={18} />}>
                         {t("common.view", "Ver")}
-                    </button>
+                    </Button>
                 </form>
             </div>
 
-            <button onClick={() => navigate(-1)} className="scanner-back-btn">
-                <ArrowLeft size={16} /> {t("common.back", "Voltar")}
-            </button>
+            <div className="mt-auto pt-8 pb-4">
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate(-1)}
+                    leftIcon={<ArrowLeft size={16} />}
+                    className="w-full text-gray-500 hover:text-white"
+                >
+                    {t("common.back", "Voltar")}
+                </Button>
+            </div>
         </div>
     );
 };

@@ -3,8 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { Ticket, Award, LogOut, ChevronRight, User, Star, Map } from 'lucide-react';
+import { Ticket, Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, CheckCircle } from 'lucide-react';
 import { TicketCard } from "../components/TicketCard";
+import { Button } from "../../../components/ui";
 import "./VisitorProfile.css"; // Import the dedicated CSS
 
 interface Certificate {
@@ -108,18 +109,22 @@ export const VisitorProfile: React.FC = () => {
 
                         {/* Logout Section */}
                         <div className="logout-section">
-                            <button onClick={logout} className="logout-btn">
-                                <div className="logout-content">
-                                    <div className="logout-icon">
+                            <Button
+                                variant="destructive"
+                                onClick={logout}
+                                className="w-full justify-between h-auto py-4 bg-red-500/10 hover:bg-red-500/20 border border-transparent hover:border-red-500/30 text-red-500"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
                                         <LogOut size={20} />
                                     </div>
-                                    <div className="logout-text">
-                                        <h4>Sair da Conta</h4>
-                                        <span>Encerrar sessão neste dispositivo</span>
+                                    <div className="text-left">
+                                        <h4 className="text-base font-bold text-red-500">Sair da Conta</h4>
+                                        <span className="text-sm text-red-400/70 block font-normal">Encerrar sessão neste dispositivo</span>
                                     </div>
                                 </div>
-                                <ChevronRight size={20} color="#ef4444" opacity={0.5} />
-                            </button>
+                                <ChevronRight size={20} className="text-red-500/50" />
+                            </Button>
                         </div>
                     </div>
                 );
@@ -131,9 +136,12 @@ export const VisitorProfile: React.FC = () => {
                             <div className="empty-state">
                                 <Ticket size={48} style={{ margin: "0 auto", opacity: 0.5 }} />
                                 <p>Você ainda não tem ingressos.</p>
-                                <button className="empty-btn" onClick={() => navigate('/eventos')}>
+                                <Button
+                                    onClick={() => navigate('/eventos')}
+                                    className="bg-gold hover:bg-gold/90 text-black font-bold rounded-full px-6"
+                                >
                                     Ver Eventos
-                                </button>
+                                </Button>
                             </div>
                         ) : (
                             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -183,18 +191,24 @@ export const VisitorProfile: React.FC = () => {
                                     </p>
 
                                     <div className="cert-actions">
-                                        <button
-                                            className="btn-gold-text"
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
                                             onClick={() => window.open(`${api.defaults.baseURL?.replace('/api', '') || ''}/certificates/${cert.id}/pdf`, '_blank')}
+                                            className="flex-1 bg-[#463420] text-gold hover:bg-[#5a432a] border-none"
+                                            leftIcon={<ExternalLink size={14} />}
                                         >
                                             Baixar PDF
-                                        </button>
-                                        <button
-                                            className="btn-outline-gold"
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
                                             onClick={() => navigate(`/verify/${cert.code}`)}
+                                            className="flex-1 border-[#463420] text-gold hover:bg-[#463420]/20 hover:text-white"
+                                            leftIcon={<CheckCircle size={14} />}
                                         >
                                             Validar
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))

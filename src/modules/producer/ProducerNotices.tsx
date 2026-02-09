@@ -21,16 +21,21 @@ export const ProducerNotices: React.FC = () => {
     const { tenantId } = useAuth();
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
-    const [canSubmit, setCanSubmit] = useState(false);
+    const [canSubmit, setCanSubmit] = useState(true);
 
     useEffect(() => {
         if (tenantId) {
             api.get(`/tenants/${tenantId}/features`)
-                .then(res => setCanSubmit(!!res.data.featureEditaisSubmission))
+                .then(res => {
+                    // Only disable if explicitly set to false
+                    if (res.data.featureEditaisSubmission === false) {
+                        setCanSubmit(false);
+                    }
+                })
                 .catch(err => console.error("Error fetching features", err));
         }
 
-        api.get("/notices?status=INSCRIPTIONS_OPEN")
+        api.get("/notices/public?status=INSCRIPTIONS_OPEN")
             .then(res => setNotices(Array.isArray(res.data) ? res.data : []))
             .catch(console.error)
             .finally(() => setLoading(false));

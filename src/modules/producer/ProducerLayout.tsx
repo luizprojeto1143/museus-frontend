@@ -28,7 +28,8 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
         featureProjects: true,
         featureTickets: false,
         featureServices: true,
-        featureReports: true
+        featureReports: true,
+        featureEditaisSubmission: true
     });
 
     React.useEffect(() => {

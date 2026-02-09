@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle } from "lucide-react";
+import { useToast } from "../../../contexts/ToastContext";
+import { Input, Button } from "../../../components/ui";
+import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle, Briefcase, FileText } from "lucide-react";
 
 const ACCESSIBILITY_SERVICES = [
     { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: "🤟" },
@@ -19,6 +21,7 @@ export const AdminProviderForm: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
+    const { addToast } = useToast();
     const isEdit = Boolean(id);
 
     const [loading, setLoading] = useState(false);
@@ -52,14 +55,21 @@ export const AdminProviderForm: React.FC = () => {
                         active: data.active ?? true
                     });
                 })
-                .catch(console.error)
+                .catch(err => {
+                    console.error(err);
+                    addToast("Erro ao carregar prestador", "error");
+                })
                 .finally(() => setLoading(false));
         }
     }, [id, tenantId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!tenantId) return;
+
+        if (!tenantId) {
+            addToast("Erro de autenticação", "error");
+            return;
+        }
 
         setSaving(true);
         try {
@@ -74,10 +84,11 @@ export const AdminProviderForm: React.FC = () => {
             } else {
                 await api.post("/providers", payload);
             }
+            addToast(isEdit ? "Prestador atualizado com sucesso!" : "Prestador cadastrado com sucesso!", "success");
             navigate("/admin/prestadores");
         } catch (error) {
             console.error("Erro ao salvar prestador:", error);
-            alert("Erro ao salvar prestador. Verifique os dados.");
+            addToast("Erro ao salvar prestador. Verifique os dados.", "error");
         } finally {
             setSaving(false);
         }
@@ -93,19 +104,16 @@ export const AdminProviderForm: React.FC = () => {
     };
 
     if (loading) {
-        return <div className="loading">Carregando prestador...</div>;
+        return <div className="text-center p-8">Carregando prestador...</div>;
     }
 
     return (
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        <div className="max-w-4xl mx-auto pb-12">
             {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-                <button
-                    onClick={() => navigate("/admin/prestadores")}
-                    style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0.5rem" }}
-                >
+            <div className="flex items-center gap-4 mb-8">
+                <Button variant="ghost" onClick={() => navigate("/admin/prestadores")} className="p-2">
                     <ArrowLeft size={24} />
-                </button>
+                </Button>
                 <div>
                     <h1 className="section-title">{isEdit ? "Editar Prestador" : "Novo Prestador"}</h1>
                     <p className="section-subtitle">
@@ -114,159 +122,146 @@ export const AdminProviderForm: React.FC = () => {
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Informações Básicas */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><User size={20} /> Informações do Prestador</h2>
+                <div className="card">
+                    <h2 className="card-title flex items-center gap-2 mb-6">
+                        <User size={20} className="text-gold" /> Informações do Prestador
+                    </h2>
 
-                    <div className="form-group">
-                        <label>Nome Completo / Razão Social *</label>
-                        <input
-                            type="text"
-                            className="input"
-                            value={formData.name}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
-                            placeholder="Ex: Maria Silva ou Acessibilidade LTDA"
-                            required
-                        />
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="md:col-span-2">
+                            <Input
+                                label="Nome Completo / Razão Social *"
+                                value={formData.name}
+                                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                placeholder="Ex: Maria Silva ou Acessibilidade LTDA"
+                                required
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <label>CPF/CNPJ</label>
-                        <input
-                            type="text"
-                            className="input"
+                        <Input
+                            label="CPF/CNPJ"
                             value={formData.document}
                             onChange={e => setFormData({ ...formData, document: e.target.value })}
                             placeholder="000.000.000-00 ou 00.000.000/0000-00"
+                            leftIcon={<FileText size={16} />}
                         />
-                    </div>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div className="form-group">
-                            <label><Mail size={16} style={{ marginRight: "0.5rem" }} />E-mail</label>
-                            <input
-                                type="email"
-                                className="input"
-                                value={formData.email}
-                                onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                placeholder="contato@exemplo.com"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label><Phone size={16} style={{ marginRight: "0.5rem" }} />Telefone</label>
-                            <input
-                                type="tel"
-                                className="input"
-                                value={formData.phone}
-                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                placeholder="(31) 99999-9999"
-                            />
-                        </div>
+                        <Input
+                            label="E-mail"
+                            type="email"
+                            value={formData.email}
+                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                            placeholder="contato@exemplo.com"
+                            leftIcon={<Mail size={16} />}
+                        />
+
+                        <Input
+                            label="Telefone"
+                            type="tel"
+                            value={formData.phone}
+                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                            placeholder="(31) 99999-9999"
+                            leftIcon={<Phone size={16} />}
+                            containerClassName="md:col-span-2"
+                        />
                     </div>
                 </div>
 
                 {/* Serviços */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title">♿ Serviços Oferecidos</h2>
-                    <p style={{ marginBottom: "1rem", color: "#6b7280", fontSize: "0.875rem" }}>
+                <div className="card">
+                    <h2 className="card-title mb-2">♿ Serviços Oferecidos</h2>
+                    <p className="text-sm text-gray-400 mb-6">
                         Selecione todos os serviços de acessibilidade que este prestador oferece:
                     </p>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0.75rem" }}>
-                        {ACCESSIBILITY_SERVICES.map(service => (
-                            <button
-                                key={service.value}
-                                type="button"
-                                onClick={() => toggleService(service.value)}
-                                style={{
-                                    padding: "1rem",
-                                    borderRadius: "0.75rem",
-                                    border: "2px solid",
-                                    borderColor: formData.services.includes(service.value) ? "#22c55e" : "#e5e7eb",
-                                    background: formData.services.includes(service.value) ? "rgba(34, 197, 94, 0.05)" : "white",
-                                    cursor: "pointer",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "0.75rem",
-                                    textAlign: "left",
-                                    transition: "all 0.2s"
-                                }}
-                            >
-                                <span style={{ fontSize: "1.5rem" }}>{service.icon}</span>
-                                <span style={{
-                                    color: formData.services.includes(service.value) ? "#22c55e" : "#374151",
-                                    fontWeight: formData.services.includes(service.value) ? 600 : 400
-                                }}>
-                                    {service.label}
-                                </span>
-                                {formData.services.includes(service.value) && (
-                                    <CheckCircle size={18} color="#22c55e" style={{ marginLeft: "auto" }} />
-                                )}
-                            </button>
-                        ))}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {ACCESSIBILITY_SERVICES.map(service => {
+                            const isSelected = formData.services.includes(service.value);
+                            return (
+                                <button
+                                    key={service.value}
+                                    type="button"
+                                    onClick={() => toggleService(service.value)}
+                                    className={`
+                                        p-4 rounded-xl border-2 transition-all flex items-center gap-3 text-left
+                                        ${isSelected
+                                            ? "border-green-500 bg-green-500/10 text-green-400"
+                                            : "border-gray-700 bg-gray-800/50 text-gray-400 hover:border-gray-600"}
+                                    `}
+                                >
+                                    <span className="text-2xl">{service.icon}</span>
+                                    <span className={`font-medium ${isSelected ? "text-green-400" : "text-gray-300"}`}>
+                                        {service.label}
+                                    </span>
+                                    {isSelected && (
+                                        <CheckCircle size={18} className="ml-auto text-green-500" />
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
                 {/* Avaliação e Histórico */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><Star size={20} /> Avaliação e Histórico</h2>
+                <div className="card">
+                    <h2 className="card-title flex items-center gap-2 mb-6">
+                        <Briefcase size={20} className="text-gold" /> Avaliação e Histórico
+                    </h2>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div className="form-group">
-                            <label>Avaliação (0-5)</label>
-                            <input
-                                type="number"
-                                step="0.1"
-                                min="0"
-                                max="5"
-                                className="input"
-                                value={formData.rating}
-                                onChange={e => setFormData({ ...formData, rating: e.target.value })}
-                                placeholder="4.5"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Trabalhos Concluídos</label>
-                            <input
-                                type="number"
-                                min="0"
-                                className="input"
-                                value={formData.completedJobs}
-                                onChange={e => setFormData({ ...formData, completedJobs: parseInt(e.target.value) || 0 })}
-                            />
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input
+                            label="Avaliação (0-5)"
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="5"
+                            value={formData.rating}
+                            onChange={e => setFormData({ ...formData, rating: e.target.value })}
+                            placeholder="4.5"
+                            leftIcon={<Star size={16} />}
+                        />
+
+                        <Input
+                            label="Trabalhos Concluídos"
+                            type="number"
+                            min="0"
+                            value={formData.completedJobs}
+                            onChange={e => setFormData({ ...formData, completedJobs: parseInt(e.target.value) || 0 })}
+                        />
                     </div>
 
-                    <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", marginTop: "1rem" }}>
-                        <input
-                            type="checkbox"
-                            checked={formData.active}
-                            onChange={e => setFormData({ ...formData, active: e.target.checked })}
-                            style={{ width: "1.25rem", height: "1.25rem" }}
-                        />
-                        <span>Prestador ativo (disponível para novos trabalhos)</span>
-                    </label>
+                    <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={formData.active}
+                                onChange={e => setFormData({ ...formData, active: e.target.checked })}
+                                className="w-5 h-5 rounded text-gold focus:ring-gold bg-gray-900 border-gray-600"
+                            />
+                            <span className="font-medium text-gray-200">Prestador ativo (disponível para novos trabalhos)</span>
+                        </label>
+                    </div>
                 </div>
 
                 {/* Ações */}
-                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-                    <button
+                <div className="flex justify-end gap-3 pt-4">
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={() => navigate("/admin/prestadores")}
+                        disabled={saving}
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
-                        className="btn btn-primary"
-                        disabled={saving}
-                        style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                        isLoading={saving}
+                        leftIcon={<Save size={18} />}
                     >
-                        <Save size={18} />
-                        {saving ? "Salvando..." : (isEdit ? "Salvar Alterações" : "Cadastrar Prestador")}
-                    </button>
+                        {isEdit ? "Salvar Alterações" : "Cadastrar Prestador"}
+                    </Button>
                 </div>
             </form>
         </div>

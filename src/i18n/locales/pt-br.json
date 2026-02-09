@@ -927,22 +927,49 @@
             "helpers": {
                 "slug": "Identificador único na URL (ex: meumuseu.com/app/slug)"
             },
-            "labels": {
-                "name": "Nome",
-                "slug": "Link Personalizado (URL)",
-                "adminEmail": "Email do Administrador",
-                "adminName": "Nome do Administrador",
-                "adminPassword": "Senha Inicial",
-                "type": "Tipo de Instituição",
-                "plan": "Plano de Assinatura",
-                "maxWorks": "Limite de Obras"
-            },
             "plans": {
                 "start": "Start (50 obras)",
                 "pro": "Pro (200 obras)",
                 "enterprise": "Enterprise (500 obras)",
                 "custom": "Personalizado"
             }
+        },
+        "achievements": {
+            "title": "Gestão de Conquistas",
+            "subtitle": "Gerencie as conquistas gamificadas da plataforma",
+            "loading": "Carregando...",
+            "errorLoad": "Erro ao carregar conquistas",
+            "select": "Selecione...",
+            "empty": "Nenhuma conquista encontrada",
+            "confirmDelete": "Tem certeza que deseja excluir?",
+            "errorDelete": "Erro ao excluir",
+            "selectTenant": "Selecione uma instituição",
+            "new": "Nova Conquista",
+            "form": {
+                "selectTenantAlert": "Selecione uma instituição!",
+                "errorSave": "Erro ao salvar conquista",
+                "newTitle": "Nova Conquista",
+                "tenant": "Instituição",
+                "code": "Código",
+                "codePlaceholder": "Ex: BADGE_1",
+                "codeHelp": "Código único para identificação",
+                "title": "Título",
+                "titlePlaceholder": "Ex: Explorador Iniciante",
+                "description": "Descrição",
+                "descriptionPlaceholder": "Descrição da conquista...",
+                "imageUrl": "URL da Imagem / Ícone",
+                "imageUrlPlaceholder": "https://...",
+                "upload": "Upload",
+                "errorUpload": "Erro no upload",
+                "saving": "Salvando..."
+            }
+        },
+        "accessibility": {
+            "errorLoad": "Erro ao carregar solicitações",
+            "uploadCheckLibras": "Confirmar Upload de Libras",
+            "uploadCheckAudio": "Confirmar Upload de Áudio",
+            "success": "Sucesso",
+            "errorSubmit": "Erro ao enviar"
         }
     },
     "producer": {

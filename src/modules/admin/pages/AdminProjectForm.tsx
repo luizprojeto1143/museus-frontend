@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { ArrowLeft, Save, Users, DollarSign, FileText, Accessibility } from "lucide-react";
+import { useToast } from "../../../contexts/ToastContext";
+import { Input, Textarea, Button } from "../../../components/ui";
 
 const STATUS_OPTIONS = [
     { value: "DRAFT", label: "Rascunho", color: "#6b7280" },
@@ -37,6 +39,7 @@ interface Notice {
 
 export const AdminProjectForm: React.FC = () => {
     const { t } = useTranslation();
+    const { addToast } = useToast();
     const { id } = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -60,6 +63,7 @@ export const AdminProjectForm: React.FC = () => {
         status: "DRAFT",
         noticeId: searchParams.get("noticeId") || "",
         proponentId: "",
+        attachments: [] as any[],
         accessibilityPlan: {
             hasAccessibility: false,
             services: [] as string[],
@@ -93,6 +97,7 @@ export const AdminProjectForm: React.FC = () => {
                         status: data.status || "DRAFT",
                         noticeId: data.noticeId || "",
                         proponentId: data.proponentId || "",
+                        attachments: data.attachments || [],
                         accessibilityPlan: data.accessibilityPlan || {
                             hasAccessibility: false,
                             services: [],
@@ -127,10 +132,11 @@ export const AdminProjectForm: React.FC = () => {
             } else {
                 await api.post("/projects", payload);
             }
+            addToast("Projeto salvo com sucesso!", "success");
             navigate("/admin/projetos");
         } catch (error) {
             console.error("Erro ao salvar projeto:", error);
-            alert("Erro ao salvar projeto. Verifique os dados.");
+            addToast("Erro ao salvar projeto. Verifique os dados.", "error");
         } finally {
             setSaving(false);
         }
@@ -155,13 +161,14 @@ export const AdminProjectForm: React.FC = () => {
     return (
         <div style={{ maxWidth: "900px", margin: "0 auto" }}>
             {/* Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-                <button
+            <div className="flex items-center gap-4 mb-8">
+                <Button
                     onClick={() => navigate("/admin/projetos")}
-                    style={{ background: "transparent", border: "none", cursor: "pointer", padding: "0.5rem" }}
+                    variant="ghost"
+                    className="p-2 hover:bg-white/10 rounded"
                 >
                     <ArrowLeft size={24} />
-                </button>
+                </Button>
                 <div>
                     <h1 className="section-title">{isEdit ? "Editar Projeto" : "Novo Projeto Cultural"}</h1>
                     <p className="section-subtitle">
@@ -172,48 +179,40 @@ export const AdminProjectForm: React.FC = () => {
 
             <form onSubmit={handleSubmit}>
                 {/* Informações Básicas */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><FileText size={20} /> Informações Básicas</h2>
+                <div className="card mb-6">
+                    <h2 className="card-title flex items-center gap-2 text-gold border-b border-gray-700 pb-2 mb-4">
+                        <FileText size={20} /> Informações Básicas
+                    </h2>
 
-                    <div className="form-group">
-                        <label>Título do Projeto *</label>
-                        <input
-                            type="text"
-                            className="input"
-                            value={formData.title}
-                            onChange={e => setFormData({ ...formData, title: e.target.value })}
-                            placeholder="Ex: Festival de Jazz de Betim 2024"
-                            required
-                        />
-                    </div>
+                    <Input
+                        label="Título do Projeto *"
+                        value={formData.title}
+                        onChange={e => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="Ex: Festival de Jazz de Betim 2024"
+                        required
+                    />
 
-                    <div className="form-group">
-                        <label>Resumo</label>
-                        <textarea
-                            className="input"
-                            rows={2}
-                            value={formData.summary}
-                            onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                            placeholder="Breve resumo do projeto..."
-                        />
-                    </div>
+                    <Textarea
+                        label="Resumo"
+                        rows={2}
+                        value={formData.summary}
+                        onChange={e => setFormData({ ...formData, summary: e.target.value })}
+                        placeholder="Breve resumo do projeto..."
+                    />
 
-                    <div className="form-group">
-                        <label>Descrição Completa</label>
-                        <textarea
-                            className="input"
-                            rows={5}
-                            value={formData.description}
-                            onChange={e => setFormData({ ...formData, description: e.target.value })}
-                            placeholder="Descreva os objetivos, metodologia, cronograma e impactos esperados..."
-                        />
-                    </div>
+                    <Textarea
+                        label="Descrição Completa"
+                        rows={5}
+                        value={formData.description}
+                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                        placeholder="Descreva os objetivos, metodologia, cronograma e impactos esperados..."
+                    />
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="form-group">
-                            <label>Categoria Cultural</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-1">Categoria Cultural</label>
                             <select
-                                className="input"
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent text-white"
                                 value={formData.culturalCategory}
                                 onChange={e => setFormData({ ...formData, culturalCategory: e.target.value })}
                             >
@@ -224,22 +223,19 @@ export const AdminProjectForm: React.FC = () => {
                             </select>
                         </div>
 
-                        <div className="form-group">
-                            <label>Região</label>
-                            <input
-                                type="text"
-                                className="input"
-                                value={formData.targetRegion}
-                                onChange={e => setFormData({ ...formData, targetRegion: e.target.value })}
-                                placeholder="Ex: Centro, Zona Norte..."
-                            />
-                        </div>
+                        <Input
+                            label="Região"
+                            value={formData.targetRegion}
+                            onChange={e => setFormData({ ...formData, targetRegion: e.target.value })}
+                            placeholder="Ex: Centro, Zona Norte..."
+                            containerClassName="mb-0"
+                        />
                     </div>
 
-                    <div className="form-group">
-                        <label>Vinculado ao Edital</label>
+                    <div className="form-group mb-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Vinculado ao Edital</label>
                         <select
-                            className="input"
+                            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent text-white"
                             value={formData.noticeId}
                             onChange={e => setFormData({ ...formData, noticeId: e.target.value })}
                         >
@@ -251,9 +247,9 @@ export const AdminProjectForm: React.FC = () => {
                     </div>
 
                     <div className="form-group">
-                        <label>Status</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
                         <select
-                            className="input"
+                            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent text-white"
                             value={formData.status}
                             onChange={e => setFormData({ ...formData, status: e.target.value })}
                         >
@@ -265,72 +261,66 @@ export const AdminProjectForm: React.FC = () => {
                 </div>
 
                 {/* Orçamento */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><DollarSign size={20} /> Orçamento</h2>
+                <div className="card mb-6">
+                    <h2 className="card-title flex items-center gap-2 text-gold border-b border-gray-700 pb-2 mb-4">
+                        <DollarSign size={20} /> Orçamento
+                    </h2>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div className="form-group">
-                            <label>Valor Solicitado (R$)</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                className="input"
-                                value={formData.requestedBudget}
-                                onChange={e => setFormData({ ...formData, requestedBudget: e.target.value })}
-                                placeholder="50000.00"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Valor Aprovado (R$)</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                className="input"
-                                value={formData.approvedBudget}
-                                onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
-                                placeholder="45000.00"
-                            />
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                            label="Valor Solicitado (R$)"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={formData.requestedBudget}
+                            onChange={e => setFormData({ ...formData, requestedBudget: e.target.value })}
+                            placeholder="50000.00"
+                        />
+                        <Input
+                            label="Valor Aprovado (R$)"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={formData.approvedBudget}
+                            onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
+                            placeholder="45000.00"
+                        />
                     </div>
                 </div>
 
                 {/* Público */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><Users size={20} /> Público</h2>
+                <div className="card mb-6">
+                    <h2 className="card-title flex items-center gap-2 text-gold border-b border-gray-700 pb-2 mb-4">
+                        <Users size={20} /> Público
+                    </h2>
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div className="form-group">
-                            <label>Público Esperado</label>
-                            <input
-                                type="number"
-                                min="0"
-                                className="input"
-                                value={formData.expectedAudience}
-                                onChange={e => setFormData({ ...formData, expectedAudience: e.target.value })}
-                                placeholder="1000"
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Público Real (após execução)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                className="input"
-                                value={formData.actualAudience}
-                                onChange={e => setFormData({ ...formData, actualAudience: e.target.value })}
-                                placeholder="1200"
-                            />
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input
+                            label="Público Esperado"
+                            type="number"
+                            min="0"
+                            value={formData.expectedAudience}
+                            onChange={e => setFormData({ ...formData, expectedAudience: e.target.value })}
+                            placeholder="1000"
+                        />
+                        <Input
+                            label="Público Real (após execução)"
+                            type="number"
+                            min="0"
+                            value={formData.actualAudience}
+                            onChange={e => setFormData({ ...formData, actualAudience: e.target.value })}
+                            placeholder="1200"
+                        />
                     </div>
                 </div>
 
                 {/* Plano de Acessibilidade */}
-                <div className="card" style={{ marginBottom: "1.5rem" }}>
-                    <h2 className="card-title"><Accessibility size={20} /> Plano de Acessibilidade</h2>
+                <div className="card mb-6">
+                    <h2 className="card-title flex items-center gap-2 text-gold border-b border-gray-700 pb-2 mb-4">
+                        <Accessibility size={20} /> Plano de Acessibilidade
+                    </h2>
 
-                    <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", marginBottom: "1rem" }}>
+                    <label className="flex items-center gap-3 cursor-pointer mb-4">
                         <input
                             type="checkbox"
                             checked={formData.accessibilityPlan.hasAccessibility}
@@ -338,31 +328,27 @@ export const AdminProjectForm: React.FC = () => {
                                 ...formData,
                                 accessibilityPlan: { ...formData.accessibilityPlan, hasAccessibility: e.target.checked }
                             })}
-                            style={{ width: "1.25rem", height: "1.25rem" }}
+                            className="w-5 h-5 rounded border-gray-600 text-gold focus:ring-gold bg-gray-700"
                         />
                         <span>Este projeto inclui recursos de acessibilidade</span>
                     </label>
 
                     {formData.accessibilityPlan.hasAccessibility && (
                         <>
-                            <div style={{ marginBottom: "1rem" }}>
-                                <label style={{ display: "block", marginBottom: "0.5rem" }}>Serviços de Acessibilidade:</label>
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                            <div className="mb-4">
+                                <label className="block mb-2 text-sm font-medium text-gray-300">Serviços de Acessibilidade:</label>
+                                <div className="flex flex-wrap gap-2">
                                     {ACCESSIBILITY_SERVICES.map(service => (
                                         <button
                                             key={service.value}
                                             type="button"
                                             onClick={() => toggleAccessibilityService(service.value)}
-                                            style={{
-                                                padding: "0.5rem 1rem",
-                                                borderRadius: "2rem",
-                                                border: "1px solid",
-                                                borderColor: formData.accessibilityPlan.services.includes(service.value) ? "#22c55e" : "#e5e7eb",
-                                                background: formData.accessibilityPlan.services.includes(service.value) ? "rgba(34, 197, 94, 0.1)" : "white",
-                                                color: formData.accessibilityPlan.services.includes(service.value) ? "#22c55e" : "#6b7280",
-                                                cursor: "pointer",
-                                                fontSize: "0.875rem"
-                                            }}
+                                            className={`
+                                                px-4 py-2 rounded-full border text-sm transition-colors
+                                                ${formData.accessibilityPlan.services.includes(service.value)
+                                                    ? 'border-green-500 bg-green-500/10 text-green-500'
+                                                    : 'border-gray-600 bg-gray-800 text-gray-400 hover:border-gray-400'}
+                                            `}
                                         >
                                             {service.label}
                                         </button>
@@ -370,41 +356,77 @@ export const AdminProjectForm: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="form-group">
-                                <label>Descrição do Plano de Acessibilidade</label>
-                                <textarea
-                                    className="input"
-                                    rows={3}
-                                    value={formData.accessibilityPlan.description}
-                                    onChange={e => setFormData({
-                                        ...formData,
-                                        accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
-                                    })}
-                                    placeholder="Descreva como os recursos de acessibilidade serão implementados..."
-                                />
-                            </div>
+                            <Textarea
+                                label="Descrição do Plano de Acessibilidade"
+                                rows={3}
+                                value={formData.accessibilityPlan.description}
+                                onChange={e => setFormData({
+                                    ...formData,
+                                    accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
+                                })}
+                                placeholder="Descreva como os recursos de acessibilidade serão implementados..."
+                            />
                         </>
                     )}
                 </div>
 
+                {/* Prestação de Contas */}
+                <div className="card mb-6">
+                    <h2 className="card-title flex items-center gap-2 text-gold border-b border-gray-700 pb-2 mb-4">
+                        <FileText size={20} /> Prestação de Contas
+                    </h2>
+
+                    {formData.attachments && formData.attachments.length > 0 ? (
+                        <div className="grid gap-3">
+                            {formData.attachments.map((doc: any, idx: number) => (
+                                <div key={idx} className="flex justify-between items-center p-4 bg-gray-800 rounded-md border border-gray-700">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-2 bg-blue-900/30 rounded-full text-blue-400">
+                                            <FileText size={20} />
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-gray-200">{doc.name}</div>
+                                            <div className="text-sm text-gray-500">
+                                                Enviado em: {new Date(doc.date).toLocaleDateString()} {new Date(doc.date).toLocaleTimeString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a
+                                        href={doc.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-gray-300 hover:bg-gray-600 text-sm font-medium transition-colors"
+                                    >
+                                        Baixar Arquivo
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-gray-500 italic">
+                            Nenhum documento de prestação de contas anexado pelo produtor.
+                        </p>
+                    )}
+                </div>
+
                 {/* Ações */}
-                <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
-                    <button
+                <div className="flex justify-end gap-4 mt-8">
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={() => navigate("/admin/projetos")}
+                        disabled={saving}
                     >
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
-                        className="btn btn-primary"
                         disabled={saving}
-                        style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                        isLoading={saving}
+                        leftIcon={<Save size={18} />}
                     >
-                        <Save size={18} />
-                        {saving ? "Salvando..." : (isEdit ? "Salvar Alterações" : "Criar Projeto")}
-                    </button>
+                        {isEdit ? "Salvar Alterações" : "Criar Projeto"}
+                    </Button>
                 </div>
             </form>
         </div>

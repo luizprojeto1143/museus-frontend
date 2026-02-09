@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Save, Bell, Lock, User, Globe } from "lucide-react";
+import { Save, Bell, Lock, User, Globe, Shield } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
+import { useToast } from "../../contexts/ToastContext";
+import { Button } from "../../components/ui";
 
 export const ProducerSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { addToast } = useToast();
     const [loading, setLoading] = useState(false);
     const [settings, setSettings] = useState({
         emailNotifications: true,
@@ -21,10 +23,10 @@ export const ProducerSettings: React.FC = () => {
             await api.put("/users/me/settings", {
                 preferences: settings
             });
-            alert("Configurações salvas com sucesso!");
+            addToast("Configurações salvas com sucesso!", "success");
         } catch (error) {
             console.error("Error saving settings", error);
-            alert("Erro ao salvar configurações");
+            addToast("Erro ao salvar configurações", "error");
         } finally {
             setLoading(false);
         }
@@ -39,88 +41,81 @@ export const ProducerSettings: React.FC = () => {
         }).catch(console.error);
     }, []);
 
-    return (
-        <div className="producer-settings" style={{ paddingBottom: "4rem" }}>
-            <h1 style={{ fontSize: "2rem", color: "#d4af37", marginBottom: "0.5rem" }}>Configurações</h1>
-            <p style={{ opacity: 0.7, marginBottom: "2rem" }}>Gerencie suas preferências de conta e privacidade.</p>
+    const toggleSetting = (key: keyof typeof settings) => {
+        setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
-            <div style={{ display: "grid", gap: "2rem" }}>
+    return (
+        <div className="max-w-4xl mx-auto pb-12">
+            <div className="mb-8">
+                <h1 className="section-title">Configurações</h1>
+                <p className="section-subtitle">Gerencie suas preferências de conta e privacidade.</p>
+            </div>
+
+            <div className="space-y-6">
 
                 {/* Notifications Section */}
-                <section style={{ background: "#1e1e24", padding: "1.5rem", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.05)" }}>
-                    <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                        <Bell size={20} color="#d4af37" /> Notificações
+                <section className="card">
+                    <h3 className="card-title flex items-center gap-2 mb-4">
+                        <Bell size={20} className="text-gold" /> Notificações
                     </h3>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                        <span>Receber atualizações de projetos por e-mail</span>
-                        <input
-                            type="checkbox"
-                            checked={settings.emailNotifications}
-                            onChange={e => setSettings({ ...settings, emailNotifications: e.target.checked })}
-                            style={{ width: "20px", height: "20px" }}
-                        />
+                    <div className="flex justify-between items-center py-4 border-b border-gray-700">
+                        <span className="text-gray-300">Receber atualizações de projetos por e-mail</span>
+                        <div
+                            onClick={() => toggleSetting('emailNotifications')}
+                            className={`w-12 h-6 rounded-full flex items-center transition-colors cursor-pointer p-1 ${settings.emailNotifications ? 'bg-green-500' : 'bg-gray-700'}`}
+                        >
+                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${settings.emailNotifications ? 'translate-x-6' : 'translate-x-0'}`} />
+                        </div>
                     </div>
                 </section>
 
                 {/* Privacy Section */}
-                <section style={{ background: "#1e1e24", padding: "1.5rem", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.05)" }}>
-                    <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                        <Globe size={20} color="#d4af37" /> Privacidade
+                <section className="card">
+                    <h3 className="card-title flex items-center gap-2 mb-4">
+                        <Globe size={20} className="text-gold" /> Privacidade
                     </h3>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0" }}>
-                        <span>Perfil Público visível na plataforma</span>
-                        <input
-                            type="checkbox"
-                            checked={settings.publicProfile}
-                            onChange={e => setSettings({ ...settings, publicProfile: e.target.checked })}
-                            style={{ width: "20px", height: "20px" }}
-                        />
+                    <div className="flex justify-between items-center py-4">
+                        <span className="text-gray-300">Perfil Público visível na plataforma</span>
+                        <div
+                            onClick={() => toggleSetting('publicProfile')}
+                            className={`w-12 h-6 rounded-full flex items-center transition-colors cursor-pointer p-1 ${settings.publicProfile ? 'bg-gold' : 'bg-gray-700'}`}
+                        >
+                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${settings.publicProfile ? 'translate-x-6' : 'translate-x-0'}`} />
+                        </div>
                     </div>
                 </section>
 
                 {/* Security Section */}
-                <section style={{ background: "#1e1e24", padding: "1.5rem", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.05)" }}>
-                    <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                        <Lock size={20} color="#d4af37" /> Segurança
+                <section className="card">
+                    <h3 className="card-title flex items-center gap-2 mb-4">
+                        <Shield size={20} className="text-gold" /> Segurança
                     </h3>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0" }}>
-                        <span>Ativar Autenticação de Dois Fatores (2FA)</span>
-                        <input
-                            type="checkbox"
-                            checked={settings.twoFactor}
-                            onChange={e => setSettings({ ...settings, twoFactor: e.target.checked })}
-                            style={{ width: "20px", height: "20px" }}
-                        />
+                    <div className="flex justify-between items-center py-4 border-b border-gray-700">
+                        <span className="text-gray-300">Ativar Autenticação de Dois Fatores (2FA)</span>
+                        <div
+                            onClick={() => toggleSetting('twoFactor')}
+                            className={`w-12 h-6 rounded-full flex items-center transition-colors cursor-pointer p-1 ${settings.twoFactor ? 'bg-gold' : 'bg-gray-700'}`}
+                        >
+                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${settings.twoFactor ? 'translate-x-6' : 'translate-x-0'}`} />
+                        </div>
                     </div>
-                    <div style={{ marginTop: "1rem" }}>
-                        <button style={{ background: "transparent", border: "1px solid #d4af37", color: "#d4af37", padding: "0.5rem 1rem", borderRadius: "0.5rem", cursor: "pointer" }}>
+                    <div className="mt-4">
+                        <Button variant="outline" leftIcon={<Lock size={16} />}>
                             Alterar Senha
-                        </button>
+                        </Button>
                     </div>
                 </section>
 
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <button
+                <div className="flex justify-end pt-4">
+                    <Button
                         onClick={handleSave}
-                        disabled={loading}
-                        className="btn-premium"
-                        style={{
-                            background: "#d4af37",
-                            color: "#000",
-                            border: "none",
-                            padding: "1rem 2rem",
-                            borderRadius: "0.5rem",
-                            fontWeight: "bold",
-                            fontSize: "1rem",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            cursor: loading ? "wait" : "pointer",
-                            opacity: loading ? 0.7 : 1
-                        }}
+                        isLoading={loading}
+                        leftIcon={<Save size={20} />}
+                        className="px-8"
                     >
-                        <Save size={20} /> {loading ? "Salvando..." : "Salvar Alterações"}
-                    </button>
+                        Salvar Alterações
+                    </Button>
                 </div>
 
             </div>
