@@ -1,0 +1,307 @@
+/* AdminNoticeForm.css */
+
+/* Container */
+.admin-form-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 5rem;
+}
+
+/* HEADER */
+.admin-wizard-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-wizard-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--fg-main);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.admin-wizard-subtitle {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* STEPPER */
+.admin-wizard-stepper {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+    .admin-wizard-stepper {
+        display: flex;
+    }
+}
+
+.admin-stepper-progress-bg {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    z-index: 0;
+}
+
+.admin-stepper-progress-fill {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 4px;
+    background: var(--accent-primary);
+    /* Gold */
+    border-radius: 4px;
+    z-index: 0;
+    transition: width 0.5s ease;
+}
+
+.admin-step-item {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.admin-step-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: var(--fg-muted);
+    transition: all 0.3s ease;
+}
+
+.admin-step-item.active .admin-step-icon {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary);
+    color: var(--bg-page);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    transform: scale(1.1);
+}
+
+.admin-step-item.completed .admin-step-icon {
+    border-color: var(--status-success);
+    background: var(--status-success);
+    color: white;
+}
+
+.admin-step-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--fg-muted);
+    transition: color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-step-item.active .admin-step-label {
+    color: var(--fg-main);
+}
+
+/* CONTENT BOX */
+.admin-wizard-content {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    min-height: 400px;
+    position: relative;
+    backdrop-filter: blur(4px);
+}
+
+/* SECTIONS & GRIDS */
+.admin-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .admin-grid-2 {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.admin-section {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* TAGS / CATEGORIES */
+.category-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--fg-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.category-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.category-btn.selected {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: var(--bg-page);
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
+
+/* REGIONS */
+.region-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: #c4b5fd;
+    border-radius: 99px;
+    font-size: 0.85rem;
+}
+
+.region-remove {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+}
+
+.region-remove:hover {
+    opacity: 1;
+}
+
+/* SUMMARY CARD */
+.summary-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+
+.summary-label {
+    color: var(--fg-muted);
+}
+
+.summary-value {
+    color: var(--fg-main);
+    font-weight: 500;
+}
+
+/* FOOTER */
+.admin-wizard-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-page);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+}
+
+.admin-wizard-footer-inner {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* UTILS */
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.max-w-md {
+    max-width: 28rem;
+}

@@ -13,6 +13,7 @@ import {
   MonitorPlay, Share2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import "./AdminShared.css";
 
 // Steps Configuration
 const STEPS = [
@@ -191,34 +192,36 @@ export const AdminWorkForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-20">
+    <div className="admin-form-container">
       {isUploading && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center text-white backdrop-blur-sm">
-          <div className="w-16 h-16 border-4 border-white/10 border-t-blue-500 rounded-full animate-spin mb-6"></div>
-          <p className="text-xl font-bold">Enviando arquivo...</p>
+        <div className="admin-modal-overlay">
+          <div style={{ textAlign: 'center', color: 'white' }}>
+            <div className="w-12 h-12 border-4 border-white/10 border-t-gold rounded-full animate-spin mb-4 mx-auto"></div>
+            <p>Enviando arquivo...</p>
+          </div>
         </div>
       )}
 
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" onClick={() => navigate("/admin/obras")} className="h-10 w-10 p-0 rounded-full hover:bg-white/10">
+      <div className="admin-wizard-header">
+        <Button variant="ghost" onClick={() => navigate("/admin/obras")} className="p-0">
           <ArrowLeft size={24} />
         </Button>
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tight">
+          <h1 className="admin-wizard-title">
             {isEdit ? "Editar Obra" : "Nova Obra"}
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="admin-wizard-subtitle">
             Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}
           </p>
         </div>
       </div>
 
       {/* Stepper */}
-      <div className="mb-8 hidden md:flex items-center justify-between relative">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-white/10 rounded-full -z-0"></div>
+      <div className="admin-wizard-stepper">
+        <div className="admin-stepper-progress-bg"></div>
         <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-blue-500 rounded-full -z-0 transition-all duration-500"
+          className="admin-stepper-progress-fill"
           style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
         ></div>
 
@@ -230,23 +233,12 @@ export const AdminWorkForm: React.FC = () => {
           return (
             <div
               key={step.id}
-              className={`relative z-10 flex flex-col items-center gap-2 cursor-pointer group`}
-              onClick={() => {
-                if (isEdit || index < currentStep) {
-                  setDirection(index > currentStep ? 1 : -1);
-                  setCurrentStep(index);
-                }
-              }}
+              className={`admin-step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
             >
-              <div className={`
-                w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300
-                ${isActive ? 'bg-blue-600 border-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.5)] scale-110' :
-                  isCompleted ? 'bg-emerald-500 border-emerald-500 text-white' :
-                    'bg-gray-900 border-white/10 text-slate-500 group-hover:border-white/30'}
-              `}>
+              <div className="admin-step-icon">
                 {isCompleted ? <CheckCircle size={20} /> : <Icon size={20} />}
               </div>
-              <span className={`text-xs font-bold transition-colors ${isActive ? 'text-white' : 'text-slate-500'}`}>
+              <span className="admin-step-label">
                 {step.title}
               </span>
             </div>
@@ -255,7 +247,7 @@ export const AdminWorkForm: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8 min-h-[400px] overflow-hidden relative">
+      <div className="admin-wizard-content">
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={currentStep}
@@ -265,29 +257,28 @@ export const AdminWorkForm: React.FC = () => {
             animate="center"
             exit="exit"
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="w-full"
+            style={{ width: "100%" }}
           >
             {/* STEP 0: DADOS BÁSICOS */}
             {currentStep === 0 && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex-col gap-6">
+                <div className="admin-grid-2">
                   <Input
                     label="Título da Obra"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder="Ex: Abaporu"
-                    className="bg-black/20 text-lg font-bold"
+                    required
                   />
                   <Input
                     label="Artista / Autor"
                     value={artist}
                     onChange={e => setArtist(e.target.value)}
                     placeholder="Ex: Tarsila do Amaral"
-                    className="bg-black/20"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="admin-grid-2">
                   <Select
                     label="Categoria"
                     value={category}
@@ -296,14 +287,12 @@ export const AdminWorkForm: React.FC = () => {
                       { value: "", label: "Selecione uma categoria..." },
                       ...categories.map(c => ({ value: c.id, label: c.name }))
                     ]}
-                    className="bg-black/20"
                   />
                   <Input
                     label="Ano de Criação"
                     value={year}
                     onChange={e => setYear(e.target.value)}
                     placeholder="Ex: 1928"
-                    className="bg-black/20"
                   />
                 </div>
 
@@ -312,7 +301,6 @@ export const AdminWorkForm: React.FC = () => {
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={6}
-                  className="bg-black/20"
                   placeholder="Conte a história desta obra..."
                 />
               </div>
@@ -320,50 +308,49 @@ export const AdminWorkForm: React.FC = () => {
 
             {/* STEP 1: LOCALIZAÇÃO */}
             {currentStep === 1 && (
-              <div className="space-y-8">
-                <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
-                  <div className="flex-1 space-y-4 w-full">
+              <div className="flex-col gap-6">
+                <div className="admin-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div style={{ flex: 1 }}>
                     <Input
                       label="🔢 Código do Discador"
                       value={code}
                       onChange={e => setCode(e.target.value)}
                       placeholder="Ex: 101"
-                      className="bg-black/20 text-2xl font-mono tracking-widest text-center border-blue-500/50 focus:border-blue-400 h-16"
+                      style={{ fontSize: '1.5rem', textAlign: 'center', letterSpacing: '0.2em' }}
                     />
-                    <p className="text-sm text-slate-400 text-center">
+                    <p style={{ fontSize: '0.8rem', color: 'gray', textAlign: 'center', marginTop: '0.5rem' }}>
                       Este código será usado pelos visitantes para encontrar a obra no app e gerar o QR Code.
                     </p>
                   </div>
 
                   {code && (
-                    <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col items-center">
+                    <div className="qr-container">
                       <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={120} level="H" />
-                      <span className="text-black font-mono font-bold mt-2 text-lg">#{code}</span>
+                      <span className="qr-code-display">#{code}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Input
-                    label="Sala / Espaço"
-                    value={room}
-                    onChange={e => setRoom(e.target.value)}
-                    placeholder="Ex: Sala Moderna"
-                    className="bg-black/20"
-                  />
-                  <Input
-                    label="Andar"
-                    value={floor}
-                    onChange={e => setFloor(e.target.value)}
-                    placeholder="Ex: 1º Pavimento"
-                    className="bg-black/20"
-                  />
+                <div className="admin-grid-2">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                    <Input
+                      label="Sala / Espaço"
+                      value={room}
+                      onChange={e => setRoom(e.target.value)}
+                      placeholder="Ex: Sala Moderna"
+                    />
+                    <Input
+                      label="Andar"
+                      value={floor}
+                      onChange={e => setFloor(e.target.value)}
+                      placeholder="Ex: 1º Pavimento"
+                    />
+                  </div>
                   <Input
                     label="Raio de Detecção (m)"
                     type="number"
                     value={radius}
                     onChange={e => setRadius(Number(e.target.value))}
-                    className="bg-black/20"
                   />
                 </div>
               </div>
@@ -371,63 +358,63 @@ export const AdminWorkForm: React.FC = () => {
 
             {/* STEP 2: MÍDIA */}
             {currentStep === 2 && (
-              <div className="space-y-8">
+              <div className="flex-col gap-6">
                 {/* Image Upload */}
-                <div className="relative group rounded-2xl overflow-hidden bg-black/40 aspect-video md:aspect-[21/9] flex items-center justify-center border-2 border-dashed border-white/10 hover:border-blue-500/50 transition-all">
+                <div className="upload-box">
                   {imageUrl ? (
                     <>
-                      <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <label className="cursor-pointer bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-slate-200 transition-colors flex items-center gap-2">
+                      <img src={imageUrl} alt="Preview" />
+                      <div className="upload-overlay">
+                        <label className="upload-btn">
                           <ImageIcon size={20} /> Trocar Imagem
-                          <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} />
+                          <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} style={{ display: 'none' }} />
                         </label>
                       </div>
                     </>
                   ) : (
-                    <div className="text-center p-8">
-                      <ImageIcon size={48} className="mx-auto text-slate-500 mb-4" />
-                      <h3 className="text-xl font-bold text-slate-300 mb-2">Imagem da Obra</h3>
-                      <p className="text-slate-500 mb-6 max-w-sm mx-auto">Arraste uma imagem ou clique para selecionar. Formatos JPG ou PNG.</p>
-                      <label className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-500 transition-colors inline-flex items-center gap-2">
+                    <div className="upload-placeholder">
+                      <ImageIcon size={48} style={{ margin: '0 auto 1rem', display: 'block' }} />
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Imagem da Obra</h3>
+                      <p>Arraste uma imagem ou clique para selecionar</p>
+                      <label className="upload-btn" style={{ marginTop: '1rem' }}>
                         <Upload size={20} /> Selecionar Arquivo
-                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} />
+                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} style={{ display: 'none' }} />
                       </label>
                     </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="admin-grid-2">
                   {/* Audio Upload */}
-                  <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors">
-                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                  <div className="media-card">
+                    <h3 className="admin-section-title">
                       <Volume2 className="text-blue-400" /> Áudio Guia
                     </h3>
-                    <div className="space-y-4">
+                    <div className="flex-col gap-4">
                       {audioUrl && (
-                        <audio controls src={audioUrl} className="w-full h-10 rounded" />
+                        <audio controls src={audioUrl} style={{ width: '100%' }} />
                       )}
 
-                      <label className="cursor-pointer flex items-center justify-center border border-white/10 bg-black/20 hover:bg-white/5 rounded-xl h-12 gap-2 text-sm text-slate-300 transition-colors">
+                      <label className="upload-btn" style={{ width: '100%', justifyContent: 'center' }}>
                         <Upload size={16} /> {audioUrl ? "Substituir Áudio" : "Enviar Áudio (MP3)"}
-                        <input type="file" className="hidden" accept="audio/*" onChange={(e) => handleUpload(e, "audio", setAudioUrl)} />
+                        <input type="file" className="hidden" accept="audio/*" onChange={(e) => handleUpload(e, "audio", setAudioUrl)} style={{ display: 'none' }} />
                       </label>
                     </div>
                   </div>
 
                   {/* Libras Upload */}
-                  <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-colors">
-                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                  <div className="media-card">
+                    <h3 className="admin-section-title">
                       <Video className="text-purple-400" /> Vídeo em Libras
                     </h3>
-                    <div className="space-y-4">
+                    <div className="flex-col gap-4">
                       {librasUrl && (
-                        <video controls src={librasUrl} className="w-full max-h-32 rounded bg-black" />
+                        <video controls src={librasUrl} style={{ width: '100%', maxHeight: '150px', background: 'black', borderRadius: '8px' }} />
                       )}
 
-                      <label className="cursor-pointer flex items-center justify-center border border-white/10 bg-black/20 hover:bg-white/5 rounded-xl h-12 gap-2 text-sm text-slate-300 transition-colors">
+                      <label className="upload-btn" style={{ width: '100%', justifyContent: 'center' }}>
                         <Upload size={16} /> {librasUrl ? "Substituir Vídeo" : "Enviar Vídeo (MP4)"}
-                        <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, "video", setLibrasUrl)} />
+                        <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, "video", setLibrasUrl)} style={{ display: 'none' }} />
                       </label>
                     </div>
                   </div>
@@ -437,100 +424,106 @@ export const AdminWorkForm: React.FC = () => {
 
             {/* STEP 3: REVISÃO */}
             {currentStep === 3 && (
-              <div className="space-y-8">
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center">
-                  <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-400">
-                    <CheckCircle size={32} />
-                  </div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Tudo pronto!</h2>
-                  <p className="text-slate-400 max-w-md mx-auto">
-                    Revise os dados abaixo antes de publicar. Você poderá editar tudo depois se necessário.
-                  </p>
+              <div className="flex-col gap-6">
+                <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '1rem', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
+                  <CheckCircle size={48} color="var(--status-success)" style={{ margin: '0 auto 1rem' }} />
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--fg-main)' }}>Tudo pronto!</h2>
+                  <p style={{ color: 'var(--fg-muted)' }}>Revise os dados abaixo antes de publicar.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h3 className="font-bold text-slate-300 uppercase text-xs tracking-wider">Resumo</h3>
-                    <div className="bg-white/5 rounded-xl p-4 space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Título:</span>
-                        <span className="font-bold text-white text-right">{title}</span>
+                <div className="admin-grid-2">
+                  <div className="admin-section">
+                    <h3 className="admin-section-title">Resumo</h3>
+                    <div className="summary-card">
+                      <div className="summary-row">
+                        <span className="summary-label">Título:</span>
+                        <span className="summary-value">{title}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Artista:</span>
-                        <span className="font-bold text-white text-right">{artist}</span>
+                      <div className="summary-row">
+                        <span className="summary-label">Artista:</span>
+                        <span className="summary-value">{artist}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Código:</span>
-                        <span className="font-mono text-blue-400 font-bold bg-blue-500/10 px-2 rounded">#{code}</span>
+                      <div className="summary-row">
+                        <span className="summary-label">Código:</span>
+                        <span className="summary-value">#{code}</span>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-500">Mídias:</span>
-                        <div className="flex gap-2">
-                          {imageUrl && <ImageIcon size={16} className="text-emerald-400" />}
-                          {audioUrl && <Volume2 size={16} className="text-emerald-400" />}
-                          {librasUrl && <Video size={16} className="text-emerald-400" />}
-                          {!imageUrl && !audioUrl && !librasUrl && <span className="text-xs text-slate-600">Nenhuma</span>}
+                      <div className="summary-row">
+                        <span className="summary-label">Mídias:</span>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          {imageUrl && <ImageIcon size={16} color="var(--status-success)" />}
+                          {audioUrl && <Volume2 size={16} color="var(--status-success)" />}
+                          {librasUrl && <Video size={16} color="var(--status-success)" />}
+                          {!imageUrl && !audioUrl && !librasUrl && <span style={{ fontSize: '0.8rem', color: 'gray' }}>Nenhuma</span>}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <h3 className="font-bold text-slate-300 uppercase text-xs tracking-wider">Ações Adicionais</h3>
+                  <div className="flex-col gap-4">
+                    <h3 className="admin-section-title">Ações Adicionais</h3>
 
                     <div
-                      className={`
-                        p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center justify-between
-                        ${published ? 'border-emerald-500 bg-emerald-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}
-                      `}
                       onClick={() => setPublished(!published)}
+                      style={{
+                        padding: '1rem',
+                        borderRadius: '1rem',
+                        border: `1px solid ${published ? 'var(--status-success)' : 'rgba(255,255,255,0.1)'}`,
+                        background: published ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.05)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${published ? 'bg-emerald-500 text-white' : 'bg-slate-700 text-slate-400'}`}>
-                          <Share2 size={20} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: published ? 'var(--status-success)' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Share2 size={20} color="white" />
                         </div>
                         <div>
-                          <h4 className={`font-bold ${published ? 'text-white' : 'text-slate-300'}`}>
+                          <div style={{ fontWeight: 'bold', color: 'var(--fg-main)' }}>
                             {published ? "Visível no App" : "Oculto (Rascunho)"}
-                          </h4>
-                          <p className="text-xs text-slate-500">Disponibilidade para visitantes</p>
+                          </div>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--fg-muted)' }}>Disponibilidade para visitantes</p>
                         </div>
                       </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${published ? 'border-emerald-500 bg-emerald-500' : 'border-slate-500'}`}>
-                        {published && <CheckCircle size={14} className="text-white" />}
-                      </div>
+                      {published && <CheckCircle size={20} color="var(--status-success)" />}
                     </div>
 
                     <div
-                      className="p-4 rounded-xl border border-dashed border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 cursor-pointer transition-all flex items-center gap-3"
                       onClick={() => setShowAccessModal(true)}
+                      style={{
+                        padding: '1rem',
+                        borderRadius: '1rem',
+                        border: '1px dashed #c084fc',
+                        background: 'rgba(192, 132, 252, 0.05)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem'
+                      }}
                     >
-                      <div className="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                        <Accessibility size={20} />
+                      <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: 'rgba(192, 132, 252, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Accessibility size={20} color="#c084fc" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-purple-200">Acessibilidade Master</h4>
-                        <p className="text-xs text-purple-300/60">Solicitar produção de Libras/Áudio</p>
+                        <div style={{ fontWeight: 'bold', color: '#c084fc' }}>Acessibilidade Master</div>
+                        <p style={{ fontSize: '0.8rem', color: '#e9d5ff' }}>Solicitar produção de Libras/Áudio</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-
-            {/* ERROR MESSAGE IF NO STEP MATCHES */}
           </motion.div>
         </AnimatePresence>
       </div>
 
       {/* Footer Navigation */}
-      <div className="fixed bottom-0 left-0 w-full bg-[#0f172a] border-t border-white/10 p-4 z-40">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
+      <div className="admin-wizard-footer">
+        <div className="admin-wizard-footer-inner">
           <Button
             variant="ghost"
             onClick={currentStep === 0 ? () => navigate("/admin/obras") : prevStep}
-            className="text-slate-400 hover:text-white"
           >
             {currentStep === 0 ? "Cancelar" : "Voltar"}
           </Button>
@@ -540,7 +533,7 @@ export const AdminWorkForm: React.FC = () => {
               <Button
                 onClick={handleSubmit}
                 isLoading={saving}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white px-8"
+                className="btn-primary"
                 leftIcon={<Save size={18} />}
               >
                 Salvar Obra
@@ -548,7 +541,7 @@ export const AdminWorkForm: React.FC = () => {
             ) : (
               <Button
                 onClick={nextStep}
-                className="bg-blue-600 hover:bg-blue-500 text-white px-8"
+                className="btn-primary"
                 rightIcon={<ChevronRight size={18} />}
               >
                 Próximo
@@ -558,18 +551,18 @@ export const AdminWorkForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Accessibility Modal (Preserved but styled) */}
+      {/* Accessibility Modal */}
       {showAccessModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
-          <div className="bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-white/10 animate-in fade-in zoom-in duration-200">
-            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-              <Accessibility className="text-purple-400" /> Solicitar Acessibilidade
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <h3 className="admin-section-title">
+              <Accessibility color="#c084fc" /> Solicitar Acessibilidade
             </h3>
-            <p className="text-slate-400 mb-6 text-sm">
+            <p style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--fg-muted)' }}>
               Envie um pedido para o time Master produzir os conteúdos de acessibilidade para esta obra.
             </p>
 
-            <div className="space-y-4">
+            <div className="flex-col gap-4">
               <Select
                 label="Tipo de Serviço"
                 value={requestType}
@@ -579,7 +572,6 @@ export const AdminWorkForm: React.FC = () => {
                   { value: "AUDIO_DESC", label: "Apenas Audiodescrição" },
                   { value: "BOTH", label: "Combo (Libras + Áudio)" }
                 ]}
-                className="bg-black/40"
               />
 
               <Textarea
@@ -588,11 +580,10 @@ export const AdminWorkForm: React.FC = () => {
                 onChange={e => setRequestNotes(e.target.value)}
                 placeholder="Ex: Prioridade alta, detalhes específicos..."
                 rows={3}
-                className="bg-black/40"
               />
             </div>
 
-            <div className="flex justify-end gap-3 mt-8">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
               <Button
                 variant="ghost"
                 onClick={() => setShowAccessModal(false)}
@@ -618,7 +609,8 @@ export const AdminWorkForm: React.FC = () => {
                   }
                 }}
                 isLoading={isRequesting}
-                className="bg-purple-600 hover:bg-purple-500 text-white"
+                className="btn-primary"
+                style={{ background: '#9333ea', borderColor: '#9333ea' }}
               >
                 Enviar Pedido
               </Button>
