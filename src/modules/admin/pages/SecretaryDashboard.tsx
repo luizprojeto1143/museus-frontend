@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
+import "./SecretaryDashboard.css"; // Import the new styles
 
 type DashboardData = {
     cards: {
@@ -78,7 +79,7 @@ const SecretaryDashboard: React.FC = () => {
 
     if (loading) {
         return (
-            <div style={{ padding: 32, display: "flex", justifyContent: "center" }}>
+            <div className="secretary-dashboard" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <div className="spinner"></div>
             </div>
         );
@@ -86,149 +87,134 @@ const SecretaryDashboard: React.FC = () => {
 
     if (!data) {
         return (
-            <div style={{ padding: 32, textAlign: "center", color: "#ef4444" }}>
+            <div className="secretary-dashboard" style={{ textAlign: "center", color: "#ef4444" }}>
                 Erro ao carregar dados do dashboard
             </div>
         );
     }
 
     return (
-        <div style={{ padding: 24 }}>
+        <div className="secretary-dashboard">
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                <div>
-                    <h1 style={{ fontSize: 24, fontWeight: 700, color: "#111827", marginBottom: 4 }}>
-                        Painel da Secretaria
-                    </h1>
-                    <p style={{ color: "#6b7280", fontSize: 14 }}>
-                        Visão executiva da gestão cultural municipal
-                    </p>
+            <div className="sec-header">
+                <div className="sec-title">
+                    <h1>Painel da Secretaria</h1>
+                    <p>Visão executiva da gestão cultural municipal</p>
                 </div>
-                <button
-                    onClick={downloadPdf}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#7c3aed",
-                        color: "white",
-                        border: "none",
-                        borderRadius: 8,
-                        cursor: "pointer",
-                        fontWeight: 600,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8
-                    }}
-                >
-                    📄 Exportar Relatório PDF
+                <button onClick={downloadPdf} className="sec-btn-export">
+                    <span>📄</span> Exportar Relatório PDF
                 </button>
             </div>
 
-            {/* Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 32 }}>
-                <Card title="Equipamentos" value={data.cards.totalEquipments} icon="🏛️" color="#3b82f6" />
-                <Card title="Projetos Ativos" value={data.cards.activeProjects} icon="📁" color="#10b981" />
-                <Card title="Acessibilidade Pendente" value={data.cards.pendingAccessibility} icon="♿" color="#f59e0b" />
-                <Card title="Eventos" value={data.cards.totalEvents} icon="📅" color="#8b5cf6" />
+            {/* KPI Cards */}
+            <div className="sec-grid-cards">
+                <Card
+                    title="Equipamentos"
+                    value={data.cards.totalEquipments}
+                    icon="🏛️"
+                    color="#3b82f6"
+                />
+                <Card
+                    title="Projetos Ativos"
+                    value={data.cards.activeProjects}
+                    icon="📁"
+                    color="#10b981"
+                />
+                <Card
+                    title="Acessibilidade"
+                    value={data.cards.pendingAccessibility}
+                    icon="♿"
+                    color="#f59e0b"
+                />
+                <Card
+                    title="Eventos"
+                    value={data.cards.totalEvents}
+                    icon="📅"
+                    color="#8b5cf6"
+                />
             </div>
 
             {/* Alerts */}
             {data.alerts.length > 0 && (
-                <div style={{ marginBottom: 32 }}>
-                    <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>⚠️ Alertas</h2>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div className="sec-alerts">
+                    <h2 className="sec-section-title">⚠️ Alertas de Atenção</h2>
+                    <div className="sec-alert-list">
                         {data.alerts.map((alert, idx) => (
                             <div
                                 key={idx}
-                                style={{
-                                    padding: 16,
-                                    borderRadius: 8,
-                                    backgroundColor: alert.severity === "WARNING" ? "#fef3c7" : "#dbeafe",
-                                    borderLeft: `4px solid ${alert.severity === "WARNING" ? "#f59e0b" : "#3b82f6"}`
-                                }}
+                                className={`sec-alert-item ${alert.severity === "WARNING" ? "sec-alert-warning" : "sec-alert-info"
+                                    }`}
                             >
-                                <span style={{ fontWeight: 500 }}>{alert.message}</span>
+                                <span>{alert.message}</span>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
 
-            {/* Equipment Accessibility Status */}
-            <div style={{ marginBottom: 32 }}>
-                <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Status de Acessibilidade por Equipamento</h2>
-                <div style={{ backgroundColor: "white", borderRadius: 12, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                            <tr style={{ backgroundColor: "#f9fafb" }}>
-                                <th style={{ padding: 12, textAlign: "left", fontWeight: 600 }}>Equipamento</th>
-                                <th style={{ padding: 12, textAlign: "center", fontWeight: 600 }}>Tipo</th>
-                                <th style={{ padding: 12, textAlign: "center", fontWeight: 600 }}>Acessibilidade</th>
-                                <th style={{ padding: 12, textAlign: "center", fontWeight: 600 }}>Pendências</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.equipmentAccessibility.map((eq) => (
-                                <tr key={eq.id} style={{ borderTop: "1px solid #e5e7eb" }}>
-                                    <td style={{ padding: 12 }}>{eq.name}</td>
-                                    <td style={{ padding: 12, textAlign: "center" }}>{eq.type}</td>
-                                    <td style={{ padding: 12, textAlign: "center" }}>
-                                        {eq.hasAccessibility ? (
-                                            <span style={{ color: "#10b981", fontWeight: 600 }}>✓ Cadastrado</span>
-                                        ) : (
-                                            <span style={{ color: "#ef4444", fontWeight: 600 }}>✗ Não cadastrado</span>
-                                        )}
-                                    </td>
-                                    <td style={{ padding: 12, textAlign: "center" }}>
-                                        {eq.pendingRequests > 0 ? (
-                                            <span style={{ backgroundColor: "#fef3c7", color: "#92400e", padding: "4px 12px", borderRadius: 999, fontSize: 13 }}>
-                                                {eq.pendingRequests} pendente(s)
-                                            </span>
-                                        ) : (
-                                            <span style={{ color: "#9ca3af" }}>—</span>
-                                        )}
-                                    </td>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+                {/* Equipment Accessibility Status */}
+                <div>
+                    <h2 className="sec-section-title">Status de Equipamentos</h2>
+                    <div className="sec-table-container">
+                        <table className="sec-table">
+                            <thead>
+                                <tr>
+                                    <th>Equipamento</th>
+                                    <th style={{ textAlign: 'center' }}>Tipo</th>
+                                    <th style={{ textAlign: 'center' }}>Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {data.equipmentAccessibility.map((eq) => (
+                                    <tr key={eq.id}>
+                                        <td style={{ fontWeight: 500 }}>{eq.name}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <span style={{ fontSize: '0.8rem', color: 'var(--sec-text-muted)' }}>{eq.type}</span>
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            {eq.pendingRequests > 0 ? (
+                                                <span className="sec-badge sec-badge-warning">
+                                                    {eq.pendingRequests} pendente(s)
+                                                </span>
+                                            ) : eq.hasAccessibility ? (
+                                                <span className="sec-badge sec-badge-success">OK</span>
+                                            ) : (
+                                                <span className="sec-badge sec-badge-danger">Sem cadastro</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            {/* Recent Projects */}
-            <div>
-                <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Projetos Recentes</h2>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {data.recentProjects.map((proj) => (
-                        <div
-                            key={proj.id}
-                            style={{
-                                padding: 16,
-                                backgroundColor: "white",
-                                borderRadius: 8,
-                                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center"
-                            }}
-                        >
-                            <div>
-                                <div style={{ fontWeight: 600 }}>{proj.title}</div>
-                                <div style={{ fontSize: 13, color: "#6b7280" }}>
-                                    {new Date(proj.createdAt).toLocaleDateString("pt-BR")}
+                {/* Recent Projects */}
+                <div>
+                    <h2 className="sec-section-title">Projetos Recentes</h2>
+                    <div className="sec-project-list">
+                        {data.recentProjects.map((proj) => (
+                            <div key={proj.id} className="sec-project-item">
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--sec-primary)' }}>{proj.title}</div>
+                                    <div style={{ fontSize: '0.85rem', color: 'var(--sec-text-muted)', marginTop: '0.25rem' }}>
+                                        {new Date(proj.createdAt).toLocaleDateString("pt-BR")}
+                                    </div>
                                 </div>
+                                <span className={`sec-badge ${proj.status === 'APPROVED' ? 'sec-badge-success' :
+                                        proj.status === 'REJECTED' ? 'sec-badge-danger' : 'sec-badge-warning'
+                                    }`}>
+                                    {statusLabels[proj.status] || proj.status}
+                                </span>
                             </div>
-                            <span style={{
-                                padding: "4px 12px",
-                                borderRadius: 999,
-                                fontSize: 13,
-                                fontWeight: 500,
-                                backgroundColor: "#dbeafe",
-                                color: "#1e40af"
-                            }}>
-                                {statusLabels[proj.status] || proj.status}
-                            </span>
-                        </div>
-                    ))}
+                        ))}
+                        {data.recentProjects.length === 0 && (
+                            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--sec-text-muted)', background: 'white', borderRadius: '8px', border: '1px dashed var(--sec-border)' }}>
+                                Nenhum projeto recente.
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -236,20 +222,10 @@ const SecretaryDashboard: React.FC = () => {
 };
 
 const Card: React.FC<{ title: string; value: number; icon: string; color: string }> = ({ title, value, icon, color }) => (
-    <div style={{
-        backgroundColor: "white",
-        borderRadius: 12,
-        padding: 20,
-        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-        borderTop: `4px solid ${color}`
-    }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 32 }}>{icon}</span>
-            <div>
-                <div style={{ fontSize: 28, fontWeight: 700, color }}>{value}</div>
-                <div style={{ fontSize: 13, color: "#6b7280" }}>{title}</div>
-            </div>
-        </div>
+    <div className="sec-card" style={{ '--card-color': color } as React.CSSProperties}>
+        <div className="sec-card-icon">{icon}</div>
+        <div className="sec-card-value" style={{ color: color }}>{value}</div>
+        <div className="sec-card-label">{title}</div>
     </div>
 );
 

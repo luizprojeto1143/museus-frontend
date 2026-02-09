@@ -83,7 +83,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const links = allLinks.filter(l => l.show);
 
   return (
-    <div className="layout-wrapper">
+    <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`}>
       {/* Mobile Overlay */}
       <div
         className={`mobile-overlay ${isSidebarOpen ? "open" : ""}`}
