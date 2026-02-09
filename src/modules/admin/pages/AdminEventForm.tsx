@@ -6,18 +6,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import {
   Calendar, MapPin, Ticket, User,
-  ChevronRight, ChevronLeft, Check, Plus, Trash2, Globe, Video, Save
+  ChevronRight, ChevronLeft, Check, Plus, Trash2, Globe, Video, Save,
+  Image as ImageIcon, Monitor, Mic, PlayCircle
 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
+import "../../master/pages/MasterShared.css"; // Reuse premium styles
 
-// Types
 interface TicketData {
   id?: string;
   name: string;
   type: 'FREE' | 'PAID';
   price: number;
   quantity: number;
-  absorbFee: boolean;
 }
 
 export const AdminEventForm: React.FC = () => {
@@ -32,15 +32,8 @@ export const AdminEventForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const steps = [
-    { id: 1, label: t("admin.eventForm.steps.basic"), icon: <Calendar className="w-5 h-5" /> },
-    { id: 2, label: t("admin.eventForm.steps.whenWhere"), icon: <MapPin className="w-5 h-5" /> },
-    { id: 3, label: t("admin.eventForm.steps.tickets"), icon: <Ticket className="w-5 h-5" /> },
-    { id: 4, label: t("admin.eventForm.steps.promotion"), icon: <User className="w-5 h-5" /> }
-  ];
-
-
   const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
+  const [tickets, setTickets] = useState<TicketData[]>([]);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -48,50 +41,38 @@ export const AdminEventForm: React.FC = () => {
     description: "",
     categoryId: "",
     coverImageUrl: "",
-
-    // Format
     format: "PRESENTIAL", // PRESENTIAL, ONLINE
     startDate: "",
     endDate: "",
-
-    // Presential
     location: "",
     zipCode: "",
     address: "",
     number: "",
-    complement: "",
-    neighborhood: "",
     city: "",
     state: "",
-
-    // Online
     platform: "ZOOM",
     meetingLink: "",
-
-    // Producer
     producerName: "",
     producerDescription: "",
-    producerLogoUrl: "",
-
+    visibility: "PUBLIC",
+    audioUrl: "",
+    videoUrl: "",
     // Certificate
     certificateBackgroundUrl: "",
     minMinutesForCertificate: "",
     certificateRequiresSurvey: false,
-
-    // Visibility
-    visibility: "PUBLIC", // PUBLIC, PRIVATE
-
-    // Audio Guide
-    audioUrl: "",
-    videoUrl: ""
   });
 
-  const [tickets, setTickets] = useState<TicketData[]>([]);
+  const steps = [
+    { id: 1, label: "Básico", desc: "Informações principais", icon: <Calendar size={18} /> },
+    { id: 2, label: "Local & Data", desc: "Onde e quando", icon: <MapPin size={18} /> },
+    { id: 3, label: "Ingressos", desc: "Valores e lotes", icon: <Ticket size={18} /> },
+    { id: 4, label: "Divulgação", desc: "Extras e Mídia", icon: <PlayCircle size={18} /> } // Changed icon to PlayCircle for better compatibility
+  ];
 
   // Load Data
   useEffect(() => {
     if (tenantId) {
-      // Fetch Categories
       api.get("/categories", { params: { tenantId, type: 'EVENT' } })
         .then(res => setCategories(res.data))
         .catch(console.error);
@@ -114,34 +95,25 @@ export const AdminEventForm: React.FC = () => {
             zipCode: data.zipCode || "",
             address: data.address || "",
             number: data.number || "",
-            complement: data.complement || "",
-            neighborhood: data.neighborhood || "",
             city: data.city || "",
             state: data.state || "",
             platform: data.platform || "ZOOM",
             meetingLink: data.meetingLink || "",
             producerName: data.producerName || "",
             producerDescription: data.producerDescription || "",
-            producerLogoUrl: data.producerLogoUrl || "",
+            visibility: data.visibility || "PUBLIC",
+            audioUrl: data.audioUrl || "",
+            videoUrl: data.videoUrl || "",
             certificateBackgroundUrl: data.certificateBackgroundUrl || "",
             minMinutesForCertificate: data.minMinutesForCertificate || "",
             certificateRequiresSurvey: data.certificateRequiresSurvey || false,
-            visibility: data.visibility || "PUBLIC",
-            audioUrl: data.audioUrl || "",
-            videoUrl: data.videoUrl || ""
           });
 
           // Fetch tickets
           try {
             const ticketRes = await api.get(`/events/${id}/tickets`);
             setTickets(ticketRes.data);
-          } catch (e) {
-            console.error("Error fetching tickets", e);
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          addToast("Erro ao carregar evento", "error");
+          } catch (e) { console.error(e); }
         })
         .finally(() => setLoading(false));
     }
@@ -166,26 +138,19 @@ export const AdminEventForm: React.FC = () => {
   }
 
   const handleSubmit = async () => {
-    if (!tenantId) {
-      addToast("Erro de autenticação", "error");
-      return;
-    }
+    if (!tenantId) return;
     setSaving(true);
-
     try {
-      // 1. Save Event
       const payload = {
         ...formData,
         tenantId,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
         isOnline: formData.format === 'ONLINE',
-        minMinutesForCertificate: formData.minMinutesForCertificate ? Number(formData.minMinutesForCertificate) : null,
-        certificateRequiresSurvey: formData.certificateRequiresSurvey
+        minMinutesForCertificate: formData.minMinutesForCertificate ? Number(formData.minMinutesForCertificate) : null
       };
 
       let eventId = id;
-
       if (id) {
         await api.put(`/events/${id}`, payload);
       } else {
@@ -193,466 +158,410 @@ export const AdminEventForm: React.FC = () => {
         eventId = res.data.id;
       }
 
-      // 2. Save Tickets (Create only for now, simple logic)
+      // Save Tickets (Simple create logic)
       if (eventId) {
         for (const t of tickets) {
-          if (!t.id) { // New ticket
-            await api.post(`/events/${eventId}/tickets`, t);
-          } else {
-            // Optional: Update ticket if modified
-          }
+          if (!t.id) await api.post(`/events/${eventId}/tickets`, t);
         }
       }
 
-      addToast(isEdit ? "Evento atualizado com sucesso!" : "Evento criado com sucesso!", "success");
+      addToast(isEdit ? "Evento atualizado!" : "Evento criado!", "success");
       navigate("/admin/eventos");
     } catch (error) {
-      console.error("Error saving event", error);
-      addToast("Erro ao salvar evento. Verifique os dados.", "error");
+      console.error(error);
+      addToast("Erro ao salvar.", "error");
     } finally {
       setSaving(false);
     }
   };
 
-
-
-  const renderStepContent = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold mb-4">{t("admin.eventForm.steps.basic")}</h2>
-
-            <Input
-              label={t("admin.eventForm.labels.title") + " *"}
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Ex: Workshop de Fotografia"
-              required
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Select
-                label={t("admin.eventForm.labels.category")}
-                value={formData.categoryId}
-                onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
-              >
-                <option value="">Selecione...</option>
-                {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </Select>
-
-              <div className="form-group">
-                <label className="block text-sm font-medium text-gray-300 mb-1">{t("admin.eventForm.labels.format")}</label>
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant={formData.format === 'PRESENTIAL' ? 'primary' : 'outline'}
-                    onClick={() => setFormData({ ...formData, format: 'PRESENTIAL' })}
-                    leftIcon={<MapPin className="w-4 h-4" />}
-                    className="flex-1 justify-center"
-                  >
-                    {t("admin.eventForm.formats.presential")}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={formData.format === 'ONLINE' ? 'primary' : 'outline'}
-                    onClick={() => setFormData({ ...formData, format: 'ONLINE' })}
-                    leftIcon={<Video className="w-4 h-4" />}
-                    className="flex-1 justify-center"
-                  >
-                    {t("admin.eventForm.formats.online")}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="block text-sm font-medium text-gray-300 mb-1">{t("admin.eventForm.labels.coverImage")}</label>
-              <div className="flex gap-2">
-                <Input
-                  containerClassName="flex-1 mb-0"
-                  value={formData.coverImageUrl}
-                  onChange={e => setFormData({ ...formData, coverImageUrl: e.target.value })}
-                  placeholder="https://..."
-                />
-                <div className="w-20 h-[42px] bg-gray-800 rounded overflow-hidden border border-gray-700">
-                  {formData.coverImageUrl && <img src={formData.coverImageUrl} alt="Capa" className="w-full h-full object-cover" />}
-                </div>
-              </div>
-            </div>
-
-            <Textarea
-              label={t("admin.eventForm.labels.description")}
-              rows={5}
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Detalhes do evento..."
-            />
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold mb-4">{t("admin.eventForm.steps.whenWhere")}</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label={t("admin.eventForm.labels.startDate") + " *"}
-                type="datetime-local"
-                value={formData.startDate}
-                onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                required
-              />
-              <Input
-                label={t("admin.eventForm.labels.endDate")}
-                type="datetime-local"
-                value={formData.endDate}
-                onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-              />
-            </div>
-
-            <hr className="my-6 border-gray-700" />
-
-            {formData.format === 'PRESENTIAL' ? (
-              <>
-                <h3 className="text-lg font-semibold mb-2">Local do Evento</h3>
-                <Input
-                  label="Nome do Local (Ex: Teatro Municipal)"
-                  value={formData.location}
-                  onChange={e => setFormData({ ...formData, location: e.target.value })}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="md:col-span-1">
-                    <Input
-                      label="CEP"
-                      value={formData.zipCode}
-                      onChange={e => {
-                        const v = e.target.value.replace(/\D/g, '');
-                        setFormData({ ...formData, zipCode: v });
-                        if (v.length === 8) refreshGeocoding(v);
-                      }}
-                      placeholder="00000-000"
-                      maxLength={8}
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Input
-                      label="Cidade"
-                      value={formData.city}
-                      onChange={e => setFormData({ ...formData, city: e.target.value })}
-                    />
-                  </div>
-                  <div className="md:col-span-1">
-                    <Input
-                      label="Estado"
-                      value={formData.state}
-                      onChange={e => setFormData({ ...formData, state: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="md:col-span-3">
-                    <Input
-                      label="Endereço"
-                      value={formData.address}
-                      onChange={e => setFormData({ ...formData, address: e.target.value })}
-                    />
-                  </div>
-                  <div className="md:col-span-1">
-                    <Input
-                      label="Número"
-                      value={formData.number}
-                      onChange={e => setFormData({ ...formData, number: e.target.value })}
-                    />
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <h3 className="text-lg font-semibold mb-2">Transmissão Online</h3>
-                <Select
-                  label="Plataforma"
-                  value={formData.platform}
-                  onChange={e => setFormData({ ...formData, platform: e.target.value })}
-                >
-                  <option value="ZOOM">Zoom</option>
-                  <option value="MEET">Google Meet</option>
-                  <option value="YOUTUBE">YouTube Live</option>
-                  <option value="OTHER">Outra</option>
-                </Select>
-                <Input
-                  label="Link da Transmissão"
-                  value={formData.meetingLink}
-                  onChange={e => setFormData({ ...formData, meetingLink: e.target.value })}
-                  placeholder="https://..."
-                />
-              </>
-            )}
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">{t("admin.eventForm.tickets.title")}</h2>
-              <Button
-                type="button"
-                variant="outline"
-                leftIcon={<Plus className="w-4 h-4" />}
-                onClick={() => setTickets([...tickets, { name: 'Novo Ingresso', type: 'FREE', price: 0, quantity: 100, absorbFee: false }])}
-              >
-                {t("admin.eventForm.tickets.create")}
-              </Button>
-            </div>
-
-            {tickets.length === 0 && (
-              <div className="text-center py-10 bg-gray-800 rounded-lg border border-dashed border-gray-700">
-                <Ticket className="w-12 h-12 text-gray-500 mx-auto mb-2" />
-                <p className="text-gray-400">{t("admin.eventForm.tickets.empty")}</p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              {tickets.map((ticket, idx) => (
-                <div key={idx} className="bg-gray-800/50 p-4 rounded-lg shadow-sm border border-gray-700 flex flex-col gap-4">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-semibold text-gray-200">{t("admin.eventForm.tickets.itemTitle")} #{idx + 1}</h4>
-                    <button className="text-red-500 hover:bg-red-500/10 p-1 rounded transition-colors" onClick={() => {
-                      const n = [...tickets]; n.splice(idx, 1); setTickets(n);
-                    }}>
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
-                      label={t("admin.eventForm.tickets.name")}
-                      value={ticket.name}
-                      onChange={e => {
-                        const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
-                      }}
-                      containerClassName="mb-0"
-                    />
-                    <Input
-                      label={t("admin.eventForm.tickets.quantity")}
-                      type="number"
-                      value={ticket.quantity}
-                      onChange={e => {
-                        const n = [...tickets]; n[idx].quantity = Number(e.target.value); setTickets(n);
-                      }}
-                      containerClassName="mb-0"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Select
-                      label={t("admin.eventForm.tickets.type")}
-                      value={ticket.type}
-                      onChange={e => {
-                        const n = [...tickets]; n[idx].type = e.target.value as 'FREE' | 'PAID'; setTickets(n);
-                      }}
-                      containerClassName="mb-0"
-                    >
-                      <option value="FREE">{t("admin.eventForm.tickets.free")}</option>
-                      <option value="PAID">{t("admin.eventForm.tickets.paid")}</option>
-                    </Select>
-                    {ticket.type === 'PAID' && (
-                      <Input
-                        label={t("admin.eventForm.tickets.price") + " (R$)"}
-                        type="number"
-                        step="0.01"
-                        value={ticket.price}
-                        onChange={e => {
-                          const n = [...tickets]; n[idx].price = Number(e.target.value); setTickets(n);
-                        }}
-                        containerClassName="mb-0"
-                      />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold mb-4">{t("admin.eventForm.steps.promotion")}</h2>
-
-            <Input
-              label={t("admin.eventForm.labels.producerName")}
-              value={formData.producerName}
-              onChange={e => setFormData({ ...formData, producerName: e.target.value })}
-              placeholder="Ex: Rede Juventude NC"
-            />
-
-            <Textarea
-              label={t("admin.eventForm.labels.producerDescription")}
-              rows={4}
-              value={formData.producerDescription}
-              onChange={e => setFormData({ ...formData, producerDescription: e.target.value })}
-              placeholder="Conte um pouco sobre quem está organizando..."
-            />
-
-            <hr className="my-6 border-gray-700" />
-
-            <h3 className="text-lg font-semibold mb-2">Certificado</h3>
-            <div className="space-y-4 mb-6">
-              <div className="form-group">
-                <label className="block text-sm font-medium text-gray-300 mb-1">{t("admin.eventForm.labels.certificateBg")}</label>
-                <Input
-                  value={formData.certificateBackgroundUrl}
-                  onChange={e => setFormData({ ...formData, certificateBackgroundUrl: e.target.value })}
-                  placeholder="https://..."
-                  containerClassName="mb-1"
-                />
-                <p className="text-xs text-gray-500">Deixe em branco para usar o padrão do sistema.</p>
-              </div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Input
-                    label={t("admin.eventForm.labels.minMinutes")}
-                    type="number"
-                    value={formData.minMinutesForCertificate}
-                    onChange={e => setFormData({ ...formData, minMinutesForCertificate: e.target.value })}
-                    placeholder="Ex: 60"
-                  />
-                </div>
-                <div className="flex-1 flex items-end pb-7">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      className="w-5 h-5 text-gold rounded focus:ring-gold bg-gray-800 border-gray-600"
-                      checked={formData.certificateRequiresSurvey}
-                      onChange={e => setFormData({ ...formData, certificateRequiresSurvey: e.target.checked })}
-                    />
-                    <span className="text-gray-300">{t("admin.eventForm.labels.surveyRequired")}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <hr className="my-6 border-gray-700" />
-
-            <h3 className="text-lg font-semibold mb-2">{t("admin.eventForm.labels.visibility")}</h3>
-            <div className="flex gap-4">
-              <label className={`flex items-center gap-2 cursor-pointer border p-4 rounded-lg flex-1 hover:bg-gray-800 transition-colors ${formData.visibility !== "PRIVATE" ? 'border-gold bg-gold/10' : 'border-gray-700'}`}>
-                <input type="radio" className="hidden" name="visibility" checked={formData.visibility !== "PRIVATE"} onChange={() => setFormData({ ...formData, visibility: "PUBLIC" })} />
-                <div>
-                  <div className="font-bold flex items-center gap-2"><Globe className="w-4 h-4" /> {t("admin.eventForm.visibility.public")}</div>
-                  <div className="text-sm text-gray-400">{t("admin.eventForm.visibility.publicDesc")}</div>
-                </div>
-              </label>
-              <label className={`flex items-center gap-2 cursor-pointer border p-4 rounded-lg flex-1 hover:bg-gray-800 transition-colors ${formData.visibility === "PRIVATE" ? 'border-gold bg-gold/10' : 'border-gray-700'}`}>
-                <input type="radio" className="hidden" name="visibility" checked={formData.visibility === "PRIVATE"} onChange={() => setFormData({ ...formData, visibility: "PRIVATE" })} />
-                <div>
-                  <div className="font-bold flex items-center gap-2"><Check className="w-4 h-4" /> {t("admin.eventForm.visibility.private")}</div>
-                  <div className="text-sm text-gray-400">{t("admin.eventForm.visibility.privateDesc")}</div>
-                </div>
-              </label>
-            </div>
-
-            <hr className="my-6 border-gray-700" />
-
-            <h3 className="text-lg font-semibold mb-2">🎧 Áudio-Guia do Evento</h3>
-            <div className="space-y-4 mb-6">
-              <div className="form-group">
-                <label className="block text-sm font-medium text-gray-300 mb-1">{t("admin.eventForm.labels.audioUrl")} (MP3)</label>
-                <Input
-                  value={formData.audioUrl}
-                  onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
-                  placeholder="https://exemplo.com/audio-evento.mp3"
-                  containerClassName="mb-1"
-                />
-                <p className="text-xs text-gray-500">Áudio que os visitantes poderão ouvir sobre o evento.</p>
-              </div>
-              <div className="form-group">
-                <label className="block text-sm font-medium text-gray-300 mb-1">{t("admin.eventForm.labels.videoUrl")}</label>
-                <Input
-                  value={formData.videoUrl}
-                  onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-                  placeholder="https://youtube.com/watch?v=..."
-                  containerClassName="mb-1"
-                />
-                <p className="text-xs text-gray-500">Vídeo de divulgação do evento.</p>
-              </div>
-            </div>
-          </div>
-        );
-    }
-  }
+  if (loading) return <div className="text-center p-10 text-slate-500">Carregando evento...</div>;
 
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-gray-900 -m-6">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-800 border-r border-gray-700 p-6 flex flex-col justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-white mb-8">
+    <div className="flex h-screen bg-[#0a0a0c] overflow-hidden">
+
+      {/* SIDEBAR STEPPER */}
+      <div className="w-80 bg-[#0f172a] border-r border-white/5 p-8 flex flex-col pt-10">
+        <div className="mb-12">
+          <h1 className="text-2xl font-black text-white tracking-tight mb-2">
             {isEdit ? "Editar Evento" : "Novo Evento"}
           </h1>
-          <div className="space-y-2">
-            {steps.map(s => (
+          <p className="text-sm text-slate-500">Configure os detalhes do seu evento passo a passo.</p>
+        </div>
+
+        <div className="space-y-6 relative">
+          {/* Connecting line */}
+          <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-white/5 -z-10"></div>
+
+          {steps.map((s, idx) => {
+            const isActive = step === s.id;
+            const isCompleted = step > s.id;
+
+            return (
               <button
                 key={s.id}
                 onClick={() => setStep(s.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-all
-                                ${step === s.id
-                    ? "bg-gold text-black font-bold shadow-sm"
-                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
-                  }`}
+                className={`group flex items-start gap-4 w-full text-left transition-all duration-300 ${isActive ? 'translate-x-2' : ''}`}
               >
-                {s.icon}
-                {s.label}
-                {step > s.id && <Check className="w-4 h-4 ml-auto text-green-500" />}
+                <div className={`
+                            w-10 h-10 rounded-xl flex items-center justify-center border transition-all shadow-xl shrink-0 z-10
+                            ${isActive
+                    ? 'bg-blue-600 border-blue-500 text-white scale-110 shadow-blue-500/20'
+                    : isCompleted
+                      ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-500'
+                      : 'bg-[#1e293b] border-white/5 text-slate-500 group-hover:border-white/20'}
+                        `}>
+                  {isCompleted ? <Check size={18} /> : s.icon}
+                </div>
+                <div className="pt-2">
+                  <div className={`font-bold text-sm transition-colors ${isActive ? 'text-white' : 'text-slate-400'}`}>
+                    {s.label}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-0.5">{s.desc}</div>
+                </div>
               </button>
-            ))}
-          </div>
+            )
+          })}
         </div>
-        <div className="text-xs text-center text-gray-500">
-          Passo {step} de 4
+
+        <div className="mt-auto">
+          <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 mb-8">
+            <div className="text-xs font-bold text-blue-400 mb-1 uppercase tracking-wider">Dica Pro</div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Você pode salvar o evento como Rascunho a qualquer momento e terminar depois.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-gray-900">
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-lg border border-gray-700 p-8 min-h-[500px]">
-            {renderStepContent()}
+      {/* MAIN CONTENT AREA */}
+      <div className="flex-1 flex flex-col relative overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-900/10 via-[#0a0a0c] to-[#0a0a0c]">
+
+        {/* SCROLLABLE FORM AREA */}
+        <div className="flex-1 overflow-y-auto p-12">
+          <div className="max-w-3xl mx-auto pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {step === 1 && (
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-2">Informações Básicas</h2>
+                  <p className="text-slate-400">O que é o seu evento e para quem ele é?</p>
+                </div>
+
+                <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                  <Input
+                    label="Nome do Evento"
+                    value={formData.title}
+                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Ex: Festival de Inverno 2024"
+                    className="h-14 text-lg font-bold"
+                    required
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Select
+                      label="Categoria"
+                      value={formData.categoryId}
+                      onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
+                      className="h-12"
+                    >
+                      <option value="">Selecione...</option>
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </Select>
+                    <div className="p-4 rounded-xl bg-black/20 border border-white/5 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+                        <ImageIcon size={20} />
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <div className="text-xs font-bold text-slate-500 uppercase">Capa do Evento</div>
+                        <input
+                          className="bg-transparent border-none text-sm text-white w-full focus:ring-0 p-0"
+                          placeholder="URL da imagem..."
+                          value={formData.coverImageUrl}
+                          onChange={e => setFormData({ ...formData, coverImageUrl: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {formData.coverImageUrl && (
+                    <div className="h-48 w-full rounded-2xl overflow-hidden relative group">
+                      <img src={formData.coverImageUrl} className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="Capa" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                        <span className="text-white font-bold text-sm">Preview da Capa</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <Textarea
+                    label="Descrição Completa"
+                    value={formData.description}
+                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    rows={5}
+                    placeholder="Descreva os detalhes incríveis do seu evento..."
+                    className="bg-black/20"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, format: "PRESENTIAL" })}
+                    className={`p-6 rounded-2xl border text-left transition-all ${formData.format === 'PRESENTIAL' ? 'bg-blue-600 border-blue-500 shadow-xl shadow-blue-900/20' : 'bg-white/5 border-white/5 opacity-60 hover:opacity-100 hover:bg-white/10'}`}
+                  >
+                    <MapPin size={24} className={formData.format === 'PRESENTIAL' ? 'text-white' : 'text-slate-400'} />
+                    <div className={`font-bold mt-4 text-lg ${formData.format === 'PRESENTIAL' ? 'text-white' : 'text-slate-200'}`}>Presencial</div>
+                    <div className={`text-sm mt-1 ${formData.format === 'PRESENTIAL' ? 'text-blue-200' : 'text-slate-500'}`}>Em um local físico</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, format: "ONLINE" })}
+                    className={`p-6 rounded-2xl border text-left transition-all ${formData.format === 'ONLINE' ? 'bg-purple-600 border-purple-500 shadow-xl shadow-purple-900/20' : 'bg-white/5 border-white/5 opacity-60 hover:opacity-100 hover:bg-white/10'}`}
+                  >
+                    <Monitor size={24} className={formData.format === 'ONLINE' ? 'text-white' : 'text-slate-400'} />
+                    <div className={`font-bold mt-4 text-lg ${formData.format === 'ONLINE' ? 'text-white' : 'text-slate-200'}`}>Online</div>
+                    <div className={`text-sm mt-1 ${formData.format === 'ONLINE' ? 'text-purple-200' : 'text-slate-500'}`}>Transmissão remota</div>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-2">Quando e Onde?</h2>
+                  <p className="text-slate-400">Defina o cronograma e a localização.</p>
+                </div>
+
+                <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input label="Início" type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required className="h-12" />
+                    <Input label="Fim" type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="h-12" />
+                  </div>
+
+                  <div className="h-px bg-white/10 my-6"></div>
+
+                  {formData.format === 'PRESENTIAL' ? (
+                    <div className="space-y-4">
+                      <Input label="Nome do Local" placeholder="Ex: Teatro Municipal" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} />
+
+                      <div className="flex gap-4">
+                        <div className="w-40">
+                          <Input
+                            label="CEP"
+                            value={formData.zipCode}
+                            onChange={e => {
+                              const v = e.target.value.replace(/\D/g, '');
+                              setFormData({ ...formData, zipCode: v });
+                              if (v.length === 8) refreshGeocoding(v);
+                            }}
+                            maxLength={8}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <Input label="Endereço" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <Input label="Número" value={formData.number} onChange={e => setFormData({ ...formData, number: e.target.value })} />
+                        <Input label="Cidade" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} />
+                        <Input label="Estado" value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <Select label="Plataforma de Streaming" value={formData.platform} onChange={e => setFormData({ ...formData, platform: e.target.value })}>
+                        <option value="ZOOM">Zoom</option>
+                        <option value="MEET">Google Meet</option>
+                        <option value="YOUTUBE">YouTube Live</option>
+                      </Select>
+                      <Input label="Link da Reunião" value={formData.meetingLink} onChange={e => setFormData({ ...formData, meetingLink: e.target.value })} placeholder="https://..." leftIcon={<Monitor size={16} />} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-3xl font-bold text-white mb-2">Ingressos</h2>
+                    <p className="text-slate-400">Gerencie a venda ou distribuição.</p>
+                  </div>
+                  <Button
+                    onClick={() => setTickets([...tickets, { name: 'Novo Lote', type: 'FREE', price: 0, quantity: 100 }])}
+                    leftIcon={<Plus size={18} />}
+                    className="bg-white text-black hover:bg-slate-200"
+                  >
+                    Adicionar
+                  </Button>
+                </div>
+
+                {tickets.length === 0 ? (
+                  <div className="text-center py-20 border-2 border-dashed border-white/5 rounded-3xl bg-white/5">
+                    <Ticket className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-white">Nenhum ingresso criado</h3>
+                    <p className="text-slate-400">Clique em adicionar para criar o primeiro lote.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    {tickets.map((t, idx) => (
+                      <div key={idx} className="bg-[#1e293b] p-6 rounded-2xl border border-white/5 flex gap-6 items-start animate-in slide-in-from-bottom-2">
+                        <div className={`
+                                            w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold shrink-0
+                                            ${t.type === 'FREE' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}
+                                        `}>
+                          {t.type === 'FREE' ? '0' : '$'}
+                        </div>
+                        <div className="flex-1 space-y-4">
+                          <div className="flex gap-4">
+                            <div className="flex-1">
+                              <label className="text-xs font-bold text-slate-500 uppercase">Nome do Lote</label>
+                              <input
+                                className="w-full bg-transparent border-b border-white/10 py-1 text-white focus:outline-none focus:border-white/30 transition-colors"
+                                value={t.name}
+                                onChange={e => {
+                                  const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
+                                }}
+                              />
+                            </div>
+                            <div className="w-32">
+                              <label className="text-xs font-bold text-slate-500 uppercase">Tipo</label>
+                              <select
+                                className="w-full bg-transparent border-b border-white/10 py-1 text-white focus:outline-none text-sm"
+                                value={t.type}
+                                onChange={e => {
+                                  const n = [...tickets]; n[idx].type = e.target.value as any; setTickets(n);
+                                }}
+                              >
+                                <option value="FREE">Gratuito</option>
+                                <option value="PAID">Pago</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="flex gap-4">
+                            <div className="flex-1">
+                              <label className="text-xs font-bold text-slate-500 uppercase">Quantidade</label>
+                              <input
+                                type="number"
+                                className="w-full bg-transparent border-b border-white/10 py-1 text-white focus:outline-none"
+                                value={t.quantity}
+                                onChange={e => {
+                                  const n = [...tickets]; n[idx].quantity = Number(e.target.value); setTickets(n);
+                                }}
+                              />
+                            </div>
+                            {t.type === 'PAID' && (
+                              <div className="flex-1">
+                                <label className="text-xs font-bold text-slate-500 uppercase">Preço (R$)</label>
+                                <input
+                                  type="number"
+                                  className="w-full bg-transparent border-b border-white/10 py-1 text-white focus:outline-none"
+                                  value={t.price}
+                                  onChange={e => {
+                                    const n = [...tickets]; n[idx].price = Number(e.target.value); setTickets(n);
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => { const n = [...tickets]; n.splice(idx, 1); setTickets(n); }}
+                          className="p-2 hover:bg-red-500/10 text-slate-500 hover:text-red-500 rounded-lg transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {step === 4 && (
+              <div className="space-y-8">
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-2">Divulgação e Extras</h2>
+                  <p className="text-slate-400">Detalhes finais para publicar.</p>
+                </div>
+
+                <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <PlayCircle className="text-pink-400" size={20} /> Mídia e Áudio
+                  </h3>
+                  <Input label="Vídeo de Divulgação (YouTube)" value={formData.videoUrl} onChange={e => setFormData({ ...formData, videoUrl: e.target.value })} leftIcon={<PlayCircle size={16} />} />
+                  <Input label="Áudio-Guia (MP3)" value={formData.audioUrl} onChange={e => setFormData({ ...formData, audioUrl: e.target.value })} leftIcon={<Mic size={16} />} />
+                </div>
+
+                <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-6">
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <Globe className="text-blue-400" size={20} /> Visibilidade
+                  </h3>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
+                      className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-4 transition-all ${formData.visibility === "PUBLIC" ? 'bg-blue-500/10 border-blue-500/50' : 'bg-black/20 border-white/5 hover:bg-white/5'}`}
+                    >
+                      <div className={`p-2 rounded-full ${formData.visibility === "PUBLIC" ? 'bg-blue-500 text-white' : 'bg-white/10 text-slate-500'}`}><Globe size={20} /></div>
+                      <div>
+                        <div className="font-bold text-white">Público</div>
+                        <div className="text-xs text-slate-400">Visível no site e app</div>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => setFormData({ ...formData, visibility: "PRIVATE" })}
+                      className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-4 transition-all ${formData.visibility === "PRIVATE" ? 'bg-amber-500/10 border-amber-500/50' : 'bg-black/20 border-white/5 hover:bg-white/5'}`}
+                    >
+                      <div className={`p-2 rounded-full ${formData.visibility === "PRIVATE" ? 'bg-amber-500 text-black' : 'bg-white/10 text-slate-500'}`}><Check size={20} /></div>
+                      <div>
+                        <div className="font-bold text-white">Privado</div>
+                        <div className="text-xs text-slate-400">Apenas via link direto</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="h-20 bg-gray-800 border-t border-gray-700 px-8 flex items-center justify-between">
+        {/* BOTTOM NAV BAR */}
+        <div className="h-24 bg-[#0f172a] border-t border-white/5 px-8 flex items-center justify-between z-20">
           <Button
             variant="ghost"
-            className={`flex items-center gap-2 ${step === 1 ? 'invisible' : ''}`}
-            onClick={() => setStep(s => Math.max(1, s - 1))}
-            leftIcon={<ChevronLeft className="w-4 h-4" />}
+            onClick={() => step === 1 ? navigate('/admin/eventos') : setStep(s => s - 1)}
+            className="text-slate-400 hover:text-white"
+            leftIcon={step > 1 ? <ChevronLeft size={18} /> : undefined}
           >
-            Voltar
+            {step === 1 ? 'Cancelar' : 'Voltar'}
           </Button>
 
-          <div className="flex gap-2">
-            <Button variant="ghost" className="text-gray-400 hover:text-white" onClick={() => navigate("/admin/eventos")}>
-              Cancelar
-            </Button>
+          <div className="flex items-center gap-4">
             {step < 4 ? (
               <Button
-                rightIcon={<ChevronRight className="w-4 h-4" />}
-                onClick={() => setStep(s => Math.min(4, s + 1))}
+                onClick={() => setStep(s => s + 1)}
+                className="px-8 h-12 rounded-xl font-bold text-base bg-white text-black hover:bg-slate-200 border-none"
+                rightIcon={<ChevronRight size={18} />}
               >
                 Próximo
               </Button>
             ) : (
               <Button
                 onClick={handleSubmit}
-                isLoading={saving || loading}
-                leftIcon={<Save className="w-4 h-4" />}
-                className="bg-green-600 hover:bg-green-700 text-white border-none"
+                disabled={saving}
+                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-green-500/20 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 border-none text-white"
+                leftIcon={<Save size={18} />}
               >
-                {isEdit ? "Salvar Alterações" : "Publicar Evento"}
+                {isEdit ? 'Salvar Alterações' : 'Publicar Evento'}
               </Button>
             )}
           </div>
         </div>
+
       </div>
     </div>
   );

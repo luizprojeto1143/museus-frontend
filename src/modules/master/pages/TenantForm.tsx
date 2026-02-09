@@ -2,7 +2,11 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
-import { Building2, Save, ArrowLeft, Package, Map, Settings, Shield } from "lucide-react";
+import {
+  Building2, Save, ArrowLeft, Package, Map, Settings, Shield,
+  Landmark, Music, Palette, Tent, ShieldCheck, CheckCircle2,
+  Users, Mail, Lock, Globe, FileText, ChevronRight
+} from "lucide-react";
 import { Button, Input, Select, Textarea } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import "./MasterShared.css";
@@ -44,6 +48,8 @@ export const TenantForm: React.FC = () => {
   const [featureGuestbook, setFeatureGuestbook] = useState(true);
   const [featureAccessibility, setFeatureAccessibility] = useState(true);
   const [featureMinigames, setFeatureMinigames] = useState(false);
+
+  const [saving, setSaving] = useState(false);
 
   const loadTenant = async () => {
     try {
@@ -105,6 +111,7 @@ export const TenantForm: React.FC = () => {
       return;
     }
 
+    setSaving(true);
     interface TenantPayload {
       name: string;
       slug: string;
@@ -183,273 +190,379 @@ export const TenantForm: React.FC = () => {
     } catch (error) {
       console.error("Erro ao salvar tenant", error);
       addToast(t("master.tenantForm.errorSave"), "error");
+    } finally {
+      setSaving(false);
     }
   };
 
+  const typeOptions = [
+    { value: "MUSEUM", icon: <Landmark size={24} />, label: "Museu", desc: "Tipologia clássica com acervo, salas e exposições." },
+    { value: "CITY", icon: <Map size={24} />, label: "Cidade / Secretaria", desc: "Gestão de múltiplos equipamentos e roteiros turísticos." },
+    { value: "PRODUCER", icon: <Music size={24} />, label: "Produtora Cultural", desc: "Foco em eventos, projetos itinerantes e editais." },
+    { value: "CULTURAL_SPACE", icon: <Tent size={24} />, label: "Espaço Cultural", desc: "Galerias, bibliotecas e centros comunitários." }
+  ];
+
+  const featureGroups = [
+    {
+      title: "Acervo e Visitação",
+      items: [
+        { label: "Obras/Artefatos", state: featureWorks, setter: setFeatureWorks },
+        { label: "Trilhas/Roteiros", state: featureTrails, setter: setFeatureTrails },
+        { label: "QR Codes", state: featureQRCodes, setter: setFeatureQRCodes },
+      ]
+    },
+    {
+      title: "Engajamento",
+      items: [
+        { label: "Gamificação", state: featureGamification, setter: setFeatureGamification },
+        { label: "Minigames", state: featureMinigames, setter: setFeatureMinigames },
+        { label: "Livro de Visitas", state: featureGuestbook, setter: setFeatureGuestbook },
+        { label: "Avaliações", state: featureReviews, setter: setFeatureReviews },
+      ]
+    },
+    {
+      title: "Serviços e Eventos",
+      items: [
+        { label: "Eventos", state: featureEvents, setter: setFeatureEvents },
+        { label: "Certificados", state: featureCertificates, setter: setFeatureCertificates },
+        { label: "Acessibilidade", state: featureAccessibility, setter: setFeatureAccessibility },
+      ]
+    },
+    {
+      title: "Premium / Monetização",
+      items: [
+        { label: "Chat IA", state: featureChatAI, setter: setFeatureChatAI, premium: true },
+        { label: "Loja Virtual", state: featureShop, setter: setFeatureShop, premium: true },
+        { label: "Doações", state: featureDonations, setter: setFeatureDonations, premium: true },
+      ]
+    }
+  ];
+
   return (
-    <div className="master-page-container">
-      {/* HERO SECTION */}
-      <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem', position: 'relative' }}>
-        <div className="master-hero-content">
+    <div className="master-page-container bg-[#0a0a0c]">
+      {/* COMPACT HERO */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-8 border-b border-white/10 gap-4">
+        <div className="flex items-center gap-4">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => navigate('/master/tenants')}
-            className="absolute top-4 left-4 w-auto h-auto py-2 px-4"
-            leftIcon={<ArrowLeft size={16} />}
+            className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 flex items-center justify-center shrink-0"
           >
-            {t("common.back")}
+            <ArrowLeft size={20} />
           </Button>
-
-          <span className="master-badge">
-            {isEdit ? '📝 Editar Instituição' : '✨ Nova Instituição'}
-          </span>
-          <h1 className="master-title">
-            {isEdit ? name : t("master.tenantForm.newTitle")}
-          </h1>
-        </div>
-      </section>
-
-      <form onSubmit={handleSubmit} className="master-card" style={{ maxWidth: 800, margin: '0 auto' }}>
-        {/* BASIC INFO */}
-        <div className="master-card-header">
-          <div className="master-icon-wrapper master-icon-blue">
-            <Building2 size={24} />
-          </div>
-          <h3>Informações Básicas</h3>
-        </div>
-
-        <div className="master-form space-y-4">
-          <Input
-            label={t("master.tenantForm.labels.name")}
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder={t("master.tenantForm.placeholders.name")}
-            required
-          />
-
-          <Input
-            label={t("master.tenantForm.labels.slug")}
-            value={slug}
-            onChange={e => setSlug(e.target.value)}
-            placeholder={t("master.tenantForm.placeholders.slug")}
-            required
-            helperText={t("master.tenantForm.helpers.slug")}
-          />
-        </div>
-
-        <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
-
-        {/* PLAN & MODE */}
-        <div className="master-card-header">
-          <div className="master-icon-wrapper master-icon-green">
-            <Package size={24} />
-          </div>
-          <h3>Plano e Operação</h3>
-        </div>
-
-        <div className="master-form space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Select
-              label={t("master.tenantForm.labels.plan")}
-              value={plan}
-              onChange={e => {
-                const newPlan = e.target.value;
-                setPlan(newPlan);
-                if (newPlan === "START") setMaxWorks(50);
-                else if (newPlan === "PRO") setMaxWorks(200);
-                else if (newPlan === "ENTERPRISE") setMaxWorks(500);
-              }}
-            >
-              <option value="START">{t("master.tenantForm.plans.start")}</option>
-              <option value="PRO">{t("master.tenantForm.plans.pro")}</option>
-              <option value="ENTERPRISE">{t("master.tenantForm.plans.enterprise")}</option>
-              <option value="CUSTOM">{t("master.tenantForm.plans.custom")}</option>
-            </Select>
-
-            <Input
-              label={t("master.tenantForm.labels.maxWorks")}
-              type="number"
-              value={maxWorks}
-              onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
-            />
-          </div>
-
-          {/* TENANT TYPE SELECTION */}
-          <div className="bg-white/5 p-6 rounded-xl border border-white/10">
-            <label className="block text-sm font-semibold mb-4">
-              🏗️ Tipo de Instituição
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                { value: "MUSEUM", icon: "🏛️", label: "Museu", desc: "Interior, salas, andares" },
-                { value: "CITY", icon: "🏙️", label: "Cidade/Secretaria", desc: "Geo-localização, roteiros" },
-                { value: "PRODUCER", icon: "🎬", label: "Produtor Cultural", desc: "Projetos, eventos, editais" },
-                { value: "CULTURAL_SPACE", icon: "🎨", label: "Espaço Cultural", desc: "Centro cultural, biblioteca" }
-              ].map(opt => (
-                <label key={opt.value} className={`
-                                    flex items-center gap-4 p-4 rounded-xl cursor-pointer border transition-all
-                                    ${tenantType === opt.value ? 'bg-blue-500/10 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.2)]' : 'bg-transparent border-white/10 hover:border-white/20'}
-                                `}>
-                  <input
-                    type="radio"
-                    name="tenantType"
-                    className="w-4 h-4 text-blue-600"
-                    checked={tenantType === opt.value}
-                    onChange={() => setTenantType(opt.value as any)}
-                  />
-                  <div className="flex flex-col">
-                    <span className="font-bold text-white flex items-center gap-2">
-                      <span>{opt.icon}</span> {opt.label}
-                    </span>
-                    <span className="text-xs text-slate-400">{opt.desc}</span>
-                  </div>
-                </label>
-              ))}
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-black text-white tracking-tight">
+                {isEdit ? 'Editar Instituição' : 'Nova Instituição'}
+              </h1>
+              {isEdit && (
+                <div className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs font-bold rounded uppercase tracking-wider">
+                  Editando
+                </div>
+              )}
             </div>
+            <p className="text-slate-500 text-sm font-medium mt-1">Configure os detalhes, funcionalidades e acessos.</p>
           </div>
-
-          {/* PARENT TENANT (for linking) */}
-          {(tenantType === "MUSEUM" || tenantType === "PRODUCER" || tenantType === "CULTURAL_SPACE") && (
-            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
-              <label className="block text-sm font-semibold mb-1">
-                🔗 Vínculo Hierárquico (opcional)
-              </label>
-              <p className="text-xs text-slate-400 mb-4">
-                Vincule esta instituição a uma Cidade/Secretaria para aparecer nos relatórios consolidados.
-              </p>
-              <Select
-                value={parentId || ""}
-                onChange={e => setParentId(e.target.value || null)}
-              >
-                <option value="">Sem vínculo (independente)</option>
-                {cities.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </Select>
-            </div>
-          )}
         </div>
-
-        <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
-
-        {/* LEGAL & TERMS */}
-        <div className="master-card-header">
-          <div className="master-icon-wrapper master-icon-yellow">
-            <Shield size={24} />
-          </div>
-          <h3>Termos e Privacidade (LGPD)</h3>
+        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full shrink-0">
+          <ShieldCheck size={16} className="text-blue-400" />
+          <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Modo Master</span>
         </div>
+      </div>
 
-        <div className="master-form space-y-4">
-          <Textarea
-            label="Termos de Uso"
-            rows={6}
-            value={termsOfUse}
-            onChange={e => setTermsOfUse(e.target.value)}
-            placeholder="Digite os termos de uso aqui..."
-            className="font-mono text-sm"
-          />
-          <Textarea
-            label="Política de Privacidade"
-            rows={6}
-            value={privacyPolicy}
-            onChange={e => setPrivacyPolicy(e.target.value)}
-            placeholder="Digite a política de privacidade..."
-            className="font-mono text-sm"
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="max-w-6xl mx-auto space-y-8 pb-24">
 
-        <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* LEFT COLUMN - MAIN INFO */}
+          <div className="lg:col-span-2 space-y-8">
 
-        {/* FEATURE FLAGS */}
-        <div className="master-card-header">
-          <div className="master-icon-wrapper master-icon-purple">
-            <Settings size={24} />
-          </div>
-          <h3>Funcionalidades</h3>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { label: "🎨 Obras/Artefatos", state: featureWorks, setter: setFeatureWorks },
-            { label: "🗺️ Trilhas/Roteiros", state: featureTrails, setter: setFeatureTrails },
-            { label: "📅 Eventos", state: featureEvents, setter: setFeatureEvents },
-            { label: "🏆 Gamificação", state: featureGamification, setter: setFeatureGamification },
-            { label: "📷 QR Codes", state: featureQRCodes, setter: setFeatureQRCodes },
-            { label: "📜 Certificados", state: featureCertificates, setter: setFeatureCertificates },
-            { label: "♿ Acessibilidade", state: featureAccessibility, setter: setFeatureAccessibility },
-            { label: "🎮 Minigame", state: featureMinigames, setter: setFeatureMinigames },
-            { label: "🤖 Chat IA ⭐", state: featureChatAI, setter: setFeatureChatAI, premium: true },
-            { label: "🛒 Loja Virtual ⭐", state: featureShop, setter: setFeatureShop, premium: true },
-          ].map((feat, idx) => (
-            <label key={idx} className={`
-                            flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition-colors
-                            ${feat.state ? 'bg-purple-500/10 border-purple-500/50' : 'bg-transparent border-white/10 hover:border-white/20'}
-                            ${feat.premium ? 'ring-1 ring-yellow-500/30' : ''}
-                        `}>
-              <input
-                type="checkbox"
-                className="w-4 h-4 rounded border-white/20 text-purple-600 focus:ring-purple-500 bg-transparent"
-                checked={feat.state}
-                onChange={e => feat.setter(e.target.checked)}
-              />
-              <span className={`text-sm ${feat.state ? 'text-white' : 'text-slate-400'}`}>
-                {feat.label}
-              </span>
-            </label>
-          ))}
-        </div>
-
-        {!isEdit && (
-          <>
-            <hr style={{ border: 0, borderTop: '1px solid rgba(255,255,255,0.1)', margin: '2rem 0' }} />
-
-            <div className="master-card-header">
-              <div className="master-icon-wrapper master-icon-red">
-                <Shield size={24} />
-              </div>
-              <h3>Administrador Inicial</h3>
-            </div>
-
-            <div className="master-form space-y-4">
-              <Input
-                label={t("master.tenantForm.labels.adminName")}
-                value={adminName}
-                onChange={e => setAdminName(e.target.value)}
-                placeholder={t("master.tenantForm.placeholders.adminName")}
-                required
-              />
-
+            {/* TYPE SELECTION */}
+            <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <Palette className="text-purple-400" size={20} /> Tipo de Instituição
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {typeOptions.map(opt => (
+                  <label key={opt.value} className={`
+                                        relative flex flex-col p-5 rounded-2xl cursor-pointer border transition-all duration-300 group
+                                        ${tenantType === opt.value
+                      ? 'bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border-blue-500/50 shadow-lg shadow-blue-500/10'
+                      : 'bg-[#12121e] border-white/5 hover:border-white/10 hover:bg-white/5'}
+                                    `}>
+                    <input
+                      type="radio"
+                      name="tenantType"
+                      className="hidden"
+                      checked={tenantType === opt.value}
+                      onChange={() => setTenantType(opt.value as any)}
+                    />
+                    <div className={`mb-3 p-3 w-fit rounded-xl transition-colors ${tenantType === opt.value ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400 group-hover:bg-white/10 group-hover:text-white'}`}>
+                      {opt.icon}
+                    </div>
+                    <span className={`font-bold text-lg mb-1 transition-colors ${tenantType === opt.value ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                      {opt.label}
+                    </span>
+                    <span className="text-xs text-slate-500 leading-relaxed">
+                      {opt.desc}
+                    </span>
+                    {tenantType === opt.value && (
+                      <div className="absolute top-4 right-4 text-blue-500 animate-in zoom-in duration-200">
+                        <CheckCircle2 size={20} fill="currentColor" className="text-blue-500 bg-white rounded-full" />
+                      </div>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* BASIC DETAILS */}
+            <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+              <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                <Building2 className="text-blue-400" size={20} /> Detalhes da Instituição
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input
-                  label={t("master.tenantForm.labels.adminEmail")}
-                  type="email"
-                  value={adminEmail}
-                  onChange={e => setAdminEmail(e.target.value)}
-                  placeholder={t("master.tenantForm.placeholders.adminEmail")}
+                  label="Nome Oficial"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="Ex: Museu Nacional..."
                   required
+                  leftIcon={<Building2 size={18} />}
+                  className="h-12 bg-black/20"
                 />
                 <Input
-                  label={t("master.tenantForm.labels.adminPassword")}
-                  type="password"
-                  value={adminPassword}
-                  onChange={e => setAdminPassword(e.target.value)}
-                  placeholder={t("master.tenantForm.placeholders.adminPassword")}
+                  label="Slug (URL Amigável)"
+                  value={slug}
+                  onChange={e => setSlug(e.target.value)}
+                  placeholder="ex: museu-nacional"
                   required
+                  leftIcon={<Globe size={18} />}
+                  className="h-12 font-mono text-sm bg-black/20"
+                  helperText="Usado na URL (ex: museus.app/seu-slug)"
+                />
+              </div>
+
+              {(tenantType === "MUSEUM" || tenantType === "PRODUCER" || tenantType === "CULTURAL_SPACE") && (
+                <div className="p-5 bg-black/20 rounded-2xl border border-white/5 flex flex-col sm:flex-row gap-5 items-start sm:items-center">
+                  <div className="flex-1 w-full">
+                    <label className="text-sm font-bold text-slate-400 mb-2 block flex items-center gap-2">
+                      <Map size={14} /> Vínculo Hierárquico (Opcional)
+                    </label>
+                    <Select
+                      value={parentId || ""}
+                      onChange={e => setParentId(e.target.value || null)}
+                      className="w-full h-11 bg-white/5 border-white/10"
+                    >
+                      <option value="">Sem vínculo (Independente)</option>
+                      {cities.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="flex-1 text-xs text-slate-500 leading-relaxed p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl">
+                    <span className="text-blue-400 font-bold block mb-1">Por que vincular?</span>
+                    Vincular a uma Cidade/Secretaria permite que esta instituição apareça nos relatórios consolidados do gestor público.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* FEATURE FLAGS */}
+            <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <Settings className="text-emerald-400" size={20} /> Funcionalidades Ativas
+              </h3>
+
+              <div className="space-y-8">
+                {featureGroups.map((group, gIdx) => (
+                  <div key={gIdx} className="bg-black/20 rounded-2xl p-5 border border-white/5 relative overflow-hidden">
+                    {/* Group decoration */}
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-2xl rounded-full -mr-10 -mt-10 pointer-events-none"></div>
+
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <div className="w-1 h-3 bg-slate-600 rounded-full"></div>
+                      {group.title}
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 relative z-10">
+                      {group.items.map((feat, idx) => (
+                        <label key={idx} className={`
+                                                    flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-white/5 hover:translate-x-1
+                                                    ${feat.state
+                            ? 'bg-emerald-500/5 border-emerald-500/30 text-emerald-100'
+                            : 'bg-transparent border-white/5 text-slate-500 line-through decoration-slate-600'}
+                                                    ${feat.premium ? 'ring-1 ring-yellow-500/20' : ''}
+                                                `}>
+                          <div className={`
+                                                        w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0
+                                                        ${feat.state ? 'bg-emerald-500 border-emerald-500' : 'border-white/20 bg-transparent'}
+                                                    `}>
+                            {feat.state && <CheckCircle2 size={12} className="text-black" />}
+                          </div>
+                          <input
+                            type="checkbox"
+                            className="hidden"
+                            checked={feat.state}
+                            onChange={e => feat.setter(e.target.checked)}
+                          />
+                          <span className="text-sm font-medium truncate">
+                            {feat.label}
+                          </span>
+                          {feat.premium && <span className="text-[9px] bg-yellow-500 text-black font-black px-1.5 py-0.5 rounded ml-auto">PRO</span>}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* RIGHT COLUMN - SIDEBAR */}
+          <div className="space-y-8">
+
+            {/* PLAN & LIMITS */}
+            <div className="bg-gradient-to-tr from-slate-900 via-slate-800 to-slate-900 border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-blue-500/20 transition-all duration-1000"></div>
+
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
+                <Package className="text-blue-400" size={20} /> Plano Contratual
+              </h3>
+
+              <div className="space-y-5 relative z-10">
+                <Select
+                  label="Nível do Plano"
+                  value={plan}
+                  onChange={e => {
+                    const newPlan = e.target.value;
+                    setPlan(newPlan);
+                    if (newPlan === "START") setMaxWorks(50);
+                    else if (newPlan === "PRO") setMaxWorks(200);
+                    else if (newPlan === "ENTERPRISE") setMaxWorks(500);
+                  }}
+                  className="bg-black/30 border-white/10"
+                >
+                  <option value="START">Start (Básico)</option>
+                  <option value="PRO">Professional</option>
+                  <option value="ENTERPRISE">Enterprise</option>
+                  <option value="CUSTOM">Customizado</option>
+                </Select>
+
+                <Input
+                  label="Limite de Obras"
+                  type="number"
+                  value={maxWorks}
+                  onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
+                  leftIcon={<Building2 size={16} />}
+                  className="bg-black/30 border-white/10"
+                  helperText="Teto de itens no acervo."
+                />
+
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-xs text-slate-400 leading-relaxed">
+                  <div className="flex items-center gap-2 text-white font-bold mb-1">
+                    <ShieldCheck size={14} className="text-green-500" /> SLA & Suporte
+                  </div>
+                  O nível do plano define automaticamente o SLA de atendimento e acesso a recursos de suporte prioritário.
+                </div>
+              </div>
+            </div>
+
+            {/* INITIAL ADMIN */}
+            {!isEdit && (
+              <div className="bg-white/5 border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
+                  <Users className="text-pink-400" size={20} /> Primeiro Acesso
+                </h3>
+                <div className="space-y-4 relative z-10">
+                  <Input
+                    label="Nome do Admin"
+                    value={adminName}
+                    onChange={e => setAdminName(e.target.value)}
+                    placeholder="Nome completo"
+                    required
+                    leftIcon={<Users size={16} />}
+                    className="h-11"
+                  />
+                  <Input
+                    label="E-mail de Acesso"
+                    type="email"
+                    value={adminEmail}
+                    onChange={e => setAdminEmail(e.target.value)}
+                    placeholder="admin@instituicao.com"
+                    required
+                    leftIcon={<Mail size={16} />}
+                    className="h-11"
+                  />
+                  <Input
+                    label="Senha Inicial"
+                    type="password"
+                    value={adminPassword}
+                    onChange={e => setAdminPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    leftIcon={<Lock size={16} />}
+                    className="h-11"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* LEGAL INFO (Collapsed style for sidebar) */}
+            <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <FileText className="text-yellow-400" size={20} /> Legal (LGPD)
+              </h3>
+              <div className="space-y-4">
+                <Textarea
+                  label="Termos de Uso"
+                  rows={3}
+                  value={termsOfUse}
+                  onChange={e => setTermsOfUse(e.target.value)}
+                  placeholder="Cole os termos aqui..."
+                  className="text-xs bg-black/20 border-white/10 min-h-[80px]"
+                />
+                <Textarea
+                  label="Política de Privacidade"
+                  rows={3}
+                  value={privacyPolicy}
+                  onChange={e => setPrivacyPolicy(e.target.value)}
+                  placeholder="Cole a política aqui..."
+                  className="text-xs bg-black/20 border-white/10 min-h-[80px]"
                 />
               </div>
             </div>
-          </>
-        )}
 
-        <div className="mt-8 pt-8 border-t border-white/10">
-          <Button
-            type="submit"
-            className="w-full md:w-auto min-w-[200px]"
-            leftIcon={<Save size={18} />}
-          >
-            {t("common.save")}
-          </Button>
+          </div>
+        </div>
+
+        {/* ACTION BAR */}
+        <div className="fixed bottom-6 left-0 right-0 z-50 pointer-events-none px-4">
+          <div className="max-w-4xl mx-auto bg-[#0f172a] border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center justify-between shadow-2xl pointer-events-auto transform translate-y-0 transition-transform">
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={() => navigate('/master/tenants')}
+              className="text-slate-400 hover:text-white px-4 h-12"
+            >
+              Cancelar
+            </Button>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:block text-right pr-4 border-r border-white/10 mr-1">
+                <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Status</div>
+                <div className="text-xs font-bold text-emerald-400">Pronto para salvar</div>
+              </div>
+              <Button
+                type="submit"
+                disabled={saving}
+                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
+                leftIcon={saving ? undefined : <Save size={18} />}
+                rightIcon={!saving ? <ChevronRight size={18} className="opacity-50" /> : undefined}
+              >
+                {saving ? 'Salvando...' : 'Salvar Instituição'}
+              </Button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
