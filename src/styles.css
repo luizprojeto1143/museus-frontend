@@ -759,6 +759,8 @@ textarea {
   /* Ensure content doesn't overflow during transition */
   position: relative;
   /* For toggle button positioning */
+  min-width: 0;
+  /* CRITICAL: Allow shrinking below content width */
 }
 
 .layout-sidebar.collapsed {
@@ -767,17 +769,24 @@ textarea {
   /* Hide border when fully collapsed */
   overflow: visible;
   /* Allow button to float outside */
+  padding: 0 !important;
+  flex-basis: 0;
 }
 
 .layout-sidebar.collapsed .app-title,
 .layout-sidebar.collapsed .app-subtitle,
 .layout-sidebar.collapsed .app-brand,
 .layout-sidebar.collapsed .sidebar-content,
-.layout-sidebar.collapsed .sidebar-footer {
-  /* Ensure all internal content is hidden */
+.layout-sidebar.collapsed .sidebar-footer,
+.layout-sidebar.collapsed .sidebar-header {
+  /* Hide all internal content */
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.2s;
+  padding: 0 !important;
+  /* Remove padding to avoid width */
+  margin: 0 !important;
+  width: 0 !important;
 }
 
 .sidebar-header {
@@ -789,6 +798,7 @@ textarea {
   overflow: hidden;
   white-space: nowrap;
   position: relative;
+  transition: padding 0.3s;
 }
 
 .sidebar-content {
@@ -799,6 +809,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  transition: padding 0.3s;
 }
 
 .sidebar-footer {
@@ -809,6 +820,7 @@ textarea {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  transition: padding 0.3s;
 }
 
 .nav-item {
