@@ -1339,7 +1339,7 @@ textarea {
 /* =========================================
    CITY MODE OVERRIDES (SECRETARIA)
    ========================================= */
-.city-mode .layout-sidebar {
+.layout-wrapper.city-mode .layout-sidebar {
   background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -1380,4 +1380,26 @@ textarea {
 .city-mode .menu-toggle {
   color: #38bdf8;
   /* Sky Blue */
+}
+
+/* City Mode Layout Fixes - Final Override */
+.layout-wrapper.city-mode {
+  background-color: #f8fafc !important;
+  background: #f8fafc !important;
+}
+
+.layout-wrapper.city-mode .layout-main {
+  background-color: #f8fafc !important;
+  background: #f8fafc !important;
+  min-height: 100vh;
+}
+
+.layout-wrapper.city-mode .layout-content {
+  background: transparent !important;
+}
+
+.layout-wrapper.city-mode .layout-content-inner {
+  max-width: 100% !important;
+  padding: 0;
+  margin: 0 !important;
 }
