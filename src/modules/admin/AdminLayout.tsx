@@ -93,6 +93,13 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
       {/* Sidebar */}
       <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+        <button
+          className="sidebar-collapse-toggle"
+          onClick={() => setCollapsed(!isCollapsed)}
+          title={isCollapsed ? "Expandir" : "Recolher"}
+        >
+          {isCollapsed ? "»" : "«"}
+        </button>
         <div className="sidebar-header">
           <div className="app-brand">
             <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
@@ -101,13 +108,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               <div className="app-subtitle">{isCityMode ? "Gestão Municipal" : t("admin.museums.title")}</div>
             </div>
           </div>
-          <button
-            className="sidebar-collapse-toggle"
-            onClick={() => setCollapsed(!isCollapsed)}
-            title={isCollapsed ? "Expandir" : "Recolher"}
-          >
-            {isCollapsed ? "»" : "«"}
-          </button>
         </div>
 
         <nav className="sidebar-content">

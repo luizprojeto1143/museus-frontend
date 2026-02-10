@@ -31,6 +31,13 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
 
       {/* Sidebar */}
       <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+        <button
+          className="sidebar-collapse-toggle"
+          onClick={() => setCollapsed(!isCollapsed)}
+          title={isCollapsed ? "Expandir" : "Recolher"}
+        >
+          {isCollapsed ? "»" : "«"}
+        </button>
         <div className="sidebar-header">
           <div className="app-brand">
             <span className="app-logo" style={{ borderColor: "#5eead4", color: "#5eead4" }}>MT</span>
@@ -39,13 +46,6 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
               <div className="app-subtitle">Gestão Global</div>
             </div>
           </div>
-          <button
-            className="sidebar-collapse-toggle"
-            onClick={() => setCollapsed(!isCollapsed)}
-            title={isCollapsed ? "Expandir" : "Recolher"}
-          >
-            {isCollapsed ? "»" : "«"}
-          </button>
         </div>
 
         <nav className="sidebar-content">
