@@ -1369,6 +1369,17 @@ textarea {
   /* Remove dark bg to allow layout-main bg to show */
 }
 
+.city-mode .layout-content-inner {
+  max-width: 100% !important;
+  /* Allow full expansion to remove white gaps */
+  padding: 0;
+  margin: 0 !important;
+  /* Remove auto margins */
+}
+
+/* Optional: tight fit */
+}
+
 .city-mode .menu-toggle {
   color: #38bdf8;
   /* Sky Blue */
