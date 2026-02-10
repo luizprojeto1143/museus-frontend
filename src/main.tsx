@@ -6,6 +6,7 @@ import { AuthProvider } from "./modules/auth/AuthContext";
 import { TenantProvider } from "./modules/auth/TenantContext";
 import "./i18n/config";
 import "./styles.css";
+import "leaflet/dist/leaflet.css";
 
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HelmetProvider } from "react-helmet-async";
