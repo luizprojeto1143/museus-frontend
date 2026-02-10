@@ -7,7 +7,7 @@ import { Input, Select, Textarea, Button } from "../../../components/ui";
 import {
   Calendar, MapPin, Ticket,
   ChevronRight, ChevronLeft, CheckCircle, Plus, Trash2, Globe, Video, Save,
-  Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft
+  Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft, Upload
 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
