@@ -779,14 +779,8 @@ textarea {
 .layout-sidebar.collapsed .sidebar-content,
 .layout-sidebar.collapsed .sidebar-footer,
 .layout-sidebar.collapsed .sidebar-header {
-  /* Hide all internal content */
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s;
-  padding: 0 !important;
-  /* Remove padding to avoid width */
-  margin: 0 !important;
-  width: 0 !important;
+  /* Hide all internal content completely */
+  display: none !important;
 }
 
 .sidebar-header {
@@ -976,6 +970,41 @@ textarea {
     left: 0;
     transform: translateX(-100%);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+    width: 280px !important;
+    /* Force width on mobile */
+    border-right: none;
+  }
+
+  /* Reset collapsed state on mobile */
+  .layout-sidebar.collapsed {
+    width: 280px !important;
+    overflow: hidden !important;
+    padding: 0;
+  }
+
+  /* Force content visibility on mobile even if collapsed state is active */
+  .layout-sidebar.collapsed .app-title,
+  .layout-sidebar.collapsed .app-subtitle,
+  .layout-sidebar.collapsed .app-brand,
+  .layout-sidebar.collapsed .sidebar-content,
+  .layout-sidebar.collapsed .sidebar-footer,
+  .layout-sidebar.collapsed .sidebar-header {
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 1.5rem 1rem !important;
+    /* Restore default padding */
+    margin: 0 !important;
+    display: flex !important;
+  }
+
+  .layout-sidebar.collapsed .sidebar-header {
+    padding: 0 1.5rem !important;
+  }
+
+  .layout-sidebar.collapsed .sidebar-footer {
+    padding: 1rem !important;
   }
 
   .layout-sidebar.open {
@@ -988,6 +1017,11 @@ textarea {
 
   .layout-content {
     padding: 1rem;
+  }
+
+  /* Hide toggle button on mobile */
+  .sidebar-collapse-toggle {
+    display: none !important;
   }
 }
 
