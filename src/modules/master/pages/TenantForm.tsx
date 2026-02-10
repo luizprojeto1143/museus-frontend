@@ -111,9 +111,15 @@ export const TenantForm: React.FC = () => {
 
   // Load cities for parent selector
   useEffect(() => {
-    api.get("/tenants/public")
+    // Use authenticated endpoint to ensure we see all tenants (avoiding rate limits or public-only filters)
+    api.get("/tenants")
       .then(res => {
-        const cityTenants = res.data.filter((t: any) => t.type === "CITY" || t.type === "SECRETARIA");
+        // Filter for tenants that can be parents (CITY, SECRETARIA or isCityMode)
+        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((t: any) =>
+          t.type === "CITY" ||
+          t.type === "SECRETARIA" ||
+          t.isCityMode === true
+        );
         setCities(cityTenants);
       })
       .catch(console.error);
