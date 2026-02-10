@@ -149,6 +149,12 @@ import { ProducerEventForm } from "./modules/producer/ProducerEventForm"; // NEW
 import { ProducerProjectForm } from "./modules/producer/ProducerProjectForm"; // NEW
 import { ProducerServices } from "./modules/producer/ProducerServices";
 import { ProducerTickets } from "./modules/producer/ProducerTickets";
+
+// Totem Pages
+import { TotemLayout } from "./modules/totem/TotemLayout";
+import { TotemDashboard } from "./modules/totem/pages/TotemDashboard";
+import { TotemValidator } from "./modules/totem/pages/TotemValidator";
+
 import { ProducerAudience } from "./modules/producer/ProducerAudience";
 import { ProducerReports } from "./modules/producer/ProducerReports";
 import { ProducerNotices } from "./modules/producer/ProducerNotices"; // NEW
@@ -486,6 +492,21 @@ const App: React.FC = () => {
                       </RequireRole>
                     }
                   />
+
+                  {/* TOTEM / KIOSK MODE */}
+                  <Route
+                    path="/totem"
+                    element={
+                      <RequireRole allowed={["admin", "master"]}>
+                        <TotemLayout />
+                      </RequireRole>
+                    }
+                  >
+                    <Route index element={<TotemDashboard />} />
+                    <Route path="validar" element={<TotemValidator />} />
+                    <Route path="eventos" element={<div style={{ color: 'white', padding: '2rem' }}>Em breve: Lista de Eventos</div>} />
+                    <Route path="busca" element={<div style={{ color: 'white', padding: '2rem' }}>Em breve: Busca Manual</div>} />
+                  </Route>
 
                   {/* ADMIN */}
                   <Route

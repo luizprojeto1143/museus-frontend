@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { useToast } from "../../../contexts/ToastContext";
 
 type Project = {
     id: string;
@@ -26,6 +27,7 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 
 export const AdminProjects: React.FC = () => {
     const { tenantId } = useAuth();
+    const { addToast } = useToast();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("");
@@ -41,9 +43,10 @@ export const AdminProjects: React.FC = () => {
             .catch(err => {
                 console.error("Erro ao carregar projetos", err);
                 setProjects([]);
+                addToast("Erro ao carregar projetos", "error");
             })
             .finally(() => setLoading(false));
-    }, [tenantId, filter]);
+    }, [tenantId, filter, addToast]);
 
     const formatCurrency = (value?: number) => {
         if (!value) return "-";
@@ -118,9 +121,10 @@ export const AdminProjects: React.FC = () => {
                                                     try {
                                                         await api.delete(`/projects/${project.id}`);
                                                         setProjects(projects.filter(p => p.id !== project.id));
+                                                        addToast("Projeto excluído com sucesso", "success");
                                                     } catch (err) {
                                                         console.error("Erro ao excluir", err);
-                                                        alert("Erro ao excluir projeto");
+                                                        addToast("Erro ao excluir projeto", "error");
                                                     }
                                                 }
                                             }}

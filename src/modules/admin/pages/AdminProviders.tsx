@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { useToast } from "../../../contexts/ToastContext";
 
 type Provider = {
     id: string;
@@ -27,6 +28,7 @@ const serviceLabels: Record<string, string> = {
 
 export const AdminProviders: React.FC = () => {
     const { tenantId } = useAuth();
+    const { addToast } = useToast();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -38,9 +40,10 @@ export const AdminProviders: React.FC = () => {
             .catch(err => {
                 console.error("Erro ao carregar prestadores", err);
                 setProviders([]);
+                addToast("Erro ao carregar prestadores", "error");
             })
             .finally(() => setLoading(false));
-    }, [tenantId]);
+    }, [tenantId, addToast]);
 
     return (
         <div>
@@ -126,9 +129,10 @@ export const AdminProviders: React.FC = () => {
                                                 try {
                                                     await api.delete(`/providers/${provider.id}`);
                                                     setProviders(providers.filter(p => p.id !== provider.id));
+                                                    addToast("Prestador excluído com sucesso", "success");
                                                 } catch (err) {
                                                     console.error("Erro ao excluir", err);
-                                                    alert("Erro ao excluir prestador");
+                                                    addToast("Erro ao excluir prestador", "error");
                                                 }
                                             }
                                         }}

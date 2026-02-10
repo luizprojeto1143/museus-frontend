@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { useToast } from "../../../contexts/ToastContext";
 
 type Notice = {
     id: string;
@@ -25,6 +26,7 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 
 export const AdminNotices: React.FC = () => {
     const { tenantId } = useAuth();
+    const { addToast } = useToast();
     const [notices, setNotices] = useState<Notice[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -36,9 +38,10 @@ export const AdminNotices: React.FC = () => {
             .catch(err => {
                 console.error("Erro ao carregar editais", err);
                 setNotices([]);
+                addToast("Erro ao carregar editais", "error");
             })
             .finally(() => setLoading(false));
-    }, [tenantId]);
+    }, [tenantId, addToast]);
 
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString("pt-BR");
@@ -113,9 +116,10 @@ export const AdminNotices: React.FC = () => {
                                                     try {
                                                         await api.delete(`/notices/${notice.id}`);
                                                         setNotices(notices.filter(n => n.id !== notice.id));
+                                                        addToast("Edital excluído com sucesso", "success");
                                                     } catch (err) {
                                                         console.error("Erro ao excluir", err);
-                                                        alert("Erro ao excluir edital");
+                                                        addToast("Erro ao excluir edital", "error");
                                                     }
                                                 }
                                             }}
