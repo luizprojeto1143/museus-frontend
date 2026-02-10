@@ -1336,21 +1336,17 @@ textarea {
   color: var(--accent-gold);
 }
 
-/* =========================================
-   CITY MODE OVERRIDES (SECRETARIA)
-   ========================================= */
 .layout-wrapper.city-mode .layout-sidebar {
-  background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, #1a1108 0%, #0f0a06 100%);
+  /* Premium Dark Brown */
+  border-right: 1px solid var(--border-subtle);
 }
 
 .city-mode .nav-item.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-right: 4px solid #38bdf8;
-  /* Sky Blue accent */
-  border-left: none;
-  /* Override default gold */
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
+  color: var(--accent-gold);
+  border-left: 4px solid var(--accent-gold);
+  border-right: none;
 }
 
 .city-mode .nav-item:hover:not(.active) {
@@ -1378,19 +1374,20 @@ textarea {
 }
 
 .city-mode .menu-toggle {
-  color: #38bdf8;
+  color: var(--accent-gold);
   /* Sky Blue */
 }
 
-/* City Mode Layout Fixes - Final Override */
+/* City Mode Layout Fixes - Final Override (Premium Dark Theme) */
 .layout-wrapper.city-mode {
-  background-color: #f8fafc !important;
-  background: #f8fafc !important;
+  background-color: var(--bg-page) !important;
+  background: var(--bg-page) !important;
+  color: var(--fg-main);
 }
 
 .layout-wrapper.city-mode .layout-main {
-  background-color: #f8fafc !important;
-  background: #f8fafc !important;
+  background-color: var(--bg-page) !important;
+  background: var(--bg-page) !important;
   min-height: 100vh;
 }
 
