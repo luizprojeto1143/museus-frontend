@@ -830,6 +830,8 @@ textarea {
 .layout-sidebar.collapsed .nav-item span:first-child {
   margin-right: 0;
   font-size: 1.4rem;
+  flex-shrink: 0;
+  /* Prevent icon squashing */
 }
 
 .layout-sidebar.collapsed .nav-item span:not(:first-child) {
@@ -843,9 +845,26 @@ textarea {
   border-radius: 50%;
 }
 
-.layout-sidebar.collapsed .sidebar-footer .btn span {
+.layout-sidebar.collapsed .sidebar-footer .btn span:first-child {
+  /* Show icon */
+  display: inline-block;
+  margin-right: 0;
+  font-size: 1.4rem;
+}
+
+.layout-sidebar.collapsed .sidebar-footer .btn span:not(:first-child) {
+  /* Hide text */
   display: none;
-  /* Hide text in buttons if any */
+}
+
+.layout-sidebar.collapsed .sidebar-lang-switcher {
+  display: none;
+}
+
+/* City Mode Layout Fixes */
+.city-mode .layout-main {
+  background-color: #f8fafc;
+  /* Match secretary dashboard bg to fix black gap */
 }
 
 .nav-item:hover,

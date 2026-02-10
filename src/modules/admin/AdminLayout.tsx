@@ -127,15 +127,15 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
         <div className="sidebar-footer">
           <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
-            <LanguageSwitcher style={{ position: "static" }} />
+            <LanguageSwitcher style={{ position: "static" }} className="sidebar-lang-switcher" />
           </div>
           <button
             onClick={logout}
             className="btn btn-secondary"
             style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444" }}
           >
+            <span style={{ fontSize: "1.2rem" }}>🚪</span>
             <span>{t("admin.sidebar.logout")}</span>
-            <span style={{ display: isCollapsed ? "block" : "none" }}>🚪</span>
           </button>
         </div>
       </aside>

@@ -69,8 +69,8 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
             className="btn btn-secondary"
             style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444" }}
           >
+            <span style={{ fontSize: "1.2rem" }}>🚪</span>
             <span>Sair</span>
-            <span style={{ display: isCollapsed ? "block" : "none" }}>🚪</span>
           </button>
         </div>
       </aside>
