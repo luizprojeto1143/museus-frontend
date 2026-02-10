@@ -283,11 +283,12 @@ export const AdminWorkForm: React.FC = () => {
                     label="Categoria"
                     value={category}
                     onChange={e => setCategory(e.target.value)}
-                    options={[
-                      { value: "", label: "Selecione uma categoria..." },
-                      ...categories.map(c => ({ value: c.id, label: c.name }))
-                    ]}
-                  />
+                  >
+                    <option value="">Selecione uma categoria...</option>
+                    {categories.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </Select>
                   <Input
                     label="Ano de Criação"
                     value={year}

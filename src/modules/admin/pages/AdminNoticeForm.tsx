@@ -69,33 +69,44 @@ export const AdminNoticeForm: React.FC = () => {
 
     const [newRegion, setNewRegion] = useState("");
 
+    const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+
     useEffect(() => {
-        if (id && tenantId) {
+        if (tenantId) {
             setLoading(true);
-            api.get(`/notices/${id}`)
-                .then(res => {
-                    const data = res.data;
-                    setFormData({
-                        title: data.title || "",
-                        description: data.description || "",
-                        inscriptionStart: data.inscriptionStart ? data.inscriptionStart.split("T")[0] : "",
-                        inscriptionEnd: data.inscriptionEnd ? data.inscriptionEnd.split("T")[0] : "",
-                        resultsDate: data.resultsDate ? data.resultsDate.split("T")[0] : "",
-                        executionEnd: data.executionEnd ? data.executionEnd.split("T")[0] : "",
-                        totalBudget: data.totalBudget?.toString() || "",
-                        maxPerProject: data.maxPerProject?.toString() || "",
-                        culturalCategories: data.culturalCategories || [],
-                        targetRegions: data.targetRegions || [],
-                        status: data.status || "DRAFT",
-                        documentUrl: data.documentUrl || "",
-                        requiresAccessibilityPlan: data.requiresAccessibilityPlan ?? true
-                    });
-                })
-                .catch(err => {
-                    console.error(err);
-                    addToast("Erro ao carregar edital", "error");
-                })
-                .finally(() => setLoading(false));
+            // Fetch Categories
+            api.get(`/categories?tenantId=${tenantId}`)
+                .then(res => setCategories(res.data))
+                .catch(console.error);
+
+            if (id) {
+                api.get(`/notices/${id}`)
+                    .then(res => {
+                        const data = res.data;
+                        setFormData({
+                            title: data.title || "",
+                            description: data.description || "",
+                            inscriptionStart: data.inscriptionStart ? data.inscriptionStart.split("T")[0] : "",
+                            inscriptionEnd: data.inscriptionEnd ? data.inscriptionEnd.split("T")[0] : "",
+                            resultsDate: data.resultsDate ? data.resultsDate.split("T")[0] : "",
+                            executionEnd: data.executionEnd ? data.executionEnd.split("T")[0] : "",
+                            totalBudget: data.totalBudget?.toString() || "",
+                            maxPerProject: data.maxPerProject?.toString() || "",
+                            culturalCategories: data.culturalCategories || [],
+                            targetRegions: data.targetRegions || [],
+                            status: data.status || "DRAFT",
+                            documentUrl: data.documentUrl || "",
+                            requiresAccessibilityPlan: data.requiresAccessibilityPlan ?? true
+                        });
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        addToast("Erro ao carregar edital", "error");
+                    })
+                    .finally(() => setLoading(false));
+            } else {
+                setLoading(false);
+            }
         }
     }, [id, tenantId]);
 
@@ -297,8 +308,11 @@ export const AdminNoticeForm: React.FC = () => {
                                         label="Status Inicial"
                                         value={formData.status}
                                         onChange={e => setFormData({ ...formData, status: e.target.value })}
-                                        options={STATUS_OPTIONS}
-                                    />
+                                    >
+                                        {STATUS_OPTIONS.map(opt => (
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        ))}
+                                    </Select>
 
                                     <div style={{ gridColumn: 'span 2' }}>
                                         <Input
@@ -401,16 +415,17 @@ export const AdminNoticeForm: React.FC = () => {
                                         <Tag size={16} /> Categorias Culturais
                                     </label>
                                     <div className="flex-wrap gap-2">
-                                        {CULTURAL_CATEGORIES.map(cat => {
-                                            const isSelected = formData.culturalCategories.includes(cat);
+                                        {(categories.length > 0 ? categories : CULTURAL_CATEGORIES.map(c => ({ name: c }))).map((cat: any) => {
+                                            const catName = cat.name || cat;
+                                            const isSelected = formData.culturalCategories.includes(catName);
                                             return (
                                                 <button
-                                                    key={cat}
+                                                    key={cat.id || cat}
                                                     type="button"
-                                                    onClick={() => toggleCategory(cat)}
+                                                    onClick={() => toggleCategory(catName)}
                                                     className={`category-btn ${isSelected ? 'selected' : ''}`}
                                                 >
-                                                    {cat}
+                                                    {catName}
                                                 </button>
                                             );
                                         })}

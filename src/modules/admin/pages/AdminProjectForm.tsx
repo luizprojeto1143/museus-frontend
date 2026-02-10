@@ -75,10 +75,18 @@ export const AdminProjectForm: React.FC = () => {
         }
     });
 
+    const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+
     useEffect(() => {
         if (tenantId) {
+            // Fetch Notices
             api.get(`/notices?tenantId=${tenantId}`)
                 .then(res => setNotices(Array.isArray(res.data) ? res.data : []))
+                .catch(console.error);
+
+            // Fetch Categories (Dynamic)
+            api.get(`/categories?tenantId=${tenantId}`)
+                .then(res => setCategories(res.data))
                 .catch(console.error);
         }
 
@@ -224,7 +232,11 @@ export const AdminProjectForm: React.FC = () => {
                                     onChange={e => setFormData({ ...formData, culturalCategory: e.target.value })}
                                 >
                                     <option value="">Selecione...</option>
-                                    {CULTURAL_CATEGORIES.map(cat => (
+                                    {categories.map(cat => (
+                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                    ))}
+                                    {/* Fallback for hardcoded if needed, or remove */}
+                                    {categories.length === 0 && CULTURAL_CATEGORIES.map(cat => (
                                         <option key={cat} value={cat}>{cat}</option>
                                     ))}
                                 </Select>
