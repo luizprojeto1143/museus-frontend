@@ -361,24 +361,44 @@ export const AdminEventForm: React.FC = () => {
                 <div className="admin-grid-2">
                   <div
                     onClick={() => setFormData({ ...formData, format: "PRESENTIAL" })}
-                    className={`p-4 rounded-xl border cursor-pointer transition-all ${formData.format === 'PRESENTIAL' ? 'bg-blue-600/20 border-blue-500' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
+                    className={`relative p-4 rounded-xl border cursor-pointer transition-all group ${formData.format === 'PRESENTIAL'
+                      ? 'bg-blue-600/20 border-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.15)]'
+                      : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
+                      }`}
                   >
-                    <div className="flex items-center gap-3 mb-2">
-                      <MapPin className={formData.format === 'PRESENTIAL' ? 'text-blue-400' : 'text-slate-400'} />
-                      <span className="font-bold text-white">Presencial</span>
+                    <div className="absolute top-4 right-4 text-blue-400">
+                      {formData.format === 'PRESENTIAL' ? <CheckCircle className="fill-blue-500/20" /> : <Circle className="text-slate-600 group-hover:text-slate-400" />}
                     </div>
-                    <p className="text-xs text-slate-400">Em um local físico</p>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`p-2 rounded-lg ${formData.format === 'PRESENTIAL' ? 'bg-blue-500/20 text-blue-400' : 'bg-white/5 text-slate-400'}`}>
+                        <MapPin size={24} />
+                      </div>
+                      <div>
+                        <span className={`block font-bold text-lg ${formData.format === 'PRESENTIAL' ? 'text-white' : 'text-slate-300'}`}>Presencial</span>
+                        <p className="text-xs text-slate-400">Em um local físico</p>
+                      </div>
+                    </div>
                   </div>
 
                   <div
                     onClick={() => setFormData({ ...formData, format: "ONLINE" })}
-                    className={`p-4 rounded-xl border cursor-pointer transition-all ${formData.format === 'ONLINE' ? 'bg-purple-600/20 border-purple-500' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
+                    className={`relative p-4 rounded-xl border cursor-pointer transition-all group ${formData.format === 'ONLINE'
+                      ? 'bg-purple-600/20 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.15)]'
+                      : 'bg-white/5 border-white/5 hover:bg-white/10 hover:border-white/20'
+                      }`}
                   >
-                    <div className="flex items-center gap-3 mb-2">
-                      <Monitor className={formData.format === 'ONLINE' ? 'text-purple-400' : 'text-slate-400'} />
-                      <span className="font-bold text-white">Online</span>
+                    <div className="absolute top-4 right-4 text-purple-400">
+                      {formData.format === 'ONLINE' ? <CheckCircle className="fill-purple-500/20" /> : <Circle className="text-slate-600 group-hover:text-slate-400" />}
                     </div>
-                    <p className="text-xs text-slate-400">Transmissão remota</p>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`p-2 rounded-lg ${formData.format === 'ONLINE' ? 'bg-purple-500/20 text-purple-400' : 'bg-white/5 text-slate-400'}`}>
+                        <Monitor size={24} />
+                      </div>
+                      <div>
+                        <span className={`block font-bold text-lg ${formData.format === 'ONLINE' ? 'text-white' : 'text-slate-300'}`}>Online</span>
+                        <p className="text-xs text-slate-400">Transmissão remota</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
