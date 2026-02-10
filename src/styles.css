@@ -747,7 +747,7 @@ textarea {
 
 /* SIDEBAR */
 .layout-sidebar {
-  width: 300px;
+  width: 320px;
   background: linear-gradient(180deg, #1a1108 0%, #2a1810 100%);
   border-right: 1px solid var(--border-subtle);
   display: flex;
@@ -757,10 +757,15 @@ textarea {
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   /* Ensure content doesn't overflow during transition */
-  position: relative;
   /* For toggle button positioning */
   min-width: 0;
   /* CRITICAL: Allow shrinking below content width */
+}
+
+.layout-sidebar .app-title {
+  font-size: 1.1rem;
+  /* Slightly smaller for sidebar to prevent truncation */
+  line-height: 1.2;
 }
 
 .layout-sidebar.collapsed {
@@ -971,14 +976,14 @@ textarea {
     left: 0;
     transform: translateX(-100%);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
-    width: 300px !important;
+    width: 320px !important;
     /* Force width on mobile */
     border-right: none;
   }
 
   /* Reset collapsed state on mobile */
   .layout-sidebar.collapsed {
-    width: 300px !important;
+    width: 320px !important;
     overflow: hidden !important;
     padding: 0;
   }
