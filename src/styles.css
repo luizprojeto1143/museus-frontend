@@ -251,6 +251,11 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  flex: 1;
+  /* Allow taking available space */
+  min-width: 0;
+  /* Crucial for text truncation in flex items */
+  overflow: hidden;
 }
 
 .app-logo {
@@ -266,6 +271,7 @@ a:hover {
   color: var(--bg-page);
   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.5);
   border: 2px solid var(--accent-gold);
+  flex-shrink: 0;
 }
 
 .app-title {
@@ -274,6 +280,9 @@ a:hover {
   letter-spacing: 0.08em;
   color: var(--accent-gold);
   text-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-subtitle {
@@ -281,6 +290,9 @@ a:hover {
   letter-spacing: 0.12em;
   color: var(--fg-soft);
   font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* VISITOR SIDEBAR */
@@ -860,7 +872,11 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
+  margin-left: 0.5rem;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-subtle);
 }
 
 .sidebar-collapse-toggle:hover {
