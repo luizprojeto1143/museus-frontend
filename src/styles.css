@@ -747,7 +747,7 @@ textarea {
 
 /* SIDEBAR */
 .layout-sidebar {
-  width: 280px;
+  width: 300px;
   background: linear-gradient(180deg, #1a1108 0%, #2a1810 100%);
   border-right: 1px solid var(--border-subtle);
   display: flex;
@@ -833,15 +833,16 @@ textarea {
 }
 
 /* City Mode Layout Fixes */
-/* City Mode Layout Fixes */
 .city-mode .layout-wrapper {
-  background-color: #f8fafc;
-  /* Ensure wrapper is also light */
+  background-color: #f8fafc !important;
+  /* Force light background on wrapper */
+  background: #f8fafc !important;
 }
 
 .city-mode .layout-main {
-  background-color: #f8fafc;
-  /* Match secretary dashboard bg to fix black gap */
+  background-color: #f8fafc !important;
+  /* Force light background on main area */
+  background: #f8fafc !important;
   min-height: 100vh;
 }
 
@@ -970,14 +971,14 @@ textarea {
     left: 0;
     transform: translateX(-100%);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
-    width: 280px !important;
+    width: 300px !important;
     /* Force width on mobile */
     border-right: none;
   }
 
   /* Reset collapsed state on mobile */
   .layout-sidebar.collapsed {
-    width: 280px !important;
+    width: 300px !important;
     overflow: hidden !important;
     padding: 0;
   }
@@ -1359,7 +1360,7 @@ textarea {
 }
 
 .city-mode .layout-content {
-  background: transparent;
+  background: transparent !important;
   /* Remove dark bg to allow layout-main bg to show */
 }
 
