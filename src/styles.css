@@ -862,9 +862,16 @@ textarea {
 }
 
 /* City Mode Layout Fixes */
+/* City Mode Layout Fixes */
+.city-mode .layout-wrapper {
+  background-color: #f8fafc;
+  /* Ensure wrapper is also light */
+}
+
 .city-mode .layout-main {
   background-color: #f8fafc;
   /* Match secretary dashboard bg to fix black gap */
+  min-height: 100vh;
 }
 
 .nav-item:hover,
@@ -1317,9 +1324,8 @@ textarea {
 }
 
 .city-mode .layout-content {
-  background: #020617;
-  /* Slate 950 */
-  background-image: radial-gradient(circle at 50% 0%, #1e3a8a 0%, transparent 40%);
+  background: transparent;
+  /* Remove dark bg to allow layout-main bg to show */
 }
 
 .city-mode .menu-toggle {
