@@ -5,6 +5,7 @@ import { useAuth } from "../auth/AuthContext";
 export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { logout } = useAuth();
   const location = useLocation();
+  const [isCollapsed, setCollapsed] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const links = [
@@ -29,7 +30,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
       />
 
       {/* Sidebar */}
-      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""}`}>
+      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <div className="sidebar-header">
           <div className="app-brand">
             <span className="app-logo" style={{ borderColor: "#5eead4", color: "#5eead4" }}>MT</span>
@@ -38,6 +39,13 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
               <div className="app-subtitle">Gestão Global</div>
             </div>
           </div>
+          <button
+            className="sidebar-collapse-toggle"
+            onClick={() => setCollapsed(!isCollapsed)}
+            title={isCollapsed ? "Expandir" : "Recolher"}
+          >
+            {isCollapsed ? "»" : "«"}
+          </button>
         </div>
 
         <nav className="sidebar-content">
@@ -47,9 +55,10 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
               to={link.to}
               className={`nav-item ${location.pathname === link.to ? "active" : ""}`}
               onClick={() => setSidebarOpen(false)}
+              title={isCollapsed ? link.label : ""}
             >
               <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>
-              {link.label}
+              <span>{link.label}</span>
             </Link>
           ))}
         </nav>
@@ -60,7 +69,8 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
             className="btn btn-secondary"
             style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444" }}
           >
-            Sair
+            <span>Sair</span>
+            <span style={{ display: isCollapsed ? "block" : "none" }}>🚪</span>
           </button>
         </div>
       </aside>

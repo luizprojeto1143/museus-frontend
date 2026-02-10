@@ -34,6 +34,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const { logout, name, tenantId } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
+  const [isCollapsed, setCollapsed] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [features, setFeatures] = useState<TenantFeatures | null>(null);
 
@@ -91,7 +92,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       />
 
       {/* Sidebar */}
-      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""}`}>
+      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <div className="sidebar-header">
           <div className="app-brand">
             <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
@@ -100,6 +101,13 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               <div className="app-subtitle">{isCityMode ? "Gestão Municipal" : t("admin.museums.title")}</div>
             </div>
           </div>
+          <button
+            className="sidebar-collapse-toggle"
+            onClick={() => setCollapsed(!isCollapsed)}
+            title={isCollapsed ? "Expandir" : "Recolher"}
+          >
+            {isCollapsed ? "»" : "«"}
+          </button>
         </div>
 
         <nav className="sidebar-content">
@@ -109,9 +117,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               to={link.to}
               className={`nav-item ${location.pathname === link.to ? "active" : ""}`}
               onClick={() => setSidebarOpen(false)}
+              title={isCollapsed ? link.label : ""}
             >
               <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>
-              {link.label}
+              <span>{link.label}</span>
             </Link>
           ))}
         </nav>
@@ -125,7 +134,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             className="btn btn-secondary"
             style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444" }}
           >
-            {t("admin.sidebar.logout")}
+            <span>{t("admin.sidebar.logout")}</span>
+            <span style={{ display: isCollapsed ? "block" : "none" }}>🚪</span>
           </button>
         </div>
       </aside>
