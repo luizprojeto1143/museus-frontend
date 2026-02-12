@@ -645,7 +645,7 @@ export const ProductGrid: React.FC = () => {
 
     const fetchProducts = useCallback(async () => {
         try {
-            const res = await api.get(\`/shop/products?tenantId=\${tenantId}\`);
+            const res = await api.get(`/shop/products?tenantId=${tenantId}`);
             setProducts(res.data);
         } catch (error) {
             console.error('Error fetching products:', error);
