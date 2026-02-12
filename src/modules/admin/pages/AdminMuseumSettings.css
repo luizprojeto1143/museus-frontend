@@ -1,0 +1,135 @@
+.visitor-theme-container {
+    font-family: 'Georgia', serif;
+    color: #EAE0D5;
+    background-color: #0f0a05;
+    min-height: 100vh;
+    padding-bottom: 6rem;
+}
+
+.visitor-theme-title {
+    font-size: 2rem;
+    color: #d4af37;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.visitor-theme-subtitle {
+    color: #c9b58c;
+    font-size: 0.95rem;
+    margin: 0.25rem 0 2rem 0;
+    opacity: 0.8;
+}
+
+.visitor-card {
+    position: relative;
+    background: linear-gradient(135deg, #2c1e10 0%, #1a1108 100%);
+    border: 1px solid #463420;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(212, 175, 55, 0.1);
+}
+
+.visitor-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    padding-bottom: 1rem;
+}
+
+.visitor-card-title {
+    font-size: 1.25rem;
+    color: #d4af37;
+    margin: 0;
+}
+
+.visitor-input-group label {
+    display: block;
+    color: #c9b58c;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.visitor-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #463420;
+    color: #EAE0D5;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.visitor-input:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* Override AdminShared styles for this page */
+.admin-wizard-footer {
+    background: #1a1108 !important;
+    border-top: 1px solid #463420 !important;
+}
+
+.btn-primary-gold {
+    background: #d4af37;
+    color: #0f0a05;
+    font-weight: bold;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary-gold:hover {
+    background: #b5952f;
+    transform: translateY(-1px);
+}
+
+.btn-ghost-gold {
+    background: transparent;
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.btn-ghost-gold:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #d4af37;
+}
+
+.upload-area {
+    border: 2px dashed #463420;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.upload-area:hover {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.floor-plan-item {
+    background: rgba(44, 30, 16, 0.4);
+    border: 1px solid #463420;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.floor-plan-image {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.25rem;
+    background: #000;
+    object-fit: cover;
+}
