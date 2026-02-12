@@ -450,67 +450,71 @@ export const AdminMuseumSettings: React.FC = () => {
           </div>
 
           {/* PREVIEW */}
-          <div
-            className="rounded-3xl p-6 relative overflow-hidden shadow-2xl transition-all duration-300 border border-[#463420]"
-            style={{
-              backgroundColor: settings.theme === 'dark' ? '#121212' : '#ffffff',
-              color: settings.theme === 'dark' ? '#ffffff' : '#121212',
-              fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
-            }}
-          >
-            <div className="absolute top-0 left-0 right-0 h-32 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
-            <div className="relative z-10 text-center">
-              <img src={settings.logoUrl || "https://via.placeholder.com/100"} className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
-              <h3 className="text-xl font-bold mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Nome"}</h3>
-              <p className="text-xs opacity-70 mb-6 line-clamp-3">{settings.mission || "Missão..."}</p>
-              <div className="w-full py-3 rounded-xl font-bold text-sm shadow-lg mb-4 opacity-90" style={{ background: settings.primaryColor, color: '#000' }}>Ingressos</div>
+          <div>
+            <div className="visitor-card-header mb-4 border-none p-0">
+              <h2 className="visitor-card-title">Prévia do App</h2>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ACTION BAR */}
-      <div className="admin-wizard-footer">
-        <div className="admin-wizard-footer-inner justify-end">
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-[#c9b58c] font-medium">
-              Alterações não salvas
-            </span>
-            <Button
-              onClick={handleSave}
-              isLoading={saving}
-              className="btn-primary-gold px-8 py-3 rounded-xl"
-              leftIcon={<Save size={18} />}
+            <div
+              className="rounded-3xl p-6 relative overflow-hidden shadow-2xl transition-all duration-300 border border-[#463420]"
+              style={{
+                backgroundColor: (settings.theme || 'dark') === 'dark' ? '#121212' : '#ffffff',
+                color: (settings.theme || 'dark') === 'dark' ? '#ffffff' : '#121212',
+                fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
+              }}
             >
-              Salvar (Estilo Visitante)
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {showFloorPlanModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm" style={{ fontFamily: 'serif' }}>
-          <div className="visitor-card w-full max-w-md bg-[#1a1108] m-0">
-            <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
-            <div className="space-y-4">
-              <input className="visitor-input" placeholder="Nome (Ex: Térreo)" value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
-              <input className="visitor-input" type="number" placeholder="Ordem" value={newFloorPlan.floor} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })} />
-              <div
-                onClick={() => floorPlanInputRef.current?.click()}
-                className="upload-area"
-              >
-                <span className="text-xs text-[#c9b58c]">{newFloorPlan.imageUrl ? "Trocar Imagem" : "Escolher Imagem"}</span>
-                <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
+              <div className="absolute top-0 left-0 right-0 h-32 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
+              <div className="relative z-10 text-center">
+                <img src={settings.logoUrl || "https://via.placeholder.com/100"} className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
+                <h3 className="text-xl font-bold mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Nome"}</h3>
+                <p className="text-xs opacity-70 mb-6 line-clamp-3">{settings.mission || "Missão..."}</p>
+                <div className="w-full py-3 rounded-xl font-bold text-sm shadow-lg mb-4 opacity-90" style={{ background: settings.primaryColor, color: '#000' }}>Ingressos</div>
               </div>
             </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowFloorPlanModal(false)} className="btn-ghost-gold flex-1 py-3 rounded-lg">Cancelar</button>
-              <button onClick={handleSaveFloorPlan} className="btn-primary-gold flex-1 py-3 rounded-lg">Salvar</button>
+          </div>
+        </div>
+
+        {/* ACTION BAR */}
+        <div className="admin-wizard-footer">
+          <div className="admin-wizard-footer-inner justify-end">
+            <div className="flex items-center gap-4">
+              <span className="text-xs text-[#c9b58c] font-medium">
+                Alterações não salvas
+              </span>
+              <Button
+                onClick={handleSave}
+                isLoading={saving}
+                className="btn-primary-gold px-8 py-3 rounded-xl"
+                leftIcon={<Save size={18} />}
+              >
+                Salvar (Estilo Visitante)
+              </Button>
             </div>
           </div>
         </div>
-      )}
 
-    </div>
-  );
+        {showFloorPlanModal && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm" style={{ fontFamily: 'serif' }}>
+            <div className="visitor-card w-full max-w-md bg-[#1a1108] m-0">
+              <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
+              <div className="space-y-4">
+                <input className="visitor-input" placeholder="Nome (Ex: Térreo)" value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
+                <input className="visitor-input" type="number" placeholder="Ordem" value={newFloorPlan.floor} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })} />
+                <div
+                  onClick={() => floorPlanInputRef.current?.click()}
+                  className="upload-area"
+                >
+                  <span className="text-xs text-[#c9b58c]">{newFloorPlan.imageUrl ? "Trocar Imagem" : "Escolher Imagem"}</span>
+                  <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button onClick={() => setShowFloorPlanModal(false)} className="btn-ghost-gold flex-1 py-3 rounded-lg">Cancelar</button>
+                <button onClick={handleSaveFloorPlan} className="btn-primary-gold flex-1 py-3 rounded-lg">Salvar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+      );
 };
