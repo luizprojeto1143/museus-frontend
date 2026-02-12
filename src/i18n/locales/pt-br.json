@@ -1160,5 +1160,16 @@
                 "step2": "Selecione 'Instalar aplicativo'"
             }
         }
+    },
+    "master": {
+        "users": {
+            "table": {
+                "name": "Nome",
+                "email": "E-mail",
+                "role": "Perfil",
+                "tenant": "Instituição",
+                "action": "Ações"
+            }
+        }
     }
 }
