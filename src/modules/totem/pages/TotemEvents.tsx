@@ -19,7 +19,7 @@ export const TotemEvents: React.FC = () => {
         try {
             // Fetch events for today (or all upcoming)
             // Ideally backend supports date filter. Using generic list for now.
-            const res = await api.get(\`/events?tenantId=\${tenantId}\`);
+            const res = await api.get(`/events?tenantId=${tenantId}`);
             setEvents(res.data);
         } catch (error) {
             console.error(error);
@@ -32,7 +32,7 @@ export const TotemEvents: React.FC = () => {
     return (
         <div style={{ padding: "2rem", height: "100%", overflowY: "auto" }}>
             <div style={{ display: "flex", alignItems: "center", marginBottom: "2rem", gap: "1rem" }}>
-                <button 
+                <button
                     onClick={() => navigate('/totem')}
                     style={{
                         background: "rgba(255,255,255,0.1)",
@@ -73,13 +73,13 @@ export const TotemEvents: React.FC = () => {
                                     <span>{new Date(event.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
                             </div>
-                            
-                            <div style={{ 
-                                display: "flex", 
-                                justifyContent: "space-between", 
-                                background: "rgba(0,0,0,0.2)", 
-                                padding: "1rem", 
-                                borderRadius: "8px" 
+
+                            <div style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                background: "rgba(0,0,0,0.2)",
+                                padding: "1rem",
+                                borderRadius: "8px"
                             }}>
                                 <div style={{ textAlign: "center" }}>
                                     <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{event.registrationsCount || 0}</div>
@@ -93,7 +93,7 @@ export const TotemEvents: React.FC = () => {
                             </div>
 
                             <button
-                                onClick={() => navigate(\`/totem/eventos/\${event.id}\`)}
+                                onClick={() => navigate(`/totem/eventos/${event.id}`)}
                                 style={{
                                     width: "100%",
                                     padding: "1rem",
@@ -117,13 +117,13 @@ export const TotemEvents: React.FC = () => {
                     ))}
                 </div>
             )}
-            
+
             <style>{`
-                .event - card: hover {
+                .event-card:hover {
                     transform: translateY(-2px);
-                    border- color: #d4af37;
-            transition: all 0.2s;
-        }
+                    border-color: #d4af37;
+                    transition: all 0.2s;
+                }
             `}</style>
         </div>
     );
