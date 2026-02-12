@@ -197,35 +197,36 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         <tbody>
                             {workRequests.length === 0 ? (
                                 <tr>
-                                    Nenhuma solicitação encontrada.<br />
-                                    <span className="text-xs">Para solicitar, vá em <b>Acervo &gt; Editar Obra &gt; Acessibilidade Master</b>.</span>
-                                </td>
+                                    <td colSpan={5} className="text-center py-8 text-slate-500">
+                                        Nenhuma solicitação encontrada.<br />
+                                        <span className="text-xs">Para solicitar, vá em <b>Acervo &gt; Editar Obra &gt; Acessibilidade Master</b>.</span>
+                                    </td>
                                 </tr>
                             ) : workRequests.map((req: any) => (
-                        <tr key={req.id}>
-                            <td className="font-bold text-white">{req.work?.title || "Obra removida"}</td>
-                            <td>
-                                <span className="text-xs font-mono bg-white/5 px-2 py-1 rounded">
-                                    {req.type === 'BOTH' ? 'LIBRAS + ÁUDIO' : req.type}
-                                </span>
-                            </td>
-                            <td>
-                                <span className={`chip ${req.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400' :
-                                    req.status === 'PENDING' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700'
-                                    }`}>
-                                    {req.status === 'COMPLETED' ? 'CONCLUÍDO' :
-                                        req.status === 'PENDING' ? 'PENDENTE' : req.status}
-                                </span>
-                            </td>
-                            <td>{new Date(req.createdAt).toLocaleDateString("pt-BR")}</td>
-                            <td className="text-sm text-slate-400 max-w-xs truncate">{req.masterNotes || "-"}</td>
-                        </tr>
+                                <tr key={req.id}>
+                                    <td className="font-bold text-white">{req.work?.title || "Obra removida"}</td>
+                                    <td>
+                                        <span className="text-xs font-mono bg-white/5 px-2 py-1 rounded">
+                                            {req.type === 'BOTH' ? 'LIBRAS + ÁUDIO' : req.type}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span className={`chip ${req.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400' :
+                                            req.status === 'PENDING' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700'
+                                            }`}>
+                                            {req.status === 'COMPLETED' ? 'CONCLUÍDO' :
+                                                req.status === 'PENDING' ? 'PENDENTE' : req.status}
+                                        </span>
+                                    </td>
+                                    <td>{new Date(req.createdAt).toLocaleDateString("pt-BR")}</td>
+                                    <td className="text-sm text-slate-400 max-w-xs truncate">{req.masterNotes || "-"}</td>
+                                </tr>
                             ))}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </div>
-    )
-}
+            )
+            }
         </div >
     );
 };
