@@ -232,22 +232,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                 </>
             )}
 
-            interface AccessRequest {
-                id: string;
-            type: string;
-            status: string;
-            notes: string;
-            workId: string;
-            work: {
-                title: string;
-            id: string;
-            description?: string;
-            audioUrl?: string;
-            imageUrl?: string;
-    };
-            tenant: {name: string; slug: string };
-            createdAt: string;
-}
+
 
             // ... (rest of imports and component setup)
 
