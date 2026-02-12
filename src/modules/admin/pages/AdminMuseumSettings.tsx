@@ -472,49 +472,50 @@ export const AdminMuseumSettings: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ACTION BAR */}
-        <div className="admin-wizard-footer">
-          <div className="admin-wizard-footer-inner justify-end">
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-[#c9b58c] font-medium">
-                Alterações não salvas
-              </span>
-              <Button
-                onClick={handleSave}
-                isLoading={saving}
-                className="btn-primary-gold px-8 py-3 rounded-xl"
-                leftIcon={<Save size={18} />}
+      {/* ACTION BAR */}
+      <div className="admin-wizard-footer">
+        <div className="admin-wizard-footer-inner justify-end">
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-[#c9b58c] font-medium">
+              Alterações não salvas
+            </span>
+            <Button
+              onClick={handleSave}
+              isLoading={saving}
+              className="btn-primary-gold px-8 py-3 rounded-xl"
+              leftIcon={<Save size={18} />}
+            >
+              Salvar (Estilo Visitante)
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {showFloorPlanModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm" style={{ fontFamily: 'serif' }}>
+          <div className="visitor-card w-full max-w-md bg-[#1a1108] m-0">
+            <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
+            <div className="space-y-4">
+              <input className="visitor-input" placeholder="Nome (Ex: Térreo)" value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
+              <input className="visitor-input" type="number" placeholder="Ordem" value={newFloorPlan.floor} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })} />
+              <div
+                onClick={() => floorPlanInputRef.current?.click()}
+                className="upload-area"
               >
-                Salvar (Estilo Visitante)
-              </Button>
+                <span className="text-xs text-[#c9b58c]">{newFloorPlan.imageUrl ? "Trocar Imagem" : "Escolher Imagem"}</span>
+                <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button onClick={() => setShowFloorPlanModal(false)} className="btn-ghost-gold flex-1 py-3 rounded-lg">Cancelar</button>
+              <button onClick={handleSaveFloorPlan} className="btn-primary-gold flex-1 py-3 rounded-lg">Salvar</button>
             </div>
           </div>
         </div>
+      )}
 
-        {showFloorPlanModal && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm" style={{ fontFamily: 'serif' }}>
-            <div className="visitor-card w-full max-w-md bg-[#1a1108] m-0">
-              <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
-              <div className="space-y-4">
-                <input className="visitor-input" placeholder="Nome (Ex: Térreo)" value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
-                <input className="visitor-input" type="number" placeholder="Ordem" value={newFloorPlan.floor} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })} />
-                <div
-                  onClick={() => floorPlanInputRef.current?.click()}
-                  className="upload-area"
-                >
-                  <span className="text-xs text-[#c9b58c]">{newFloorPlan.imageUrl ? "Trocar Imagem" : "Escolher Imagem"}</span>
-                  <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
-                </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <button onClick={() => setShowFloorPlanModal(false)} className="btn-ghost-gold flex-1 py-3 rounded-lg">Cancelar</button>
-                <button onClick={handleSaveFloorPlan} className="btn-primary-gold flex-1 py-3 rounded-lg">Salvar</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-      );
+    </div>
+  );
 };
