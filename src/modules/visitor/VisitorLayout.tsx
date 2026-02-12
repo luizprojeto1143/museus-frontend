@@ -73,6 +73,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     featureReviews?: boolean;
     featureGuestbook?: boolean;
     featureAccessibility?: boolean;
+    // Media
+    welcomeVideoUrl?: string;
   } | null>(null);
 
   useEffect(() => {
@@ -121,6 +123,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         <WelcomeAnimation
           name={name}
           email={email}
+          videoUrl={settings?.welcomeVideoUrl}
           onComplete={() => {
             setShowWelcome(false);
             sessionStorage.setItem("hasSeenWelcome", "true");
