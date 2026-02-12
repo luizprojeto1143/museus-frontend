@@ -576,12 +576,11 @@ export const AdminWorkForm: React.FC = () => {
                 label="Tipo de Serviço"
                 value={requestType}
                 onChange={(e) => setRequestType(e.target.value as any)}
-                options={[
-                  { value: "LIBRAS", label: "Apenas Vídeo em Libras" },
-                  { value: "AUDIO_DESC", label: "Apenas Audiodescrição" },
-                  { value: "BOTH", label: "Combo (Libras + Áudio)" }
-                ]}
-              />
+              >
+                <option value="LIBRAS">Apenas Vídeo em Libras</option>
+                <option value="AUDIO_DESC">Apenas Audiodescrição</option>
+                <option value="BOTH">Combo (Libras + Áudio)</option>
+              </Select>
 
               <Textarea
                 label="Observações"
