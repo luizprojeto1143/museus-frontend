@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
-import { useAuth } from "../../../auth/AuthContext";
+import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { Users, CheckCircle, Search, ArrowLeft, Ticket } from "lucide-react";
 import { toast } from "react-hot-toast";
