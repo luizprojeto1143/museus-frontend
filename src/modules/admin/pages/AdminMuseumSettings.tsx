@@ -4,11 +4,14 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Input, Button, Textarea, Select } from "../../../components/ui";
 import {
-  Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
-  Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
-  Plus, Edit, Trash2, Palette, Save
-} from "lucide-react";
+import {
+    Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
+    Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
+    Plus, Edit, Trash2, Palette, Save
+  } from "lucide-react";
+import "./AdminShared.css";
 
+// Interface definitions kept same...
 interface FloorPlan {
   id: string;
   name: string;
@@ -49,7 +52,7 @@ export const AdminMuseumSettings: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
 
-  // Refs for File Inputs
+  // Refs
   const logoInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const iconInputRef = useRef<HTMLInputElement>(null);
@@ -68,7 +71,7 @@ export const AdminMuseumSettings: React.FC = () => {
     coverImageUrl: "",
     appIconUrl: "",
     mapImageUrl: "",
-    latitude: -20.385574, // Default Ouro Preto
+    latitude: -20.385574,
     longitude: -43.503578,
     primaryColor: "#d4af37",
     secondaryColor: "#cd7f32",
@@ -77,10 +80,10 @@ export const AdminMuseumSettings: React.FC = () => {
     welcomeAudioUrl: "",
     welcomeVideoUrl: "",
   });
+
+  // State
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
-  // Floor Plans state
   const [floorPlans, setFloorPlans] = useState<FloorPlan[]>([]);
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [editingFloorPlan, setEditingFloorPlan] = useState<FloorPlan | null>(null);
@@ -203,13 +206,14 @@ export const AdminMuseumSettings: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto pb-20">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="admin-form-container">
+      <div className="admin-wizard-header">
+        <Settings size={32} className="text-gold" />
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
-            <Settings size={28} className="text-gold" /> Configurações do Museu
+          <h1 className="admin-wizard-title">
+            Configurações do Museu
           </h1>
-          <p className="text-slate-400 mt-1">
+          <p className="admin-wizard-subtitle">
             Personalize a identidade visual, informações institucionais e recursos multimídia.
           </p>
         </div>
@@ -220,9 +224,9 @@ export const AdminMuseumSettings: React.FC = () => {
         <div className="lg:col-span-2 space-y-8">
 
           {/* DADOS INSTITUCIONAIS */}
-          <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <Building2 className="text-blue-400" size={24} /> Dados Institucionais
+          <div className="admin-section">
+            <h2 className="admin-section-title">
+              <Building2 className="text-blue-400" size={20} /> Dados Institucionais
             </h2>
 
             <div className="space-y-5">
@@ -231,7 +235,6 @@ export const AdminMuseumSettings: React.FC = () => {
                 value={settings.name}
                 onChange={(e) => setSettings({ ...settings, name: e.target.value })}
                 placeholder="Ex: Museu Histórico"
-                className="bg-black/20"
               />
 
               <Textarea
@@ -239,23 +242,20 @@ export const AdminMuseumSettings: React.FC = () => {
                 value={settings.mission}
                 onChange={(e) => setSettings({ ...settings, mission: e.target.value })}
                 rows={3}
-                className="bg-black/20"
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="admin-grid-2">
                 <Input
                   label={t("admin.museumSettings.labels.address")}
                   value={settings.address}
                   onChange={(e) => setSettings({ ...settings, address: e.target.value })}
                   leftIcon={<MapPin size={16} />}
-                  className="bg-black/20"
                 />
                 <Input
                   label={t("admin.museumSettings.labels.openingHours")}
                   value={settings.openingHours}
                   onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })}
                   leftIcon={<Clock size={16} />}
-                  className="bg-black/20"
                 />
               </div>
 
@@ -265,34 +265,31 @@ export const AdminMuseumSettings: React.FC = () => {
                   value={settings.whatsapp}
                   onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })}
                   leftIcon={<Phone size={16} />}
-                  className="bg-black/20"
                 />
                 <Input
                   label={t("admin.museumSettings.labels.email")}
                   value={settings.email}
                   onChange={(e) => setSettings({ ...settings, email: e.target.value })}
                   leftIcon={<Mail size={16} />}
-                  className="bg-black/20"
                 />
                 <Input
                   label={t("admin.museumSettings.labels.website")}
                   value={settings.website}
                   onChange={(e) => setSettings({ ...settings, website: e.target.value })}
                   leftIcon={<Globe size={16} />}
-                  className="bg-black/20"
                 />
               </div>
             </div>
           </div>
 
           {/* MULTIMIDIA E BOAS VINDAS */}
-          <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
-            <h2 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-              <Volume2 className="text-pink-400" size={24} /> Boas-vindas Multimídia
+          <div className="admin-section">
+            <h2 className="admin-section-title">
+              <Volume2 className="text-pink-400" size={20} /> Boas-vindas Multimídia
             </h2>
             <p className="text-sm text-slate-400 mb-6">Conteúdo reproduzido automaticamente na tela inicial do app.</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="admin-grid-2">
               <div className="space-y-3">
                 <label className="text-sm font-bold text-slate-300">Áudio de Narração</label>
                 <div
@@ -329,7 +326,6 @@ export const AdminMuseumSettings: React.FC = () => {
                   onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })}
                   placeholder="https://..."
                   leftIcon={<Video size={16} />}
-                  className="bg-black/20"
                 />
                 <div className="aspect-video bg-black/40 rounded-lg flex items-center justify-center border border-white/5">
                   {settings.welcomeVideoUrl ? (
@@ -346,17 +342,17 @@ export const AdminMuseumSettings: React.FC = () => {
           </div>
 
           {/* MAPAS E PLANTAS */}
-          <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+          <div className="admin-section">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <MapIcon size={24} className="text-emerald-400" /> Plantas e Localização
+              <h2 className="admin-section-title">
+                <MapIcon size={20} className="text-emerald-400" /> Plantas e Localização
               </h2>
               <Button variant="ghost" className="text-xs h-8" onClick={() => setShowFloorPlanModal(true)}>
                 <Plus size={14} className="mr-1" /> Adicionar Andar
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="admin-grid-2">
               {/* PLANTA GERAL (LEGADO/OUTDOOR) */}
               <div className="space-y-4">
                 <label className="text-sm font-bold text-slate-300">Mapa Outdoor / Capa do Mapa</label>
@@ -381,7 +377,7 @@ export const AdminMuseumSettings: React.FC = () => {
                     step="any"
                     value={settings.latitude}
                     onChange={(e) => setSettings({ ...settings, latitude: parseFloat(e.target.value) })}
-                    className="bg-black/20 h-9"
+                    className="h-9"
                   />
                   <Input
                     label="Longitude"
@@ -389,7 +385,7 @@ export const AdminMuseumSettings: React.FC = () => {
                     step="any"
                     value={settings.longitude}
                     onChange={(e) => setSettings({ ...settings, longitude: parseFloat(e.target.value) })}
-                    className="bg-black/20 h-9"
+                    className="h-9"
                   />
                 </div>
               </div>
@@ -433,9 +429,9 @@ export const AdminMuseumSettings: React.FC = () => {
         <div className="space-y-8">
 
           {/* IDENTIDADE VISUAL */}
-          <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-              <Palette className="text-purple-400" size={24} /> Identidade Visual
+          <div className="admin-section">
+            <h2 className="admin-section-title">
+              <Palette className="text-purple-400" size={20} /> Identidade Visual
             </h2>
 
             <div className="space-y-6">
@@ -540,23 +536,25 @@ export const AdminMuseumSettings: React.FC = () => {
       </div>
 
       {/* ACTION BAR */}
-      <div className="fixed bottom-6 w-full left-0 z-50 pointer-events-none px-4 flex justify-center">
-        <div className="bg-[#0f172a] border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center gap-4 shadow-2xl pointer-events-auto transform translate-y-0 transition-transform">
-          <span className="text-xs text-slate-500 font-medium ml-2">
-            Alterações não salvas
-          </span>
-          <Button
-            onClick={handleSave}
-            isLoading={saving}
-            className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
-            leftIcon={<Save size={18} />}
-          >
-            Salvar Configurações
-          </Button>
+      <div className="admin-wizard-footer">
+        <div className="admin-wizard-footer-inner justify-end">
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-slate-500 font-medium">
+              Alterações não salvas
+            </span>
+            <Button
+              onClick={handleSave}
+              isLoading={saving}
+              className="btn-primary"
+              leftIcon={<Save size={18} />}
+            >
+              Salvar Configurações
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Modal para adicionar/editar planta - Mantido simples mas estilizado */}
+      {/* Modal para adicionar/editar planta */}
       {showFloorPlanModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
           <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-md w-full p-6 shadow-2xl">
