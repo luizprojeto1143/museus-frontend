@@ -67,6 +67,7 @@ export const AdminEventForm: React.FC = () => {
     producerName: "",
     producerDescription: "",
     visibility: "PUBLIC",
+    status: "DRAFT", // New Field
     audioUrl: "",
     videoUrl: "",
     // Certificate
@@ -107,6 +108,7 @@ export const AdminEventForm: React.FC = () => {
             producerName: data.producerName || "",
             producerDescription: data.producerDescription || "",
             visibility: data.visibility || "PUBLIC",
+            status: data.status || "DRAFT",
             audioUrl: data.audioUrl || "",
             videoUrl: data.videoUrl || "",
             certificateBackgroundUrl: data.certificateBackgroundUrl || "",
@@ -123,6 +125,19 @@ export const AdminEventForm: React.FC = () => {
         .finally(() => setLoading(false));
     }
   }, [id, tenantId]);
+
+  // ... (refreshGeocoding, handleUpload, nextStep, prevStep omitted for brevity) ...
+  // Re-inserting handleUpload etc not needed since I'm using replace on a block including fetching logic.
+  // Wait, I need to be careful with Replace.
+  // I will target specific blocks.
+
+  // 1. Initial State Update
+  // 2. Load Logic Update
+  // 3. UI Update
+
+  // Let's do it in chunks.
+  // Chunk 1: Initial State & Load Logic
+
 
   const refreshGeocoding = async (cep: string) => {
     if (cep.length === 8) {
@@ -558,28 +573,55 @@ export const AdminEventForm: React.FC = () => {
                 </div>
 
                 <div className="admin-section">
-                  <h3 className="admin-section-title">Visibilidade</h3>
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
-                      className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PUBLIC" ? 'bg-blue-500/10 border-blue-500' : 'bg-white/5 border-white/5'}`}
-                    >
-                      <Globe size={20} className={formData.visibility === "PUBLIC" ? 'text-blue-500' : 'text-slate-500'} />
-                      <div>
-                        <div className="font-bold text-white">Público</div>
-                        <div className="text-xs text-slate-400">Visível no app</div>
-                      </div>
-                    </button>
-                    <button
-                      onClick={() => setFormData({ ...formData, visibility: "PRIVATE" })}
-                      className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PRIVATE" ? 'bg-amber-500/10 border-amber-500' : 'bg-white/5 border-white/5'}`}
-                    >
-                      <CheckCircle size={20} className={formData.visibility === "PRIVATE" ? 'text-amber-500' : 'text-slate-500'} />
-                      <div>
-                        <div className="font-bold text-white">Privado</div>
-                        <div className="text-xs text-slate-400">Apenas link</div>
-                      </div>
-                    </button>
+                  <h3 className="admin-section-title">Visibilidade e Status</h3>
+                  <div className="flex flex-col gap-4">
+                    {/* Visibility */}
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PUBLIC" ? 'bg-blue-500/10 border-blue-500' : 'bg-white/5 border-white/5'}`}
+                      >
+                        <Globe size={20} className={formData.visibility === "PUBLIC" ? 'text-blue-500' : 'text-slate-500'} />
+                        <div>
+                          <div className="font-bold text-white">Público</div>
+                          <div className="text-xs text-slate-400">Visível no app</div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setFormData({ ...formData, visibility: "PRIVATE" })}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PRIVATE" ? 'bg-amber-500/10 border-amber-500' : 'bg-white/5 border-white/5'}`}
+                      >
+                        <CheckCircle size={20} className={formData.visibility === "PRIVATE" ? 'text-amber-500' : 'text-slate-500'} />
+                        <div>
+                          <div className="font-bold text-white">Privado</div>
+                          <div className="text-xs text-slate-400">Apenas link</div>
+                        </div>
+                      </button>
+                    </div>
+
+                    {/* Status Toggle */}
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => setFormData({ ...formData, status: "DRAFT" })}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? 'bg-slate-500/10 border-slate-500' : 'bg-white/5 border-white/5'}`}
+                      >
+                        <div className={`w-3 h-3 rounded-full ${formData.status === "DRAFT" ? 'bg-slate-400' : 'bg-slate-700'}`}></div>
+                        <div>
+                          <div className="font-bold text-white">Rascunho</div>
+                          <div className="text-xs text-slate-400">Oculto do público</div>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setFormData({ ...formData, status: "PUBLISHED" })}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "PUBLISHED" ? 'bg-green-500/10 border-green-500' : 'bg-white/5 border-white/5'}`}
+                      >
+                        <CheckCircle size={20} className={formData.status === "PUBLISHED" ? 'text-green-500' : 'text-slate-700'} />
+                        <div>
+                          <div className="font-bold text-white">Publicado</div>
+                          <div className="text-xs text-slate-400">Visível imediatamente</div>
+                        </div>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

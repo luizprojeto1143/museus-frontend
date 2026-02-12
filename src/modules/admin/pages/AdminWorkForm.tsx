@@ -15,21 +15,28 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import "./AdminShared.css";
 
+import { useTerminology } from "../../../hooks/useTerminology";
+
 // Steps Configuration
-const STEPS = [
-  { id: 0, title: "Dados Básicos", icon: FileText, description: "Informações principais da obra" },
-  { id: 1, title: "Localização", icon: MapPin, description: "Onde encontrar a obra" },
-  { id: 2, title: "Mídia e Conteúdo", icon: MonitorPlay, description: "Imagens, áudios e vídeos" },
-  { id: 3, title: "Revisão", icon: CheckCircle, description: "Confirmação e publicação" }
-];
+// Note: We move STEPS inside the component or make it a function to use terminology, 
+// but for simplicity we will rename labels inside the component render.
 
 export const AdminWorkForm: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
+  const term = useTerminology(); // Dynamic terms
   const { addToast } = useToast();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+
+  // Steps Configuration Adjusted
+  const steps = [
+    { id: 0, title: "Dados Básicos", icon: FileText, description: `Informações principais da ${term.work.toLowerCase()}` },
+    { id: 1, title: "Localização", icon: MapPin, description: `Onde encontrar o ${term.work.toLowerCase()}` },
+    { id: 2, title: "Mídia e Conteúdo", icon: MonitorPlay, description: "Imagens, áudios e vídeos" },
+    { id: 3, title: "Revisão", icon: CheckCircle, description: "Confirmação e publicação" }
+  ];
 
   // Wizard State
   const [currentStep, setCurrentStep] = useState(0);
@@ -87,7 +94,7 @@ export const AdminWorkForm: React.FC = () => {
         if (data.qrCode) setCode(data.qrCode.code);
       }).catch(err => {
         console.error(err);
-        addToast("Erro ao carregar obra", "error");
+        addToast(`Erro ao carregar ${term.work.toLowerCase()}`, "error");
       });
     }
   }, [id, tenantId]);
@@ -119,7 +126,8 @@ export const AdminWorkForm: React.FC = () => {
     switch (stepIndex) {
       case 0: // Basic Info
         if (!title.trim()) return "O título é obrigatório";
-        if (!artist.trim()) return "O artista é obrigatório";
+        // Artist might not be mandatory for city points, but let's keep it consistent or optional
+        // if (!artist.trim()) return "O artista é obrigatório"; 
         return null;
       case 1: // Location
         if (!code.trim()) return "O código do discador é obrigatório";
@@ -136,7 +144,7 @@ export const AdminWorkForm: React.FC = () => {
       return;
     }
     setDirection(1);
-    setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
+    setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
   };
 
   const prevStep = () => {
@@ -157,17 +165,17 @@ export const AdminWorkForm: React.FC = () => {
     try {
       if (id) {
         await api.put(`/works/${id}`, payload);
-        addToast("Obra atualizada com sucesso!", "success");
+        addToast(`${term.work} atualizada com sucesso!`, "success");
         navigate("/admin/obras");
       } else {
         const res = await api.post("/works", payload);
-        addToast("Obra criada com sucesso!", "success");
+        addToast(`${term.work} criada com sucesso!`, "success");
         // Option to stay allows adding accessibility request immediately
         navigate(`/admin/obras/${res.data.id}`);
       }
     } catch (err: any) {
       console.error("Erro ao salvar obra", err);
-      addToast("Erro ao salvar obra. Verifique os dados.", "error");
+      addToast("Erro ao salvar. Verifique os dados.", "error");
     } finally {
       setSaving(false);
     }
@@ -209,10 +217,10 @@ export const AdminWorkForm: React.FC = () => {
         </Button>
         <div>
           <h1 className="admin-wizard-title">
-            {isEdit ? "Editar Obra" : "Nova Obra"}
+            {isEdit ? `Editar ${term.work}` : `Nova ${term.work}`}
           </h1>
           <p className="admin-wizard-subtitle">
-            Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}
+            Passo {currentStep + 1} de {steps.length}: {steps[currentStep].title}
           </p>
         </div>
       </div>
@@ -222,10 +230,10 @@ export const AdminWorkForm: React.FC = () => {
         <div className="admin-stepper-progress-bg"></div>
         <div
           className="admin-stepper-progress-fill"
-          style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+          style={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
         ></div>
 
-        {STEPS.map((step, index) => {
+        {steps.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
           const Icon = step.icon;
@@ -264,23 +272,23 @@ export const AdminWorkForm: React.FC = () => {
               <div className="flex-col gap-6">
                 <div className="admin-grid-2">
                   <Input
-                    label="Título da Obra"
+                    label={term.work === "Obra" ? "Título da Obra" : "Nome do Ponto/Monumento"}
                     value={title}
                     onChange={e => setTitle(e.target.value)}
-                    placeholder="Ex: Abaporu"
+                    placeholder={term.work === "Obra" ? "Ex: Abaporu" : "Ex: Cristo Redentor"}
                     required
                   />
                   <Input
-                    label="Artista / Autor"
+                    label={term.artist}
                     value={artist}
                     onChange={e => setArtist(e.target.value)}
-                    placeholder="Ex: Tarsila do Amaral"
+                    placeholder={term.work === "Obra" ? "Ex: Tarsila do Amaral" : "Ex: Heitor da Silva Costa"}
                   />
                 </div>
 
                 <div className="admin-grid-2">
                   <Select
-                    label="Categoria"
+                    label={term.technique}
                     value={category}
                     onChange={e => setCategory(e.target.value)}
                   >
@@ -290,7 +298,7 @@ export const AdminWorkForm: React.FC = () => {
                     ))}
                   </Select>
                   <Input
-                    label="Ano de Criação"
+                    label={term.work === "Obra" ? "Ano de Criação" : "Ano de Inauguração"}
                     value={year}
                     onChange={e => setYear(e.target.value)}
                     placeholder="Ex: 1928"
@@ -302,7 +310,7 @@ export const AdminWorkForm: React.FC = () => {
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={6}
-                  placeholder="Conte a história desta obra..."
+                  placeholder={`Conte a história desta ${term.work.toLowerCase()}...`}
                 />
               </div>
             )}
@@ -320,7 +328,7 @@ export const AdminWorkForm: React.FC = () => {
                       style={{ fontSize: '1.5rem', textAlign: 'center', letterSpacing: '0.2em' }}
                     />
                     <p style={{ fontSize: '0.8rem', color: 'gray', textAlign: 'center', marginTop: '0.5rem' }}>
-                      Este código será usado pelos visitantes para encontrar a obra no app e gerar o QR Code.
+                      Este código será usado pelos {term.visitors.toLowerCase()} para encontrar o item no app.
                     </p>
                   </div>
 
@@ -335,16 +343,16 @@ export const AdminWorkForm: React.FC = () => {
                 <div className="admin-grid-2">
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
                     <Input
-                      label="Sala / Espaço"
+                      label={term.room}
                       value={room}
                       onChange={e => setRoom(e.target.value)}
-                      placeholder="Ex: Sala Moderna"
+                      placeholder={term.room === "Sala" ? "Ex: Sala Moderna" : "Ex: Centro Histórico"}
                     />
                     <Input
-                      label="Andar"
+                      label={term.floor}
                       value={floor}
                       onChange={e => setFloor(e.target.value)}
-                      placeholder="Ex: 1º Pavimento"
+                      placeholder={term.floor === "Andar" ? "Ex: 1º Pavimento" : "Ex: Zona Sul"}
                     />
                   </div>
                   <Input
@@ -375,7 +383,7 @@ export const AdminWorkForm: React.FC = () => {
                   ) : (
                     <div className="upload-placeholder">
                       <ImageIcon size={48} style={{ margin: '0 auto 1rem', display: 'block' }} />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Imagem da Obra</h3>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Imagem Principal</h3>
                       <p>Arraste uma imagem ou clique para selecionar</p>
                       <label className="upload-btn" style={{ marginTop: '1rem' }}>
                         <Upload size={20} /> Selecionar Arquivo
@@ -389,7 +397,7 @@ export const AdminWorkForm: React.FC = () => {
                   {/* Audio Upload */}
                   <div className="media-card">
                     <h3 className="admin-section-title">
-                      <Volume2 className="text-blue-400" /> Áudio Guia
+                      <Volume2 className="text-blue-400" /> Áudio Guia {term.work === "Obra" ? "da Obra" : "do Ponto"}
                     </h3>
                     <div className="flex-col gap-4">
                       {audioUrl && (
@@ -437,11 +445,11 @@ export const AdminWorkForm: React.FC = () => {
                     <h3 className="admin-section-title">Resumo</h3>
                     <div className="summary-card">
                       <div className="summary-row">
-                        <span className="summary-label">Título:</span>
+                        <span className="summary-label">Nome/Título:</span>
                         <span className="summary-value">{title}</span>
                       </div>
                       <div className="summary-row">
-                        <span className="summary-label">Artista:</span>
+                        <span className="summary-label">{term.artist}:</span>
                         <span className="summary-value">{artist}</span>
                       </div>
                       <div className="summary-row">
@@ -484,7 +492,7 @@ export const AdminWorkForm: React.FC = () => {
                           <div style={{ fontWeight: 'bold', color: 'var(--fg-main)' }}>
                             {published ? "Visível no App" : "Oculto (Rascunho)"}
                           </div>
-                          <p style={{ fontSize: '0.8rem', color: 'var(--fg-muted)' }}>Disponibilidade para visitantes</p>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--fg-muted)' }}>Disponibilidade para {term.visitors.toLowerCase()}</p>
                         </div>
                       </div>
                       {published && <CheckCircle size={20} color="var(--status-success)" />}
@@ -530,14 +538,14 @@ export const AdminWorkForm: React.FC = () => {
           </Button>
 
           <div className="flex gap-2">
-            {currentStep === STEPS.length - 1 ? (
+            {currentStep === steps.length - 1 ? (
               <Button
                 onClick={handleSubmit}
                 isLoading={saving}
                 className="btn-primary"
                 leftIcon={<Save size={18} />}
               >
-                Salvar Obra
+                Salvar {term.work}
               </Button>
             ) : (
               <Button
@@ -560,7 +568,7 @@ export const AdminWorkForm: React.FC = () => {
               <Accessibility color="#c084fc" /> Solicitar Acessibilidade
             </h3>
             <p style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--fg-muted)' }}>
-              Envie um pedido para o time Master produzir os conteúdos de acessibilidade para esta obra.
+              Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {term.work === "Obra" ? "esta obra" : "este ponto"}.
             </p>
 
             <div className="flex-col gap-4">
@@ -595,7 +603,7 @@ export const AdminWorkForm: React.FC = () => {
               <Button
                 onClick={async () => {
                   if (!id) {
-                    addToast("Salve a obra primeiro antes de solicitar.", "info");
+                    addToast(`Salve ${term.work === "Obra" ? "a obra" : "o ponto"} primeiro antes de solicitar.`, "info");
                     return;
                   }
                   try {

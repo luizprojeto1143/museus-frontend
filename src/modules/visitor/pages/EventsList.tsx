@@ -33,7 +33,10 @@ export const EventsList: React.FC = () => {
     setLoading(true);
     try {
       const res = await api.get("/events", { params: { tenantId } });
-      const apiEvents = (res.data as ApiEvent[]).map((e) => ({
+      // Backend returns { data: [], meta: {} }
+      const eventsData = res.data.data || [];
+
+      const apiEvents = (eventsData as ApiEvent[]).map((e) => ({
         id: e.id,
         title: e.title,
         date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",

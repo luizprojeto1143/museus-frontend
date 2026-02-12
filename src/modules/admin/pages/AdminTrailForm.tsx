@@ -14,6 +14,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import { ArrowLeft, Save, Plus, GripVertical, X, Music, Video, ToggleLeft, ToggleRight } from "lucide-react";
+import { useTerminology } from "../../../hooks/useTerminology";
 
 // Componente auxiliar para item ordenável
 function SortableItem({ id, title, onRemove }: { id: string; title: string; onRemove: () => void }) {
@@ -58,6 +59,7 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
 
 export const AdminTrailForm: React.FC = () => {
   const { t } = useTranslation();
+  const term = useTerminology();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
   const { addToast } = useToast();
@@ -243,12 +245,12 @@ export const AdminTrailForm: React.FC = () => {
         {/* MULTIMEDIA SECTION */}
         <div className="card">
           <h3 className="card-title flex items-center gap-2 mb-6">
-            <Music size={20} className="text-gold" /> Mídia da Trilha
+            <Music size={20} className="text-gold" /> Mídia {term.trail === "Trilha" ? "da Trilha" : "do Roteiro"}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Áudio-Guia da Trilha (Arquivo)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Áudio-Guia {term.trail === "Trilha" ? "da Trilha" : "do Roteiro"} (Arquivo)</label>
               <input
                 type="file"
                 accept="audio/*"
@@ -269,7 +271,7 @@ export const AdminTrailForm: React.FC = () => {
                 </div>
               )}
               <p className="text-xs text-gray-500 mt-2">
-                Áudio de introdução da trilha que será reproduzido para os visitantes.
+                Áudio de introdução {term.trail === "Trilha" ? "da trilha" : "do roteiro"} que será reproduzido para os {term.visitors.toLowerCase()}.
               </p>
             </div>
 
@@ -282,7 +284,7 @@ export const AdminTrailForm: React.FC = () => {
                 leftIcon={<Video size={16} />}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Vídeo de apresentação da trilha.
+                Vídeo de apresentação {term.trail === "Trilha" ? "da trilha" : "do roteiro"}.
               </p>
             </div>
           </div>

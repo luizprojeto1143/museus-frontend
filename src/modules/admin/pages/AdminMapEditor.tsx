@@ -41,20 +41,24 @@ export const AdminMapEditor: React.FC = () => {
     const [saving, setSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
-
-    // Default center (can be adjusted or fetched from tenant settings)
-    const defaultCenter: [number, number] = [-22.9068, -43.1729]; // Rio de Janeiro default
+    const [mapCenter, setMapCenter] = useState<[number, number]>([-22.9068, -43.1729]); // Default Rio
 
     useEffect(() => {
         if (!tenantId) return;
 
         const loadData = async () => {
             try {
-                const [worksRes] = await Promise.all([
+                const [worksRes, settingsRes] = await Promise.all([
                     api.get("/works", { params: { tenantId } }),
+                    api.get(`/tenants/${tenantId}/settings`)
                 ]);
 
                 setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
+
+                // Set map center if tenant has coordinates
+                if (settingsRes.data.latitude && settingsRes.data.longitude) {
+                    setMapCenter([settingsRes.data.latitude, settingsRes.data.longitude]);
+                }
             } catch (error) {
                 console.error("Error loading data", error);
             } finally {
@@ -63,6 +67,7 @@ export const AdminMapEditor: React.FC = () => {
         };
         loadData();
     }, [tenantId]);
+
 
     const handleMapClick = (lat: number, lng: number) => {
         if (!selectedWorkId) return;
@@ -186,7 +191,7 @@ export const AdminMapEditor: React.FC = () => {
                 {/* Map Container */}
                 <div className="flex-1 bg-black/20 rounded-xl overflow-hidden border border-white/10 relative">
                     <MapContainer
-                        center={defaultCenter}
+                        center={mapCenter}
                         zoom={13}
                         style={{ height: "100%", width: "100%" }}
                         className="z-0"

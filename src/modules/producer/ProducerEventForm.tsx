@@ -24,7 +24,7 @@ export const ProducerEventForm: React.FC = () => {
         coverUrl: "",
         location: "",
         visibility: "PUBLIC",
-        active: true
+        status: "DRAFT" // New default
     });
 
     useEffect(() => {
@@ -49,7 +49,7 @@ export const ProducerEventForm: React.FC = () => {
                         coverUrl: ev.coverUrl || "",
                         location: ev.location || "",
                         visibility: ev.visibility || "PUBLIC",
-                        active: ev.active !== false
+                        status: ev.status || "DRAFT"
                     });
                 })
                 .catch(err => console.error(err))
@@ -216,6 +216,44 @@ export const ProducerEventForm: React.FC = () => {
                         style={{ ...inputStyle, paddingLeft: "2.5rem" }}
                         placeholder="https://..."
                     />
+                </div>
+
+                <div style={{ marginTop: "1.5rem", background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "0.5rem" }}>
+                    <label style={{ ...labelStyle, marginTop: 0, marginBottom: "0.5rem" }}>Status do Evento</label>
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                        <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, status: "DRAFT" })}
+                            style={{
+                                flex: 1,
+                                padding: "0.8rem",
+                                borderRadius: "0.5rem",
+                                border: formData.status === "DRAFT" ? "1px solid #94a3b8" : "1px solid rgba(255,255,255,0.1)",
+                                background: formData.status === "DRAFT" ? "rgba(148,163,184,0.1)" : "transparent",
+                                color: formData.status === "DRAFT" ? "#94a3b8" : "rgba(255,255,255,0.5)",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            Rascunho
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, status: "PUBLISHED" })}
+                            style={{
+                                flex: 1,
+                                padding: "0.8rem",
+                                borderRadius: "0.5rem",
+                                border: formData.status === "PUBLISHED" ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.1)",
+                                background: formData.status === "PUBLISHED" ? "rgba(16,185,129,0.1)" : "transparent",
+                                color: formData.status === "PUBLISHED" ? "#10b981" : "rgba(255,255,255,0.5)",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            Publicado
+                        </button>
+                    </div>
                 </div>
 
                 <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
