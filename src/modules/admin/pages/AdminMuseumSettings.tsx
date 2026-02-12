@@ -4,11 +4,10 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Input, Button, Textarea, Select } from "../../../components/ui";
 import {
-import {
-    Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
-    Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
-    Plus, Edit, Trash2, Palette, Save
-  } from "lucide-react";
+  Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
+  Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
+  Plus, Edit, Trash2, Palette, Save
+} from "lucide-react";
 import "./AdminShared.css";
 
 // Interface definitions kept same...
