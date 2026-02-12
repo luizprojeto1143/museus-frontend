@@ -30,20 +30,21 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
       />
 
       {/* Sidebar */}
-      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`} style={{ borderRight: "1px solid #463420", background: "linear-gradient(180deg, #1a1108 0%, #0f0a05 100%)" }}>
         <button
           className="sidebar-collapse-toggle"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? "Expandir" : "Recolher"}
+          style={{ borderColor: "#463420", color: "#d4af37", background: "#2c1e10" }}
         >
           {isCollapsed ? "»" : "«"}
         </button>
-        <div className="sidebar-header">
+        <div className="sidebar-header" style={{ borderBottom: "1px solid #463420" }}>
           <div className="app-brand">
-            <span className="app-logo" style={{ borderColor: "#5eead4", color: "#5eead4" }}>MT</span>
+            <span className="app-logo" style={{ borderColor: "#d4af37", color: "#d4af37" }}>MT</span>
             <div>
-              <div className="app-title" style={{ color: "#5eead4" }}>Master Panel</div>
-              <div className="app-subtitle">Gestão Global</div>
+              <div className="app-title" style={{ color: "#d4af37", fontFamily: "Georgia, serif" }}>Master Panel</div>
+              <div className="app-subtitle" style={{ color: "#8b7355" }}>Gestão Global</div>
             </div>
           </div>
         </div>
@@ -56,18 +57,19 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
               className={`nav-item ${location.pathname === link.to ? "active" : ""}`}
               onClick={() => setSidebarOpen(false)}
               title={isCollapsed ? link.label : ""}
+              style={location.pathname === link.to ? { background: "linear-gradient(90deg, rgba(212, 175, 55, 0.1), transparent)", borderLeft: "3px solid #d4af37", color: "#EAE0D5" } : { color: "#8b7355" }}
             >
-              <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>
+              <span style={{ fontSize: "1.2rem", filter: location.pathname === link.to ? "none" : "grayscale(100%) sepia(50%)" }}>{link.icon}</span>
               <span>{link.label}</span>
             </Link>
           ))}
         </nav>
 
-        <div className="sidebar-footer">
+        <div className="sidebar-footer" style={{ borderTop: "1px solid #463420" }}>
           <button
             onClick={logout}
             className="btn btn-secondary"
-            style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444" }}
+            style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444", background: "rgba(239, 68, 68, 0.05)" }}
           >
             <span style={{ fontSize: "1.2rem" }}>🚪</span>
             <span>Sair</span>
@@ -76,13 +78,13 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
       </aside>
 
       {/* Main Content */}
-      <main className="layout-main">
-        <header className="layout-header">
-          <button className="menu-toggle" onClick={() => setSidebarOpen(true)}>
+      <main className="layout-main" style={{ background: "#0f0a05" }}>
+        <header className="layout-header" style={{ borderBottom: "1px solid #463420", background: "rgba(26, 17, 8, 0.9)" }}>
+          <button className="menu-toggle" onClick={() => setSidebarOpen(true)} style={{ color: "#d4af37" }}>
             ☰
           </button>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span className="badge" style={{ borderColor: "#5eead4", color: "#5eead4" }}>MASTER ADMIN</span>
+            <span className="badge" style={{ borderColor: "#d4af37", color: "#d4af37", background: "rgba(212, 175, 55, 0.1)" }}>MASTER ADMIN</span>
           </div>
         </header>
 

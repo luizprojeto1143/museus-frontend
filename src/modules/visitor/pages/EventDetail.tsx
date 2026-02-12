@@ -52,6 +52,10 @@ type EventDetailType = {
   galleryUrls?: string[];
   tenant?: { name: string };
   audioUrl?: string | null;
+  // Workshop
+  type?: string;
+  instructor?: string;
+  materials?: string;
 };
 
 export const EventDetail: React.FC = () => {
@@ -101,7 +105,10 @@ export const EventDetail: React.FC = () => {
 
         setEvent({
           ...evData,
-          audioUrl: getFullUrl(evData.audioUrl)
+          audioUrl: getFullUrl(evData.audioUrl),
+          type: evData.type,
+          instructor: evData.instructor,
+          materials: evData.materials
         });
         setTickets(tickRes.data);
         if (attRes.data?.attended) setAttendance(attRes.data);
@@ -189,7 +196,10 @@ export const EventDetail: React.FC = () => {
           <div className="event-header">
             <div>
               <span className={`event-type-badge ${event.isOnline ? 'online' : 'presencial'}`}>
-                {event.isOnline ? "Evento Online" : "Presencial"}
+                {event.isOnline ? "Evento Online" : (
+                  event.type === 'WORKSHOP' ? "Oficina Presencial" :
+                    event.type === 'EXHIBITION' ? "Exposição" : "Presencial"
+                )}
               </span>
               <h1 className="event-title text-4xl md:text-5xl font-black mt-4">{event.title}</h1>
               {event.producerName && (
@@ -234,6 +244,30 @@ export const EventDetail: React.FC = () => {
                 <div className="event-producer-section bg-gradient-to-br from-indigo-500/5 to-transparent p-8 rounded-3xl border border-white/5">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><User size={20} className="text-indigo-400" /> Sobre o Produtor</h3>
                   <p className="text-slate-400 leading-relaxed">{event.producerDescription}</p>
+                </div>
+              )}
+
+              {/* Workshop Details */}
+              {(event.type === 'WORKSHOP' && (event.instructor || event.materials)) && (
+                <div className="bg-purple-500/5 p-8 rounded-3xl border border-purple-500/10">
+                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-purple-400">
+                    <div className="w-1.5 h-6 bg-purple-500 rounded-full" />
+                    Detalhes da Oficina
+                  </h3>
+                  <div className="space-y-6">
+                    {event.instructor && (
+                      <div>
+                        <p className="text-sm font-bold text-purple-300 uppercase tracking-widest mb-1">Instrutor / Facilitador</p>
+                        <p className="text-white text-lg">{event.instructor}</p>
+                      </div>
+                    )}
+                    {event.materials && (
+                      <div>
+                        <p className="text-sm font-bold text-purple-300 uppercase tracking-widest mb-1">Materiais Necessários</p>
+                        <p className="text-slate-300">{event.materials}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

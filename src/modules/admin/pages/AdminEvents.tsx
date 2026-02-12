@@ -10,6 +10,7 @@ type AdminEventItem = {
   title: string;
   date?: string;
   time?: string;
+  type?: string;
   status: string;
 };
 
@@ -33,6 +34,7 @@ export const AdminEvents: React.FC = () => {
           title: e.title,
           date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",
           time: e.startDate ? new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
+          type: e.type,
           status: e.status || (e.active ? "PUBLISHED" : "DRAFT") // Fallback
         }));
         setEvents(events);
@@ -72,6 +74,7 @@ export const AdminEvents: React.FC = () => {
         <thead>
           <tr>
             <th>{t("admin.events.table.title")}</th>
+            <th>Tipo</th>
             <th>{t("admin.events.table.date")}</th>
             <th>{t("admin.events.table.time")}</th>
             <th>{t("admin.events.table.status")}</th>
@@ -81,7 +84,12 @@ export const AdminEvents: React.FC = () => {
         <tbody>
           {events.map(ev => (
             <tr key={ev.id}>
-              <td>{ev.title}</td>
+              <td>
+                <div className="font-bold">{ev.title}</div>
+              </td>
+              <td>
+                {ev.type && <span className="text-xs border border-white/20 px-2 py-0.5 rounded text-slate-300">{ev.type === 'OTHER' ? 'Geral' : ev.type}</span>}
+              </td>
               <td>{ev.date}</td>
               <td>{ev.time}</td>
               <td>

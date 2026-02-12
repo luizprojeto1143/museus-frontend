@@ -45,6 +45,7 @@ export const AdminEventForm: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
 
   const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
+  const [spaces, setSpaces] = useState<{ id: string, name: string }[]>([]);
   const [tickets, setTickets] = useState<TicketData[]>([]);
 
   // Form State
@@ -70,10 +71,15 @@ export const AdminEventForm: React.FC = () => {
     status: "DRAFT", // New Field
     audioUrl: "",
     videoUrl: "",
+    // Workshop Fields
+    type: "OTHER",
+    instructor: "",
+    materials: "",
     // Certificate
     certificateBackgroundUrl: "",
     minMinutesForCertificate: "",
     certificateRequiresSurvey: false,
+    spaceId: "",
   });
 
   // Load Data
@@ -81,6 +87,10 @@ export const AdminEventForm: React.FC = () => {
     if (tenantId) {
       api.get("/categories", { params: { tenantId, type: 'EVENT' } })
         .then(res => setCategories(res.data))
+        .catch(console.error);
+
+      api.get("/spaces", { params: { tenantId } })
+        .then(res => setSpaces(res.data))
         .catch(console.error);
     }
 
@@ -111,9 +121,13 @@ export const AdminEventForm: React.FC = () => {
             status: data.status || "DRAFT",
             audioUrl: data.audioUrl || "",
             videoUrl: data.videoUrl || "",
+            type: data.type || "OTHER",
+            instructor: data.instructor || "",
+            materials: data.materials || "",
             certificateBackgroundUrl: data.certificateBackgroundUrl || "",
             minMinutesForCertificate: data.minMinutesForCertificate || "",
             certificateRequiresSurvey: data.certificateRequiresSurvey || false,
+            spaceId: data.spaceId || "",
           });
 
           // Fetch tickets
@@ -341,6 +355,35 @@ export const AdminEventForm: React.FC = () => {
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </Select>
 
+                  <Select
+                    label="Tipo de Evento"
+                    value={formData.type}
+                    onChange={e => setFormData({ ...formData, type: e.target.value })}
+                  >
+                    <option value="OTHER">Geral / Outro</option>
+                    <option value="WORKSHOP">Oficina / Workshop</option>
+                    <option value="EXHIBITION">Exposição</option>
+                    <option value="SHOW">Show / Apresentação</option>
+                    <option value="LECTURE">Palestra / Aula</option>
+                  </Select>
+
+                  {formData.type === 'WORKSHOP' && (
+                    <div className="admin-grid-2 col-span-2 bg-white/5 p-4 rounded-lg border border-white/10 mt-2">
+                      <Input
+                        label="Instrutor / Facilitador"
+                        placeholder="Nome do responsável..."
+                        value={formData.instructor}
+                        onChange={e => setFormData({ ...formData, instructor: e.target.value })}
+                      />
+                      <Input
+                        label="Materiais Necessários"
+                        placeholder="Ex: Tesoura, papel, notebook..."
+                        value={formData.materials}
+                        onChange={e => setFormData({ ...formData, materials: e.target.value })}
+                      />
+                    </div>
+                  )}
+
                   <div className="flex-col">
                     <label className="block text-sm font-medium text-gray-300 mb-1">Capa do Evento</label>
                     <div className="flex gap-2">
@@ -426,6 +469,20 @@ export const AdminEventForm: React.FC = () => {
                   <Input label="Início" type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required />
                   <Input label="Fim" type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} />
                 </div>
+
+                {formData.format === 'PRESENTIAL' && (
+                  <div className="bg-blue-600/5 p-4 rounded-xl border border-blue-500/20 mb-4">
+                    <Select
+                      label="💾 Reservar Espaço Físico (Opcional)"
+                      value={formData.spaceId}
+                      onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
+                      description="Ao selecionar um espaço, o sistema verificará se não há conflitos de horário e reservará a sala automaticamente para este evento."
+                    >
+                      <option value="">Nenhum espaço selecionado</option>
+                      {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                    </Select>
+                  </div>
+                )}
 
                 <div className="h-px bg-white/10 my-2"></div>
 

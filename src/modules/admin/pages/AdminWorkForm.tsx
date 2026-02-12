@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./AdminShared.css";
 
 import { useTerminology } from "../../../hooks/useTerminology";
+import { useIsCityMode, useTenant } from "../../auth/TenantContext";
 
 // Steps Configuration
 // Note: We move STEPS inside the component or make it a function to use terminology, 
@@ -29,6 +30,10 @@ export const AdminWorkForm: React.FC = () => {
   const { addToast } = useToast();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
+
+  const isCity = useIsCityMode();
+  const tenant = useTenant();
+  const isCultural = tenant?.type === 'CULTURAL_SPACE';
 
   // Steps Configuration Adjusted
   const steps = [
@@ -272,17 +277,17 @@ export const AdminWorkForm: React.FC = () => {
               <div className="flex-col gap-6">
                 <div className="admin-grid-2">
                   <Input
-                    label={term.work === "Obra" ? "Título da Obra" : "Nome do Ponto/Monumento"}
+                    label={isCity ? "Nome do Ponto/Monumento" : isCultural ? "Título da Atividade" : "Título da Obra"}
                     value={title}
                     onChange={e => setTitle(e.target.value)}
-                    placeholder={term.work === "Obra" ? "Ex: Abaporu" : "Ex: Cristo Redentor"}
+                    placeholder={isCity ? "Ex: Cristo Redentor" : isCultural ? "Ex: Oficina de Cerâmica" : "Ex: Abaporu"}
                     required
                   />
                   <Input
                     label={term.artist}
                     value={artist}
                     onChange={e => setArtist(e.target.value)}
-                    placeholder={term.work === "Obra" ? "Ex: Tarsila do Amaral" : "Ex: Heitor da Silva Costa"}
+                    placeholder={isCity ? "Ex: Heitor da Silva Costa" : isCultural ? "Ex: Instrutor João" : "Ex: Tarsila do Amaral"}
                   />
                 </div>
 
@@ -298,7 +303,7 @@ export const AdminWorkForm: React.FC = () => {
                     ))}
                   </Select>
                   <Input
-                    label={term.work === "Obra" ? "Ano de Criação" : "Ano de Inauguração"}
+                    label={isCity ? "Ano de Inauguração" : isCultural ? "Data/Ano" : "Ano de Criação"}
                     value={year}
                     onChange={e => setYear(e.target.value)}
                     placeholder="Ex: 1928"
@@ -346,13 +351,13 @@ export const AdminWorkForm: React.FC = () => {
                       label={term.room}
                       value={room}
                       onChange={e => setRoom(e.target.value)}
-                      placeholder={term.room === "Sala" ? "Ex: Sala Moderna" : "Ex: Centro Histórico"}
+                      placeholder={isCity ? "Ex: Centro Histórico" : isCultural ? "Ex: Sala de Ensaio 1" : "Ex: Sala Moderna"}
                     />
                     <Input
                       label={term.floor}
                       value={floor}
                       onChange={e => setFloor(e.target.value)}
-                      placeholder={term.floor === "Andar" ? "Ex: 1º Pavimento" : "Ex: Zona Sul"}
+                      placeholder={isCity ? "Ex: Zona Sul" : isCultural ? "Ex: Térreo" : "Ex: 1º Pavimento"}
                     />
                   </div>
                   <Input
@@ -397,7 +402,7 @@ export const AdminWorkForm: React.FC = () => {
                   {/* Audio Upload */}
                   <div className="media-card">
                     <h3 className="admin-section-title">
-                      <Volume2 className="text-blue-400" /> Áudio Guia {term.work === "Obra" ? "da Obra" : "do Ponto"}
+                      <Volume2 className="text-blue-400" /> Áudio Guia {isCity ? "do Ponto" : isCultural ? "da Atividade" : "da Obra"}
                     </h3>
                     <div className="flex-col gap-4">
                       {audioUrl && (
@@ -568,7 +573,7 @@ export const AdminWorkForm: React.FC = () => {
               <Accessibility color="#c084fc" /> Solicitar Acessibilidade
             </h3>
             <p style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--fg-muted)' }}>
-              Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {term.work === "Obra" ? "esta obra" : "este ponto"}.
+              Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {isCity ? "este ponto" : isCultural ? "esta atividade" : "esta obra"}.
             </p>
 
             <div className="flex-col gap-4">
@@ -602,7 +607,7 @@ export const AdminWorkForm: React.FC = () => {
               <Button
                 onClick={async () => {
                   if (!id) {
-                    addToast(`Salve ${term.work === "Obra" ? "a obra" : "o ponto"} primeiro antes de solicitar.`, "info");
+                    addToast(`Salve ${isCity ? "o ponto" : isCultural ? "a atividade" : "a obra"} primeiro antes de solicitar.`, "info");
                     return;
                   }
                   try {

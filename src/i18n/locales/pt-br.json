@@ -60,6 +60,16 @@
                 "rooms": "Regiões",
                 "floor": "Bairro",
                 "floors": "Bairros"
+            },
+            "cultural_space": {
+                "work": "Atividade",
+                "works": "Atividades",
+                "trail": "Projeto",
+                "trails": "Projetos",
+                "room": "Espaço",
+                "rooms": "Espaços",
+                "floor": "Pavimento",
+                "floors": "Pavimentos"
             }
         }
     },
@@ -970,6 +980,15 @@
             "uploadCheckAudio": "Confirmar Upload de Áudio",
             "success": "Sucesso",
             "errorSubmit": "Erro ao enviar"
+        },
+        "users": {
+            "table": {
+                "name": "Nome",
+                "email": "E-mail",
+                "role": "Perfil",
+                "tenant": "Instituição",
+                "action": "Ações"
+            }
         }
     },
     "producer": {
@@ -1158,17 +1177,6 @@
             "android": {
                 "step1": "Toque no menu (três pontos)",
                 "step2": "Selecione 'Instalar aplicativo'"
-            }
-        }
-    },
-    "master": {
-        "users": {
-            "table": {
-                "name": "Nome",
-                "email": "E-mail",
-                "role": "Perfil",
-                "tenant": "Instituição",
-                "action": "Ações"
             }
         }
     }

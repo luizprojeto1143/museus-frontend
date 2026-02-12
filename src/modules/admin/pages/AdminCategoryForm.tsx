@@ -6,12 +6,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "../../../contexts/ToastContext";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import { ArrowLeft, Save } from "lucide-react";
+import { useTerminology } from "../../../hooks/useTerminology";
 
 export const AdminCategoryForm: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
   const { addToast } = useToast();
+  const term = useTerminology();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
@@ -103,10 +105,10 @@ export const AdminCategoryForm: React.FC = () => {
           value={type}
           onChange={(e) => setType(e.target.value)}
         >
-          <option value="WORK">{t("admin.categoryForm.types.WORK")}</option>
-          <option value="TRAIL">{t("admin.categoryForm.types.TRAIL")}</option>
-          <option value="EVENT">{t("admin.categoryForm.types.EVENT")}</option>
-          <option value="GENERAL">{t("admin.categoryForm.types.GENERAL")}</option>
+          <option value="WORK">{term.work}</option>
+          <option value="TRAIL">{term.trail}</option>
+          <option value="EVENT">{term.event}</option>
+          <option value="GENERAL">{t("admin.categoryForm.types.GENERAL") || "Geral"}</option>
         </Select>
 
         <Textarea

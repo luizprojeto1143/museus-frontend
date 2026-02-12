@@ -12,6 +12,7 @@ type EventItem = {
   date?: string;
   time?: string;
   location?: string;
+  type?: string;
 };
 
 type ApiEvent = {
@@ -19,6 +20,7 @@ type ApiEvent = {
   title: string;
   startDate?: string;
   location?: string;
+  type?: string;
 };
 
 export const EventsList: React.FC = () => {
@@ -41,7 +43,8 @@ export const EventsList: React.FC = () => {
         title: e.title,
         date: e.startDate ? new Date(e.startDate).toLocaleDateString() : "",
         time: e.startDate ? new Date(e.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
-        location: e.location ?? ""
+        location: e.location ?? "",
+        type: e.type
       }));
       setEvents(apiEvents);
     } catch {
@@ -82,9 +85,12 @@ export const EventsList: React.FC = () => {
             <Link key={ev.id} to={`/eventos/${ev.id}`} className="event-ticket">
               <div className="ticket-notch-right"></div>
               <div className="ticket-content">
-                <span className="ticket-badge">
+                <span className={`ticket-badge ${ev.type === 'WORKSHOP' ? 'bg-purple-500/20 text-purple-400' : ''}`}>
                   <Ticket size={12} />
-                  Evento
+                  {ev.type === 'WORKSHOP' ? "Oficina" :
+                    ev.type === 'EXHIBITION' ? "Exposição" :
+                      ev.type === 'SHOW' ? "Show" :
+                        ev.type === 'LECTURE' ? "Palestra" : "Evento"}
                 </span>
                 <h2 className="ticket-title">{ev.title}</h2>
                 {ev.location && (

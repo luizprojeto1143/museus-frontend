@@ -57,6 +57,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: features?.featureEvents ?? true },
     { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫", show: features?.featureEvents ?? true },
     { to: "/admin/certificates", label: "Certificados", icon: "🎓", show: features?.featureCertificates ?? true },
+    { to: "/admin/espacos", label: "Gestão de Espaços", icon: "🏢", show: true },
+    { to: "/admin/calendario", label: "Agenda", icon: "📅", show: true },
     { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱", show: features?.featureQRCodes ?? true },
     { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️", show: true },
     { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "👥", show: true },

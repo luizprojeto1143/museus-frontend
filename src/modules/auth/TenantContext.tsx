@@ -6,6 +6,7 @@ interface TenantSettings {
     id: string;
     name: string;
     slug: string;
+    type: string;
     isCityMode: boolean;
     primaryColor: string;
     secondaryColor: string;
@@ -41,6 +42,7 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 id: tenantId,
                 name: res.data.name || "",
                 slug: res.data.slug || "",
+                type: res.data.type || "MUSEUM",
                 isCityMode: res.data.isCityMode || false,
                 primaryColor: res.data.primaryColor || "#d4af37",
                 secondaryColor: res.data.secondaryColor || "#cd7f32",

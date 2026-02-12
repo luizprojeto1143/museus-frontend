@@ -50,94 +50,127 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="app-shell" style={{ justifyContent: "center", alignItems: "center", position: "relative" }}>
+    <div className="app-shell" style={{
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+      background: "radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.05), transparent 70%), linear-gradient(180deg, #1a1108 0%, #0f0a05 100%)",
+      fontFamily: "'Georgia', serif"
+    }}>
       <LanguageSwitcher />
       <form
         onSubmit={handleSubmit}
         style={{
           width: "100%",
-          maxWidth: 380,
-          padding: "2rem",
-          borderRadius: "1.25rem",
-          border: "1px solid rgba(148,163,184,0.5)",
-          background:
-            "radial-gradient(circle at top left, rgba(56,189,248,0.16), transparent 55%)," +
-            "radial-gradient(circle at bottom right, rgba(139,92,246,0.18), transparent 55%)," +
-            "rgba(15,23,42,0.96)",
-          boxShadow: "0 20px 60px rgba(15,23,42,0.9)"
+          maxWidth: 400,
+          padding: "2.5rem",
+          borderRadius: "1.5rem",
+          border: "1px solid #463420",
+          background: "linear-gradient(145deg, rgba(44, 30, 16, 0.95), rgba(26, 17, 8, 0.98))",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 1px rgba(212, 175, 55, 0.2)"
         }}
       >
-        <h1 style={{ margin: 0, fontSize: "1.4rem", marginBottom: "0.25rem" }}>
-          {t("auth.login.title")}
-        </h1>
-        <p className="section-subtitle" style={{ marginBottom: "1.5rem" }}>
-          {t("welcome.subtitle")}
-        </p>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 60, height: 60, borderRadius: "50%", marginBottom: "1rem", border: "2px solid #d4af37" }} />
+          <h1 style={{ margin: 0, fontSize: "1.8rem", color: "#d4af37", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+            {t("auth.login.title")}
+          </h1>
+          <p style={{ color: "#8b7355", marginTop: "0.5rem", fontSize: "0.95rem" }}>
+            {t("welcome.subtitle")}
+          </p>
+        </div>
 
-        <label style={{ fontSize: "0.85rem", display: "block", marginBottom: "0.25rem" }}>
-          {t("auth.login.email")}
-        </label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "0.9rem",
-            padding: "0.6rem 0.75rem",
-            borderRadius: "0.6rem",
-            border: "1px solid rgba(148,163,184,0.7)",
-            background: "rgba(15,23,42,0.9)",
-            color: "#e5e7eb"
-          }}
-        />
+        <div style={{ marginBottom: "1.25rem" }}>
+          <label style={{ fontSize: "0.9rem", display: "block", marginBottom: "0.5rem", color: "#EAE0D5" }}>
+            {t("auth.login.email")}
+          </label>
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "0.85rem 1rem",
+              borderRadius: "0.75rem",
+              border: "1px solid #463420",
+              background: "rgba(0, 0, 0, 0.3)",
+              color: "#EAE0D5",
+              fontSize: "1rem",
+              outline: "none",
+              transition: "border-color 0.3s"
+            }}
+            onFocus={(e) => e.target.style.borderColor = "#d4af37"}
+            onBlur={(e) => e.target.style.borderColor = "#463420"}
+          />
+        </div>
 
-        <label style={{ fontSize: "0.85rem", display: "block", marginBottom: "0.25rem" }}>
-          {t("auth.login.password")}
-        </label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "1.1rem",
-            padding: "0.6rem 0.75rem",
-            borderRadius: "0.6rem",
-            border: "1px solid rgba(148,163,184,0.7)",
-            background: "rgba(15,23,42,0.9)",
-            color: "#e5e7eb"
-          }}
-        />
+        <div style={{ marginBottom: "1.5rem" }}>
+          <label style={{ fontSize: "0.9rem", display: "block", marginBottom: "0.5rem", color: "#EAE0D5" }}>
+            {t("auth.login.password")}
+          </label>
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "0.85rem 1rem",
+              borderRadius: "0.75rem",
+              border: "1px solid #463420",
+              background: "rgba(0, 0, 0, 0.3)",
+              color: "#EAE0D5",
+              fontSize: "1rem",
+              outline: "none",
+              transition: "border-color 0.3s"
+            }}
+            onFocus={(e) => e.target.style.borderColor = "#d4af37"}
+            onBlur={(e) => e.target.style.borderColor = "#463420"}
+          />
+        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', marginTop: '-0.5rem' }}>
-          <Link to="/forgot-password" style={{ color: '#d4af37', fontSize: '0.85rem', textDecoration: 'none' }}>Esqueceu a senha?</Link>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
+          <Link to="/forgot-password" style={{ color: '#d4af37', fontSize: '0.9rem', textDecoration: 'none', opacity: 0.8 }}>Esqueceu a senha?</Link>
         </div>
 
         {import.meta.env.VITE_DEMO_MODE === "true" && (
-          <p style={{ fontSize: "0.75rem", color: "#9ca3af", marginBottom: "0.75rem" }}>
-            <strong>Dica para modo demo:</strong> use qualquer e-mail. Se incluir{" "}
-            <code>master</code> no e-mail, entra como master.
+          <p style={{ fontSize: "0.8rem", color: "#8b7355", marginBottom: "1rem", background: "rgba(212, 175, 55, 0.05)", padding: "0.5rem", borderRadius: "0.5rem" }}>
+            <strong>Modo Demo:</strong> use qualquer e-mail.
           </p>
         )}
 
         {error && (
-          <p style={{ color: "#f97373", fontSize: "0.8rem", marginBottom: "0.75rem" }}>
+          <p style={{ color: "#ef4444", fontSize: "0.9rem", marginBottom: "1rem", padding: "0.75rem", background: "rgba(239, 68, 68, 0.1)", borderRadius: "0.5rem", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
             {error}
           </p>
         )}
 
-        <button className="btn" type="submit" disabled={isSubmitting} style={{ width: "100%" }}>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          style={{
+            width: "100%",
+            padding: "1rem",
+            background: "linear-gradient(135deg, #d4af37 0%, #b8860b 100%)",
+            color: "#1a1108",
+            border: "none",
+            borderRadius: "0.75rem",
+            fontSize: "1rem",
+            fontWeight: "bold",
+            cursor: isSubmitting ? "wait" : "pointer",
+            opacity: isSubmitting ? 0.7 : 1,
+            boxShadow: "0 4px 15px rgba(212, 175, 55, 0.3)"
+          }}
+        >
           {isSubmitting ? t("common.loading") : t("auth.login.submit")}
         </button>
 
-        <div style={{ textAlign: "center", marginTop: "1rem" }}>
-          <p style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
+        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+          <p style={{ fontSize: "0.95rem", color: "#8b7355" }}>
             {t("auth.login.noAccount")}{" "}
             <span
-              style={{ color: "#38bdf8", cursor: "pointer", textDecoration: "underline" }}
+              style={{ color: "#d4af37", cursor: "pointer", textDecoration: "underline", fontWeight: "bold" }}
               onClick={() => navigate("/register")}
             >
               {t("auth.register.submit")}
@@ -145,8 +178,6 @@ export const Login: React.FC = () => {
           </p>
         </div>
       </form>
-
-
     </div>
   );
 };

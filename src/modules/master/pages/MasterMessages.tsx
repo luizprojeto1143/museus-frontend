@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Mail, CheckCircle, Archive, AlertCircle, RefreshCw } from "lucide-react";
-import { api } from "../../api/client";
+import { api } from "../../../api/client";
 
 interface Message {
     id: string;

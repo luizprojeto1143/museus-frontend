@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ShoppingBag, Plus, Minus, Trash2, X } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Trash2, X, Copy, Check, QrCode, Ticket } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
+import { toast } from 'react-hot-toast';
 
 interface Product {
     id: string;
@@ -17,6 +18,280 @@ interface CartItem {
     product: Product;
     quantity: number;
 }
+
+interface CheckoutModalProps {
+    items: CartItem[];
+    total: number;
+    onClose: () => void;
+    onSuccess: () => void;
+}
+
+const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, onSuccess }) => {
+    const { user, tenantId } = useAuth();
+    const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
+    const [loading, setLoading] = useState(false);
+
+    // Customer Details
+    const [name, setName] = useState(user?.name || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [phone, setPhone] = useState(user?.phone || '');
+    const [cpf, setCpf] = useState((user as any)?.cpf || '');
+
+    // Payment
+    const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'BOLETO'>('PIX');
+    const [paymentResult, setPaymentResult] = useState<any>(null);
+
+    const handleConfirmOrder = async () => {
+        if (!name || !email || !phone) {
+            toast.error("Por favor, preencha todos os campos obrigatórios.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const payload = {
+                tenantId,
+                customerName: name,
+                customerEmail: email,
+                customerPhone: phone,
+                customerCpf: cpf, // If backend supports it
+                paymentMethod,
+                items: items.map(item => ({
+                    productId: item.product.id,
+                    quantity: item.quantity
+                }))
+            };
+
+            const res = await api.post('/shop/orders', payload);
+            setPaymentResult(res.data.payment);
+            setStep('success');
+            onSuccess();
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.response?.data?.message || "Erro ao criar pedido.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+        toast.success("Copiado!");
+    };
+
+    return (
+        <div className="checkout-overlay">
+            <div className="checkout-modal">
+                <button className="close-modal" onClick={onClose}><X size={24} /></button>
+
+                {step === 'details' && (
+                    <>
+                        <h2>Finalizar Pedido</h2>
+                        <div className="checkout-summary">
+                            <p>Total: <strong>R$ {total.toFixed(2).replace('.', ',')}</strong></p>
+                            <p className="items-count">{items.length} itens</p>
+                        </div>
+
+                        <div className="checkout-form">
+                            <h3>Seus Dados</h3>
+                            <div className="form-group">
+                                <label>Nome</label>
+                                <input value={name} onChange={e => setName(e.target.value)} placeholder="Seu nome completo" />
+                            </div>
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input value={email} onChange={e => setEmail(e.target.value)} placeholder="seu@email.com" />
+                            </div>
+                            <div className="form-group">
+                                <label>Telefone / WhatsApp</label>
+                                <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="(11) 99999-9999" />
+                            </div>
+
+                            <h3>Forma de Pagamento</h3>
+                            <div className="payment-methods">
+                                <button
+                                    className={`method-btn ${paymentMethod === 'PIX' ? 'active' : ''}`}
+                                    onClick={() => setPaymentMethod('PIX')}
+                                >
+                                    <QrCode size={20} /> Pix
+                                </button>
+                                <button
+                                    className={`method-btn ${paymentMethod === 'BOLETO' ? 'active' : ''}`}
+                                    onClick={() => setPaymentMethod('BOLETO')}
+                                >
+                                    <Ticket size={20} /> Boleto
+                                </button>
+                            </div>
+                        </div>
+
+                        <button className="confirm-btn" onClick={handleConfirmOrder} disabled={loading}>
+                            {loading ? 'Processando...' : `Pagar R$ ${total.toFixed(2).replace('.', ',')}`}
+                        </button>
+                    </>
+                )}
+
+                {step === 'success' && paymentResult && (
+                    <div className="success-step">
+                        <div className="success-icon"><Check size={48} /></div>
+                        <h2>Pedido Criado!</h2>
+                        <p>Realize o pagamento para confirmar sua compra.</p>
+
+                        {paymentMethod === 'PIX' && paymentResult.pixQrCode && (
+                            <div className="pix-container">
+                                <img src={`data:image/png;base64,${paymentResult.pixQrCode}`} alt="Pix QR Code" />
+                                <div className="pix-payload">
+                                    <input value={paymentResult.pixPayload} readOnly />
+                                    <button onClick={() => copyToClipboard(paymentResult.pixPayload)}>
+                                        <Copy size={16} /> Copiar
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {paymentMethod === 'BOLETO' && (
+                            <div className="boleto-container">
+                                <a href={paymentResult.bankSlipUrl || paymentResult.invoiceUrl} target="_blank" rel="noopener noreferrer" className="boleto-btn">
+                                    <Ticket size={24} /> Visualizar Boleto
+                                </a>
+                            </div>
+                        )}
+
+                        <p className="warn-text">Você também receberá os dados por email.</p>
+                        <button className="close-checkout-btn" onClick={onClose}>Fechar</button>
+                    </div>
+                )}
+            </div>
+
+            <style>{`
+                .checkout-overlay {
+                    position: fixed;
+                    inset: 0;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 300;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                }
+                .checkout-modal {
+                    background: var(--bg-card, #1f2937);
+                    width: 100%;
+                    max-width: 500px;
+                    border-radius: 24px;
+                    padding: 24px;
+                    position: relative;
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    color: var(--fg-main, white);
+                }
+                .close-modal {
+                    position: absolute;
+                    top: 16px;
+                    right: 16px;
+                    background: none;
+                    border: none;
+                    color: var(--fg-muted, #9ca3af);
+                    cursor: pointer;
+                }
+                .checkout-summary {
+                    background: rgba(255,255,255,0.05);
+                    padding: 16px;
+                    border-radius: 12px;
+                    margin-bottom: 24px;
+                }
+                .checkout-form h3 { margin: 20px 0 12px; font-size: 1.1rem; }
+                .form-group { margin-bottom: 12px; }
+                .form-group label { display: block; margin-bottom: 4px; font-size: 0.9rem; color: var(--fg-muted); }
+                .form-group input {
+                    width: 100%;
+                    padding: 12px;
+                    border-radius: 8px;
+                    background: rgba(0,0,0,0.2);
+                    border: 1px solid var(--border-color, #374151);
+                    color: white;
+                }
+                .payment-methods { display: flex; gap: 10px; }
+                .method-btn {
+                    flex: 1;
+                    padding: 12px;
+                    border-radius: 8px;
+                    background: rgba(0,0,0,0.2);
+                    border: 1px solid var(--border-color, #374151);
+                    color: white;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    cursor: pointer;
+                }
+                .method-btn.active {
+                    background: rgba(34, 197, 94, 0.1);
+                    border-color: #22c55e;
+                    color: #22c55e;
+                }
+                .confirm-btn {
+                    width: 100%;
+                    padding: 16px;
+                    background: linear-gradient(135deg, #22c55e, #16a34a);
+                    color: white;
+                    border: none;
+                    border-radius: 12px;
+                    font-weight: bold;
+                    margin-top: 24px;
+                    cursor: pointer;
+                }
+                
+                .success-step { text-align: center; }
+                .success-icon { 
+                    width: 80px; height: 80px; 
+                    background: #22c55e; 
+                    border-radius: 50%; 
+                    display: flex; align-items: center; justify-content: center;
+                    margin: 0 auto 20px;
+                    color: white;
+                }
+                .pix-container {
+                    background: white;
+                    padding: 16px;
+                    border-radius: 12px;
+                    margin: 20px 0;
+                }
+                .pix-container img { width: 100%; max-width: 200px; display: block; margin: 0 auto 16px; }
+                .pix-payload { display: flex; gap: 8px; }
+                .pix-payload input { color: black; }
+                .pix-payload button { 
+                    white-space: nowrap; 
+                    background: #374151; 
+                    color: white; 
+                    border: none;
+                    border-radius: 6px;
+                    padding: 0 12px;
+                    cursor: pointer;
+                }
+                .boleto-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: #3b82f6;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: bold;
+                    margin: 20px 0;
+                }
+                .close-checkout-btn {
+                    background: transparent;
+                    border: 1px solid var(--border-color);
+                    color: var(--fg-main);
+                    padding: 12px 32px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                }
+            `}</style>
+        </div>
+    );
+};
 
 /**
  * Product Card Component
@@ -366,10 +641,11 @@ export const ProductGrid: React.FC = () => {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCart, setShowCart] = useState(false);
+    const [showCheckout, setShowCheckout] = useState(false);
 
     const fetchProducts = useCallback(async () => {
         try {
-            const res = await api.get(`/shop/products?tenantId=${tenantId}`);
+            const res = await api.get(\`/shop/products?tenantId=\${tenantId}\`);
             setProducts(res.data);
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -396,6 +672,7 @@ export const ProductGrid: React.FC = () => {
             }
             return [...prev, { product, quantity: 1 }];
         });
+        toast.success('Adicionado ao carrinho');
     };
 
     const updateQuantity = (productId: string, quantity: number) => {
@@ -417,11 +694,12 @@ export const ProductGrid: React.FC = () => {
     };
 
     const handleCheckout = () => {
-        // Checkout em desenvolvimento
-        alert('Checkout em desenvolvimento. Aguarde a integração com pagamentos.');
+        setShowCheckout(true);
+        setShowCart(false);
     };
 
     const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const total = cart.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0);
 
     return (
         <div className="shop-container">
@@ -453,6 +731,19 @@ export const ProductGrid: React.FC = () => {
                 </div>
             )}
 
+            {/* Checkout Modal */}
+            {showCheckout && (
+                <CheckoutModal
+                    items={cart}
+                    total={total}
+                    onClose={() => setShowCheckout(false)}
+                    onSuccess={() => {
+                        setCart([]); // Clear cart
+                        // Keep modal open to show payment info
+                    }}
+                />
+            )}
+
             {/* Products Grid */}
             {loading ? (
                 <div className="loading-grid">Carregando produtos...</div>
@@ -475,89 +766,89 @@ export const ProductGrid: React.FC = () => {
             )}
 
             <style>{`
-                .shop-container {
+                .shop - container {
                     position: relative;
                 }
+
+                    .products - grid {
+                        display: grid;
+                        grid- template - columns: repeat(auto - fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
                 
-                .products-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                    gap: 20px;
-                }
+                .empty - shop {
+            text-align: center;
+    padding: 60px 20px;
+    color: var(--fg - muted, #9ca3af);
+}
                 
-                .empty-shop {
-                    text-align: center;
-                    padding: 60px 20px;
-                    color: var(--fg-muted, #9ca3af);
-                }
+                .empty - shop h3 {
+    margin: 16px 0 8px;
+    color: var(--fg - main, #f3f4f6);
+}
                 
-                .empty-shop h3 {
-                    margin: 16px 0 8px;
-                    color: var(--fg-main, #f3f4f6);
-                }
+                .cart - fab {
+    position: fixed;
+    bottom: 100px;
+    right: 80px;
+    width: 60px;
+    height: 60px;
+    border - radius: 50 %;
+    background: linear - gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align - items: center;
+    justify - content: center;
+    box - shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+    z - index: 100;
+}
                 
-                .cart-fab {
-                    position: fixed;
-                    bottom: 100px;
-                    right: 80px;
-                    width: 60px;
-                    height: 60px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, #22c55e, #16a34a);
-                    color: white;
-                    border: none;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
-                    z-index: 100;
-                }
+                .cart - badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 24px;
+    height: 24px;
+    background: #ef4444;
+    border - radius: 50 %;
+    font - size: 0.75rem;
+    font - weight: bold;
+    display: flex;
+    align - items: center;
+    justify - content: center;
+}
                 
-                .cart-badge {
-                    position: absolute;
-                    top: -4px;
-                    right: -4px;
-                    width: 24px;
-                    height: 24px;
-                    background: #ef4444;
-                    border-radius: 50%;
-                    font-size: 0.75rem;
-                    font-weight: bold;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
+                .cart - overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z - index: 200;
+}
                 
-                .cart-overlay {
-                    position: fixed;
-                    inset: 0;
-                    background: rgba(0, 0, 0, 0.5);
-                    z-index: 200;
-                }
+                .cart - sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 400px;
+    max - width: 90vw;
+    background: var(--bg - page, #111827);
+    padding: 20px;
+    overflow - y: auto;
+}
                 
-                .cart-sidebar {
-                    position: absolute;
-                    right: 0;
-                    top: 0;
-                    bottom: 0;
-                    width: 400px;
-                    max-width: 90vw;
-                    background: var(--bg-page, #111827);
-                    padding: 20px;
-                    overflow-y: auto;
-                }
-                
-                .close-cart {
-                    position: absolute;
-                    top: 20px;
-                    right: 20px;
-                    background: transparent;
-                    border: none;
-                    color: var(--fg-muted, #9ca3af);
-                    cursor: pointer;
-                }
-            `}</style>
+                .close - cart {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--fg - muted, #9ca3af);
+    cursor: pointer;
+}
+`}</style>
         </div>
     );
 };

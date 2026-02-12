@@ -94,6 +94,9 @@ import { AdminInternalUsers } from "./modules/admin/pages/AdminInternalUsers";
 import { AdminCertificates } from "./modules/admin/certificates";
 import { AdminReviews } from "./modules/admin/pages/AdminReviews";
 import { AdminShop } from "./modules/admin/pages/AdminShop";
+import { AdminSpaces } from "./modules/admin/pages/AdminSpaces";
+import { AdminSpaceForm } from "./modules/admin/pages/AdminSpaceForm";
+import { AdminCalendar } from "./modules/admin/pages/AdminCalendar";
 
 // Lazy Loaded Admin Component
 const AdminScannerTrainer = React.lazy(() => import("./modules/admin/pages/AdminScannerTrainer").then(module => ({ default: module.AdminScannerTrainer })));
@@ -133,12 +136,13 @@ import { MasterAchievementForm } from "./modules/master/pages/MasterAchievementF
 import { MasterAuditLogs } from "./modules/master/pages/MasterAuditLogs";
 import { MasterAccessibilityRequests } from "./modules/master/pages/MasterAccessibilityRequests";
 import { MasterSystemHealth } from "./modules/master/pages/MasterSystemHealth";
-import { MasterMessages } from "./modules/master/MasterMessages";
+import { MasterMessages } from "./modules/master/pages/MasterMessages";
 import MasterPlans from "./modules/master/pages/MasterPlans";
 import { MasterProviders } from "./modules/master/pages/MasterProviders";
 
 import { GlobalEvents } from "./modules/public/GlobalEvents";
 import { ForgotPassword } from "./modules/auth/ForgotPassword";
+import { NotFound } from "./modules/public/NotFound";
 
 // Producer pages
 import { ProducerLayout } from "./modules/producer/ProducerLayout";
@@ -154,6 +158,9 @@ import { ProducerTickets } from "./modules/producer/ProducerTickets";
 import { TotemLayout } from "./modules/totem/TotemLayout";
 import { TotemDashboard } from "./modules/totem/pages/TotemDashboard";
 import { TotemValidator } from "./modules/totem/pages/TotemValidator";
+import { TotemEvents } from "./modules/totem/pages/TotemEvents";
+import { TotemEventDetails } from "./modules/totem/pages/TotemEventDetails";
+import { TotemSearch } from "./modules/totem/pages/TotemSearch";
 
 import { ProducerAudience } from "./modules/producer/ProducerAudience";
 import { ProducerReports } from "./modules/producer/ProducerReports";
@@ -431,6 +438,16 @@ const App: React.FC = () => {
                     }
                   />
                   <Route
+                    path="/agendar"
+                    element={
+                      <RequireRole allowed={["visitor", "admin", "master"]}>
+                        <VisitorLayout>
+                          <SchedulingPage />
+                        </VisitorLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
                     path="/roteiro-inteligente/resultado"
                     element={
                       <RequireRole allowed={["visitor", "admin", "master"]}>
@@ -504,8 +521,9 @@ const App: React.FC = () => {
                   >
                     <Route index element={<TotemDashboard />} />
                     <Route path="validar" element={<TotemValidator />} />
-                    <Route path="eventos" element={<div style={{ color: 'white', padding: '2rem' }}>Em breve: Lista de Eventos</div>} />
-                    <Route path="busca" element={<div style={{ color: 'white', padding: '2rem' }}>Em breve: Busca Manual</div>} />
+                    <Route path="eventos" element={<TotemEvents />} />
+                    <Route path="eventos/:id" element={<TotemEventDetails />} />
+                    <Route path="busca" element={<TotemSearch />} />
                   </Route>
 
                   {/* ADMIN */}
@@ -590,6 +608,36 @@ const App: React.FC = () => {
                     }
                   />
                   <Route
+                    path="/admin/espacos"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminSpaces />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
+                    path="/admin/espacos/novo"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminSpaceForm />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
+                    path="/admin/espacos/:id"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminSpaceForm />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
                     path="/admin/certificates/*"
                     element={
                       <RequireRole allowed={["admin"]}>
@@ -635,6 +683,16 @@ const App: React.FC = () => {
                       <RequireRole allowed={["admin"]}>
                         <AdminLayout>
                           <AdminEventCheckIn />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
+                    path="/admin/calendario"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminCalendar />
                         </AdminLayout>
                       </RequireRole>
                     }
@@ -763,6 +821,17 @@ const App: React.FC = () => {
                   />
 
                   <Route
+                    path="/master/messages"
+                    element={
+                      <RequireRole allowed={["master"]}>
+                        <MasterLayout>
+                          <MasterMessages />
+                        </MasterLayout>
+                      </RequireRole>
+                    }
+                  />
+
+                  <Route
                     path="/admin/ia"
                     element={
                       <RequireRole allowed={["admin"]}>
@@ -783,6 +852,9 @@ const App: React.FC = () => {
                       </RequireRole>
                     }
                   />
+
+                  {/* 404 - Catch All */}
+                  <Route path="*" element={<NotFound />} />
 
                   <Route
                     path="/admin/uploads"

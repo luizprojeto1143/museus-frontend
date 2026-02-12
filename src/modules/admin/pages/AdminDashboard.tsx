@@ -26,6 +26,13 @@ type DashboardData = {
     message: string;
     link?: string;
   }>;
+  upcomingBookings: Array<{
+    id: string;
+    startTime: string;
+    purpose: string;
+    space: { name: string };
+    user: { name: string };
+  }>;
 };
 
 export const AdminDashboard: React.FC = () => {
@@ -144,6 +151,50 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div className="stat-label">{t("admin.dashboard.stats.monthlyGrowth")}</div>
         </div>
+      </div>
+
+      {/* 1.4 PRÓXIMAS RESERVAS - New Widget */}
+      <div className="card" style={{ marginBottom: "2rem", border: "1px solid rgba(59, 130, 246, 0.2)", background: "rgba(59, 130, 246, 0.02)" }}>
+        <h2 className="card-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#60a5fa" }}>
+          📅 {t("admin.dashboard.upcomingBookings", "Próximas Reservas de Espaço")}
+        </h2>
+        {data.upcomingBookings && data.upcomingBookings.length > 0 ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+            {data.upcomingBookings.map((booking) => (
+              <div
+                key={booking.id}
+                className="card"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  padding: "1rem",
+                  transition: "all 0.3s ease",
+                  cursor: "default"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.5rem" }}>
+                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#94a3b8" }}>
+                    {new Date(booking.startTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                  </div>
+                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#60a5fa" }}>
+                    {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+                <h4 style={{ color: "white", fontWeight: 700, fontSize: "1rem", marginBottom: "0.25rem" }}>{booking.purpose}</h4>
+                <div style={{ display: "flex", itemsCenter: "center", gap: "0.4rem", fontSize: "0.8rem", color: "#64748b", marginBottom: "0.5rem" }}>
+                  📍 {booking.space.name}
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "#475569", borderTop: "1px solid rgba(255,255,255,0.05)", pt: "0.5rem", marginTop: "0.5rem" }}>
+                  Por {booking.user.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>
+            Não há reservas agendadas para os próximos dias.
+          </div>
+        )}
       </div>
 
       {/* TOP OBRAS, TRILHAS E EVENTOS */}
