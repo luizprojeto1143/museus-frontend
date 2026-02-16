@@ -353,20 +353,20 @@ export const AdminCalendar: React.FC = () => {
             {isBookingModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
                     <div className="bg-white border border-gray-200 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-6">{editingBookingId ? "Editar Reserva" : "Nova Reserva"}</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-6">{editingBookingId ? "Editar Reserva" : "Nova Reserva"}</h2>
 
                         <form onSubmit={handleSaveBooking} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-gray-500 mb-2">Espaço</label>
                                 <select
-                                    className="input w-full"
+                                    className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
                                     value={bookingForm.spaceId}
                                     onChange={e => setBookingForm({ ...bookingForm, spaceId: e.target.value })}
                                     required
                                 >
                                     <option value="" disabled>Selecione um espaço...</option>
                                     {spaces.map(s => (
-                                        <option key={s.id} value={s.id} className="bg-white text-gray-800">{s.name}</option>
+                                        <option key={s.id} value={s.id} className="text-gray-900">{s.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -376,7 +376,7 @@ export const AdminCalendar: React.FC = () => {
                                     <label className="block text-sm font-bold text-gray-500 mb-2">Início</label>
                                     <input
                                         type="time"
-                                        className="input w-full"
+                                        className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
                                         value={bookingForm.startTime}
                                         onChange={e => setBookingForm({ ...bookingForm, startTime: e.target.value })}
                                         required
@@ -386,7 +386,7 @@ export const AdminCalendar: React.FC = () => {
                                     <label className="block text-sm font-bold text-gray-500 mb-2">Fim</label>
                                     <input
                                         type="time"
-                                        className="input w-full"
+                                        className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
                                         value={bookingForm.endTime}
                                         onChange={e => setBookingForm({ ...bookingForm, endTime: e.target.value })}
                                         required
@@ -399,7 +399,7 @@ export const AdminCalendar: React.FC = () => {
                                 <input
                                     type="text"
                                     placeholder="Ex: Reunião de Equipe, Ensaio..."
-                                    className="input w-full"
+                                    className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
                                     value={bookingForm.purpose}
                                     onChange={e => setBookingForm({ ...bookingForm, purpose: e.target.value })}
                                     required
@@ -409,9 +409,9 @@ export const AdminCalendar: React.FC = () => {
                             <div className="flex gap-3 pt-4">
                                 <Button
                                     type="button"
-                                    variant="outline"
+                                    variant="ghost"
                                     onClick={() => setIsBookingModalOpen(false)}
-                                    className="flex-1"
+                                    className="flex-1 text-gray-500 hover:text-gray-900"
                                 >
                                     Cancelar
                                 </Button>
