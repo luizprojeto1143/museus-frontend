@@ -111,26 +111,28 @@ export const AdminSpaceForm: React.FC = () => {
     };
 
     return (
-        <div className="admin-page animate-fadeIn max-w-4xl mx-auto pb-20">
+        <div className="max-w-4xl mx-auto pb-20 animate-fadeIn">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <Button onClick={() => navigate(-1)} variant="outline" className="w-12 h-12 rounded-full p-0 flex items-center justify-center border-white/10 text-slate-400 hover:text-white hover:bg-white/10">
-                    <ArrowLeft size={20} />
+                <Button onClick={() => navigate(-1)} variant="ghost" className="w-12 h-12 rounded-full p-0 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100">
+                    <ArrowLeft size={24} />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-black text-white">
+                    <h1 className="text-3xl font-bold text-gray-900">
                         {id === 'new' ? "Novo Espaço" : "Editar Espaço"}
                     </h1>
-                    <p className="text-slate-400">Preencha as informações do ambiente</p>
+                    <p className="text-gray-500 mt-1">Preencha as informações do ambiente</p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Basic Info Card */}
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-                    <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                        <Layers className="text-blue-400" size={24} />
-                        <h3 className="text-xl font-bold text-white">Informações Básicas</h3>
+                <div className="card bg-white border border-gray-200 shadow-sm rounded-3xl p-8">
+                    <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                        <div className="p-2 bg-blue-50 rounded-xl">
+                            <Layers className="text-blue-600" size={24} />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">Informações Básicas</h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -141,6 +143,7 @@ export const AdminSpaceForm: React.FC = () => {
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                                 required
+                                className="bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                             />
                         </div>
 
@@ -148,6 +151,7 @@ export const AdminSpaceForm: React.FC = () => {
                             label="Tipo de Ambiente"
                             value={formData.type}
                             onChange={e => setFormData({ ...formData, type: e.target.value })}
+                            className="bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                         >
                             <option value="ROOM">Sala Multiuso</option>
                             <option value="AUDITORIUM">Auditório</option>
@@ -161,6 +165,7 @@ export const AdminSpaceForm: React.FC = () => {
                             type="number"
                             value={formData.capacity}
                             onChange={e => setFormData({ ...formData, capacity: Number(e.target.value) })}
+                            className="bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                         />
 
                         <div className="md:col-span-2">
@@ -170,16 +175,19 @@ export const AdminSpaceForm: React.FC = () => {
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
+                                className="bg-white border-gray-300 text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Resources Card */}
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-                    <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                        <Box className="text-purple-400" size={24} />
-                        <h3 className="text-xl font-bold text-white">Recursos & Comodidades</h3>
+                <div className="card bg-white border border-gray-200 shadow-sm rounded-3xl p-8">
+                    <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                        <div className="p-2 bg-purple-50 rounded-xl">
+                            <Box className="text-purple-600" size={24} />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">Recursos & Comodidades</h3>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -191,13 +199,13 @@ export const AdminSpaceForm: React.FC = () => {
                                 className={`
                     p-4 rounded-2xl border text-sm font-bold text-left transition-all flex flex-col gap-2 relative overflow-hidden
                     ${formData.resources.includes(res)
-                                        ? 'bg-blue-600/20 border-blue-500 text-blue-300 ring-2 ring-blue-500/20'
-                                        : 'bg-black/20 border-white/5 text-slate-500 hover:border-white/20 hover:text-slate-300'
+                                        ? 'bg-blue-50 border-blue-500 text-blue-700 ring-2 ring-blue-500/20'
+                                        : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100'
                                     }
                  `}
                             >
                                 {formData.resources.includes(res) && (
-                                    <div className="absolute top-2 right-2 text-blue-500">
+                                    <div className="absolute top-2 right-2 text-blue-600">
                                         <CheckCircle size={14} />
                                     </div>
                                 )}
@@ -208,16 +216,18 @@ export const AdminSpaceForm: React.FC = () => {
                 </div>
 
                 {/* Settings Card */}
-                <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-                    <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-                        <Monitor className="text-green-400" size={24} />
-                        <h3 className="text-xl font-bold text-white">Configurações</h3>
+                <div className="card bg-white border border-gray-200 shadow-sm rounded-3xl p-8">
+                    <div className="flex items-center gap-3 mb-6 border-b border-gray-100 pb-4">
+                        <div className="p-2 bg-green-50 rounded-xl">
+                            <Monitor className="text-green-600" size={24} />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900">Configurações</h3>
                     </div>
 
-                    <div className="flex items-center gap-4 p-4 bg-black/20 rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-4 p-6 bg-gray-50 rounded-2xl border border-gray-200">
                         <div className="flex-1">
-                            <h4 className="text-white font-bold">Disponível para Reserva</h4>
-                            <p className="text-sm text-slate-500">Permitir que este espaço seja reservado no calendário.</p>
+                            <h4 className="text-gray-900 font-bold mb-1">Disponível para Reserva</h4>
+                            <p className="text-sm text-gray-500">Permitir que este espaço seja reservado no calendário.</p>
                         </div>
                         <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full cursor-pointer">
                             <input
@@ -226,17 +236,25 @@ export const AdminSpaceForm: React.FC = () => {
                                 checked={formData.isBookable}
                                 onChange={e => setFormData({ ...formData, isBookable: e.target.checked })}
                             />
-                            <span className={`block w-12 h-7 rounded-full transition-colors duration-300 ${formData.isBookable ? 'bg-green-500' : 'bg-slate-700'}`}></span>
-                            <span className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 ${formData.isBookable ? 'translate-x-5' : 'translate-x-0'}`}></span>
+                            <span className={`block w-12 h-7 rounded-full transition-colors duration-300 ${formData.isBookable ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                            <span className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 shadow-sm ${formData.isBookable ? 'translate-x-5' : 'translate-x-0'}`}></span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-4 pb-8">
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => navigate("/admin/espacos")}
+                        className="mr-4 text-gray-500 hover:text-gray-900"
+                    >
+                        Cancelar
+                    </Button>
                     <Button
                         type="submit"
                         disabled={loading}
-                        className="px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-blue-600/20"
+                        className="px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-blue-600/20 btn-primary"
                         leftIcon={loading ? <Loader2 className="animate-spin" /> : <Save />}
                     >
                         {loading ? "Salvando..." : "Salvar Espaço"}
