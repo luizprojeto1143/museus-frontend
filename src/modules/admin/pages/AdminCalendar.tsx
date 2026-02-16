@@ -177,54 +177,6 @@ export const AdminCalendar: React.FC = () => {
         });
     };
 
-    const renderDay = (date: Date | null, index: number) => {
-        if (!date) return <div key={`empty-${index}`} className="h-32 bg-zinc-900/30 border border-white/5 rounded-xl opacity-50"></div>;
-
-        const dayBookings = getBookingsForDate(date);
-        const isToday = new Date().toDateString() === date.toDateString();
-        const isSelected = selectedDate?.toDateString() === date.toDateString();
-
-        return (
-            <div
-                key={date.toISOString()}
-                onClick={() => {
-                    setSelectedDate(date);
-                    if (isBookingModalOpen) setIsBookingModalOpen(false); // Close to force re-open if needed or just select
-                }}
-                className={`
-                    h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all group relative overflow-hidden
-                    ${isToday ? 'bg-gold/10 border-gold/50' : 'bg-zinc-900/50 border-white/5 hover:border-white/20 hover:bg-zinc-800/50'}
-                    ${isSelected ? 'ring-2 ring-gold shadow-[0_0_15px_rgba(212,175,55,0.2)]' : ''}
-                `}
-            >
-                <div className="flex justify-between items-start z-10 relative">
-                    <span className={`text-sm font-bold ${isToday ? 'text-gold' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
-                        {date.getDate()}
-                    </span>
-                    {dayBookings.length > 0 && (
-                        <span className="text-[10px] bg-gold text-black px-1.5 py-0.5 rounded-full font-bold">
-                            {dayBookings.length}
-                        </span>
-                    )}
-                </div>
-
-                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 mt-1 z-10 relative">
-                    {dayBookings.slice(0, 3).map((b, idx) => (
-                        <div key={idx} className="text-[10px] bg-black/40 p-1 rounded border border-white/5 truncate text-zinc-300 flex items-center gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gold/50 shrink-0" />
-                            {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''} {b.space?.name}
-                        </div>
-                    ))}
-                    {dayBookings.length > 3 && (
-                        <div className="text-[10px] text-zinc-500 text-center font-medium">
-                            + {dayBookings.length - 3} mais
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
     const selectedBookings = selectedDate ? getBookingsForDate(selectedDate) : [];
 
     return (
@@ -256,9 +208,9 @@ export const AdminCalendar: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Calendar Grid */}
                 <div className="lg:col-span-2 bg-zinc-900/50 p-6 rounded-3xl border border-white/5 backdrop-blur-sm">
-                    <div className="grid grid-cols-7 gap-4 mb-4 text-center">
+                    <div className="flex gap-2 mb-4 text-center">
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-                            <div key={d} className="text-zinc-500 text-xs font-bold uppercase tracking-wider">{d}</div>
+                            <div key={d} className="text-zinc-500 text-xs font-bold uppercase tracking-wider w-[calc(14.28%-8px)]">{d}</div>
                         ))}
                     </div>
 
@@ -268,8 +220,54 @@ export const AdminCalendar: React.FC = () => {
                             <p className="text-zinc-500 text-sm">Carregando agenda...</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-7 gap-2">
-                            {days.map((date, idx) => renderDay(date, idx))}
+                        <div className="flex flex-wrap gap-2">
+                            {days.map((date, idx) => {
+                                if (!date) return <div key={`empty-${idx}`} className="h-32 bg-zinc-900/30 border border-white/5 rounded-xl opacity-50 w-[calc(14.28%-8px)]"></div>;
+
+                                const dayBookings = getBookingsForDate(date);
+                                const isToday = new Date().toDateString() === date.toDateString();
+                                const isSelected = selectedDate?.toDateString() === date.toDateString();
+
+                                return (
+                                    <div
+                                        key={date.toISOString()}
+                                        onClick={() => {
+                                            setSelectedDate(date);
+                                            if (isBookingModalOpen) setIsBookingModalOpen(false);
+                                        }}
+                                        className={`
+                                            h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all group relative overflow-hidden w-[calc(14.28%-8px)]
+                                            ${isToday ? 'bg-gold/10 border-gold/50' : 'bg-zinc-900/50 border-white/5 hover:border-white/20 hover:bg-zinc-800/50'}
+                                            ${isSelected ? 'ring-2 ring-gold shadow-[0_0_15px_rgba(212,175,55,0.2)]' : ''}
+                                        `}
+                                    >
+                                        <div className="flex justify-between items-start z-10 relative">
+                                            <span className={`text-sm font-bold ${isToday ? 'text-gold' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
+                                                {date.getDate()}
+                                            </span>
+                                            {dayBookings.length > 0 && (
+                                                <span className="text-[10px] bg-gold text-black px-1.5 py-0.5 rounded-full font-bold">
+                                                    {dayBookings.length}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 mt-1 z-10 relative">
+                                            {dayBookings.slice(0, 3).map((b, idx) => (
+                                                <div key={idx} className="text-[10px] bg-black/40 p-1 rounded border border-white/5 truncate text-zinc-300 flex items-center gap-1">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-gold/50 shrink-0" />
+                                                    {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''} {b.space?.name}
+                                                </div>
+                                            ))}
+                                            {dayBookings.length > 3 && (
+                                                <div className="text-[10px] text-zinc-500 text-center font-medium">
+                                                    + {dayBookings.length - 3} mais
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
