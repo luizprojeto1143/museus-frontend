@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Clock, MapPin, Edit2, Trash2 } from "lucide-react";
-import { Button } from "../../../components/ui";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Clock, MapPin, Edit2, Trash2, CalendarRange, CheckCircle2, X } from "lucide-react";
+import { Button, Input, Select, Textarea } from "../../../components/ui"; // Assuming Input/Select/Textarea exist
+import { useAuth } from "../../auth/AuthContext";
 
 type Booking = {
     id: string;
@@ -20,8 +21,6 @@ type Booking = {
     };
     status: string;
 };
-
-import { useAuth } from "../../auth/AuthContext";
 
 export const AdminCalendar: React.FC = () => {
     const { t } = useTranslation();
@@ -45,8 +44,8 @@ export const AdminCalendar: React.FC = () => {
     const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchSpaces();
-    }, []);
+        if (tenantId) fetchSpaces();
+    }, [tenantId]);
 
     const fetchSpaces = async () => {
         try {
@@ -124,8 +123,8 @@ export const AdminCalendar: React.FC = () => {
     };
 
     useEffect(() => {
-        fetchBookings();
-    }, [currentDate]);
+        if (tenantId) fetchBookings();
+    }, [currentDate, tenantId]);
 
     const fetchBookings = async () => {
         setLoading(true);
@@ -137,8 +136,6 @@ export const AdminCalendar: React.FC = () => {
             setBookings(res.data);
         } catch (err) {
             console.error(err);
-            // Mock data for demo if backend not ready or empty
-            // addToast("Erro ao carregar agenda", "error");
         } finally {
             setLoading(false);
         }
@@ -173,7 +170,7 @@ export const AdminCalendar: React.FC = () => {
 
     const getBookingsForDate = (date: Date) => {
         return bookings.filter(b => {
-            const bDate = new Date(b.date); // or b.startTime if booking logic changed to range
+            const bDate = new Date(b.date);
             return bDate.getDate() === date.getDate() &&
                 bDate.getMonth() === date.getMonth() &&
                 bDate.getFullYear() === date.getFullYear();
@@ -181,7 +178,7 @@ export const AdminCalendar: React.FC = () => {
     };
 
     const renderDay = (date: Date | null, index: number) => {
-        if (!date) return <div key={`empty-${index}`} className="h-32 bg-gray-50 border border-gray-100 rounded-xl opacity-50"></div>;
+        if (!date) return <div key={`empty-${index}`} className="h-32 bg-zinc-900/30 border border-white/5 rounded-xl opacity-50"></div>;
 
         const dayBookings = getBookingsForDate(date);
         const isToday = new Date().toDateString() === date.toDateString();
@@ -190,32 +187,36 @@ export const AdminCalendar: React.FC = () => {
         return (
             <div
                 key={date.toISOString()}
-                onClick={() => setSelectedDate(date)}
+                onClick={() => {
+                    setSelectedDate(date);
+                    if (isBookingModalOpen) setIsBookingModalOpen(false); // Close to force re-open if needed or just select
+                }}
                 className={`
-           h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all hover:border-blue-500/50
-           ${isToday ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'}
-           ${isSelected ? 'ring-2 ring-blue-500' : ''}
-        `}
+                    h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all group relative overflow-hidden
+                    ${isToday ? 'bg-gold/10 border-gold/50' : 'bg-zinc-900/50 border-white/5 hover:border-white/20 hover:bg-zinc-800/50'}
+                    ${isSelected ? 'ring-2 ring-gold shadow-[0_0_15px_rgba(212,175,55,0.2)]' : ''}
+                `}
             >
-                <div className="flex justify-between items-start">
-                    <span className={`text-sm font-bold ${isToday ? 'text-blue-600' : 'text-gray-500'}`}>
+                <div className="flex justify-between items-start z-10 relative">
+                    <span className={`text-sm font-bold ${isToday ? 'text-gold' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
                         {date.getDate()}
                     </span>
                     {dayBookings.length > 0 && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-1.5 rounded-full font-bold">
+                        <span className="text-[10px] bg-gold text-black px-1.5 py-0.5 rounded-full font-bold">
                             {dayBookings.length}
                         </span>
                     )}
                 </div>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 mt-1">
+                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 mt-1 z-10 relative">
                     {dayBookings.slice(0, 3).map((b, idx) => (
-                        <div key={idx} className="text-[10px] bg-gray-100 p-1 rounded border border-gray-200 truncate text-gray-600">
-                            {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''} {b.space?.name || "Reserva"}
+                        <div key={idx} className="text-[10px] bg-black/40 p-1 rounded border border-white/5 truncate text-zinc-300 flex items-center gap-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-gold/50 shrink-0" />
+                            {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''} {b.space?.name}
                         </div>
                     ))}
                     {dayBookings.length > 3 && (
-                        <div className="text-[10px] text-gray-400 text-center">
+                        <div className="text-[10px] text-zinc-500 text-center font-medium">
                             + {dayBookings.length - 3} mais
                         </div>
                     )}
@@ -227,39 +228,44 @@ export const AdminCalendar: React.FC = () => {
     const selectedBookings = selectedDate ? getBookingsForDate(selectedDate) : [];
 
     return (
-        <div className="admin-page animate-fadeIn space-y-6">
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem", alignItems: "center" }}>
+        <div className="max-w-6xl mx-auto pb-24 animate-fadeIn">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
-                    <h1 className="section-title">
-                        Agenda de Espaços
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 flex items-center gap-3">
+                        <CalendarRange className="text-gold" size={32} /> Agenda de Espaços
                     </h1>
-
+                    <p className="text-zinc-400 text-sm font-medium mt-1">
+                        Gerencie as reservas e disponibilidade dos espaços.
+                    </p>
                 </div>
-                <div className="flex items-center gap-4 bg-gray-100 p-2 rounded-2xl border border-gray-200">
-                    <Button variant="ghost" onClick={prevMonth} className="text-gray-500 hover:text-black">
-                        <ChevronLeft />
+
+                <div className="flex items-center gap-4 bg-zinc-900/80 p-1.5 rounded-2xl border border-white/10 backdrop-blur-md shadow-xl">
+                    <Button variant="ghost" onClick={prevMonth} className="text-zinc-400 hover:text-white hover:bg-white/5 w-10 h-10 p-0 rounded-xl">
+                        <ChevronLeft size={20} />
                     </Button>
-                    <span className="text-xl font-bold text-gray-800 min-w-[150px] text-center capitalize">
+                    <span className="text-lg font-bold text-white min-w-[150px] text-center capitalize">
                         {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
                     </span>
-                    <Button variant="ghost" onClick={nextMonth} className="text-gray-500 hover:text-black">
-                        <ChevronRight />
+                    <Button variant="ghost" onClick={nextMonth} className="text-zinc-400 hover:text-white hover:bg-white/5 w-10 h-10 p-0 rounded-xl">
+                        <ChevronRight size={20} />
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Calendar Grid */}
-                <div className="lg:col-span-2 bg-gray-50/50 p-6 rounded-3xl border border-gray-200">
+                <div className="lg:col-span-2 bg-zinc-900/50 p-6 rounded-3xl border border-white/5 backdrop-blur-sm">
                     <div className="grid grid-cols-7 gap-4 mb-4 text-center">
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-                            <div key={d} className="text-gray-400 text-sm font-bold uppercase tracking-wider">{d}</div>
+                            <div key={d} className="text-zinc-500 text-xs font-bold uppercase tracking-wider">{d}</div>
                         ))}
                     </div>
 
                     {loading ? (
-                        <div className="h-96 flex items-center justify-center">
-                            <Loader2 className="animate-spin text-blue-500" size={40} />
+                        <div className="h-96 flex flex-col items-center justify-center gap-4">
+                            <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-zinc-500 text-sm">Carregando agenda...</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-7 gap-2">
@@ -269,124 +275,136 @@ export const AdminCalendar: React.FC = () => {
                 </div>
 
                 {/* Sidebar Details */}
-                <div className="card h-fit">
-                    <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                        <Clock size={20} className="text-blue-500" />
-                        {selectedDate
-                            ? selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
-                            : "Selecione uma data"}
-                    </h3>
+                <div className="space-y-6">
+                    <div className="bg-zinc-900/80 border border-white/10 rounded-3xl p-6 shadow-xl backdrop-blur-md h-fit relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
-                    {selectedDate && (
-                        <Button
-                            onClick={() => {
-                                setEditingBookingId(null);
-                                setBookingForm({
-                                    spaceId: spaces[0]?.id || "",
-                                    startTime: "09:00",
-                                    endTime: "10:00",
-                                    purpose: ""
-                                });
-                                setIsBookingModalOpen(true);
-                            }}
-                            className="w-full mb-6 btn btn-primary"
-                        >
-                            + Nova Reserva
-                        </Button>
-                    )}
+                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2 relative z-10">
+                            <Clock size={20} className="text-gold" />
+                            {selectedDate
+                                ? selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
+                                : "Selecione uma data"}
+                        </h3>
 
-                    {!selectedDate ? (
-                        <div className="text-center py-10 text-gray-400">
-                            Clique em um dia no calendário para ver os detalhes.
-                        </div>
-                    ) : selectedBookings.length === 0 ? (
-                        <div className="text-center py-10 text-gray-400 bg-gray-50 rounded-2xl border border-gray-200 border-dashed">
-                            Nenhuma reserva para este dia.
-                        </div>
-                    ) : (
-                        <div className="space-y-4">
-                            {selectedBookings.map(b => (
-                                <div key={b.id} className="bg-white p-4 rounded-2xl border border-gray-100 hover:border-blue-500/30 transition-colors shadow-sm">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <span className={`text-xs px-2 py-0.5 rounded font-bold ${b.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                            {b.status === 'CONFIRMED' ? 'Confirmado' : b.status}
-                                        </span>
-                                        <div className="flex items-center gap-1">
-                                            <button
-                                                onClick={() => handleEditClick(b)}
-                                                className="p-1.5 hover:bg-blue-50 text-gray-400 hover:text-blue-500 rounded-lg transition-colors"
-                                            >
-                                                <Edit2 size={14} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteBooking(b.id)}
-                                                className="p-1.5 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                            <span className="text-gray-400 text-xs ml-2">
-                                                {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Dia todo'}
-                                                {' - '}
-                                                {b.endTime ? new Date(b.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <h4 className="text-gray-800 font-bold text-lg mb-1">{b.purpose || "Sem título"}</h4>
-                                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                                        <MapPin size={14} className="text-blue-500" />
-                                        {b.space?.name || "Espaço desconhecido"}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs text-gray-400 border-t border-gray-100 pt-2 mt-2">
-                                        <div className="w-5 h-5 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-600">
-                                            {b.user?.name?.charAt(0) || "U"}
-                                        </div>
-                                        Reservado por {b.user?.name || "Usuário"}
-                                    </div>
+                        {selectedDate && (
+                            <Button
+                                onClick={() => {
+                                    setEditingBookingId(null);
+                                    setBookingForm({
+                                        spaceId: spaces[0]?.id || "",
+                                        startTime: "09:00",
+                                        endTime: "10:00",
+                                        purpose: ""
+                                    });
+                                    setIsBookingModalOpen(true);
+                                }}
+                                className="w-full mb-6 py-6 rounded-xl font-bold text-base shadow-lg shadow-gold/20 bg-gold hover:bg-gold/90 text-black border-none"
+                            >
+                                + Nova Reserva
+                            </Button>
+                        )}
+
+                        {!selectedDate ? (
+                            <div className="text-center py-12 text-zinc-500 flex flex-col items-center">
+                                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 text-zinc-600">
+                                    <CalendarIcon size={24} />
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                                <p className="text-sm font-medium">Clique em um dia no calendário para ver os detalhes.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                                {selectedBookings.length === 0 ? (
+                                    <div className="text-center py-10 text-zinc-500 bg-black/20 rounded-xl border border-white/5">
+                                        <p className="text-sm">Nenhuma reserva para este dia.</p>
+                                    </div>
+                                ) : (
+                                    selectedBookings.map(booking => (
+                                        <div key={booking.id} className="bg-black/40 border border-white/5 p-4 rounded-xl hover:border-white/10 transition-colors group">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2 h-2 rounded-full bg-gold" />
+                                                    <span className="font-bold text-white text-sm">{booking.space?.name}</span>
+                                                </div>
+                                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={() => handleEditClick(booking)}
+                                                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-lg"
+                                                    >
+                                                        <Edit2 size={14} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteBooking(booking.id)}
+                                                        className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs text-zinc-400 mb-2">
+                                                <Clock size={12} />
+                                                {booking.startTime ? new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'} -
+                                                {booking.endTime ? new Date(booking.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}
+                                            </div>
+                                            {booking.purpose && (
+                                                <p className="text-xs text-zinc-500 italic border-t border-white/5 pt-2 mt-2">
+                                                    "{booking.purpose}"
+                                                </p>
+                                            )}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Booking Modal */}
+            {/* Modal de Reserva */}
             {isBookingModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white border border-gray-200 rounded-3xl p-8 max-w-md w-full shadow-2xl relative">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6">{editingBookingId ? "Editar Reserva" : "Nova Reserva"}</h2>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-zinc-900 border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl relative">
+                        <button
+                            onClick={() => setIsBookingModalOpen(false)}
+                            className="absolute top-4 right-4 text-zinc-400 hover:text-white p-2 rounded-full hover:bg-white/5"
+                        >
+                            <X size={20} />
+                        </button>
+
+                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            {editingBookingId ? "Editar Reserva" : "Nova Reserva"}
+                        </h2>
 
                         <form onSubmit={handleSaveBooking} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-gray-500 mb-2">Espaço</label>
+                                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Espaço</label>
                                 <select
-                                    className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold/50"
                                     value={bookingForm.spaceId}
                                     onChange={e => setBookingForm({ ...bookingForm, spaceId: e.target.value })}
                                     required
                                 >
-                                    <option value="" disabled>Selecione um espaço...</option>
                                     {spaces.map(s => (
-                                        <option key={s.id} value={s.id} className="text-gray-900">{s.name}</option>
+                                        <option key={s.id} value={s.id}>{s.name}</option>
                                     ))}
                                 </select>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-500 mb-2">Início</label>
+                                    <label className="block text-sm font-medium text-zinc-300 mb-1.5">Início</label>
                                     <input
                                         type="time"
-                                        className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold/50"
                                         value={bookingForm.startTime}
                                         onChange={e => setBookingForm({ ...bookingForm, startTime: e.target.value })}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-500 mb-2">Fim</label>
+                                    <label className="block text-sm font-medium text-zinc-300 mb-1.5">Fim</label>
                                     <input
                                         type="time"
-                                        className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold/50"
                                         value={bookingForm.endTime}
                                         onChange={e => setBookingForm({ ...bookingForm, endTime: e.target.value })}
                                         required
@@ -395,32 +413,30 @@ export const AdminCalendar: React.FC = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-gray-500 mb-2">Propósito</label>
-                                <input
-                                    type="text"
-                                    placeholder="Ex: Reunião de Equipe, Ensaio..."
-                                    className="input w-full bg-white border-gray-300 text-gray-900 focus:border-blue-500"
+                                <label className="block text-sm font-medium text-zinc-300 mb-1.5">Propósito / Observações</label>
+                                <textarea
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-gold/50 min-h-[100px]"
                                     value={bookingForm.purpose}
                                     onChange={e => setBookingForm({ ...bookingForm, purpose: e.target.value })}
-                                    required
+                                    placeholder="Ex: Reunião de equipe..."
                                 />
                             </div>
 
-                            <div className="flex gap-3 pt-4">
+                            <div className="flex justify-end gap-3 pt-4">
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     onClick={() => setIsBookingModalOpen(false)}
-                                    className="flex-1 text-gray-500 hover:text-gray-900"
+                                    className="text-zinc-400 hover:text-white"
                                 >
                                     Cancelar
                                 </Button>
                                 <Button
                                     type="submit"
-                                    className="flex-1 btn-primary"
-                                    disabled={isSubmitting}
+                                    isLoading={isSubmitting}
+                                    className="bg-gold text-black hover:bg-gold/90 font-bold"
                                 >
-                                    {isSubmitting ? <Loader2 className="animate-spin" /> : "Confirmar Reserva"}
+                                    Salvar
                                 </Button>
                             </div>
                         </form>
