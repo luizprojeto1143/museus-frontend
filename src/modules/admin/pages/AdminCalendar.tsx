@@ -207,10 +207,12 @@ export const AdminCalendar: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Calendar Grid */}
+                {/* Calendar Grid */}
                 <div className="lg:col-span-2 bg-zinc-900/50 p-6 rounded-3xl border border-white/5 backdrop-blur-sm">
-                    <div className="flex gap-2 mb-4 text-center">
+                    {/* Header Days */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '1rem', marginBottom: '1rem', textAlign: 'center' }}>
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-                            <div key={d} className="text-zinc-500 text-xs font-bold uppercase tracking-wider w-[calc(14.28%-8px)]">{d}</div>
+                            <div key={d} className="text-zinc-500 text-xs font-bold uppercase tracking-wider">{d}</div>
                         ))}
                     </div>
 
@@ -220,9 +222,9 @@ export const AdminCalendar: React.FC = () => {
                             <p className="text-zinc-500 text-sm">Carregando agenda...</p>
                         </div>
                     ) : (
-                        <div className="flex flex-wrap gap-2">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem' }}>
                             {days.map((date, idx) => {
-                                if (!date) return <div key={`empty-${idx}`} className="h-32 bg-zinc-900/30 border border-white/5 rounded-xl opacity-50 w-[calc(14.28%-8px)]"></div>;
+                                if (!date) return <div key={`empty-${idx}`} className="h-32 bg-zinc-900/30 border border-white/5 rounded-xl opacity-50"></div>;
 
                                 const dayBookings = getBookingsForDate(date);
                                 const isToday = new Date().toDateString() === date.toDateString();
@@ -236,7 +238,7 @@ export const AdminCalendar: React.FC = () => {
                                             if (isBookingModalOpen) setIsBookingModalOpen(false);
                                         }}
                                         className={`
-                                            h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all group relative overflow-hidden w-[calc(14.28%-8px)]
+                                            h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all group relative overflow-hidden
                                             ${isToday ? 'bg-gold/10 border-gold/50' : 'bg-zinc-900/50 border-white/5 hover:border-white/20 hover:bg-zinc-800/50'}
                                             ${isSelected ? 'ring-2 ring-gold shadow-[0_0_15px_rgba(212,175,55,0.2)]' : ''}
                                         `}
