@@ -1,4 +1,4 @@
-import { useIsCityMode } from "../modules/auth/TenantContext";
+import { useIsCityMode, useTenant } from "../modules/auth/TenantContext";
 import { useTranslation } from "react-i18next";
 
 export interface Terminology {
