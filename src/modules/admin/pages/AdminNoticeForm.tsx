@@ -226,29 +226,32 @@ export const AdminNoticeForm: React.FC = () => {
     }
 
     return (
-        <div className="admin-form-container">
+        <div className="max-w-5xl mx-auto pb-24 animate-fadeIn">
             {/* Header */}
-            <div className="admin-wizard-header">
-                <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="p-0">
+            <div className="flex items-center gap-4 mb-8">
+                <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="p-0 hover:bg-transparent text-zinc-400 hover:text-white transition-colors">
                     <ArrowLeft size={24} />
                 </Button>
                 <div>
-                    <h1 className="admin-wizard-title">
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
                         {isEdit ? "Editar Edital" : "Novo Edital"}
                     </h1>
-                    <p className="admin-wizard-subtitle">
+                    <p className="text-zinc-400 mt-1">
                         Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}
                     </p>
                 </div>
             </div>
 
             {/* Stepper */}
-            <div className="admin-wizard-stepper">
-                <div className="admin-stepper-progress-bg"></div>
+            <div className="flex items-center justify-between relative mb-12 px-4">
+                {/* Progress Bar Background */}
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -z-10" />
+
+                {/* Progress Bar Fill */}
                 <div
-                    className="admin-stepper-progress-fill"
+                    className="absolute top-1/2 left-0 h-0.5 bg-gold transition-all duration-300 -z-10"
                     style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
-                ></div>
+                />
 
                 {STEPS.map((step, index) => {
                     const isActive = index === currentStep;
@@ -258,7 +261,8 @@ export const AdminNoticeForm: React.FC = () => {
                     return (
                         <div
                             key={step.id}
-                            className={`admin-step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
+                            className={`flex flex-col items-center relative z-10 cursor-pointer group ${isActive ? 'text-gold' : isCompleted ? 'text-white' : 'text-zinc-500'
+                                }`}
                             onClick={() => {
                                 if (isEdit || index < currentStep) {
                                     setDirection(index > currentStep ? 1 : -1);
@@ -266,10 +270,15 @@ export const AdminNoticeForm: React.FC = () => {
                                 }
                             }}
                         >
-                            <div className="admin-step-icon">
+                            <div className={`
+                                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 mb-3
+                                ${isActive ? 'bg-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]' :
+                                    isCompleted ? 'bg-zinc-800 text-white border border-white/20' :
+                                        'bg-zinc-900 text-zinc-600 border border-white/10 group-hover:border-white/20'}
+                            `}>
                                 {isCompleted ? <CheckCircle size={20} /> : <Icon size={20} />}
                             </div>
-                            <span className="admin-step-label">
+                            <span className="text-sm font-medium transition-colors">
                                 {step.title}
                             </span>
                         </div>
@@ -278,7 +287,7 @@ export const AdminNoticeForm: React.FC = () => {
             </div>
 
             {/* Content Container */}
-            <div className="admin-wizard-content">
+            <div className="min-h-[400px]">
                 <AnimatePresence mode="wait" initial={false} custom={direction}>
                     <motion.div
                         key={currentStep}
@@ -288,19 +297,20 @@ export const AdminNoticeForm: React.FC = () => {
                         animate="center"
                         exit="exit"
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        style={{ width: "100%" }}
+                        className="w-full"
                     >
                         {/* STEP 0: DADOS BÁSICOS */}
                         {currentStep === 0 && (
-                            <div className="flex-col gap-6">
-                                <div className="admin-grid-2">
-                                    <div style={{ gridColumn: 'span 1' }}>
+                            <div className="space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-1">
                                         <Input
                                             label="Título do Edital *"
                                             value={formData.title}
                                             onChange={e => setFormData({ ...formData, title: e.target.value })}
                                             placeholder="Ex: Edital de Fomento à Cultura 2024"
                                             required
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
 
@@ -308,19 +318,21 @@ export const AdminNoticeForm: React.FC = () => {
                                         label="Status Inicial"
                                         value={formData.status}
                                         onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                     >
                                         {STATUS_OPTIONS.map(opt => (
                                             <option key={opt.value} value={opt.value}>{opt.label}</option>
                                         ))}
                                     </Select>
 
-                                    <div style={{ gridColumn: 'span 2' }}>
+                                    <div className="md:col-span-2">
                                         <Input
                                             label="Link do Documento (PDF)"
                                             type="url"
                                             value={formData.documentUrl}
                                             onChange={e => setFormData({ ...formData, documentUrl: e.target.value })}
                                             placeholder="https://exemplo.com/edital.pdf"
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
                                 </div>
@@ -331,49 +343,54 @@ export const AdminNoticeForm: React.FC = () => {
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Descreva os objetivos, público-alvo e regras do edital..."
+                                    className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                 />
                             </div>
                         )}
 
                         {/* STEP 1: CRONOGRAMA */}
                         {currentStep === 1 && (
-                            <div className="flex-col gap-6">
-                                <div className="admin-section">
-                                    <h3 className="admin-section-title">
-                                        <MousePointerClick size={20} /> Período de Inscrição
+                            <div className="space-y-6">
+                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                    <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                                        <MousePointerClick size={20} className="text-gold" /> Período de Inscrição
                                     </h3>
-                                    <div className="admin-grid-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <Input
                                             label="Abertura das Inscrições *"
                                             type="date"
                                             value={formData.inscriptionStart}
                                             onChange={e => setFormData({ ...formData, inscriptionStart: e.target.value })}
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                         <Input
                                             label="Encerramento das Inscrições *"
                                             type="date"
                                             value={formData.inscriptionEnd}
                                             onChange={e => setFormData({ ...formData, inscriptionEnd: e.target.value })}
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="admin-section">
-                                    <h3 className="admin-section-title">
-                                        <Calendar size={20} /> Execução e Resultados
+                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                    <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                                        <Calendar size={20} className="text-gold" /> Execução e Resultados
                                     </h3>
-                                    <div className="admin-grid-2">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <Input
                                             label="Divulgação dos Resultados"
                                             type="date"
                                             value={formData.resultsDate}
                                             onChange={e => setFormData({ ...formData, resultsDate: e.target.value })}
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                         <Input
                                             label="Prazo Final de Execução"
                                             type="date"
                                             value={formData.executionEnd}
                                             onChange={e => setFormData({ ...formData, executionEnd: e.target.value })}
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
                                 </div>
@@ -382,11 +399,11 @@ export const AdminNoticeForm: React.FC = () => {
 
                         {/* STEP 2: ESCOPO E RECURSOS */}
                         {currentStep === 2 && (
-                            <div className="flex-col gap-6">
+                            <div className="space-y-6">
                                 {/* Orçamento */}
-                                <div className="admin-grid-2">
-                                    <div className="admin-section">
-                                        <h3 className="admin-section-title" style={{ color: 'var(--status-success)' }}>Orçamento Geral</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                        <h3 className="text-lg font-semibold text-white mb-4">Orçamento Geral</h3>
                                         <Input
                                             label="Valor Total do Edital (R$)"
                                             type="number"
@@ -394,10 +411,11 @@ export const AdminNoticeForm: React.FC = () => {
                                             value={formData.totalBudget}
                                             onChange={e => setFormData({ ...formData, totalBudget: e.target.value })}
                                             placeholder="500000.00"
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
-                                    <div className="admin-section">
-                                        <h3 className="admin-section-title" style={{ color: '#c084fc' }}>Limite por Projeto</h3>
+                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                        <h3 className="text-lg font-semibold text-white mb-4">Limite por Projeto</h3>
                                         <Input
                                             label="Teto Máximo (R$)"
                                             type="number"
@@ -405,16 +423,17 @@ export const AdminNoticeForm: React.FC = () => {
                                             value={formData.maxPerProject}
                                             onChange={e => setFormData({ ...formData, maxPerProject: e.target.value })}
                                             placeholder="50000.00"
+                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Categorias */}
-                                <div>
-                                    <label className="admin-section-title">
-                                        <Tag size={16} /> Categorias Culturais
+                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                    <label className="text-base font-medium text-white mb-4 block flex items-center gap-2">
+                                        <Tag size={16} className="text-gold" /> Categorias Culturais
                                     </label>
-                                    <div className="flex-wrap gap-2">
+                                    <div className="flex flex-wrap gap-2">
                                         {(categories.length > 0 ? categories : CULTURAL_CATEGORIES.map(c => ({ name: c }))).map((cat: any) => {
                                             const catName = cat.name || cat;
                                             const isSelected = formData.culturalCategories.includes(catName);
@@ -423,7 +442,12 @@ export const AdminNoticeForm: React.FC = () => {
                                                     key={cat.id || cat}
                                                     type="button"
                                                     onClick={() => toggleCategory(catName)}
-                                                    className={`category-btn ${isSelected ? 'selected' : ''}`}
+                                                    className={`
+                                                        px-4 py-2 rounded-full text-sm font-medium transition-all
+                                                        ${isSelected
+                                                            ? 'bg-gold text-black shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                                                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-white'}
+                                                    `}
                                                 >
                                                     {catName}
                                                 </button>
@@ -433,9 +457,9 @@ export const AdminNoticeForm: React.FC = () => {
                                 </div>
 
                                 {/* Regiões */}
-                                <div>
-                                    <label className="admin-section-title">
-                                        <MapPin size={16} /> Regiões Alvo
+                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                    <label className="text-base font-medium text-white mb-4 block flex items-center gap-2">
+                                        <MapPin size={16} className="text-gold" /> Regiões Alvo
                                     </label>
                                     <div className="flex gap-2 mb-4">
                                         <div className="flex-1">
@@ -444,23 +468,28 @@ export const AdminNoticeForm: React.FC = () => {
                                                 onChange={e => setNewRegion(e.target.value)}
                                                 placeholder="Ex: Zona Norte, Centro..."
                                                 onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addRegion())}
+                                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                             />
                                         </div>
-                                        <Button type="button" onClick={addRegion} leftIcon={<Plus size={18} />}>
-                                            Adicionar
+                                        <Button
+                                            type="button"
+                                            onClick={addRegion}
+                                            className="bg-zinc-800 hover:bg-zinc-700 text-white"
+                                        >
+                                            <Plus size={18} />
                                         </Button>
                                     </div>
-                                    <div className="flex-wrap gap-2" style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', minHeight: '60px' }}>
+                                    <div className="flex flex-wrap gap-2 p-4 bg-zinc-950/30 rounded-lg min-h-[60px] border border-white/5">
                                         {formData.targetRegions.length === 0 && (
-                                            <p style={{ color: 'gray', fontStyle: 'italic', fontSize: '0.9rem' }}>Nenhuma região restrita (Abrangência Global)</p>
+                                            <p className="text-zinc-500 italic text-sm">Nenhuma região restrita (Abrangência Global)</p>
                                         )}
                                         {formData.targetRegions.map(region => (
-                                            <span key={region} className="region-tag">
+                                            <span key={region} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 border border-white/10 text-sm text-white">
                                                 {region}
                                                 <button
                                                     type="button"
                                                     onClick={() => removeRegion(region)}
-                                                    className="region-remove"
+                                                    className="text-zinc-400 hover:text-red-400"
                                                 >
                                                     <X size={14} />
                                                 </button>
@@ -473,60 +502,56 @@ export const AdminNoticeForm: React.FC = () => {
 
                         {/* STEP 3: REVISÃO */}
                         {currentStep === 3 && (
-                            <div className="flex-col gap-6">
-                                <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '1rem', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
-                                    <CheckCircle size={48} color="var(--status-success)" style={{ margin: '0 auto 1rem' }} />
-                                    <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--fg-main)' }}>Quase lá!</h2>
-                                    <p style={{ color: 'var(--fg-muted)' }}>Revise os dados abaixo antes de publicar.</p>
+                            <div className="space-y-6">
+                                <div className="text-center p-8 bg-green-500/10 rounded-2xl border border-green-500/30">
+                                    <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
+                                    <h2 className="text-2xl font-bold text-white mb-2">Quase lá!</h2>
+                                    <p className="text-zinc-400">Revise os dados abaixo antes de publicar.</p>
                                 </div>
 
-                                <div className="admin-grid-2">
-                                    <div className="admin-section">
-                                        <h3 className="admin-section-title">Resumo</h3>
-                                        <div className="summary-card">
-                                            <div className="summary-row">
-                                                <span className="summary-label">Título:</span>
-                                                <span className="summary-value">{formData.title}</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6 space-y-4">
+                                        <h3 className="text-lg font-semibold text-white">Resumo</h3>
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                                <span className="text-zinc-400">Título:</span>
+                                                <span className="text-white font-medium">{formData.title}</span>
                                             </div>
-                                            <div className="summary-row">
-                                                <span className="summary-label">Orçamento:</span>
-                                                <span className="summary-value" style={{ color: 'var(--status-success)' }}>
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                                <span className="text-zinc-400">Orçamento:</span>
+                                                <span className="text-green-400 font-medium">
                                                     {formData.totalBudget ? `R$ ${Number(formData.totalBudget).toLocaleString()}` : 'N/A'}
                                                 </span>
                                             </div>
-                                            <div className="summary-row">
-                                                <span className="summary-label">Inscrições:</span>
-                                                <span className="summary-value" style={{ fontSize: '0.85rem' }}>
+                                            <div className="flex justify-between items-center py-2 border-b border-white/5">
+                                                <span className="text-zinc-400">Inscrições:</span>
+                                                <span className="text-white text-sm">
                                                     {formData.inscriptionStart ? new Date(formData.inscriptionStart).toLocaleDateString() : 'N/A'} até {formData.inscriptionEnd ? new Date(formData.inscriptionEnd).toLocaleDateString() : 'N/A'}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="admin-section">
-                                        <h3 className="admin-section-title">Configurações Finais</h3>
+                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                        <h3 className="text-lg font-semibold text-white mb-4">Configurações Finais</h3>
 
                                         <div
                                             onClick={() => setFormData(prev => ({ ...prev, requiresAccessibilityPlan: !prev.requiresAccessibilityPlan }))}
-                                            style={{
-                                                padding: '1rem',
-                                                borderRadius: '1rem',
-                                                border: `1px solid ${formData.requiresAccessibilityPlan ? 'var(--accent-primary)' : 'rgba(255,255,255,0.1)'}`,
-                                                background: formData.requiresAccessibilityPlan ? 'rgba(212, 175, 55, 0.1)' : 'rgba(0,0,0,0.2)',
-                                                cursor: 'pointer',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between'
-                                            }}
+                                            className={`
+                                                p-4 rounded-xl border cursor-pointer flex items-center justify-between transition-all
+                                                ${formData.requiresAccessibilityPlan
+                                                    ? 'bg-gold/10 border-gold/50'
+                                                    : 'bg-zinc-900/50 border-white/10 hover:border-white/20'}
+                                            `}
                                         >
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                <Accessibility size={24} color={formData.requiresAccessibilityPlan ? 'var(--accent-primary)' : 'gray'} />
+                                            <div className="flex items-center gap-4">
+                                                <Accessibility size={24} className={formData.requiresAccessibilityPlan ? 'text-gold' : 'text-zinc-500'} />
                                                 <div>
-                                                    <div style={{ fontWeight: 'bold', color: formData.requiresAccessibilityPlan ? 'var(--fg-main)' : 'gray' }}>Plano de Acessibilidade</div>
-                                                    <div style={{ fontSize: '0.8rem', color: 'var(--fg-muted)' }}>Exigir envio de plano detalhado</div>
+                                                    <div className={`font-bold ${formData.requiresAccessibilityPlan ? 'text-white' : 'text-zinc-500'}`}>Plano de Acessibilidade</div>
+                                                    <div className="text-xs text-zinc-400">Exigir envio de plano detalhado</div>
                                                 </div>
                                             </div>
-                                            {formData.requiresAccessibilityPlan && <CheckCircle size={20} color="var(--accent-primary)" />}
+                                            {formData.requiresAccessibilityPlan && <CheckCircle size={20} className="text-gold" />}
                                         </div>
                                     </div>
                                 </div>
@@ -537,21 +562,22 @@ export const AdminNoticeForm: React.FC = () => {
             </div>
 
             {/* Footer Navigation */}
-            <div className="admin-wizard-footer">
-                <div className="admin-wizard-footer-inner">
+            <div className="fixed bottom-0 left-0 right-0 p-6 bg-zinc-950/80 backdrop-blur-xl border-t border-white/10 z-40">
+                <div className="max-w-5xl mx-auto flex justify-between items-center">
                     <Button
                         variant="ghost"
                         onClick={currentStep === 0 ? () => navigate("/admin/editais") : prevStep}
+                        className="text-zinc-400 hover:text-white hover:bg-white/5"
                     >
                         {currentStep === 0 ? "Cancelar" : "Voltar"}
                     </Button>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                         {currentStep === STEPS.length - 1 ? (
                             <Button
                                 onClick={handleSubmit}
                                 isLoading={saving}
-                                className="btn-primary" // Styles defined in styles.css
+                                className="bg-gold hover:bg-gold/90 text-black font-medium px-8"
                                 leftIcon={<Save size={18} />}
                             >
                                 {isEdit ? "Salvar Alterações" : "Publicar Edital"}
@@ -559,7 +585,7 @@ export const AdminNoticeForm: React.FC = () => {
                         ) : (
                             <Button
                                 onClick={nextStep}
-                                className="btn-primary"
+                                className="bg-gold hover:bg-gold/90 text-black font-medium px-8"
                                 rightIcon={<ChevronRight size={18} />}
                             >
                                 Próximo

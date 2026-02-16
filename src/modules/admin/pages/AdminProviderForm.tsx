@@ -5,7 +5,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Input, Button } from "../../../components/ui";
-import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle, Briefcase, FileText } from "lucide-react";
+import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle, Briefcase, FileText, CheckCircle2 } from "lucide-react";
 
 const ACCESSIBILITY_SERVICES = [
     { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: "🤟" },
@@ -104,26 +104,41 @@ export const AdminProviderForm: React.FC = () => {
     };
 
     if (loading) {
-        return <div className="text-center p-8">Carregando prestador...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen bg-[#0a0a0c]">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-zinc-400 text-sm">Carregando prestador...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="max-w-4xl mx-auto pb-12">
+        <div className="max-w-4xl mx-auto pb-24 animate-fadeIn">
             {/* Header */}
             <div className="flex items-center gap-4 mb-8">
-                <Button variant="ghost" onClick={() => navigate("/admin/prestadores")} className="p-2">
-                    <ArrowLeft size={24} />
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate("/admin/prestadores")}
+                    className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
+                >
+                    <ArrowLeft size={20} />
                 </Button>
                 <div>
-                    <h1 className="section-title">{isEdit ? "Editar Prestador" : "Novo Prestador"}</h1>
-
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+                        {isEdit ? "Editar Prestador" : "Novo Prestador"}
+                    </h1>
+                    <p className="text-zinc-400 text-sm font-medium mt-1">
+                        Gerencie os dados e serviços deste prestador.
+                    </p>
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Informações Básicas */}
-                <div className="card">
-                    <h2 className="card-title flex items-center gap-2 mb-6">
+                <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
                         <User size={20} className="text-gold" /> Informações do Prestador
                     </h2>
 
@@ -135,6 +150,7 @@ export const AdminProviderForm: React.FC = () => {
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                                 placeholder="Ex: Maria Silva ou Acessibilidade LTDA"
                                 required
+                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                             />
                         </div>
 
@@ -144,6 +160,7 @@ export const AdminProviderForm: React.FC = () => {
                             onChange={e => setFormData({ ...formData, document: e.target.value })}
                             placeholder="000.000.000-00 ou 00.000.000/0000-00"
                             leftIcon={<FileText size={16} />}
+                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
 
                         <Input
@@ -153,6 +170,7 @@ export const AdminProviderForm: React.FC = () => {
                             onChange={e => setFormData({ ...formData, email: e.target.value })}
                             placeholder="contato@exemplo.com"
                             leftIcon={<Mail size={16} />}
+                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
 
                         <Input
@@ -163,18 +181,21 @@ export const AdminProviderForm: React.FC = () => {
                             placeholder="(31) 99999-9999"
                             leftIcon={<Phone size={16} />}
                             containerClassName="md:col-span-2"
+                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
                     </div>
                 </div>
 
                 {/* Serviços */}
-                <div className="card">
-                    <h2 className="card-title mb-2">♿ Serviços Oferecidos</h2>
-                    <p className="text-sm text-gray-400 mb-6">
-                        Selecione todos os serviços de acessibilidade que este prestador oferece:
-                    </p>
+                <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+                    <div>
+                        <h2 className="text-lg font-bold text-white mb-1">♿ Serviços Oferecidos</h2>
+                        <p className="text-sm text-zinc-400">
+                            Selecione todos os serviços de acessibilidade que este prestador oferece:
+                        </p>
+                    </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {ACCESSIBILITY_SERVICES.map(service => {
                             const isSelected = formData.services.includes(service.value);
                             return (
@@ -183,18 +204,18 @@ export const AdminProviderForm: React.FC = () => {
                                     type="button"
                                     onClick={() => toggleService(service.value)}
                                     className={`
-                                        p-4 rounded-xl border-2 transition-all flex items-center gap-3 text-left
+                                        p-4 rounded-xl border transition-all flex items-center gap-3 text-left group
                                         ${isSelected
-                                            ? "border-green-500 bg-green-500/10 text-green-400"
-                                            : "border-gray-700 bg-gray-800/50 text-gray-400 hover:border-gray-600"}
+                                            ? "border-gold bg-gold/10 text-gold shadow-[0_0_15px_rgba(212,175,55,0.1)]"
+                                            : "border-white/10 bg-zinc-900/50 text-zinc-400 hover:border-white/20 hover:text-white"}
                                     `}
                                 >
                                     <span className="text-2xl">{service.icon}</span>
-                                    <span className={`font-medium ${isSelected ? "text-green-400" : "text-gray-300"}`}>
+                                    <span className="font-medium">
                                         {service.label}
                                     </span>
                                     {isSelected && (
-                                        <CheckCircle size={18} className="ml-auto text-green-500" />
+                                        <CheckCircle2 size={18} className="ml-auto text-gold" />
                                     )}
                                 </button>
                             );
@@ -203,8 +224,8 @@ export const AdminProviderForm: React.FC = () => {
                 </div>
 
                 {/* Avaliação e Histórico */}
-                <div className="card">
-                    <h2 className="card-title flex items-center gap-2 mb-6">
+                <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
                         <Briefcase size={20} className="text-gold" /> Avaliação e Histórico
                     </h2>
 
@@ -219,6 +240,7 @@ export const AdminProviderForm: React.FC = () => {
                             onChange={e => setFormData({ ...formData, rating: e.target.value })}
                             placeholder="4.5"
                             leftIcon={<Star size={16} />}
+                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
 
                         <Input
@@ -227,39 +249,54 @@ export const AdminProviderForm: React.FC = () => {
                             min="0"
                             value={formData.completedJobs}
                             onChange={e => setFormData({ ...formData, completedJobs: parseInt(e.target.value) || 0 })}
+                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
                     </div>
 
-                    <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
-                        <label className="flex items-center gap-3 cursor-pointer">
+                    <div className="p-4 bg-zinc-900/50 rounded-xl border border-white/5">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <div className={`
+                                w-5 h-5 rounded border flex items-center justify-center transition-colors
+                                ${formData.active ? 'bg-gold border-gold' : 'border-zinc-600 group-hover:border-zinc-500'}
+                            `}>
+                                {formData.active && <CheckCircle size={14} className="text-black" />}
+                            </div>
                             <input
                                 type="checkbox"
                                 checked={formData.active}
                                 onChange={e => setFormData({ ...formData, active: e.target.checked })}
-                                className="w-5 h-5 rounded text-gold focus:ring-gold bg-gray-900 border-gray-600"
+                                className="hidden"
                             />
-                            <span className="font-medium text-gray-200">Prestador ativo (disponível para novos trabalhos)</span>
+                            <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">
+                                Prestador ativo (disponível para novos trabalhos)
+                            </span>
                         </label>
                     </div>
                 </div>
 
                 {/* Ações */}
-                <div className="flex justify-end gap-3 pt-4">
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => navigate("/admin/prestadores")}
-                        disabled={saving}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        type="submit"
-                        isLoading={saving}
-                        leftIcon={<Save size={18} />}
-                    >
-                        {isEdit ? "Salvar Alterações" : "Cadastrar Prestador"}
-                    </Button>
+                <div className="fixed bottom-6 left-0 right-0 z-50 pointer-events-none px-4">
+                    <div className="max-w-4xl mx-auto bg-zinc-900/90 border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center justify-between shadow-2xl backdrop-blur-xl pointer-events-auto">
+                        <Button
+                            variant="ghost"
+                            type="button"
+                            onClick={() => navigate("/admin/prestadores")}
+                            className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-white/5"
+                            disabled={saving}
+                        >
+                            Cancelar
+                        </Button>
+                        <div className="flex items-center gap-3">
+                            <Button
+                                type="submit"
+                                disabled={saving}
+                                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-gold/20 bg-gold hover:bg-gold/90 text-black border-none"
+                                leftIcon={saving ? undefined : <Save size={18} />}
+                            >
+                                {saving ? 'Salvando...' : (isEdit ? "Salvar Alterações" : "Cadastrar Prestador")}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

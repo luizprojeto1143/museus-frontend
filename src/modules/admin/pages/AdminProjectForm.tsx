@@ -169,51 +169,51 @@ export const AdminProjectForm: React.FC = () => {
         return (
             <div className="flex justify-center items-center h-screen bg-[#0a0a0c]">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-slate-400 text-sm">Carregando projeto...</p>
+                    <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-zinc-400 text-sm">Carregando projeto...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="master-page-container bg-[#0a0a0c] min-h-screen pb-24">
+        <div className="max-w-7xl mx-auto pb-24 animate-fadeIn">
             {/* HERO SECTION */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-8 border-b border-white/10 gap-4">
                 <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
                         onClick={() => navigate('/admin/projetos')}
-                        className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-slate-400 flex items-center justify-center shrink-0"
+                        className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
                     >
                         <ArrowLeft size={20} />
                     </Button>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black text-white tracking-tight">
+                            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
                                 {isEdit ? 'Editar Projeto' : 'Novo Projeto'}
                             </h1>
                             {isEdit && (
-                                <div className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs font-bold rounded uppercase tracking-wider">
+                                <div className="px-2 py-0.5 bg-gold/10 text-gold text-xs font-bold rounded uppercase tracking-wider border border-gold/20">
                                     Admin Mode
                                 </div>
                             )}
                         </div>
-                        <p className="text-slate-500 text-sm font-medium mt-1">Gestão de propostas culturais e editais.</p>
+                        <p className="text-zinc-400 text-sm font-medium mt-1">Gestão de propostas culturais e editais.</p>
                     </div>
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="max-w-7xl mx-auto">
+            <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* LEFT COLUMN - MAIN CONTENT */}
                     <div className="lg:col-span-2 space-y-8">
 
                         {/* BASIC INFO CARD */}
-                        <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
                             <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                                <FileText className="text-blue-400" size={20} /> Informações do Projeto
+                                <FileText className="text-gold" size={20} /> Informações do Projeto
                             </h3>
 
                             <Input
@@ -222,7 +222,7 @@ export const AdminProjectForm: React.FC = () => {
                                 onChange={e => setFormData({ ...formData, title: e.target.value })}
                                 placeholder="Ex: Festival de Jazz de Betim 2024"
                                 required
-                                className="h-12 text-lg font-bold"
+                                className="h-12 text-lg font-bold bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                             />
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -230,6 +230,7 @@ export const AdminProjectForm: React.FC = () => {
                                     label="Categoria Cultural"
                                     value={formData.culturalCategory}
                                     onChange={e => setFormData({ ...formData, culturalCategory: e.target.value })}
+                                    className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                 >
                                     <option value="">Selecione...</option>
                                     {categories.map(cat => (
@@ -247,6 +248,7 @@ export const AdminProjectForm: React.FC = () => {
                                     onChange={e => setFormData({ ...formData, targetRegion: e.target.value })}
                                     placeholder="Ex: Centro, Zona Norte"
                                     leftIcon={<LayoutList size={16} />}
+                                    className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                 />
                             </div>
 
@@ -256,7 +258,7 @@ export const AdminProjectForm: React.FC = () => {
                                 value={formData.summary}
                                 onChange={e => setFormData({ ...formData, summary: e.target.value })}
                                 placeholder="Breve resumo para listagem pública..."
-                                className="bg-black/20"
+                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                             />
 
                             <Textarea
@@ -265,25 +267,25 @@ export const AdminProjectForm: React.FC = () => {
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 placeholder="Objetivos, metodologia, cronograma..."
-                                className="bg-black/20"
+                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                             />
                         </div>
 
                         {/* ACCESSIBILITY CARD */}
-                        <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8">
                             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                                <Accessibility className="text-emerald-400" size={20} /> Plano de Acessibilidade
+                                <Accessibility className="text-gold" size={20} /> Plano de Acessibilidade
                             </h3>
 
                             <label className={`
                                 flex items-center gap-4 p-4 rounded-xl cursor-pointer border transition-all mb-6
                                 ${formData.accessibilityPlan.hasAccessibility
-                                    ? 'bg-emerald-500/10 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
-                                    : 'bg-black/20 border-white/10 hover:border-white/20'}
+                                    ? 'bg-gold/10 border-gold/50 shadow-[0_0_15px_rgba(212,175,55,0.1)]'
+                                    : 'bg-zinc-900/50 border-white/10 hover:border-white/20'}
                             `}>
                                 <div className={`
                                     w-6 h-6 rounded-full border flex items-center justify-center transition-colors
-                                    ${formData.accessibilityPlan.hasAccessibility ? 'bg-emerald-500 border-emerald-500' : 'border-white/30'}
+                                    ${formData.accessibilityPlan.hasAccessibility ? 'bg-gold border-gold' : 'border-white/30'}
                                 `}>
                                     {formData.accessibilityPlan.hasAccessibility && <CheckCircle2 size={14} className="text-black" />}
                                 </div>
@@ -297,17 +299,17 @@ export const AdminProjectForm: React.FC = () => {
                                     })}
                                 />
                                 <div>
-                                    <div className={`font-bold ${formData.accessibilityPlan.hasAccessibility ? 'text-emerald-400' : 'text-slate-300'}`}>
+                                    <div className={`font-bold ${formData.accessibilityPlan.hasAccessibility ? 'text-white' : 'text-zinc-400'}`}>
                                         Acessibilidade Inclusa
                                     </div>
-                                    <div className="text-xs text-slate-500">Este projeto contempla medidas de acessibilidade para PcD.</div>
+                                    <div className="text-xs text-zinc-500">Este projeto contempla medidas de acessibilidade para PcD.</div>
                                 </div>
                             </label>
 
                             {formData.accessibilityPlan.hasAccessibility && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
                                     <div>
-                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-3">Recursos Oferecidos</label>
+                                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-3">Recursos Oferecidos</label>
                                         <div className="flex flex-wrap gap-2">
                                             {ACCESSIBILITY_SERVICES.map(service => (
                                                 <button
@@ -317,8 +319,8 @@ export const AdminProjectForm: React.FC = () => {
                                                     className={`
                                                         px-3 py-1.5 rounded-lg text-sm font-medium border transition-all
                                                         ${formData.accessibilityPlan.services.includes(service.value)
-                                                            ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
-                                                            : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'}
+                                                            ? 'bg-gold/20 border-gold/50 text-gold'
+                                                            : 'bg-white/5 border-white/10 text-zinc-400 hover:bg-white/10'}
                                                     `}
                                                 >
                                                     {service.label}
@@ -336,29 +338,29 @@ export const AdminProjectForm: React.FC = () => {
                                             accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
                                         })}
                                         placeholder="Descreva como os recursos serão implementados..."
-                                        className="bg-black/20"
+                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                     />
                                 </div>
                             )}
                         </div>
 
                         {/* ACCOUNTABILITY FILES */}
-                        <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
+                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8">
                             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                                <FileText className="text-yellow-400" size={20} /> Prestação de Contas
+                                <FileText className="text-gold" size={20} /> Prestação de Contas
                             </h3>
 
                             {formData.attachments && formData.attachments.length > 0 ? (
                                 <div className="grid gap-3">
                                     {formData.attachments.map((doc: any, idx: number) => (
-                                        <div key={idx} className="flex justify-between items-center p-4 bg-black/20 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
+                                        <div key={idx} className="flex justify-between items-center p-4 bg-zinc-900/50 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
                                             <div className="flex items-center gap-4">
-                                                <div className="p-2.5 bg-blue-500/20 rounded-lg text-blue-400">
+                                                <div className="p-2.5 bg-zinc-800 rounded-lg text-zinc-400">
                                                     <FileText size={20} />
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-slate-200">{doc.name}</div>
-                                                    <div className="text-xs text-slate-500">
+                                                    <div className="font-bold text-zinc-200">{doc.name}</div>
+                                                    <div className="text-xs text-zinc-500">
                                                         Enviado em: {new Date(doc.date).toLocaleDateString()}
                                                     </div>
                                                 </div>
@@ -367,7 +369,7 @@ export const AdminProjectForm: React.FC = () => {
                                                 href={doc.url}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:bg-white/10 hover:text-white text-sm font-medium transition-colors"
+                                                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-zinc-300 hover:bg-white/10 hover:text-white text-sm font-medium transition-colors"
                                             >
                                                 Visualizar
                                             </a>
@@ -376,8 +378,8 @@ export const AdminProjectForm: React.FC = () => {
                                 </div>
                             ) : (
                                 <div className="text-center py-10 border-2 border-dashed border-white/10 rounded-2xl bg-white/5">
-                                    <FileText className="w-10 h-10 text-slate-500 mx-auto mb-3" />
-                                    <p className="text-slate-400">Nenhum documento anexado pelo produtor ainda.</p>
+                                    <FileText className="w-10 h-10 text-zinc-500 mx-auto mb-3" />
+                                    <p className="text-zinc-400">Nenhum documento anexado pelo produtor ainda.</p>
                                 </div>
                             )}
                         </div>
@@ -388,7 +390,7 @@ export const AdminProjectForm: React.FC = () => {
                     <div className="space-y-6">
 
                         {/* STATUS CARD */}
-                        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-white/10 rounded-3xl p-6 shadow-xl">
+                        <div className="bg-zinc-900/80 border border-white/10 rounded-3xl p-6 shadow-xl backdrop-blur-xl">
                             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                                 Status do Projeto
                             </h3>
@@ -406,10 +408,10 @@ export const AdminProjectForm: React.FC = () => {
                                                     : 'bg-white/5 border-white/5 opacity-50 hover:opacity-100'}
                                             `}
                                         >
-                                            <div className={formData.status === opt.value ? opt.color : 'text-slate-400'}>
+                                            <div className={formData.status === opt.value ? opt.color : 'text-zinc-400'}>
                                                 {opt.icon}
                                             </div>
-                                            <span className={`text-sm font-bold ${formData.status === opt.value ? 'text-white' : 'text-slate-400'}`}>
+                                            <span className={`text-sm font-bold ${formData.status === opt.value ? 'text-white' : 'text-zinc-400'}`}>
                                                 {opt.label}
                                             </span>
                                             {formData.status === opt.value && (
@@ -422,14 +424,14 @@ export const AdminProjectForm: React.FC = () => {
                         </div>
 
                         {/* NUMBERS CARD */}
-                        <div className="bg-white/5 border border-white/5 rounded-3xl p-6 space-y-6">
+                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 space-y-6">
                             <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                                <DollarSign className="text-green-400" size={20} /> Métricas & Edital
+                                <DollarSign className="text-gold" size={20} /> Métricas & Edital
                             </h3>
 
                             <div className="space-y-4">
-                                <div className="p-4 bg-black/20 rounded-xl border border-white/5">
-                                    <div className="text-xs text-slate-500 uppercase font-bold mb-1">Edital Vinculado</div>
+                                <div className="p-4 bg-zinc-900/50 rounded-xl border border-white/5">
+                                    <div className="text-xs text-zinc-500 uppercase font-bold mb-1">Edital Vinculado</div>
                                     <select
                                         className="w-full bg-transparent text-white font-medium focus:outline-none text-sm"
                                         value={formData.noticeId}
@@ -449,7 +451,7 @@ export const AdminProjectForm: React.FC = () => {
                                         value={formData.requestedBudget}
                                         onChange={e => setFormData({ ...formData, requestedBudget: e.target.value })}
                                         placeholder="0.00"
-                                        className="font-mono text-sm"
+                                        className="font-mono text-sm bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                     />
                                     <Input
                                         label="R$ Aprovado"
@@ -457,7 +459,7 @@ export const AdminProjectForm: React.FC = () => {
                                         value={formData.approvedBudget}
                                         onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
                                         placeholder="0.00"
-                                        className="font-mono text-sm border-green-500/30 focus:border-green-500"
+                                        className="font-mono text-sm bg-zinc-900/50 border-green-500/30 text-white focus:border-green-500"
                                     />
                                 </div>
 
@@ -470,6 +472,7 @@ export const AdminProjectForm: React.FC = () => {
                                         value={formData.expectedAudience}
                                         onChange={e => setFormData({ ...formData, expectedAudience: e.target.value })}
                                         leftIcon={<Users size={14} />}
+                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                     />
                                     <Input
                                         label="Público Real"
@@ -477,6 +480,7 @@ export const AdminProjectForm: React.FC = () => {
                                         value={formData.actualAudience}
                                         onChange={e => setFormData({ ...formData, actualAudience: e.target.value })}
                                         leftIcon={<Users size={14} />}
+                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                     />
                                 </div>
                             </div>
@@ -487,12 +491,12 @@ export const AdminProjectForm: React.FC = () => {
 
                 {/* FLOATING ACTION BAR */}
                 <div className="fixed bottom-6 left-0 right-0 z-50 pointer-events-none px-4">
-                    <div className="max-w-4xl mx-auto bg-[#0f172a] border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center justify-between shadow-2xl pointer-events-auto">
+                    <div className="max-w-4xl mx-auto bg-zinc-900/90 border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center justify-between shadow-2xl backdrop-blur-xl pointer-events-auto">
                         <Button
                             variant="ghost"
                             type="button"
                             onClick={() => navigate('/admin/projetos')}
-                            className="text-slate-400 hover:text-white px-4 h-12"
+                            className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-white/5"
                         >
                             Cancelar
                         </Button>
@@ -500,7 +504,7 @@ export const AdminProjectForm: React.FC = () => {
                             <Button
                                 type="submit"
                                 disabled={saving}
-                                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
+                                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-gold/20 bg-gold hover:bg-gold/90 text-black border-none"
                                 leftIcon={saving ? undefined : <Save size={18} />}
                             >
                                 {saving ? 'Salvando...' : 'Salvar Projeto'}
