@@ -106,9 +106,7 @@ export const AdminAchievementForm: React.FC = () => {
   return (
     <div>
       <h1 className="section-title">{isEditing ? t("admin.achievementForm.editTitle") : t("admin.achievementForm.newTitle")}</h1>
-      <p className="section-subtitle">
-        {isEditing ? t("admin.achievementForm.editSubtitle") : t("admin.achievementForm.newSubtitle")}
-      </p>
+
 
       <form onSubmit={handleSubmit}>
         <div className="card" style={{ marginBottom: "1.5rem" }}>

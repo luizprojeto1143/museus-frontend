@@ -72,7 +72,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
         <div>
             <div style={{ marginBottom: "2rem" }}>
                 <h1 className="section-title">♿ Gestão de Acessibilidade</h1>
-                <p className="section-subtitle">Gerencie solicitações de serviços e produção de conteúdo acessível</p>
+
             </div>
 
             {/* TABS */}

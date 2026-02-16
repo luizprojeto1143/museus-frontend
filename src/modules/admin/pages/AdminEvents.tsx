@@ -61,9 +61,7 @@ export const AdminEvents: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div>
           <h1 className="section-title">{term.events}</h1>
-          <p className="section-subtitle">
-            Gerencie a {term.events.toLowerCase()} e atividades
-          </p>
+
         </div>
         <Link to="/admin/eventos/novo" className="btn">
           + Novo {term.event}

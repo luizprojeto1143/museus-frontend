@@ -57,7 +57,7 @@ export const AdminNotices: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
                 <div>
                     <h1 className="section-title">📋 Editais Públicos</h1>
-                    <p className="section-subtitle">Gerencie os editais de fomento e seleção cultural</p>
+
                 </div>
                 <Link to="/admin/editais/novo" className="btn">
                     + Novo Edital

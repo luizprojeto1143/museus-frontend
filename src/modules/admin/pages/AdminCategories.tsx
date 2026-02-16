@@ -47,9 +47,7 @@ export const AdminCategories: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div>
           <h1 className="section-title">🏷 {t("admin.categories.title")}</h1>
-          <p className="section-subtitle">
-            {t("admin.categories.subtitle")}
-          </p>
+
         </div>
         <Link to="/admin/categorias/nova" className="btn">
           {t("admin.categories.new")}

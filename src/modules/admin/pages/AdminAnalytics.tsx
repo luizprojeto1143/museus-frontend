@@ -99,9 +99,7 @@ export const AdminAnalytics: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
           <h1 className="section-title">📊 Analytics Avançado</h1>
-          <p className="section-subtitle">
-            Análise detalhada de visitantes, heatmaps e tendências
-          </p>
+
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <select

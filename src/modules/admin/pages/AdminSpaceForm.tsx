@@ -121,7 +121,7 @@ export const AdminSpaceForm: React.FC = () => {
                     <h1 className="text-3xl font-bold text-gray-900">
                         {id === 'new' ? "Novo Espaço" : "Editar Espaço"}
                     </h1>
-                    <p className="text-gray-500 mt-1">Preencha as informações do ambiente</p>
+
                 </div>
             </div>
 

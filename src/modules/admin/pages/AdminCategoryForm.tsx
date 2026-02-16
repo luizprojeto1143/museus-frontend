@@ -83,9 +83,7 @@ export const AdminCategoryForm: React.FC = () => {
           <h1 className="section-title">
             {isEdit ? t("admin.categoryForm.editTitle") : t("admin.categoryForm.newTitle")}
           </h1>
-          <p className="section-subtitle">
-            {t("admin.categoryForm.subtitle")}
-          </p>
+
         </div>
       </div>
 

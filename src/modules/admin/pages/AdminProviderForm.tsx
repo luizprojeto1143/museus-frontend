@@ -116,9 +116,7 @@ export const AdminProviderForm: React.FC = () => {
                 </Button>
                 <div>
                     <h1 className="section-title">{isEdit ? "Editar Prestador" : "Novo Prestador"}</h1>
-                    <p className="section-subtitle">
-                        {isEdit ? "Atualize as informações do prestador" : "Cadastre um novo prestador de acessibilidade"}
-                    </p>
+
                 </div>
             </div>
 

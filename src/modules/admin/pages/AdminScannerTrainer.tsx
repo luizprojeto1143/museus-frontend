@@ -127,7 +127,7 @@ export const AdminScannerTrainer: React.FC = () => {
     return (
         <div style={{ padding: "1rem" }}>
             <h1 className="section-title">{t("admin.scanner.title", "Treinamento do Scanner Visual")}</h1>
-            <p className="section-subtitle">{t("admin.scanner.subtitle", "Ensine a IA a reconhecer as obras apontando a câmera.")}</p>
+
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
                 {/* Camera Feed */}

@@ -56,9 +56,7 @@ export const AdminWorks: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div>
           <h1 className="section-title">{term.works}</h1>
-          <p className="section-subtitle">
-            Gerencie {term.works.toLowerCase()} e {term.rooms.toLowerCase()}
-          </p>
+
         </div>
         <Link to="/admin/obras/nova" className="btn">
           + Nova {term.work}

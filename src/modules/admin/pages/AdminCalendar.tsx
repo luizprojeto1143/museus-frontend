@@ -233,7 +233,7 @@ export const AdminCalendar: React.FC = () => {
                     <h1 className="section-title">
                         Agenda de Espaços
                     </h1>
-                    <p className="section-subtitle">Visualize e gerencie a ocupação das salas e estúdios.</p>
+
                 </div>
                 <div className="flex items-center gap-4 bg-gray-100 p-2 rounded-2xl border border-gray-200">
                     <Button variant="ghost" onClick={prevMonth} className="text-gray-500 hover:text-black">

@@ -88,9 +88,7 @@ export const AdminVisitors: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
           <h1 className="section-title">👥 {t("admin.visitors.title")}</h1>
-          <p className="section-subtitle">
-            {t("admin.visitors.subtitle")}
-          </p>
+
         </div>
         <button onClick={handleExportCSV} className="btn btn-secondary">
           📥 {t("admin.visitors.exportCSV")}

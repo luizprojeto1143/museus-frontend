@@ -105,9 +105,7 @@ export const AdminQRCodes: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div>
           <h1 className="section-title">{t("admin.qrCodes.title")}</h1>
-          <p className="section-subtitle">
-            {t("admin.qrCodes.subtitle")}
-          </p>
+
         </div>
         <button className="btn" onClick={() => setShowForm(!showForm)}>
           {showForm ? t("admin.qrCodes.cancel") : t("admin.qrCodes.new")}

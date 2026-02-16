@@ -74,7 +74,7 @@ export const AdminDashboard: React.FC = () => {
     return (
       <div>
         <h1 className="section-title">{t("admin.dashboard.title")}</h1>
-        <p className="section-subtitle" style={{ color: "#ef4444" }}>
+        <p style={{ color: "#ef4444" }}>
           {t("common.error")}
         </p>
       </div>
@@ -84,9 +84,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div>
       <h1 className="section-title">🏛 {t("admin.dashboard.title")}</h1>
-      <p className="section-subtitle">
-        {t("admin.dashboard.subtitle")}
-      </p>
+
 
       {/* 1.3 ALERTAS E NOTIFICAÇÕES */}
       {data.alerts.length > 0 && (
@@ -181,10 +179,10 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
                 <h4 style={{ color: "white", fontWeight: 700, fontSize: "1rem", marginBottom: "0.25rem" }}>{booking.purpose}</h4>
-                <div style={{ display: "flex", itemsCenter: "center", gap: "0.4rem", fontSize: "0.8rem", color: "#64748b", marginBottom: "0.5rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem", color: "#64748b", marginBottom: "0.5rem" }}>
                   📍 {booking.space.name}
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "#475569", borderTop: "1px solid rgba(255,255,255,0.05)", pt: "0.5rem", marginTop: "0.5rem" }}>
+                <div style={{ fontSize: "0.75rem", color: "#475569", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.5rem", marginTop: "0.5rem" }}>
                   Por {booking.user.name}
                 </div>
               </div>

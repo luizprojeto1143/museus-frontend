@@ -58,7 +58,7 @@ export const AdminProjects: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
                 <div>
                     <h1 className="section-title">🎨 Projetos Culturais</h1>
-                    <p className="section-subtitle">Acompanhe os projetos inscritos nos editais</p>
+
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem" }}>
                     <select

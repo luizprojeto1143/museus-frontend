@@ -63,9 +63,7 @@ export const AdminAchievements: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
           <h1 className="section-title">🏅 {t("admin.achievements.title")}</h1>
-          <p className="section-subtitle">
-            {t("admin.achievements.subtitle")}
-          </p>
+
         </div>
         <Link to="/admin/conquistas/nova" className="btn btn-primary">
           + {t("admin.achievements.new")}

@@ -184,7 +184,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
                 <div>
                     <h1 className="section-title"><BarChart2 size={28} style={{ marginRight: "0.5rem" }} />Relatórios Institucionais</h1>
-                    <p className="section-subtitle">Dados consolidados para prestação de contas e planejamento</p>
+
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                     <input

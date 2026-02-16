@@ -51,7 +51,7 @@ export const AdminEquipments: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
                 <div>
                     <h1 className="section-title">🏛️ Equipamentos Culturais</h1>
-                    <p className="section-subtitle">Museus, centros culturais e espaços vinculados</p>
+
                 </div>
                 <Link to="/admin/equipamentos/novo" className="btn">
                     + Novo Equipamento

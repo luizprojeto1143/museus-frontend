@@ -85,9 +85,7 @@ export const AdminInternalUsers: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
           <h1 className="section-title">👤 Usuários Internos</h1>
-          <p className="section-subtitle">
-            Gerencie administradores e permissões do sistema
-          </p>
+
         </div>
         <Link to="/admin/usuarios/novo" className="btn btn-primary">
           + Novo Usuário

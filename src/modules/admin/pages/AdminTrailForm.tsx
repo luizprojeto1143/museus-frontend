@@ -203,9 +203,7 @@ export const AdminTrailForm: React.FC = () => {
           <h1 className="section-title">
             {isEdit ? t("admin.trailForm.editTitle") : t("admin.trailForm.newTitle")}
           </h1>
-          <p className="section-subtitle">
-            {t("admin.trailForm.subtitle")}
-          </p>
+
         </div>
       </div>
 

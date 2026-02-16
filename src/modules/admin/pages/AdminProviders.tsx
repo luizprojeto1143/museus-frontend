@@ -50,7 +50,7 @@ export const AdminProviders: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
                 <div>
                     <h1 className="section-title">👷 Prestadores de Acessibilidade</h1>
-                    <p className="section-subtitle">Cadastro de intérpretes, audiodescritores e outros profissionais</p>
+
                 </div>
                 <Link to="/admin/prestadores/novo" className="btn">
                     + Novo Prestador

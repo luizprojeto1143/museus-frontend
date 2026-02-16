@@ -90,9 +90,7 @@ export const AdminUploads: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
           <h1 className="section-title">📤 {t("admin.uploads.title")}</h1>
-          <p className="section-subtitle">
-            {t("admin.uploads.subtitle")}
-          </p>
+
         </div>
         <button
           onClick={() => fileInputRef.current?.click()}

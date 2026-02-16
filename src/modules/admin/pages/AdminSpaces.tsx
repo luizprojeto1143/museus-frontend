@@ -64,9 +64,7 @@ export const AdminSpaces: React.FC = () => {
                     <h1 className="section-title">
                         {t("admin.spaces.title", "Gestão de Espaços")}
                     </h1>
-                    <p className="section-subtitle">
-                        {t("admin.spaces.subtitle", "Gerencie salas, auditórios e estúdios do centro cultural.")}
-                    </p>
+
                 </div>
                 <Button
                     onClick={() => navigate("/admin/espacos/novo")}

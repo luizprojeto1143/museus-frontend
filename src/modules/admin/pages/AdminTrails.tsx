@@ -60,9 +60,7 @@ export const AdminTrails: React.FC = () => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div>
           <h1 className="section-title">{t("admin.trails.title")}</h1>
-          <p className="section-subtitle">
-            {t("admin.trails.subtitle")}
-          </p>
+
         </div>
         <Link to="/admin/trilhas/nova" className="btn">
           {t("admin.trails.new")}
