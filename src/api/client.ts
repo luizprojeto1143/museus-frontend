@@ -86,7 +86,7 @@ api.interceptors.response.use(
         // Logout forçado
         window.localStorage.removeItem("museus_auth_v1");
         // Opcional: Redirecionar para login
-        // window.location.href = "/login";
+        window.location.href = "/login";
       }
     }
 
