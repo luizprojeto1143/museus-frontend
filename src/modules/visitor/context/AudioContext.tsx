@@ -65,7 +65,17 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             // Only load if different url to avoid reset on re-render if that happens (though state protects it)
             if (audioRef.current.src !== currentTrack.url) {
                 audioRef.current.src = currentTrack.url;
-                audioRef.current.play().then(() => setIsPlaying(true)).catch(e => console.error("Auto-play blocked", e));
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => setIsPlaying(true))
+                        .catch(e => {
+                            console.warn("Auto-play blocked or interrupted", e);
+                            // We don't set isPlaying(true) here, forcing user to click play if needed, 
+                            // or simple recovery.
+                            setIsPlaying(false);
+                        });
+                }
             }
         }
     }, [currentTrack]);
@@ -85,8 +95,16 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 audioRef.current.pause();
                 setIsPlaying(false);
             } else {
-                audioRef.current.play();
-                setIsPlaying(true);
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => setIsPlaying(true))
+                        .catch(error => {
+                            console.log("Playback failed or was interrupted:", error);
+                            setIsPlaying(false);
+                        });
+                }
+                // setIsPlaying(true) moved inside then()
             }
         }
     };

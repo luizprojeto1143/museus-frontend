@@ -4,7 +4,8 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./modules/auth/AuthContext";
 import { TenantProvider } from "./modules/auth/TenantContext";
-import "./i18n/config";
+import i18n from "./i18n/config";
+import { I18nextProvider } from "react-i18next";
 import "./styles.css";
 import "leaflet/dist/leaflet.css";
 
@@ -15,13 +16,15 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <ErrorBoundary>
-        <BrowserRouter>
-          <AuthProvider>
-            <TenantProvider>
-              <App />
-            </TenantProvider>
-          </AuthProvider>
-        </BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <BrowserRouter>
+            <AuthProvider>
+              <TenantProvider>
+                <App />
+              </TenantProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </I18nextProvider>
       </ErrorBoundary>
     </HelmetProvider>
   </React.StrictMode>

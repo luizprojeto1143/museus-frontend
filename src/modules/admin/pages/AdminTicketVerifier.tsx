@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useAuth } from '../../auth/AuthContext';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { UserCheck, AlertTriangle, QrCode, Calendar, Users, Search } from 'lucide-react';
 import { api } from '../../../api/client';
@@ -30,17 +31,21 @@ export const AdminTicketVerifier: React.FC = () => {
     const [stats, setStats] = useState({ total: 0, checkedIn: 0 });
 
     // Carregar eventos com inscrições
+    const { tenantId } = useAuth();
+
+    // Carregar eventos com inscrições
     useEffect(() => {
         const loadEvents = async () => {
+            if (!tenantId) return;
             try {
-                const res = await api.get('/events?hasRegistrations=true&limit=5');
-                setRecentEvents(res.data.events || res.data || []);
+                const res = await api.get(`/events?hasRegistrations=true&limit=5&tenantId=${tenantId}`);
+                setRecentEvents(res.data.events || res.data.data || res.data || []);
             } catch {
                 // Silently fail
             }
         };
         loadEvents();
-    }, []);
+    }, [tenantId]);
 
     // Atualizar estatísticas
     useEffect(() => {
