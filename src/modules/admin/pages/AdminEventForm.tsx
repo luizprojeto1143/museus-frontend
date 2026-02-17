@@ -265,22 +265,31 @@ export const AdminEventForm: React.FC = () => {
       )}
 
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" onClick={() => navigate("/admin/eventos")} className="btn-ghost w-12 h-12 rounded-full p-0 flex items-center justify-center">
+      <div className="admin-wizard-header">
+        <Button variant="ghost" onClick={() => navigate("/admin/eventos")} className="p-0 hover:bg-transparent text-zinc-400 hover:text-white transition-colors">
           <ArrowLeft size={24} />
         </Button>
         <div>
-          <h1 className="section-title">
+          <h1 className="admin-wizard-title">
             {isEdit ? "Editar Evento" : "Novo Evento"}
           </h1>
-          <p className="text-gray-400 italic">
+          <p className="admin-wizard-subtitle">
             Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}
           </p>
         </div>
       </div>
 
       {/* Stepper */}
-      <div className="mb-8 flex items-center justify-between px-4 overflow-x-auto">
+      <div className="flex items-center justify-between relative mb-12 px-4">
+        {/* Progress Bar Background */}
+        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -z-10" />
+
+        {/* Progress Bar Fill */}
+        <div
+          className="absolute top-1/2 left-0 h-0.5 bg-gold transition-all duration-300 -z-10"
+          style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+        />
+
         {STEPS.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
@@ -289,9 +298,9 @@ export const AdminEventForm: React.FC = () => {
           return (
             <div
               key={step.id}
-              className="flex flex-col items-center gap-2 min-w-[100px] cursor-pointer"
+              className={`flex flex-col items-center relative z-10 cursor-pointer group ${isActive ? 'text-gold' : isCompleted ? 'text-white' : 'text-zinc-500'
+                }`}
               onClick={() => {
-                // Allow navigation to completed steps or if editing
                 if (isEdit || index < currentStep) {
                   setDirection(index > currentStep ? 1 : -1);
                   setCurrentStep(index);
@@ -299,15 +308,14 @@ export const AdminEventForm: React.FC = () => {
               }}
             >
               <div className={`
-                                w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all
-                                ${isActive ? 'bg-[#d4af37] border-[#d4af37] text-[#1a1108] shadow-[0_0_15px_rgba(212,175,55,0.4)] scale-110' :
-                  isCompleted ? 'bg-[#22c55e] border-[#22c55e] text-[#1a1108]' :
-                    'bg-[rgba(255,255,255,0.05)] border-[rgba(255,255,255,0.1)] text-gray-500'
-                }
-                            `}>
+                        w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 mb-3
+                        ${isActive ? 'bg-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]' :
+                  isCompleted ? 'bg-zinc-800 text-white border border-white/20' :
+                    'bg-zinc-900 text-zinc-600 border border-white/10 group-hover:border-white/20'}
+                    `}>
                 {isCompleted ? <CheckCircle size={20} /> : <Icon size={20} />}
               </div>
-              <span className={`text-xs font-bold uppercase tracking-wider ${isActive ? 'text-[#d4af37]' : 'text-gray-500'}`}>
+              <span className="text-sm font-medium transition-colors">
                 {step.title}
               </span>
             </div>
