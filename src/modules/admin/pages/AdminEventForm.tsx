@@ -279,43 +279,112 @@ export const AdminEventForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Stepper */}
-      <div className="flex items-center justify-between relative mb-12 px-4 w-full">
+      {/* Stepper - Inline Styles because Tailwind is missing */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        position: 'relative',
+        marginBottom: '3rem',
+        padding: '0 1rem',
+        width: '100%'
+      }}>
+
         {/* Progress Bar Background */}
-        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10" />
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          width: '100%',
+          height: '2px',
+          background: 'rgba(255, 255, 255, 0.1)',
+          zIndex: 0,
+          transform: 'translateY(-50%)'
+        }} />
 
         {/* Progress Bar Fill */}
-        <div
-          className="absolute top-1/2 left-0 h-0.5 bg-[#d4af37] transition-all duration-300 -z-10"
-          style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
-        />
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          height: '2px',
+          background: '#d4af37',
+          zIndex: 0,
+          transform: 'translateY(-50%)',
+          width: `${(currentStep / (STEPS.length - 1)) * 100}%`,
+          transition: 'width 0.3s ease'
+        }} />
 
         {STEPS.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
           const Icon = step.icon;
 
+          let iconBg = '#18181b'; // zinc-900 like
+          let iconBorder = 'rgba(255,255,255,0.1)';
+          let iconColor = '#71717a'; // zinc-500
+          let textColor = '#71717a';
+          let boxShadow = 'none';
+          let scale = '1';
+
+          if (isActive) {
+            iconBg = '#d4af37';
+            iconBorder = '#d4af37';
+            iconColor = '#000000';
+            textColor = '#d4af37';
+            boxShadow = '0 0 20px rgba(212,175,55,0.4)';
+            scale = '1.1';
+          } else if (isCompleted) {
+            iconBg = '#22c55e';
+            iconBorder = '#22c55e';
+            iconColor = '#000000';
+            textColor = '#22c55e';
+          }
+
           return (
             <div
               key={step.id}
-              className={`flex flex-col items-center relative z-10 cursor-pointer group transtion-transform duration-300 hover:scale-105 ${isActive ? 'text-[#d4af37]' : isCompleted ? 'text-white' : 'text-gray-500'
-                }`}
               onClick={() => {
                 if (isEdit || index < currentStep) {
                   setDirection(index > currentStep ? 1 : -1);
                   setCurrentStep(index);
                 }
               }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                position: 'relative',
+                zIndex: 10,
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+              }}
             >
-              <div className={`
-                        w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 mb-3 border-2
-                        ${isActive ? 'bg-[#d4af37] border-[#d4af37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-110' :
-                  isCompleted ? 'bg-[#22c55e] border-[#22c55e] text-black' :
-                    'bg-[#18181b] border-white/10 text-gray-500 group-hover:border-[#d4af37]/50 group-hover:text-[#d4af37]'}
-                    `}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: iconBg,
+                border: `2px solid ${iconBorder}`,
+                color: iconColor,
+                boxShadow: boxShadow,
+                transform: `scale(${scale})`,
+                transition: 'all 0.3s ease',
+                marginBottom: '0.75rem'
+              }}>
                 {isCompleted ? <CheckCircle size={24} /> : <Icon size={24} />}
               </div>
-              <span className={`text-sm font-bold uppercase tracking-wider transition-colors ${isActive ? 'text-[#d4af37]' : isCompleted ? 'text-[#22c55e]' : 'text-gray-500'}`}>
+              <span style={{
+                fontSize: '0.875rem',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: textColor,
+                transition: 'color 0.3s'
+              }}>
                 {step.title}
               </span>
             </div>
