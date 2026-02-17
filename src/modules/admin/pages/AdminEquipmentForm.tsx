@@ -7,7 +7,7 @@ import {
     Landmark, Save, ArrowLeft, Building2,
     Tent, Music, Mail, Lock, User, Globe, CheckCircle2
 } from "lucide-react";
-import { Button, Input, Select } from "../../../components/ui";
+import { Button, Input, Select, Checkbox } from "../../../components/ui";
 import "./AdminShared.css";
 
 type EquipmentType = "MUSEUM" | "CULTURAL_SPACE" | "PRODUCER";
@@ -151,27 +151,6 @@ export const AdminEquipmentForm: React.FC = () => {
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="form-group md:col-span-2">
-                            <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">Tipo de Equipamento</label>
-                            <div className="grid grid-cols-3 gap-4">
-                                {typeOptions.map(opt => (
-                                    <div
-                                        key={opt.value}
-                                        onClick={() => setType(opt.value as any)}
-                                        className={`cursor-pointer p-4 rounded-xl border transition-all flex flex-col items-center gap-2 text-center
-                                            ${type === opt.value
-                                                ? 'bg-[var(--accent-gold)]/10 border-[var(--accent-gold)] text-[var(--accent-gold)]'
-                                                : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)] hover:bg-[var(--bg-surface-hover)]'
-                                            }
-                                        `}
-                                    >
-                                        {opt.icon}
-                                        <span className="font-bold text-sm">{opt.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
                         <div className="form-group">
                             <Input
                                 label="Nome Oficial"
@@ -183,6 +162,18 @@ export const AdminEquipmentForm: React.FC = () => {
                         </div>
 
                         <div className="form-group">
+                            <Select
+                                label="Tipo de Equipamento"
+                                value={type}
+                                onChange={e => setType(e.target.value as any)}
+                            >
+                                {typeOptions.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                            </Select>
+                        </div>
+
+                        <div className="form-group md:col-span-2">
                             <Input
                                 label="Slug (URL)"
                                 value={slug}
@@ -192,6 +183,9 @@ export const AdminEquipmentForm: React.FC = () => {
                                 leftIcon={<Globe size={16} />}
                                 style={{ fontFamily: 'monospace' }}
                             />
+                            <p className="text-xs text-[var(--fg-muted)] mt-2">
+                                Identificador único usado na URL do museu.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -254,45 +248,27 @@ export const AdminEquipmentForm: React.FC = () => {
                         <CheckCircle2 className="text-[var(--accent-gold)]" size={20} /> Módulos Habilitados
                     </h3>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div
-                            onClick={() => setFeatureWorks(!featureWorks)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureWorks ? 'bg-emerald-900/20 border-emerald-500/50' : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)]'}`}
-                        >
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${featureWorks ? 'bg-emerald-500 border-emerald-500' : 'border-[var(--fg-muted)]'}`}>
-                                    {featureWorks && <CheckCircle2 size={12} className="text-black" />}
-                                </div>
-                                <span className="font-bold text-[var(--fg-main)]">Acervo & Obras</span>
-                            </div>
-                            <p className="text-xs text-[var(--fg-muted)]">Permite cadastrar obras, peças e itens do acervo.</p>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Checkbox
+                            label="Acervo & Obras"
+                            description="Permite cadastrar obras, peças e itens do acervo."
+                            checked={featureWorks}
+                            onChange={e => setFeatureWorks(e.target.checked)}
+                        />
 
-                        <div
-                            onClick={() => setFeatureEvents(!featureEvents)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureEvents ? 'bg-emerald-900/20 border-emerald-500/50' : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)]'}`}
-                        >
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${featureEvents ? 'bg-emerald-500 border-emerald-500' : 'border-[var(--fg-muted)]'}`}>
-                                    {featureEvents && <CheckCircle2 size={12} className="text-black" />}
-                                </div>
-                                <span className="font-bold text-[var(--fg-main)]">Agenda de Eventos</span>
-                            </div>
-                            <p className="text-xs text-[var(--fg-muted)]">Gestão de eventos, ingressos e calendário.</p>
-                        </div>
+                        <Checkbox
+                            label="Agenda de Eventos"
+                            description="Gestão de eventos, ingressos e calendário."
+                            checked={featureEvents}
+                            onChange={e => setFeatureEvents(e.target.checked)}
+                        />
 
-                        <div
-                            onClick={() => setFeatureGamification(!featureGamification)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureGamification ? 'bg-emerald-900/20 border-emerald-500/50' : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)]'}`}
-                        >
-                            <div className="flex items-center gap-2 mb-2">
-                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${featureGamification ? 'bg-emerald-500 border-emerald-500' : 'border-[var(--fg-muted)]'}`}>
-                                    {featureGamification && <CheckCircle2 size={12} className="text-black" />}
-                                </div>
-                                <span className="font-bold text-[var(--fg-main)]">Gamificação</span>
-                            </div>
-                            <p className="text-xs text-[var(--fg-muted)]">Ranking, visitas premiadas e caça ao tesouro.</p>
-                        </div>
+                        <Checkbox
+                            label="Gamificação"
+                            description="Ranking, visitas premiadas e caça ao tesouro."
+                            checked={featureGamification}
+                            onChange={e => setFeatureGamification(e.target.checked)}
+                        />
                     </div>
                 </div>
 

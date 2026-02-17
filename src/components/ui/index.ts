@@ -9,3 +9,4 @@ export { Skeleton, CardSkeleton, ListSkeleton } from './Skeleton';
 export { FavoriteButton } from './FavoriteButton';
 export { StarRating, ReviewForm } from './StarRating';
 export { NewsletterForm } from './NewsletterForm';
+export { Checkbox } from './Checkbox';
