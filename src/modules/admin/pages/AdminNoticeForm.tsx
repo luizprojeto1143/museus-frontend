@@ -7,7 +7,7 @@ import { useToast } from "../../../contexts/ToastContext";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import {
     ArrowLeft, Save, Calendar, DollarSign, FileText,
-    MapPin, X, Plus, CheckCircle, ChevronRight,
+    MapPin, X, Plus, CheckCircle, ChevronRight, ChevronDown,
     MousePointerClick, Accessibility, Tag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -322,15 +322,21 @@ export const AdminNoticeForm: React.FC = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <Select
-                                            label="Status Inicial"
-                                            value={formData.status}
-                                            onChange={e => setFormData({ ...formData, status: e.target.value })}
-                                        >
-                                            {STATUS_OPTIONS.map(opt => (
-                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                            ))}
-                                        </Select>
+                                        <label className="text-sm font-bold text-gold mb-2 block">Status Inicial</label>
+                                        <div className="relative">
+                                            <select
+                                                value={formData.status}
+                                                onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                                className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold/50 appearance-none cursor-pointer"
+                                            >
+                                                {STATUS_OPTIONS.map(opt => (
+                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                ))}
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-500">
+                                                <ChevronDown size={16} />
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div className="md:col-span-2 form-group">
