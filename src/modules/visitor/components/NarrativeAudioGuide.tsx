@@ -1,81 +1,56 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Headphones, Sparkles, Loader2, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
+import { useAudio } from "../context/AudioContext";
 import './NarrativeAudioGuide.css';
 
 interface NarrativeAudioGuideProps {
     audioUrl?: string | null;
     title: string;
     artist?: string;
+    coverUrl?: string;
 }
 
-export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioUrl, title, artist }) => {
+export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioUrl, title, artist, coverUrl }) => {
     const { t } = useTranslation();
     const { addToast } = useToast();
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isLoaded, setIsLoaded] = useState(false);
-
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-        const handleLoadedMetadata = () => {
-            setDuration(audio.duration);
-            setIsLoaded(true);
-        };
-        const handleEnded = () => setIsPlaying(false);
-
-        audio.addEventListener('timeupdate', handleTimeUpdate);
-        audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-        audio.addEventListener('ended', handleEnded);
-
-        return () => {
-            audio.removeEventListener('timeupdate', handleTimeUpdate);
-            audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-            audio.removeEventListener('ended', handleEnded);
-        };
-    }, [audioUrl]);
-
-    const togglePlay = () => {
-        const audio = audioRef.current;
-        if (!audio) return;
-
-        if (isPlaying) {
-            audio.pause();
-        } else {
-            audio.play();
-        }
-        setIsPlaying(!isPlaying);
-    };
-
-    const skip = (seconds: number) => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        audio.currentTime = Math.max(0, Math.min(audio.currentTime + seconds, duration));
-    };
-
-    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const audio = audioRef.current;
-        if (!audio) return;
-        const newTime = parseFloat(e.target.value);
-        audio.currentTime = newTime;
-        setCurrentTime(newTime);
-    };
-
-    const formatTime = (time: number) => {
-        const mins = Math.floor(time / 60);
-        const secs = Math.floor(time % 60);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    };
+    const {
+        isPlaying,
+        currentTrack,
+        togglePlay,
+        playTrack,
+        seek,
+        currentTime,
+        duration,
+        progress
+    } = useAudio();
 
     const [generating, setGenerating] = useState(false);
     const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null);
+
+    // Determine the effective audio URL (uploaded or generated)
+    const effectiveAudioUrl = audioUrl || generatedAudioUrl;
+
+    // Check if THIS specific track is currently active in the global player
+    const isCurrentTrack = currentTrack?.url === effectiveAudioUrl;
+    const isTrackPlaying = isCurrentTrack && isPlaying;
+
+    const handlePlay = () => {
+        if (!effectiveAudioUrl) return;
+
+        if (isCurrentTrack) {
+            togglePlay();
+        } else {
+            playTrack({
+                title,
+                artist,
+                url: effectiveAudioUrl,
+                coverUrl: coverUrl || undefined
+            });
+        }
+    };
 
     const handleGenerateAudio = async () => {
         if (!title && !artist) return;
@@ -97,7 +72,15 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             setGeneratedAudioUrl(url);
-            setIsLoaded(true);
+
+            // Auto-play the generated audio
+            playTrack({
+                title,
+                artist,
+                url,
+                coverUrl: coverUrl || undefined
+            });
+
             addToast("Áudio-guia gerado com sucesso!", "success");
         } catch (error) {
             console.error("TTS Error", error);
@@ -107,8 +90,20 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
         }
     };
 
-    const effectiveAudioUrl = audioUrl || generatedAudioUrl;
+    const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isCurrentTrack) return;
+        const newTime = parseFloat(e.target.value);
+        seek(newTime);
+    };
 
+    const formatTime = (time: number) => {
+        if (!time || isNaN(time)) return "0:00";
+        const mins = Math.floor(time / 60);
+        const secs = Math.floor(time % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    // If no audio is available and not generating, show "Empty State" or "Generate"
     if (!effectiveAudioUrl) {
         return (
             <section className="narrative-guide-section bg-gradient-to-br from-[#12121e] to-[#0a0a0c] border border-white/5 p-8 rounded-[2.5rem] shadow-2xl">
@@ -147,8 +142,6 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
 
     return (
         <section className="narrative-guide-section bg-gradient-to-br from-[#12121e] to-[#0a0a0c] border border-white/10 p-8 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
-            <audio ref={audioRef} src={effectiveAudioUrl} preload="metadata" />
-
             {/* Decorative BG element */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] -mr-32 -mt-32 rounded-full pointer-events-none"></div>
 
@@ -167,12 +160,12 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                     <div className="player-artwork relative">
                         <div className={`
                             w-32 h-32 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center relative overflow-hidden transition-all duration-700
-                            ${isPlaying ? 'scale-110 shadow-3xl shadow-blue-500/20' : ''}
+                            ${isTrackPlaying ? 'scale-110 shadow-3xl shadow-blue-500/20' : ''}
                         `}>
-                            <Headphones size={48} className={`text-blue-500 transition-all duration-700 ${isPlaying ? 'rotate-[-10deg]' : ''}`} />
+                            <Headphones size={48} className={`text-blue-500 transition-all duration-700 ${isTrackPlaying ? 'rotate-[-10deg]' : ''}`} />
 
                             {/* Animated pulses when playing */}
-                            {isPlaying && (
+                            {isTrackPlaying && (
                                 <div className="absolute inset-0 pointer-events-none">
                                     <div className="absolute inset-0 border-2 border-blue-500/30 rounded-3xl animate-ping"></div>
                                     <div className="absolute inset-4 border border-blue-400/20 rounded-2xl animate-pulse"></div>
@@ -195,50 +188,56 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
 
                 <div className="space-y-4">
                     <div className="player-progress flex items-center gap-4">
-                        <span className="text-[10px] font-black text-slate-500 w-10 text-right font-mono">{formatTime(currentTime)}</span>
+                        <span className="text-[10px] font-black text-slate-500 w-10 text-right font-mono">
+                            {isCurrentTrack ? formatTime(currentTime) : "0:00"}
+                        </span>
                         <div className="flex-1 relative h-6 flex items-center">
                             <input
                                 type="range"
                                 min={0}
-                                max={duration || 100}
-                                value={currentTime}
+                                max={isCurrentTrack ? (duration || 100) : 100}
+                                value={isCurrentTrack ? currentTime : 0}
                                 onChange={handleSeek}
                                 className="w-full appearance-none bg-white/5 h-1.5 rounded-full outline-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all"
-                                disabled={!isLoaded}
+                                disabled={!isCurrentTrack}
                             />
                             {/* Visual Progress Layer */}
                             <div
                                 className="absolute left-0 bg-blue-500 h-1.5 rounded-full pointer-events-none"
-                                style={{ width: `${(currentTime / (duration || 100)) * 100}%` }}
+                                style={{ width: `${isCurrentTrack ? progress : 0}%` }}
                             ></div>
                         </div>
-                        <span className="text-[10px] font-black text-slate-500 w-10 font-mono">{formatTime(duration)}</span>
+                        <span className="text-[10px] font-black text-slate-500 w-10 font-mono">
+                            {isCurrentTrack ? formatTime(duration) : "0:00"}
+                        </span>
                     </div>
 
                     <div className="player-controls flex items-center justify-center gap-10 pt-4">
                         <button
-                            onClick={() => skip(-10)}
-                            className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                            onClick={() => isCurrentTrack && seek(currentTime - 10)}
+                            className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all active:scale-95 disabled:opacity-50"
                             title="Voltar 10s"
+                            disabled={!isCurrentTrack}
                         >
                             <SkipBack size={24} />
                         </button>
 
                         <button
-                            onClick={togglePlay}
+                            onClick={handlePlay}
                             className={`
                                 w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-xl active:scale-90
-                                ${isPlaying ? 'bg-white text-black' : 'bg-blue-600 text-white shadow-blue-600/30'}
+                                ${isTrackPlaying ? 'bg-white text-black' : 'bg-blue-600 text-white shadow-blue-600/30'}
                             `}
-                            title={isPlaying ? 'Pausar' : 'Reproduzir'}
+                            title={isTrackPlaying ? 'Pausar' : 'Reproduzir'}
                         >
-                            {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
+                            {isTrackPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
                         </button>
 
                         <button
-                            onClick={() => skip(10)}
-                            className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all active:scale-95"
+                            onClick={() => isCurrentTrack && seek(currentTime + 10)}
+                            className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all active:scale-95 disabled:opacity-50"
                             title="Avançar 10s"
+                            disabled={!isCurrentTrack}
                         >
                             <SkipForward size={24} />
                         </button>
