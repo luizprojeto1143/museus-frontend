@@ -92,45 +92,56 @@ export const AdminNotices: React.FC = () => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group">
+                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-gold/30 transition-all duration-500">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <FileText size={64} className="text-white" />
+                        <FileText size={80} className="text-white transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <p className="text-zinc-400 font-medium mb-1">Total de Editais</p>
-                    <h3 className="text-4xl font-bold text-white">{total}</h3>
+                    <div className="relative z-10">
+                        <p className="text-zinc-400 font-medium mb-1 uppercase tracking-wider text-xs">Total de Editais</p>
+                        <h3 className="text-5xl font-bold text-white mb-2">{total}</h3>
+                        <div className="w-12 h-1 bg-gold rounded-full opacity-50"></div>
+                    </div>
                 </div>
-                <div className="bg-emerald-950/20 backdrop-blur-md border border-emerald-500/20 p-6 rounded-2xl relative overflow-hidden group">
+
+                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-500">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Calendar size={64} className="text-emerald-400" />
+                        <Calendar size={80} className="text-emerald-400 transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent"></div>
-                    <p className="text-emerald-200/70 font-medium mb-1">Inscrições Abertas</p>
-                    <h3 className="text-4xl font-bold text-white">{open}</h3>
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent opacity-50"></div>
+                    <div className="relative z-10">
+                        <p className="text-emerald-400/70 font-medium mb-1 uppercase tracking-wider text-xs">Inscrições Abertas</p>
+                        <h3 className="text-5xl font-bold text-white mb-2">{open}</h3>
+                        <div className="w-12 h-1 bg-emerald-500 rounded-full opacity-50"></div>
+                    </div>
                 </div>
-                <div className="bg-purple-950/20 backdrop-blur-md border border-purple-500/20 p-6 rounded-2xl relative overflow-hidden group">
+
+                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-purple-500/30 transition-all duration-500">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <CheckCircle size={64} className="text-purple-400" />
+                        <CheckCircle size={80} className="text-purple-400 transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-transparent"></div>
-                    <p className="text-purple-200/70 font-medium mb-1">Em Avaliação</p>
-                    <h3 className="text-4xl font-bold text-white">{evaluating}</h3>
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-transparent opacity-50"></div>
+                    <div className="relative z-10">
+                        <p className="text-purple-400/70 font-medium mb-1 uppercase tracking-wider text-xs">Em Avaliação</p>
+                        <h3 className="text-5xl font-bold text-white mb-2">{evaluating}</h3>
+                        <div className="w-12 h-1 bg-purple-500 rounded-full opacity-50"></div>
+                    </div>
                 </div>
             </div>
 
             {/* Filters Bar */}
-            <div className="bg-zinc-900/30 border border-white/5 p-4 rounded-xl flex flex-col md:flex-row gap-4 mb-8 backdrop-blur-sm">
+            <div className="bg-zinc-900/30 border border-white/5 p-1 rounded-xl flex flex-col md:flex-row gap-2 mb-8 backdrop-blur-sm max-w-4xl">
                 <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={20} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
                     <input
                         type="text"
                         placeholder="Buscar por título ou status..."
-                        className="w-full bg-zinc-950/50 border border-white/10 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-gold/50 transition-colors"
+                        className="w-full bg-zinc-950/50 border border-transparent rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:bg-zinc-900 transition-colors placeholder:text-zinc-600"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white px-6">
-                    <Filter size={18} className="mr-2" /> Filtros Avançados
+                <Button variant="outline" className="border-transparent bg-zinc-800/50 text-zinc-300 hover:bg-gold/10 hover:text-gold px-6 min-w-[140px]">
+                    <Filter size={16} className="mr-2" /> Filtros
                 </Button>
             </div>
 
@@ -139,16 +150,18 @@ export const AdminNotices: React.FC = () => {
                 {loading ? (
                     <div className="py-20 flex flex-col items-center justify-center">
                         <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin mb-6"></div>
-                        <p className="text-zinc-500">Carregando editais...</p>
+                        <p className="text-zinc-500 animate-pulse">Carregando editais...</p>
                     </div>
                 ) : filteredNotices.length === 0 ? (
-                    <div className="py-24 text-center text-zinc-500 bg-zinc-900/20 rounded-3xl border border-white/5 border-dashed">
-                        <FileText className="mx-auto mb-6 opacity-20" size={64} />
+                    <div className="py-24 text-center bg-zinc-900/20 rounded-3xl border border-white/5 border-dashed flex flex-col items-center justify-center group hover:border-white/10 transition-all">
+                        <div className="w-20 h-20 rounded-full bg-zinc-900 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                            <FileText className="text-zinc-700 group-hover:text-gold transition-colors" size={32} />
+                        </div>
                         <h3 className="text-2xl font-bold text-white mb-2">Nenhum edital encontrado</h3>
-                        <p className="mb-8 max-w-md mx-auto text-zinc-400">Comece criando seu primeiro edital de fomento cultural para receber inscrições.</p>
+                        <p className="mb-8 max-w-md text-zinc-400">Comece criando seu primeiro edital de fomento cultural para receber inscrições.</p>
                         <Link to="/admin/editais/novo">
-                            <Button className="bg-zinc-800 text-white hover:bg-zinc-700 border border-white/10">
-                                Criar Edital Agora
+                            <Button className="bg-zinc-800 text-white hover:bg-zinc-700 border border-white/10 hover:border-gold/30 hover:text-gold transition-all">
+                                Criar Primeiro Edital
                             </Button>
                         </Link>
                     </div>
@@ -158,17 +171,17 @@ export const AdminNotices: React.FC = () => {
                             const statusInfo = statusLabels[notice.status] || { label: notice.status, color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" };
 
                             return (
-                                <div key={notice.id} className="group bg-zinc-900/40 border border-white/5 hover:border-gold/30 rounded-2xl p-6 transition-all hover:bg-zinc-900/60 hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] relative overflow-hidden backdrop-blur-sm">
+                                <div key={notice.id} className="group bg-zinc-900/40 border border-white/5 hover:border-gold/50 rounded-2xl p-6 transition-all hover:bg-zinc-900/60 hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] relative overflow-hidden backdrop-blur-sm">
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                                     <div className="flex flex-col md:flex-row gap-6 relative z-10">
                                         {/* Main Info */}
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-3">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border} shadow-sm`}>
+                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border} shadow-sm`}>
                                                     {statusInfo.label}
                                                 </span>
-                                                <span className="text-zinc-600 text-xs">ID: {notice.id.slice(0, 8)}</span>
+                                                <span className="text-zinc-600 text-xs font-mono">#{notice.id.slice(0, 8)}</span>
                                             </div>
 
                                             <h3 className="text-2xl font-bold text-white group-hover:text-gold transition-colors mb-2">
@@ -176,22 +189,22 @@ export const AdminNotices: React.FC = () => {
                                             </h3>
 
                                             <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-400 mt-4">
-                                                <div className="flex items-center gap-2 bg-zinc-950/30 px-3 py-1.5 rounded-lg border border-white/5">
-                                                    <Calendar size={14} className="text-gold" />
-                                                    <span>Inscrições: <span className="text-zinc-200">{formatDate(notice.inscriptionStart)}</span> a <span className="text-zinc-200">{formatDate(notice.inscriptionEnd)}</span></span>
+                                                <div className="flex items-center gap-2">
+                                                    <Calendar size={14} className="text-zinc-600" />
+                                                    <span><span className="text-zinc-300">{formatDate(notice.inscriptionStart)}</span> até <span className="text-zinc-300">{formatDate(notice.inscriptionEnd)}</span></span>
                                                 </div>
 
                                                 {notice.totalBudget !== undefined && (
-                                                    <div className="flex items-center gap-2 bg-zinc-950/30 px-3 py-1.5 rounded-lg border border-white/5">
-                                                        <DollarSign size={14} className="text-gold" />
-                                                        <span className="text-zinc-200 font-medium">{formatCurrency(notice.totalBudget)}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <DollarSign size={14} className="text-zinc-600" />
+                                                        <span className="text-zinc-300 font-medium">{formatCurrency(notice.totalBudget)}</span>
                                                     </div>
                                                 )}
 
                                                 {notice._count && (
-                                                    <div className="flex items-center gap-2 px-2">
-                                                        <FileText size={14} className="text-zinc-500" />
-                                                        <span>{notice._count.projects || 0} inscritos</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <FileText size={14} className="text-zinc-600" />
+                                                        <span><span className="text-white font-bold">{notice._count.projects || 0}</span> inscritos</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -204,7 +217,7 @@ export const AdminNotices: React.FC = () => {
                                                 className="w-full md:w-auto justify-center text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10"
                                                 onClick={() => navigate(`/admin/editais/${notice.id}`)}
                                             >
-                                                <Edit size={18} className="mr-2" /> Gerenciar
+                                                <Edit size={16} className="mr-2" /> Gerenciar
                                             </Button>
                                         </div>
                                     </div>
