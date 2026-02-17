@@ -7,7 +7,7 @@ import { useToast } from "../../../contexts/ToastContext";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import {
     ArrowLeft, Save, Calendar, DollarSign, FileText,
-    MapPin, X, Plus, CheckCircle, ChevronRight, ChevronDown,
+    MapPin, X, Plus, CheckCircle, ChevronRight, ClipboardList, ChevronDown,
     MousePointerClick, Accessibility, Tag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
