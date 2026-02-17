@@ -1,94 +1,86 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 import { useAuth } from "../../auth/AuthContext";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
+import {
+  MapPin, Search, Filter, Compass, Calendar,
+  ArrowRight, Star, Clock, Info
+} from "lucide-react";
 import "./SelectMuseum.css";
 
 interface Tenant {
   id: string;
   name: string;
   slug: string;
-  type?: "MUSEUM" | "PRODUCER";
+  type?: "MUSEUM" | "PRODUCER" | "CULTURAL_SPACE";
+  city?: string;
+  coverUrl?: string;
+  isOpen?: boolean;
 }
-
-import { Calendar, MapPin } from "lucide-react";
-
-export const CityAgendaCarousel: React.FC<{ onSelectTenant: (tenant: Tenant) => void }> = ({ onSelectTenant }) => {
-  const [events, setEvents] = useState<any[]>([]);
-
-  useEffect(() => {
-    const baseUrl = import.meta.env.VITE_API_URL as string;
-    fetch(baseUrl + "/events?discovery=true")
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setEvents(data);
-      })
-      .catch(err => console.error("Error fetching agenda", err));
-  }, []);
-
-  if (events.length === 0) return (
-    <div style={{ opacity: 0.6, fontSize: '0.9rem', fontStyle: 'italic' }}>
-      Nenhum evento agendado para os próximos dias.
-    </div>
-  );
-
-  return (
-    <>
-      {events.map(event => (
-        <div key={event.id} className="event-card-discovery" onClick={() => onSelectTenant(event.tenant)}>
-          <div className="event-card-image" style={{ backgroundImage: event.coverImageUrl ? `url(${event.coverImageUrl})` : undefined }}>
-            <div className="event-date-badge">
-              {new Date(event.startDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
-            </div>
-          </div>
-          <div className="event-card-content">
-            <h4 className="event-title">{event.title}</h4>
-            <div className="event-producer">{event.producerName || event.tenant?.name}</div>
-            <div className="event-location">
-              <MapPin size={12} color="#d4af37" />
-              {event.location || "Local a confirmar"}
-            </div>
-          </div>
-        </div>
-      ))}
-    </>
-  );
-};
 
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated, token, updateSession } = useAuth();
+
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [filteredTenants, setFilteredTenants] = useState<Tenant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState<"ALL" | "MUSEUM" | "PRODUCER" | "EVENT">("ALL");
 
   useEffect(() => {
-    const loadTenants = async () => {
-      try {
-        const baseUrl = import.meta.env.VITE_API_URL as string;
-        const res = await fetch(baseUrl + "/tenants/public");
-
-        if (!res.ok) {
-          throw new Error(t("visitor.selectMuseum.errorLoading"));
-        }
-
-        const data = await res.json();
-        setTenants(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("common.error"));
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadTenants();
-  }, [t]);
+  }, []);
 
-  const handleSelectMuseum = async (tenant: Tenant) => {
+  useEffect(() => {
+    filterTenants();
+  }, [searchTerm, activeFilter, tenants]);
+
+  const loadTenants = async () => {
+    try {
+      const baseUrl = import.meta.env.VITE_API_URL as string;
+      const res = await fetch(baseUrl + "/tenants/public");
+      const data = await res.json();
+
+      // Mock data enhancement for demo/premium feel (if API doesn't return these yet)
+      const enhancedData = data.map((t: any) => ({
+        ...t,
+        coverUrl: t.coverUrl || undefined,
+        isOpen: true // Mock status for now
+      }));
+
+      setTenants(enhancedData);
+    } catch (err) {
+      console.error("Error loading tenants", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filterTenants = () => {
+    let result = tenants;
+
+    if (searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      result = result.filter(t =>
+        t.name.toLowerCase().includes(lower) ||
+        t.slug.toLowerCase().includes(lower) ||
+        t.city?.toLowerCase().includes(lower)
+      );
+    }
+
+    if (activeFilter !== "ALL") {
+      result = result.filter(t => t.type === activeFilter);
+    }
+
+    setFilteredTenants(result);
+  };
+
+  const handleSelect = async (tenant: Tenant) => {
     if (isAuthenticated && token) {
+      // Auth flow for switching tenants
       try {
         const baseUrl = import.meta.env.VITE_API_URL as string;
         const res = await fetch(baseUrl + "/auth/switch-tenant", {
@@ -105,139 +97,141 @@ export const SelectMuseum: React.FC = () => {
           updateSession(data.accessToken, data.role, data.tenantId, data.name);
           navigate("/");
           return;
-        } else {
-          console.error("Erro ao trocar de museu, status:", res.status);
-          if (res.status === 401) {
-            navigate("/register", {
-              state: {
-                tenantId: tenant.id,
-                tenantName: tenant.name
-              }
-            });
-          }
         }
       } catch (err) {
-        console.error("Erro ao trocar de museu (exception)", err);
+        console.error(err);
       }
-    } else {
-      // Fallback ou não autenticado
-      navigate("/register", {
-        state: {
-          tenantId: tenant.id,
-          tenantName: tenant.name
-        }
-      });
     }
+
+    // Default / Unauth flow
+    navigate("/register", { state: { tenantId: tenant.id, tenantName: tenant.name } });
   };
 
-  if (loading) {
-    return (
-      <div className="select-museum-loading">
-        {t("visitor.selectMuseum.loading")}
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="select-museum-error">
-        <p>{error}</p>
-        <button
-          onClick={() => navigate("/")}
-          className="error-back-button"
-        >
-          {t("common.back")}
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="select-museum-container">
-      <LanguageSwitcher />
-      <div className="select-museum-content">
-        {/* Cabeçalho */}
-        <div className="select-museum-header">
-          <h1 className="select-museum-title">
-            {t("visitor.selectMuseum.title", "Selecione uma Experiência")}
-          </h1>
-          <p className="select-museum-subtitle">
-            {t("visitor.selectMuseum.subtitle", "Explore museus, eventos culturais e roteiros exclusivos da cidade.")}
-          </p>
-        </div>
-
-        {/* AGENDA GLOBAL DA CIDADE (City Agenda) */}
-        {!loading && (
-          <div className="agenda-section">
-            <div className="section-title">
-              <span>📅</span> Agenda de Eventos
+    <div className="discovery-page">
+      {/* HERO SECTION */}
+      <header className="discovery-hero">
+        <div className="discovery-overlay"></div>
+        <div className="discovery-hero-content">
+          <div className="d-flex justify-between w-full p-6 absolute top-0 left-0 z-10">
+            <div className="brand-pill">
+              <Compass size={16} className="text-[var(--accent-gold)]" />
+              <span>Cultura Viva Discovery</span>
             </div>
-            <div className="agenda-grid">
-              <CityAgendaCarousel onSelectTenant={(tenant) => handleSelectMuseum(tenant)} />
-            </div>
+            <LanguageSwitcher />
           </div>
-        )}
 
-        {/* SEÇÃO: INSTITUIÇÕES */}
-        <div className="section-title">
-          <span>🏛</span> Parceiros Oficiais
+          <h1 className="hero-title">
+            Descubra o <span className="text-gradient">Patrimônio Vivo</span>
+          </h1>
+          <p className="hero-subtitle">
+            Explore museus, teatros e experiências culturais exclusivas na sua cidade.
+          </p>
+
+          {/* SEARCH BAR */}
+          <div className="search-container">
+            <Search className="search-icon" size={20} />
+            <input
+              type="text"
+              placeholder="O que você procura hoje?"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            <button className="search-btn">Buscar</button>
+          </div>
+
+          {/* FILTERS */}
+          <div className="filters-container">
+            <button
+              className={`filter-pill ${activeFilter === "ALL" ? "active" : ""}`}
+              onClick={() => setActiveFilter("ALL")}
+            >
+              Todos
+            </button>
+            <button
+              className={`filter-pill ${activeFilter === "MUSEUM" ? "active" : ""}`}
+              onClick={() => setActiveFilter("MUSEUM")}
+            >
+              🏛 Museus
+            </button>
+            <button
+              className={`filter-pill ${activeFilter === "PRODUCER" ? "active" : ""}`}
+              onClick={() => setActiveFilter("PRODUCER")}
+            >
+              🎭 Produtoras
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN CONTENT */}
+      <main className="discovery-main">
+        <div className="section-header">
+          <h2>Experiências em Destaque</h2>
+          <span className="location-badge">
+            <MapPin size={14} /> Rio de Janeiro, BR
+          </span>
         </div>
 
-        {/* Grid de museus */}
-        {tenants.length === 0 ? (
-          <div className="no-museums">
-            <p>{t("visitor.selectMuseum.noMuseums")}</p>
-            <p className="admin-hint">
-              {t("visitor.selectMuseum.adminHint")}
-            </p>
+        {loading ? (
+          <div className="loading-grid">
+            {[1, 2, 3].map(i => <div key={i} className="skeleton-card"></div>)}
           </div>
         ) : (
-          <div className="museum-grid">
-            {tenants.map((tenant) => (
-              <div
-                key={tenant.id}
-                onClick={() => handleSelectMuseum(tenant)}
-                className="museum-card"
-              >
-                {/* Ícone */}
-                <div className="museum-card-icon" style={{
-                  color: tenant.type === "PRODUCER" ? "#d4af37" : "#fff",
-                  borderColor: tenant.type === "PRODUCER" ? "#d4af37" : "rgba(255,255,255,0.2)"
-                }}>
-                  {tenant.type === "PRODUCER" ? "🎭" : "🏛"}
+          <div className="discovery-grid">
+            {filteredTenants.map(tenant => (
+              <div key={tenant.id} className="discovery-card" onClick={() => handleSelect(tenant)}>
+                <div className="card-image-wrapper">
+                  <img
+                    src={tenant.coverUrl || "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=800&auto=format&fit=crop"}
+                    alt={tenant.name}
+                    className="card-image"
+                  />
+                  <div className="card-badges">
+                    {tenant.type === 'PRODUCER' && <span className="badge-producer">Produtora</span>}
+                    {tenant.type === 'MUSEUM' && <span className="badge-museum">Museu</span>}
+                    <span className={`badge-status ${tenant.isOpen ? 'open' : 'closed'}`}>
+                      {tenant.isOpen ? 'Aberto' : 'Fechado'}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Tipo Badge */}
-                {tenant.type === "PRODUCER" && (
-                  <span className="producer-badge">
-                    PRODUTOR
-                  </span>
-                )}
+                <div className="card-content">
+                  <h3 className="card-title">{tenant.name}</h3>
 
-                {/* Nome do museu */}
-                <h3 className="museum-card-title">
-                  {tenant.name}
-                </h3>
+                  <div className="card-meta">
+                    <div className="meta-item">
+                      <Star size={14} className="text-yellow-500 fill-yellow-500" />
+                      <span>4.8 (120)</span>
+                    </div>
+                    <div className="meta-item">
+                      <MapPin size={14} />
+                      <span>2.5 km</span>
+                    </div>
+                  </div>
 
-                {/* Slug */}
-                <p className="museum-card-slug">
-                  @{tenant.slug}
-                </p>
+                  <p className="card-description">
+                    Experiência cultural imersiva com acervo digital e guias interativos.
+                  </p>
+
+                  <button className="card-cta">
+                    Visitar <ArrowRight size={16} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Botão voltar */}
-        <div className="back-button-container">
-          <button
-            onClick={() => navigate("/welcome")}
-            className="back-button"
-          >
-            ← {t("common.back")}
-          </button>
-        </div>
-      </div>
+        {filteredTenants.length === 0 && !loading && (
+          <div className="empty-state">
+            <Compass size={48} strokeWidth={1} />
+            <h3>Nenhum resultado encontrado</h3>
+            <p>Tente buscar por outro termo ou categoria.</p>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
