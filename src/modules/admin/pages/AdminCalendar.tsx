@@ -224,7 +224,7 @@ export const AdminCalendar: React.FC = () => {
 
             <div className="flex flex-col lg:flex-row gap-8">
                 {/* Calendar Table */}
-                <div className="flex-1 bg-zinc-900/50 rounded-3xl border border-white/5 backdrop-blur-sm overflow-hidden">
+                <div className="flex-1 bg-zinc-900 rounded-3xl border border-zinc-800 overflow-hidden shadow-2xl">
                     {loading ? (
                         <div className="h-96 flex flex-col items-center justify-center gap-4">
                             <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
@@ -232,11 +232,11 @@ export const AdminCalendar: React.FC = () => {
                         </div>
                     ) : (
                         <div className="w-full overflow-x-auto">
-                            <table className="w-full border-collapse table-fixed">
+                            <table className="w-full border-collapse table-fixed bg-black">
                                 <thead>
                                     <tr>
                                         {['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'].map(d => (
-                                            <th key={d} className="py-4 text-center text-zinc-400 text-xs font-bold uppercase tracking-wider bg-zinc-900/80 border-b border-white/10 w-[14.28%]">
+                                            <th key={d} className="py-3 text-center text-zinc-400 text-xs font-bold uppercase tracking-wider bg-zinc-900 border-b border-r border-zinc-800 last:border-r-0 w-[14.28%]">
                                                 {d}
                                             </th>
                                         ))}
@@ -246,7 +246,7 @@ export const AdminCalendar: React.FC = () => {
                                     {weeks.map((week, wIdx) => (
                                         <tr key={wIdx}>
                                             {week.map((date, dIdx) => {
-                                                if (!date) return <td key={`empty-${wIdx}-${dIdx}`} className="h-32 bg-zinc-950/30 border border-white/5"></td>;
+                                                if (!date) return <td key={`empty-${wIdx}-${dIdx}`} className="h-32 bg-zinc-950 border-r border-b border-zinc-800"></td>;
 
                                                 const dayBookings = getBookingsForDate(date);
                                                 const isToday = new Date().toDateString() === date.toDateString();
@@ -260,45 +260,42 @@ export const AdminCalendar: React.FC = () => {
                                                             if (isBookingModalOpen) setIsBookingModalOpen(false);
                                                         }}
                                                         className={`
-                                                             h-32 border border-white/5 cursor-pointer transition-colors relative align-top p-2 hover:bg-white/5
-                                                             ${isToday ? 'bg-zinc-800/50' : ''}
+                                                             h-32 border-r border-b border-zinc-800 cursor-pointer transition-colors relative align-top p-1 hover:bg-zinc-800/30
+                                                             ${isToday ? 'bg-zinc-900' : 'bg-black'}
                                                              ${isSelected ? 'bg-gold/5' : ''}
                                                          `}
                                                     >
-                                                        {isSelected && <div className="absolute inset-0 border-2 border-gold pointer-events-none z-10"></div>}
+                                                        {isSelected && <div className="absolute inset-0 ring-2 ring-inset ring-gold pointer-events-none z-10 w-full h-full"></div>}
 
-                                                        <div className="flex justify-between items-start mb-2">
+                                                        <div className="flex justify-between items-start mb-1 px-1 pt-1">
                                                             <span className={`
-                                                                 w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold
+                                                                 w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold
                                                                  ${isToday ? 'bg-gold text-black' : 'text-zinc-400'}
                                                              `}>
                                                                 {date.getDate()}
                                                             </span>
-                                                            {dayBookings.length > 0 && !isToday && (
-                                                                <span className="text-[10px] text-zinc-500 font-medium">
-                                                                    {dayBookings.length}
-                                                                </span>
-                                                            )}
                                                         </div>
 
-                                                        <div className="flex flex-col gap-1">
-                                                            {dayBookings.slice(0, 3).map((b, idx) => (
+                                                        <div className="flex flex-col gap-0.5 pointer-events-none">
+                                                            {dayBookings.slice(0, 4).map((b, idx) => (
                                                                 <div
                                                                     key={idx}
                                                                     className={`
-                                                                         text-[10px] px-1.5 py-1 rounded truncate flex items-center gap-1 border
+                                                                         text-[10px] px-1.5 py-0.5 rounded-sm truncate border-l-2
                                                                          ${isToday
-                                                                            ? 'bg-gold/20 text-gold border-gold/30'
-                                                                            : 'bg-zinc-800 text-zinc-300 border-white/5'}
+                                                                            ? 'bg-gold/20 text-gold border-gold'
+                                                                            : 'bg-zinc-800 text-zinc-300 border-zinc-600'}
                                                                      `}
                                                                 >
-                                                                    <div className={`w-1 h-1 rounded-full shrink-0 ${isToday ? 'bg-gold' : 'bg-zinc-500'}`} />
-                                                                    <span className="truncate">{b.space?.name}</span>
+                                                                    <span className="font-semibold mr-1">
+                                                                        {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                                                    </span>
+                                                                    <span>{b.space?.name}</span>
                                                                 </div>
                                                             ))}
-                                                            {dayBookings.length > 3 && (
-                                                                <div className="text-[10px] text-zinc-500 pl-1">
-                                                                    + {dayBookings.length - 3} mais
+                                                            {dayBookings.length > 4 && (
+                                                                <div className="text-[10px] text-zinc-500 pl-1 font-medium">
+                                                                    + {dayBookings.length - 4} mais
                                                                 </div>
                                                             )}
                                                         </div>
