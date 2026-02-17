@@ -143,6 +143,7 @@ import { MasterProviders } from "./modules/master/pages/MasterProviders";
 
 import { GlobalEvents } from "./modules/public/GlobalEvents";
 import { ForgotPassword } from "./modules/auth/ForgotPassword";
+import { ResetPassword } from "./modules/auth/ResetPassword";
 import { NotFound } from "./modules/public/NotFound";
 
 // Producer pages
