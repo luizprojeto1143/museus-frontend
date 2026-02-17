@@ -9,6 +9,7 @@ import {
     CheckCircle, Clock, AlertCircle, Headphones,
     Type, HandMetal, Eye, FileText, Layers, Box
 } from "lucide-react";
+import "./AdminShared.css";
 
 const ACCESSIBILITY_SERVICES = [
     { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: <HandMetal size={24} />, description: "Tradução simultânea para língua de sinais" },
@@ -141,36 +142,43 @@ export const AdminAccessibilityForm: React.FC = () => {
     );
 
     if (loading) {
-        return <div className="text-white text-center py-20">Carregando...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen bg-[var(--bg-root)]">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-2 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-[var(--fg-muted)] text-sm">Carregando...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="max-w-5xl mx-auto pb-20">
+        <div className="admin-form-container">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
+            <div className="admin-wizard-header">
                 <Button
                     variant="ghost"
                     onClick={() => navigate("/admin/acessibilidade")}
-                    className="h-10 w-10 p-0 rounded-full"
+                    className="p-0 text-[var(--fg-muted)] hover:text-white"
                 >
-                    <ArrowLeft size={24} />
+                    <ArrowLeft size={20} />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-2">
+                    <h1 className="admin-wizard-title">
                         {isEdit ? "Editar Solicitação" : "Nova Solicitação de Acessibilidade"}
                     </h1>
-                    <p className="text-slate-400 mt-1">
+                    <p className="admin-wizard-subtitle">
                         {isEdit ? "Atualize os dados da solicitação" : "Registre uma nova demanda de recursos acessíveis"}
                     </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-24">
                 {/* COLUNA ESQUERDA - TIPO DE SERVIÇO */}
                 <div className="lg:col-span-2 space-y-8">
 
-                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <div className="admin-section">
+                        <h2 className="admin-section-title">
                             <span className="text-blue-400">♿</span> Tipo de Serviço
                         </h2>
 
@@ -180,25 +188,25 @@ export const AdminAccessibilityForm: React.FC = () => {
                                     key={service.value}
                                     onClick={() => setFormData({ ...formData, serviceType: service.value, providerId: "" })}
                                     className={`
-                                        cursor-pointer p-4 rounded-2xl border transition-all duration-200 relative overflow-hidden group
+                                        cursor-pointer p-4 rounded-xl border transition-all duration-200 relative overflow-hidden group
                                         ${formData.serviceType === service.value
-                                            ? 'bg-blue-600/20 border-blue-500/50 shadow-[0_0_30px_-10px_rgba(37,99,235,0.3)]'
-                                            : 'bg-black/20 border-white/5 hover:border-white/10 hover:bg-white/5'}
+                                            ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_15px_rgba(37,99,235,0.1)]'
+                                            : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]'}
                                     `}
                                 >
-                                    <div className={`mb-3 ${formData.serviceType === service.value ? 'text-blue-400' : 'text-slate-400 group-hover:text-white'}`}>
+                                    <div className={`mb-3 ${formData.serviceType === service.value ? 'text-blue-400' : 'text-[var(--fg-muted)] group-hover:text-white'}`}>
                                         {service.icon}
                                     </div>
-                                    <h3 className={`font-bold text-sm mb-1 ${formData.serviceType === service.value ? 'text-white' : 'text-slate-200'}`}>
+                                    <h3 className={`font-bold text-sm mb-1 ${formData.serviceType === service.value ? 'text-white' : 'text-[var(--fg-main)]'}`}>
                                         {service.label}
                                     </h3>
-                                    <p className="text-xs text-slate-500 leading-relaxed">
+                                    <p className="text-xs text-[var(--fg-muted)] leading-relaxed">
                                         {service.description}
                                     </p>
 
                                     {formData.serviceType === service.value && (
                                         <div className="absolute top-4 right-4 text-blue-400">
-                                            <CheckCircle size={18} className="fill-blue-500/20" />
+                                            <CheckCircle size={18} className="fill-blue-500/10" />
                                         </div>
                                     )}
                                 </div>
@@ -206,9 +214,9 @@ export const AdminAccessibilityForm: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6 md:p-8">
-                        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                            <FileText className="text-emerald-400" size={24} /> Detalhes da Solicitação
+                    <div className="admin-section">
+                        <h2 className="admin-section-title">
+                            <FileText className="text-[var(--accent-gold)]" size={20} /> Detalhes da Solicitação
                         </h2>
 
                         <div className="space-y-6">
@@ -219,7 +227,6 @@ export const AdminAccessibilityForm: React.FC = () => {
                                     onChange={e => setFormData({ ...formData, requestedBy: e.target.value })}
                                     placeholder="Ex: Educativo, Curadoria..."
                                     leftIcon={<User size={16} />}
-                                    className="bg-black/20"
                                 />
                                 <Select
                                     label="Projeto Vinculado"
@@ -229,7 +236,6 @@ export const AdminAccessibilityForm: React.FC = () => {
                                         { value: "", label: "Nenhum projeto vinculado" },
                                         ...projects.map(p => ({ value: p.id, label: p.title }))
                                     ]}
-                                    className="bg-black/20"
                                 />
                             </div>
 
@@ -239,7 +245,6 @@ export const AdminAccessibilityForm: React.FC = () => {
                                 onChange={e => setFormData({ ...formData, deliverables: e.target.value })}
                                 placeholder="Descreva detalhadamente o que deve ser entregue..."
                                 rows={4}
-                                className="bg-black/20"
                             />
                         </div>
                     </div>
@@ -249,12 +254,12 @@ export const AdminAccessibilityForm: React.FC = () => {
                 <div className="space-y-8">
 
                     {/* Status Card */}
-                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
-                        <h2 className="text-xl font-bold text-white mb-6">Status e Orçamento</h2>
+                    <div className="admin-section">
+                        <h2 className="admin-section-title">Status e Orçamento</h2>
 
                         <div className="space-y-6">
                             <div>
-                                <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Situação Atual</label>
+                                <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">Situação Atual</label>
                                 <div className="grid grid-cols-1 gap-2">
                                     {STATUS_OPTIONS.map(opt => (
                                         <button
@@ -265,7 +270,7 @@ export const AdminAccessibilityForm: React.FC = () => {
                                                 flex items-center gap-3 p-3 rounded-xl border transition-all text-sm font-medium
                                                 ${formData.status === opt.value
                                                     ? `${opt.bg} ${opt.border} ${opt.color}`
-                                                    : 'bg-black/20 border-transparent text-slate-500 hover:bg-white/5'}
+                                                    : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] text-[var(--fg-muted)] hover:bg-[var(--bg-surface-hover)]'}
                                             `}
                                         >
                                             <div className={`w-2 h-2 rounded-full ${formData.status === opt.value ? 'bg-current' : 'bg-slate-600'}`} />
@@ -276,14 +281,14 @@ export const AdminAccessibilityForm: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-white/5">
+                            <div className="pt-6 border-t border-[var(--border-subtle)]">
                                 <Input
                                     label="Orçamento Aprovado (R$)"
                                     type="number"
                                     value={formData.approvedBudget}
                                     onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
                                     leftIcon={<DollarSign size={16} />}
-                                    className="bg-black/20 font-mono text-lg"
+                                    className="font-mono text-lg"
                                     placeholder="0,00"
                                 />
                             </div>
@@ -295,15 +300,14 @@ export const AdminAccessibilityForm: React.FC = () => {
                                     onChange={e => setFormData({ ...formData, validationStatus: e.target.value })}
                                     placeholder="Ex: Aprovado pelo especialista"
                                     leftIcon={<CheckCircle size={16} />}
-                                    className="bg-black/20"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Prestador Card */}
-                    <div className="bg-white/5 border border-white/5 rounded-3xl p-6">
-                        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="admin-section">
+                        <h2 className="admin-section-title">
                             <User className="text-purple-400" size={20} /> Prestador
                         </h2>
 
@@ -331,7 +335,6 @@ export const AdminAccessibilityForm: React.FC = () => {
                                         { value: "", label: "Selecione um prestador..." },
                                         ...filteredProviders.map(p => ({ value: p.id, label: p.name }))
                                     ]}
-                                    className="bg-black/20"
                                 />
                                 {formData.providerId && (
                                     <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center gap-3">
@@ -354,15 +357,15 @@ export const AdminAccessibilityForm: React.FC = () => {
             </div>
 
             {/* Floating Action Bar */}
-            <div className="fixed bottom-6 w-full left-0 z-50 pointer-events-none px-4 flex justify-center">
-                <div className="bg-[#0f172a] border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center gap-4 shadow-2xl pointer-events-auto transform translate-y-0 transition-transform">
-                    <span className="text-xs text-slate-500 font-medium ml-2 hidden sm:block">
+            <div className="admin-wizard-footer">
+                <div className="admin-wizard-footer-inner">
+                    <span className="text-xs text-[var(--fg-muted)] font-medium ml-2 hidden sm:block">
                         {isEdit ? "Edição de registro" : "Novo registro"}
                     </span>
                     <Button
                         onClick={handleSubmit}
                         isLoading={saving}
-                        className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-blue-600/20 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 border-none"
+                        className="btn-primary"
                         leftIcon={<Save size={18} />}
                     >
                         Salvar Solicitação

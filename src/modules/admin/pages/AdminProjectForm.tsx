@@ -167,10 +167,10 @@ export const AdminProjectForm: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-screen bg-[#0a0a0c]">
+            <div className="flex justify-center items-center h-screen bg-[var(--bg-root)]">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-zinc-400 text-sm">Carregando projeto...</p>
+                    <div className="w-8 h-8 border-2 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-[var(--fg-muted)] text-sm">Carregando projeto...</p>
                 </div>
             </div>
         );
@@ -183,7 +183,7 @@ export const AdminProjectForm: React.FC = () => {
                 <Button
                     variant="ghost"
                     onClick={() => navigate('/admin/projetos')}
-                    className="p-0 text-zinc-400 hover:text-white"
+                    className="p-0 text-[var(--fg-muted)] hover:text-white"
                 >
                     <ArrowLeft size={20} />
                 </Button>
@@ -204,7 +204,7 @@ export const AdminProjectForm: React.FC = () => {
                         {/* BASIC INFO CARD */}
                         <div className="admin-section">
                             <h3 className="admin-section-title">
-                                <FileText className="text-gold" size={20} /> Informações do Projeto
+                                <FileText className="text-[var(--accent-gold)]" size={20} /> Informações do Projeto
                             </h3>
 
                             <div className="form-group">
@@ -270,18 +270,18 @@ export const AdminProjectForm: React.FC = () => {
                         {/* ACCESSIBILITY CARD */}
                         <div className="admin-section">
                             <h3 className="admin-section-title">
-                                <Accessibility className="text-gold" size={20} /> Plano de Acessibilidade
+                                <Accessibility className="text-[var(--accent-gold)]" size={20} /> Plano de Acessibilidade
                             </h3>
 
                             <label className={`
                                 flex items-center gap-4 p-4 rounded-xl cursor-pointer border transition-all mb-6
                                 ${formData.accessibilityPlan.hasAccessibility
-                                    ? 'bg-gold/10 border-gold/50 shadow-[0_0_15px_rgba(212,175,55,0.1)]'
-                                    : 'bg-zinc-900/50 border-white/10 hover:border-white/20'}
+                                    ? 'bg-[var(--accent-gold)]/10 border-[var(--accent-gold)]/50 shadow-[0_0_15px_rgba(212,175,55,0.1)]'
+                                    : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] hover:border-[var(--border-default)]'}
                             `}>
                                 <div className={`
                                     w-6 h-6 rounded-full border flex items-center justify-center transition-colors
-                                    ${formData.accessibilityPlan.hasAccessibility ? 'bg-gold border-gold' : 'border-white/30'}
+                                    ${formData.accessibilityPlan.hasAccessibility ? 'bg-[var(--accent-gold)] border-[var(--accent-gold)]' : 'border-[var(--fg-muted)]/30'}
                                 `}>
                                     {formData.accessibilityPlan.hasAccessibility && <CheckCircle2 size={14} className="text-black" />}
                                 </div>
@@ -295,17 +295,17 @@ export const AdminProjectForm: React.FC = () => {
                                     })}
                                 />
                                 <div>
-                                    <div className={`font-bold ${formData.accessibilityPlan.hasAccessibility ? 'text-white' : 'text-zinc-400'}`}>
+                                    <div className={`font-bold ${formData.accessibilityPlan.hasAccessibility ? 'text-[var(--fg-main)]' : 'text-[var(--fg-muted)]'}`}>
                                         Acessibilidade Inclusa
                                     </div>
-                                    <div className="text-xs text-zinc-500">Este projeto contempla medidas de acessibilidade para PcD.</div>
+                                    <div className="text-xs text-[var(--fg-muted)]">Este projeto contempla medidas de acessibilidade para PcD.</div>
                                 </div>
                             </label>
 
                             {formData.accessibilityPlan.hasAccessibility && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
                                     <div>
-                                        <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-3">Recursos Oferecidos</label>
+                                        <label className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider block mb-3">Recursos Oferecidos</label>
                                         <div className="flex flex-wrap gap-2">
                                             {ACCESSIBILITY_SERVICES.map(service => (
                                                 <button
@@ -315,8 +315,8 @@ export const AdminProjectForm: React.FC = () => {
                                                     className={`
                                                         px-3 py-1.5 rounded-lg text-sm font-medium border transition-all
                                                         ${formData.accessibilityPlan.services.includes(service.value)
-                                                            ? 'bg-gold/20 border-gold/50 text-gold'
-                                                            : 'bg-white/5 border-white/10 text-zinc-400 hover:bg-white/10'}
+                                                            ? 'bg-[var(--accent-gold)]/20 border-[var(--accent-gold)]/50 text-[var(--accent-gold)]'
+                                                            : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)] text-[var(--fg-muted)] hover:bg-[var(--bg-surface-hover)]'}
                                                     `}
                                                 >
                                                     {service.label}
@@ -344,20 +344,20 @@ export const AdminProjectForm: React.FC = () => {
                         {/* ACCOUNTABILITY FILES */}
                         <div className="admin-section">
                             <h3 className="admin-section-title">
-                                <FileText className="text-gold" size={20} /> Prestação de Contas
+                                <FileText className="text-[var(--accent-gold)]" size={20} /> Prestação de Contas
                             </h3>
 
                             {formData.attachments && formData.attachments.length > 0 ? (
                                 <div className="grid gap-3">
                                     {formData.attachments.map((doc: any, idx: number) => (
-                                        <div key={idx} className="flex justify-between items-center p-4 bg-zinc-900/50 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
+                                        <div key={idx} className="flex justify-between items-center p-4 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-subtle)] hover:border-[var(--border-default)] transition-colors">
                                             <div className="flex items-center gap-4">
-                                                <div className="p-2.5 bg-zinc-800 rounded-lg text-zinc-400">
+                                                <div className="p-2.5 bg-[var(--bg-surface-active)] rounded-lg text-[var(--fg-muted)]">
                                                     <FileText size={20} />
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-zinc-200">{doc.name}</div>
-                                                    <div className="text-xs text-zinc-500">
+                                                    <div className="font-bold text-[var(--fg-main)]">{doc.name}</div>
+                                                    <div className="text-xs text-[var(--fg-muted)]">
                                                         Enviado em: {new Date(doc.date).toLocaleDateString()}
                                                     </div>
                                                 </div>
@@ -366,7 +366,7 @@ export const AdminProjectForm: React.FC = () => {
                                                 href={doc.url}
                                                 target="_blank"
                                                 rel="noreferrer"
-                                                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-zinc-300 hover:bg-white/10 hover:text-white text-sm font-medium transition-colors"
+                                                className="px-4 py-2 bg-[var(--bg-surface-active)] border border-[var(--border-subtle)] rounded-lg text-[var(--fg-muted)] hover:bg-[var(--bg-surface-hover)] hover:text-white text-sm font-medium transition-colors"
                                             >
                                                 Visualizar
                                             </a>
@@ -374,9 +374,9 @@ export const AdminProjectForm: React.FC = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-10 border-2 border-dashed border-white/10 rounded-2xl bg-white/5">
-                                    <FileText className="w-10 h-10 text-zinc-500 mx-auto mb-3" />
-                                    <p className="text-zinc-400">Nenhum documento anexado pelo produtor ainda.</p>
+                                <div className="text-center py-10 border-2 border-dashed border-[var(--border-subtle)] rounded-2xl bg-[var(--bg-surface)]">
+                                    <FileText className="w-10 h-10 text-[var(--fg-muted)] mx-auto mb-3" />
+                                    <p className="text-[var(--fg-muted)]">Nenhum documento anexado pelo produtor ainda.</p>
                                 </div>
                             )}
                         </div>
@@ -402,13 +402,13 @@ export const AdminProjectForm: React.FC = () => {
                                                 flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left
                                                 ${formData.status === opt.value
                                                     ? `${opt.bg} ${opt.border} ring-1 ring-inset ${opt.color.replace('text-', 'ring-')}`
-                                                    : 'bg-white/5 border-white/5 opacity-50 hover:opacity-100'}
+                                                    : 'bg-[var(--bg-surface)] border-[var(--border-subtle)] opacity-50 hover:opacity-100'}
                                             `}
                                         >
-                                            <div className={formData.status === opt.value ? opt.color : 'text-zinc-400'}>
+                                            <div className={formData.status === opt.value ? opt.color : 'text-[var(--fg-muted)]'}>
                                                 {opt.icon}
                                             </div>
-                                            <span className={`text-sm font-bold ${formData.status === opt.value ? 'text-white' : 'text-zinc-400'}`}>
+                                            <span className={`text-sm font-bold ${formData.status === opt.value ? 'text-white' : 'text-[var(--fg-muted)]'}`}>
                                                 {opt.label}
                                             </span>
                                             {formData.status === opt.value && (
@@ -423,14 +423,14 @@ export const AdminProjectForm: React.FC = () => {
                         {/* NUMBERS CARD */}
                         <div className="admin-section">
                             <h3 className="admin-section-title">
-                                <DollarSign className="text-gold" size={20} /> Métricas & Edital
+                                <DollarSign className="text-[var(--accent-gold)]" size={20} /> Métricas & Edital
                             </h3>
 
                             <div className="space-y-4">
-                                <div className="p-4 bg-zinc-900/50 rounded-xl border border-white/5">
-                                    <div className="text-xs text-zinc-500 uppercase font-bold mb-1">Edital Vinculado</div>
+                                <div className="p-4 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-subtle)]">
+                                    <div className="text-xs text-[var(--fg-muted)] uppercase font-bold mb-1">Edital Vinculado</div>
                                     <select
-                                        className="w-full bg-transparent text-white font-medium focus:outline-none text-sm"
+                                        className="w-full bg-transparent text-[var(--fg-main)] font-medium focus:outline-none text-sm"
                                         value={formData.noticeId}
                                         onChange={e => setFormData({ ...formData, noticeId: e.target.value })}
                                     >
@@ -463,7 +463,7 @@ export const AdminProjectForm: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="h-px bg-white/10"></div>
+                                <div className="h-px bg-[var(--border-subtle)]"></div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="form-group">
@@ -498,7 +498,7 @@ export const AdminProjectForm: React.FC = () => {
                             variant="ghost"
                             type="button"
                             onClick={() => navigate('/admin/projetos')}
-                            className="text-zinc-400 hover:text-white"
+                            className="text-[var(--fg-muted)] hover:text-white"
                         >
                             Cancelar
                         </Button>
@@ -518,3 +518,4 @@ export const AdminProjectForm: React.FC = () => {
         </div>
     );
 };
+

@@ -8,6 +8,7 @@ import {
     Tent, Music, Mail, Lock, User, Globe, CheckCircle2
 } from "lucide-react";
 import { Button, Input, Select } from "../../../components/ui";
+import "./AdminShared.css";
 
 type EquipmentType = "MUSEUM" | "CULTURAL_SPACE" | "PRODUCER";
 
@@ -46,7 +47,7 @@ export const AdminEquipmentForm: React.FC = () => {
     const loadEquipment = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/tenants/${id}`); // Uses the same endpoint (Subject to Admin restriction verified in backend)
+            const res = await api.get(`/tenants/${id}`);
             const data = res.data;
 
             setName(data.name);
@@ -89,19 +90,10 @@ export const AdminEquipmentForm: React.FC = () => {
                 payload.adminEmail = adminEmail;
                 payload.adminPassword = adminPassword;
 
-                await api.post("/tenants", payload); // Backend now allows ADMIN to post if parentId is enforced
+                await api.post("/tenants", payload);
                 addToast("Equipamento criado com sucesso!", "success");
             } else {
-                await api.put(`/tenants/${id}`, payload); // Uses PUT /tenants/:id (ADMIN can update own children? Need to verify route)
-                // Actually Backend PUT /tenants/:id is restricted to MASTER or ADMIN of THAT tenant.
-                // If I am the Parent, I might NOT be the Admin of the Child Tenant directly (I have different TenantID).
-                // Wait, if I created it, I am the Parent. But the endpoint checks `user.tenantId === id`.
-                // If I am Secretary (ID=1) and I want to update Museum A (ID=2), `user.tenantId` (1) != `id` (2).
-                // So I might get 403 Forbidden on UPDATE.
-                // Create (POST) should work because of my fix.
-                // Update (PUT) might fail.
-                // I will proceed with Creation first. If Update fails, I'll fix the backend for Update later.
-
+                await api.put(`/tenants/${id}`, payload);
                 addToast("Equipamento atualizado com sucesso!", "success");
             }
 
@@ -123,36 +115,44 @@ export const AdminEquipmentForm: React.FC = () => {
     ];
 
     if (loading) {
-        return <div className="p-8 text-center text-gray-400">Carregando...</div>;
+        return (
+            <div className="flex justify-center items-center h-screen bg-[var(--bg-root)]">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-2 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-[var(--fg-muted)] text-sm">Carregando...</p>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="max-w-4xl mx-auto pb-20 animate-fadeIn">
+        <div className="admin-form-container">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
-                <Button onClick={() => navigate("/admin/equipamentos")} variant="ghost" className="btn-ghost w-12 h-12 rounded-full p-0 flex items-center justify-center">
-                    <ArrowLeft size={24} />
+            <div className="admin-wizard-header">
+                <Button
+                    onClick={() => navigate("/admin/equipamentos")}
+                    variant="ghost"
+                    className="p-0 text-[var(--fg-muted)] hover:text-white"
+                >
+                    <ArrowLeft size={20} />
                 </Button>
                 <div>
-                    <h1 className="section-title">
+                    <h1 className="admin-wizard-title">
                         {isNew ? "Novo Equipamento Cultural" : "Editar Equipamento"}
                     </h1>
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-8 pb-24">
                 {/* Basic Info */}
-                <div className="card">
-                    <div className="flex items-center gap-3 mb-6 border-b border-[rgba(212,175,55,0.1)] pb-4">
-                        <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
-                            <Building2 className="text-[#d4af37]" size={24} />
-                        </div>
-                        <h3 className="card-title mb-0">Identificação</h3>
-                    </div>
+                <div className="admin-section">
+                    <h3 className="admin-section-title">
+                        <Building2 className="text-[var(--accent-gold)]" size={20} /> Identificação
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="form-group md:col-span-2">
-                            <label className="form-label">Tipo de Equipamento</label>
+                            <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">Tipo de Equipamento</label>
                             <div className="grid grid-cols-3 gap-4">
                                 {typeOptions.map(opt => (
                                     <div
@@ -160,8 +160,8 @@ export const AdminEquipmentForm: React.FC = () => {
                                         onClick={() => setType(opt.value as any)}
                                         className={`cursor-pointer p-4 rounded-xl border transition-all flex flex-col items-center gap-2 text-center
                                             ${type === opt.value
-                                                ? 'bg-[rgba(212,175,55,0.1)] border-[#d4af37] text-[#d4af37]'
-                                                : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.05)]'
+                                                ? 'bg-[var(--accent-gold)]/10 border-[var(--accent-gold)] text-[var(--accent-gold)]'
+                                                : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)] hover:bg-[var(--bg-surface-hover)]'
                                             }
                                         `}
                                     >
@@ -173,8 +173,8 @@ export const AdminEquipmentForm: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Nome Oficial</label>
                             <Input
+                                label="Nome Oficial"
                                 value={name}
                                 onChange={e => setName(e.target.value)}
                                 placeholder="Ex: Teatro Municipal"
@@ -183,8 +183,8 @@ export const AdminEquipmentForm: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Slug (URL)</label>
                             <Input
+                                label="Slug (URL)"
                                 value={slug}
                                 onChange={e => setSlug(e.target.value)}
                                 placeholder="ex: teatro-municipal"
@@ -198,21 +198,20 @@ export const AdminEquipmentForm: React.FC = () => {
 
                 {/* Credentials (Only for New) */}
                 {isNew && (
-                    <div className="card">
-                        <div className="flex items-center gap-3 mb-6 border-b border-[rgba(212,175,55,0.1)] pb-4">
-                            <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
-                                <User className="text-[#d4af37]" size={24} />
-                            </div>
-                            <h3 className="card-title mb-0">Acesso Administrativo</h3>
-                            <span className="ml-auto text-xs text-amber-500 bg-amber-900/20 px-2 py-1 rounded">
+                    <div className="admin-section">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="admin-section-title mb-0">
+                                <User className="text-[var(--accent-gold)]" size={20} /> Acesso Administrativo
+                            </h3>
+                            <span className="text-xs text-[var(--accent-gold)] bg-[var(--accent-gold)]/10 px-2 py-1 rounded">
                                 Primeiro Administrador
                             </span>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="form-group">
-                                <label className="form-label">Nome do Gestor</label>
                                 <Input
+                                    label="Nome do Gestor"
                                     value={adminName}
                                     onChange={e => setAdminName(e.target.value)}
                                     placeholder="Nome completo"
@@ -221,8 +220,8 @@ export const AdminEquipmentForm: React.FC = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label className="form-label">E-mail de Login</label>
                                 <Input
+                                    label="E-mail de Login"
                                     type="email"
                                     value={adminEmail}
                                     onChange={e => setAdminEmail(e.target.value)}
@@ -232,8 +231,8 @@ export const AdminEquipmentForm: React.FC = () => {
                                 />
                             </div>
                             <div className="form-group md:col-span-2">
-                                <label className="form-label">Senha Inicial</label>
                                 <Input
+                                    label="Senha Inicial"
                                     type="password"
                                     value={adminPassword}
                                     onChange={e => setAdminPassword(e.target.value)}
@@ -241,7 +240,7 @@ export const AdminEquipmentForm: React.FC = () => {
                                     required
                                     leftIcon={<Lock size={16} />}
                                 />
-                                <p className="text-xs text-gray-400 mt-2">
+                                <p className="text-xs text-[var(--fg-muted)] mt-2">
                                     O gestor poderá alterar esta senha no primeiro acesso.
                                 </p>
                             </div>
@@ -250,67 +249,72 @@ export const AdminEquipmentForm: React.FC = () => {
                 )}
 
                 {/* Modules */}
-                <div className="card">
-                    <div className="flex items-center gap-3 mb-6 border-b border-[rgba(212,175,55,0.1)] pb-4">
-                        <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
-                            <CheckCircle2 className="text-[#d4af37]" size={24} />
-                        </div>
-                        <h3 className="card-title mb-0">Módulos Habilitados</h3>
-                    </div>
+                <div className="admin-section">
+                    <h3 className="admin-section-title">
+                        <CheckCircle2 className="text-[var(--accent-gold)]" size={20} /> Módulos Habilitados
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div
                             onClick={() => setFeatureWorks(!featureWorks)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureWorks ? 'bg-green-900/20 border-green-500/50' : 'bg-gray-800/30 border-gray-700'}`}
+                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureWorks ? 'bg-emerald-900/20 border-emerald-500/50' : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)]'}`}
                         >
                             <div className="flex items-center gap-2 mb-2">
-                                <input type="checkbox" checked={featureWorks} readOnly className="checked:bg-green-500" />
-                                <span className="font-bold">Acervo & Obras</span>
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${featureWorks ? 'bg-emerald-500 border-emerald-500' : 'border-[var(--fg-muted)]'}`}>
+                                    {featureWorks && <CheckCircle2 size={12} className="text-black" />}
+                                </div>
+                                <span className="font-bold text-[var(--fg-main)]">Acervo & Obras</span>
                             </div>
-                            <p className="text-xs text-gray-400">Permite cadastrar obras, peças e itens do acervo.</p>
+                            <p className="text-xs text-[var(--fg-muted)]">Permite cadastrar obras, peças e itens do acervo.</p>
                         </div>
 
                         <div
                             onClick={() => setFeatureEvents(!featureEvents)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureEvents ? 'bg-green-900/20 border-green-500/50' : 'bg-gray-800/30 border-gray-700'}`}
+                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureEvents ? 'bg-emerald-900/20 border-emerald-500/50' : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)]'}`}
                         >
                             <div className="flex items-center gap-2 mb-2">
-                                <input type="checkbox" checked={featureEvents} readOnly className="checked:bg-green-500" />
-                                <span className="font-bold">Agenda de Eventos</span>
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${featureEvents ? 'bg-emerald-500 border-emerald-500' : 'border-[var(--fg-muted)]'}`}>
+                                    {featureEvents && <CheckCircle2 size={12} className="text-black" />}
+                                </div>
+                                <span className="font-bold text-[var(--fg-main)]">Agenda de Eventos</span>
                             </div>
-                            <p className="text-xs text-gray-400">Gestão de eventos, ingressos e calendário.</p>
+                            <p className="text-xs text-[var(--fg-muted)]">Gestão de eventos, ingressos e calendário.</p>
                         </div>
 
                         <div
                             onClick={() => setFeatureGamification(!featureGamification)}
-                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureGamification ? 'bg-green-900/20 border-green-500/50' : 'bg-gray-800/30 border-gray-700'}`}
+                            className={`p-4 rounded-xl border cursor-pointer transition-all ${featureGamification ? 'bg-emerald-900/20 border-emerald-500/50' : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)]'}`}
                         >
                             <div className="flex items-center gap-2 mb-2">
-                                <input type="checkbox" checked={featureGamification} readOnly className="checked:bg-green-500" />
-                                <span className="font-bold">Gamificação</span>
+                                <div className={`w-4 h-4 rounded border flex items-center justify-center ${featureGamification ? 'bg-emerald-500 border-emerald-500' : 'border-[var(--fg-muted)]'}`}>
+                                    {featureGamification && <CheckCircle2 size={12} className="text-black" />}
+                                </div>
+                                <span className="font-bold text-[var(--fg-main)]">Gamificação</span>
                             </div>
-                            <p className="text-xs text-gray-400">Ranking, visitas premiadas e caça ao tesouro.</p>
+                            <p className="text-xs text-[var(--fg-muted)]">Ranking, visitas premiadas e caça ao tesouro.</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 pt-4">
-                    <Button
-                        type="button"
-                        onClick={() => navigate("/admin/equipamentos")}
-                        variant="ghost"
-                        className="btn-ghost"
-                    >
-                        Cancelar
-                    </Button>
-                    <Button
-                        type="submit"
-                        isLoading={saving}
-                        className="btn-primary px-8"
-                        leftIcon={!saving ? <Save size={18} /> : undefined}
-                    >
-                        {isNew ? "Criar Equipamento" : "Salvar Alterações"}
-                    </Button>
+                <div className="admin-wizard-footer">
+                    <div className="admin-wizard-footer-inner">
+                        <Button
+                            type="button"
+                            onClick={() => navigate("/admin/equipamentos")}
+                            variant="ghost"
+                            className="text-[var(--fg-muted)] hover:text-white"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button
+                            type="submit"
+                            isLoading={saving}
+                            className="btn-primary"
+                            leftIcon={!saving ? <Save size={18} /> : undefined}
+                        >
+                            {isNew ? "Criar Equipamento" : "Salvar Alterações"}
+                        </Button>
+                    </div>
                 </div>
             </form>
         </div>

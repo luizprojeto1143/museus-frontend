@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
+import { Input, Button, TextArea } from '../../../components/ui'; // Assuming TextArea exists or use text-area
+import "./AdminShared.css";
+
+// Use standard Input/Button/Textarea if available in UI library
+// If not, use standard HTML with admin classes
 
 interface Product {
     id: string;
@@ -68,323 +73,185 @@ export const AdminShop: React.FC = () => {
         total: products.length,
         active: products.filter(p => p.active).length,
         outOfStock: products.filter(p => p.stock <= 0).length
-
     };
 
     return (
-        <div className="admin-shop-page">
-            <header className="page-header">
+        <div className="max-w-[1400px] mx-auto pb-20 animate-fadeIn">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1>🛒 Gestão da Loja</h1>
-                    <p className="subtitle">Gerencie os produtos da loja do museu</p>
+                    <h1 className="section-title">🛒 Gestão da Loja</h1>
+                    <p className="text-[var(--fg-muted)]">Gerencie os produtos da loja do museu</p>
                 </div>
-                <button className="add-btn" onClick={() => { setEditingProduct(null); setShowForm(true); }}>
-                    <Plus size={18} /> Novo Produto
-                </button>
-            </header>
+                <Button
+                    onClick={() => { setEditingProduct(null); setShowForm(true); }}
+                    className="btn-primary"
+                    leftIcon={<Plus size={18} />}
+                >
+                    Novo Produto
+                </Button>
+            </div>
 
             {/* Stats */}
-            <div className="stats-row">
-                <div className="stat-card">
-                    <Package size={24} />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="card flex items-center gap-4 p-6">
+                    <div className="p-3 bg-[rgba(212,175,55,0.1)] rounded-xl text-[var(--accent-gold)]">
+                        <Package size={24} />
+                    </div>
                     <div>
-                        <span className="stat-value">{stats.total}</span>
-                        <span className="stat-label">Produtos</span>
+                        <span className="block text-2xl font-bold text-[var(--fg-main)]">{stats.total}</span>
+                        <span className="text-sm text-[var(--fg-muted)]">Total de Produtos</span>
                     </div>
                 </div>
-                <div className="stat-card">
-                    <DollarSign size={24} />
+                <div className="card flex items-center gap-4 p-6">
+                    <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
+                        <DollarSign size={24} />
+                    </div>
                     <div>
-                        <span className="stat-value">{stats.active}</span>
-                        <span className="stat-label">Ativos</span>
+                        <span className="block text-2xl font-bold text-[var(--fg-main)]">{stats.active}</span>
+                        <span className="text-sm text-[var(--fg-muted)]">Produtos Ativos</span>
                     </div>
                 </div>
-                <div className="stat-card warning">
-                    <Archive size={24} />
+                <div className="card flex items-center gap-4 p-6 border-red-500/20">
+                    <div className="p-3 bg-red-500/10 rounded-xl text-red-400">
+                        <Archive size={24} />
+                    </div>
                     <div>
-                        <span className="stat-value">{stats.outOfStock}</span>
-                        <span className="stat-label">Sem Estoque</span>
+                        <span className="block text-2xl font-bold text-[var(--fg-main)]">{stats.outOfStock}</span>
+                        <span className="text-sm text-[var(--fg-muted)]">Sem Estoque</span>
                     </div>
                 </div>
             </div>
 
             {/* Search */}
-            <div className="search-bar">
-                <Search size={18} />
-                <input
-                    type="text"
-                    placeholder="Buscar por nome ou SKU..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
+            <div className="mb-8">
+                <div className="relative max-w-md">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--fg-muted)]" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Buscar por nome ou SKU..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl py-3 pl-10 pr-4 text-[var(--fg-main)] focus:border-[var(--accent-gold)] focus:outline-none transition-colors"
+                    />
+                </div>
             </div>
 
             {/* Products Grid */}
-            <div className="products-grid">
-                {loading ? (
-                    <div className="loading-state">Carregando produtos...</div>
-                ) : filteredProducts.length === 0 ? (
-                    <div className="empty-state">
-                        <Package size={48} />
-                        <h3>Nenhum produto cadastrado</h3>
-                        <p>Adicione produtos para sua loja virtual</p>
+            {loading ? (
+                <div className="text-center py-20 text-[var(--fg-muted)]">
+                    <div className="w-8 h-8 border-2 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    Carregando produtos...
+                </div>
+            ) : filteredProducts.length === 0 ? (
+                <div className="card text-center py-20 flex flex-col items-center">
+                    <div className="w-16 h-16 bg-[var(--bg-surface)] rounded-full flex items-center justify-center mb-4 text-[var(--fg-muted)]">
+                        <Package size={32} />
                     </div>
-                ) : (
-                    filteredProducts.map(product => (
-                        <div key={product.id} className={`product-card ${!product.active ? 'inactive' : ''}`}>
-                            <div className="product-image">
+                    <h3 className="text-lg font-bold text-[var(--fg-main)] mb-1">Nenhum produto encontrado</h3>
+                    <p className="text-[var(--fg-muted)]">Tente buscar outro termo ou adicione um novo produto.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredProducts.map(product => (
+                        <div key={product.id} className={`card p-0 overflow-hidden group hover:border-[var(--accent-gold)] transition-colors ${!product.active ? 'opacity-70' : ''}`}>
+                            {/* Image Area */}
+                            <div className="relative aspect-[4/3] bg-[var(--bg-surface-active)] flex items-center justify-center overflow-hidden">
                                 {product.imageUrl ? (
-                                    <img src={product.imageUrl} alt={product.name} />
+                                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                 ) : (
-                                    <Package size={48} />
+                                    <ImageIcon size={48} className="text-[var(--fg-muted)] opacity-20" />
                                 )}
-                                {product.stock <= 0 && <div className="out-of-stock-badge">Esgotado</div>}
+                                {product.stock <= 0 && (
+                                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                                        Esgotado
+                                    </div>
+                                )}
+                                {!product.active && (
+                                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
+                                        <XCircle size={12} /> Inativo
+                                    </div>
+                                )}
                             </div>
-                            <div className="product-info">
-                                <h4>{product.name}</h4>
-                                <p className="product-sku">{product.sku || 'Sem SKU'}</p>
-                                <div className="product-meta">
-                                    <span className="price">R$ {Number(product.price).toFixed(2).replace('.', ',')}</span>
-                                    <span className="stock">Estoque: {product.stock}</span>
+
+                            {/* Content */}
+                            <div className="p-5">
+                                <div className="flex justify-between items-start mb-2">
+                                    <h4 className="font-bold text-[var(--fg-main)] line-clamp-1" title={product.name}>{product.name}</h4>
+                                </div>
+                                <p className="text-xs text-[var(--fg-muted)] mb-4 font-mono">{product.sku || 'Sem SKU'}</p>
+
+                                <div className="flex justify-between items-center mb-4">
+                                    <span className="text-lg font-bold text-green-400">
+                                        R$ {Number(product.price).toFixed(2).replace('.', ',')}
+                                    </span>
+                                    <span className="text-xs text-[var(--fg-muted)] bg-[var(--bg-surface-active)] px-2 py-1 rounded">
+                                        Estoque: <span className={product.stock < 5 ? "text-yellow-500 font-bold" : ""}>{product.stock}</span>
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-3 gap-2 pt-4 border-t border-[var(--border-subtle)]">
+                                    <button
+                                        onClick={() => toggleActive(product)}
+                                        className={`flex items-center justify-center py-2 rounded-lg text-xs font-medium transition-colors
+                                            ${product.active
+                                                ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
+                                                : 'bg-[var(--bg-surface-active)] text-[var(--fg-muted)] hover:text-white'}
+                                        `}
+                                        title={product.active ? "Desativar" : "Ativar"}
+                                    >
+                                        <CheckCircle2 size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => { setEditingProduct(product); setShowForm(true); }}
+                                        className="flex items-center justify-center py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                                        title="Editar"
+                                    >
+                                        <Edit size={16} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(product.id)}
+                                        className="flex items-center justify-center py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                                        title="Excluir"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
                                 </div>
                             </div>
-                            <div className="product-actions">
-                                <button
-                                    className={`toggle-btn ${product.active ? 'active' : ''}`}
-                                    onClick={() => toggleActive(product)}
-                                >
-                                    {product.active ? '✓ Ativo' : '○ Inativo'}
-                                </button>
-                                <button className="edit-btn" onClick={() => { setEditingProduct(product); setShowForm(true); }}>
-                                    <Edit size={16} />
-                                </button>
-                                <button className="delete-btn" onClick={() => handleDelete(product.id)}>
-                                    <Trash2 size={16} />
-                                </button>
-                            </div>
                         </div>
-                    ))
-                )}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {/* Form Modal */}
             {showForm && (
-                <ProductFormModal
-                    product={editingProduct}
-                    tenantId={tenantId || ''}
-                    onClose={() => setShowForm(false)}
-                    onSave={() => { setShowForm(false); fetchProducts(); }}
-                />
-            )}
+                <div className="admin-modal-overlay">
+                    <div className="admin-modal animate-in fade-in zoom-in duration-200">
+                        <div className="flex justify-between items-center mb-6 border-b border-[var(--border-subtle)] pb-4">
+                            <h2 className="text-xl font-bold flex items-center gap-2 text-[var(--fg-main)]">
+                                {editingProduct ? <Edit size={20} className="text-[var(--accent-gold)]" /> : <Plus size={20} className="text-[var(--accent-gold)]" />}
+                                {editingProduct ? 'Editar Produto' : 'Novo Produto'}
+                            </h2>
+                            <button onClick={() => setShowForm(false)} className="text-[var(--fg-muted)] hover:text-white transition-colors">
+                                <XCircle size={24} />
+                            </button>
+                        </div>
 
-            <style>{`
-                .admin-shop-page {
-                    padding: 24px;
-                }
-                
-                .page-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    margin-bottom: 24px;
-                }
-                
-                .page-header h1 {
-                    margin: 0;
-                    font-size: 1.75rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .add-btn {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    padding: 12px 24px;
-                    background: linear-gradient(135deg, #22c55e, #16a34a);
-                    color: white;
-                    border: none;
-                    border-radius: 10px;
-                    font-weight: 600;
-                    cursor: pointer;
-                }
-                
-                .stats-row {
-                    display: flex;
-                    gap: 16px;
-                    margin-bottom: 24px;
-                }
-                
-                .stat-card {
-                    flex: 1;
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    padding: 20px;
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 12px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .stat-card.warning {
-                    border: 1px solid rgba(245, 158, 11, 0.3);
-                }
-                
-                .stat-value {
-                    display: block;
-                    font-size: 1.5rem;
-                    font-weight: bold;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .stat-label {
-                    font-size: 0.85rem;
-                }
-                
-                .search-bar {
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    padding: 12px 16px;
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 10px;
-                    margin-bottom: 20px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .search-bar input {
-                    flex: 1;
-                    background: transparent;
-                    border: none;
-                    color: var(--fg-main, #f3f4f6);
-                    font-size: 1rem;
-                }
-                
-                .products-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                    gap: 16px;
-                }
-                
-                .product-card {
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 16px;
-                    overflow: hidden;
-                }
-                
-                .product-card.inactive {
-                    opacity: 0.6;
-                }
-                
-                .product-image {
-                    position: relative;
-                    height: 150px;
-                    background: var(--bg-elevated, #374151);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .product-image img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-                
-                .out-of-stock-badge {
-                    position: absolute;
-                    top: 8px;
-                    right: 8px;
-                    padding: 4px 10px;
-                    background: #ef4444;
-                    color: white;
-                    font-size: 0.75rem;
-                    font-weight: bold;
-                    border-radius: 4px;
-                }
-                
-                .product-info {
-                    padding: 16px;
-                }
-                
-                .product-info h4 {
-                    margin: 0 0 4px;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .product-sku {
-                    font-size: 0.8rem;
-                    color: var(--fg-muted, #9ca3af);
-                    margin: 0 0 12px;
-                }
-                
-                .product-meta {
-                    display: flex;
-                    justify-content: space-between;
-                }
-                
-                .price {
-                    font-weight: bold;
-                    color: #22c55e;
-                }
-                
-                .stock {
-                    font-size: 0.85rem;
-                    color: var(--fg-muted, #9ca3af);
-                }
-                
-                .product-actions {
-                    display: flex;
-                    gap: 8px;
-                    padding: 12px 16px;
-                    border-top: 1px solid var(--border-color, #374151);
-                }
-                
-                .toggle-btn {
-                    flex: 1;
-                    padding: 8px;
-                    background: var(--bg-elevated, #374151);
-                    border: none;
-                    border-radius: 6px;
-                    color: var(--fg-muted, #9ca3af);
-                    cursor: pointer;
-                }
-                
-                .toggle-btn.active {
-                    background: rgba(34, 197, 94, 0.2);
-                    color: #22c55e;
-                }
-                
-                .edit-btn, .delete-btn {
-                    padding: 8px;
-                    border: none;
-                    border-radius: 6px;
-                    cursor: pointer;
-                }
-                
-                .edit-btn {
-                    background: rgba(59, 130, 246, 0.2);
-                    color: #3b82f6;
-                }
-                
-                .delete-btn {
-                    background: rgba(239, 68, 68, 0.2);
-                    color: #ef4444;
-                }
-                
-                .loading-state, .empty-state {
-                    grid-column: 1 / -1;
-                    text-align: center;
-                    padding: 60px 20px;
-                    color: var(--fg-muted, #9ca3af);
-                }
-            `}</style>
+                        <ProductForm
+                            product={editingProduct}
+                            tenantId={tenantId || ''}
+                            onClose={() => setShowForm(false)}
+                            onSave={() => { setShowForm(false); fetchProducts(); }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-// Product Form Modal
-const ProductFormModal: React.FC<{
+// Extracted Form Component
+const ProductForm: React.FC<{
     product: Product | null;
     tenantId: string;
     onClose: () => void;
@@ -420,161 +287,84 @@ const ProductFormModal: React.FC<{
     };
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-                <h2>{product ? 'Editar Produto' : 'Novo Produto'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Nome *</label>
-                        <input
-                            type="text"
-                            value={form.name}
-                            onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                            required
-                        />
-                    </div>
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>Preço *</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={form.price}
-                                onChange={e => setForm(f => ({ ...f, price: parseFloat(e.target.value) }))}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Estoque</label>
-                            <input
-                                type="number"
-                                value={form.stock}
-                                onChange={e => setForm(f => ({ ...f, stock: parseInt(e.target.value) }))}
-                            />
-                        </div>
-                    </div>
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label>SKU</label>
-                            <input
-                                type="text"
-                                value={form.sku}
-                                onChange={e => setForm(f => ({ ...f, sku: e.target.value }))}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Categoria</label>
-                            <input
-                                type="text"
-                                value={form.category}
-                                onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                                placeholder="souvenirs, livros..."
-                            />
-                        </div>
-                    </div>
-                    <div className="form-group">
-                        <label>Descrição</label>
-                        <textarea
-                            value={form.description}
-                            onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                            rows={3}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>URL da Imagem</label>
-                        <input
-                            type="url"
-                            value={form.imageUrl}
-                            onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                        />
-                    </div>
-                    <div className="form-actions">
-                        <button type="button" className="cancel-btn" onClick={onClose}>Cancelar</button>
-                        <button type="submit" className="save-btn" disabled={saving}>
-                            {saving ? 'Salvando...' : 'Salvar'}
-                        </button>
-                    </div>
-                </form>
-
-                <style>{`
-                    .modal-backdrop {
-                        position: fixed;
-                        inset: 0;
-                        background: rgba(0, 0, 0, 0.7);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        z-index: 1000;
-                        padding: 20px;
-                    }
-                    
-                    .modal-content {
-                        background: var(--bg-card, #1f2937);
-                        border-radius: 16px;
-                        padding: 24px;
-                        width: 100%;
-                        max-width: 500px;
-                        max-height: 90vh;
-                        overflow-y: auto;
-                    }
-                    
-                    .modal-content h2 {
-                        margin: 0 0 20px;
-                        color: var(--fg-main, #f3f4f6);
-                    }
-                    
-                    .form-group {
-                        margin-bottom: 16px;
-                    }
-                    
-                    .form-group label {
-                        display: block;
-                        margin-bottom: 6px;
-                        font-size: 0.9rem;
-                        color: var(--fg-muted, #9ca3af);
-                    }
-                    
-                    .form-group input, .form-group textarea {
-                        width: 100%;
-                        padding: 12px;
-                        background: var(--bg-elevated, #374151);
-                        border: 1px solid var(--border-color, #4b5563);
-                        border-radius: 8px;
-                        color: var(--fg-main, #f3f4f6);
-                    }
-                    
-                    .form-row {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 12px;
-                    }
-                    
-                    .form-actions {
-                        display: flex;
-                        gap: 12px;
-                        margin-top: 24px;
-                    }
-                    
-                    .cancel-btn, .save-btn {
-                        flex: 1;
-                        padding: 12px;
-                        border: none;
-                        border-radius: 8px;
-                        font-weight: 600;
-                        cursor: pointer;
-                    }
-                    
-                    .cancel-btn {
-                        background: var(--bg-elevated, #374151);
-                        color: var(--fg-muted, #9ca3af);
-                    }
-                    
-                    .save-btn {
-                        background: linear-gradient(135deg, #22c55e, #16a34a);
-                        color: white;
-                    }
-                `}</style>
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="form-group">
+                <Input
+                    label="Nome do Produto *"
+                    value={form.name}
+                    onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
+                    required
+                    placeholder="Ex: Caneca do Museu"
+                />
             </div>
-        </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div className="form-group">
+                    <Input
+                        label="Preço R$ *"
+                        type="number"
+                        step="0.01"
+                        value={form.price}
+                        onChange={(e) => setForm(f => ({ ...f, price: parseFloat(e.target.value) }))}
+                        required
+                        leftIcon={<DollarSign size={14} />}
+                    />
+                </div>
+                <div className="form-group">
+                    <Input
+                        label="Estoque"
+                        type="number"
+                        value={form.stock}
+                        onChange={(e) => setForm(f => ({ ...f, stock: parseInt(e.target.value) }))}
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div className="form-group">
+                    <Input
+                        label="SKU (Código)"
+                        value={form.sku}
+                        onChange={(e) => setForm(f => ({ ...f, sku: e.target.value }))}
+                        placeholder="COD-001"
+                    />
+                </div>
+                <div className="form-group">
+                    <Input
+                        label="Categoria"
+                        value={form.category}
+                        onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}
+                        placeholder="souvenirs, livros..."
+                    />
+                </div>
+            </div>
+
+            <div className="form-group">
+                <label className="form-label">Descrição</label>
+                <textarea
+                    className="w-full bg-[rgba(10,6,4,0.6)] border border-[var(--border-default)] rounded-md text-[var(--fg-main)] p-3 focus:border-[var(--accent-gold)] focus:outline-none min-h-[80px]"
+                    value={form.description}
+                    onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
+                    rows={3}
+                />
+            </div>
+
+            <div className="form-group">
+                <Input
+                    label="URL da Imagem"
+                    value={form.imageUrl}
+                    onChange={(e) => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                    placeholder="https://..."
+                />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+                <Button type="button" variant="ghost" onClick={onClose} className="flex-1 btn-ghost">Cancelar</Button>
+                <Button type="submit" isLoading={saving} className="flex-1 btn-primary">
+                    {saving ? 'Salvando...' : 'Salvar Produto'}
+                </Button>
+            </div>
+        </form>
     );
 };
+
