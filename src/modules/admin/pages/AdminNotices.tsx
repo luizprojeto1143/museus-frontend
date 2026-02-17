@@ -77,11 +77,11 @@ export const AdminNotices: React.FC = () => {
                         Editais & Fomento
                     </h1>
                     <p className="text-zinc-400 text-lg">
-                        Gerencie processos seletivos e editais de cultura. <span className="text-xs text-zinc-600">(v2.0 Premium)</span>
+                        Gerencie processos seletivos e editais de cultura.
                     </p>
                 </div>
                 <Link to="/admin/editais/novo">
-                    <Button className="bg-gold text-black hover:bg-gold/90 font-bold shadow-[0_0_20px_rgba(212,175,55,0.3)] border-none px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95">
+                    <Button className="btn-primary rounded-full px-6 py-3 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:scale-105 transition-transform">
                         <Plus size={20} className="mr-2" /> Novo Edital
                     </Button>
                 </Link>
@@ -91,45 +91,45 @@ export const AdminNotices: React.FC = () => {
             {/* This is handled by sidebar hiding, but good to have stats */}
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-gold/30 transition-all duration-500">
+            <div className="admin-grid-3">
+                <div className="stat-card group hover:border-gold/50 transition-all duration-500 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <FileText size={80} className="text-white transform group-hover:scale-110 transition-transform duration-500" />
+                        <FileText size={80} className="text-gold transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="relative z-10">
-                        <p className="text-zinc-400 font-medium mb-1 uppercase tracking-wider text-xs">Total de Editais</p>
-                        <h3 className="text-5xl font-bold text-white mb-2">{total}</h3>
+                        <p className="stat-label mb-1">Total de Editais</p>
+                        <h3 className="stat-value mb-2 text-5xl">{total}</h3>
                         <div className="w-12 h-1 bg-gold rounded-full opacity-50"></div>
                     </div>
                 </div>
 
-                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-500">
+                <div className="stat-card group hover:border-emerald-500/50 transition-all duration-500 relative overflow-hidden border-emerald-500/20">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <Calendar size={80} className="text-emerald-400 transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent opacity-50"></div>
                     <div className="relative z-10">
-                        <p className="text-emerald-400/70 font-medium mb-1 uppercase tracking-wider text-xs">Inscrições Abertas</p>
-                        <h3 className="text-5xl font-bold text-white mb-2">{open}</h3>
+                        <p className="stat-label text-emerald-400/70 mb-1">Inscrições Abertas</p>
+                        <h3 className="stat-value text-white mb-2 text-5xl">{open}</h3>
                         <div className="w-12 h-1 bg-emerald-500 rounded-full opacity-50"></div>
                     </div>
                 </div>
 
-                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group hover:border-purple-500/30 transition-all duration-500">
+                <div className="stat-card group hover:border-purple-500/50 transition-all duration-500 relative overflow-hidden border-purple-500/20">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <CheckCircle size={80} className="text-purple-400 transform group-hover:scale-110 transition-transform duration-500" />
                     </div>
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-transparent opacity-50"></div>
                     <div className="relative z-10">
-                        <p className="text-purple-400/70 font-medium mb-1 uppercase tracking-wider text-xs">Em Avaliação</p>
-                        <h3 className="text-5xl font-bold text-white mb-2">{evaluating}</h3>
+                        <p className="stat-label text-purple-400/70 mb-1">Em Avaliação</p>
+                        <h3 className="stat-value text-white mb-2 text-5xl">{evaluating}</h3>
                         <div className="w-12 h-1 bg-purple-500 rounded-full opacity-50"></div>
                     </div>
                 </div>
             </div>
 
             {/* Filters Bar */}
-            <div className="bg-zinc-900/30 border border-white/5 p-1 rounded-xl flex flex-col md:flex-row gap-2 mb-8 backdrop-blur-sm max-w-4xl">
+            <div className="bg-zinc-900/30 border border-white/5 p-2 rounded-xl flex flex-col md:flex-row gap-2 mb-8 backdrop-blur-sm max-w-4xl section-title" style={{ fontSize: '1rem', textShadow: 'none', margin: '0 0 2rem' }}>
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
                     <input
@@ -138,6 +138,7 @@ export const AdminNotices: React.FC = () => {
                         className="w-full bg-zinc-950/50 border border-transparent rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:bg-zinc-900 transition-colors placeholder:text-zinc-600"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
+                        style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}
                     />
                 </div>
                 <Button variant="outline" className="border-transparent bg-zinc-800/50 text-zinc-300 hover:bg-gold/10 hover:text-gold px-6 min-w-[140px]">
@@ -160,7 +161,7 @@ export const AdminNotices: React.FC = () => {
                         <h3 className="text-2xl font-bold text-white mb-2">Nenhum edital encontrado</h3>
                         <p className="mb-8 max-w-md text-zinc-400">Comece criando seu primeiro edital de fomento cultural para receber inscrições.</p>
                         <Link to="/admin/editais/novo">
-                            <Button className="bg-zinc-800 text-white hover:bg-zinc-700 border border-white/10 hover:border-gold/30 hover:text-gold transition-all">
+                            <Button className="btn-secondary hover:text-white border-white/10 hover:border-gold/30 transition-all">
                                 Criar Primeiro Edital
                             </Button>
                         </Link>
@@ -171,7 +172,7 @@ export const AdminNotices: React.FC = () => {
                             const statusInfo = statusLabels[notice.status] || { label: notice.status, color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" };
 
                             return (
-                                <div key={notice.id} className="group bg-zinc-900/40 border border-white/5 hover:border-gold/50 rounded-2xl p-6 transition-all hover:bg-zinc-900/60 hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] relative overflow-hidden backdrop-blur-sm">
+                                <div key={notice.id} className="media-card group hover:border-gold/50 relative overflow-hidden backdrop-blur-sm" style={{ padding: '1.5rem' }}>
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
                                     <div className="flex flex-col md:flex-row gap-6 relative z-10">
@@ -184,7 +185,7 @@ export const AdminNotices: React.FC = () => {
                                                 <span className="text-zinc-600 text-xs font-mono">#{notice.id.slice(0, 8)}</span>
                                             </div>
 
-                                            <h3 className="text-2xl font-bold text-white group-hover:text-gold transition-colors mb-2">
+                                            <h3 className="text-2xl font-bold text-white group-hover:text-gold transition-colors mb-2 font-heading">
                                                 {notice.title}
                                             </h3>
 
@@ -214,7 +215,7 @@ export const AdminNotices: React.FC = () => {
                                         <div className="flex items-center gap-3 self-start md:self-center border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0 w-full md:w-auto justify-end">
                                             <Button
                                                 variant="ghost"
-                                                className="w-full md:w-auto justify-center text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10"
+                                                className="btn-ghost w-full md:w-auto justify-center hover:bg-white/5 border border-transparent hover:border-white/10"
                                                 onClick={() => navigate(`/admin/editais/${notice.id}`)}
                                             >
                                                 <Edit size={16} className="mr-2" /> Gerenciar
