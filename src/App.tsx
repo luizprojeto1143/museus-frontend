@@ -116,6 +116,7 @@ import { AdminProviderForm } from "./modules/admin/pages/AdminProviderForm";
 import { AdminAccessibilityManagement } from "./modules/admin/pages/AdminAccessibilityManagement";
 import { AdminAccessibilityForm } from "./modules/admin/pages/AdminAccessibilityForm";
 import { AdminEquipments } from "./modules/admin/pages/AdminEquipments";
+import { AdminEquipmentForm } from "./modules/admin/pages/AdminEquipmentForm";
 import { AdminReports } from "./modules/admin/pages/AdminReports";
 
 // Governance / Executive Pages
@@ -633,6 +634,38 @@ const App: React.FC = () => {
                       <RequireRole allowed={["admin"]}>
                         <AdminLayout>
                           <AdminSpaceForm />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+
+                  {/* EQUIPAMENTOS CULTURAIS (Sub-tenants) */}
+                  <Route
+                    path="/admin/equipamentos"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminEquipments />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
+                    path="/admin/equipamentos/novo"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminEquipmentForm />
+                        </AdminLayout>
+                      </RequireRole>
+                    }
+                  />
+                  <Route
+                    path="/admin/equipamentos/:id"
+                    element={
+                      <RequireRole allowed={["admin"]}>
+                        <AdminLayout>
+                          <AdminEquipmentForm />
                         </AdminLayout>
                       </RequireRole>
                     }
