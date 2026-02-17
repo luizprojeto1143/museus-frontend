@@ -243,46 +243,54 @@ export const AdminNoticeForm: React.FC = () => {
             </div>
 
             {/* Horizontal Premium Stepper */}
-            <div className="mb-10 px-4">
-                <div className="flex justify-between relative">
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-white/5 -z-10 rounded-full" />
+            <div className="mb-12 px-2 md:px-0">
+                <div className="relative w-full">
+                    {/* Background Line */}
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-white/5 -z-10 rounded-full transform -translate-y-1/2" />
+
+                    {/* Active Progress Line */}
                     <div
-                        className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-gold to-yellow-600 transition-all duration-500 ease-out -z-10 rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                        className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-gold to-yellow-600 transition-all duration-500 ease-out -z-10 rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)] transform -translate-y-1/2"
                         style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
                     />
 
-                    {STEPS.map((step, index) => {
-                        const isActive = index === currentStep;
-                        const isCompleted = index < currentStep;
-                        const Icon = step.icon;
+                    <div className="flex flex-row justify-between items-start w-full relative">
+                        {STEPS.map((step, index) => {
+                            const isActive = index === currentStep;
+                            const isCompleted = index < currentStep;
+                            const Icon = step.icon;
 
-                        return (
-                            <div
-                                key={step.id}
-                                className={`flex flex-col items-center relative z-10 cursor-pointer group`}
-                                onClick={() => {
-                                    if (isEdit || index < currentStep) {
-                                        setDirection(index > currentStep ? 1 : -1);
-                                        setCurrentStep(index);
-                                    }
-                                }}
-                            >
-                                <div className={`
-                                    w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 mb-3 border-2
-                                    ${isActive
-                                        ? 'bg-gold text-black border-gold shadow-[0_0_25px_rgba(212,175,55,0.5)] scale-110 rotate-3'
-                                        : isCompleted
-                                            ? 'bg-zinc-800 text-gold border-gold/50'
-                                            : 'bg-zinc-950 text-zinc-600 border-white/10 group-hover:border-white/30'}
-                                `}>
-                                    {isCompleted ? <CheckCircle size={24} /> : <Icon size={24} />}
+                            return (
+                                <div
+                                    key={step.id}
+                                    className={`flex flex-col items-center justify-center relative z-10 cursor-pointer group flex-1`}
+                                    onClick={() => {
+                                        if (isEdit || index < currentStep) {
+                                            setDirection(index > currentStep ? 1 : -1);
+                                            setCurrentStep(index);
+                                        }
+                                    }}
+                                >
+                                    <div className={`
+                                        w-10 h-10 md:w-14 md:h-14 rounded-2xl flex items-center justify-center transition-all duration-300 mb-2 md:mb-3 border-2
+                                        ${isActive
+                                            ? 'bg-gold text-black border-gold shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-110 -rotate-3'
+                                            : isCompleted
+                                                ? 'bg-zinc-800 text-gold border-gold/50'
+                                                : 'bg-zinc-950 text-zinc-600 border-white/10 group-hover:border-white/30'}
+                                    `}>
+                                        {isCompleted ? <CheckCircle size={20} className="md:w-6 md:h-6" /> : <Icon size={20} className="md:w-6 md:h-6" />}
+                                    </div>
+                                    <span className={`
+                                        text-[10px] md:text-xs font-bold uppercase tracking-wider transition-colors text-center hidden md:block
+                                        ${isActive ? 'text-gold' : isCompleted ? 'text-zinc-400' : 'text-zinc-700'}
+                                    `}>
+                                        {step.title}
+                                    </span>
                                 </div>
-                                <span className={`text-sm font-bold uppercase tracking-wider transition-colors ${isActive ? 'text-gold' : isCompleted ? 'text-zinc-300' : 'text-zinc-600'}`}>
-                                    {step.title}
-                                </span>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 
