@@ -208,23 +208,29 @@ export const AdminCalendar: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Calendar Grid */}
                 {/* Calendar Grid */}
-                <div className="lg:col-span-2 bg-zinc-900/50 p-6 rounded-3xl border border-white/5 backdrop-blur-sm">
+                {/* Calendar Grid */}
+                <div className="lg:col-span-2 flex flex-col h-full">
                     {/* Header Days */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '1rem', marginBottom: '1rem', textAlign: 'center' }}>
+                    <div className="grid grid-cols-7 border-b border-white/10">
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-                            <div key={d} className="text-zinc-500 text-xs font-bold uppercase tracking-wider">{d}</div>
+                            <div key={d} className="py-3 text-center text-zinc-400 text-xs font-bold uppercase tracking-wider bg-zinc-900/50">
+                                {d}
+                            </div>
                         ))}
                     </div>
 
                     {loading ? (
-                        <div className="h-96 flex flex-col items-center justify-center gap-4">
+                        <div className="h-96 flex flex-col items-center justify-center gap-4 bg-zinc-900/30 rounded-b-3xl border border-white/5">
                             <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
                             <p className="text-zinc-500 text-sm">Carregando agenda...</p>
                         </div>
                     ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem' }}>
+                        <div className="grid grid-cols-7 auto-rows-fr bg-zinc-900/30 rounded-b-3xl border-l border-b border-r border-white/5">
                             {days.map((date, idx) => {
-                                if (!date) return <div key={`empty-${idx}`} className="h-32 bg-zinc-900/30 border border-white/5 rounded-xl opacity-50"></div>;
+                                // Empty slot (filler)
+                                if (!date) return (
+                                    <div key={`empty-${idx}`} className="min-h-[120px] bg-zinc-950/30 border-r border-b border-white/5"></div>
+                                );
 
                                 const dayBookings = getBookingsForDate(date);
                                 const isToday = new Date().toDateString() === date.toDateString();
@@ -238,35 +244,53 @@ export const AdminCalendar: React.FC = () => {
                                             if (isBookingModalOpen) setIsBookingModalOpen(false);
                                         }}
                                         className={`
-                                            h-32 border rounded-xl p-2 flex flex-col gap-1 cursor-pointer transition-all group relative overflow-hidden
-                                            ${isToday ? 'bg-gold/10 border-gold/50' : 'bg-zinc-900/50 border-white/5 hover:border-white/20 hover:bg-zinc-800/50'}
-                                            ${isSelected ? 'ring-2 ring-gold shadow-[0_0_15px_rgba(212,175,55,0.2)]' : ''}
+                                            min-h-[120px] p-2 border-r border-b border-white/5 cursor-pointer transition-colors relative group
+                                            ${isSelected ? 'bg-gold/5' : 'hover:bg-white/5'}
+                                            ${isToday ? 'bg-zinc-800/50' : ''}
                                         `}
                                     >
-                                        <div className="flex justify-between items-start z-10 relative">
-                                            <span className={`text-sm font-bold ${isToday ? 'text-gold' : 'text-zinc-400 group-hover:text-zinc-200'}`}>
+                                        {/* Date Number */}
+                                        <div className="flex justify-between items-start mb-1">
+                                            <span className={`
+                                                w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold
+                                                ${isToday ? 'bg-gold text-black' : 'text-zinc-400 group-hover:text-zinc-200'}
+                                            `}>
                                                 {date.getDate()}
                                             </span>
-                                            {dayBookings.length > 0 && (
-                                                <span className="text-[10px] bg-gold text-black px-1.5 py-0.5 rounded-full font-bold">
+                                            {dayBookings.length > 0 && !isToday && (
+                                                <span className="text-[10px] text-zinc-500 font-medium">
                                                     {dayBookings.length}
                                                 </span>
                                             )}
                                         </div>
 
-                                        <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 mt-1 z-10 relative">
+                                        {/* Bookings List (Small Pills) */}
+                                        <div className="flex flex-col gap-1 overflow-hidden">
                                             {dayBookings.slice(0, 3).map((b, idx) => (
-                                                <div key={idx} className="text-[10px] bg-black/40 p-1 rounded border border-white/5 truncate text-zinc-300 flex items-center gap-1">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-gold/50 shrink-0" />
-                                                    {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''} {b.space?.name}
+                                                <div
+                                                    key={idx}
+                                                    className={`
+                                                        text-[10px] px-1.5 py-1 rounded truncate flex items-center gap-1 border
+                                                        ${isToday
+                                                            ? 'bg-gold/20 text-gold border-gold/30'
+                                                            : 'bg-zinc-800 text-zinc-300 border-white/5 group-hover:border-white/10'}
+                                                    `}
+                                                >
+                                                    <div className={`w-1 h-1 rounded-full shrink-0 ${isToday ? 'bg-gold' : 'bg-zinc-500'}`} />
+                                                    <span className="truncate">{b.space?.name}</span>
                                                 </div>
                                             ))}
                                             {dayBookings.length > 3 && (
-                                                <div className="text-[10px] text-zinc-500 text-center font-medium">
+                                                <div className="text-[10px] text-zinc-500 pl-1">
                                                     + {dayBookings.length - 3} mais
                                                 </div>
                                             )}
                                         </div>
+
+                                        {/* Selection Indicator Overlay */}
+                                        {isSelected && (
+                                            <div className="absolute inset-0 border-2 border-gold pointer-events-none"></div>
+                                        )}
                                     </div>
                                 );
                             })}
