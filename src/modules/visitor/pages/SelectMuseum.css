@@ -27,6 +27,18 @@
     align-items: center;
 }
 
+.discovery-top-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: absolute;
+    top: -6rem;
+    /* Adjust based on hero padding */
+    left: 0;
+    padding: 1rem;
+    z-index: 20;
+}
+
 .brand-pill {
     display: flex;
     align-items: center;
