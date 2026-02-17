@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Clock, MapPin, Edit2, Trash2, CalendarRange, CheckCircle2, X } from "lucide-react";
-import { Button, Input, Select, Textarea } from "../../../components/ui"; // Assuming Input/Select/Textarea exist
+import { Button, Input, Select, Textarea } from "../../../components/ui";
 import { useAuth } from "../../auth/AuthContext";
 
 type Booking = {
@@ -179,8 +179,25 @@ export const AdminCalendar: React.FC = () => {
 
     const selectedBookings = selectedDate ? getBookingsForDate(selectedDate) : [];
 
+    // Group days into weeks for table rows
+    const weeks = [];
+    let currentWeek = [];
+    for (let i = 0; i < days.length; i++) {
+        currentWeek.push(days[i]);
+        if (currentWeek.length === 7) {
+            weeks.push(currentWeek);
+            currentWeek = [];
+        }
+    }
+    if (currentWeek.length > 0) {
+        while (currentWeek.length < 7) {
+            currentWeek.push(null);
+        }
+        weeks.push(currentWeek);
+    }
+
     return (
-        <div className="max-w-6xl mx-auto pb-24 animate-fadeIn">
+        <div className="max-w-[95%] mx-auto pb-24 animate-fadeIn">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
@@ -205,101 +222,99 @@ export const AdminCalendar: React.FC = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Calendar Grid */}
-                {/* Calendar Grid */}
-                {/* Calendar Grid */}
-                <div className="lg:col-span-2 flex flex-col h-full">
-                    {/* Header Days */}
-                    <div className="grid grid-cols-7 border-b border-white/10">
-                        {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(d => (
-                            <div key={d} className="py-3 text-center text-zinc-400 text-xs font-bold uppercase tracking-wider bg-zinc-900/50">
-                                {d}
-                            </div>
-                        ))}
-                    </div>
-
+            <div className="flex flex-col lg:flex-row gap-8">
+                {/* Calendar Table */}
+                <div className="flex-1 bg-zinc-900/50 rounded-3xl border border-white/5 backdrop-blur-sm overflow-hidden">
                     {loading ? (
-                        <div className="h-96 flex flex-col items-center justify-center gap-4 bg-zinc-900/30 rounded-b-3xl border border-white/5">
+                        <div className="h-96 flex flex-col items-center justify-center gap-4">
                             <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
                             <p className="text-zinc-500 text-sm">Carregando agenda...</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-7 auto-rows-fr bg-zinc-900/30 rounded-b-3xl border-l border-b border-r border-white/5">
-                            {days.map((date, idx) => {
-                                // Empty slot (filler)
-                                if (!date) return (
-                                    <div key={`empty-${idx}`} className="min-h-[120px] bg-zinc-950/30 border-r border-b border-white/5"></div>
-                                );
+                        <div className="w-full overflow-x-auto">
+                            <table className="w-full border-collapse table-fixed">
+                                <thead>
+                                    <tr>
+                                        {['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'].map(d => (
+                                            <th key={d} className="py-4 text-center text-zinc-400 text-xs font-bold uppercase tracking-wider bg-zinc-900/80 border-b border-white/10 w-[14.28%]">
+                                                {d}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {weeks.map((week, wIdx) => (
+                                        <tr key={wIdx}>
+                                            {week.map((date, dIdx) => {
+                                                if (!date) return <td key={`empty-${wIdx}-${dIdx}`} className="h-32 bg-zinc-950/30 border border-white/5"></td>;
 
-                                const dayBookings = getBookingsForDate(date);
-                                const isToday = new Date().toDateString() === date.toDateString();
-                                const isSelected = selectedDate?.toDateString() === date.toDateString();
+                                                const dayBookings = getBookingsForDate(date);
+                                                const isToday = new Date().toDateString() === date.toDateString();
+                                                const isSelected = selectedDate?.toDateString() === date.toDateString();
 
-                                return (
-                                    <div
-                                        key={date.toISOString()}
-                                        onClick={() => {
-                                            setSelectedDate(date);
-                                            if (isBookingModalOpen) setIsBookingModalOpen(false);
-                                        }}
-                                        className={`
-                                            min-h-[120px] p-2 border-r border-b border-white/5 cursor-pointer transition-colors relative group
-                                            ${isSelected ? 'bg-gold/5' : 'hover:bg-white/5'}
-                                            ${isToday ? 'bg-zinc-800/50' : ''}
-                                        `}
-                                    >
-                                        {/* Date Number */}
-                                        <div className="flex justify-between items-start mb-1">
-                                            <span className={`
-                                                w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold
-                                                ${isToday ? 'bg-gold text-black' : 'text-zinc-400 group-hover:text-zinc-200'}
-                                            `}>
-                                                {date.getDate()}
-                                            </span>
-                                            {dayBookings.length > 0 && !isToday && (
-                                                <span className="text-[10px] text-zinc-500 font-medium">
-                                                    {dayBookings.length}
-                                                </span>
-                                            )}
-                                        </div>
+                                                return (
+                                                    <td
+                                                        key={date.toISOString()}
+                                                        onClick={() => {
+                                                            setSelectedDate(date);
+                                                            if (isBookingModalOpen) setIsBookingModalOpen(false);
+                                                        }}
+                                                        className={`
+                                                             h-32 border border-white/5 cursor-pointer transition-colors relative align-top p-2 hover:bg-white/5
+                                                             ${isToday ? 'bg-zinc-800/50' : ''}
+                                                             ${isSelected ? 'bg-gold/5' : ''}
+                                                         `}
+                                                    >
+                                                        {isSelected && <div className="absolute inset-0 border-2 border-gold pointer-events-none z-10"></div>}
 
-                                        {/* Bookings List (Small Pills) */}
-                                        <div className="flex flex-col gap-1 overflow-hidden">
-                                            {dayBookings.slice(0, 3).map((b, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className={`
-                                                        text-[10px] px-1.5 py-1 rounded truncate flex items-center gap-1 border
-                                                        ${isToday
-                                                            ? 'bg-gold/20 text-gold border-gold/30'
-                                                            : 'bg-zinc-800 text-zinc-300 border-white/5 group-hover:border-white/10'}
-                                                    `}
-                                                >
-                                                    <div className={`w-1 h-1 rounded-full shrink-0 ${isToday ? 'bg-gold' : 'bg-zinc-500'}`} />
-                                                    <span className="truncate">{b.space?.name}</span>
-                                                </div>
-                                            ))}
-                                            {dayBookings.length > 3 && (
-                                                <div className="text-[10px] text-zinc-500 pl-1">
-                                                    + {dayBookings.length - 3} mais
-                                                </div>
-                                            )}
-                                        </div>
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <span className={`
+                                                                 w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold
+                                                                 ${isToday ? 'bg-gold text-black' : 'text-zinc-400'}
+                                                             `}>
+                                                                {date.getDate()}
+                                                            </span>
+                                                            {dayBookings.length > 0 && !isToday && (
+                                                                <span className="text-[10px] text-zinc-500 font-medium">
+                                                                    {dayBookings.length}
+                                                                </span>
+                                                            )}
+                                                        </div>
 
-                                        {/* Selection Indicator Overlay */}
-                                        {isSelected && (
-                                            <div className="absolute inset-0 border-2 border-gold pointer-events-none"></div>
-                                        )}
-                                    </div>
-                                );
-                            })}
+                                                        <div className="flex flex-col gap-1">
+                                                            {dayBookings.slice(0, 3).map((b, idx) => (
+                                                                <div
+                                                                    key={idx}
+                                                                    className={`
+                                                                         text-[10px] px-1.5 py-1 rounded truncate flex items-center gap-1 border
+                                                                         ${isToday
+                                                                            ? 'bg-gold/20 text-gold border-gold/30'
+                                                                            : 'bg-zinc-800 text-zinc-300 border-white/5'}
+                                                                     `}
+                                                                >
+                                                                    <div className={`w-1 h-1 rounded-full shrink-0 ${isToday ? 'bg-gold' : 'bg-zinc-500'}`} />
+                                                                    <span className="truncate">{b.space?.name}</span>
+                                                                </div>
+                                                            ))}
+                                                            {dayBookings.length > 3 && (
+                                                                <div className="text-[10px] text-zinc-500 pl-1">
+                                                                    + {dayBookings.length - 3} mais
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     )}
                 </div>
 
                 {/* Sidebar Details */}
-                <div className="space-y-6">
+                <div className="w-full lg:w-96 space-y-6 shrink-0">
                     <div className="bg-zinc-900/80 border border-white/10 rounded-3xl p-6 shadow-xl backdrop-blur-md h-fit relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
