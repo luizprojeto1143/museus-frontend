@@ -16,16 +16,11 @@ export const ForgotPassword: React.FC = () => {
         setError("");
 
         try {
-            // Mock API call or real endpoint
-            // await api.post("/auth/recover-password", { email });
-
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
+            await api.post("/auth/recover-password", { email });
             setSent(true);
         } catch (err) {
             console.error(err);
-            setError("Não foi possível enviar o e-mail. Tente novamente.");
+            setError("Não foi possível enviar o e-mail. Verifique se o endereço está correto.");
         } finally {
             setLoading(false);
         }

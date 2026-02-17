@@ -236,6 +236,9 @@ const App: React.FC = () => {
                   {/* Cadastro de Produtor - Novo Fluxo */}
                   <Route path="/sou-produtor" element={<RegisterProducer />} />
 
+                  {/* Password Reset */}
+                  <Route path="/reset-password" element={<ResetPassword />} />
+
                   {/* Redirecionamento legado para quem já está logado ou quer ir direto pro app */}
                   <Route
                     path="/app"
