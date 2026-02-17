@@ -111,10 +111,22 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     return (settings as Record<string, unknown>)[link.feature] !== false;
   });
 
+  // Font Size State
+  const [fontSizeMultiplier, setFontSizeMultiplier] = useState(1);
+
+  const increaseFontSize = () => {
+    setFontSizeMultiplier(prev => Math.min(prev + 0.2, 1.6)); // Max 160%
+  };
+
+  const decreaseFontSize = () => {
+    setFontSizeMultiplier(prev => Math.max(prev - 0.2, 0.8)); // Min 80%
+  };
+
   const themeStyles = settings ? {
     "--primary-color": settings.primaryColor,
     "--secondary-color": settings.secondaryColor,
-    fontFamily: settings.historicalFont ? "Georgia, serif" : "system-ui"
+    fontFamily: settings.historicalFont ? "Georgia, serif" : "system-ui",
+    fontSize: `${fontSizeMultiplier * 100}%`
   } as React.CSSProperties : {};
 
   return (
@@ -225,6 +237,25 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
           {/* Desktop/Mobile Common Header Items (if any, e.g. User Profile or Spacer) */}
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            {/* Font Size Controls */}
+            {settings?.featureAccessibility !== false && (
+              <>
+                <button
+                  className="btn btn-secondary icon-btn"
+                  onClick={decreaseFontSize}
+                  title={t("visitor.accessibility.decreaseFontSize", "Diminuir Fonte")}
+                >
+                  A-
+                </button>
+                <button
+                  className="btn btn-secondary icon-btn"
+                  onClick={increaseFontSize}
+                  title={t("visitor.accessibility.increaseFontSize", "Aumentar Fonte")}
+                >
+                  A+
+                </button>
+              </>
+            )}
             <button
               className="btn btn-secondary icon-btn mobile-only"
               style={{ display: 'flex' }}

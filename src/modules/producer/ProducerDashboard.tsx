@@ -147,7 +147,7 @@ export const ProducerDashboard: React.FC = () => {
                             </div>
                         ))}
                         <button onClick={() => navigate("/producer/events/new")} style={{ padding: "1rem", border: "2px dashed rgba(212,175,55,0.3)", background: "transparent", color: "#d4af37", borderRadius: "0.5rem", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}>
-                            <Plus size={20} /> {t("producer.dashboard.nextEvents.create")}
+                            <Plus size={20} /> {t("producer.dashboard.nextEvents.create", "Novo Evento")}
                         </button>
                     </div>
                 </div>

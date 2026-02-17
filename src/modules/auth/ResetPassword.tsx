@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { api } from "../../api/client";
 
-export const ResetPassword: React.FC = () => {
+export const ResetPasswordPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const query = new URLSearchParams(location.search);

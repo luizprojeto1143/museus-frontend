@@ -24,6 +24,8 @@ export const AdminEvents: React.FC = () => {
   const term = useTerminology();
   const navigate = useNavigate();
   const [events, setEvents] = useState<AdminEventItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -32,9 +34,11 @@ export const AdminEvents: React.FC = () => {
 
     setLoading(true);
     api
-      .get("/events", { params: { tenantId } })
+      .get("/events", { params: { tenantId, page, limit: 10 } })
       .then((res) => {
-        const rawData = Array.isArray(res.data) ? res.data : (res.data.data || []);
+        const responseData = res.data;
+        const rawData = Array.isArray(responseData) ? responseData : (responseData.data || []);
+        const meta = responseData.meta || {};
 
         const events = rawData.map((e: any) => ({
           id: e.id,
@@ -47,13 +51,14 @@ export const AdminEvents: React.FC = () => {
           location: e.location || (e.isOnline ? "Online" : "")
         }));
         setEvents(events);
+        setTotalPages(meta.totalPages || 1);
       })
       .catch((err) => {
         console.error("Failed to fetch events", err);
         setEvents([]);
       })
       .finally(() => setLoading(false));
-  }, [tenantId]);
+  }, [tenantId, page]);
 
   const getStatusBadge = (status: string) => {
     const map = {
@@ -192,6 +197,29 @@ export const AdminEvents: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <Button
+            variant="outline"
+            disabled={page <= 1}
+            onClick={() => setPage(p => p - 1)}
+            className="border-white/10 text-zinc-400 hover:text-white"
+          >
+            ◀ Anterior
+          </Button>
+          <span className="text-zinc-500 text-sm">Página {page} de {totalPages}</span>
+          <Button
+            variant="outline"
+            disabled={page >= totalPages}
+            onClick={() => setPage(p => p + 1)}
+            className="border-white/10 text-zinc-400 hover:text-white"
+          >
+            Próxima ▶
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

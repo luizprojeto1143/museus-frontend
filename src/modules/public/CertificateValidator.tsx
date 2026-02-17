@@ -50,8 +50,15 @@ export const CertificateValidator: React.FC = () => {
         }
     }, [code, validateCertificate]);
 
+    // Extract tenant theme from query params or data if possible, 
+    // but for now, we'll try to apply data-driven styling when data is loaded.
+    const themeStyles = data ? {
+        '--primary-color': '#d4af37', // We could fetch this from backend if we extend the API
+        '--text-color': '#f5e6d3',
+    } as React.CSSProperties : {};
+
     return (
-        <div className="min-h-screen bg-[#1a1108] text-[#f5e6d3] font-serif flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-[var(--bg-page)] text-[var(--fg-primary)] font-serif flex flex-col items-center justify-center p-4 relative overflow-hidden" style={themeStyles}>
             {/* Background Texture */}
             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -61,18 +68,24 @@ export const CertificateValidator: React.FC = () => {
 
                 {/* Header Logo or Brand */}
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-[#d4af37] tracking-widest uppercase">Cultura Viva</h1>
-                    <p className="text-[#8b7355] text-xs uppercase tracking-widest mt-1">Sistema de Validação Digital</p>
+                    {data?.issuerLogo ? (
+                        <img src={data.issuerLogo} alt={data.issuerName} className="h-16 w-16 mx-auto rounded-full object-cover border-2 border-[var(--primary-color)] mb-3 shadow-lg" />
+                    ) : (
+                        <h1 className="text-2xl font-bold text-[var(--primary-color)] tracking-widest uppercase">Cultura Viva</h1>
+                    )}
+                    <p className="text-[var(--fg-muted)] text-xs uppercase tracking-widest mt-1">
+                        {data?.issuerName || "Sistema de Validação Digital"}
+                    </p>
                 </div>
 
-                <div className="bg-[#2a1810] border border-[rgba(212,175,55,0.3)] rounded-lg shadow-2xl overflow-hidden backdrop-blur-sm">
+                <div className="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-lg shadow-2xl overflow-hidden backdrop-blur-sm">
 
                     {/* Status Header */}
                     <div className={`p-6 text-center border-b ${status === 'valid' ? 'bg-green-900/20 border-green-800' :
                         status === 'invalid' ? 'bg-red-900/20 border-red-800' :
                             'bg-gray-900/20 border-gray-800'
                         }`}>
-                        {status === 'loading' && <div className="text-[#d4af37]">Verificando autenticidade...</div>}
+                        {status === 'loading' && <div className="text-[var(--primary-color)]">Verificando autenticidade...</div>}
 
                         {status === 'valid' && (
                             <div className="flex flex-col items-center gap-3">
@@ -112,35 +125,35 @@ export const CertificateValidator: React.FC = () => {
                     {status === 'valid' && data && (
                         <div className="p-8 space-y-6">
                             {/* Visitor Info */}
-                            <div className="text-center space-y-2 pb-6 border-b border-[rgba(212,175,55,0.1)]">
-                                <div className="text-[#8b7355] text-xs uppercase tracking-wider">Certificado emitido para</div>
-                                <h3 className="text-2xl font-bold text-[#f5e6d3]">{data.visitorName}</h3>
+                            <div className="text-center space-y-2 pb-6 border-b border-[var(--border-subtle)]">
+                                <div className="text-[var(--fg-muted)] text-xs uppercase tracking-wider">Certificado emitido para</div>
+                                <h3 className="text-2xl font-bold text-[var(--fg-primary)]">{data.visitorName}</h3>
                             </div>
 
                             {/* Details Grid */}
                             <div className="grid grid-cols-1 gap-4">
-                                <div className="flex items-start gap-3 p-3 rounded bg-[#3a2818]/30">
-                                    <User className="text-[#d4af37] shrink-0 mt-0.5" size={18} />
+                                <div className="flex items-start gap-3 p-3 rounded bg-[var(--bg-base)]/50">
+                                    <User className="text-[var(--primary-color)] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <div className="text-[10px] text-[#8b7355] uppercase font-bold">Atividade</div>
-                                        <div className="text-[#f5e6d3] font-medium">{data.title}</div>
-                                        <div className="text-[#c9b58c] text-xs mt-0.5 leading-relaxed">{data.description}</div>
+                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">Atividade</div>
+                                        <div className="text-[var(--fg-primary)] font-medium">{data.title}</div>
+                                        <div className="text-[var(--fg-muted)] text-xs mt-0.5 leading-relaxed">{data.description}</div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3 p-3 rounded bg-[#3a2818]/30">
-                                    <MapPin className="text-[#d4af37] shrink-0 mt-0.5" size={18} />
+                                <div className="flex items-start gap-3 p-3 rounded bg-[var(--bg-base)]/50">
+                                    <MapPin className="text-[var(--primary-color)] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <div className="text-[10px] text-[#8b7355] uppercase font-bold">Emissor</div>
-                                        <div className="text-[#f5e6d3] font-medium">{data.issuerName}</div>
+                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">Emissor</div>
+                                        <div className="text-[var(--fg-primary)] font-medium">{data.issuerName}</div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-start gap-3 p-3 rounded bg-[#3a2818]/30">
-                                    <Calendar className="text-[#d4af37] shrink-0 mt-0.5" size={18} />
+                                <div className="flex items-start gap-3 p-3 rounded bg-[var(--bg-base)]/50">
+                                    <Calendar className="text-[var(--primary-color)] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <div className="text-[10px] text-[#8b7355] uppercase font-bold">Data de Emissão</div>
-                                        <div className="text-[#f5e6d3] font-medium">{new Date(data.issuedAt).toLocaleDateString('pt-BR')}</div>
+                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">Data de Emissão</div>
+                                        <div className="text-[var(--fg-primary)] font-medium">{new Date(data.issuedAt).toLocaleDateString('pt-BR')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -149,7 +162,7 @@ export const CertificateValidator: React.FC = () => {
                             <div className="pt-4">
                                 <button
                                     onClick={() => window.print()}
-                                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-[#d4af37] to-[#b8941f] text-[#1a1108] font-bold rounded shadow-lg hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all"
+                                    className="w-full flex items-center justify-center gap-2 py-3 btn-primary font-bold rounded shadow-lg transition-all"
                                 >
                                     <Download size={18} />
                                     Imprimir Comprovante
@@ -158,15 +171,15 @@ export const CertificateValidator: React.FC = () => {
 
                             {/* Footer Hash */}
                             <div className="text-center mt-4">
-                                <div className="text-[10px] text-[#8b7355]">Código de Autenticidade</div>
-                                <div className="font-mono text-xs text-[#d4af37]/80 tracking-widest mt-0.5">{data.code}</div>
+                                <div className="text-[10px] text-[var(--fg-muted)]">Código de Autenticidade</div>
+                                <div className="font-mono text-xs text-[var(--primary-color)] tracking-widest mt-0.5 opacity-80">{data.code}</div>
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="text-center mt-8 text-[#8b7355] text-xs">
-                    &copy; {new Date().getFullYear()} Cultura Viva. Plataforma de Gestão Museológica.
+                <div className="text-center mt-8 text-[var(--fg-muted)] text-xs">
+                    &copy; {new Date().getFullYear()} Cultura Viva
                 </div>
             </div>
         </div>

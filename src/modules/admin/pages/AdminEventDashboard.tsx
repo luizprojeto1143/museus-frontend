@@ -52,8 +52,10 @@ export const AdminEventDashboard: React.FC = () => {
                 setStats(prev => ({ ...prev, totalTickets: total, ticketsSold: sold, revenue: rev }));
             }).catch(console.error);
 
-            // Fetch recent registrations (mocked or real endpoint if exists)
-            // api.get(`/events/${id}/registrations?limit=5`).then...
+            // Fetch recent registrations
+            api.get(`/registrations?eventId=${id}&limit=5`).then(res => {
+                setStats(prev => ({ ...prev, recentRegistrations: res.data.data || [] }));
+            }).catch(console.error);
         }
     }, [id, tenantId]);
 
@@ -148,13 +150,38 @@ export const AdminEventDashboard: React.FC = () => {
                 <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
                     <div className="p-6 border-b border-gray-100 flex justify-between items-center">
                         <h3 className="font-bold text-gray-800">Inscrições Recentes</h3>
-                        <button className="text-blue-600 text-sm font-medium hover:underline">Ver todas</button>
+                        <Link to={`/admin/eventos/${id}/relatorio`} className="text-blue-600 text-sm font-medium hover:underline">Ver todas</Link>
                     </div>
-                    <div className="p-6">
-                        {/* Placeholder for table */}
-                        <div className="text-center text-gray-500 py-8">
-                            Nenhuma inscrição recente.
-                        </div>
+                    <div className="p-0">
+                        {stats.recentRegistrations.length === 0 ? (
+                            <div className="text-center text-gray-500 py-8">
+                                Nenhuma inscrição recente.
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-gray-100">
+                                {stats.recentRegistrations.map((reg: any) => (
+                                    <div key={reg.id} className="p-4 flex justify-between items-center hover:bg-gray-50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                                {reg.guestName?.charAt(0) || reg.visitor?.name?.charAt(0) || "?"}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-gray-900">{reg.guestName || reg.visitor?.name || "Visitante"}</p>
+                                                <p className="text-xs text-gray-500">{new Date(reg.createdAt).toLocaleDateString()} às {new Date(reg.createdAt).toLocaleTimeString()}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className={`px-2 py-1 rounded text-xs font-semibold ${reg.status === 'CHECKED_IN' ? 'bg-green-100 text-green-700' :
+                                                reg.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                {reg.status === 'CHECKED_IN' ? 'Presente' : 'Confirmado'}
+                                            </span>
+                                            <p className="text-xs text-gray-400 mt-1">{reg.ticket?.name}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 

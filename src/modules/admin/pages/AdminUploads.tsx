@@ -11,6 +11,7 @@ interface UploadedFile {
   size: number;
   uploadedAt: string;
   usedIn: Array<{ type: string; id: string; title: string }>;
+  useInAi?: boolean;
 }
 
 export const AdminUploads: React.FC = () => {
@@ -70,6 +71,19 @@ export const AdminUploads: React.FC = () => {
       loadFiles();
     } catch {
       alert(t("common.error"));
+    }
+  };
+
+  const handleToggleAi = async (id: string, current: boolean) => {
+    try {
+      // Otimistic Update
+      setFiles(prev => prev.map(f => f.id === id ? { ...f, useInAi: !current } : f));
+
+      await api.patch(`/upload/${id}`, { useInAi: !current });
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao atualizar status IA");
+      loadFiles(); // Revert
     }
   };
 
@@ -222,29 +236,55 @@ export const AdminUploads: React.FC = () => {
               )}
 
               {/* Ações */}
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <a
-                  href={file.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-secondary"
-                  style={{ flex: 1, fontSize: "0.8rem", textAlign: "center" }}
-                >
-                  {t("common.view")}
-                </a>
-                <button
-                  onClick={() => handleDelete(file.id, file.usedIn)}
-                  className="btn"
+              <div style={{ display: "flex", gap: "0.5rem", flexDirection: 'column' }}>
+                <label
                   style={{
-                    padding: "0.5rem",
-                    fontSize: "0.8rem",
-                    background: "rgba(239, 68, 68, 0.1)",
-                    color: "#ef4444",
-                    border: "1px solid #ef4444"
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    padding: '0.5rem',
+                    background: file.useInAi ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.05)',
+                    border: `1px solid ${file.useInAi ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)'}`,
+                    borderRadius: 'var(--radius-sm)'
                   }}
                 >
-                  🗑
-                </button>
+                  <input
+                    type="checkbox"
+                    checked={!!file.useInAi}
+                    onChange={() => handleToggleAi(file.id, !!file.useInAi)}
+                    style={{ accentColor: 'var(--accent-gold)' }}
+                  />
+                  <span>
+                    {file.useInAi ? "✅ Usar na IA" : "Usar na IA"}
+                  </span>
+                </label>
+
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-secondary"
+                    style={{ flex: 1, fontSize: "0.8rem", textAlign: "center" }}
+                  >
+                    {t("common.view")}
+                  </a>
+                  <button
+                    onClick={() => handleDelete(file.id, file.usedIn)}
+                    className="btn"
+                    style={{
+                      padding: "0.5rem",
+                      fontSize: "0.8rem",
+                      background: "rgba(239, 68, 68, 0.1)",
+                      color: "#ef4444",
+                      border: "1px solid #ef4444"
+                    }}
+                  >
+                    🗑
+                  </button>
+                </div>
               </div>
             </div>
           ))}

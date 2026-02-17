@@ -44,7 +44,7 @@ export const ProducerEvents: React.FC = () => {
         <div className="producer-events" style={{ paddingBottom: "4rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "2rem" }}>
                 <div>
-                    <h1 style={{ fontSize: "2rem", color: "#d4af37", marginBottom: "0.5rem" }}>Meus Projetos</h1>
+                    <h1 style={{ fontSize: "2rem", color: "#d4af37", marginBottom: "0.5rem" }}>Meus Eventos</h1>
                     <p style={{ opacity: 0.7 }}>Gerencie seus eventos, exposições e workshops.</p>
                 </div>
                 <button
@@ -63,7 +63,7 @@ export const ProducerEvents: React.FC = () => {
                         cursor: "pointer"
                     }}
                 >
-                    <Plus size={20} /> Novo Projeto
+                    <Plus size={20} /> Novo Evento
                 </button>
             </div>
 
@@ -78,7 +78,7 @@ export const ProducerEvents: React.FC = () => {
                     border: "1px dashed rgba(255,255,255,0.2)"
                 }}>
                     <Calendar size={48} style={{ opacity: 0.3, marginBottom: "1rem" }} />
-                    <h3>Nenhum projeto encontrado</h3>
+                    <h3>Nenhum evento encontrado</h3>
                     <p style={{ opacity: 0.6, marginBottom: "1.5rem" }}>Comece criando seu primeiro evento ou exposição.</p>
                     <button
                         onClick={() => navigate("/producer/events/new")}

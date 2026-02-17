@@ -38,7 +38,10 @@ const getAuthFromStorage = (): { email: string | null; tenantId: string | null; 
     return { email: null, tenantId: null, isAuthenticated: false };
 };
 
+import { useToast } from "../../../contexts/ToastContext";
+
 export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { addToast } = useToast();
     const [authState, setAuthState] = useState(getAuthFromStorage);
     const [loading, setLoading] = useState(false);
     const [stats, setStats] = useState<UserStats>(() => {
@@ -165,9 +168,14 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 unlockedAt: new Date().toISOString(),
             };
 
+            // Notify user
+            if (addToast) {
+                addToast(`Conquista Desbloqueada: ${prev.achievements[achievementIndex].title}!`, 'success');
+            }
+
             return { ...prev, achievements: updatedAchievements };
         });
-    }, []);
+    }, [addToast]);
 
     const visitWork = useCallback((workId: string) => {
         setStats((prev) => {

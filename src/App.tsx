@@ -143,7 +143,7 @@ import { MasterProviders } from "./modules/master/pages/MasterProviders";
 
 import { GlobalEvents } from "./modules/public/GlobalEvents";
 import { ForgotPassword } from "./modules/auth/ForgotPassword";
-import { ResetPassword } from "./modules/auth/ResetPassword";
+import { ResetPasswordPage } from "./modules/auth/ResetPassword";
 import { NotFound } from "./modules/public/NotFound";
 
 // Producer pages
@@ -238,7 +238,7 @@ const App: React.FC = () => {
                   <Route path="/sou-produtor" element={<RegisterProducer />} />
 
                   {/* Password Reset */}
-                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                   {/* Redirecionamento legado para quem já está logado ou quer ir direto pro app */}
                   <Route

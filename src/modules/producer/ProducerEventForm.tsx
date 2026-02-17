@@ -112,13 +112,13 @@ export const ProducerEventForm: React.FC = () => {
                     <ArrowLeft size={24} />
                 </button>
                 <h1 style={{ fontSize: "2rem", color: "#d4af37", margin: 0 }}>
-                    {id ? "Editar Projeto" : "Novo Projeto"}
+                    {id ? "Editar Evento" : "Novo Evento"}
                 </h1>
             </div>
 
             <form onSubmit={handleSubmit} style={{ background: "linear-gradient(145deg, #1e1e24, #15151a)", padding: "2rem", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.05)" }}>
 
-                <label style={{ ...labelStyle, marginTop: 0 }}>Título do Projeto</label>
+                <label style={{ ...labelStyle, marginTop: 0 }}>Título do Evento</label>
                 <div style={{ position: "relative" }}>
                     <AlignLeft size={18} style={{ position: "absolute", top: "1.2rem", left: "0.8rem", opacity: 0.5 }} />
                     <input
@@ -278,7 +278,7 @@ export const ProducerEventForm: React.FC = () => {
                             opacity: loading ? 0.7 : 1
                         }}
                     >
-                        <Save size={20} /> {loading ? "Salvando..." : "Salvar Projeto"}
+                        <Save size={20} /> {loading ? "Salvando..." : "Salvar Evento"}
                     </button>
                 </div>
 
