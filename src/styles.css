@@ -255,7 +255,7 @@ a:hover {
   /* Allow taking available space */
   min-width: 0;
   /* Crucial for text truncation in flex items */
-  overflow: hidden;
+  overflow: visible;
 }
 
 .app-logo {
@@ -280,9 +280,9 @@ a:hover {
   letter-spacing: 0.08em;
   color: var(--accent-gold);
   text-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.2;
 }
 
 .app-subtitle {
@@ -789,13 +789,14 @@ textarea {
 }
 
 .sidebar-header {
-  height: 70px;
+  min-height: 70px;
+  height: auto;
   display: flex;
   align-items: center;
-  padding: 0 1.5rem;
+  padding: 0.5rem 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
-  overflow: hidden;
-  white-space: nowrap;
+  overflow: visible;
+  white-space: normal;
   position: relative;
   transition: padding 0.3s;
 }
