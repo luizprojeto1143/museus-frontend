@@ -280,13 +280,13 @@ export const AdminEventForm: React.FC = () => {
       </div>
 
       {/* Stepper */}
-      <div className="flex items-center justify-between relative mb-12 px-4">
+      <div className="flex items-center justify-between relative mb-12 px-4 w-full">
         {/* Progress Bar Background */}
-        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -z-10" />
+        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/10 -z-10" />
 
         {/* Progress Bar Fill */}
         <div
-          className="absolute top-1/2 left-0 h-0.5 bg-gold transition-all duration-300 -z-10"
+          className="absolute top-1/2 left-0 h-0.5 bg-[#d4af37] transition-all duration-300 -z-10"
           style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
         />
 
@@ -298,7 +298,7 @@ export const AdminEventForm: React.FC = () => {
           return (
             <div
               key={step.id}
-              className={`flex flex-col items-center relative z-10 cursor-pointer group ${isActive ? 'text-gold' : isCompleted ? 'text-white' : 'text-zinc-500'
+              className={`flex flex-col items-center relative z-10 cursor-pointer group transtion-transform duration-300 hover:scale-105 ${isActive ? 'text-[#d4af37]' : isCompleted ? 'text-white' : 'text-gray-500'
                 }`}
               onClick={() => {
                 if (isEdit || index < currentStep) {
@@ -308,14 +308,14 @@ export const AdminEventForm: React.FC = () => {
               }}
             >
               <div className={`
-                        w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 mb-3
-                        ${isActive ? 'bg-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]' :
-                  isCompleted ? 'bg-zinc-800 text-white border border-white/20' :
-                    'bg-zinc-900 text-zinc-600 border border-white/10 group-hover:border-white/20'}
+                        w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 mb-3 border-2
+                        ${isActive ? 'bg-[#d4af37] border-[#d4af37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-110' :
+                  isCompleted ? 'bg-[#22c55e] border-[#22c55e] text-black' :
+                    'bg-[#18181b] border-white/10 text-gray-500 group-hover:border-[#d4af37]/50 group-hover:text-[#d4af37]'}
                     `}>
-                {isCompleted ? <CheckCircle size={20} /> : <Icon size={20} />}
+                {isCompleted ? <CheckCircle size={24} /> : <Icon size={24} />}
               </div>
-              <span className="text-sm font-medium transition-colors">
+              <span className={`text-sm font-bold uppercase tracking-wider transition-colors ${isActive ? 'text-[#d4af37]' : isCompleted ? 'text-[#22c55e]' : 'text-gray-500'}`}>
                 {step.title}
               </span>
             </div>
