@@ -58,113 +58,160 @@ export const AdminNotices: React.FC = () => {
         return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
     };
 
+    // Calcs
+    const total = notices.length;
+    const open = notices.filter(n => n.status === "INSCRIPTIONS_OPEN").length;
+    const evaluating = notices.filter(n => n.status === "EVALUATION").length;
+
     const filteredNotices = notices.filter(n =>
         n.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
-        <div className="max-w-6xl mx-auto pb-24 animate-fadeIn">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div className="admin-form-container max-w-7xl animate-fadeIn">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 flex items-center gap-3">
-                        📋 Editais Públicos
+                    <h1 className="text-4xl font-bold font-heading text-white mb-2 flex items-center gap-3">
+                        <FileText className="text-gold" size={36} />
+                        Editais & Fomento
                     </h1>
-                    <p className="text-zinc-400 text-sm font-medium mt-1">
-                        Gerencie os editais de fomento e seus status.
+                    <p className="text-zinc-400 text-lg">
+                        Gerencie processos seletivos e editais de cultura.
                     </p>
                 </div>
                 <Link to="/admin/editais/novo">
-                    <Button className="bg-gold text-black hover:bg-gold/90 font-bold shadow-lg shadow-gold/10 border-none">
-                        <Plus size={18} className="mr-2" /> Novo Edital
+                    <Button className="bg-gold text-black hover:bg-gold/90 font-bold shadow-[0_0_20px_rgba(212,175,55,0.3)] border-none px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95">
+                        <Plus size={20} className="mr-2" /> Novo Edital
                     </Button>
                 </Link>
             </div>
 
-            {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
+            {/* Config Check (if feature is off in backend but accessible via route) */}
+            {/* This is handled by sidebar hiding, but good to have stats */}
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="bg-zinc-900/40 backdrop-blur-md border border-white/5 p-6 rounded-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <FileText size={64} className="text-white" />
+                    </div>
+                    <p className="text-zinc-400 font-medium mb-1">Total de Editais</p>
+                    <h3 className="text-4xl font-bold text-white">{total}</h3>
+                </div>
+                <div className="bg-emerald-950/20 backdrop-blur-md border border-emerald-500/20 p-6 rounded-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Calendar size={64} className="text-emerald-400" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent"></div>
+                    <p className="text-emerald-200/70 font-medium mb-1">Inscrições Abertas</p>
+                    <h3 className="text-4xl font-bold text-white">{open}</h3>
+                </div>
+                <div className="bg-purple-950/20 backdrop-blur-md border border-purple-500/20 p-6 rounded-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <CheckCircle size={64} className="text-purple-400" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-transparent"></div>
+                    <p className="text-purple-200/70 font-medium mb-1">Em Avaliação</p>
+                    <h3 className="text-4xl font-bold text-white">{evaluating}</h3>
+                </div>
+            </div>
+
+            {/* Filters Bar */}
+            <div className="bg-zinc-900/30 border border-white/5 p-4 rounded-xl flex flex-col md:flex-row gap-4 mb-8 backdrop-blur-sm">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
-                    <Input
-                        placeholder="Buscar editais..."
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={20} />
+                    <input
+                        type="text"
+                        placeholder="Buscar por título ou status..."
+                        className="w-full bg-zinc-950/50 border border-white/10 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-gold/50 transition-colors"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
-                        className="pl-10 bg-zinc-900/50 border-white/5 text-white focus:border-gold/30"
                     />
                 </div>
-                <Button variant="outline" className="border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white">
-                    <Filter size={18} className="mr-2" /> Filtros
+                <Button variant="outline" className="border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white px-6">
+                    <Filter size={18} className="mr-2" /> Filtros Avançados
                 </Button>
             </div>
 
             {/* Grid/List */}
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-4">
                 {loading ? (
-                    <div className="p-12 flex flex-col items-center justify-center bg-zinc-900/50 rounded-3xl border border-white/5">
-                        <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <p className="text-zinc-500 text-sm">Carregando editais...</p>
+                    <div className="py-20 flex flex-col items-center justify-center">
+                        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin mb-6"></div>
+                        <p className="text-zinc-500">Carregando editais...</p>
                     </div>
                 ) : filteredNotices.length === 0 ? (
-                    <div className="p-16 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-white/5">
-                        <FileText className="mx-auto mb-4 opacity-20" size={48} />
-                        <h3 className="text-lg font-bold text-white mb-2">Nenhum edital encontrado</h3>
-                        <p className="mb-6 max-w-sm mx-auto">Parece que você ainda não criou nenhum edital público.</p>
+                    <div className="py-24 text-center text-zinc-500 bg-zinc-900/20 rounded-3xl border border-white/5 border-dashed">
+                        <FileText className="mx-auto mb-6 opacity-20" size={64} />
+                        <h3 className="text-2xl font-bold text-white mb-2">Nenhum edital encontrado</h3>
+                        <p className="mb-8 max-w-md mx-auto text-zinc-400">Comece criando seu primeiro edital de fomento cultural para receber inscrições.</p>
                         <Link to="/admin/editais/novo">
-                            <Button variant="outline" className="border-gold/30 text-gold hover:bg-gold/10">
-                                Criar primeiro edital
+                            <Button className="bg-zinc-800 text-white hover:bg-zinc-700 border border-white/10">
+                                Criar Edital Agora
                             </Button>
                         </Link>
                     </div>
                 ) : (
-                    filteredNotices.map(notice => {
-                        const statusInfo = statusLabels[notice.status] || { label: notice.status, color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" };
+                    <div className="grid grid-cols-1 gap-4">
+                        {filteredNotices.map(notice => {
+                            const statusInfo = statusLabels[notice.status] || { label: notice.status, color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" };
 
-                        return (
-                            <div key={notice.id} className="bg-zinc-900/50 border border-white/5 rounded-2xl p-5 hover:border-gold/30 transition-all group backdrop-blur-sm relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            return (
+                                <div key={notice.id} className="group bg-zinc-900/40 border border-white/5 hover:border-gold/30 rounded-2xl p-6 transition-all hover:bg-zinc-900/60 hover:shadow-[0_4px_20px_rgba(0,0,0,0.2)] relative overflow-hidden backdrop-blur-sm">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-                                <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between relative z-10">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
-                                                {statusInfo.label}
-                                            </span>
-                                            {notice.totalBudget !== undefined && (
-                                                <span className="text-xs text-zinc-500 flex items-center gap-1">
-                                                    <DollarSign size={12} /> {formatCurrency(notice.totalBudget)}
+                                    <div className="flex flex-col md:flex-row gap-6 relative z-10">
+                                        {/* Main Info */}
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border} shadow-sm`}>
+                                                    {statusInfo.label}
                                                 </span>
-                                            )}
-                                        </div>
-                                        <h3 className="text-xl font-bold text-white group-hover:text-gold transition-colors truncate mb-1">
-                                            {notice.title}
-                                        </h3>
-                                        <div className="flex items-center gap-4 text-sm text-zinc-400">
-                                            <div className="flex items-center gap-1.5" title="Período de Inscrição">
-                                                <Calendar size={14} className="text-zinc-600" />
-                                                <span>{formatDate(notice.inscriptionStart)} a {formatDate(notice.inscriptionEnd)}</span>
+                                                <span className="text-zinc-600 text-xs">ID: {notice.id.slice(0, 8)}</span>
                                             </div>
-                                            {notice._count && (
-                                                <div className="flex items-center gap-1.5" title="Projetos Inscritos">
-                                                    <FileText size={14} className="text-zinc-600" />
-                                                    <span>{notice._count.projects || 0} projetos</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
 
-                                    <div className="flex items-center gap-2 self-end md:self-center">
-                                        <Button
-                                            variant="ghost"
-                                            className="text-zinc-400 hover:text-white hover:bg-white/10"
-                                            onClick={() => navigate(`/admin/editais/${notice.id}`)}
-                                        >
-                                            <Edit size={18} />
-                                        </Button>
+                                            <h3 className="text-2xl font-bold text-white group-hover:text-gold transition-colors mb-2">
+                                                {notice.title}
+                                            </h3>
+
+                                            <div className="flex flex-wrap items-center gap-6 text-sm text-zinc-400 mt-4">
+                                                <div className="flex items-center gap-2 bg-zinc-950/30 px-3 py-1.5 rounded-lg border border-white/5">
+                                                    <Calendar size={14} className="text-gold" />
+                                                    <span>Inscrições: <span className="text-zinc-200">{formatDate(notice.inscriptionStart)}</span> a <span className="text-zinc-200">{formatDate(notice.inscriptionEnd)}</span></span>
+                                                </div>
+
+                                                {notice.totalBudget !== undefined && (
+                                                    <div className="flex items-center gap-2 bg-zinc-950/30 px-3 py-1.5 rounded-lg border border-white/5">
+                                                        <DollarSign size={14} className="text-gold" />
+                                                        <span className="text-zinc-200 font-medium">{formatCurrency(notice.totalBudget)}</span>
+                                                    </div>
+                                                )}
+
+                                                {notice._count && (
+                                                    <div className="flex items-center gap-2 px-2">
+                                                        <FileText size={14} className="text-zinc-500" />
+                                                        <span>{notice._count.projects || 0} inscritos</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex items-center gap-3 self-start md:self-center border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0 w-full md:w-auto justify-end">
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full md:w-auto justify-center text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10"
+                                                onClick={() => navigate(`/admin/editais/${notice.id}`)}
+                                            >
+                                                <Edit size={18} className="mr-2" /> Gerenciar
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })
+                            );
+                        })}
+                    </div>
                 )}
             </div>
         </div>

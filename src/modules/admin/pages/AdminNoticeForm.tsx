@@ -242,48 +242,48 @@ export const AdminNoticeForm: React.FC = () => {
                 </div>
             </div>
 
-            {/* Stepper */}
-            <div className="flex items-center justify-between relative mb-12 px-4">
-                {/* Progress Bar Background */}
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -z-10" />
+            {/* Horizontal Premium Stepper */}
+            <div className="mb-10 px-4">
+                <div className="flex justify-between relative">
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-white/5 -z-10 rounded-full" />
+                    <div
+                        className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-gold to-yellow-600 transition-all duration-500 ease-out -z-10 rounded-full shadow-[0_0_15px_rgba(212,175,55,0.4)]"
+                        style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+                    />
 
-                {/* Progress Bar Fill */}
-                <div
-                    className="absolute top-1/2 left-0 h-0.5 bg-gold transition-all duration-300 -z-10"
-                    style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
-                />
+                    {STEPS.map((step, index) => {
+                        const isActive = index === currentStep;
+                        const isCompleted = index < currentStep;
+                        const Icon = step.icon;
 
-                {STEPS.map((step, index) => {
-                    const isActive = index === currentStep;
-                    const isCompleted = index < currentStep;
-                    const Icon = step.icon;
-
-                    return (
-                        <div
-                            key={step.id}
-                            className={`flex flex-col items-center relative z-10 cursor-pointer group ${isActive ? 'text-gold' : isCompleted ? 'text-white' : 'text-zinc-500'
-                                }`}
-                            onClick={() => {
-                                if (isEdit || index < currentStep) {
-                                    setDirection(index > currentStep ? 1 : -1);
-                                    setCurrentStep(index);
-                                }
-                            }}
-                        >
-                            <div className={`
-                                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 mb-3
-                                ${isActive ? 'bg-gold text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]' :
-                                    isCompleted ? 'bg-zinc-800 text-white border border-white/20' :
-                                        'bg-zinc-900 text-zinc-600 border border-white/10 group-hover:border-white/20'}
-                            `}>
-                                {isCompleted ? <CheckCircle size={20} /> : <Icon size={20} />}
+                        return (
+                            <div
+                                key={step.id}
+                                className={`flex flex-col items-center relative z-10 cursor-pointer group`}
+                                onClick={() => {
+                                    if (isEdit || index < currentStep) {
+                                        setDirection(index > currentStep ? 1 : -1);
+                                        setCurrentStep(index);
+                                    }
+                                }}
+                            >
+                                <div className={`
+                                    w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 mb-3 border-2
+                                    ${isActive
+                                        ? 'bg-gold text-black border-gold shadow-[0_0_25px_rgba(212,175,55,0.5)] scale-110 rotate-3'
+                                        : isCompleted
+                                            ? 'bg-zinc-800 text-gold border-gold/50'
+                                            : 'bg-zinc-950 text-zinc-600 border-white/10 group-hover:border-white/30'}
+                                `}>
+                                    {isCompleted ? <CheckCircle size={24} /> : <Icon size={24} />}
+                                </div>
+                                <span className={`text-sm font-bold uppercase tracking-wider transition-colors ${isActive ? 'text-gold' : isCompleted ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                                    {step.title}
+                                </span>
                             </div>
-                            <span className="text-sm font-medium transition-colors">
-                                {step.title}
-                            </span>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
 
             {/* Content Container */}
