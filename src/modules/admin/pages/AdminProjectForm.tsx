@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useToast } from "../../../contexts/ToastContext";
 import { Input, Textarea, Button, Select } from "../../../components/ui";
-import "../../master/pages/MasterShared.css"; // Reuse the premium styles
+import "./AdminShared.css";
 
 const STATUS_OPTIONS = [
     { value: "DRAFT", label: "Rascunho", icon: <Clock size={16} />, color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/20" },
@@ -177,103 +177,99 @@ export const AdminProjectForm: React.FC = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto pb-24 animate-fadeIn">
+        <div className="admin-form-container">
             {/* HERO SECTION */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-8 border-b border-white/10 gap-4">
-                <div className="flex items-center gap-4">
-                    <Button
-                        variant="ghost"
-                        onClick={() => navigate('/admin/projetos')}
-                        className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
-                    >
-                        <ArrowLeft size={20} />
-                    </Button>
-                    <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
-                                {isEdit ? 'Editar Projeto' : 'Novo Projeto'}
-                            </h1>
-                            {isEdit && (
-                                <div className="px-2 py-0.5 bg-gold/10 text-gold text-xs font-bold rounded uppercase tracking-wider border border-gold/20">
-                                    Admin Mode
-                                </div>
-                            )}
-                        </div>
-                        <p className="text-zinc-400 text-sm font-medium mt-1">Gestão de propostas culturais e editais.</p>
-                    </div>
+            <div className="admin-wizard-header">
+                <Button
+                    variant="ghost"
+                    onClick={() => navigate('/admin/projetos')}
+                    className="p-0 text-zinc-400 hover:text-white"
+                >
+                    <ArrowLeft size={20} />
+                </Button>
+                <div>
+                    <h1 className="admin-wizard-title">
+                        {isEdit ? 'Editar Projeto' : 'Novo Projeto'}
+                    </h1>
+                    <p className="admin-wizard-subtitle">Gestão de propostas culturais e editais.</p>
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-8 pb-24">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                     {/* LEFT COLUMN - MAIN CONTENT */}
                     <div className="lg:col-span-2 space-y-8">
 
                         {/* BASIC INFO CARD */}
-                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-                            <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                        <div className="admin-section">
+                            <h3 className="admin-section-title">
                                 <FileText className="text-gold" size={20} /> Informações do Projeto
                             </h3>
 
-                            <Input
-                                label="Título do Projeto *"
-                                value={formData.title}
-                                onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="Ex: Festival de Jazz de Betim 2024"
-                                required
-                                className="h-12 text-lg font-bold bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                            />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Select
-                                    label="Categoria Cultural"
-                                    value={formData.culturalCategory}
-                                    onChange={e => setFormData({ ...formData, culturalCategory: e.target.value })}
-                                    className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                >
-                                    <option value="">Selecione...</option>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
-                                    ))}
-                                    {/* Fallback for hardcoded if needed, or remove */}
-                                    {categories.length === 0 && CULTURAL_CATEGORIES.map(cat => (
-                                        <option key={cat} value={cat}>{cat}</option>
-                                    ))}
-                                </Select>
-
+                            <div className="form-group">
                                 <Input
-                                    label="Região de Atuação"
-                                    value={formData.targetRegion}
-                                    onChange={e => setFormData({ ...formData, targetRegion: e.target.value })}
-                                    placeholder="Ex: Centro, Zona Norte"
-                                    leftIcon={<LayoutList size={16} />}
-                                    className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
+                                    label="Título do Projeto *"
+                                    value={formData.title}
+                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                    placeholder="Ex: Festival de Jazz de Betim 2024"
+                                    required
+                                    className="h-12 text-lg font-bold"
                                 />
                             </div>
 
-                            <Textarea
-                                label="Resumo Executivo"
-                                rows={3}
-                                value={formData.summary}
-                                onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                                placeholder="Breve resumo para listagem pública..."
-                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                            />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="form-group">
+                                    <Select
+                                        label="Categoria Cultural"
+                                        value={formData.culturalCategory}
+                                        onChange={e => setFormData({ ...formData, culturalCategory: e.target.value })}
+                                    >
+                                        <option value="">Selecione...</option>
+                                        {categories.map(cat => (
+                                            <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                        ))}
+                                        {categories.length === 0 && CULTURAL_CATEGORIES.map(cat => (
+                                            <option key={cat} value={cat}>{cat}</option>
+                                        ))}
+                                    </Select>
+                                </div>
 
-                            <Textarea
-                                label="Descrição Detalhada"
-                                rows={6}
-                                value={formData.description}
-                                onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                placeholder="Objetivos, metodologia, cronograma..."
-                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                            />
+                                <div className="form-group">
+                                    <Input
+                                        label="Região de Atuação"
+                                        value={formData.targetRegion}
+                                        onChange={e => setFormData({ ...formData, targetRegion: e.target.value })}
+                                        placeholder="Ex: Centro, Zona Norte"
+                                        leftIcon={<LayoutList size={16} />}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <Textarea
+                                    label="Resumo Executivo"
+                                    rows={3}
+                                    value={formData.summary}
+                                    onChange={e => setFormData({ ...formData, summary: e.target.value })}
+                                    placeholder="Breve resumo para listagem pública..."
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <Textarea
+                                    label="Descrição Detalhada"
+                                    rows={6}
+                                    value={formData.description}
+                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                    placeholder="Objetivos, metodologia, cronograma..."
+                                />
+                            </div>
                         </div>
 
                         {/* ACCESSIBILITY CARD */}
-                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8">
-                            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <div className="admin-section">
+                            <h3 className="admin-section-title">
                                 <Accessibility className="text-gold" size={20} /> Plano de Acessibilidade
                             </h3>
 
@@ -329,24 +325,25 @@ export const AdminProjectForm: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <Textarea
-                                        label="Detalhamento da Acessibilidade"
-                                        rows={3}
-                                        value={formData.accessibilityPlan.description}
-                                        onChange={e => setFormData({
-                                            ...formData,
-                                            accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
-                                        })}
-                                        placeholder="Descreva como os recursos serão implementados..."
-                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                    />
+                                    <div className="form-group">
+                                        <Textarea
+                                            label="Detalhamento da Acessibilidade"
+                                            rows={3}
+                                            value={formData.accessibilityPlan.description}
+                                            onChange={e => setFormData({
+                                                ...formData,
+                                                accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
+                                            })}
+                                            placeholder="Descreva como os recursos serão implementados..."
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </div>
 
                         {/* ACCOUNTABILITY FILES */}
-                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8">
-                            <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                        <div className="admin-section">
+                            <h3 className="admin-section-title">
                                 <FileText className="text-gold" size={20} /> Prestação de Contas
                             </h3>
 
@@ -390,8 +387,8 @@ export const AdminProjectForm: React.FC = () => {
                     <div className="space-y-6">
 
                         {/* STATUS CARD */}
-                        <div className="bg-zinc-900/80 border border-white/10 rounded-3xl p-6 shadow-xl backdrop-blur-xl">
-                            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <div className="admin-section shadow-xl backdrop-blur-xl">
+                            <h3 className="admin-section-title">
                                 Status do Projeto
                             </h3>
                             <div className="space-y-4">
@@ -424,8 +421,8 @@ export const AdminProjectForm: React.FC = () => {
                         </div>
 
                         {/* NUMBERS CARD */}
-                        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 space-y-6">
-                            <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                        <div className="admin-section">
+                            <h3 className="admin-section-title">
                                 <DollarSign className="text-gold" size={20} /> Métricas & Edital
                             </h3>
 
@@ -445,43 +442,48 @@ export const AdminProjectForm: React.FC = () => {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Input
-                                        label="R$ Solicitado"
-                                        type="number"
-                                        value={formData.requestedBudget}
-                                        onChange={e => setFormData({ ...formData, requestedBudget: e.target.value })}
-                                        placeholder="0.00"
-                                        className="font-mono text-sm bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                    />
-                                    <Input
-                                        label="R$ Aprovado"
-                                        type="number"
-                                        value={formData.approvedBudget}
-                                        onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
-                                        placeholder="0.00"
-                                        className="font-mono text-sm bg-zinc-900/50 border-green-500/30 text-white focus:border-green-500"
-                                    />
+                                    <div className="form-group">
+                                        <Input
+                                            label="R$ Solicitado"
+                                            type="number"
+                                            value={formData.requestedBudget}
+                                            onChange={e => setFormData({ ...formData, requestedBudget: e.target.value })}
+                                            placeholder="0.00"
+                                            className="font-mono text-sm"
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <Input
+                                            label="R$ Aprovado"
+                                            type="number"
+                                            value={formData.approvedBudget}
+                                            onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
+                                            placeholder="0.00"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="h-px bg-white/10"></div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Input
-                                        label="Público Previsto"
-                                        type="number"
-                                        value={formData.expectedAudience}
-                                        onChange={e => setFormData({ ...formData, expectedAudience: e.target.value })}
-                                        leftIcon={<Users size={14} />}
-                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                    />
-                                    <Input
-                                        label="Público Real"
-                                        type="number"
-                                        value={formData.actualAudience}
-                                        onChange={e => setFormData({ ...formData, actualAudience: e.target.value })}
-                                        leftIcon={<Users size={14} />}
-                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                    />
+                                    <div className="form-group">
+                                        <Input
+                                            label="Público Previsto"
+                                            type="number"
+                                            value={formData.expectedAudience}
+                                            onChange={e => setFormData({ ...formData, expectedAudience: e.target.value })}
+                                            leftIcon={<Users size={14} />}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <Input
+                                            label="Público Real"
+                                            type="number"
+                                            value={formData.actualAudience}
+                                            onChange={e => setFormData({ ...formData, actualAudience: e.target.value })}
+                                            leftIcon={<Users size={14} />}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -490,13 +492,13 @@ export const AdminProjectForm: React.FC = () => {
                 </div>
 
                 {/* FLOATING ACTION BAR */}
-                <div className="fixed bottom-6 left-0 right-0 z-50 pointer-events-none px-4">
-                    <div className="max-w-4xl mx-auto bg-zinc-900/90 border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center justify-between shadow-2xl backdrop-blur-xl pointer-events-auto">
+                <div className="admin-wizard-footer">
+                    <div className="admin-wizard-footer-inner">
                         <Button
                             variant="ghost"
                             type="button"
                             onClick={() => navigate('/admin/projetos')}
-                            className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-white/5"
+                            className="text-zinc-400 hover:text-white"
                         >
                             Cancelar
                         </Button>
@@ -504,7 +506,7 @@ export const AdminProjectForm: React.FC = () => {
                             <Button
                                 type="submit"
                                 disabled={saving}
-                                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-gold/20 bg-gold hover:bg-gold/90 text-black border-none"
+                                className="btn-primary"
                                 leftIcon={saving ? undefined : <Save size={18} />}
                             >
                                 {saving ? 'Salvando...' : 'Salvar Projeto'}

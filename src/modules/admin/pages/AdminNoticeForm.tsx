@@ -226,17 +226,17 @@ export const AdminNoticeForm: React.FC = () => {
     }
 
     return (
-        <div className="max-w-5xl mx-auto pb-24 animate-fadeIn">
+        <div className="admin-form-container">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
+            <div className="admin-wizard-header">
                 <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="p-0 hover:bg-transparent text-zinc-400 hover:text-white transition-colors">
                     <ArrowLeft size={24} />
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+                    <h1 className="admin-wizard-title">
                         {isEdit ? "Editar Edital" : "Novo Edital"}
                     </h1>
-                    <p className="text-zinc-400 mt-1">
+                    <p className="admin-wizard-subtitle">
                         Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}
                     </p>
                 </div>
@@ -301,97 +301,101 @@ export const AdminNoticeForm: React.FC = () => {
                     >
                         {/* STEP 0: DADOS BÁSICOS */}
                         {currentStep === 0 && (
-                            <div className="space-y-6">
+                            <div className="admin-section space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="md:col-span-1">
+                                    <div className="md:col-span-1 form-group">
                                         <Input
                                             label="Título do Edital *"
                                             value={formData.title}
                                             onChange={e => setFormData({ ...formData, title: e.target.value })}
                                             placeholder="Ex: Edital de Fomento à Cultura 2024"
                                             required
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
 
-                                    <Select
-                                        label="Status Inicial"
-                                        value={formData.status}
-                                        onChange={e => setFormData({ ...formData, status: e.target.value })}
-                                        className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                    >
-                                        {STATUS_OPTIONS.map(opt => (
-                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                        ))}
-                                    </Select>
+                                    <div className="form-group">
+                                        <Select
+                                            label="Status Inicial"
+                                            value={formData.status}
+                                            onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                        >
+                                            {STATUS_OPTIONS.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </Select>
+                                    </div>
 
-                                    <div className="md:col-span-2">
+                                    <div className="md:col-span-2 form-group">
                                         <Input
                                             label="Link do Documento (PDF)"
                                             type="url"
                                             value={formData.documentUrl}
                                             onChange={e => setFormData({ ...formData, documentUrl: e.target.value })}
                                             placeholder="https://exemplo.com/edital.pdf"
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                         />
                                     </div>
                                 </div>
 
-                                <Textarea
-                                    label="Descrição Completa"
-                                    rows={6}
-                                    value={formData.description}
-                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Descreva os objetivos, público-alvo e regras do edital..."
-                                    className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                />
+                                <div className="form-group">
+                                    <Textarea
+                                        label="Descrição Completa"
+                                        rows={6}
+                                        value={formData.description}
+                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Descreva os objetivos, público-alvo e regras do edital..."
+                                    />
+                                </div>
                             </div>
                         )}
 
                         {/* STEP 1: CRONOGRAMA */}
                         {currentStep === 1 && (
                             <div className="space-y-6">
-                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-                                    <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                                <div className="admin-section">
+                                    <h3 className="admin-section-title">
                                         <MousePointerClick size={20} className="text-gold" /> Período de Inscrição
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <Input
-                                            label="Abertura das Inscrições *"
-                                            type="date"
-                                            value={formData.inscriptionStart}
-                                            onChange={e => setFormData({ ...formData, inscriptionStart: e.target.value })}
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                        />
-                                        <Input
-                                            label="Encerramento das Inscrições *"
-                                            type="date"
-                                            value={formData.inscriptionEnd}
-                                            onChange={e => setFormData({ ...formData, inscriptionEnd: e.target.value })}
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                        />
+                                        <div className="form-group">
+                                            <Input
+                                                label="Abertura das Inscrições *"
+                                                type="date"
+                                                value={formData.inscriptionStart}
+                                                onChange={e => setFormData({ ...formData, inscriptionStart: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <Input
+                                                label="Encerramento das Inscrições *"
+                                                type="date"
+                                                value={formData.inscriptionEnd}
+                                                onChange={e => setFormData({ ...formData, inscriptionEnd: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-                                    <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                                <div className="admin-section">
+                                    <h3 className="admin-section-title">
                                         <Calendar size={20} className="text-gold" /> Execução e Resultados
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <Input
-                                            label="Divulgação dos Resultados"
-                                            type="date"
-                                            value={formData.resultsDate}
-                                            onChange={e => setFormData({ ...formData, resultsDate: e.target.value })}
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                        />
-                                        <Input
-                                            label="Prazo Final de Execução"
-                                            type="date"
-                                            value={formData.executionEnd}
-                                            onChange={e => setFormData({ ...formData, executionEnd: e.target.value })}
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                        />
+                                        <div className="form-group">
+                                            <Input
+                                                label="Divulgação dos Resultados"
+                                                type="date"
+                                                value={formData.resultsDate}
+                                                onChange={e => setFormData({ ...formData, resultsDate: e.target.value })}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <Input
+                                                label="Prazo Final de Execução"
+                                                type="date"
+                                                value={formData.executionEnd}
+                                                onChange={e => setFormData({ ...formData, executionEnd: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -402,34 +406,36 @@ export const AdminNoticeForm: React.FC = () => {
                             <div className="space-y-6">
                                 {/* Orçamento */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-                                        <h3 className="text-lg font-semibold text-white mb-4">Orçamento Geral</h3>
-                                        <Input
-                                            label="Valor Total do Edital (R$)"
-                                            type="number"
-                                            step="0.01"
-                                            value={formData.totalBudget}
-                                            onChange={e => setFormData({ ...formData, totalBudget: e.target.value })}
-                                            placeholder="500000.00"
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                        />
+                                    <div className="admin-section">
+                                        <h3 className="admin-section-title">Orçamento Geral</h3>
+                                        <div className="form-group">
+                                            <Input
+                                                label="Valor Total do Edital (R$)"
+                                                type="number"
+                                                step="0.01"
+                                                value={formData.totalBudget}
+                                                onChange={e => setFormData({ ...formData, totalBudget: e.target.value })}
+                                                placeholder="500000.00"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-                                        <h3 className="text-lg font-semibold text-white mb-4">Limite por Projeto</h3>
-                                        <Input
-                                            label="Teto Máximo (R$)"
-                                            type="number"
-                                            step="0.01"
-                                            value={formData.maxPerProject}
-                                            onChange={e => setFormData({ ...formData, maxPerProject: e.target.value })}
-                                            placeholder="50000.00"
-                                            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-                                        />
+                                    <div className="admin-section">
+                                        <h3 className="admin-section-title">Limite por Projeto</h3>
+                                        <div className="form-group">
+                                            <Input
+                                                label="Teto Máximo (R$)"
+                                                type="number"
+                                                step="0.01"
+                                                value={formData.maxPerProject}
+                                                onChange={e => setFormData({ ...formData, maxPerProject: e.target.value })}
+                                                placeholder="50000.00"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Categorias */}
-                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                <div className="admin-section">
                                     <label className="text-base font-medium text-white mb-4 block flex items-center gap-2">
                                         <Tag size={16} className="text-gold" /> Categorias Culturais
                                     </label>
@@ -457,24 +463,23 @@ export const AdminNoticeForm: React.FC = () => {
                                 </div>
 
                                 {/* Regiões */}
-                                <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
+                                <div className="admin-section">
                                     <label className="text-base font-medium text-white mb-4 block flex items-center gap-2">
                                         <MapPin size={16} className="text-gold" /> Regiões Alvo
                                     </label>
                                     <div className="flex gap-2 mb-4">
-                                        <div className="flex-1">
+                                        <div className="flex-1 form-group">
                                             <Input
                                                 value={newRegion}
                                                 onChange={e => setNewRegion(e.target.value)}
                                                 placeholder="Ex: Zona Norte, Centro..."
                                                 onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addRegion())}
-                                                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                                             />
                                         </div>
                                         <Button
                                             type="button"
                                             onClick={addRegion}
-                                            className="bg-zinc-800 hover:bg-zinc-700 text-white"
+                                            className="btn-secondary"
                                         >
                                             <Plus size={18} />
                                         </Button>
@@ -510,8 +515,8 @@ export const AdminNoticeForm: React.FC = () => {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6 space-y-4">
-                                        <h3 className="text-lg font-semibold text-white">Resumo</h3>
+                                    <div className="admin-section space-y-4">
+                                        <h3 className="admin-section-title">Resumo</h3>
                                         <div className="space-y-3">
                                             <div className="flex justify-between items-center py-2 border-b border-white/5">
                                                 <span className="text-zinc-400">Título:</span>
@@ -532,8 +537,8 @@ export const AdminNoticeForm: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-zinc-900/50 border border-white/5 rounded-xl p-6">
-                                        <h3 className="text-lg font-semibold text-white mb-4">Configurações Finais</h3>
+                                    <div className="admin-section">
+                                        <h3 className="admin-section-title mb-4">Configurações Finais</h3>
 
                                         <div
                                             onClick={() => setFormData(prev => ({ ...prev, requiresAccessibilityPlan: !prev.requiresAccessibilityPlan }))}
@@ -562,12 +567,12 @@ export const AdminNoticeForm: React.FC = () => {
             </div>
 
             {/* Footer Navigation */}
-            <div className="fixed bottom-0 left-0 right-0 p-6 bg-zinc-950/80 backdrop-blur-xl border-t border-white/10 z-40">
-                <div className="max-w-5xl mx-auto flex justify-between items-center">
+            <div className="admin-wizard-footer">
+                <div className="admin-wizard-footer-inner">
                     <Button
                         variant="ghost"
                         onClick={currentStep === 0 ? () => navigate("/admin/editais") : prevStep}
-                        className="text-zinc-400 hover:text-white hover:bg-white/5"
+                        className="text-zinc-400 hover:text-white"
                     >
                         {currentStep === 0 ? "Cancelar" : "Voltar"}
                     </Button>
@@ -577,7 +582,7 @@ export const AdminNoticeForm: React.FC = () => {
                             <Button
                                 onClick={handleSubmit}
                                 isLoading={saving}
-                                className="bg-gold hover:bg-gold/90 text-black font-medium px-8"
+                                className="btn-primary"
                                 leftIcon={<Save size={18} />}
                             >
                                 {isEdit ? "Salvar Alterações" : "Publicar Edital"}
@@ -585,7 +590,7 @@ export const AdminNoticeForm: React.FC = () => {
                         ) : (
                             <Button
                                 onClick={nextStep}
-                                className="bg-gold hover:bg-gold/90 text-black font-medium px-8"
+                                className="btn-primary"
                                 rightIcon={<ChevronRight size={18} />}
                             >
                                 Próximo
