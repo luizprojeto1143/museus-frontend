@@ -4,7 +4,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button, Input } from "../../../components/ui";
-import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2, CheckCircle } from "lucide-react";
 
 type Notice = {
     id: string;
