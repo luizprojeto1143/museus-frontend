@@ -271,7 +271,7 @@ export const AdminEventForm: React.FC = () => {
         </Button>
         <div>
           <h1 className="admin-wizard-title">
-            {isEdit ? "Editar Evento" : "Novo Evento (v2)"}
+            {isEdit ? "Editar Evento" : "Novo Evento"}
           </h1>
           <p className="admin-wizard-subtitle">
             Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}

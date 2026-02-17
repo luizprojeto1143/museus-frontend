@@ -73,7 +73,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
     { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
     // Municipal Management
-    { to: "/admin/editais", label: "Editais", icon: "📋", show: features?.featureEditais ?? false },
+    { to: "/admin/editais", label: "Editais", icon: "📋", show: true },
     { to: "/admin/projetos", label: "Projetos Culturais", icon: "🎨", show: features?.featureProjects ?? false },
     { to: "/admin/prestadores", label: "Prestadores", icon: "👷", show: features?.featureProviders ?? false },
     { to: "/admin/acessibilidade-gestao", label: "Gestão Acessibilidade", icon: "♿", show: features?.featureAccessibilityMgmt ?? false },
