@@ -60,6 +60,7 @@ export const TenantForm: React.FC = () => {
   const [featureReviews, setFeatureReviews] = useState(true);
   const [featureGuestbook, setFeatureGuestbook] = useState(true);
   const [featureAccessibility, setFeatureAccessibility] = useState(true);
+  const [featureEditais, setFeatureEditais] = useState(false);
   const [featureMinigames, setFeatureMinigames] = useState(false);
 
   const [saving, setSaving] = useState(false);
@@ -91,6 +92,7 @@ export const TenantForm: React.FC = () => {
       setFeatureReviews(data.featureReviews ?? true);
       setFeatureGuestbook(data.featureGuestbook ?? true);
       setFeatureAccessibility(data.featureAccessibility ?? true);
+      setFeatureEditais(data.featureEditais ?? false);
       setFeatureMinigames(data.featureMinigames ?? false);
 
       setTermsOfUse(data.termsOfUse || "");
@@ -191,6 +193,7 @@ export const TenantForm: React.FC = () => {
       featureReviews?: boolean;
       featureGuestbook?: boolean;
       featureAccessibility?: boolean;
+      featureEditais?: boolean;
       featureMinigames?: boolean;
 
       termsOfUse?: string;
@@ -219,6 +222,7 @@ export const TenantForm: React.FC = () => {
       featureReviews,
       featureGuestbook,
       featureAccessibility,
+      featureEditais,
       featureMinigames,
 
       termsOfUse,
@@ -278,6 +282,7 @@ export const TenantForm: React.FC = () => {
       title: "Serviços e Eventos",
       items: [
         { label: "Eventos", state: featureEvents, setter: setFeatureEvents },
+        { label: "Editais (Gestão)", state: featureEditais, setter: setFeatureEditais, premium: true },
         { label: "Certificados", state: featureCertificates, setter: setFeatureCertificates },
         { label: "Acessibilidade", state: featureAccessibility, setter: setFeatureAccessibility },
       ]
