@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Clock, MapPin, Edit2, Trash2, CalendarRange, CheckCircle2, X, Plus } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Clock, MapPin, Edit2, Trash2, Plus, X } from "lucide-react";
 import { Button } from "../../../components/ui";
 import { useAuth } from "../../auth/AuthContext";
 
@@ -236,12 +236,13 @@ export const AdminCalendar: React.FC = () => {
             <div className="flex flex-col xl:flex-row gap-6 h-[calc(100vh-250px)] min-h-[600px]">
 
                 {/* --- CALENDAR GRID --- */}
+                {/* INLINE STYLES FORCED GRID to emulate Outlook perfectly and bypass Tailwind/CSS issues */}
                 <div className="flex-1 flex flex-col bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
 
                     {/* Weekday Header */}
-                    <div className="flex border-b border-zinc-800 bg-zinc-900">
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }} className="border-b border-zinc-800 bg-zinc-900">
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-                            <div key={day} className="flex-1 py-3 text-center text-xs font-bold uppercase tracking-wider text-zinc-400">
+                            <div key={day} className="py-3 text-center text-xs font-bold uppercase tracking-wider text-zinc-400 border-r border-zinc-800 last:border-r-0">
                                 {day}
                             </div>
                         ))}
@@ -253,7 +254,7 @@ export const AdminCalendar: React.FC = () => {
                             <Loader2 className="animate-spin text-gold" size={48} />
                         </div>
                     ) : (
-                        <div className="flex-1 flex flex-wrap content-start">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gridAutoRows: '1fr' }} className="flex-1 bg-zinc-950">
                             {calendarDays.map((date, idx) => {
                                 const dayBookings = getBookingsForDay(date);
                                 const currentMonth = isSameMonth(date);
@@ -265,10 +266,11 @@ export const AdminCalendar: React.FC = () => {
                                         key={idx}
                                         onClick={() => setSelectedDate(date)}
                                         className={`
-                                            relative w-[14.28%] min-h-[14.28%] border-r border-b border-zinc-800 p-2 cursor-pointer transition-colors
-                                            ${!currentMonth ? 'bg-zinc-950/20' : 'bg-zinc-950'}
+                                            relative border-r border-b border-zinc-800 p-2 cursor-pointer transition-colors
+                                            ${!currentMonth ? 'bg-zinc-950/20 opacity-40' : 'bg-transparent'}
                                             ${selected ? 'bg-gold/10' : 'hover:bg-zinc-900'}
                                         `}
+                                        style={{ minHeight: '120px' }}
                                     >
                                         {/* Day Number */}
                                         <div className="flex justify-between items-start mb-1">
