@@ -15,6 +15,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import { ArrowLeft, Save, Plus, GripVertical, X, Music, Video, ToggleLeft, ToggleRight, Map, CheckCircle2 } from "lucide-react";
 import { useTerminology } from "../../../hooks/useTerminology";
+import "./AdminShared.css";
 
 // Componente auxiliar para item ordenável
 function SortableItem({ id, title, onRemove }: { id: string; title: string; onRemove: () => void }) {
@@ -37,7 +38,7 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between p-4 mb-3 bg-zinc-900/50 border border-white/10 rounded-xl group hover:border-gold/50 transition-all cursor-grab active:cursor-grabbing backdrop-blur-sm"
+      className="flex items-center justify-between p-4 mb-3 bg-black/20 border border-white/10 rounded-xl group hover:border-gold/50 transition-all cursor-grab active:cursor-grabbing backdrop-blur-sm"
     >
       <div className="flex items-center gap-4">
         <GripVertical size={20} className="text-zinc-600 group-hover:text-gold transition-colors" />
@@ -190,72 +191,76 @@ export const AdminTrailForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-24 animate-fadeIn">
+    <div className="admin-form-container">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="admin-wizard-header">
         <Button
           variant="ghost"
           onClick={() => navigate("/admin/trilhas")}
-          className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
+          className="p-0 text-zinc-400 hover:text-white"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={24} />
         </Button>
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+          <h1 className="admin-wizard-title">
             {isEdit ? t("admin.trailForm.editTitle") : t("admin.trailForm.newTitle")}
           </h1>
-          <p className="text-zinc-400 text-sm font-medium mt-1">
+          <p className="admin-wizard-subtitle">
             Gerencie o roteiro e as obras desta trilha.
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <div className="admin-section">
+          <h2 className="admin-section-title">
             <Map className="text-gold" size={20} /> Informações Gerais
           </h2>
 
-          <Input
-            label={t("admin.trailForm.labels.name")}
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t("admin.trailForm.placeholders.name")}
-            required
-            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-          />
+          <div className="flex flex-col gap-4">
+            <div className="form-group">
+              <Input
+                label={t("admin.trailForm.labels.name")}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t("admin.trailForm.placeholders.name")}
+                required
+              />
+            </div>
 
-          <Textarea
-            label={t("admin.trailForm.labels.description")}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
-          />
+            <div className="form-group">
+              <Textarea
+                label={t("admin.trailForm.labels.description")}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
 
-          <div className="flex items-center gap-4 p-4 bg-zinc-900/50 rounded-xl border border-white/5 w-fit">
-            <button
-              type="button"
-              onClick={() => setActive(!active)}
-              className={`transition-colors ${active ? "text-gold" : "text-zinc-600"}`}
-            >
-              {active ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
-            </button>
-            <span className={`font-medium ${active ? "text-white" : "text-zinc-500"}`}>
-              {active ? "Trilha Ativa" : "Trilha Inativa"}
-            </span>
+            <div className="flex items-center gap-4 p-4 bg-black/20 rounded-xl border border-white/5 w-fit">
+              <button
+                type="button"
+                onClick={() => setActive(!active)}
+                className={`transition-colors ${active ? "text-gold" : "text-zinc-600"}`}
+              >
+                {active ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
+              </button>
+              <span className={`font-medium ${active ? "text-white" : "text-zinc-500"}`}>
+                {active ? "Trilha Ativa" : "Trilha Inativa"}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* MULTIMEDIA SECTION */}
-        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="admin-section">
+          <h3 className="admin-section-title">
             <Music size={20} className="text-gold" /> Mídia {term.trail === "Trilha" ? "da Trilha" : "do Roteiro"}
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-2">Áudio-Guia {term.trail === "Trilha" ? "da Trilha" : "do Roteiro"} (Arquivo)</label>
+            <div className="form-group">
+              <label className="form-label">Áudio-Guia {term.trail === "Trilha" ? "da Trilha" : "do Roteiro"} (Arquivo)</label>
               <div className="relative group">
                 <input
                   type="file"
@@ -269,6 +274,7 @@ export const AdminTrailForm: React.FC = () => {
                         file:bg-zinc-800 file:text-gold
                         file:cursor-pointer hover:file:bg-zinc-700
                         cursor-pointer
+                        bg-black/20 rounded-xl border border-white/5
                     "
                 />
               </div>
@@ -288,14 +294,13 @@ export const AdminTrailForm: React.FC = () => {
               </p>
             </div>
 
-            <div>
+            <div className="form-group">
               <Input
                 label="URL do Vídeo (MP4 ou YouTube)"
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
                 placeholder="https://youtube.com/watch?v=..."
                 leftIcon={<Video size={16} />}
-                className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
               />
               <p className="text-xs text-zinc-500 mt-2">
                 Vídeo de apresentação {term.trail === "Trilha" ? "da trilha" : "do roteiro"}.
@@ -304,10 +309,10 @@ export const AdminTrailForm: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-          <div className="flex justify-between items-end">
+        <div className="admin-section">
+          <div className="flex justify-between items-end mb-4">
             <div>
-              <h2 className="text-lg font-bold text-white mb-1">{t("admin.trailForm.labels.works")}</h2>
+              <h2 className="admin-section-title mb-1">{t("admin.trailForm.labels.works")}</h2>
               <p className="text-sm text-zinc-400">
                 Adicione e ordene as obras que farão parte desta trilha.
               </p>
@@ -317,12 +322,11 @@ export const AdminTrailForm: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 mb-4">
             <Select
               value={workToAdd}
               onChange={(e) => setWorkToAdd(e.target.value)}
               containerClassName="flex-1 mb-0"
-              className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
             >
               <option value="">{t("admin.trailForm.selectWork")}</option>
               {allWorks.map(w => (
@@ -332,14 +336,14 @@ export const AdminTrailForm: React.FC = () => {
             <Button
               type="button"
               onClick={handleAddWork}
-              className="bg-zinc-800 hover:bg-zinc-700 text-white"
+              className="btn-secondary"
               disabled={!workToAdd}
             >
               <Plus size={18} />
             </Button>
           </div>
 
-          <div className="bg-zinc-950/30 rounded-2xl border border-white/5 p-4 min-h-[300px]">
+          <div className="bg-black/20 rounded-2xl border border-white/5 p-4 min-h-[300px]">
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={selectedWorks} strategy={verticalListSortingStrategy}>
                 {selectedWorks.map((work) => (
@@ -366,27 +370,25 @@ export const AdminTrailForm: React.FC = () => {
         </div>
 
         {/* ACTION BAR */}
-        <div className="fixed bottom-6 left-0 right-0 z-50 pointer-events-none px-4">
-          <div className="max-w-4xl mx-auto bg-zinc-900/90 border border-white/10 p-2 pr-3 pl-4 rounded-2xl flex items-center justify-between shadow-2xl backdrop-blur-xl pointer-events-auto">
+        <div className="admin-wizard-footer">
+          <div className="admin-wizard-footer-inner">
             <Button
               variant="ghost"
               type="button"
               onClick={() => navigate("/admin/trilhas")}
-              className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-white/5"
+              className="text-zinc-400 hover:text-white"
               disabled={saving}
             >
               {t("common.cancel")}
             </Button>
-            <div className="flex items-center gap-3">
-              <Button
-                type="submit"
-                disabled={saving}
-                className="px-8 h-12 rounded-xl font-bold text-base shadow-lg shadow-gold/20 bg-gold hover:bg-gold/90 text-black border-none"
-                leftIcon={saving ? undefined : <Save size={18} />}
-              >
-                {saving ? 'Salvando...' : t("common.save")}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              disabled={saving}
+              className="btn-primary"
+              leftIcon={saving ? undefined : <Save size={18} />}
+            >
+              {saving ? 'Salvando...' : t("common.save")}
+            </Button>
           </div>
         </div>
       </form>
