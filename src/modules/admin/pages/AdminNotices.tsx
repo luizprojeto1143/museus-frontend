@@ -77,7 +77,7 @@ export const AdminNotices: React.FC = () => {
                         Editais & Fomento
                     </h1>
                     <p className="text-zinc-400 text-lg">
-                        Gerencie processos seletivos e editais de cultura.
+                        Gerencie processos seletivos e editais de cultura. <span className="text-xs text-zinc-600">(v2.0 Premium)</span>
                     </p>
                 </div>
                 <Link to="/admin/editais/novo">
