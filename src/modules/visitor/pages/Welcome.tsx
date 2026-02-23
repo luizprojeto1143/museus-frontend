@@ -42,7 +42,7 @@ export const Welcome: React.FC = () => {
       </button>
 
       <button
-        onClick={() => { enterAsGuest(); navigate("/home"); }}
+        onClick={() => navigate("/select-museum")}
         className="welcome-secondary-btn"
         style={{ marginTop: "0.75rem", borderColor: "#8B7355", color: "#c9b58c" }}
       >

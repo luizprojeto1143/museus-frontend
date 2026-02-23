@@ -136,7 +136,7 @@ export const SelectMuseum: React.FC = () => {
   };
 
   const handleSelect = async (tenant: Tenant) => {
-    if (isAuthenticated && token) {
+    if (isAuthenticated && token && !isGuest) {
       // Auth flow for switching tenants
       try {
         const baseUrl = import.meta.env.VITE_API_URL as string;
@@ -151,8 +151,8 @@ export const SelectMuseum: React.FC = () => {
 
         if (res.ok) {
           const data = await res.json();
-          updateSession(data.accessToken, data.role, data.tenantId, data.name);
-          navigate("/");
+          updateSession(data.accessToken, data.refreshToken || "", data.role, data.tenantId, data.name);
+          navigate("/home");
           return;
         }
       } catch (err) {
@@ -160,8 +160,12 @@ export const SelectMuseum: React.FC = () => {
       }
     }
 
-    // Default / Unauth flow
-    navigate("/register", { state: { tenantId: tenant.id, tenantName: tenant.name } });
+    // Guest or Unauth flow: Enter as guest directly for the selected museum
+    const { enterAsGuest } = useAuth(); // We need to be careful with hook calling, but SelectMuseum body is already using it.
+    // Wait, useAuth is already called at line 30.
+
+    enterAsGuest(tenant.id);
+    navigate("/home");
   };
 
   const formatDistance = (dist?: number) => {

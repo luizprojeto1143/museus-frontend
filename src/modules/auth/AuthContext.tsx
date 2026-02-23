@@ -292,12 +292,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // window.location.href = "/login"; // Opcional
   };
 
-  const enterAsGuest = () => {
+  const enterAsGuest = (selectedTenantId?: string | null) => {
     const guestToken = "guest-anonymous-token";
     setToken(guestToken);
     setRefreshToken("");
     setRole("visitor");
-    setTenantId(null);
+    setTenantId(selectedTenantId ?? null);
     setTenantType("MUSEUM");
     setEmail(null);
     setName("Visitante");
@@ -308,7 +308,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       token: guestToken,
       refreshToken: "",
       role: "visitor",
-      tenantId: null,
+      tenantId: selectedTenantId ?? null,
       tenantType: "MUSEUM",
       email: null,
       name: "Visitante",
