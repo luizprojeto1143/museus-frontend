@@ -208,70 +208,92 @@ export const AdminCalendar: React.FC = () => {
     };
 
     return (
-        <div className="max-w-[1600px] mx-auto p-6 animate-fadeIn pb-24">
+    return (
+        <div className="animate-fadeIn" style={{ paddingBottom: "5rem" }}>
 
             {/* --- HEADER --- */}
-            <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
-                <div className="flex items-center gap-5">
-                    <div className="w-16 h-16 bg-gold/10 border border-gold/20 rounded-2xl flex items-center justify-center shadow-lg shadow-gold/5">
-                        <CalendarIcon className="text-gold" size={32} />
-                    </div>
-                    <div>
-                        <h1 className="text-4xl font-black text-white tracking-tight">
-                            Agenda de <span className="text-gold">Espaços</span>
-                        </h1>
-                        <p className="text-zinc-500 text-sm font-medium">Gestão integrada da ocupação e horários dos ambientes culturais.</p>
+            <div style={{ marginBottom: "3rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.5rem" }}>
+                        <div style={{
+                            width: "56px", height: "56px", background: "rgba(212,175,55,0.1)",
+                            border: "1px solid rgba(212,175,55,0.2)", borderRadius: "16px",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            boxShadow: "0 8px 32px rgba(212,175,55,0.1)"
+                        }}>
+                            <CalendarIcon size={28} style={{ color: "var(--accent-gold)" }} />
+                        </div>
+                        <div>
+                            <h1 className="section-title" style={{ margin: 0, fontSize: "2.5rem" }}>
+                                Agenda de <span style={{ color: "var(--accent-gold)" }}>Espaços</span>
+                            </h1>
+                            <p className="section-subtitle" style={{ margin: 0, opacity: 0.8 }}>
+                                Gestão centralizada da ocupação e horários dos ambientes do museu.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3 bg-zinc-900/50 backdrop-blur-md border border-white/5 p-1.5 rounded-2xl shadow-2xl">
+                {/* Date Navigation */}
+                <div style={{
+                    display: "flex", alignItems: "center", gap: "1.5rem",
+                    padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.03)",
+                    border: "1px solid var(--border-subtle)", borderRadius: "1.25rem",
+                    backdropFilter: "blur(12px)"
+                }}>
                     <Button
                         variant="ghost"
-                        className="h-10 w-10 p-0 hover:bg-gold/10 hover:text-gold rounded-xl transition-all"
                         onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}
+                        style={{ padding: "0.5rem", borderRadius: "10px" }}
                     >
                         <ChevronLeft size={20} />
                     </Button>
-                    <div className="px-6 text-center">
-                        <span className="text-lg font-bold text-white capitalize block leading-tight">
+                    <div style={{ textAlign: "center", minWidth: "140px" }}>
+                        <span style={{ display: "block", fontSize: "1.1rem", fontWeight: 800, color: "white", textTransform: "capitalize" }}>
                             {currentDate.toLocaleDateString("pt-BR", { month: "long" })}
                         </span>
-                        <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest leading-none">
+                        <span style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, color: "var(--fg-muted)", textTransform: "uppercase", letterSpacing: "0.2em", marginTop: "2px" }}>
                             {currentDate.getFullYear()}
                         </span>
                     </div>
                     <Button
                         variant="ghost"
-                        className="h-10 w-10 p-0 hover:bg-gold/10 hover:text-gold rounded-xl transition-all"
                         onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}
+                        style={{ padding: "0.5rem", borderRadius: "10px" }}
                     >
                         <ChevronRight size={20} />
                     </Button>
                 </div>
             </div>
 
-            <div className="flex flex-col xl:flex-row gap-8 h-[calc(100vh-280px)] min-h-[650px]">
+            <div style={{ display: "flex", gap: "2rem", height: "calc(100vh - 320px)", minHeight: "650px" }}>
 
-                {/* --- CALENDAR GRID --- */}
-                <div className="flex-1 flex flex-col bg-zinc-900/40 backdrop-blur-sm border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
-
-                    {/* Weekday Header */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }} className="border-b border-white/5 bg-zinc-900/60">
+                {/* --- CALENDAR MAIN GRID --- */}
+                <div className="card" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                    {/* Day Names Row */}
+                    <div style={{
+                        display: "grid", gridTemplateColumns: "repeat(7, 1fr)",
+                        background: "rgba(212,175,55,0.05)", borderBottom: "1px solid var(--border-subtle)"
+                    }}>
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-                            <div key={day} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 border-r border-white/5 last:border-r-0">
+                            <div key={day} style={{
+                                padding: "1.25rem 0.5rem", textAlign: "center", fontSize: "0.75rem",
+                                fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em",
+                                color: "var(--fg-muted)"
+                            }}>
                                 {day}
                             </div>
                         ))}
                     </div>
 
-                    {/* Days Grid */}
-                    {loading ? (
-                        <div className="flex-1 flex items-center justify-center">
-                            <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                    ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gridAutoRows: '1fr' }} className="flex-1 bg-zinc-950/20">
-                            {calendarDays.map((date, idx) => {
+                    {/* Scrollable Grid Content */}
+                    <div style={{ flex: 1, overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoRows: "minmax(120px, 1fr)" }}>
+                        {loading ? (
+                            <div style={{ gridColumn: "span 7", display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+                                <div className="spinner"></div>
+                            </div>
+                        ) : (
+                            calendarDays.map((date, idx) => {
                                 const dayBookings = getBookingsForDay(date);
                                 const currentMonth = isSameMonth(date);
                                 const today = isToday(date);
@@ -281,223 +303,239 @@ export const AdminCalendar: React.FC = () => {
                                     <div
                                         key={idx}
                                         onClick={() => setSelectedDate(date)}
-                                        className={`
-                                            relative border-r border-b border-white/5 p-3 cursor-pointer transition-all duration-300 group/day
-                                            ${!currentMonth ? 'bg-zinc-950/40 opacity-30 hover:opacity-100' : 'bg-transparent'}
-                                            ${selected ? 'bg-gold/5' : 'hover:bg-white/[0.02]'}
-                                        `}
-                                        style={{ minHeight: '120px' }}
+                                        style={{
+                                            padding: "0.75rem", cursor: "pointer",
+                                            borderRight: "1px solid var(--border-subtle)",
+                                            borderBottom: "1px solid var(--border-subtle)",
+                                            background: selected ? "rgba(212,175,55,0.08)" : "transparent",
+                                            opacity: currentMonth ? 1 : 0.3,
+                                            transition: "all 0.3s ease",
+                                            position: "relative"
+                                        }}
+                                        className="calendar-cell-hover"
                                     >
-                                        {/* Day Number */}
-                                        <div className="flex justify-between items-start mb-2">
-                                            <span className={`
-                                                w-8 h-8 flex items-center justify-center rounded-xl text-sm font-black transition-all duration-300
-                                                ${today ? 'bg-gold text-black shadow-lg shadow-gold/20 scale-110' : currentMonth ? 'text-zinc-300 group-hover/day:text-gold' : 'text-zinc-600'}
-                                                ${selected && !today ? 'border border-gold text-gold' : ''}
-                                            `}>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                                            <span style={{
+                                                width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center",
+                                                borderRadius: "8px",
+                                                background: today ? "var(--accent-gold)" : "transparent",
+                                                color: today ? "black" : "white",
+                                                fontWeight: today ? 900 : 500,
+                                                fontSize: "0.9rem",
+                                                boxShadow: today ? "0 4px 12px rgba(212,175,55,0.4)" : "none"
+                                            }}>
                                                 {date.getDate()}
                                             </span>
                                             {dayBookings.length > 0 && currentMonth && (
-                                                <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></div>
+                                                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--accent-gold)", boxShadow: "0 0 10px var(--accent-gold)" }}></div>
                                             )}
                                         </div>
 
-                                        {/* Events Chips */}
-                                        <div className="flex flex-col gap-1.5 overflow-hidden">
-                                            {dayBookings.slice(0, 3).map((b, i) => (
-                                                <div key={i} className={`
-                                                    text-[10px] px-2 py-1 rounded-lg truncate border border-white/5
-                                                    ${today ? 'bg-black/40 text-gold font-bold' : 'bg-zinc-800/50 text-zinc-400 group-hover/day:border-gold/20 group-hover/day:text-zinc-300'}
-                                                `}>
-                                                    <span className="opacity-60 mr-1.5 font-medium italic">
-                                                        {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                                                    </span>
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                            {dayBookings.slice(0, 2).map((b, i) => (
+                                                <div key={i} style={{
+                                                    fontSize: "0.7rem", padding: "4px 8px", borderRadius: "6px",
+                                                    background: "rgba(255,255,255,0.03)", borderLeft: "3px solid var(--accent-gold)",
+                                                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--fg-muted)",
+                                                    display: "flex", alignItems: "center", gap: "4px"
+                                                }}>
+                                                    <span style={{ color: "var(--accent-gold)", fontWeight: 700 }}>{b.startTime?.split('T')[1].slice(0, 5)}</span>
                                                     {b.space?.name}
                                                 </div>
                                             ))}
-                                            {dayBookings.length > 3 && (
-                                                <span className="text-[9px] text-zinc-600 pl-2 font-bold uppercase tracking-wider">
-                                                    + {dayBookings.length - 3} ocupações
-                                                </span>
+                                            {dayBookings.length > 2 && (
+                                                <div style={{ fontSize: "0.65rem", color: "var(--fg-tertiary)", fontWeight: 700, paddingLeft: "8px", marginTop: "2px" }}>
+                                                    + {dayBookings.length - 2} reservas
+                                                </div>
                                             )}
                                         </div>
 
-                                        {/* Glow Effect */}
+                                        {/* Selected Indicator */}
                                         {selected && (
-                                            <div className="absolute inset-x-0 bottom-0 h-1 bg-gold shadow-[0_0_15px_rgba(212,175,55,0.5)] z-10" />
+                                            <div style={{
+                                                position: "absolute", bottom: 0, left: 0, right: 0, height: "3px",
+                                                background: "var(--accent-gold)", boxShadow: "0 0 15px var(--accent-gold)"
+                                            }}></div>
                                         )}
                                     </div>
                                 );
-                            })}
-                        </div>
-                    )}
-                </div>
-
-                {/* --- SIDEBAR DETAILS --- */}
-                <div className="w-full xl:w-[400px] bg-zinc-900/60 backdrop-blur-xl border border-white/5 rounded-3xl p-6 shadow-2xl flex flex-col h-full overflow-hidden">
-                    <div className="mb-6">
-                        <span className="text-[10px] font-black text-gold uppercase tracking-[0.3em] block mb-2 opacity-60">Programação do Dia</span>
-                        <h3 className="text-2xl font-black text-white capitalize">
-                            {selectedDate
-                                ? selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })
-                                : "Visão Detalhada"}
-                        </h3>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-3">
-                        {selectedDate ? (
-                            getBookingsForDay(selectedDate).length === 0 ? (
-                                <div className="text-center text-zinc-600 py-16 opacity-30 flex flex-col items-center">
-                                    <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
-                                        <CalendarIcon size={40} />
-                                    </div>
-                                    <p className="font-bold uppercase tracking-widest text-xs">Espaço Livre</p>
-                                </div>
-                            ) : (
-                                getBookingsForDay(selectedDate).map(b => (
-                                    <div key={b.id} className="group/card bg-zinc-950/40 hover:bg-zinc-950/60 border border-white/5 hover:border-gold/30 p-5 rounded-2xl transition-all duration-300 relative">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">{b.space?.type || 'Ambiente'}</span>
-                                                <span className="font-black text-white text-lg group-hover/card:text-gold transition-colors">{b.space?.name}</span>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => openEditModal(b)} className="p-2 bg-white/5 hover:bg-white/10 rounded-xl text-zinc-400 hover:text-white transition-all">
-                                                    <Edit2 size={16} />
-                                                </button>
-                                                <button onClick={() => handleDelete(b.id)} className="p-2 bg-white/5 hover:bg-red-500/10 rounded-xl text-zinc-400 hover:text-red-500 transition-all">
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded-xl text-sm font-black text-gold">
-                                                <Clock size={14} />
-                                                {b.startTime ? new Date(b.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                                            </div>
-                                            <div className="w-4 h-[1px] bg-zinc-800"></div>
-                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 border border-white/5 rounded-xl text-sm font-bold text-zinc-400">
-                                                <Clock size={14} />
-                                                {b.endTime ? new Date(b.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                                            </div>
-                                        </div>
-
-                                        {b.purpose && (
-                                            <div className="p-3 bg-black/30 rounded-xl border border-white/5 italic text-sm text-zinc-500 leading-relaxed">
-                                                <span className="text-gold/40 text-lg font-serif">"</span>
-                                                {b.purpose}
-                                                <span className="text-gold/40 text-lg font-serif ml-1">"</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))
-                            )
-                        ) : (
-                            <div className="text-center text-zinc-600 py-16">
-                                <p className="font-bold uppercase tracking-widest text-xs opacity-30">Selecione um dia no calendário</p>
-                            </div>
+                            })
                         )}
                     </div>
+                </div>
 
-                    <div className="pt-6 border-t border-white/5 mt-auto">
-                        <Button
-                            className="w-full bg-gold text-black hover:bg-white hover:scale-[1.02] transition-all duration-300 font-black h-14 rounded-2xl shadow-xl shadow-gold/10"
-                            disabled={!selectedDate}
-                            onClick={openNewModal}
-                        >
-                            <Plus size={20} className="mr-2" /> SOLICITAR RESERVA
-                        </Button>
+                {/* --- SIDEBAR: DAY DETAILS --- */}
+                <div style={{ width: "420px", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+
+                    {/* Action Button */}
+                    <Button
+                        className="btn-primary"
+                        style={{ height: "4.5rem", borderRadius: "1.25rem", fontSize: "1rem", fontWeight: 800, width: "100%" }}
+                        disabled={!selectedDate}
+                        onClick={openNewModal}
+                    >
+                        <Plus size={24} style={{ marginRight: "0.75rem" }} /> NOVA RESERVA
+                    </Button>
+
+                    {/* Details Card */}
+                    <div className="card" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                        <div style={{ padding: "1.5rem", borderBottom: "1px solid var(--border-subtle)", background: "rgba(212,175,55,0.03)" }}>
+                            <span style={{ display: "block", fontSize: "0.7rem", fontWeight: 800, color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "0.25rem" }}>
+                                Detalhes do Dia
+                            </span>
+                            <h3 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "white", textTransform: "capitalize" }}>
+                                {selectedDate ? selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Selecione uma data"}
+                            </h3>
+                        </div>
+
+                        <div style={{ flex: 1, padding: "1.5rem", overflowY: "auto", display: "flex", flexDirection: "column", gap: "1rem" }}>
+                            {selectedDate ? (
+                                getBookingsForDay(selectedDate).length > 0 ? (
+                                    getBookingsForDay(selectedDate).map(b => (
+                                        <div key={b.id} style={{
+                                            padding: "1.25rem", background: "rgba(255,255,255,0.02)",
+                                            border: "1px solid var(--border-subtle)", borderRadius: "1.25rem",
+                                            position: "relative", transition: "all 0.2s ease"
+                                        }} className="booking-card-hover">
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
+                                                <div>
+                                                    <span style={{ display: "block", fontSize: "0.65rem", fontWeight: 800, color: "var(--fg-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.25rem" }}>
+                                                        {b.space?.type || "Espaço"}
+                                                    </span>
+                                                    <h4 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 800, color: "white" }}>{b.space?.name}</h4>
+                                                </div>
+                                                <div style={{ display: "flex", gap: "0.5rem" }}>
+                                                    <button onClick={() => openEditModal(b)} style={{ padding: "0.5rem", borderRadius: "10px", background: "rgba(255,255,255,0.05)", border: "none", color: "var(--fg-muted)", cursor: "pointer" }}>
+                                                        <Edit2 size={16} />
+                                                    </button>
+                                                    <button onClick={() => handleDelete(b.id)} style={{ padding: "0.5rem", borderRadius: "10px", background: "rgba(239, 68, 68, 0.1)", border: "none", color: "#ef4444", cursor: "pointer" }}>
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginBottom: "1rem" }}>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-gold)" }}></div>
+                                                    <span style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--accent-gold)" }}>
+                                                        {b.startTime?.split('T')[1].slice(0, 5)} - {b.endTime?.split('T')[1].slice(0, 5)}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {b.purpose && (
+                                                <div style={{
+                                                    padding: "0.75rem", background: "rgba(0,0,0,0.2)",
+                                                    borderRadius: "0.75rem", fontSize: "0.85rem", color: "var(--fg-muted)",
+                                                    border: "1px solid rgba(255,255,255,0.02)", fontStyle: "italic"
+                                                }}>
+                                                    {b.purpose}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: 0.2, textAlign: "center", padding: "2rem" }}>
+                                        <CalendarIcon size={64} style={{ marginBottom: "1rem" }} />
+                                        <p style={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", fontSize: "0.8rem" }}>
+                                            Nenhuma reserva para este dia
+                                        </p>
+                                    </div>
+                                )
+                            ) : (
+                                <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: 0.2, textAlign: "center", padding: "2rem" }}>
+                                    <ChevronRight size={64} style={{ marginBottom: "1rem" }} />
+                                    <p style={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", fontSize: "0.8rem" }}>
+                                        Selecione uma data para ver os detalhes
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* --- MODAL --- */}
+            {/* --- MODAL: RESERVA --- */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-fadeIn p-4">
-                    <div className="bg-zinc-900 border border-white/10 w-full max-w-lg rounded-[2.5rem] p-10 shadow-3xl relative overflow-hidden">
-                        {/* Modal background decoration */}
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-
-                        <div className="flex justify-between items-center mb-8 relative z-10">
+                <div style={{
+                    position: "fixed", inset: 0, zIndex: 1000,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
+                    padding: "1rem"
+                }} className="animate-fadeIn">
+                    <div className="card" style={{ width: "100%", maxWidth: "550px", padding: "2.5rem", position: "relative" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2.5rem" }}>
                             <div>
-                                <span className="text-[10px] font-black text-gold uppercase tracking-[0.3em] block mb-1">Gerenciamento</span>
-                                <h2 className="text-3xl font-black text-white">
-                                    {editingId ? "Editar" : "Nova"} <span className="text-gold">Reserva</span>
+                                <h2 className="card-title" style={{ margin: 0, fontSize: "1.75rem" }}>
+                                    {editingId ? "Editar" : "Confirmar"} <span style={{ color: "var(--accent-gold)" }}>Reserva</span>
                                 </h2>
+                                <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--fg-muted)" }}>
+                                    {selectedDate?.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </p>
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-2xl text-zinc-400 hover:text-white transition-all">
-                                <X size={24} />
+                            <button onClick={() => setIsModalOpen(false)} style={{ background: "none", border: "none", color: "var(--fg-muted)", cursor: "pointer", padding: "0.5rem" }}>
+                                <X size={28} />
                             </button>
                         </div>
 
-                        <form onSubmit={handleSave} className="space-y-6 relative z-10">
-                            <div className="space-y-2">
-                                <label className="block text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">Ambiente Selecionado</label>
+                        <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+                            <div className="form-group" style={{ margin: 0 }}>
+                                <label className="form-label">Selecione o Ambiente</label>
                                 <select
-                                    className="w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white focus:border-gold/50 outline-none transition-all cursor-pointer appearance-none font-bold"
                                     value={formData.spaceId}
                                     onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
                                     required
+                                    style={{ width: "100%", height: "3.5rem" }}
                                 >
-                                    {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                    {spaces.map(s => <option key={s.id} value={s.id}>{s.name} ({s.type || 'Geral'})</option>)}
                                 </select>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">Horário de Início</label>
-                                    <div className="relative">
-                                        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-gold opacity-50" size={18} />
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
+                                <div className="form-group" style={{ margin: 0 }}>
+                                    <label className="form-label">Horário de Início</label>
+                                    <div style={{ position: "relative" }}>
+                                        <Clock size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--accent-gold)", opacity: 0.5 }} />
                                         <input
                                             type="time"
-                                            className="w-full bg-black/40 border border-white/5 rounded-2xl p-4 pl-12 text-white focus:border-gold/50 outline-none transition-all font-bold"
                                             value={formData.startTime}
                                             onChange={e => setFormData({ ...formData, startTime: e.target.value })}
                                             required
+                                            style={{ width: "100%", height: "3.5rem", paddingLeft: "3rem" }}
                                         />
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">Horário de Término</label>
-                                    <div className="relative">
-                                        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 opacity-50" size={18} />
+                                <div className="form-group" style={{ margin: 0 }}>
+                                    <label className="form-label">Horário de Término</label>
+                                    <div style={{ position: "relative" }}>
+                                        <Clock size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--fg-muted)", opacity: 0.5 }} />
                                         <input
                                             type="time"
-                                            className="w-full bg-black/40 border border-white/5 rounded-2xl p-4 pl-12 text-white focus:border-gold/50 outline-none transition-all font-bold"
                                             value={formData.endTime}
                                             onChange={e => setFormData({ ...formData, endTime: e.target.value })}
                                             required
+                                            style={{ width: "100%", height: "3.5rem", paddingLeft: "3rem" }}
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="block text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">Finalidade da Ocupação</label>
+                            <div className="form-group" style={{ margin: 0 }}>
+                                <label className="form-label">Finalidade da Ocupação</label>
                                 <textarea
-                                    className="w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-white focus:border-gold/50 outline-none transition-all min-h-[120px] resize-none placeholder:text-zinc-700 font-medium"
                                     value={formData.purpose}
                                     onChange={e => setFormData({ ...formData, purpose: e.target.value })}
-                                    placeholder="Ex: Ensaio de coral, Reunião técnica, Manutenção preventiva..."
+                                    style={{ width: "100%", minHeight: "120px" }}
+                                    placeholder="Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo..."
                                 />
                             </div>
 
-                            <div className="flex gap-4 pt-4 mt-2">
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="flex-1 h-14 rounded-2xl text-zinc-500 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-xs transition-all"
-                                >
-                                    Descartar
+                            <div style={{ display: "flex", gap: "1.25rem", marginTop: "1rem" }}>
+                                <Button type="button" variant="ghost" style={{ flex: 1, height: "3.5rem" }} onClick={() => setIsModalOpen(false)}>
+                                    DESCARTE
                                 </Button>
-                                <Button
-                                    type="submit"
-                                    isLoading={isSubmitting}
-                                    className="flex-[1.5] h-14 bg-gold text-black hover:bg-white hover:scale-[1.02] transition-all duration-300 font-black uppercase tracking-widest text-xs rounded-2xl shadow-xl shadow-gold/10"
-                                >
-                                    Confirmar Reserva
+                                <Button type="submit" className="btn-primary" style={{ flex: 2, height: "3.5rem", fontWeight: 800 }} isLoading={isSubmitting}>
+                                    SALVAR AGENDAMENTO
                                 </Button>
                             </div>
                         </form>
@@ -507,3 +545,4 @@ export const AdminCalendar: React.FC = () => {
         </div>
     );
 };
+
