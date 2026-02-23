@@ -208,7 +208,6 @@ export const AdminCalendar: React.FC = () => {
     };
 
     return (
-    return (
         <div className="animate-fadeIn" style={{ paddingBottom: "5rem" }}>
 
             {/* --- HEADER --- */}
