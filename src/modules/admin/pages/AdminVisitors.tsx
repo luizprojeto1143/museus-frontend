@@ -21,13 +21,15 @@ export const AdminVisitors: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [visitors, setVisitors] = useState<Visitor[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   const loadVisitors = React.useCallback(async () => {
     try {
-      const res = await api.get(`/visitors?tenantId=${tenantId}`);
+      const res = await api.get(`/visitors?tenantId=${tenantId}&limit=50`);
       setVisitors(res.data.data || []);
+      setTotal(res.data.pagination?.total || 0);
     } catch (err) {
       console.error("Erro ao carregar visitantes", err);
       setVisitors([]);
@@ -91,7 +93,7 @@ export const AdminVisitors: React.FC = () => {
       {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
         <div className="stat-card">
-          <div className="stat-value">{visitors.length}</div>
+          <div className="stat-value">{total}</div>
           <div className="stat-label">{t("admin.visitors.totalVisitors")}</div>
         </div>
         <div className="stat-card">
