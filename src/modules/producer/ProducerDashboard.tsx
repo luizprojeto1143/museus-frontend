@@ -211,25 +211,35 @@ export const ProducerDashboard: React.FC = () => {
 
                     <div className="event-list">
                         {nextEvents.length > 0 ? nextEvents.map(evt => (
-                            <div key={evt.id} className="event-item-card" onClick={() => navigate(`/producer/events/${evt.id}`)}>
-                                <div className="flex items-center gap-4">
-                                    <div className="event-date-badge">
-                                        <span className="event-day">{evt.date.split('/')[0]}</span>
-                                        <span className="event-month">
-                                            {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'][parseInt(evt.date.split('/')[1]) - 1]}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <div className="event-name">{evt.name}</div>
-                                        <div className="event-sales-info">{t("producer.dashboard.nextEvents.sales")}: {evt.sales}</div>
+                            <div key={evt.id} className="agenda-card-mini group" onClick={() => navigate(`/producer/events/${evt.id}`)}>
+                                <div className="card-time-strip-mini">
+                                    <span className="strip-hour-mini">
+                                        {evt.time || "00:00"}
+                                    </span>
+                                    <span className="strip-label-mini">Início</span>
+                                </div>
+
+                                <div className="card-main-mini">
+                                    <h3 className="card-title-mini group-hover:text-gold transition-colors">{evt.name}</h3>
+                                    <div className="card-meta-mini">
+                                        <div className="meta-item-mini">
+                                            <Calendar size={12} className="text-gold/50" />
+                                            <span>{evt.date}</span>
+                                        </div>
+                                        <div className="meta-item-mini">
+                                            <Ticket size={12} className="text-gold/50" />
+                                            <span>{evt.sales}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <button
-                                    className="btn btn-outline text-[0.8rem]"
-                                    onClick={(e) => { e.stopPropagation(); navigate(`/producer/events/${evt.id}`); }}
-                                >
-                                    {t("producer.dashboard.nextEvents.manage")}
-                                </button>
+                                <div className="p-4 flex items-center">
+                                    <button
+                                        className="p-2 bg-white/5 hover:bg-gold/10 text-zinc-400 hover:text-gold rounded-xl transition-all"
+                                        onClick={(e) => { e.stopPropagation(); navigate(`/producer/events/${evt.id}`); }}
+                                    >
+                                        <Briefcase size={18} />
+                                    </button>
+                                </div>
                             </div>
                         )) : (
                             <div className="empty-events-state">

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2 } from "lucide-react";
 
 type DashboardData = {
-  // 1.1 Indicadores principais
+  // ... (previous fields remain the same)
   visitorsThisMonth: number;
   topWorks: Array<{ id: string; title: string; visits: number }>;
   topTrails: Array<{ id: string; title: string; completions: number }>;
@@ -14,13 +15,11 @@ type DashboardData = {
   weeklyGrowth: number;
   monthlyGrowth: number;
 
-  // 1.2 Gráficos
   visitsByDay: Array<{ date: string; count: number }>;
   visitsByWork: Array<{ workTitle: string; count: number }>;
   xpByCategory: Array<{ category: string; xp: number }>;
   accessBySource: { qr: number; app: number; map: number; trails: number };
 
-  // 1.3 Alertas
   alerts: Array<{
     type: "warning" | "error" | "info";
     message: string;
@@ -35,20 +34,32 @@ type DashboardData = {
   }>;
 };
 
+type UpcomingEvent = {
+  id: string;
+  title: string;
+  startDate: string;
+  location?: string;
+  type?: string;
+};
+
 export const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
+  const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
   const [loading, setLoading] = useState(true);
-
-
 
   const loadDashboard = React.useCallback(async () => {
     try {
       if (!tenantId) return;
 
-      const res = await api.get(`/analytics/dashboard/${tenantId}`);
-      setData(res.data);
+      const [dashRes, eventsRes] = await Promise.all([
+        api.get(`/analytics/dashboard/${tenantId}`),
+        api.get("/events", { params: { tenantId, status: 'PUBLISHED', limit: 3 } })
+      ]);
+
+      setData(dashRes.data);
+      setUpcomingEvents(eventsRes.data.data || []);
     } catch (err) {
       console.error("Erro ao carregar dashboard", err);
       setData(null);
@@ -175,6 +186,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* 1.1 INDICADORES PRINCIPAIS */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
+        {/* ... stats cards ... */}
         <div className="stat-card">
           <div className="stat-value">{data.visitorsThisMonth}</div>
           <div className="stat-label">{t("admin.dashboard.stats.visitors")}</div>
@@ -198,7 +210,77 @@ export const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* 1.4 PRÓXIMAS RESERVAS - New Widget */}
+      {/* 1.4 AGENDA DO MUSEU - New Mini Agenda Widget */}
+      <div className="card" style={{ marginBottom: "2rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+          <h2 className="card-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            🎨 Agenda do Museu
+          </h2>
+          <button
+            className="btn btn-ghost"
+            style={{ fontSize: "0.85rem" }}
+            onClick={() => window.location.href = "/admin/eventos"}
+          >
+            Ver tudo <ChevronRight size={14} />
+          </button>
+        </div>
+
+        {upcomingEvents.length > 0 ? (
+          <div className="mini-timeline">
+            {upcomingEvents.map((ev, idx) => {
+              const d = new Date(ev.startDate);
+              const day = d.getDate();
+              const month = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
+              const hour = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+              return (
+                <div key={ev.id} className="mini-timeline-item" style={{ display: "flex", gap: "1rem", marginBottom: idx === upcomingEvents.length - 1 ? 0 : "1.5rem" }}>
+                  <div className="mini-date-badge" style={{
+                    width: "48px", height: "48px", background: "rgba(212,175,55,0.1)",
+                    border: "1px solid rgba(212,175,55,0.2)", borderRadius: "12px",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                    flexShrink: 0
+                  }}>
+                    <span style={{ fontSize: "1rem", fontWeight: 800, color: "#d4af37", lineHeight: 1 }}>{day}</span>
+                    <span style={{ fontSize: "0.6rem", textTransform: "uppercase", fontWeight: "bold", color: "#8b7355" }}>{month}</span>
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <h4 style={{ margin: 0, color: "white", fontSize: "0.95rem" }}>{ev.title}</h4>
+                      <span style={{ fontSize: "0.75rem", color: "#d4af37", fontWeight: 600 }}>{hour}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: "1rem", marginTop: "0.25rem" }}>
+                      {ev.location && (
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", color: "#52525b" }}>
+                          <MapPin size={12} /> {ev.location}
+                        </div>
+                      )}
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", color: "#52525b" }}>
+                        <Ticket size={12} /> {ev.type || 'Evento'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => window.location.href = `/admin/eventos/${ev.id}/dashboard`}
+                    title="Ver Dashboard do Evento"
+                    style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "8px", padding: "6px", cursor: "pointer", display: "flex", alignItems: "center" }}
+                  >
+                    <BarChart2 size={16} className="text-zinc-500 hover:text-gold" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>
+            Não há eventos publicados para os próximos dias.
+          </div>
+        )}
+      </div>
+
+      {/* 1.5 PRÓXIMAS RESERVAS - Moved down */}
       <div className="card" style={{ marginBottom: "2rem", border: "1px solid rgba(59, 130, 246, 0.2)", background: "rgba(59, 130, 246, 0.02)" }}>
         <h2 className="card-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#60a5fa" }}>
           📅 {t("admin.dashboard.upcomingBookings", "Próximas Reservas de Espaço")}
@@ -210,7 +292,7 @@ export const AdminDashboard: React.FC = () => {
                 key={booking.id}
                 className="card"
                 style={{
-                  background: "rgba(255,255,255,0.03)",
+                  background: "rgba(0,0,0,0.2)",
                   border: "1px solid rgba(255,255,255,0.1)",
                   padding: "1rem",
                   transition: "all 0.3s ease",
@@ -237,7 +319,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
         ) : (
           <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>
-            Não há reservas agendadas para os próximos dias.
+            Não há reservas agendadas.
           </div>
         )}
       </div>
