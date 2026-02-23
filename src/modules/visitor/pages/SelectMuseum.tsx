@@ -27,7 +27,7 @@ interface Tenant {
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, token, updateSession } = useAuth();
+  const { isAuthenticated, token, updateSession, isGuest, enterAsGuest } = useAuth();
 
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [filteredTenants, setFilteredTenants] = useState<Tenant[]>([]);
@@ -161,9 +161,6 @@ export const SelectMuseum: React.FC = () => {
     }
 
     // Guest or Unauth flow: Enter as guest directly for the selected museum
-    const { enterAsGuest } = useAuth(); // We need to be careful with hook calling, but SelectMuseum body is already using it.
-    // Wait, useAuth is already called at line 30.
-
     enterAsGuest(tenant.id);
     navigate("/home");
   };
