@@ -19,7 +19,7 @@ export const MasterSeeder: React.FC = () => {
 
     // Fetch tenants on mount
     useEffect(() => {
-        api.get('/tenants')
+        api.get('/tenants/public')
             .then(res => {
                 const data: TenantOption[] = Array.isArray(res.data) ? res.data : [];
                 setTenants(data);
