@@ -24,17 +24,13 @@ export const AdminVisitors: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-
-
   const loadVisitors = React.useCallback(async () => {
     try {
       const res = await api.get(`/visitors?tenantId=${tenantId}`);
-      // The API returns { data: Visitor[], pagination: ... }
-      // We need to extract the data array
       setVisitors(res.data.data || []);
     } catch (err) {
       console.error("Erro ao carregar visitantes", err);
-      setVisitors([]); // Ensure it's always an array on error
+      setVisitors([]);
     } finally {
       setLoading(false);
     }
@@ -86,16 +82,13 @@ export const AdminVisitors: React.FC = () => {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-        <div>
-          <h1 className="section-title">👥 {t("admin.visitors.title")}</h1>
-
-        </div>
+        <h1 className="section-title">👥 {t("admin.visitors.title")}</h1>
         <button onClick={handleExportCSV} className="btn btn-secondary">
           📥 {t("admin.visitors.exportCSV")}
         </button>
       </div>
 
-      {/* Stats Rápidas */}
+      {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
         <div className="stat-card">
           <div className="stat-value">{visitors.length}</div>
@@ -127,7 +120,8 @@ export const AdminVisitors: React.FC = () => {
             padding: "0.75rem 1rem",
             border: "1px solid var(--border-strong)",
             borderRadius: "var(--radius-md)",
-            background: "rgba(42, 24, 16, 0.3)"
+            background: "rgba(42, 24, 16, 0.3)",
+            color: "var(--fg-main)"
           }}
         />
       </div>
@@ -141,54 +135,61 @@ export const AdminVisitors: React.FC = () => {
       )}
 
       {!loading && filteredVisitors.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVisitors.map((visitor) => (
-            <div key={visitor.id} className="card relative group hover:border-[#d4af37] transition-all duration-300">
-              <div className="absolute top-0 right-0 p-4">
-                <span className="badge bg-[#d4af37]/10 text-[#d4af37] border border-[#d4af37]/20">
-                  {visitor.xp} XP
-                </span>
-              </div>
-
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#d4af37] to-[#b8860b] text-[#1a1108] flex items-center justify-center font-bold text-xl shadow-lg shadow-[#d4af37]/20">
-                  {visitor.name ? visitor.name.charAt(0).toUpperCase() : "?"}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[#EAE0D5] line-clamp-1" title={visitor.name}>{visitor.name || "Visitante sem nome"}</h3>
-                  <p className="text-xs text-[#8b7355] line-clamp-1" title={visitor.email}>{visitor.email || "Sem e-mail"}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 mb-6 p-3 bg-[#0f0a05]/30 rounded-lg border border-[#463420]">
-                <div className="text-center">
-                  <div className="text-xs text-[#8b7355] uppercase">Idade</div>
-                  <div className="font-bold text-[#EAE0D5]">{visitor.age || "-"}</div>
-                </div>
-                <div className="text-center border-l border-[#463420]">
-                  <div className="text-xs text-[#8b7355] uppercase">Trilhas</div>
-                  <div className="font-bold text-[#EAE0D5]">{visitor.trailsCompleted}</div>
-                </div>
-                <div className="text-center border-l border-[#463420]">
-                  <div className="text-xs text-[#8b7355] uppercase">Obras</div>
-                  <div className="font-bold text-[#EAE0D5]">{visitor.worksVisited}</div>
-                </div>
-              </div>
-
-              <div className="text-xs text-[#8b7355] mb-4 flex justify-between">
-                <span>Primeiro: {new Date(visitor.firstAccessAt).toLocaleDateString()}</span>
-                <span>Último: {new Date(visitor.lastAccessAt).toLocaleDateString()}</span>
-              </div>
-
-              <Link
-                to={`/admin/visitantes/${visitor.id}`}
-                className="w-full block text-center py-2.5 rounded bg-[#d4af37]/10 text-[#d4af37] border border-[#d4af37]/20 font-bold hover:bg-[#d4af37] hover:text-[#1a1108] transition-all"
-              >
-                {t("admin.visitors.viewDetails")}
-              </Link>
-            </div>
-          ))}
-        </div>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>{t("admin.visitors.table.name")}</th>
+              <th>{t("admin.visitors.table.email")}</th>
+              <th>{t("admin.visitors.table.xp")}</th>
+              <th>{t("admin.visitors.table.trails")}</th>
+              <th>{t("admin.visitors.table.works")}</th>
+              <th>{t("admin.visitors.table.lastAccess")}</th>
+              <th style={{ textAlign: "right" }}>{t("common.actions")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredVisitors.map((visitor) => (
+              <tr key={visitor.id}>
+                <td>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <div style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
+                      background: "linear-gradient(135deg, var(--accent-gold), var(--accent-bronze))",
+                      color: "var(--bg-page)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: 700,
+                      fontSize: "0.9rem",
+                      flexShrink: 0
+                    }}>
+                      {visitor.name ? visitor.name.charAt(0).toUpperCase() : "?"}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 600, color: "var(--fg-main)" }}>{visitor.name || "Visitante sem nome"}</div>
+                    </div>
+                  </div>
+                </td>
+                <td style={{ color: "var(--fg-muted)", fontSize: "0.9rem" }}>{visitor.email || "—"}</td>
+                <td>
+                  <span className="chip">{visitor.xp} XP</span>
+                </td>
+                <td>{visitor.trailsCompleted}</td>
+                <td>{visitor.worksVisited}</td>
+                <td style={{ fontSize: "0.85rem", color: "var(--fg-muted)" }}>
+                  {new Date(visitor.lastAccessAt).toLocaleDateString()}
+                </td>
+                <td style={{ textAlign: "right" }}>
+                  <Link to={`/admin/visitantes/${visitor.id}`} className="btn btn-secondary">
+                    {t("admin.visitors.viewDetails")}
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
