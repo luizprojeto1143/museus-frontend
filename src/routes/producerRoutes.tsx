@@ -4,19 +4,19 @@ import { ProducerLayout } from "../modules/producer/ProducerLayout";
 import { Role } from "../modules/auth/AuthContext";
 
 // Producer pages
-import { ProducerDashboard } from "../modules/producer/ProducerDashboard";
-import { ProducerEvents } from "../modules/producer/ProducerEvents";
-import { ProducerProjects } from "../modules/producer/ProducerProjects";
-import { ProducerEventForm } from "../modules/producer/ProducerEventForm";
-import { ProducerProjectForm } from "../modules/producer/ProducerProjectForm";
-import { ProducerServices } from "../modules/producer/ProducerServices";
-import { ProducerTickets } from "../modules/producer/ProducerTickets";
-import { ProducerInbox } from "../modules/producer/ProducerInbox";
-import { ProducerAudience } from "../modules/producer/ProducerAudience";
-import { ProducerReports } from "../modules/producer/ProducerReports";
-import { ProducerNotices } from "../modules/producer/ProducerNotices";
-import { ProducerProfile } from "../modules/producer/ProducerProfile";
-import { ProducerSettings } from "../modules/producer/ProducerSettings";
+const ProducerDashboard = React.lazy(() => import("../modules/producer/ProducerDashboard").then(m => ({ default: m.ProducerDashboard })));
+const ProducerEvents = React.lazy(() => import("../modules/producer/ProducerEvents").then(m => ({ default: m.ProducerEvents })));
+const ProducerProjects = React.lazy(() => import("../modules/producer/ProducerProjects").then(m => ({ default: m.ProducerProjects })));
+const ProducerEventForm = React.lazy(() => import("../modules/producer/ProducerEventForm").then(m => ({ default: m.ProducerEventForm })));
+const ProducerProjectForm = React.lazy(() => import("../modules/producer/ProducerProjectForm").then(m => ({ default: m.ProducerProjectForm })));
+const ProducerServices = React.lazy(() => import("../modules/producer/ProducerServices").then(m => ({ default: m.ProducerServices })));
+const ProducerTickets = React.lazy(() => import("../modules/producer/ProducerTickets").then(m => ({ default: m.ProducerTickets })));
+const ProducerInbox = React.lazy(() => import("../modules/producer/ProducerInbox").then(m => ({ default: m.ProducerInbox })));
+const ProducerAudience = React.lazy(() => import("../modules/producer/ProducerAudience").then(m => ({ default: m.ProducerAudience })));
+const ProducerReports = React.lazy(() => import("../modules/producer/ProducerReports").then(m => ({ default: m.ProducerReports })));
+const ProducerNotices = React.lazy(() => import("../modules/producer/ProducerNotices").then(m => ({ default: m.ProducerNotices })));
+const ProducerProfile = React.lazy(() => import("../modules/producer/ProducerProfile").then(m => ({ default: m.ProducerProfile })));
+const ProducerSettings = React.lazy(() => import("../modules/producer/ProducerSettings").then(m => ({ default: m.ProducerSettings })));
 
 // Reused admin components for museum features
 import { AdminWorks } from "../modules/admin/pages/AdminWorks";

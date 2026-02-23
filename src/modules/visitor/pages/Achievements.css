@@ -157,6 +157,20 @@
     color: #5c452b;
 }
 
+.achievement-condition {
+    font-size: 0.7rem;
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.05);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-style: italic;
+}
+
 /* Status Badge */
 .status-badge {
     display: inline-flex;

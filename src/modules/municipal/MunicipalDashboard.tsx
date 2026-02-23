@@ -19,11 +19,13 @@ import { Button } from "../../components/ui";
 export const MunicipalDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<any>(null);
+    const [period, setPeriod] = useState<"30" | "7" | "90" | "365">("30");
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const res = await api.get("/secretary/dashboard");
+                const res = await api.get("/secretary/dashboard", { params: { periodDays: period } });
                 setData(res.data);
             } catch (err) {
                 console.error("Error fetching municipal dashboard", err);
@@ -32,9 +34,9 @@ export const MunicipalDashboard: React.FC = () => {
             }
         };
         fetchData();
-    }, []);
+    }, [period]);
 
-    if (loading) return <div className="p-10 text-center animate-pulse text-blue-600">Carregando panorama executivo...</div>;
+    if (loading && !data) return <div className="p-10 text-center animate-pulse text-blue-600">Carregando panorama executivo...</div>;
 
     const cards = [
         { label: "Equipamentos Culturais", value: data?.cards?.totalEquipments || 0, icon: <Building2 className="text-blue-600" />, trend: "+2 este mês", color: "blue" },
@@ -42,6 +44,13 @@ export const MunicipalDashboard: React.FC = () => {
         { label: "Projetos em Execução", value: data?.cards?.activeProjects || 0, icon: <FileText className="text-orange-600" />, trend: "15 aguardando análise", color: "orange" },
         { label: "Impacto Público (Est.)", value: data?.cards?.estimatedPublicImpact || 0, icon: <Users className="text-purple-600" />, trend: "+12.4% vs mês anterior", color: "purple" }
     ];
+
+    const periodLabels = {
+        "7": "Últimos 7 dias",
+        "30": "Últimos 30 dias",
+        "90": "Últimos 90 dias",
+        "365": "Último ano"
+    };
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -52,9 +61,22 @@ export const MunicipalDashboard: React.FC = () => {
                     <p className="text-slate-500 mt-1 font-medium">Panorama geral de equipamentos, projetos e conformidade legal.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2 font-bold px-6">
-                        <Calendar size={18} /> Período: Últimos 30 dias
-                    </Button>
+                    <div className="relative group">
+                        <Button variant="outline" className="bg-white border-slate-200 text-slate-600 hover:bg-slate-50 gap-2 font-bold px-6">
+                            <Calendar size={18} /> {periodLabels[period]}
+                        </Button>
+                        <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl hidden group-hover:block z-50">
+                            {(Object.entries(periodLabels) as [keyof typeof periodLabels, string][]).map(([val, label]) => (
+                                <button
+                                    key={val}
+                                    onClick={() => setPeriod(val as any)}
+                                    className={`w-full text-left px-4 py-3 text-sm font-bold hover:bg-blue-50 transition-colors ${period === val ? 'text-blue-600 bg-blue-50/50' : 'text-slate-600'}`}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20">
                         Exportar Relatório PDF
                     </Button>
@@ -135,6 +157,68 @@ export const MunicipalDashboard: React.FC = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Georeferenced Map (New from Audit) */}
+                <div className="lg:col-span-3">
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900">Mapa Georeferenciado de Equipamentos</h3>
+                                <p className="text-sm text-slate-500">Distribuição espacial das unidades culturais e pontos de interesse.</p>
+                            </div>
+                            <div className="flex gap-2">
+                                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1.5 rounded-full">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div> Unidades
+                                </span>
+                                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1.5 rounded-full">
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div> Projetos
+                                </span>
+                            </div>
+                        </div>
+                        <div className="h-[400px] bg-slate-50 relative group cursor-crosshair">
+                            {/* Visual Representation of a Map */}
+                            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '15px 15px' }}></div>
+
+                            {/* Mock Map Markers */}
+                            <div className="absolute top-1/4 left-1/3 group/marker">
+                                <div className="w-8 h-8 bg-blue-600 rounded-full border-4 border-white shadow-lg animate-bounce flex items-center justify-center text-white scale-75">
+                                    <Building2 size={12} />
+                                </div>
+                                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
+                                    Museu da Inconfidência
+                                </div>
+                            </div>
+
+                            <div className="absolute bottom-1/3 right-1/4 group/marker">
+                                <div className="w-8 h-8 bg-emerald-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75">
+                                    <FileText size={12} />
+                                </div>
+                                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
+                                    Projeto Revivendo Ouro Preto
+                                </div>
+                            </div>
+
+                            <div className="absolute top-1/2 right-1/2 group/marker">
+                                <div className="w-8 h-8 bg-blue-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75">
+                                    <Building2 size={12} />
+                                </div>
+                                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
+                                    Teatro Municipal
+                                </div>
+                            </div>
+
+                            {/* Map Tools Overlay */}
+                            <div className="absolute bottom-6 left-6 flex flex-col gap-2">
+                                <button className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md text-slate-600 hover:text-blue-600 transition-all font-black text-xs">+</button>
+                                <button className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md text-slate-600 hover:text-blue-600 transition-all font-black text-xs">-</button>
+                            </div>
+
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <div className="text-slate-200 font-black text-6xl uppercase tracking-[0.5em] select-none opacity-50">Mapa Ativo</div>
+                            </div>
                         </div>
                     </div>
                 </div>

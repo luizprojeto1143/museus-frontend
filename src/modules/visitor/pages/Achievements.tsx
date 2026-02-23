@@ -114,6 +114,13 @@ export default function Achievements() {
                     {a.description}
                   </p>
 
+                  {!isUnlocked && a.condition && (
+                    <div className="achievement-condition">
+                      <Lock size={10} />
+                      {t("visitor.achievements.howToUnlock", "Como desbloquear:")} {a.condition}
+                    </div>
+                  )}
+
                   {isUnlocked && (
                     <div className="status-badge unlocked">
                       <CheckCircle2 size={12} />

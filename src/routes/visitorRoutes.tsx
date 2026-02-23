@@ -8,31 +8,31 @@ const VisualScannerPage = React.lazy(() => import("../modules/visitor/pages/Visu
 const ScannerHub = React.lazy(() => import("../modules/visitor/pages/ScannerHub").then(module => ({ default: module.ScannerHub })));
 const ScannerPage = React.lazy(() => import("../modules/visitor/pages/ScannerPage").then(module => ({ default: module.ScannerPage })));
 
-// Standard imports
-import { Home } from "../modules/visitor/pages/Home";
-import { WorksList } from "../modules/visitor/pages/WorksList";
-import { WorkDetail } from "../modules/visitor/pages/WorkDetail";
-import { TrailsList } from "../modules/visitor/pages/TrailsList";
-import { TrailDetail } from "../modules/visitor/pages/TrailDetail";
-import { MapView } from "../modules/visitor/pages/MapView";
-import { EventsList } from "../modules/visitor/pages/EventsList";
-import { EventDetail } from "../modules/visitor/pages/EventDetail";
-import { Favorites } from "../modules/visitor/pages/Favorites";
-import ChatAI from "../modules/visitor/pages/ChatAI";
-import Souvenir from "../modules/visitor/pages/Souvenir";
-import Passport from "../modules/visitor/pages/Passport";
-import Achievements from "../modules/visitor/pages/Achievements";
-import { QrVisit } from "../modules/visitor/pages/QrVisit";
-import TreasureHunt from "../modules/visitor/pages/TreasureHunt";
-import { SmartItineraryWizard } from "../modules/visitor/pages/SmartItineraryWizard";
-import { SmartItineraryResult } from "../modules/visitor/pages/SmartItineraryResult";
-import { SchedulingPage } from "../modules/visitor/pages/SchedulingPage";
-import { GuestbookPage } from "../modules/visitor/pages/GuestbookPage";
-import { LeaderboardPage } from "../modules/visitor/pages/LeaderboardPage";
-import { VisitorProfile } from "../modules/visitor/pages/VisitorProfile";
-import { ShopPage } from "../modules/visitor/pages/ShopPage";
-import { ChallengesPage } from "../modules/visitor/pages/ChallengesPage";
-import { EventSurveyPage } from "../modules/visitor/pages/EventSurveyPage";
+// Standard imports (converted to lazy)
+const Home = React.lazy(() => import("../modules/visitor/pages/Home").then(m => ({ default: m.Home })));
+const WorksList = React.lazy(() => import("../modules/visitor/pages/WorksList").then(m => ({ default: m.WorksList })));
+const WorkDetail = React.lazy(() => import("../modules/visitor/pages/WorkDetail").then(m => ({ default: m.WorkDetail })));
+const TrailsList = React.lazy(() => import("../modules/visitor/pages/TrailsList").then(m => ({ default: m.TrailsList })));
+const TrailDetail = React.lazy(() => import("../modules/visitor/pages/TrailDetail").then(m => ({ default: m.TrailDetail })));
+const MapView = React.lazy(() => import("../modules/visitor/pages/MapView").then(m => ({ default: m.MapView })));
+const EventsList = React.lazy(() => import("../modules/visitor/pages/EventsList").then(m => ({ default: m.EventsList })));
+const EventDetail = React.lazy(() => import("../modules/visitor/pages/EventDetail").then(m => ({ default: m.EventDetail })));
+const Favorites = React.lazy(() => import("../modules/visitor/pages/Favorites").then(m => ({ default: m.Favorites })));
+const ChatAI = React.lazy(() => import("../modules/visitor/pages/ChatAI"));
+const Souvenir = React.lazy(() => import("../modules/visitor/pages/Souvenir"));
+const Passport = React.lazy(() => import("../modules/visitor/pages/Passport"));
+const Achievements = React.lazy(() => import("../modules/visitor/pages/Achievements"));
+const QrVisit = React.lazy(() => import("../modules/visitor/pages/QrVisit").then(m => ({ default: m.QrVisit })));
+const TreasureHunt = React.lazy(() => import("../modules/visitor/pages/TreasureHunt"));
+const SmartItineraryWizard = React.lazy(() => import("../modules/visitor/pages/SmartItineraryWizard").then(m => ({ default: m.SmartItineraryWizard })));
+const SmartItineraryResult = React.lazy(() => import("../modules/visitor/pages/SmartItineraryResult").then(m => ({ default: m.SmartItineraryResult })));
+const SchedulingPage = React.lazy(() => import("../modules/visitor/pages/SchedulingPage").then(m => ({ default: m.SchedulingPage })));
+const GuestbookPage = React.lazy(() => import("../modules/visitor/pages/GuestbookPage").then(m => ({ default: m.GuestbookPage })));
+const LeaderboardPage = React.lazy(() => import("../modules/visitor/pages/LeaderboardPage").then(m => ({ default: m.LeaderboardPage })));
+const VisitorProfile = React.lazy(() => import("../modules/visitor/pages/VisitorProfile").then(m => ({ default: m.VisitorProfile })));
+const ShopPage = React.lazy(() => import("../modules/visitor/pages/ShopPage").then(m => ({ default: m.ShopPage })));
+const ChallengesPage = React.lazy(() => import("../modules/visitor/pages/ChallengesPage").then(m => ({ default: m.ChallengesPage })));
+const EventSurveyPage = React.lazy(() => import("../modules/visitor/pages/EventSurveyPage").then(m => ({ default: m.EventSurveyPage })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
