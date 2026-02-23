@@ -35,9 +35,9 @@ export const MasterSeeder: React.FC = () => {
 
     // Simulation State
     const [simSettings, setSimSettings] = useState({
-        visitors: 5,
-        minVisits: 1,
-        maxVisits: 5
+        visitors: 20,
+        minVisits: 2,
+        maxVisits: 6
     });
 
     const handleGenerate = async () => {
