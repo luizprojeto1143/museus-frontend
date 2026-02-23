@@ -173,7 +173,7 @@ export const Login: React.FC = () => {
             {t("auth.login.noAccount")}{" "}
             <span
               style={{ color: "#d4af37", cursor: "pointer", textDecoration: "underline", fontWeight: "bold" }}
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/select-museum?mode=register")}
             >
               {t("auth.register.submit")}
             </span>

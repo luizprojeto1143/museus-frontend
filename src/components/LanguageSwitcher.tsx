@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 interface LanguageSwitcherProps {
     style?: React.CSSProperties;
     className?: string;
+    absolute?: boolean; // New prop to control absolute positioning
 }
 
-export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, className }) => {
+export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, className, absolute = true }) => {
     const { i18n } = useTranslation();
 
     const changeLanguage = (lng: string) => {
@@ -19,9 +20,9 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
         <div
             className={className}
             style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
+                position: absolute ? "absolute" : "relative",
+                top: absolute ? "1rem" : undefined,
+                right: absolute ? "1rem" : undefined,
                 zIndex: 10,
                 display: "flex",
                 gap: "0.5rem",

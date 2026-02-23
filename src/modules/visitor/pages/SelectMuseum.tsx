@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
@@ -28,6 +28,8 @@ export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated, token, updateSession, isGuest, enterAsGuest } = useAuth();
+  const [searchParams] = useSearchParams();
+  const isRegisterMode = searchParams.get("mode") === "register";
 
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [filteredTenants, setFilteredTenants] = useState<Tenant[]>([]);
@@ -160,6 +162,12 @@ export const SelectMuseum: React.FC = () => {
       }
     }
 
+    // Register flow: redirect to registration with context
+    if (isRegisterMode) {
+      navigate("/register", { state: { tenantId: tenant.id, tenantName: tenant.name } });
+      return;
+    }
+
     // Guest or Unauth flow: Enter as guest directly for the selected museum
     enterAsGuest(tenant.id);
     navigate("/home");
@@ -183,14 +191,16 @@ export const SelectMuseum: React.FC = () => {
               <Compass size={16} className="text-[var(--accent-gold)]" />
               <span>Cultura Viva Discovery</span>
             </div>
-            <LanguageSwitcher />
+            <LanguageSwitcher absolute={false} />
           </div>
 
           <h1 className="hero-title mt-16">
             Descubra o <span className="text-gradient">Patrimônio Vivo</span>
           </h1>
           <p className="hero-subtitle">
-            Explore museus, teatros e experiências culturais exclusivas na sua cidade.
+            {isRegisterMode
+              ? "Para criar sua conta, selecione primeiro a instituição que deseja participar."
+              : "Explore museus, teatros e experiências culturais exclusivas na sua cidade."}
           </p>
 
           {/* SEARCH BAR */}

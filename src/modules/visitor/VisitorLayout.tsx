@@ -232,7 +232,15 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         {isGuest && (
           <div className="guest-banner">
             <span>✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!</span>
-            <button className="guest-banner-btn" onClick={() => navigate("/register")}>
+            <button
+              className="guest-banner-btn"
+              onClick={() => navigate("/register", {
+                state: {
+                  tenantId,
+                  tenantName: settings?.name || "Museu"
+                }
+              })}
+            >
               Criar Conta Grátis
             </button>
           </div>
