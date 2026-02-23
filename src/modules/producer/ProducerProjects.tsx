@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
 import { useTranslation } from "react-i18next";
-import { Plus, Edit, Eye } from "lucide-react";
+import { Plus, Edit, Eye, FileText, ArrowRight } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 
 interface Project {
@@ -15,6 +15,7 @@ interface Project {
 
 export const ProducerProjects: React.FC = () => {
     const { t } = useTranslation();
+    const router = useNavigate();
     const { tenantId } = useAuth();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
@@ -27,120 +28,106 @@ export const ProducerProjects: React.FC = () => {
     }, []);
 
     const getStatusBadge = (status: string) => {
-        const statusConfig: Record<string, { bg: string; label: string }> = {
-            DRAFT: { bg: "#6b7280", label: "Rascunho" },
-            SUBMITTED: { bg: "#3b82f6", label: "Submetido" },
-            APPROVED: { bg: "#22c55e", label: "Aprovado" },
-            REJECTED: { bg: "#ef4444", label: "Rejeitado" },
-            UNDER_REVIEW: { bg: "#eab308", label: "Em Análise" },
-            IN_EXECUTION: { bg: "#a855f7", label: "Em Execução" },
-            COMPLETED: { bg: "#06b6d4", label: "Concluído" }
+        const config: Record<string, string> = {
+            DRAFT: "bg-gray-500/20 text-gray-400 border-gray-500/50",
+            SUBMITTED: "bg-blue-500/20 text-blue-400 border-blue-500/50",
+            APPROVED: "bg-green-500/20 text-green-400 border-green-500/50",
+            REJECTED: "bg-red-500/20 text-red-400 border-red-500/50",
+            UNDER_REVIEW: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+            IN_EXECUTION: "bg-purple-500/20 text-purple-400 border-purple-500/50",
+            COMPLETED: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50"
         };
-        const config = statusConfig[status] || { bg: "#6b7280", label: status };
+
+        const label: Record<string, string> = {
+            DRAFT: "Rascunho",
+            SUBMITTED: "Submetido",
+            APPROVED: "Aprovado",
+            REJECTED: "Rejeitado",
+            UNDER_REVIEW: "Em Análise",
+            IN_EXECUTION: "Em Execução",
+            COMPLETED: "Concluído"
+        };
+
+        const className = config[status] || "bg-gray-500/20 text-gray-400 border-gray-500/50";
+        const text = label[status] || status;
+
         return (
-            <span style={{
-                padding: "0.25rem 0.75rem",
-                borderRadius: "1rem",
-                fontSize: "0.75rem",
-                fontWeight: "bold",
-                color: "#fff",
-                background: config.bg
-            }}>
-                {config.label}
+            <span className={`px-3 py-1 rounded-full text-xs font-bold border ${className}`}>
+                {text}
             </span>
         );
     };
 
     return (
-        <div>
+        <div className="pb-16 animate-in fade-in duration-500">
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+            <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 style={{ fontSize: "1.8rem", color: "#d4af37", marginBottom: "0.5rem" }}>
-                        📂 Meus Projetos
+                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif flex items-center gap-3">
+                        Meus Projetos
                     </h1>
-                    <p style={{ color: "#B0A090" }}>Gerencie seus projetos culturais</p>
+                    <p className="text-[#B0A090]">Gerencie seus projetos culturais e acompanhe o status.</p>
                 </div>
                 <Link
                     to="/producer/projects/new"
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        background: "linear-gradient(135deg, #d4af37 0%, #f5d769 100%)",
-                        color: "#1a1108",
-                        fontWeight: "bold",
-                        padding: "0.75rem 1.25rem",
-                        borderRadius: "0.5rem",
-                        textDecoration: "none",
-                        transition: "all 0.2s"
-                    }}
+                    className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg shadow-[#D4AF37]/20"
                 >
-                    <Plus size={18} /> Novo Projeto
+                    <Plus size={20} /> Novo Projeto
                 </Link>
             </div>
 
             {loading ? (
-                <p style={{ color: "#B0A090" }}>Carregando...</p>
+                <div className="flex justify-center py-20">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
+                </div>
             ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div className="space-y-4">
                     {projects.length === 0 ? (
-                        <div style={{
-                            padding: "3rem",
-                            textAlign: "center",
-                            background: "rgba(44, 30, 16, 0.5)",
-                            borderRadius: "0.75rem",
-                            border: "1px solid #463420"
-                        }}>
-                            <p style={{ color: "#B0A090", marginBottom: "1rem" }}>
-                                Você ainda não tem projetos cadastrados.
+                        <div className="bg-[#2c1e10] rounded-2xl p-12 text-center border border-dashed border-[#463420]">
+                            <div className="w-20 h-20 bg-black/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#463420]">
+                                <FileText size={40} />
+                            </div>
+                            <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">Você ainda não tem projetos</h3>
+                            <p className="text-[#B0A090] mb-8 max-w-md mx-auto">
+                                Crie projetos para participar de editais ou para captar recursos via Lei de Incentivo.
                             </p>
                             <Link
                                 to="/producer/projects/new"
-                                style={{ color: "#d4af37", textDecoration: "underline" }}
+                                className="inline-flex items-center gap-2 text-[#D4AF37] hover:underline font-bold"
                             >
-                                Criar meu primeiro projeto
+                                Criar meu primeiro projeto <ArrowRight size={16} />
                             </Link>
                         </div>
                     ) : (
                         projects.map(project => (
                             <div
                                 key={project.id}
-                                style={{
-                                    background: "rgba(44, 30, 16, 0.6)",
-                                    border: "1px solid #463420",
-                                    borderRadius: "0.75rem",
-                                    padding: "1.25rem",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    transition: "all 0.2s"
-                                }}
+                                className="bg-[#2c1e10] p-6 rounded-xl border border-[#463420] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-[#D4AF37]/50 transition-all group"
                             >
                                 <div>
-                                    <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#EAE0D5", marginBottom: "0.5rem" }}>
-                                        {project.title}
-                                    </h3>
-                                    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", fontSize: "0.9rem", color: "#B0A090" }}>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <h3 className="text-lg font-bold text-[#EAE0D5] group-hover:text-[#D4AF37] transition-colors">
+                                            {project.title}
+                                        </h3>
                                         {getStatusBadge(project.status)}
-                                        <span>• Criado em: {new Date(project.createdAt).toLocaleDateString()}</span>
-                                        {project.notice && <span>• Edital: {project.notice.title}</span>}
+                                    </div>
+                                    <div className="flex flex-wrap gap-4 text-sm text-[#B0A090]">
+                                        <span>Criado em: <strong className="text-[#EAE0D5]">{new Date(project.createdAt).toLocaleDateString()}</strong></span>
+                                        {project.notice && (
+                                            <span className="flex items-center gap-1 text-[#D4AF37]">
+                                                <FileText size={14} /> Edital: {project.notice.title}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    <Link
-                                        to={`/producer/projects/${project.id}`}
-                                        style={{
-                                            padding: "0.5rem",
-                                            borderRadius: "0.375rem",
-                                            color: project.status === 'DRAFT' ? "#3b82f6" : "#B0A090",
-                                            background: "transparent",
-                                            transition: "background 0.2s"
-                                        }}
+                                <div className="flex gap-2 w-full md:w-auto">
+                                    <button
+                                        onClick={() => router(`/producer/projects/${project.id}`)}
+                                        className="flex-1 md:flex-none px-4 py-2 bg-black/20 hover:bg-[#D4AF37] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
                                         title={project.status === 'DRAFT' ? "Editar" : "Visualizar"}
                                     >
-                                        {project.status === 'DRAFT' ? <Edit size={18} /> : <Eye size={18} />}
-                                    </Link>
+                                        {project.status === 'DRAFT' ? <><Edit size={16} /> Editar</> : <><Eye size={16} /> Detalhes</>}
+                                    </button>
                                 </div>
                             </div>
                         ))

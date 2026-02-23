@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Save, Bell, Lock, User, Globe, Shield } from "lucide-react";
+import { Save, Bell, Lock, User, Globe, Shield, ToggleLeft, ToggleRight } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
 import { useToast } from "../../contexts/ToastContext";
@@ -46,73 +46,86 @@ export const ProducerSettings: React.FC = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto pb-12">
+        <div className="max-w-4xl mx-auto pb-16 animate-in fade-in duration-500">
             <div className="mb-8">
-                <h1 className="section-title">Configurações</h1>
-                <p className="section-subtitle">Gerencie suas preferências de conta e privacidade.</p>
+                <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Configurações</h1>
+                <p className="text-[#B0A090]">Gerencie suas preferências de conta e privacidade.</p>
             </div>
 
             <div className="space-y-6">
 
                 {/* Notifications Section */}
-                <section className="card">
-                    <h3 className="card-title flex items-center gap-2 mb-4">
-                        <Bell size={20} className="text-gold" /> Notificações
+                <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
+                    <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
+                        <Bell size={20} className="text-[#D4AF37]" /> Notificações
                     </h3>
-                    <div className="flex justify-between items-center py-4 border-b border-gray-700">
-                        <span className="text-gray-300">Receber atualizações de projetos por e-mail</span>
+                    <div className="flex justify-between items-center py-2">
+                        <span className="text-[#B0A090] text-sm">Receber atualizações de projetos por e-mail</span>
                         <div
                             onClick={() => toggleSetting('emailNotifications')}
-                            className={`w-12 h-6 rounded-full flex items-center transition-colors cursor-pointer p-1 ${settings.emailNotifications ? 'bg-green-500' : 'bg-gray-700'}`}
+                            className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
                         >
-                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${settings.emailNotifications ? 'translate-x-6' : 'translate-x-0'}`} />
+                            {settings.emailNotifications ?
+                                <ToggleRight size={48} fill="currentColor" className="text-[#D4AF37]" /> :
+                                <ToggleLeft size={48} className="text-[#B0A090]" />
+                            }
                         </div>
                     </div>
                 </section>
 
                 {/* Privacy Section */}
-                <section className="card">
-                    <h3 className="card-title flex items-center gap-2 mb-4">
-                        <Globe size={20} className="text-gold" /> Privacidade
+                <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
+                    <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
+                        <Globe size={20} className="text-[#D4AF37]" /> Privacidade
                     </h3>
-                    <div className="flex justify-between items-center py-4">
-                        <span className="text-gray-300">Perfil Público visível na plataforma</span>
+                    <div className="flex justify-between items-center py-2">
+                        <span className="text-[#B0A090] text-sm">Perfil Público visível na plataforma</span>
                         <div
                             onClick={() => toggleSetting('publicProfile')}
-                            className={`w-12 h-6 rounded-full flex items-center transition-colors cursor-pointer p-1 ${settings.publicProfile ? 'bg-gold' : 'bg-gray-700'}`}
+                            className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
                         >
-                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${settings.publicProfile ? 'translate-x-6' : 'translate-x-0'}`} />
+                            {settings.publicProfile ?
+                                <ToggleRight size={48} fill="currentColor" className="text-[#D4AF37]" /> :
+                                <ToggleLeft size={48} className="text-[#B0A090]" />
+                            }
                         </div>
                     </div>
                 </section>
 
                 {/* Security Section */}
-                <section className="card">
-                    <h3 className="card-title flex items-center gap-2 mb-4">
-                        <Shield size={20} className="text-gold" /> Segurança
+                <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
+                    <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
+                        <Shield size={20} className="text-[#D4AF37]" /> Segurança
                     </h3>
-                    <div className="flex justify-between items-center py-4 border-b border-gray-700">
-                        <span className="text-gray-300">Ativar Autenticação de Dois Fatores (2FA)</span>
+                    <div className="flex justify-between items-center py-2 mb-6">
+                        <span className="text-[#B0A090] text-sm">Ativar Autenticação de Dois Fatores (2FA)</span>
                         <div
                             onClick={() => toggleSetting('twoFactor')}
-                            className={`w-12 h-6 rounded-full flex items-center transition-colors cursor-pointer p-1 ${settings.twoFactor ? 'bg-gold' : 'bg-gray-700'}`}
+                            className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
                         >
-                            <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${settings.twoFactor ? 'translate-x-6' : 'translate-x-0'}`} />
+                            {settings.twoFactor ?
+                                <ToggleRight size={48} fill="currentColor" className="text-[#D4AF37]" /> :
+                                <ToggleLeft size={48} className="text-[#B0A090]" />
+                            }
                         </div>
                     </div>
-                    <div className="mt-4">
-                        <Button variant="outline" leftIcon={<Lock size={16} />}>
+                    <div className="pt-4 border-t border-[#463420]">
+                        <Button
+                            variant="outline"
+                            leftIcon={<Lock size={16} />}
+                            className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[#D4AF37]/30"
+                        >
                             Alterar Senha
                         </Button>
                     </div>
                 </section>
 
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-6">
                     <Button
                         onClick={handleSave}
                         isLoading={loading}
                         leftIcon={<Save size={20} />}
-                        className="px-8"
+                        className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[#D4AF37]/20 border-none rounded-xl"
                     >
                         Salvar Alterações
                     </Button>

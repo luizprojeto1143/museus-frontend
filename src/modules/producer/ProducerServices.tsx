@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
 import { CheckCircle, MessageSquare, Mic, Ear, ShieldCheck, ArrowRight, PlayCircle, Star, Phone, Loader2 } from "lucide-react";
 import { EmptyState, Button } from "../../components/ui";
 import { useToast } from "../../contexts/ToastContext";
+import { inboxService } from "../../services/inboxService";
 
 type Provider = {
     id: string;
@@ -17,6 +19,7 @@ type Provider = {
 
 export const ProducerServices: React.FC = () => {
     const { addToast } = useToast();
+    const navigate = useNavigate();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -30,12 +33,12 @@ export const ProducerServices: React.FC = () => {
     };
 
     const serviceIcons: Record<string, React.ReactNode> = {
-        "LIBRAS_INTERPRETATION": <Ear size={40} className="text-yellow-500" />,
-        "AUDIO_DESCRIPTION": <Mic size={40} className="text-yellow-500" />,
-        "CAPTIONING": <MessageSquare size={40} className="text-yellow-500" />,
-        "BRAILLE": <ShieldCheck size={40} className="text-yellow-500" />,
-        "TACTILE_MODEL": <PlayCircle size={40} className="text-yellow-500" />,
-        "EASY_READING": <ArrowRight size={40} className="text-yellow-500" />
+        "LIBRAS_INTERPRETATION": <Ear size={40} className="text-[#D4AF37]" />,
+        "AUDIO_DESCRIPTION": <Mic size={40} className="text-[#D4AF37]" />,
+        "CAPTIONING": <MessageSquare size={40} className="text-[#D4AF37]" />,
+        "BRAILLE": <ShieldCheck size={40} className="text-[#D4AF37]" />,
+        "TACTILE_MODEL": <PlayCircle size={40} className="text-[#D4AF37]" />,
+        "EASY_READING": <ArrowRight size={40} className="text-[#D4AF37]" />
     };
 
     const fetchProviders = useCallback(() => {
@@ -62,13 +65,30 @@ export const ProducerServices: React.FC = () => {
         }
     };
 
+    const handleRequestQuote = async (provider: Provider) => {
+        try {
+            const initialMessage = `Olá ${provider.name}, gostaria de solicitar um orçamento para serviços de acessibilidade.`;
+            // 1. Create Conversation
+            await inboxService.createConversation(provider.id, initialMessage);
+            // 2. Notify User
+            addToast("Negociação iniciada! Você será redirecionado para o Inbox.", "success");
+            // 3. Redirect to Inbox
+            setTimeout(() => {
+                navigate("/producer/inbox");
+            }, 1000);
+        } catch (error) {
+            console.error("Error creating conversation", error);
+            addToast("Erro ao iniciar negociação via plataforma.", "error");
+        }
+    };
+
     return (
-        <div className="producer-services py-12 px-4 max-w-7xl mx-auto">
+        <div className="producer-services py-12 px-4 max-w-7xl mx-auto animate-in fade-in duration-500">
             <div className="text-center mb-16 space-y-4">
-                <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
-                    Marketplace de Acessibilidade
+                <h1 className="text-4xl md:text-5xl font-bold text-[#EAE0D5] font-serif">
+                    Marketplace de <span className="text-[#D4AF37]">Acessibilidade</span>
                 </h1>
-                <p className="max-w-2xl mx-auto opacity-70 text-lg leading-relaxed">
+                <p className="max-w-2xl mx-auto text-[#B0A090] text-lg leading-relaxed">
                     Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais.
                     Contrate direto pela plataforma através de canais seguros.
                 </p>
@@ -76,8 +96,8 @@ export const ProducerServices: React.FC = () => {
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <Loader2 className="animate-spin text-yellow-500" size={48} />
-                    <p className="opacity-50 font-medium">Carregando parceiros homologados...</p>
+                    <Loader2 className="animate-spin text-[#D4AF37]" size={48} />
+                    <p className="text-[#B0A090] font-medium">Carregando parceiros homologados...</p>
                 </div>
             ) : providers.length === 0 ? (
                 <EmptyState
@@ -88,42 +108,50 @@ export const ProducerServices: React.FC = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {providers.map(provider => (
-                        <div key={provider.id} className="group relative bg-[#15151a] border border-white/5 rounded-[2rem] p-8 flex flex-col hover:border-yellow-500/30 transition-all hover:shadow-2xl hover:shadow-yellow-500/5">
+                        <div key={provider.id} className="group relative bg-[#2c1e10] border border-[#463420] rounded-[2rem] p-8 flex flex-col hover:border-[#D4AF37]/50 transition-all hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1">
                             <div className="flex justify-between items-start mb-6">
                                 <div className="space-y-1">
-                                    <h3 className="text-xl font-bold text-white group-hover:text-yellow-500 transition-colors uppercase tracking-tight">{provider.name}</h3>
+                                    <h3 className="text-xl font-bold text-[#EAE0D5] group-hover:text-[#D4AF37] transition-colors">{provider.name}</h3>
                                     <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-1 text-yellow-500 text-sm font-bold">
+                                        <div className="flex items-center gap-1 text-[#D4AF37] text-sm font-bold">
                                             <Star size={14} fill="currentColor" />
                                             <span>{provider.rating?.toFixed(1) || "Novo"}</span>
                                         </div>
-                                        <span className="text-xs text-slate-500 font-medium">• {provider.completedJobs} jobs concluídos</span>
+                                        <span className="text-xs text-[#B0A090] font-medium">• {provider.completedJobs} jobs concluídos</span>
                                     </div>
                                 </div>
-                                <div className="bg-yellow-500/10 p-4 rounded-2xl group-hover:bg-yellow-500/20 transition-colors">
-                                    {serviceIcons[provider.services[0]] || <ShieldCheck size={32} className="text-yellow-500" />}
+                                <div className="bg-[#D4AF37]/10 p-4 rounded-2xl group-hover:bg-[#D4AF37]/20 transition-colors">
+                                    {serviceIcons[provider.services[0]] || <ShieldCheck size={32} className="text-[#D4AF37]" />}
                                 </div>
                             </div>
 
-                            <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3">
+                            <p className="text-[#B0A090] text-sm leading-relaxed mb-8 line-clamp-3">
                                 {provider.description || "Prestador especializado em acessibilidade cultural com ampla experiência em projetos públicos e privados."}
                             </p>
 
                             <div className="flex flex-wrap gap-1.5 mb-8">
                                 {provider.services.map(s => (
-                                    <span key={s} className="px-3 py-1 bg-white/5 text-xs font-bold text-slate-400 border border-white/10 rounded-full uppercase tracking-widest">
+                                    <span key={s} className="px-3 py-1 bg-black/20 text-xs font-bold text-[#EAE0D5] border border-[#463420] rounded-full uppercase tracking-widest">
                                         {serviceLabels[s] || s}
                                     </span>
                                 ))}
                             </div>
 
-                            <div className="mt-auto pt-6 border-t border-white/5">
+                            <div className="mt-auto pt-6 border-t border-[#463420] flex flex-col gap-3">
+                                <Button
+                                    onClick={() => handleRequestQuote(provider)}
+                                    className="w-full py-4 bg-[#D4AF37] hover:bg-[#c5a028] text-[#1a1108] border-none rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20"
+                                    leftIcon={<MessageSquare size={18} fill="currentColor" />}
+                                >
+                                    Solicitar Orçamento
+                                </Button>
                                 <Button
                                     onClick={() => handleWhatsApp(provider)}
-                                    className="w-full py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white border-none rounded-2xl font-black text-sm uppercase tracking-wider"
-                                    leftIcon={<Phone size={18} fill="currentColor" />}
+                                    variant="ghost"
+                                    className="w-full py-2 text-[#25D366] hover:bg-[#25D366]/10 text-xs uppercase tracking-wider"
+                                    leftIcon={<Phone size={14} />}
                                 >
-                                    Contatar no WhatsApp
+                                    WhatsApp (Externo)
                                 </Button>
                             </div>
                         </div>

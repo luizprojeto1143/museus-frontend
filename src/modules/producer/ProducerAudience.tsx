@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
-import { Search, Mail, Download, User } from "lucide-react";
+import { Search, Mail, Download, User, ArrowLeft } from "lucide-react";
+import { Button, Input } from "../../components/ui";
 
 type Participant = {
     id: string;
@@ -17,6 +18,7 @@ export const ProducerAudience: React.FC = () => {
     // Mock Data
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         // Fetch real registrations
@@ -61,88 +63,92 @@ export const ProducerAudience: React.FC = () => {
         document.body.removeChild(link);
     };
 
+    const filteredParticipants = participants.filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
-        <div className="producer-audience">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "2.5rem" }}>
+        <div className="pb-16 animate-in fade-in duration-500">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h1 style={{ fontSize: "2rem", color: "#d4af37", marginBottom: "0.5rem" }}>Meu Público (CRM)</h1>
-                    <p style={{ opacity: 0.7 }}>Visualize quem são seus visitantes e exporte dados para marketing.</p>
+                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meu Público (CRM)</h1>
+                    <p className="text-[#B0A090]">Visualize quem são seus visitantes e exporte dados para marketing.</p>
                 </div>
-                <button
+                <Button
                     onClick={handleExport}
-                    className="btn-premium" style={{
-                        background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)",
-                        padding: "0.8rem 1.5rem", borderRadius: "0.5rem", fontWeight: "bold",
-                        display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer"
-                    }}>
-                    <Download size={20} /> Exportar CSV
-                </button>
+                    variant="outline"
+                    className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[#D4AF37]/30"
+                    leftIcon={<Download size={20} />}
+                >
+                    Exportar CSV
+                </Button>
             </div>
 
-            <div style={{ background: "linear-gradient(145deg, #1e1e24, #15151a)", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.05)", overflow: "hidden" }}>
+            <div className="bg-[#2c1e10] rounded-2xl border border-[#463420] overflow-hidden shadow-lg shadow-black/20">
                 {/* Toolbar */}
-                <div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", gap: "1rem" }}>
-                    <div style={{ position: "relative", flex: 1 }}>
-                        <Search size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", opacity: 0.5 }} />
-                        <input
+                <div className="p-6 border-b border-[#463420] flex gap-4">
+                    <div className="relative flex-1">
+                        <Input
                             placeholder="Buscar por nome ou email..."
-                            style={{
-                                width: "100%", padding: "0.8rem 1rem 0.8rem 3rem",
-                                background: "rgba(0,0,0,0.2)", border: "none", borderRadius: "0.5rem", color: "white"
-                            }}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            leftIcon={<Search size={18} />}
+                            className="bg-black/20 border-none text-[#EAE0D5] placeholder:text-[#B0A090]/50"
                         />
                     </div>
                 </div>
 
                 {/* Table Header */}
-                <div style={{ display: "grid", gridTemplateColumns: "2fr 2fr 2fr 1.5fr 1fr", padding: "1rem 1.5rem", background: "rgba(0,0,0,0.3)", fontSize: "0.85rem", textTransform: "uppercase", opacity: 0.7, fontWeight: "bold" }}>
-                    <div>Nome</div>
-                    <div>Evento</div>
-                    <div>Ingresso</div>
-                    <div>Status</div>
-                    <div style={{ textAlign: "right" }}>Ações</div>
+                <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-black/20 text-xs font-bold text-[#B0A090] uppercase tracking-wider">
+                    <div className="col-span-4">Nome</div>
+                    <div className="col-span-3">Evento</div>
+                    <div className="col-span-2">Ingresso</div>
+                    <div className="col-span-2">Status</div>
+                    <div className="col-span-1 text-right">Ações</div>
                 </div>
 
                 {/* Rows */}
-                {participants.map(p => (
-                    <div key={p.id} style={{
-                        display: "grid", gridTemplateColumns: "2fr 2fr 2fr 1.5fr 1fr",
-                        padding: "1.2rem 1.5rem",
-                        borderBottom: "1px solid rgba(255,255,255,0.02)",
-                        alignItems: "center",
-                        fontSize: "0.95rem"
-                    }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
-                            <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#333", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <User size={16} opacity={0.7} />
+                <div className="divide-y divide-[#463420]">
+                    {loading ? (
+                        <div className="p-8 text-center text-[#B0A090]">Carregando...</div>
+                    ) : filteredParticipants.length === 0 ? (
+                        <div className="p-8 text-center text-[#B0A090]">Nenhum participante encontrado.</div>
+                    ) : (
+                        filteredParticipants.map(p => (
+                            <div key={p.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-white/5 transition-colors">
+                                <div className="col-span-4 flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center text-[#B0A090]">
+                                        <User size={16} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="font-bold text-[#EAE0D5] truncate">{p.name}</div>
+                                        <div className="text-xs text-[#B0A090] truncate">{p.email}</div>
+                                    </div>
+                                </div>
+                                <div className="col-span-3 text-sm text-[#EAE0D5]/80 truncate">{p.event}</div>
+                                <div className="col-span-2">
+                                    <span className="bg-white/5 text-[#B0A090] px-2 py-1 rounded text-xs">
+                                        {p.ticketType}
+                                    </span>
+                                </div>
+                                <div className="col-span-2">
+                                    <span className={`px-2 py-1 rounded-full text-xs font-bold border ${p.status === "CHECKED_IN"
+                                            ? "bg-[#4cd964]/10 text-[#4cd964] border-[#4cd964]/20"
+                                            : "bg-[#ffb340]/10 text-[#ffb340] border-[#ffb340]/20"
+                                        }`}>
+                                        {p.status === "CHECKED_IN" ? "PRESENTE" : "CONFIRMADO"}
+                                    </span>
+                                </div>
+                                <div className="col-span-1 text-right">
+                                    <button className="p-2 hover:bg-white/10 rounded-lg text-[#B0A090] transition-colors">
+                                        <Mail size={18} />
+                                    </button>
+                                </div>
                             </div>
-                            <div>
-                                <div style={{ fontWeight: "bold" }}>{p.name}</div>
-                                <div style={{ fontSize: "0.8rem", opacity: 0.5 }}>{p.email}</div>
-                            </div>
-                        </div>
-                        <div style={{ opacity: 0.8 }}>{p.event}</div>
-                        <div>
-                            <span style={{ background: "rgba(255,255,255,0.05)", padding: "0.2rem 0.6rem", borderRadius: "0.3rem", fontSize: "0.85rem" }}>
-                                {p.ticketType}
-                            </span>
-                        </div>
-                        <div>
-                            <span style={{
-                                background: p.status === "CHECKED_IN" ? "rgba(76, 217, 100, 0.1)" : "rgba(255, 179, 64, 0.1)",
-                                color: p.status === "CHECKED_IN" ? "#4cd964" : "#ffb340",
-                                padding: "0.2rem 0.6rem", borderRadius: "1rem", fontSize: "0.75rem", fontWeight: "bold"
-                            }}>
-                                {p.status === "CHECKED_IN" ? "PRESENTE" : "CONFIRMADO"}
-                            </span>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                            <button style={{ background: "transparent", border: "none", cursor: "pointer", opacity: 0.7 }}>
-                                <Mail size={18} color="white" />
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

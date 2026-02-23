@@ -28,7 +28,7 @@ export const Passport: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { stats, currentLevel, nextLevel, progressToNextLevel, refreshGamification } = useGamification();
-  const { name, email, tenantId } = useAuth();
+  const { name, email, tenantId, isGuest } = useAuth();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"progress" | "collection" | "journal" | "stamps">("progress");
@@ -207,230 +207,251 @@ export const Passport: React.FC = () => {
         onClose={() => setIsSettingsOpen(false)}
       />
 
-      {/* Tabs */}
-      <div className="passport-tabs">
-        {[
-          { id: "progress", label: t("visitor.passport.tabs.progress", "Progresso") },
-          { id: "stamps", label: t("visitor.passport.tabs.stamps", "Carimbos") },
-          { id: "collection", label: t("visitor.passport.tabs.collection", "Coleção") },
-          { id: "journal", label: t("visitor.passport.tabs.journal", "Diário") },
-        ].map((tab) => (
+      {isGuest ? (
+        <div style={{ marginTop: "2rem", background: "rgba(212, 175, 55, 0.05)", border: "1px dashed #d4af37", padding: "4rem 2rem", borderRadius: "1rem", textAlign: "center" }}>
+          <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🗺️</div>
+          <h2 style={{ fontSize: "1.5rem", color: "#d4af37", marginBottom: "1rem", fontFamily: "Georgia, serif" }}>
+            Seu Passaporte Digital
+          </h2>
+          <p style={{ color: "#EAE0D5", marginBottom: "2rem", opacity: 0.8, maxWidth: "400px", margin: "0 auto 2rem" }}>
+            Registre-se para começar a colecionar carimbos, ganhar XP e desbloquear conquistas exclusivas durante sua visita.
+          </p>
           <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`passport-tab-btn ${activeTab === tab.id ? "active" : ""}`}
+            onClick={() => navigate("/register")}
+            className="passport-tab-btn active"
+            style={{ width: "auto", padding: "1rem 2.5rem", borderRadius: "2rem", fontSize: "1rem" }}
           >
-            {tab.label}
+            Começar Agora
           </button>
-        ))}
-      </div>
-
-      {activeTab === "progress" && (
-        <div className="animate-fadeIn">
-          <div className="progress-card">
-            <div className="progress-header">
-              <h2 className="level-title">{currentLevel.title}</h2>
-              <span className="level-chip">{t("visitor.passport.level", "Nível")} {currentLevel.level}</span>
-            </div>
-
-            <div className="progress-bar-container">
-              <div
-                className="progress-bar-fill"
-                style={{ width: `${progressToNextLevel}%` }}
-              />
-            </div>
-
-            <div className="xp-stats">
-              <span>{stats.xp} XP</span>
-              {nextLevel && <span>{t("visitor.passport.next", "Próximo")}: {nextLevel.minXp} XP</span>}
-            </div>
+        </div>
+      ) : (
+        <>
+          {/* Tabs */}
+          <div className="passport-tabs">
+            {[
+              { id: "progress", label: t("visitor.passport.tabs.progress", "Progresso") },
+              { id: "stamps", label: t("visitor.passport.tabs.stamps", "Carimbos") },
+              { id: "collection", label: t("visitor.passport.tabs.collection", "Coleção") },
+              { id: "journal", label: t("visitor.passport.tabs.journal", "Diário") },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                className={`passport-tab-btn ${activeTab === tab.id ? "active" : ""}`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          <h3 className="section-title">{t("visitor.passport.historyTitle", "Histórico de Visitas")}</h3>
-
-          {loadingWorks ? (
-            <div className="empty-text" style={{ textAlign: "center", padding: "2rem" }}>
-              <div className="spinner" style={{ margin: "0 auto 1rem" }}></div>
-              <p>Carregando...</p>
-            </div>
-          ) : visitedWorks.length === 0 ? (
-            <p className="empty-text">{t("visitor.passport.noHistory", "Você ainda não visitou nenhuma obra.")}</p>
-          ) : (
-            <div>
-              {visitedWorks.map((work, i) => (
-                <div
-                  key={work.id + "-" + i}
-                  className="history-item"
-                  onClick={() => navigate(`/obras/${work.id}`)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {work.imageUrl ? (
-                    <img
-                      src={getFullUrl(work.imageUrl)}
-                      alt={work.title}
-                      className="history-img"
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 8,
-                        objectFit: "cover",
-                        border: "2px solid #d4af37"
-                      }}
-                    />
-                  ) : (
-                    <span className="history-icon" role="img" aria-label="art">🖼️</span>
-                  )}
-                  <div className="history-details">
-                    <p style={{ fontWeight: "bold", color: "#d4af37", margin: 0 }}>{work.title}</p>
-                    <p style={{ fontSize: "0.8rem", color: "#8b7355", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
-                      <Calendar size={12} />
-                      {work.visitedAt ? formatDate(work.visitedAt) : t("visitor.passport.visited", "Visitada")}
-                    </p>
-                  </div>
+          {activeTab === "progress" && (
+            <div className="animate-fadeIn">
+              <div className="progress-card">
+                <div className="progress-header">
+                  <h2 className="level-title">{currentLevel.title}</h2>
+                  <span className="level-chip">{t("visitor.passport.level", "Nível")} {currentLevel.level}</span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
 
-      {activeTab === "stamps" && (
-        <div className="animate-fadeIn">
-          <h3 className="section-title">{t("visitor.passport.stampsTitle", "Meus Carimbos")}</h3>
+                <div className="progress-bar-container">
+                  <div
+                    className="progress-bar-fill"
+                    style={{ width: `${progressToNextLevel}%` }}
+                  />
+                </div>
 
-          <div className="passport-book-bg">
-            <div className="passport-book-grid">
-              {visitedWorks.map((work) => (
-                <div key={work.id} style={{ textAlign: "center" }}>
-                  <div className={`stamp-slot ${stamped.has(work.id) ? 'filled' : ''}`}>
-                    {stamped.has(work.id) ? (
-                      <div className="stamp-container" style={{ position: "relative" }}>
-                        {work.imageUrl ? (
-                          <img
-                            src={getFullUrl(work.imageUrl)}
-                            alt={work.title}
-                            className="stamp-img"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              borderRadius: 8,
-                              filter: "sepia(0.3) contrast(1.1)",
-                              border: "3px solid #8b4513"
-                            }}
-                          />
-                        ) : (
-                          <div style={{
-                            width: "100%",
-                            height: "100%",
-                            background: "linear-gradient(135deg, #8b4513, #654321)",
+                <div className="xp-stats">
+                  <span>{stats.xp} XP</span>
+                  {nextLevel && <span>{t("visitor.passport.next", "Próximo")}: {nextLevel.minXp} XP</span>}
+                </div>
+              </div>
+
+              <h3 className="section-title">{t("visitor.passport.historyTitle", "Histórico de Visitas")}</h3>
+
+              {loadingWorks ? (
+                <div className="empty-text" style={{ textAlign: "center", padding: "2rem" }}>
+                  <div className="spinner" style={{ margin: "0 auto 1rem" }}></div>
+                  <p>Carregando...</p>
+                </div>
+              ) : visitedWorks.length === 0 ? (
+                <p className="empty-text">{t("visitor.passport.noHistory", "Você ainda não visitou nenhuma obra.")}</p>
+              ) : (
+                <div>
+                  {visitedWorks.map((work, i) => (
+                    <div
+                      key={work.id + "-" + i}
+                      className="history-item"
+                      onClick={() => navigate(`/obras/${work.id}`)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {work.imageUrl ? (
+                        <img
+                          src={getFullUrl(work.imageUrl)}
+                          alt={work.title}
+                          className="history-img"
+                          style={{
+                            width: 48,
+                            height: 48,
                             borderRadius: 8,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#d4af37",
-                            fontSize: "2rem"
-                          }}>
-                            🏛️
-                          </div>
-                        )}
-                        <div style={{
-                          position: "absolute",
-                          bottom: -8,
-                          right: -8,
-                          background: "#d4af37",
-                          borderRadius: "50%",
-                          width: 24,
-                          height: 24,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
-                        }}>
-                          ✓
-                        </div>
+                            objectFit: "cover",
+                            border: "2px solid #d4af37"
+                          }}
+                        />
+                      ) : (
+                        <span className="history-icon" role="img" aria-label="art">🖼️</span>
+                      )}
+                      <div className="history-details">
+                        <p style={{ fontWeight: "bold", color: "#d4af37", margin: 0 }}>{work.title}</p>
+                        <p style={{ fontSize: "0.8rem", color: "#8b7355", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
+                          <Calendar size={12} />
+                          {work.visitedAt ? formatDate(work.visitedAt) : t("visitor.passport.visited", "Visitada")}
+                        </p>
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => handleStamp(work.id)}
-                        className="generate-btn"
-                      >
-                        {t("visitor.passport.generate", "Carimbar")}
-                      </button>
-                    )}
-                  </div>
-                  <div className="stamp-label" style={{
-                    marginTop: 8,
-                    fontSize: "0.75rem",
-                    color: "#463420",
-                    fontWeight: 600,
-                    maxWidth: 100,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
-                  }}>
-                    {work.title}
-                  </div>
-                </div>
-              ))}
-
-              {visitedWorks.length === 0 && (
-                <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#666", padding: "2rem" }}>
-                  <MapPin size={48} style={{ color: "#d4af37", marginBottom: "1rem" }} />
-                  <p style={{ fontFamily: 'Georgia, serif', color: '#463420', fontWeight: 'bold' }}>
-                    {t("visitor.passport.empty", "Visite obras para colecionar carimbos!")}
-                  </p>
-                  <button
-                    className="generate-btn"
-                    onClick={() => navigate("/obras")}
-                    style={{ marginTop: "1rem" }}
-                  >
-                    Ver Obras
-                  </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {activeTab === "collection" && (
-        <div className="animate-fadeIn">
-          <h3 className="section-title">{t("visitor.passport.favoritesTitle", "Meus Favoritos")}</h3>
-          {favorites.length === 0 ? (
-            <p className="empty-text">{t("visitor.passport.noFavorites", "Sua coleção está vazia.")}</p>
-          ) : (
-            <div className="card-grid">
-              {favorites.map((item) => (
-                <div key={item.id} className="simple-card">
-                  <h4>{item.title}</h4>
-                  <p>{item.type === "work" ? t("visitor.sidebar.artworks") : "Item"}</p>
+          {activeTab === "stamps" && (
+            <div className="animate-fadeIn">
+              <h3 className="section-title">{t("visitor.passport.stampsTitle", "Meus Carimbos")}</h3>
+
+              <div className="passport-book-bg">
+                <div className="passport-book-grid">
+                  {visitedWorks.map((work) => (
+                    <div key={work.id} style={{ textAlign: "center" }}>
+                      <div className={`stamp-slot ${stamped.has(work.id) ? 'filled' : ''}`}>
+                        {stamped.has(work.id) ? (
+                          <div className="stamp-container" style={{ position: "relative" }}>
+                            {work.imageUrl ? (
+                              <img
+                                src={getFullUrl(work.imageUrl)}
+                                alt={work.title}
+                                className="stamp-img"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  borderRadius: 8,
+                                  filter: "sepia(0.3) contrast(1.1)",
+                                  border: "3px solid #8b4513"
+                                }}
+                              />
+                            ) : (
+                              <div style={{
+                                width: "100%",
+                                height: "100%",
+                                background: "linear-gradient(135deg, #8b4513, #654321)",
+                                borderRadius: 8,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#d4af37",
+                                fontSize: "2rem"
+                              }}>
+                                🏛️
+                              </div>
+                            )}
+                            <div style={{
+                              position: "absolute",
+                              bottom: -8,
+                              right: -8,
+                              background: "#d4af37",
+                              borderRadius: "50%",
+                              width: 24,
+                              height: 24,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
+                            }}>
+                              ✓
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleStamp(work.id)}
+                            className="generate-btn"
+                          >
+                            {t("visitor.passport.generate", "Carimbar")}
+                          </button>
+                        )}
+                      </div>
+                      <div className="stamp-label" style={{
+                        marginTop: 8,
+                        fontSize: "0.75rem",
+                        color: "#463420",
+                        fontWeight: 600,
+                        maxWidth: 100,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap"
+                      }}>
+                        {work.title}
+                      </div>
+                    </div>
+                  ))}
+
+                  {visitedWorks.length === 0 && (
+                    <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#666", padding: "2rem" }}>
+                      <MapPin size={48} style={{ color: "#d4af37", marginBottom: "1rem" }} />
+                      <p style={{ fontFamily: 'Georgia, serif', color: '#463420', fontWeight: 'bold' }}>
+                        {t("visitor.passport.empty", "Visite obras para colecionar carimbos!")}
+                      </p>
+                      <button
+                        className="generate-btn"
+                        onClick={() => navigate("/obras")}
+                        style={{ marginTop: "1rem" }}
+                      >
+                        Ver Obras
+                      </button>
+                    </div>
+                  )}
                 </div>
-              ))}
+              </div>
             </div>
           )}
-        </div>
-      )}
 
-      {activeTab === "journal" && (
-        <div className="animate-fadeIn">
-          <h3 className="section-title">{t("visitor.passport.journalTitle", "Meu Diário de Bordo")}</h3>
-          {Object.keys(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).length === 0 ? (
-            <p className="empty-text">{t("visitor.passport.noNotes", "Seu diário de bordo está vazio. Visite obras para adicionar anotações.")}</p>
-          ) : (
-            <div className="card-grid">
-              {Object.entries(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).map(([workId, note]) => {
-                const work = visitedWorks.find(w => w.id === workId);
-                return (
-                  <div key={workId} className="simple-card">
-                    <h4>{work?.title || t("visitor.artwork.badge")}</h4>
-                    <p style={{ whiteSpace: "pre-wrap", margin: 0 }}>{note as string}</p>
-                  </div>
-                );
-              })}
+          {activeTab === "collection" && (
+            <div className="animate-fadeIn">
+              <h3 className="section-title">{t("visitor.passport.favoritesTitle", "Meus Favoritos")}</h3>
+              {favorites.length === 0 ? (
+                <p className="empty-text">{t("visitor.passport.noFavorites", "Sua coleção está vazia.")}</p>
+              ) : (
+                <div className="card-grid">
+                  {favorites.map((item) => (
+                    <div key={item.id} className="simple-card">
+                      <h4>{item.title}</h4>
+                      <p>{item.type === "work" ? t("visitor.sidebar.artworks") : "Item"}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
-        </div>
+
+          {activeTab === "journal" && (
+            <div className="animate-fadeIn">
+              <h3 className="section-title">{t("visitor.passport.journalTitle", "Meu Diário de Bordo")}</h3>
+              {Object.keys(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).length === 0 ? (
+                <p className="empty-text">{t("visitor.passport.noNotes", "Seu diário de bordo está vazio. Visite obras para adicionar anotações.")}</p>
+              ) : (
+                <div className="card-grid">
+                  {Object.entries(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).map(([workId, note]) => {
+                    const work = visitedWorks.find(w => w.id === workId);
+                    return (
+                      <div key={workId} className="simple-card">
+                        <h4>{work?.title || t("visitor.artwork.badge")}</h4>
+                        <p style={{ whiteSpace: "pre-wrap", margin: 0 }}>{note as string}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

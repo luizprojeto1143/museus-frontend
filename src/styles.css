@@ -51,10 +51,10 @@
   /* Foreground / Text */
   --fg-main: #f5e6d3;
   /* Primary text (Off-white/Beige) */
-  --fg-secondary: #c9b58c;
-  /* Secondary text */
-  --fg-tertiary: #8b7355;
-  /* Muted text */
+  --fg-secondary: #d2c09a;
+  /* Secondary text — WCAG AA compliant on dark bg */
+  --fg-tertiary: #a89070;
+  /* Muted text — WCAG AA 4.7:1 on #0F0A06 */
   --fg-inverse: var(--color-neutral-950);
 
   /* Accents */
@@ -137,6 +137,40 @@
   color: var(--fg-main);
   font-family: var(--font-body);
   /* Default to accessible sans-serif */
+}
+
+/* --- Municipal / Secretary Blue Theme Variant --- */
+.municipal-theme {
+  --bg-page: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f1f5f9;
+  --bg-surface-active: #e2e8f0;
+  --bg-overlay: rgba(15, 23, 42, 0.6);
+
+  --fg-main: #1e293b;
+  --fg-secondary: #475569;
+  --fg-tertiary: #64748b;
+  --fg-inverse: #ffffff;
+
+  --accent-primary: #2563eb;
+  --accent-primary-hover: #3b82f6;
+  --accent-secondary: #0ea5e9;
+
+  --border-subtle: rgba(37, 99, 235, 0.1);
+  --border-default: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-focus: #2563eb;
+
+  --bg-sidebar: #0f172a;
+  --font-heading: system-ui, sans-serif;
+  --shadow-glow: 0 0 15px rgba(37, 99, 235, 0.15);
+
+  --municipal-sidebar-bg: #0f172a;
+  --municipal-sidebar-text: #cbd5e1;
+  --municipal-sidebar-active: #2563eb;
+  --municipal-header-bg: #ffffff;
+
+  color-scheme: light;
 }
 
 /* --- Accessibility Utilities --- */
@@ -862,6 +896,56 @@ textarea {
 .nav-item.active {
   background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
   border-left-color: var(--accent-gold);
+}
+
+/* Sidebar Groups (Collapsible Sections) */
+.sidebar-group {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--fg-tertiary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-family: var(--font-body);
+  margin-top: 0.25rem;
+}
+
+.sidebar-group-header:hover {
+  color: var(--accent-primary);
+}
+
+.sidebar-group-header.open {
+  color: var(--fg-secondary);
+}
+
+.sidebar-group-chevron {
+  font-size: 0.65rem;
+  transition: transform 0.2s;
+}
+
+.sidebar-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-left: 0.25rem;
+}
+
+.sidebar-group-items .nav-item {
+  font-size: 0.9rem;
+  padding: 0.6rem 0.75rem 0.6rem 1rem;
 }
 
 /* Sidebar Toggle Button */

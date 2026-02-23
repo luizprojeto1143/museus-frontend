@@ -1,23 +1,16 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { Construction } from "lucide-react";
 
 export const ProducerPlaceholder: React.FC<{ title: string }> = ({ title }) => {
     return (
-        <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "60vh",
-            textAlign: "center",
-            color: "rgba(255,255,255,0.5)"
-        }}>
-            <div style={{ background: "rgba(255,255,255,0.05)", padding: "2rem", borderRadius: "50%", marginBottom: "2rem" }}>
-                <Construction size={64} />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8 animate-in fade-in duration-500">
+            <div className="w-24 h-24 bg-[#2c1e10] rounded-full flex items-center justify-center mb-6 border border-[#463420] shadow-lg shadow-black/20">
+                <Construction size={40} className="text-[#D4AF37]" />
             </div>
-            <h1 style={{ color: "white", marginBottom: "0.5rem" }}>{title}</h1>
-            <p>Esta funcionalidade estará disponível na próxima atualização.</p>
+            <h1 className="text-3xl font-bold text-[#EAE0D5] mb-2 font-serif">{title}</h1>
+            <p className="text-[#B0A090] max-w-md">
+                Esta funcionalidade está em desenvolvimento e estará disponível na próxima atualização do Portal do Produtor.
+            </p>
         </div>
     );
 };

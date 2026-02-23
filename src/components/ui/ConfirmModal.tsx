@@ -92,6 +92,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                         className="confirm-modal-btn cancel"
                         onClick={onClose}
                         disabled={loading}
+                        aria-label={cancelText}
                     >
                         {cancelText}
                     </button>
@@ -100,9 +101,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                         onClick={onConfirm}
                         disabled={loading}
                         style={{ background: style.confirmBg }}
+                        aria-label={confirmText}
                     >
                         {loading ? (
-                            <span className="loading-spinner" />
+                            <span className="loading-spinner" aria-hidden="true" />
                         ) : (
                             confirmText
                         )}

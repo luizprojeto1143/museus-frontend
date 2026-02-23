@@ -65,7 +65,37 @@ export const AdminDashboard: React.FC = () => {
     return (
       <div>
         <h1 className="section-title">{t("admin.dashboard.title")}</h1>
-        <p>{t("common.loading")}</p>
+        {/* Skeleton Loader */}
+        <div className="card-grid" style={{ marginBottom: "2rem" }}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="stat-card" style={{ minHeight: 90 }}>
+              <div style={{
+                width: "60%", height: 28, borderRadius: 6,
+                background: "linear-gradient(90deg, rgba(212,175,55,0.08) 25%, rgba(212,175,55,0.15) 50%, rgba(212,175,55,0.08) 75%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s infinite"
+              }} />
+              <div style={{
+                width: "40%", height: 14, borderRadius: 4, marginTop: 8,
+                background: "rgba(212,175,55,0.06)"
+              }} />
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} className="card" style={{ minHeight: 200 }}>
+              <div style={{ width: "50%", height: 20, borderRadius: 4, background: "rgba(212,175,55,0.1)", marginBottom: 16 }} />
+              {[1, 2, 3].map(j => (
+                <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "0.75rem 0", borderBottom: "1px solid var(--border-subtle)" }}>
+                  <div style={{ width: "60%", height: 14, borderRadius: 4, background: "rgba(212,175,55,0.06)" }} />
+                  <div style={{ width: "20%", height: 14, borderRadius: 4, background: "rgba(212,175,55,0.08)" }} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <style>{`@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }`}</style>
       </div>
     );
   }
@@ -74,9 +104,26 @@ export const AdminDashboard: React.FC = () => {
     return (
       <div>
         <h1 className="section-title">{t("admin.dashboard.title")}</h1>
-        <p style={{ color: "#ef4444" }}>
-          {t("common.error")}
-        </p>
+        <div className="card" style={{
+          textAlign: "center", padding: "3rem 2rem",
+          border: "1px solid rgba(239, 68, 68, 0.3)",
+          background: "rgba(239, 68, 68, 0.05)"
+        }}>
+          <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>⚠️</div>
+          <h2 style={{ color: "#ef4444", marginBottom: "0.5rem", fontSize: "1.2rem" }}>
+            {t("common.error")}
+          </h2>
+          <p style={{ color: "var(--fg-secondary)", marginBottom: "1.5rem", fontSize: "0.9rem" }}>
+            Não foi possível carregar os dados do dashboard. Verifique sua conexão e tente novamente.
+          </p>
+          <button
+            className="btn btn-primary"
+            onClick={() => { setLoading(true); loadDashboard(); }}
+            aria-label="Tentar carregar dashboard novamente"
+          >
+            🔄 Tentar Novamente
+          </button>
+        </div>
       </div>
     );
   }

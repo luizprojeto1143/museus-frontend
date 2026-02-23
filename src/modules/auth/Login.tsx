@@ -19,12 +19,14 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const { role: userRole, tenantType } = await login({ email, password });
+      const { role: userRole, tenantType, hasProviderProfile } = await login({ email, password });
 
       // Redirecionar baseado no role após login
       let redirectPath = "/";
 
-      if (userRole === "master") {
+      if (hasProviderProfile) {
+        redirectPath = "/provider";
+      } else if (userRole === "master") {
         redirectPath = "/master";
       } else if (userRole === "admin") {
         if (tenantType === "PRODUCER") {

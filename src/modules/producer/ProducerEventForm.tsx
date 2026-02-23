@@ -3,20 +3,25 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
 import { useAuth } from "../auth/AuthContext";
-import { Save, ArrowLeft, Calendar, MapPin, Image as ImageIcon, AlignLeft, Tag } from "lucide-react";
+import { Save, ArrowLeft, Calendar, MapPin, Image as ImageIcon, AlignLeft, Tag, Clock, Globe, Info } from "lucide-react";
+import { useToast } from "../../contexts/ToastContext";
+import { Button, Input, Textarea, Select } from "../../components/ui";
 
 export const ProducerEventForm: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
+    const { addToast } = useToast();
 
     const [loading, setLoading] = useState(false);
-    const [categories, setCategories] = useState<{ id: string, name: string }[]>([]); // New state
+    const [saving, setSaving] = useState(false);
+    const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
+
     const [formData, setFormData] = useState({
         title: "",
         description: "",
-        categoryId: "", // New field
+        categoryId: "",
         startDate: "",
         startTime: "",
         endDate: "",
@@ -24,11 +29,10 @@ export const ProducerEventForm: React.FC = () => {
         coverUrl: "",
         location: "",
         visibility: "PUBLIC",
-        status: "DRAFT" // New default
+        status: "DRAFT"
     });
 
     useEffect(() => {
-        // Fetch categories
         api.get("/categories", { params: { tenantId } })
             .then(res => setCategories(res.data))
             .catch(err => console.error("Error fetching categories", err));
@@ -41,7 +45,7 @@ export const ProducerEventForm: React.FC = () => {
                     setFormData({
                         title: ev.title,
                         description: ev.description || "",
-                        categoryId: ev.categoryId || "", // Set category
+                        categoryId: ev.categoryId || "",
                         startDate: ev.startDate ? ev.startDate.split('T')[0] : "",
                         startTime: ev.startDate ? new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
                         endDate: ev.endDate ? ev.endDate.split('T')[0] : "",
@@ -52,18 +56,25 @@ export const ProducerEventForm: React.FC = () => {
                         status: ev.status || "DRAFT"
                     });
                 })
-                .catch(err => console.error(err))
+                .catch(err => {
+                    console.error(err);
+                    addToast("Erro ao carregar evento", "error");
+                })
                 .finally(() => setLoading(false));
         }
-    }, [id, tenantId]); // Added tenantId to dependency array for category fetch
+    }, [id, tenantId, addToast]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        setSaving(true);
 
-        // Combine date and time
-        const startDateTime = new Date(`${formData.startDate}T${formData.startTime || "00:00"}`);
-        const endDateTime = formData.endDate ? new Date(`${formData.endDate}T${formData.endTime || "23:59"}`) : null;
+        const startDateTime = new Date(`${formData.startDate}T${formData.startTime || "00:00"} `);
+        const endDateTime = formData.endDate ? new Date(`${formData.endDate}T${formData.endTime || "23:59"} `) : null;
 
         const payload = {
             ...formData,
@@ -78,211 +89,209 @@ export const ProducerEventForm: React.FC = () => {
             } else {
                 await api.post("/events", payload);
             }
+            addToast("Evento salvo com sucesso!", "success");
             navigate("/producer/events");
         } catch (error) {
             console.error("Error saving event", error);
-            alert("Erro ao salvar projeto. Verifique os dados.");
+            addToast("Erro ao salvar evento. Verifique os dados.", "error");
         } finally {
-            setLoading(false);
+            setSaving(false);
         }
     };
 
-    const inputStyle = {
-        display: "block",
-        width: "100%",
-        padding: "0.8rem",
-        background: "rgba(255,255,255,0.05)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: "0.5rem",
-        color: "white",
-        marginTop: "0.5rem"
-    };
-
-    const labelStyle = {
-        display: "block",
-        fontSize: "0.9rem",
-        opacity: 0.7,
-        marginTop: "1.5rem"
-    };
+    if (loading) return (
+        <div className="flex justify-center items-center h-screen bg-[#1a1108]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
+        </div>
+    );
 
     return (
-        <div className="producer-event-form" style={{ maxWidth: "800px", margin: "0 auto" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-                <button onClick={() => navigate("/producer/events")} style={{ background: "transparent", border: "none", color: "white", cursor: "pointer" }}>
-                    <ArrowLeft size={24} />
-                </button>
-                <h1 style={{ fontSize: "2rem", color: "#d4af37", margin: 0 }}>
-                    {id ? "Editar Evento" : "Novo Evento"}
-                </h1>
-            </div>
-
-            <form onSubmit={handleSubmit} style={{ background: "linear-gradient(145deg, #1e1e24, #15151a)", padding: "2rem", borderRadius: "1rem", border: "1px solid rgba(255,255,255,0.05)" }}>
-
-                <label style={{ ...labelStyle, marginTop: 0 }}>Título do Evento</label>
-                <div style={{ position: "relative" }}>
-                    <AlignLeft size={18} style={{ position: "absolute", top: "1.2rem", left: "0.8rem", opacity: 0.5 }} />
-                    <input
-                        required
-                        value={formData.title}
-                        onChange={e => setFormData({ ...formData, title: e.target.value })}
-                        style={{ ...inputStyle, paddingLeft: "2.5rem", fontSize: "1.1rem" }}
-                        placeholder="Ex: Festival de Jazz 2024"
-                    />
-                </div>
-
-                <label style={labelStyle}>Descrição</label>
-                <textarea
-                    value={formData.description}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                    style={{ ...inputStyle, minHeight: "100px", resize: "vertical" }}
-                    placeholder="Descreva o evento, atrações e detalhes importantes..."
-                />
-
-                <label style={labelStyle}>Categoria</label>
-                <div style={{ position: "relative" }}>
-                    <Tag size={18} style={{ position: "absolute", top: "1.2rem", left: "0.8rem", opacity: 0.5 }} />
-                    <select
-                        value={formData.categoryId}
-                        onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
-                        style={{ ...inputStyle, paddingLeft: "2.5rem", appearance: "none" }}
+        <div className="min-h-screen bg-[#1a1108] text-[#EAE0D5] p-6 md:p-12 animate-in fade-in duration-500">
+            <div className="max-w-4xl mx-auto">
+                <div className="flex items-center gap-4 mb-8">
+                    <Button
+                        variant="ghost"
+                        onClick={() => navigate("/producer/events")}
+                        className="w-10 h-10 p-0 rounded-full bg-[#2c1e10] hover:bg-[#D4AF37]/10 text-[#B0A090] border border-[#463420]"
                     >
-                        <option value="">Selecione uma categoria (Opcional)</option>
-                        {categories.map(cat => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </select>
+                        <ArrowLeft size={20} />
+                    </Button>
+                    <div>
+                        <h1 className="text-3xl font-bold text-[#D4AF37] font-serif">
+                            {id ? "Editar Evento" : "Novo Evento"}
+                        </h1>
+                        <p className="text-[#B0A090]">Preencha as informações para divulgar na agenda cultural.</p>
+                    </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                    <div>
-                        <label style={labelStyle}>Data Início</label>
-                        <input
-                            type="date"
+                <form onSubmit={handleSubmit} className="bg-[#2c1e10] rounded-2xl p-8 border border-[#463420] shadow-lg shadow-black/20 space-y-8">
+
+                    {/* Basic Info */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
+                            <Info size={18} /> Informações Básicas
+                        </div>
+
+                        <Input
+                            label="Título do Evento"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
                             required
-                            value={formData.startDate}
-                            onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                            style={inputStyle}
+                            placeholder="Ex: Festival de Jazz 2024"
+                            leftIcon={<AlignLeft size={18} className="text-[#D4AF37]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12 text-lg font-bold"
                         />
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Horário Início</label>
-                        <input
-                            type="time"
-                            value={formData.startTime}
-                            onChange={e => setFormData({ ...formData, startTime: e.target.value })}
-                            style={inputStyle}
+
+                        <Textarea
+                            label="Descrição"
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows={5}
+                            placeholder="Descreva o evento, atrações e detalhes importantes..."
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                         />
-                    </div>
-                </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                    <div>
-                        <label style={labelStyle}>Data Fim (Opcional)</label>
-                        <input
-                            type="date"
-                            value={formData.endDate}
-                            onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-                            style={inputStyle}
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-[#B0A090] flex items-center gap-2">
+                                <Tag size={16} className="text-[#D4AF37]" /> Categoria
+                            </label>
+                            <select
+                                name="categoryId"
+                                value={formData.categoryId}
+                                onChange={handleChange}
+                                className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-3 text-[#EAE0D5] focus:border-[#D4AF37] outline-none transition-colors appearance-none"
+                            >
+                                <option value="" className="bg-[#2c1e10]">Selecione uma categoria (Opcional)</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id} className="bg-[#2c1e10]">{cat.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* DateTime */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
+                            <Calendar size={18} /> Data e Hora
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <Input
+                                    label="Data Início"
+                                    name="startDate"
+                                    type="date"
+                                    value={formData.startDate}
+                                    onChange={handleChange}
+                                    required
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
+                                />
+                                <Input
+                                    label="Horário Início"
+                                    name="startTime"
+                                    type="time"
+                                    value={formData.startTime}
+                                    onChange={handleChange}
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
+                                    leftIcon={<Clock size={18} className="text-[#D4AF37]" />}
+                                />
+                            </div>
+                            <div className="space-y-4">
+                                <Input
+                                    label="Data Fim (Opcional)"
+                                    name="endDate"
+                                    type="date"
+                                    value={formData.endDate}
+                                    onChange={handleChange}
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
+                                />
+                                <Input
+                                    label="Horário Fim"
+                                    name="endTime"
+                                    type="time"
+                                    value={formData.endTime}
+                                    onChange={handleChange}
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
+                                    leftIcon={<Clock size={18} className="text-[#D4AF37]" />}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Location & Media */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
+                            <MapPin size={18} /> Localização e Mídia
+                        </div>
+
+                        <Input
+                            label="Localização"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            placeholder="Ex: Teatro Municipal - Sala 2"
+                            leftIcon={<MapPin size={18} className="text-[#D4AF37]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                         />
-                    </div>
-                    <div>
-                        <label style={labelStyle}>Horário Fim</label>
-                        <input
-                            type="time"
-                            value={formData.endTime}
-                            onChange={e => setFormData({ ...formData, endTime: e.target.value })}
-                            style={inputStyle}
+
+                        <Input
+                            label="URL da Imagem de Capa"
+                            name="coverUrl"
+                            value={formData.coverUrl}
+                            onChange={handleChange}
+                            placeholder="https://..."
+                            leftIcon={<ImageIcon size={18} className="text-[#D4AF37]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                         />
+                        {formData.coverUrl && (
+                            <div className="h-48 w-full rounded-xl overflow-hidden border border-[#463420]">
+                                <img src={formData.coverUrl} alt="Preview" className="w-full h-full object-cover" />
+                            </div>
+                        )}
                     </div>
-                </div>
 
-                <label style={labelStyle}>Localização</label>
-                <div style={{ position: "relative" }}>
-                    <MapPin size={18} style={{ position: "absolute", top: "1.2rem", left: "0.8rem", opacity: 0.5 }} />
-                    <input
-                        value={formData.location}
-                        onChange={e => setFormData({ ...formData, location: e.target.value })}
-                        style={{ ...inputStyle, paddingLeft: "2.5rem" }}
-                        placeholder="Ex: Teatro Municipal - Sala 2"
-                    />
-                </div>
+                    {/* Status */}
+                    <div className="bg-black/20 p-6 rounded-xl border border-[#463420]">
+                        <label className="block text-sm font-medium text-[#B0A090] mb-4">Status do Evento</label>
+                        <div className="flex gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, status: "DRAFT" }))}
+                                className={`flex-1 py-3 rounded-xl font-bold transition-all border ${formData.status === "DRAFT"
+                                        ? "bg-[#B0A090]/10 border-[#B0A090] text-[#EAE0D5]"
+                                        : "bg-transparent border-[#463420] text-[#B0A090] hover:bg-white/5"
+                                    }`}
+                            >
+                                Rascunho
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, status: "PUBLISHED" }))}
+                                className={`flex-1 py-3 rounded-xl font-bold transition-all border ${formData.status === "PUBLISHED"
+                                        ? "bg-[#4cd964]/10 border-[#4cd964] text-[#4cd964]"
+                                        : "bg-transparent border-[#463420] text-[#B0A090] hover:bg-white/5"
+                                    }`}
+                            >
+                                Publicado
+                            </button>
+                        </div>
+                    </div>
 
-                <label style={labelStyle}>URL da Imagem de Capa</label>
-                <div style={{ position: "relative" }}>
-                    <ImageIcon size={18} style={{ position: "absolute", top: "1.2rem", left: "0.8rem", opacity: 0.5 }} />
-                    <input
-                        value={formData.coverUrl}
-                        onChange={e => setFormData({ ...formData, coverUrl: e.target.value })}
-                        style={{ ...inputStyle, paddingLeft: "2.5rem" }}
-                        placeholder="https://..."
-                    />
-                </div>
-
-                <div style={{ marginTop: "1.5rem", background: "rgba(255,255,255,0.03)", padding: "1rem", borderRadius: "0.5rem" }}>
-                    <label style={{ ...labelStyle, marginTop: 0, marginBottom: "0.5rem" }}>Status do Evento</label>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                        <button
-                            type="button"
-                            onClick={() => setFormData({ ...formData, status: "DRAFT" })}
-                            style={{
-                                flex: 1,
-                                padding: "0.8rem",
-                                borderRadius: "0.5rem",
-                                border: formData.status === "DRAFT" ? "1px solid #94a3b8" : "1px solid rgba(255,255,255,0.1)",
-                                background: formData.status === "DRAFT" ? "rgba(148,163,184,0.1)" : "transparent",
-                                color: formData.status === "DRAFT" ? "#94a3b8" : "rgba(255,255,255,0.5)",
-                                cursor: "pointer",
-                                transition: "all 0.2s"
-                            }}
+                    <div className="flex justify-end pt-4 border-t border-[#463420]">
+                        <Button
+                            type="submit"
+                            isLoading={saving}
+                            leftIcon={<Save size={20} />}
+                            className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[#D4AF37]/20 border-none rounded-xl w-full md:w-auto"
                         >
-                            Rascunho
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setFormData({ ...formData, status: "PUBLISHED" })}
-                            style={{
-                                flex: 1,
-                                padding: "0.8rem",
-                                borderRadius: "0.5rem",
-                                border: formData.status === "PUBLISHED" ? "1px solid #10b981" : "1px solid rgba(255,255,255,0.1)",
-                                background: formData.status === "PUBLISHED" ? "rgba(16,185,129,0.1)" : "transparent",
-                                color: formData.status === "PUBLISHED" ? "#10b981" : "rgba(255,255,255,0.5)",
-                                cursor: "pointer",
-                                transition: "all 0.2s"
-                            }}
-                        >
-                            Publicado
-                        </button>
+                            Salvar Evento
+                        </Button>
                     </div>
-                </div>
 
-                <div style={{ marginTop: "2rem", display: "flex", gap: "1rem" }}>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="btn-premium"
-                        style={{
-                            flex: 1,
-                            background: "#d4af37",
-                            color: "#000",
-                            border: "none",
-                            padding: "1rem",
-                            borderRadius: "0.5rem",
-                            fontWeight: "bold",
-                            fontSize: "1rem",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            cursor: loading ? "wait" : "pointer",
-                            opacity: loading ? 0.7 : 1
-                        }}
-                    >
-                        <Save size={20} /> {loading ? "Salvando..." : "Salvar Evento"}
-                    </button>
-                </div>
-
-            </form>
+                </form>
+            </div>
         </div>
     );
 };

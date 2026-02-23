@@ -16,10 +16,13 @@ interface StoredAuth {
   tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
+  hasProviderProfile: boolean;
+  isGuest?: boolean;
 }
 
 interface AuthContextValue {
   isAuthenticated: boolean;
+  isGuest: boolean;
   role: Role | null;
   token: string | null;
   refreshToken: string | null; // [NEW]
@@ -27,7 +30,9 @@ interface AuthContextValue {
   tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
-  login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null }>;
+  hasProviderProfile: boolean;
+  login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null; hasProviderProfile: boolean }>;
+  enterAsGuest: () => void;
   logout: () => void;
   updateSession: (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => void;
 }
@@ -128,6 +133,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return null;
   });
 
+  const [hasProviderProfile, setHasProviderProfile] = useState<boolean>(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as StoredAuth;
+        return parsed.hasProviderProfile ?? false;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
+  const [isGuest, setIsGuest] = useState<boolean>(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as StoredAuth;
+        return parsed.isGuest ?? false;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+
   const login: AuthContextValue["login"] = async ({ email, password }) => {
     const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
     const demo = import.meta.env.VITE_DEMO_MODE === "true";
@@ -149,7 +180,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         role?: string;
         tenantId?: string | null;
         tenantType?: "MUSEUM" | "PRODUCER" | null;
-        user?: { email: string; name?: string };
+        hasProviderProfile?: boolean;
+        user?: { email: string; name?: string; hasProviderProfile?: boolean };
       };
 
       const receivedToken = data.accessToken;
@@ -170,6 +202,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const receivedTenantType = data.tenantType ?? "MUSEUM";
       const receivedEmail = data.user?.email ?? email;
       const receivedName = data.user?.name ?? null;
+      const receivedHasProviderProfile = data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false;
 
       setToken(receivedToken);
       setRefreshToken(receivedRefreshToken);
@@ -178,6 +211,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setTenantType(receivedTenantType);
       setEmail(receivedEmail);
       setName(receivedName);
+      setHasProviderProfile(receivedHasProviderProfile);
 
       const toStore: StoredAuth = {
         token: receivedToken,
@@ -186,11 +220,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         tenantId: receivedTenantId,
         tenantType: receivedTenantType,
         email: receivedEmail,
-        name: receivedName
+        name: receivedName,
+        hasProviderProfile: receivedHasProviderProfile
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
 
-      return { role: mappedRole, tenantType: receivedTenantType };
+      return { role: mappedRole, tenantType: receivedTenantType, hasProviderProfile: receivedHasProviderProfile };
     } else {
       // modo demo (mock)
       const simulatedRole: Role =
@@ -215,11 +250,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         tenantId: null,
         tenantType: simulatedTenantType,
         email: email,
-        name: "Usuário Demo"
+        name: "Usuário Demo",
+        hasProviderProfile: false
       };
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
 
-      return { role: simulatedRole, tenantType: simulatedTenantType };
+      return { role: simulatedRole, tenantType: simulatedTenantType, hasProviderProfile: false };
     }
   };
 
@@ -248,10 +284,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setTenantType(null);
     setEmail(null);
     setName(null);
+    setHasProviderProfile(false);
+    setIsGuest(false);
     window.localStorage.removeItem(STORAGE_KEY);
 
     // Forçar recarga ou limpeza de cache se necessário
     // window.location.href = "/login"; // Opcional
+  };
+
+  const enterAsGuest = () => {
+    const guestToken = "guest-anonymous-token";
+    setToken(guestToken);
+    setRefreshToken("");
+    setRole("visitor");
+    setTenantId(null);
+    setTenantType("MUSEUM");
+    setEmail(null);
+    setName("Visitante");
+    setHasProviderProfile(false);
+    setIsGuest(true);
+
+    const toStore: StoredAuth = {
+      token: guestToken,
+      refreshToken: "",
+      role: "visitor",
+      tenantId: null,
+      tenantType: "MUSEUM",
+      email: null,
+      name: "Visitante",
+      hasProviderProfile: false,
+      isGuest: true
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   };
 
   const updateSession = (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => {
@@ -278,7 +342,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       tenantId: newTenantId,
       tenantType: currentTenantType,
       email: email || "",
-      name: newName !== undefined ? (newName ?? null) : name
+      name: newName !== undefined ? (newName ?? null) : name,
+      hasProviderProfile: hasProviderProfile
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   };
@@ -287,6 +352,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     <AuthContext.Provider
       value={{
         isAuthenticated: !!token,
+        isGuest,
         role,
         token,
         refreshToken,
@@ -294,7 +360,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         tenantType,
         email,
         name,
+        hasProviderProfile,
         login,
+        enterAsGuest,
         logout,
         updateSession
       }}

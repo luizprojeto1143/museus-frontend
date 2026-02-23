@@ -6,7 +6,7 @@ import { Input, Button, Textarea, Select } from "../../../components/ui";
 import {
   Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
   Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
-  Plus, Edit, Trash2, Palette, Save
+  Plus, Edit, Trash2, Palette, Save, Smartphone
 } from "lucide-react";
 import "./AdminMuseumSettings.css";
 
@@ -89,6 +89,7 @@ export const AdminMuseumSettings: React.FC = () => {
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [editingFloorPlan, setEditingFloorPlan] = useState<FloorPlan | null>(null);
   const [newFloorPlan, setNewFloorPlan] = useState({ name: "", floor: 0, imageUrl: "" });
+  const [activeTab, setActiveTab] = useState<"dados" | "multimidia" | "mapa" | "visual" | "preview">("dados");
 
   const loadFloorPlans = React.useCallback(async () => {
     if (!tenantId) return;
@@ -206,11 +207,17 @@ export const AdminMuseumSettings: React.FC = () => {
     return <p>{t("common.loading")}</p>;
   }
 
+  const tabs = [
+    { id: "dados" as const, label: "Dados", icon: <Building2 size={16} /> },
+    { id: "multimidia" as const, label: "Multimídia", icon: <Volume2 size={16} /> },
+    { id: "mapa" as const, label: "Mapas", icon: <MapIcon size={16} /> },
+    { id: "visual" as const, label: "Visual", icon: <Palette size={16} /> },
+    { id: "preview" as const, label: "Preview", icon: <ImageIcon size={16} /> },
+  ];
+
   return (
     <div className="visitor-theme-container max-w-5xl mx-auto px-4 pt-8">
-
-      {/* Header Style like Visitor Profile */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="visitor-theme-title flex items-center gap-3">
           <Settings size={32} /> Configurações do Museu
         </h1>
@@ -219,38 +226,40 @@ export const AdminMuseumSettings: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* COLUNA ESQUERDA */}
-        <div className="lg:col-span-2 space-y-6">
+      {/* TAB BAR */}
+      <div className="settings-tab-bar">
+        {tabs.map(tab => (
+          <button
+            key={tab.id}
+            className={`settings-tab ${activeTab === tab.id ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+            aria-selected={activeTab === tab.id}
+            role="tab"
+          >
+            {tab.icon}
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
 
-          {/* DADOS INSTITUCIONAIS */}
+      {/* TAB CONTENT */}
+      <div style={{ marginTop: "1.5rem" }}>
+
+        {activeTab === "dados" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
               <Building2 className="text-[#d4af37]" size={24} />
               <h2 className="visitor-card-title">Dados Institucionais</h2>
             </div>
-
             <div className="space-y-4">
               <div className="visitor-input-group">
                 <label>Nome do Museu *</label>
-                <input
-                  className="visitor-input"
-                  value={settings.name}
-                  onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                  placeholder="Ex: Museu Histórico"
-                />
+                <input className="visitor-input" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} placeholder="Ex: Museu Histórico" />
               </div>
-
               <div className="visitor-input-group">
                 <label>Missão / Descrição</label>
-                <textarea
-                  className="visitor-input"
-                  rows={3}
-                  value={settings.mission}
-                  onChange={(e) => setSettings({ ...settings, mission: e.target.value })}
-                />
+                <textarea className="visitor-input" rows={3} value={settings.mission} onChange={(e) => setSettings({ ...settings, mission: e.target.value })} />
               </div>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="visitor-input-group">
                   <label>Endereço</label>
@@ -263,15 +272,9 @@ export const AdminMuseumSettings: React.FC = () => {
                   </div>
                   <div className="visitor-input-group">
                     <label>Capacidade (Pessoas/Hora)</label>
-                    <input
-                      type="number"
-                      className="visitor-input"
-                      value={settings.capacityPerHour || 50}
-                      onChange={(e) => setSettings({ ...settings, capacityPerHour: parseInt(e.target.value) || 50 })}
-                    />
+                    <input type="number" className="visitor-input" value={settings.capacityPerHour || 50} onChange={(e) => setSettings({ ...settings, capacityPerHour: parseInt(e.target.value) || 50 })} />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="visitor-input-group">
                     <label>WhatsApp</label>
@@ -289,40 +292,37 @@ export const AdminMuseumSettings: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
 
-          {/* MULTIMIDIA */}
+        {activeTab === "multimidia" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
               <Volume2 className="text-[#d4af37]" size={24} />
               <h2 className="visitor-card-title">Boas-vindas Multimídia</h2>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <label className="text-[#c9b58c] text-sm font-bold">Áudio de Narração</label>
                 <div
                   onClick={() => document.getElementById('welcome-audio-upload')?.click()}
                   className="upload-area"
+                  role="button"
+                  aria-label="Fazer upload de áudio de boas-vindas"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && document.getElementById('welcome-audio-upload')?.click()}
                 >
                   <Upload size={24} className="mx-auto text-[#d4af37] mb-2" />
                   <span className="text-xs text-[#c9b58c]">Enviar Áudio (MP3)</span>
-                  <input
-                    id="welcome-audio-upload"
-                    type="file"
-                    accept="audio/*"
-                    className="hidden"
-                    onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])}
-                  />
+                  <input id="welcome-audio-upload" type="file" accept="audio/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])} />
                 </div>
                 {settings.welcomeAudioUrl && (
                   <div className="floor-plan-item">
-                    <Headphones size={18} className="text-[#d4af37]" />
+                    <Headphones size={18} className="text-[#d4af37]" aria-hidden="true" />
                     <span className="text-sm text-[#EAE0D5] flex-1">Áudio Configurado</span>
-                    <audio controls src={settings.welcomeAudioUrl} className="h-6 w-24" />
+                    <audio controls src={settings.welcomeAudioUrl} className="h-6 w-24" aria-label="Player de áudio de boas-vindas" />
                   </div>
                 )}
               </div>
-
               <div className="space-y-3">
                 <div className="visitor-input-group">
                   <label>Vídeo de Apresentação (URL)</label>
@@ -338,34 +338,35 @@ export const AdminMuseumSettings: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
 
-          {/* MAPAS */}
+        {activeTab === "mapa" && (
           <div className="visitor-card">
             <div className="visitor-card-header justify-between">
               <div className="flex items-center gap-3">
                 <MapIcon className="text-[#d4af37]" size={24} />
                 <h2 className="visitor-card-title">Plantas e Localização</h2>
               </div>
-              <button
-                onClick={() => setShowFloorPlanModal(true)}
-                className="btn-ghost-gold px-3 py-1 rounded-full text-xs font-bold"
-              >
+              <button onClick={() => setShowFloorPlanModal(true)} className="btn-ghost-gold px-3 py-1 rounded-full text-xs font-bold">
                 + Adicionar Andar
               </button>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <label className="text-[#c9b58c] text-sm font-bold">Mapa Outdoor</label>
                 <div
                   onClick={() => mapInputRef.current?.click()}
                   className="aspect-[4/3] upload-area relative overflow-hidden p-0 flex items-center justify-center"
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Fazer upload do mapa outdoor"
+                  onKeyDown={(e) => e.key === 'Enter' && mapInputRef.current?.click()}
                 >
                   {settings.mapImageUrl ? (
-                    <img src={settings.mapImageUrl} className="w-full h-full object-cover" />
+                    <img src={settings.mapImageUrl} className="w-full h-full object-cover" alt="Mapa outdoor atual" />
                   ) : (
                     <div className="text-center p-4">
-                      <ImageIcon size={32} className="mx-auto mb-2 text-[#d4af37]" />
+                      <ImageIcon size={32} className="mx-auto mb-2 text-[#d4af37]" aria-hidden="true" />
                       <span className="text-xs text-[#c9b58c]">Enviar Mapa Geral</span>
                     </div>
                   )}
@@ -376,7 +377,6 @@ export const AdminMuseumSettings: React.FC = () => {
                   <input type="number" step="any" className="visitor-input" placeholder="Lng" value={settings.longitude} onChange={(e) => setSettings({ ...settings, longitude: parseFloat(e.target.value) })} />
                 </div>
               </div>
-
               <div>
                 <label className="text-[#c9b58c] text-sm font-bold mb-3 block">Andares Indoor</label>
                 <div className="space-y-2">
@@ -395,96 +395,158 @@ export const AdminMuseumSettings: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
 
-        </div>
-
-        {/* COLUNA DIREITA */}
-        <div className="space-y-6">
+        {activeTab === "visual" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
               <Palette className="text-[#d4af37]" size={24} />
               <h2 className="visitor-card-title">Identidade Visual</h2>
             </div>
-
             <div className="space-y-6">
-              <div className="text-center">
-                <div
-                  onClick={() => logoInputRef.current?.click()}
-                  className="w-32 h-32 mx-auto rounded-full border-2 border-dashed border-[#463420] hover:border-[#d4af37] cursor-pointer overflow-hidden flex items-center justify-center bg-black/40 group relative transition-colors"
-                >
-                  {settings.logoUrl ? (
-                    <img src={settings.logoUrl} className="w-full h-full object-contain" />
-                  ) : (
-                    <Upload size={24} className="text-[#d4af37]" />
-                  )}
-                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])} />
-                </div>
-                <p className="text-xs text-[#c9b58c] mt-2">Logomarca</p>
-              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div className="space-y-6">
+                  <div className="flex flex-col items-center p-6 bg-[#1a1108] rounded-xl border border-[#463420]">
+                    <div
+                      onClick={() => logoInputRef.current?.click()}
+                      className="w-24 h-24 rounded-full border-2 border-dashed border-[#463420] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors bg-black/20"
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Fazer upload da logomarca"
+                      onKeyDown={(e) => e.key === 'Enter' && logoInputRef.current?.click()}
+                    >
+                      {settings.logoUrl ? (
+                        <img src={settings.logoUrl} className="w-full h-full object-cover" alt="Logomarca atual" />
+                      ) : (
+                        <Upload size={24} className="text-[#d4af37]" aria-hidden="true" />
+                      )}
+                      <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])} />
+                    </div>
+                    <p className="text-xs text-[#c9b58c] mt-2 font-bold uppercase tracking-wider">Logomarca</p>
+                  </div>
 
-              <div className="visitor-input-group">
-                <label>Cor Primária</label>
-                <div className="flex gap-2">
-                  <input type="color" className="w-12 h-10 bg-transparent border border-[#463420] rounded cursor-pointer" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
-                  <input className="visitor-input" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
-                </div>
-              </div>
+                  <div className="visitor-input-group">
+                    <label>Cor Primária (Destaques e Botões)</label>
+                    <div className="flex gap-3">
+                      <input type="color" className="w-14 h-12 bg-transparent border border-[#463420] rounded-lg cursor-pointer p-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
+                      <input className="visitor-input flex-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
+                    </div>
+                  </div>
 
-              <div className="visitor-input-group">
-                <label>Cor Secundária</label>
-                <div className="flex gap-2">
-                  <input type="color" className="w-12 h-10 bg-transparent border border-[#463420] rounded cursor-pointer" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
-                  <input className="visitor-input" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
-                </div>
-              </div>
+                  <div className="visitor-input-group">
+                    <label>Cor Secundária (Bordas e Detalhes)</label>
+                    <div className="flex gap-3">
+                      <input type="color" className="w-14 h-12 bg-transparent border border-[#463420] rounded-lg cursor-pointer p-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
+                      <input className="visitor-input flex-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
+                    </div>
+                  </div>
 
-              <div className="p-4 bg-[#1a1108] rounded-lg border border-[#463420] space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#EAE0D5] text-sm">Tema Escuro</span>
-                  <div
-                    onClick={() => setSettings({ ...settings, theme: settings.theme === 'dark' ? 'light' : 'dark' })}
-                    className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.theme === 'dark' ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
-                  >
-                    <div className={`absolute top-1 w-4 h-4 bg-[#0f0a05] rounded-full transition-transform ${settings.theme === 'dark' ? 'left-7' : 'left-1'}`} />
+                  <div className="p-4 bg-black/20 rounded-xl border border-[#463420] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[#EAE0D5] text-sm font-bold block">Tema Escuro</span>
+                        <span className="text-[10px] text-[#c9b58c]">Recomendado para museus</span>
+                      </div>
+                      <div
+                        onClick={() => setSettings({ ...settings, theme: settings.theme === 'dark' ? 'light' : 'dark' })}
+                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.theme === 'dark' ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
+                        role="switch"
+                        aria-checked={settings.theme === 'dark'}
+                        aria-label="Alternar tema escuro"
+                      >
+                        <div className={`absolute top-1 w-4 h-4 bg-[#0f0a05] rounded-full transition-transform ${settings.theme === 'dark' ? 'left-7' : 'left-1'}`} />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[#EAE0D5] text-sm font-bold block">Fonte Histórica</span>
+                        <span className="text-[10px] text-[#c9b58c]">Estilo Serifado Premium</span>
+                      </div>
+                      <div
+                        onClick={() => setSettings({ ...settings, historicalFont: !settings.historicalFont })}
+                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
+                        role="switch"
+                        aria-checked={settings.historicalFont}
+                        aria-label="Alternar fonte histórica"
+                      >
+                        <div className={`absolute top-1 w-4 h-4 bg-[#0f0a05] rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[#EAE0D5] text-sm">Fonte Histórica</span>
+
+                {/* LIVE PREVIEW COLUMN */}
+                <div className="hidden lg:block sticky top-8">
+                  <p className="text-[10px] text-[#c9b58c] mb-2 uppercase font-black tracking-widest text-center">Visualização em Tempo Real</p>
                   <div
-                    onClick={() => setSettings({ ...settings, historicalFont: !settings.historicalFont })}
-                    className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
+                    className="rounded-[2.5rem] border-[8px] border-[#2c1e10] p-4 shadow-2xl relative overflow-hidden aspect-[9/16] w-[260px] mx-auto transition-all duration-500"
+                    style={{
+                      backgroundColor: (settings.theme || 'dark') === 'dark' ? '#121212' : '#ffffff',
+                      color: (settings.theme || 'dark') === 'dark' ? '#ffffff' : '#121212',
+                      fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
+                    }}
                   >
-                    <div className={`absolute top-1 w-4 h-4 bg-[#0f0a05] rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
+                    <div className="absolute top-0 left-0 right-0 h-24 opacity-30" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
+                    <div className="relative z-10 text-center py-4">
+                      <img src={settings.logoUrl || "https://via.placeholder.com/80"} className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-white/10 shadow-md object-cover" />
+                      <h4 className="text-sm font-black mb-1 line-clamp-1" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h4>
+                      <div className="w-full h-[1px] opacity-20 my-3" style={{ backgroundColor: settings.secondaryColor }}></div>
+                      <div className="space-y-2 mt-4">
+                        <div className="h-8 w-full rounded-lg flex items-center justify-center text-[10px] font-bold" style={{ background: settings.primaryColor, color: '#000' }}>EXPLORAR</div>
+                        <div className="h-8 w-full rounded-lg border flex items-center justify-center text-[10px] font-bold" style={{ borderColor: settings.secondaryColor, color: settings.secondaryColor }}>MAPA</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mt-4">
+                        <div className="aspect-square rounded-lg bg-black/10 border border-white/5"></div>
+                        <div className="aspect-square rounded-lg bg-black/10 border border-white/5"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
+        )}
 
-          {/* PREVIEW */}
-          <div>
-            <div className="visitor-card-header mb-4 border-none p-0">
-              <h2 className="visitor-card-title">Prévia do App</h2>
-            </div>
-            <div
-              className="rounded-3xl p-6 relative overflow-hidden shadow-2xl transition-all duration-300 border border-[#463420]"
-              style={{
-                backgroundColor: (settings.theme || 'dark') === 'dark' ? '#121212' : '#ffffff',
-                color: (settings.theme || 'dark') === 'dark' ? '#ffffff' : '#121212',
-                fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
-              }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-32 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
-              <div className="relative z-10 text-center">
-                <img src={settings.logoUrl || "https://via.placeholder.com/100"} className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
-                <h3 className="text-xl font-bold mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Nome"}</h3>
-                <p className="text-xs opacity-70 mb-6 line-clamp-3">{settings.mission || "Missão..."}</p>
-                <div className="w-full py-3 rounded-xl font-bold text-sm shadow-lg mb-4 opacity-90" style={{ background: settings.primaryColor, color: '#000' }}>Ingressos</div>
+        {activeTab === "preview" && (
+          <div className="visitor-card">
+            <h2 className="visitor-card-title" style={{ marginBottom: "1.5rem" }}>Simulação Completa</h2>
+            <div className="flex justify-center py-8">
+              <div
+                className="rounded-[3rem] border-[12px] border-[#2c1e10] p-6 relative overflow-hidden shadow-2xl transition-all duration-300 w-full max-w-[320px] aspect-[9/19]"
+                style={{
+                  backgroundColor: (settings.theme || 'dark') === 'dark' ? '#121212' : '#ffffff',
+                  color: (settings.theme || 'dark') === 'dark' ? '#ffffff' : '#121212',
+                  fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
+                }}
+              >
+                <div className="absolute top-0 left-0 right-0 h-40 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
+                <div className="relative z-10 text-center">
+                  <div className="flex justify-between items-center mb-8 px-2">
+                    <div className="w-8 h-8 rounded-full bg-black/10"></div>
+                    <div className="w-16 h-4 bg-black/20 rounded-full"></div>
+                  </div>
+                  <img src={settings.logoUrl || "https://via.placeholder.com/100"} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
+                  <h3 className="text-xl font-black mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h3>
+                  <p className="text-[10px] opacity-60 mb-8 line-clamp-3 leading-relaxed italic">{settings.mission || "Sua missão aparecerá aqui para os visitantes..."}</p>
+                  <div className="space-y-3">
+                    <div className="w-full py-4 rounded-2xl font-black text-xs shadow-lg flex items-center justify-center gap-2" style={{ background: settings.primaryColor, color: '#000' }}>
+                      <Smartphone size={14} /> EXPLORAR ACERVO
+                    </div>
+                    <div className="w-full py-4 rounded-2xl font-black text-xs border-2 flex items-center justify-center gap-2" style={{ borderColor: settings.secondaryColor, color: settings.secondaryColor }}>
+                      <MapIcon size={14} /> MAPA INTERATIVO
+                    </div>
+                  </div>
+                  <div className="mt-8 grid grid-cols-3 gap-2">
+                    <div className="h-1 bg-current opacity-20 rounded"></div>
+                    <div className="h-1 bg-current opacity-20 rounded"></div>
+                    <div className="h-1 bg-current opacity-20 rounded"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
+
       </div>
 
       {/* ACTION BAR */}
@@ -500,7 +562,7 @@ export const AdminMuseumSettings: React.FC = () => {
               className="btn-primary-gold px-8 py-3 rounded-xl"
               leftIcon={<Save size={18} />}
             >
-              Salvar (Estilo Visitante)
+              Salvar Configurações
             </Button>
           </div>
         </div>
@@ -516,6 +578,10 @@ export const AdminMuseumSettings: React.FC = () => {
               <div
                 onClick={() => floorPlanInputRef.current?.click()}
                 className="upload-area"
+                role="button"
+                tabIndex={0}
+                aria-label="Fazer upload da imagem do andar"
+                onKeyDown={(e) => e.key === 'Enter' && floorPlanInputRef.current?.click()}
               >
                 <span className="text-xs text-[#c9b58c]">{newFloorPlan.imageUrl ? "Trocar Imagem" : "Escolher Imagem"}</span>
                 <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />

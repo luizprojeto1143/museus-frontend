@@ -24,7 +24,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const navigate = useNavigate();
   const { t } = useTranslation();
   const location = useLocation();
-  const { logout, name, email, tenantId } = useAuth();
+  const { logout, name, email, tenantId, isGuest } = useAuth();
 
   // Integrated PWA Hook
   const { canInstall, promptInstall, isInstalled } = usePWAInstall();
@@ -229,6 +229,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
       {/* MAIN CONTENT */}
       <main className="layout-main">
+        {isGuest && (
+          <div className="guest-banner">
+            <span>✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!</span>
+            <button className="guest-banner-btn" onClick={() => navigate("/register")}>
+              Criar Conta Grátis
+            </button>
+          </div>
+        )}
         <header className="layout-header">
           {/* Mobile Toggle */}
           <button className="menu-toggle" onClick={() => setIsMenuOpen(true)}>
@@ -260,6 +268,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
               className="btn btn-secondary icon-btn mobile-only"
               style={{ display: 'flex' }}
               onClick={() => setIsSearchOpen(true)}
+              aria-label="Abrir busca"
             >
               🔍
             </button>
@@ -267,6 +276,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
               className="btn btn-secondary icon-btn mobile-only"
               style={{ display: 'flex' }}
               onClick={() => setIsDialerOpen(true)}
+              aria-label="Abrir teclado numérico"
             >
               🔢
             </button>
@@ -285,6 +295,47 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <GlobalAudioPlayer />
       {settings?.featureChatAI !== false && <AiChatWidget />}
       <InstallGuideModal isOpen={showInstallGuide} onClose={() => setShowInstallGuide(false)} />
+
+      {/* MOBILE BOTTOM NAV */}
+      <nav className="mobile-bottom-nav" aria-label={t("visitor.sidebar.navigation", "Navegação")}>
+        <Link
+          to="/home"
+          className={`bottom-nav-item ${location.pathname === "/home" ? "active" : ""}`}
+        >
+          <span className="bottom-nav-icon">🏠</span>
+          <span className="bottom-nav-label">{t("visitor.sidebar.home")}</span>
+        </Link>
+        <Link
+          to="/scanner"
+          className={`bottom-nav-item ${location.pathname.startsWith("/scanner") ? "active" : ""}`}
+        >
+          <span className="bottom-nav-icon">📷</span>
+          <span className="bottom-nav-label">Scanner</span>
+        </Link>
+        <Link
+          to="/mapa"
+          className={`bottom-nav-item ${location.pathname === "/mapa" ? "active" : ""}`}
+        >
+          <span className="bottom-nav-icon">📍</span>
+          <span className="bottom-nav-label">{t("visitor.sidebar.map", "Mapa")}</span>
+        </Link>
+        <Link
+          to="/passaporte"
+          className={`bottom-nav-item ${location.pathname === "/passaporte" ? "active" : ""}`}
+        >
+          <span className="bottom-nav-icon">🎫</span>
+          <span className="bottom-nav-label">{t("visitor.sidebar.passport", "Passaporte")}</span>
+        </Link>
+        <button
+          className={`bottom-nav-item ${isMenuOpen ? "active" : ""}`}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={isMenuOpen}
+        >
+          <span className="bottom-nav-icon">{isMenuOpen ? "✕" : "☰"}</span>
+          <span className="bottom-nav-label">{t("visitor.sidebar.menu", "Menu")}</span>
+        </button>
+      </nav>
     </div>
   );
 };

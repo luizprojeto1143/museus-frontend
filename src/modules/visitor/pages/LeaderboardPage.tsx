@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
+import { useAuth } from "../../auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "./Leaderboard.css";
 
 type LeaderboardEntry = {
@@ -15,6 +17,8 @@ type LeaderboardEntry = {
 
 export const LeaderboardPage: React.FC = () => {
     const { t } = useTranslation();
+    const { isGuest } = useAuth();
+    const navigate = useNavigate();
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
     const [loading, setLoading] = useState(true);
@@ -105,8 +109,22 @@ export const LeaderboardPage: React.FC = () => {
                 <p className="leaderboard-page-subtitle">{t("visitor.leaderboard.subtitle", "Os maiores exploradores da cultura")}</p>
             </header>
 
+            {isGuest && (
+                <div className="my-rank-card-premium" style={{ cursor: "pointer", borderStyle: "dashed", background: "rgba(212, 175, 55, 0.05)" }} onClick={() => navigate("/register")}>
+                    <div className="my-rank-left">
+                        <div className="my-rank-circle">
+                            <span className="my-rank-value">?</span>
+                        </div>
+                        <div className="my-rank-info-text">
+                            <span className="my-rank-position-label">Você ainda não está no ranking</span>
+                            <span className="my-rank-name" style={{ color: "var(--primary-color)" }}>Crie sua conta para começar a pontuar!</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* My Rank Card */}
-            {myRank && (
+            {!isGuest && myRank && (
                 <div className="my-rank-card-premium">
                     <div className="my-rank-left">
                         <div className="my-rank-circle">
@@ -148,7 +166,7 @@ export const LeaderboardPage: React.FC = () => {
             </div>
 
             {/* Sticky User Rank Bar */}
-            {myRank && (
+            {!isGuest && myRank && (
                 <div className="sticky-rank-bottom">
                     <div className="sticky-rank-content">
                         <div className="sticky-rank-left">

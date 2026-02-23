@@ -23,7 +23,6 @@ export const ProducerProfile: React.FC = () => {
 
     useEffect(() => {
         api.get("/auth/me").then(res => {
-            // Assuming /auth/me returns the user object with extra fields
             const u = res.data.user || res.data;
             setFormData({
                 name: u.name || "",
@@ -48,10 +47,9 @@ export const ProducerProfile: React.FC = () => {
         setLoading(true);
 
         try {
-            await api.put("/users/me", formData); // Endpoint to update own profile
+            await api.put("/users/me", formData);
             addToast("Perfil atualizado com sucesso!", "success");
 
-            // Update context
             if (token && refreshToken && role) {
                 updateSession(token, refreshToken, role, tenantId, formData.name);
             }
@@ -64,20 +62,20 @@ export const ProducerProfile: React.FC = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto pb-12">
+        <div className="max-w-4xl mx-auto pb-16 animate-in fade-in duration-500">
             <div className="mb-8">
-                <h1 className="section-title">Meu Perfil</h1>
-                <p className="section-subtitle">Gerencie suas informações pessoais e de contato.</p>
+                <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meu Perfil</h1>
+                <p className="text-[#B0A090]">Gerencie suas informações pessoais e de contato.</p>
             </div>
 
-            <div className="card">
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-700">
-                    <div className="p-3 bg-gold/10 rounded-full">
-                        <User size={24} className="text-gold" />
+            <div className="bg-[#2c1e10] rounded-2xl p-8 border border-[#463420] shadow-lg shadow-black/20">
+                <div className="flex items-center gap-4 mb-8 pb-6 border-b border-[#463420]">
+                    <div className="p-4 bg-[#D4AF37]/10 rounded-full border border-[#D4AF37]/20">
+                        <User size={32} className="text-[#D4AF37]" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-gray-100">Dados do Produtor</h2>
-                        <p className="text-sm text-gray-400">Informações visíveis para administradores e contratos</p>
+                        <h2 className="text-xl font-bold text-[#EAE0D5] font-serif">Dados do Produtor</h2>
+                        <p className="text-sm text-[#B0A090]">Informações visíveis para administradores e em seus projetos</p>
                     </div>
                 </div>
 
@@ -88,8 +86,9 @@ export const ProducerProfile: React.FC = () => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            leftIcon={<User size={18} />}
+                            leftIcon={<User size={18} className="text-[#D4AF37]" />}
                             required
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
                         />
 
                         <Input
@@ -98,8 +97,8 @@ export const ProducerProfile: React.FC = () => {
                             type="email"
                             value={formData.email}
                             disabled
-                            leftIcon={<Mail size={18} />}
-                            className="opacity-60 cursor-not-allowed"
+                            leftIcon={<Mail size={18} className="text-[#B0A090]" />}
+                            className="bg-black/40 border-[#463420] text-[#B0A090] cursor-not-allowed h-12"
                         />
                     </div>
 
@@ -110,7 +109,8 @@ export const ProducerProfile: React.FC = () => {
                             value={formData.cpf}
                             onChange={handleChange}
                             placeholder="000.000.000-00"
-                            leftIcon={<FileText size={18} />}
+                            leftIcon={<FileText size={18} className="text-[#D4AF37]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
                         />
 
                         <Input
@@ -119,7 +119,8 @@ export const ProducerProfile: React.FC = () => {
                             value={formData.phone}
                             onChange={handleChange}
                             placeholder="(00) 00000-0000"
-                            leftIcon={<Phone size={18} />}
+                            leftIcon={<Phone size={18} className="text-[#D4AF37]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
                         />
                     </div>
 
@@ -129,7 +130,8 @@ export const ProducerProfile: React.FC = () => {
                         value={formData.website}
                         onChange={handleChange}
                         placeholder="https://..."
-                        leftIcon={<Globe size={18} />}
+                        leftIcon={<Globe size={18} className="text-[#D4AF37]" />}
+                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
                     />
 
                     <Textarea
@@ -139,14 +141,15 @@ export const ProducerProfile: React.FC = () => {
                         value={formData.bio}
                         onChange={handleChange}
                         placeholder="Conte um pouco sobre sua trajetória cultural..."
+                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                     />
 
-                    <div className="flex justify-end pt-4 border-t border-gray-700">
+                    <div className="flex justify-end pt-6 border-t border-[#463420]">
                         <Button
                             type="submit"
                             isLoading={loading}
                             leftIcon={<Save size={18} />}
-                            className="px-8"
+                            className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold h-12 shadow-lg shadow-[#D4AF37]/20 border-none"
                         >
                             Salvar Alterações
                         </Button>

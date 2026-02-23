@@ -6,7 +6,9 @@ import "./Achievements.css";
 
 export default function Achievements() {
   const { t } = useTranslation();
+  const { isGuest } = useAuth();
   const { stats, loading } = useGamification();
+  const navigate = useNavigate();
 
   const progress = useMemo(() => {
     if (!stats?.achievements?.length) return 0;
@@ -19,6 +21,34 @@ export default function Achievements() {
       <div className="achievements-loading">
         <div className="spinner-gold"></div>
         <p>{t("common.loading")}</p>
+      </div>
+    );
+  }
+
+  if (isGuest) {
+    return (
+      <div className="achievements-container" style={{ textAlign: "center", padding: "4rem 2rem" }}>
+        <div style={{ fontSize: "5rem", marginBottom: "1.5rem" }}>🏆</div>
+        <h1 className="achievements-title" style={{ marginBottom: "1rem" }}>Galeria de Troféus</h1>
+        <p style={{ color: "var(--text-secondary)", maxWidth: "450px", margin: "0 auto 2.5rem", lineHeight: "1.6" }}>
+          Cada obra visitada e cada desafio concluído rende uma medalha exclusiva. Crie sua conta para começar sua coleção!
+        </p>
+        <button
+          onClick={() => navigate("/register")}
+          style={{
+            background: "var(--primary-color)",
+            color: "#1a1108",
+            border: "none",
+            padding: "1rem 3rem",
+            borderRadius: "2rem",
+            fontWeight: "bold",
+            fontSize: "1.1rem",
+            cursor: "pointer",
+            boxShadow: "0 4px 15px rgba(212, 175, 55, 0.3)"
+          }}
+        >
+          Começar minha Coleção
+        </button>
       </div>
     );
   }

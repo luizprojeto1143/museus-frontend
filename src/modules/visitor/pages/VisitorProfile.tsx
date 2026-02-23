@@ -37,7 +37,7 @@ interface Registration {
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { name, email, logout } = useAuth();
+    const { name, email, logout, isGuest } = useAuth();
 
     // Tabs: 'info' | 'tickets' | 'certificates'
     const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates'>('info');
@@ -110,7 +110,7 @@ export const VisitorProfile: React.FC = () => {
                         {/* Logout Section */}
                         <div className="logout-section">
                             <Button
-                                variant="destructive"
+                                variant="outline"
                                 onClick={logout}
                                 className="w-full justify-between h-auto py-4 bg-red-500/10 hover:bg-red-500/20 border border-transparent hover:border-red-500/30 text-red-500"
                             >
@@ -248,29 +248,44 @@ export const VisitorProfile: React.FC = () => {
                 </div>
             </div>
 
-            {/* Tabs */}
-            <div className="profile-tabs">
-                <button
-                    onClick={() => handleTabChange('info')}
-                    className={`profile-tab-btn ${activeTab === 'info' ? 'active' : ''}`}
-                >
-                    Informações
-                </button>
-                <button
-                    onClick={() => handleTabChange('tickets')}
-                    className={`profile-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`}
-                >
-                    Ingressos
-                </button>
-                <button
-                    onClick={() => handleTabChange('certificates')}
-                    className={`profile-tab-btn ${activeTab === 'certificates' ? 'active' : ''}`}
-                >
-                    Certificados
-                </button>
-            </div>
+            {isGuest ? (
+                <div className="empty-state" style={{ marginTop: "2rem", background: "rgba(212, 175, 55, 0.05)", border: "1px dashed var(--primary-color)", padding: "3rem" }}>
+                    <Star size={48} className="text-gold mb-4" style={{ opacity: 0.5 }} />
+                    <h2 className="text-xl font-bold text-gold">{t("visitor.profile.guestTitle", "Acesso Restrito")}</h2>
+                    <p className="max-w-md mx-auto mb-6 text-secondary" style={{ color: "var(--text-secondary)" }}>
+                        Crie uma conta para salvar seus ingressos, certificados e acompanhar suas conquistas em todos os seus dispositivos.
+                    </p>
+                    <Button onClick={() => navigate("/register")} className="bg-gold text-black font-bold h-12 px-8 rounded-full shadow-lg hover:scale-105 transition-transform">
+                        Criar Conta Agora
+                    </Button>
+                </div>
+            ) : (
+                <>
+                    {/* Tabs */}
+                    <div className="profile-tabs">
+                        <button
+                            onClick={() => handleTabChange('info')}
+                            className={`profile-tab-btn ${activeTab === 'info' ? 'active' : ''}`}
+                        >
+                            Informações
+                        </button>
+                        <button
+                            onClick={() => handleTabChange('tickets')}
+                            className={`profile-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`}
+                        >
+                            Ingressos
+                        </button>
+                        <button
+                            onClick={() => handleTabChange('certificates')}
+                            className={`profile-tab-btn ${activeTab === 'certificates' ? 'active' : ''}`}
+                        >
+                            Certificados
+                        </button>
+                    </div>
 
-            {renderContent()}
+                    {renderContent()}
+                </>
+            )}
         </div>
     );
 };

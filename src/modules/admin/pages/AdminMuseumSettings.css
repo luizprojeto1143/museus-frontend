@@ -133,3 +133,46 @@
     background: #000;
     object-fit: cover;
 }
+
+/* Settings Tab Bar */
+.settings-tab-bar {
+    display: flex;
+    gap: 0.25rem;
+    border-bottom: 1px solid #463420;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.settings-tab-bar::-webkit-scrollbar {
+    display: none;
+}
+
+.settings-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: none;
+    border: none;
+    color: #8B7355;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.settings-tab:hover {
+    color: #c9b58c;
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.settings-tab.active {
+    color: #d4af37;
+    border-bottom-color: #d4af37;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
