@@ -94,25 +94,76 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
+/* ============================================
+   ACTIONS GROUP
+   ============================================ */
+.welcome-actions-group {
+    background: rgba(42, 24, 16, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 320px;
+    animation: welcomeFadeIn 1.5s ease-out 0.2s both;
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(212, 175, 55, 0.05);
+}
+
 .welcome-secondary-btn {
-    background: transparent;
-    color: #8b7355;
-    font-size: 0.95rem;
-    padding: 0.7rem 1.75rem;
-    border: 1px solid #8b7355;
-    border-radius: 0.5rem;
+    background: rgba(26, 17, 8, 0.5);
+    color: #c9b58c;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid rgba(139, 115, 85, 0.4);
+    border-radius: 0.75rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     z-index: 1;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    font-weight: 500;
 }
 
 .welcome-secondary-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
     color: #d4af37;
     border-color: #d4af37;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.welcome-secondary-btn.agenda {
+    border-color: rgba(212, 175, 55, 0.3);
+    color: #d4af37;
+}
+
+.welcome-secondary-btn.guest {
+    border-color: rgba(139, 115, 85, 0.3);
+}
+
+.welcome-secondary-btn.login {
+    background: transparent;
+    border: none;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.welcome-secondary-btn.login:hover {
+    background: transparent;
+    opacity: 1;
+    transform: none;
+    box-shadow: none;
+    text-decoration: underline;
 }
 
 /* ============================================

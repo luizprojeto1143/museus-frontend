@@ -25,38 +25,37 @@ export const Welcome: React.FC = () => {
         <p className="welcome-subtitle">{t("welcome.subtitle")}</p>
       </div>
 
-      {/* Botão principal */}
+      {/* Botão principal de destaque */}
       <button
         onClick={() => navigate("/select-museum")}
         className="welcome-primary-btn"
       >
-        <Smartphone size={22} /> {t("welcome.explore")}
+        <Smartphone size={24} /> {t("welcome.explore")}
       </button>
 
-      <button
-        onClick={() => navigate("/events")}
-        className="welcome-secondary-btn"
-        style={{ marginTop: "1rem", borderColor: "#d4af37", color: "#d4af37" }}
-      >
-        <span style={{ marginRight: "0.5rem" }}>📅</span> Agenda Cultural Unificada
-      </button>
+      {/* Grupo de ações secundárias */}
+      <div className="welcome-actions-group">
+        <button
+          onClick={() => navigate("/events")}
+          className="welcome-secondary-btn agenda"
+        >
+          <Smartphone size={18} /> Agenda Cultural
+        </button>
 
-      <button
-        onClick={() => navigate("/select-museum")}
-        className="welcome-secondary-btn"
-        style={{ marginTop: "0.75rem", borderColor: "#8B7355", color: "#c9b58c" }}
-      >
-        <Eye size={16} /> Explorar sem Conta
-      </button>
+        <button
+          onClick={() => navigate("/select-museum")}
+          className="welcome-secondary-btn guest"
+        >
+          <Eye size={18} /> Explorar sem Conta
+        </button>
 
-
-      {/* Botão secundário */}
-      <button
-        onClick={() => navigate("/login")}
-        className="welcome-secondary-btn"
-      >
-        <Lock size={16} /> {t("welcome.login")}
-      </button>
+        <button
+          onClick={() => navigate("/login")}
+          className="welcome-secondary-btn login"
+        >
+          <Lock size={14} /> {t("welcome.login")}
+        </button>
+      </div>
 
       {/* Decorações */}
       <div className="welcome-decor top-left">🏺</div>
