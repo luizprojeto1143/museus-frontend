@@ -14,6 +14,7 @@ export const MasterSeeder: React.FC = () => {
     const [tenantId, setTenantId] = useState('');
     const [count, setCount] = useState(10);
     const [loading, setLoading] = useState(false);
+    const [lastResult, setLastResult] = useState<{ visits: number; stamps: number; achievements: number; guestbook: number; reviews: number } | null>(null);
     const [tenants, setTenants] = useState<TenantOption[]>([]);
     const [loadingTenants, setLoadingTenants] = useState(true);
 
@@ -81,6 +82,7 @@ export const MasterSeeder: React.FC = () => {
         }
 
         setLoading(true);
+        setLastResult(null);
         try {
             const res = await api.post('/seeder/simulate-traffic', {
                 tenantId,
@@ -88,7 +90,8 @@ export const MasterSeeder: React.FC = () => {
                 minVisits: simSettings.minVisits,
                 maxVisits: simSettings.maxVisits
             });
-            addToast(`🎭 ${res.data.details}`, "success");
+            addToast(`🎭 Simulação completa!`, "success");
+            if (res.data.stats) setLastResult(res.data.stats);
         } catch (e) {
             console.error(e);
             addToast("❌ Erro na simulação", "error");
@@ -194,10 +197,10 @@ export const MasterSeeder: React.FC = () => {
                         </div>
                         <h3>Simular Atividade</h3>
                     </div>
-                    <p className="master-card-desc">Faça os visitantes "andarem" pelo museu e interagirem com obras.</p>
+                    <p className="master-card-desc">Simula visitas completas: obras, selos, conquistas, reviews e livro de visitas.</p>
 
                     <div className="master-form space-y-4">
-                        <div className="grid grid-cols-3 gap-2">
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
                             <Input
                                 label="Ativos"
                                 type="number"
@@ -221,14 +224,33 @@ export const MasterSeeder: React.FC = () => {
                             />
                         </div>
 
+                        <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, padding: '0.5rem 0' }}>
+                            🎨 Visitas a obras &nbsp;|&nbsp; 🔖 Selos no passaporte<br />
+                            🏆 Conquistas &nbsp;|&nbsp; ⭐ Reviews &nbsp;|&nbsp; 📝 Livro de visitas
+                        </div>
+
                         <Button
                             onClick={handleSimulate}
                             disabled={loading}
-                            className="w-full bg-purple-600 hover:bg-purple-700 border-none"
+                            className="w-full"
+                            style={{ background: '#7c3aed' }}
                             leftIcon={loading ? <Activity className="animate-spin" size={18} /> : <PlayCircle size={18} />}
                         >
-                            Rodar Simulação
+                            Rodar Simulação Completa
                         </Button>
+
+                        {lastResult && (
+                            <div style={{ marginTop: '1rem', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '8px', padding: '1rem' }}>
+                                <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#a78bfa', fontSize: '0.9rem' }}>✅ Última Simulação</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+                                    <span>🎨 {lastResult.visits} visitas</span>
+                                    <span>🔖 {lastResult.stamps} selos</span>
+                                    <span>🏆 {lastResult.achievements} conquistas</span>
+                                    <span>⭐ {lastResult.reviews} reviews</span>
+                                    <span>📝 {lastResult.guestbook} guestbook</span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </article>
 
