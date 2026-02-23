@@ -115,85 +115,89 @@ export const AdminEvents: React.FC = () => {
       </div>
 
       {/* List */}
-      <div className="bg-zinc-900/50 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-sm">
+      <div className="space-y-4">
         {loading ? (
-          <div className="p-12 flex flex-col items-center justify-center">
+          <div className="p-12 flex flex-col items-center justify-center bg-zinc-900/50 border border-white/5 rounded-3xl">
             <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-zinc-500 text-sm">Carregando...</p>
+            <p className="text-zinc-500 text-sm">Organizando agenda...</p>
           </div>
         ) : filteredEvents.length === 0 ? (
-          <div className="p-12 text-center text-zinc-500">
+          <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 border border-white/5 rounded-3xl">
             <Calendar className="mx-auto mb-3 opacity-20" size={48} />
-            <p>Nenhum evento encontrado.</p>
+            <p>Nenhum evento agendado no momento.</p>
           </div>
         ) : (
-          <div className="w-full">
-            <div className="grid grid-cols-12 gap-4 p-4 border-b border-white/5 text-xs font-bold text-zinc-500 uppercase tracking-wider">
-              <div className="col-span-5 md:col-span-4">Evento</div>
-              <div className="col-span-3 md:col-span-2 hidden md:block">Data/Hora</div>
-              <div className="col-span-3 md:col-span-2 hidden md:block">Local</div>
-              <div className="col-span-3 md:col-span-2">Status</div>
-              <div className="col-span-4 md:col-span-2 text-right">Ações</div>
-            </div>
-
-            <div className="divide-y divide-white/5">
-              {filteredEvents.map(ev => (
-                <div key={ev.id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors group">
-                  <div className="col-span-5 md:col-span-4">
-                    <div className="font-bold text-white group-hover:text-gold transition-colors">{ev.title}</div>
-                    <div className="text-xs text-zinc-500 mt-0.5 md:hidden">
-                      {ev.date} • {ev.time}
-                    </div>
-                    {ev.type && (
-                      <span className="inline-block mt-1 text-[10px] bg-white/5 text-zinc-400 px-1.5 py-0.5 rounded border border-white/5">
-                        {ev.type === 'OTHER' ? 'Geral' : ev.type}
-                      </span>
-                    )}
+          <div className="grid grid-cols-1 gap-4">
+            {filteredEvents.map(ev => (
+              <div key={ev.id} className="group bg-zinc-900/40 hover:bg-zinc-900/60 border border-white/5 hover:border-gold/30 rounded-3xl transition-all duration-300 overflow-hidden">
+                <div className="flex flex-col md:flex-row items-stretch">
+                  {/* Date Badge Side */}
+                  <div className="md:w-32 bg-zinc-900/50 p-4 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-white/5 group-hover:bg-gold/5 transition-colors">
+                    <span className="text-2xl font-black text-white group-hover:text-gold transition-colors">
+                      {ev.date?.split('/')[0]}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-tighter">
+                      {ev.date?.split('/')[1] === '01' ? 'JAN' :
+                        ev.date?.split('/')[1] === '02' ? 'FEV' :
+                          ev.date?.split('/')[1] === '03' ? 'MAR' :
+                            ev.date?.split('/')[1] === '04' ? 'ABR' :
+                              ev.date?.split('/')[1] === '05' ? 'MAI' :
+                                ev.date?.split('/')[1] === '06' ? 'JUN' :
+                                  ev.date?.split('/')[1] === '07' ? 'JUL' :
+                                    ev.date?.split('/')[1] === '08' ? 'AGO' :
+                                      ev.date?.split('/')[1] === '09' ? 'SET' :
+                                        ev.date?.split('/')[1] === '10' ? 'OUT' :
+                                          ev.date?.split('/')[1] === '11' ? 'NOV' : 'DEZ'}
+                    </span>
                   </div>
 
-                  <div className="col-span-3 md:col-span-2 hidden md:block text-sm text-zinc-300">
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} className="text-zinc-500" />
-                      {ev.date}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-zinc-500 mt-1">
-                      <Clock size={12} />
-                      {ev.time}
-                    </div>
-                  </div>
-
-                  <div className="col-span-3 md:col-span-2 hidden md:block text-sm text-zinc-400">
-                    {ev.location && (
-                      <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-zinc-600" />
-                        <span className="truncate">{ev.location}</span>
+                  {/* Main Content */}
+                  <div className="flex-1 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        {getStatusBadge(ev.status)}
+                        <span className="text-[10px] font-bold text-zinc-600 bg-zinc-800 px-2 py-0.5 rounded-full uppercase">
+                          {ev.type || 'Geral'}
+                        </span>
                       </div>
-                    )}
-                  </div>
+                      <h3 className="text-xl font-bold text-white group-hover:text-gold transition-all">
+                        {ev.title}
+                      </h3>
+                      <div className="flex flex-wrap gap-4 mt-3">
+                        <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+                          <Clock size={14} className="text-gold/50" />
+                          {ev.time}
+                        </div>
+                        {ev.location && (
+                          <div className="flex items-center gap-1.5 text-sm text-zinc-400">
+                            <MapPin size={14} className="text-gold/50" />
+                            <span className="truncate max-w-[200px]">{ev.location}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
 
-                  <div className="col-span-3 md:col-span-2">
-                    {getStatusBadge(ev.status)}
-                  </div>
-
-                  <div className="col-span-4 md:col-span-2 flex justify-end gap-2">
-                    <button
-                      onClick={() => navigate(`/admin/eventos/${ev.id}/dashboard`)}
-                      className="p-2 text-zinc-400 hover:text-gold hover:bg-gold/10 rounded-xl transition-colors"
-                      title="Dashboard"
-                    >
-                      <BarChart2 size={18} />
-                    </button>
-                    <button
-                      onClick={() => navigate(`/admin/eventos/${ev.id}`)}
-                      className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-xl transition-colors"
-                      title="Editar"
-                    >
-                      <Edit size={18} />
-                    </button>
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 self-end md:self-center">
+                      <button
+                        onClick={() => navigate(`/admin/eventos/${ev.id}/dashboard`)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-zinc-400 hover:text-gold hover:bg-gold/10 rounded-2xl transition-all"
+                      >
+                        <BarChart2 size={18} />
+                        <span className="hidden lg:inline">Relatório</span>
+                      </button>
+                      <button
+                        onClick={() => navigate(`/admin/eventos/${ev.id}`)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-all border border-white/5"
+                      >
+                        <Edit size={18} />
+                        <span className="hidden lg:inline">Editar</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

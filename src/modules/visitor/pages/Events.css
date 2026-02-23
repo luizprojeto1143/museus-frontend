@@ -1,228 +1,292 @@
-/* Premium Events Theme - Dark & Gold Ticket Style */
+/* Agenda Cultural - Premium Theme */
 
 .events-container {
     padding-bottom: 6rem;
-    font-family: 'Georgia', serif;
+    font-family: 'Inter', sans-serif;
     color: #EAE0D5;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .events-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem 1rem;
-    background: linear-gradient(180deg, rgba(26, 17, 8, 0) 0%, rgba(212, 175, 55, 0.05) 100%);
-    border-bottom: 1px solid rgba(70, 52, 32, 0.3);
+    text-align: left;
+    margin-bottom: 2.5rem;
+    padding: 3rem 1.5rem;
+    background: linear-gradient(180deg, rgba(212, 175, 55, 0.08) 0%, transparent 100%);
+    border-radius: 0 0 3rem 3rem;
+    position: relative;
 }
 
 .events-title {
-    font-size: 2rem;
-    color: #d4af37;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
     margin: 0 0 0.5rem 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: -0.02em;
 }
 
 .events-subtitle {
     color: #c9b58c;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     margin: 0;
-    font-style: italic;
+    opacity: 0.8;
 }
 
-/* Events Grid */
-.events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-    padding: 0 1rem;
-}
-
-/* Event Ticket Card */
-.event-ticket {
-    position: relative;
-    background: linear-gradient(135deg, #2c1e10 0%, #1a1108 100%);
-    border: 1px solid #463420;
-    border-radius: 1rem;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-}
-
-.event-ticket:hover {
-    transform: translateY(-4px);
-    border-color: #d4af37;
-    box-shadow: 0 8px 30px rgba(212, 175, 55, 0.15);
-}
-
-/* Ticket Perforation Effect */
-.event-ticket::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 70px;
-    height: 2px;
-    border-bottom: 2px dashed rgba(70, 52, 32, 0.5);
-}
-
-/* Ticket Notches */
-.event-ticket::after {
-    content: '';
-    position: absolute;
-    left: -8px;
-    bottom: 62px;
-    width: 16px;
-    height: 16px;
-    background: #0f0a05;
-    border-radius: 50%;
-    box-shadow: calc(100% + 16px) 0 0 0 #0f0a05;
-    /* Right notch via box-shadow doesn't work, handled separately */
-}
-
-.ticket-notch-right {
-    position: absolute;
-    right: -8px;
-    bottom: 62px;
-    width: 16px;
-    height: 16px;
-    background: #0f0a05;
-    border-radius: 50%;
-}
-
-/* Ticket Content */
-.ticket-content {
-    padding: 1.5rem;
-    padding-bottom: 5rem;
-    /* Space for footer */
-}
-
-.ticket-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    background: rgba(212, 175, 55, 0.15);
-    color: #d4af37;
-    padding: 0.3rem 0.75rem;
-    border-radius: 2rem;
-    font-size: 0.7rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 1rem;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-}
-
-.ticket-title {
-    font-size: 1.25rem;
-    color: #EAE0D5;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.3;
-}
-
-.ticket-location {
+/* Agenda Filters */
+.agenda-filters {
     display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    margin-bottom: 2rem;
     align-items: center;
-    gap: 0.5rem;
+}
+
+.filter-group {
+    display: flex;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.3rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.75rem;
     font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
     color: #8b7355;
 }
 
-.ticket-location svg {
+.filter-btn.active {
+    background: #d4af37;
+    color: #000;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.category-chips {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+}
+
+.category-chip {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    color: #a1a1aa;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.category-chip:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.category-chip.active {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: #d4af37;
     color: #d4af37;
+}
+
+/* Timeline View */
+.agenda-timeline {
+    padding: 0 1.5rem;
+    position: relative;
+}
+
+.timeline-day-group {
+    margin-bottom: 3rem;
+}
+
+.timeline-date-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.date-circle {
+    width: 50px;
+    height: 50px;
+    background: #1a1a1a;
+    border: 1px solid #d4af37;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
 }
 
-/* Ticket Footer (Date/Time Strip) */
-.ticket-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1rem 1.5rem;
-    background: rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid rgba(70, 52, 32, 0.3);
+.date-circle .day-num {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #d4af37;
+    line-height: 1;
 }
 
-.ticket-date {
+.date-circle .month-name {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #8b7355;
+}
+
+.day-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.timeline-events {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
+    padding-left: 25px;
+    border-left: 1px dashed rgba(212, 175, 55, 0.2);
+    margin-left: 25px;
 }
 
-.date-label {
+/* New Event Card */
+.agenda-card {
+    display: flex;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.agenda-card:hover {
+    transform: translateX(8px);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.card-time-strip {
+    width: 80px;
+    padding: 1.5rem 0.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.strip-hour {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #d4af37;
+}
+
+.strip-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: #52525b;
+}
+
+.card-main {
+    flex: 1;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.card-tag {
     font-size: 0.65rem;
-    color: #5c452b;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-}
-
-.date-value {
-    font-size: 1rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(212, 175, 55, 0.1);
     color: #d4af37;
-    font-weight: bold;
+    border-radius: 0.5rem;
+    width: fit-content;
 }
 
-.ticket-time {
-    font-size: 1.25rem;
-    color: #EAE0D5;
-    font-weight: bold;
-    font-family: 'Courier New', monospace;
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.card-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #a1a1aa;
+    margin-top: auto;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.card-img-side {
+    width: 120px;
+    height: auto;
+    object-fit: cover;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Empty State */
 .events-empty {
     text-align: center;
-    padding: 4rem 2rem;
-    background: rgba(44, 30, 16, 0.3);
-    border: 2px dashed #463420;
-    border-radius: 1rem;
-    margin: 0 1rem;
+    padding: 5rem 2rem;
+    background: rgba(212, 175, 55, 0.02);
+    border: 1px dashed rgba(212, 175, 55, 0.2);
+    border-radius: 2rem;
+    margin: 0 1.5rem;
 }
 
 .empty-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
+    font-size: 3rem;
     display: block;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
 }
 
-.events-empty h3 {
-    color: #8b7355;
-    margin: 0 0 0.5rem 0;
-    font-family: 'Georgia', serif;
-}
-
-.events-empty p {
-    color: #5c452b;
-    margin: 0;
-    font-size: 0.9rem;
-}
-
-/* Loading Skeleton */
-.events-loading {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.5rem;
-    padding: 0 1rem;
-}
-
-.skeleton-card {
-    height: 200px;
-    background: linear-gradient(90deg, #2c1e10 0%, #463420 50%, #2c1e10 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 1rem;
-    border: 1px solid #463420;
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: 200% 0;
+/* Responsive */
+@media (max-width: 640px) {
+    .agenda-card {
+        flex-direction: column;
     }
 
-    100% {
-        background-position: -200% 0;
+    .card-time-strip {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 0.75rem 1.25rem;
+        gap: 0.5rem;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-img-side {
+        width: 100%;
+        height: 150px;
+        order: -1;
+        border-left: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 }

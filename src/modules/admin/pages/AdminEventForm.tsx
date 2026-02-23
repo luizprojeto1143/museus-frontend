@@ -553,48 +553,55 @@ export const AdminEventForm: React.FC = () => {
 
             {/* STEP 1: LOCAL & DATA */}
             {currentStep === 1 && (
-              <div className="card space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="form-group">
-                    <label className="form-label">Início</label>
-                    <input type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required className="input w-full" />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Fim</label>
-                    <input type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="input w-full" />
+              <div className="card space-y-8 animate-fadeIn">
+                <div className="bg-[rgba(255,255,255,0.02)] p-6 rounded-2xl border border-white/5">
+                  <h3 className="text-sm font-bold text-gold uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <Clock size={16} /> Horários
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="form-group">
+                      <label className="form-label">Data e Hora de Início</label>
+                      <input type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required className="input w-full bg-zinc-900" />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Data e Hora de Término (Opcional)</label>
+                      <input type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="input w-full bg-zinc-900" />
+                    </div>
                   </div>
                 </div>
 
-                {formData.format === 'PRESENTIAL' && (
-                  <div className="bg-[rgba(212,175,55,0.05)] p-6 rounded-xl border border-[rgba(212,175,55,0.1)] mb-4">
-                    <div className="form-group">
-                      <label className="form-label">💾 Reservar Espaço Físico (Opcional)</label>
-                      <select
-                        value={formData.spaceId}
-                        onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
-                        className="input w-full"
-                      >
-                        <option value="">Nenhum espaço selecionado</option>
-                        {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                      </select>
-                      <p className="text-xs text-[#d4af37] mt-2">Ao selecionar um espaço, o sistema verificará conflitos de horário.</p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="h-px bg-[rgba(255,255,255,0.1)] my-2"></div>
-
                 {formData.format === 'PRESENTIAL' ? (
                   <div className="space-y-6">
-                    <div className="form-group">
-                      <label className="form-label">Nome do Local</label>
-                      <input placeholder="Ex: Teatro Municipal" value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} className="input w-full" />
+                    <div className="bg-[rgba(212,175,55,0.05)] p-6 rounded-2xl border border-[#d4af37]/20">
+                      <div className="form-group">
+                        <label className="form-label flex items-center gap-2">
+                          Reservar Espaço Físico
+                        </label>
+                        <select
+                          value={formData.spaceId}
+                          onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
+                          className="input w-full bg-zinc-900 focus:border-gold"
+                        >
+                          <option value="">Selecione um espaço...</option>
+                          {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                        </select>
+                        <div className="flex items-start gap-2 mt-3 p-3 bg-black/20 rounded-lg">
+                          <CheckCircle size={14} className="text-gold mt-0.5" />
+                          <p className="text-xs text-[#d4af37]/80">O sistema bloqueará automaticamente o horário neste espaço para evitar conflitos com outros eventos.</p>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex gap-4">
-                      <div className="w-1/3 form-group">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="form-group md:col-span-2">
+                        <label className="form-label">Nome do Local de Exibição</label>
+                        <input placeholder="Ex: Auditório Principal, Sala de Cinema..." value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} className="input w-full" />
+                      </div>
+
+                      <div className="form-group">
                         <label className="form-label">CEP</label>
                         <input
+                          placeholder="00000-000"
                           value={formData.zipCode}
                           onChange={e => {
                             const v = e.target.value.replace(/\D/g, '');
@@ -605,40 +612,47 @@ export const AdminEventForm: React.FC = () => {
                           className="input w-full"
                         />
                       </div>
-                      <div className="flex-1 form-group">
+                      <div className="form-group">
                         <label className="form-label">Endereço</label>
                         <input value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="input w-full" />
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="form-group">
-                        <label className="form-label">Número</label>
-                        <input value={formData.number} onChange={e => setFormData({ ...formData, number: e.target.value })} className="input w-full" />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="form-group">
+                          <label className="form-label">Número</label>
+                          <input value={formData.number} onChange={e => setFormData({ ...formData, number: e.target.value })} className="input w-full" />
+                        </div>
+                        <div className="form-group">
+                          <label className="form-label">UF</label>
+                          <input value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} className="input w-full" />
+                        </div>
                       </div>
+
                       <div className="form-group">
                         <label className="form-label">Cidade</label>
                         <input value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className="input w-full" />
                       </div>
-                      <div className="form-group">
-                        <label className="form-label">Estado</label>
-                        <input value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} className="input w-full" />
-                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="form-group">
-                      <label className="form-label">Plataforma</label>
-                      <select value={formData.platform} onChange={e => setFormData({ ...formData, platform: e.target.value })} className="input w-full">
-                        <option value="ZOOM">Zoom</option>
-                        <option value="MEET">Google Meet</option>
-                        <option value="YOUTUBE">YouTube Live</option>
-                      </select>
+                  <div className="bg-purple-500/5 p-8 rounded-2xl border border-purple-500/20 space-y-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Monitor className="text-purple-400" />
+                      <h3 className="font-bold text-white">Configuração da Transmissão</h3>
                     </div>
-                    <div className="form-group">
-                      <label className="form-label">Link da Reunião</label>
-                      <input value={formData.meetingLink} onChange={e => setFormData({ ...formData, meetingLink: e.target.value })} placeholder="https://..." className="input w-full" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="form-group">
+                        <label className="form-label">Plataforma</label>
+                        <select value={formData.platform} onChange={e => setFormData({ ...formData, platform: e.target.value })} className="input w-full bg-zinc-900 border-purple-500/30">
+                          <option value="ZOOM">Zoom</option>
+                          <option value="MEET">Google Meet</option>
+                          <option value="YOUTUBE">YouTube Live</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Link da Reunião / Live</label>
+                        <input value={formData.meetingLink} onChange={e => setFormData({ ...formData, meetingLink: e.target.value })} placeholder="https://..." className="input w-full bg-zinc-900 border-purple-500/30" />
+                      </div>
                     </div>
                   </div>
                 )}
