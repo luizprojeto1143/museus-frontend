@@ -32,7 +32,7 @@ interface AuthContextValue {
   name: string | null;
   hasProviderProfile: boolean;
   login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null; hasProviderProfile: boolean }>;
-  enterAsGuest: () => void;
+  enterAsGuest: (selectedTenantId?: string | null) => void;
   logout: () => void;
   updateSession: (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => void;
 }
