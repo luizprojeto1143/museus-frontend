@@ -39,7 +39,6 @@
         "visitor": "Visitante",
         "you": "Você",
         "cancelled": "Cancelado",
-        "cancelled": "Cancelado",
         "confirmed": "Confirmado",
         "work": "Obra",
         "works": "Acervo",
@@ -504,6 +503,7 @@
                 "accessBySource": "Acesso por Origem",
                 "xpByCategory": "XP por Categoria"
             },
+            "upcomingBookings": "Próximas Reservas de Espaço",
             "growth": {
                 "summary": "Resumo de Crescimento",
                 "weekly": "Semanal",
