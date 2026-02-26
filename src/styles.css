@@ -785,11 +785,12 @@ textarea {
   overflow: hidden;
   background-color: var(--bg-page);
   color: var(--fg-main);
+  --sidebar-width: 320px;
 }
 
 /* SIDEBAR */
 .layout-sidebar {
-  width: 320px;
+  width: var(--sidebar-width);
   background: linear-gradient(180deg, #1a1108 0%, #2a1810 100%);
   border-right: 1px solid var(--border-subtle);
   display: flex;
@@ -808,6 +809,10 @@ textarea {
   font-size: 1.1rem;
   /* Slightly smaller for sidebar to prevent truncation */
   line-height: 1.2;
+}
+
+.layout-wrapper:has(.layout-sidebar.collapsed) {
+  --sidebar-width: 0px;
 }
 
 .layout-sidebar.collapsed {
