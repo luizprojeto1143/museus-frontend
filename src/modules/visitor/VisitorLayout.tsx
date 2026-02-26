@@ -111,6 +111,17 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     return (settings as Record<string, unknown>)[link.feature] !== false;
   });
 
+  // Font Size State
+  const [fontSizeMultiplier, setFontSizeMultiplier] = useState(1);
+
+  const increaseFontSize = () => {
+    setFontSizeMultiplier(prev => Math.min(prev + 0.2, 1.6)); // Max 160%
+  };
+
+  const decreaseFontSize = () => {
+    setFontSizeMultiplier(prev => Math.max(prev - 0.2, 0.8)); // Min 80%
+  };
+
   // Synchronize root font size for accessibility (A+/A-)
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSizeMultiplier * 100}%`;
