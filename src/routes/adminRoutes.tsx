@@ -39,6 +39,7 @@ const AdminEventSurvey = React.lazy(() => import("../modules/admin/pages/AdminEv
 const AdminEventReport = React.lazy(() => import("../modules/admin/pages/AdminEventReport").then(m => ({ default: m.AdminEventReport })));
 const AdminNotices = React.lazy(() => import("../modules/admin/pages/AdminNotices").then(m => ({ default: m.AdminNotices })));
 const AdminNoticeForm = React.lazy(() => import("../modules/admin/pages/AdminNoticeForm").then(m => ({ default: m.AdminNoticeForm })));
+const AdminNoticeProjects = React.lazy(() => import("../modules/admin/pages/AdminNoticeProjects").then(m => ({ default: m.AdminNoticeProjects })));
 const AdminProjects = React.lazy(() => import("../modules/admin/pages/AdminProjects").then(m => ({ default: m.AdminProjects })));
 const AdminProjectForm = React.lazy(() => import("../modules/admin/pages/AdminProjectForm").then(m => ({ default: m.AdminProjectForm })));
 const AdminProviders = React.lazy(() => import("../modules/admin/pages/AdminProviders").then(m => ({ default: m.AdminProviders })));
@@ -115,6 +116,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/editais" element={ar(AdminNotices, RequireRole)} />
             <Route path="/admin/editais/novo" element={ar(AdminNoticeForm, RequireRole)} />
             <Route path="/admin/editais/:id" element={ar(AdminNoticeForm, RequireRole)} />
+            <Route path="/admin/editais/:id/projetos" element={ar(AdminNoticeProjects, RequireRole)} />
             <Route path="/admin/projetos" element={ar(AdminProjects, RequireRole)} />
             <Route path="/admin/projetos/novo" element={ar(AdminProjectForm, RequireRole)} />
             <Route path="/admin/projetos/:id" element={ar(AdminProjectForm, RequireRole)} />

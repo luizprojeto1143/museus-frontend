@@ -8,7 +8,7 @@ import { Input, Select, Textarea, Button } from "../../../components/ui";
 import {
     ArrowLeft, Save, Calendar, DollarSign, FileText,
     MapPin, X, Plus, CheckCircle, ChevronRight, ClipboardList, ChevronDown,
-    MousePointerClick, Accessibility, Tag
+    MousePointerClick, Accessibility, Tag, Upload, TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./AdminShared.css";
@@ -54,22 +54,54 @@ export const AdminNoticeForm: React.FC = () => {
     const [formData, setFormData] = useState({
         title: "",
         description: "",
+        objectives: "",
+        requirements: "",
         inscriptionStart: "",
         inscriptionEnd: "",
         resultsDate: "",
         executionEnd: "",
         totalBudget: "",
+        minPerProject: "",
         maxPerProject: "",
         culturalCategories: [] as string[],
         targetRegions: [] as string[],
         status: "DRAFT",
         documentUrl: "",
-        requiresAccessibilityPlan: true
+        requiresAccessibilityPlan: true,
+        showScoresInResults: true
     });
 
     const [newRegion, setNewRegion] = useState("");
 
     const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+    const [uploading, setUploading] = useState(false);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.type !== "application/pdf") {
+            addToast("Apenas arquivos PDF são permitidos", "error");
+            return;
+        }
+
+        setUploading(true);
+        const formDataUpload = new FormData();
+        formDataUpload.append("file", file);
+
+        try {
+            const res = await api.post("/upload/document", formDataUpload, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            setFormData(prev => ({ ...prev, documentUrl: res.data.url }));
+            addToast("PDF enviado com sucesso!", "success");
+        } catch (error) {
+            console.error(error);
+            addToast("Erro ao enviar PDF", "error");
+        } finally {
+            setUploading(false);
+        }
+    };
 
     useEffect(() => {
         if (tenantId) {
@@ -86,17 +118,21 @@ export const AdminNoticeForm: React.FC = () => {
                         setFormData({
                             title: data.title || "",
                             description: data.description || "",
+                            objectives: data.objectives || "",
+                            requirements: data.requirements || "",
                             inscriptionStart: data.inscriptionStart ? data.inscriptionStart.split("T")[0] : "",
                             inscriptionEnd: data.inscriptionEnd ? data.inscriptionEnd.split("T")[0] : "",
                             resultsDate: data.resultsDate ? data.resultsDate.split("T")[0] : "",
                             executionEnd: data.executionEnd ? data.executionEnd.split("T")[0] : "",
                             totalBudget: data.totalBudget?.toString() || "",
+                            minPerProject: data.minPerProject?.toString() || "",
                             maxPerProject: data.maxPerProject?.toString() || "",
                             culturalCategories: data.culturalCategories || [],
                             targetRegions: data.targetRegions || [],
                             status: data.status || "DRAFT",
                             documentUrl: data.documentUrl || "",
-                            requiresAccessibilityPlan: data.requiresAccessibilityPlan ?? true
+                            requiresAccessibilityPlan: data.requiresAccessibilityPlan ?? true,
+                            showScoresInResults: data.showScoresInResults ?? true
                         });
                     })
                     .catch(err => {
@@ -155,6 +191,7 @@ export const AdminNoticeForm: React.FC = () => {
                 resultsDate: formData.resultsDate ? new Date(formData.resultsDate).toISOString() : null,
                 executionEnd: formData.executionEnd ? new Date(formData.executionEnd).toISOString() : null,
                 totalBudget: formData.totalBudget ? parseFloat(formData.totalBudget) : null,
+                minPerProject: formData.minPerProject ? parseFloat(formData.minPerProject) : null,
                 maxPerProject: formData.maxPerProject ? parseFloat(formData.maxPerProject) : null
             };
 
@@ -340,23 +377,77 @@ export const AdminNoticeForm: React.FC = () => {
                                     </div>
 
                                     <div className="md:col-span-2 form-group">
-                                        <Input
-                                            label="Link do Documento (PDF)"
-                                            type="url"
-                                            value={formData.documentUrl}
-                                            onChange={e => setFormData({ ...formData, documentUrl: e.target.value })}
-                                            placeholder="https://exemplo.com/edital.pdf"
-                                        />
+                                        <label className="text-sm font-bold text-gold mb-2 block">Documento do Edital (PDF)</label>
+                                        <div className="flex items-center gap-4 p-4 bg-zinc-900/50 border border-white/10 rounded-xl">
+                                            {formData.documentUrl ? (
+                                                <div className="flex-1 flex items-center gap-3 overflow-hidden">
+                                                    <div className="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center text-red-500 flex-shrink-0">
+                                                        <FileText size={20} />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm text-white font-medium truncate">Documento Enviado</p>
+                                                        <a href={formData.documentUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-zinc-500 hover:text-gold flex items-center gap-1">
+                                                            Visualizar PDF <ChevronRight size={10} />
+                                                        </a>
+                                                    </div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => setFormData(prev => ({ ...prev, documentUrl: "" }))}
+                                                        className="text-zinc-500 hover:text-red-400"
+                                                    >
+                                                        <X size={16} />
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <div className="flex-1 flex flex-col items-center justify-center py-2 border-2 border-dashed border-white/5 rounded-lg hover:border-gold/30 transition-colors relative group">
+                                                    <input
+                                                        type="file"
+                                                        accept=".pdf"
+                                                        onChange={handleFileUpload}
+                                                        className="absolute inset-0 opacity-0 cursor-pointer"
+                                                        disabled={uploading}
+                                                    />
+                                                    <Upload size={24} className={`mb-2 ${uploading ? 'animate-bounce text-gold' : 'text-zinc-600 group-hover:text-gold'}`} />
+                                                    <p className="text-xs text-zinc-500 group-hover:text-zinc-300">
+                                                        {uploading ? 'Enviando...' : 'Clique para enviar o Edital (PDF)'}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div className="form-group">
                                     <Textarea
-                                        label="Descrição Completa"
-                                        rows={6}
+                                        label="Descrição / Objetivo do Edital *"
+                                        rows={4}
                                         value={formData.description}
                                         onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                        placeholder="Descreva os objetivos, público-alvo e regras do edital..."
+                                        placeholder="Breve apresentação do edital..."
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <Textarea
+                                        label="Objetivos Estratégicos (Para Análise IA) *"
+                                        rows={4}
+                                        value={formData.objectives}
+                                        onChange={e => setFormData({ ...formData, objectives: e.target.value })}
+                                        placeholder="Descreva o que este edital busca fomentar... (Será usado pela IA para avaliar mérito)"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <Textarea
+                                        label="Requisitos Técnicos / Critérios (Para Análise IA) *"
+                                        rows={4}
+                                        value={formData.requirements}
+                                        onChange={e => setFormData({ ...formData, requirements: e.target.value })}
+                                        placeholder="Liste os critérios de eliminação ou pontuação... (Será usado pela IA para checklist)"
+                                        required
                                     />
                                 </div>
                             </div>
@@ -434,16 +525,28 @@ export const AdminNoticeForm: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="admin-section">
-                                        <h3 className="admin-section-title">Limite por Projeto</h3>
-                                        <div className="form-group">
-                                            <Input
-                                                label="Teto Máximo (R$)"
-                                                type="number"
-                                                step="0.01"
-                                                value={formData.maxPerProject}
-                                                onChange={e => setFormData({ ...formData, maxPerProject: e.target.value })}
-                                                placeholder="50000.00"
-                                            />
+                                        <h3 className="admin-section-title">Limites por Projeto</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="form-group">
+                                                <Input
+                                                    label="Mínimo (R$)"
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={formData.minPerProject}
+                                                    onChange={e => setFormData({ ...formData, minPerProject: e.target.value })}
+                                                    placeholder="1000.00"
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <Input
+                                                    label="Máximo (R$)"
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={formData.maxPerProject}
+                                                    onChange={e => setFormData({ ...formData, maxPerProject: e.target.value })}
+                                                    placeholder="50000.00"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -571,6 +674,25 @@ export const AdminNoticeForm: React.FC = () => {
                                                 </div>
                                             </div>
                                             {formData.requiresAccessibilityPlan && <CheckCircle size={20} className="text-gold" />}
+                                        </div>
+
+                                        <div
+                                            onClick={() => setFormData(prev => ({ ...prev, showScoresInResults: !prev.showScoresInResults }))}
+                                            className={`
+                                                p-4 rounded-xl border cursor-pointer flex items-center justify-between transition-all mt-4
+                                                ${formData.showScoresInResults
+                                                    ? 'bg-gold/10 border-gold/50'
+                                                    : 'bg-zinc-900/50 border-white/10 hover:border-white/20'}
+                                            `}
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <TrendingUp size={24} className={formData.showScoresInResults ? 'text-gold' : 'text-zinc-500'} />
+                                                <div>
+                                                    <div className={`font-bold ${formData.showScoresInResults ? 'text-white' : 'text-zinc-500'}`}>Exibir Notas no Ranking</div>
+                                                    <div className="text-xs text-zinc-400">Mostrar pontuação final para o público</div>
+                                                </div>
+                                            </div>
+                                            {formData.showScoresInResults && <CheckCircle size={20} className="text-gold" />}
                                         </div>
                                     </div>
                                 </div>

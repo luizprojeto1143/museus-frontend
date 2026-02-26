@@ -17,6 +17,7 @@ const ProducerReports = React.lazy(() => import("../modules/producer/ProducerRep
 const ProducerNotices = React.lazy(() => import("../modules/producer/ProducerNotices").then(m => ({ default: m.ProducerNotices })));
 const ProducerProfile = React.lazy(() => import("../modules/producer/ProducerProfile").then(m => ({ default: m.ProducerProfile })));
 const ProducerSettings = React.lazy(() => import("../modules/producer/ProducerSettings").then(m => ({ default: m.ProducerSettings })));
+const ProducerNoticeResults = React.lazy(() => import("../modules/producer/ProducerNoticeResults").then(m => ({ default: m.ProducerNoticeResults })));
 
 // Reused admin components for museum features
 import { AdminWorks } from "../modules/admin/pages/AdminWorks";
@@ -41,6 +42,7 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/projects/new" element={pr(ProducerProjectForm, RequireRole)} />
             <Route path="/producer/projects/:id" element={pr(ProducerProjectForm, RequireRole)} />
             <Route path="/producer/editais" element={pr(ProducerNotices, RequireRole)} />
+            <Route path="/producer/editais/:id/results" element={pr(ProducerNoticeResults, RequireRole)} />
             <Route path="/producer/profile" element={pr(ProducerProfile, RequireRole)} />
             <Route path="/producer/settings" element={pr(ProducerSettings, RequireRole)} />
             <Route path="/producer/events" element={pr(ProducerEvents, RequireRole)} />

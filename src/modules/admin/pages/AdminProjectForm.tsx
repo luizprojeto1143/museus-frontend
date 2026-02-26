@@ -4,8 +4,9 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import {
-    ArrowLeft, Save, Users, DollarSign, FileText, Accessibility,
-    LayoutList, Tag, CheckCircle2, AlertCircle, Clock, XCircle
+    LayoutList, Tag, CheckCircle2, AlertCircle, Clock, XCircle,
+    Sparkles, TrendingUp, ThumbsUp, ThumbsDown, Info, RefreshCw, Send,
+    Download, ShieldCheck, AlertTriangle, ArrowLeft, Save, Users, DollarSign, FileText, Accessibility
 } from "lucide-react";
 import { useToast } from "../../../contexts/ToastContext";
 import { Input, Textarea, Button, Select } from "../../../components/ui";
@@ -52,6 +53,7 @@ export const AdminProjectForm: React.FC = () => {
 
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [analyzing, setAnalyzing] = useState(false);
     const [notices, setNotices] = useState<Notice[]>([]);
 
     const [formData, setFormData] = useState({
@@ -67,12 +69,19 @@ export const AdminProjectForm: React.FC = () => {
         status: "DRAFT",
         noticeId: searchParams.get("noticeId") || "",
         proponentId: "",
+        proponent: null as any,
         attachments: [] as any[],
         accessibilityPlan: {
             hasAccessibility: false,
             services: [] as string[],
             description: ""
-        }
+        },
+        aiAnalysis: null as any,
+        aiAnalyzedAt: null as string | null,
+        reviewNotes: "",
+        humanScore: "",
+        reviewedBy: "",
+        reviewedAt: null as string | null
     });
 
     const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
@@ -81,7 +90,7 @@ export const AdminProjectForm: React.FC = () => {
         if (tenantId) {
             // Fetch Notices
             api.get(`/notices?tenantId=${tenantId}`)
-                .then(res => setNotices(Array.isArray(res.data) ? res.data : []))
+                .then(res => setNotices(res.data))
                 .catch(console.error);
 
             // Fetch Categories (Dynamic)
@@ -90,12 +99,13 @@ export const AdminProjectForm: React.FC = () => {
                 .catch(console.error);
         }
 
-        if (id && tenantId) {
-            setLoading(true);
+        const fetchProject = () => {
+            if (!id || !tenantId) return;
             api.get(`/projects/${id}`)
                 .then(res => {
                     const data = res.data;
-                    setFormData({
+                    setFormData(prev => ({
+                        ...prev,
                         title: data.title || "",
                         summary: data.summary || "",
                         description: data.description || "",
@@ -108,18 +118,51 @@ export const AdminProjectForm: React.FC = () => {
                         status: data.status || "DRAFT",
                         noticeId: data.noticeId || "",
                         proponentId: data.proponentId || "",
+                        proponent: data.proponent,
                         attachments: data.attachments || [],
                         accessibilityPlan: data.accessibilityPlan || {
                             hasAccessibility: false,
                             services: [],
                             description: ""
-                        }
-                    });
+                        },
+                        aiAnalysis: data.aiAnalysis,
+                        aiAnalyzedAt: data.aiAnalyzedAt,
+                        reviewNotes: data.reviewNotes || "",
+                        humanScore: data.humanScore?.toString() || "",
+                        reviewedBy: data.reviewedBy || "",
+                        reviewedAt: data.reviewedAt
+                    }));
                 })
                 .catch(console.error)
                 .finally(() => setLoading(false));
+        };
+
+        if (id && tenantId) {
+            setLoading(true);
+            fetchProject();
         }
-    }, [id, tenantId, searchParams]);
+
+        // Polling if AI analysis is missing and project is submitted
+        let pollInterval: any;
+        if (isEdit) {
+            pollInterval = setInterval(() => {
+                if (!formData.aiAnalyzedAt && formData.status !== 'DRAFT') {
+                    api.get(`/projects/${id}`).then(res => {
+                        if (res.data.aiAnalyzedAt) {
+                            setFormData(prev => ({
+                                ...prev,
+                                aiAnalysis: res.data.aiAnalysis,
+                                aiAnalyzedAt: res.data.aiAnalyzedAt
+                            }));
+                            addToast("Análise IA recebida!", "success");
+                        }
+                    });
+                }
+            }, 5000);
+        }
+
+        return () => clearInterval(pollInterval);
+    }, [id, tenantId, isEdit, formData.aiAnalyzedAt, formData.status]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -163,6 +206,45 @@ export const AdminProjectForm: React.FC = () => {
                     : [...prev.accessibilityPlan.services, service]
             }
         }));
+    };
+
+    const handleAnalyzeIA = async () => {
+        if (!id) return;
+        setAnalyzing(true);
+        try {
+            const res = await api.post(`/projects/${id}/analyze`);
+            setFormData(prev => ({
+                ...prev,
+                aiAnalysis: res.data,
+                aiAnalyzedAt: new Date().toISOString()
+            }));
+            addToast("Análise IA concluída!", "success");
+        } catch (err: any) {
+            console.error(err);
+            addToast("Falha na análise IA.", "error");
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
+    const handleUpdateStatus = async (newStatus: string) => {
+        if (!id) return;
+        setSaving(true);
+        try {
+            await api.put(`/projects/${id}/status`, {
+                status: newStatus,
+                notes: formData.reviewNotes,
+                humanScore: formData.humanScore ? parseFloat(formData.humanScore) : null,
+                approvedBudget: formData.approvedBudget ? parseFloat(formData.approvedBudget) : null
+            });
+            setFormData(prev => ({ ...prev, status: newStatus }));
+            addToast(`Status atualizado para ${newStatus}`, "success");
+        } catch (err) {
+            console.error(err);
+            addToast("Erro ao atualizar status.", "error");
+        } finally {
+            setSaving(false);
+        }
     };
 
     if (loading) {
@@ -341,50 +423,250 @@ export const AdminProjectForm: React.FC = () => {
                             )}
                         </div>
 
-                        {/* ACCOUNTABILITY FILES */}
-                        <div className="admin-section">
-                            <h3 className="admin-section-title">
-                                <FileText className="text-[var(--accent-gold)]" size={20} /> Prestação de Contas
-                            </h3>
+                        {/* AI ANALYSIS PANEL */}
+                        {isEdit && (
+                            <div className="admin-section border-l-4 border-purple-500 bg-gradient-to-br from-purple-500/5 to-transparent">
+                                <div className="flex items-center justify-between mb-8">
+                                    <h3 className="admin-section-title !mb-0">
+                                        <Sparkles className="text-purple-400" size={20} /> Painel de Análise por IA
+                                    </h3>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={handleAnalyzeIA}
+                                        isLoading={analyzing}
+                                        className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+                                        leftIcon={<RefreshCw size={14} />}
+                                    >
+                                        Re-analisar
+                                    </Button>
+                                </div>
 
-                            {formData.attachments && formData.attachments.length > 0 ? (
-                                <div className="grid gap-3">
-                                    {formData.attachments.map((doc: any, idx: number) => (
-                                        <div key={idx} className="flex justify-between items-center p-4 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-subtle)] hover:border-[var(--border-default)] transition-colors">
-                                            <div className="flex items-center gap-4">
-                                                <div className="p-2.5 bg-[var(--bg-surface-active)] rounded-lg text-[var(--fg-muted)]">
-                                                    <FileText size={20} />
-                                                </div>
-                                                <div>
-                                                    <div className="font-bold text-[var(--fg-main)]">{doc.name}</div>
-                                                    <div className="text-xs text-[var(--fg-muted)]">
-                                                        Enviado em: {new Date(doc.date).toLocaleDateString()}
-                                                    </div>
+                                {formData.aiAnalysis ? (
+                                    <div className="space-y-8 animate-in fade-in duration-500">
+                                        {/* Summary & Recommendation */}
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="md:col-span-2">
+                                                <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-2">Resumo da Análise</div>
+                                                <p className="text-sm text-[var(--fg-main)] leading-relaxed italic">
+                                                    "{formData.aiAnalysis.summary}"
+                                                </p>
+                                            </div>
+                                            <div className={`p-4 rounded-2xl border flex flex-col items-center justify-center text-center
+                                                ${formData.aiAnalysis.recommendation === 'APPROVE' ? 'bg-emerald-500/10 border-emerald-500/20' :
+                                                    formData.aiAnalysis.recommendation === 'REJECT' ? 'bg-red-500/10 border-red-500/20' :
+                                                        'bg-amber-500/10 border-amber-500/20'}
+                                            `}>
+                                                <div className="text-[10px] font-bold uppercase mb-1 opacity-70">Recomendação IA</div>
+                                                <div className={`text-lg font-black tracking-tighter
+                                                    ${formData.aiAnalysis.recommendation === 'APPROVE' ? 'text-emerald-400' :
+                                                        formData.aiAnalysis.recommendation === 'REJECT' ? 'text-red-400' :
+                                                            'text-amber-400'}
+                                                `}>
+                                                    {formData.aiAnalysis.recommendation === 'APPROVE' ? 'APROVAR' :
+                                                        formData.aiAnalysis.recommendation === 'REJECT' ? 'REJEITAR' :
+                                                            'REVISAR'}
                                                 </div>
                                             </div>
-                                            <a
-                                                href={doc.url}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="px-4 py-2 bg-[var(--bg-surface-active)] border border-[var(--border-subtle)] rounded-lg text-[var(--fg-muted)] hover:bg-[var(--bg-surface-hover)] hover:text-white text-sm font-medium transition-colors"
-                                            >
-                                                Visualizar
-                                            </a>
                                         </div>
-                                    ))}
+
+                                        {/* Scores Grid */}
+                                        <div>
+                                            <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-4">Pontuação Técnica</div>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                                                {Object.entries(formData.aiAnalysis.scores || {}).map(([key, value]: [string, any]) => (
+                                                    <div key={key} className="bg-black/20 p-3 rounded-xl border border-white/5 text-center">
+                                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold truncate mb-1">{key}</div>
+                                                        <div className="text-xl font-black text-purple-400">{value}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Strengths & Weaknesses */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div className="bg-emerald-500/5 p-4 rounded-2xl border border-emerald-500/10">
+                                                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase mb-3 text-emerald-400/80">
+                                                    <ThumbsUp size={14} /> Pontos Fortes
+                                                </div>
+                                                <ul className="space-y-2">
+                                                    {formData.aiAnalysis.strengths?.map((s: string, i: number) => (
+                                                        <li key={i} className="text-xs text-[var(--fg-main)] flex gap-2">
+                                                            <span className="text-emerald-500">•</span> {s}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                            <div className="bg-red-500/5 p-4 rounded-2xl border border-red-500/10">
+                                                <div className="flex items-center gap-2 text-red-400 font-bold text-xs uppercase mb-3 text-red-400/80">
+                                                    <ThumbsDown size={14} /> Pontos Críticos
+                                                </div>
+                                                <ul className="space-y-2">
+                                                    {formData.aiAnalysis.weaknesses?.map((w: string, i: number) => (
+                                                        <li key={i} className="text-xs text-[var(--fg-main)] flex gap-2">
+                                                            <span className="text-red-500">•</span> {w}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        {/* Requirements Checklist */}
+                                        {formData.aiAnalysis.requirementsCheck && (
+                                            <div>
+                                                <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-3">Checklist do Edital</div>
+                                                <div className="space-y-2">
+                                                    {formData.aiAnalysis.requirementsCheck.map((req: any, i: number) => (
+                                                        <div key={i} className="flex items-start gap-3 p-3 bg-black/10 rounded-xl border border-white/5">
+                                                            {req.met ? <CheckCircle2 size={16} className="text-emerald-400 mt-0.5" /> : <AlertTriangle size={16} className="text-red-400 mt-0.5" />}
+                                                            <div>
+                                                                <div className="text-xs font-bold text-[var(--fg-main)]">{req.requirement}</div>
+                                                                <div className="text-[10px] text-[var(--fg-muted)]">{req.justification}</div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="text-[10px] text-[var(--fg-muted)] italic text-right">
+                                            Analisado automaticamente em {new Date(formData.aiAnalyzedAt!).toLocaleString()}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="py-12 flex flex-col items-center justify-center text-center opacity-60">
+                                        <Sparkles size={48} className="text-purple-500/30 mb-4" />
+                                        <p className="text-sm max-w-xs">Nenhuma análise automática gerada ainda ou projeto pendente de submissão.</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* HUMAN REVIEW PANEL */}
+                        {isEdit && (
+                            <div className="admin-section border-l-4 border-blue-500 shadow-xl">
+                                <h3 className="admin-section-title">
+                                    <ShieldCheck className="text-blue-400" size={20} /> Avaliação Humana (Parecer)
+                                </h3>
+
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                        <div className="md:col-span-2">
+                                            <div className="form-group">
+                                                <Textarea
+                                                    label="Observações da Revisão"
+                                                    rows={4}
+                                                    value={formData.reviewNotes}
+                                                    onChange={e => setFormData({ ...formData, reviewNotes: e.target.value })}
+                                                    placeholder="Descreva os motivos da decisão ou ações necessárias..."
+                                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="md:col-span-1">
+                                            <div className="form-group">
+                                                <Input
+                                                    label="Nota Humana (0-100)"
+                                                    type="number"
+                                                    min="0"
+                                                    max="100"
+                                                    value={formData.humanScore}
+                                                    onChange={e => setFormData({ ...formData, humanScore: e.target.value })}
+                                                    placeholder="0-100"
+                                                    className="h-24 text-4xl text-center font-black text-blue-400 bg-blue-500/5 border-blue-500/20"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="md:col-span-1">
+                                            <div className="bg-zinc-900 border border-white/5 rounded-2xl p-4 flex flex-col items-center justify-center h-full">
+                                                <div className="text-[10px] text-zinc-500 uppercase font-bold mb-1">Score Final Previsto</div>
+                                                <div className="text-4xl font-black text-white">
+                                                    {(() => {
+                                                        const aiScores = formData.aiAnalysis?.scores || {};
+                                                        const aiVals = Object.values(aiScores) as number[];
+                                                        const aiAvg = aiVals.length > 0 ? aiVals.reduce((a, b) => a + b, 0) / aiVals.length : 0;
+                                                        const hScore = formData.humanScore ? parseFloat(formData.humanScore) : 0;
+
+                                                        if (aiAvg > 0 && hScore > 0) return ((aiAvg + hScore) / 2).toFixed(1);
+                                                        if (aiAvg > 0) return aiAvg.toFixed(1);
+                                                        if (hScore > 0) return hScore.toFixed(1);
+                                                        return "0.0";
+                                                    })()}
+                                                </div>
+                                                <div className="text-[9px] text-zinc-600 mt-1 italic">(Média IA + Humana)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => handleUpdateStatus('UNDER_REVIEW')}
+                                            disabled={saving}
+                                            className="border-amber-500/50 text-amber-500 hover:bg-amber-500/10 font-bold"
+                                            leftIcon={<RefreshCw size={16} />}
+                                        >
+                                            Pedir Revisão
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            onClick={() => handleUpdateStatus('REJECTED')}
+                                            disabled={saving}
+                                            className="border-red-500/50 text-red-500 hover:bg-red-500/10 font-bold"
+                                            leftIcon={<XCircle size={16} />}
+                                        >
+                                            Reprovar
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            onClick={() => handleUpdateStatus('APPROVED')}
+                                            disabled={saving}
+                                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                                            leftIcon={<CheckCircle2 size={16} />}
+                                        >
+                                            Aprovar Projeto
+                                        </Button>
+                                    </div>
+
+                                    {formData.reviewedAt && (
+                                        <div className="text-[10px] text-[var(--fg-muted)] italic text-right flex items-center justify-end gap-2">
+                                            <Info size={10} /> Última avaliação por {formData.reviewedBy || 'Admin'} em {new Date(formData.reviewedAt).toLocaleString()}
+                                        </div>
+                                    )}
                                 </div>
-                            ) : (
-                                <div className="text-center py-10 border-2 border-dashed border-[var(--border-subtle)] rounded-2xl bg-[var(--bg-surface)]">
-                                    <FileText className="w-10 h-10 text-[var(--fg-muted)] mx-auto mb-3" />
-                                    <p className="text-[var(--fg-muted)]">Nenhum documento anexado pelo produtor ainda.</p>
-                                </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
 
                     </div>
 
                     {/* RIGHT COLUMN - SIDEBAR */}
                     <div className="space-y-6">
+
+                        {/* PROPONENT CARD */}
+                        <div className="admin-section shadow-xl">
+                            <h3 className="admin-section-title">
+                                <Users className="text-[var(--accent-gold)]" size={20} /> Proponente
+                            </h3>
+                            {formData.proponent ? (
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center border border-gold/30 text-gold font-bold text-xl overflow-hidden">
+                                        {formData.proponent.image ? (
+                                            <img src={formData.proponent.image} alt={formData.proponent.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            formData.proponent.name?.charAt(0)
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="text-white font-bold truncate">{formData.proponent.name}</div>
+                                        <div className="text-[10px] text-zinc-500 truncate">{formData.proponent.email}</div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-sm text-zinc-500 italic">Carregando dados do proponente...</div>
+                            )}
+                        </div>
 
                         {/* STATUS CARD */}
                         <div className="admin-section shadow-xl backdrop-blur-xl">

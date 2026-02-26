@@ -4,7 +4,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button, Input } from "../../../components/ui";
-import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2, CheckCircle } from "lucide-react";
+import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2, CheckCircle, Users } from "lucide-react";
 
 type Notice = {
     id: string;
@@ -13,6 +13,7 @@ type Notice = {
     inscriptionStart: string;
     inscriptionEnd: string;
     totalBudget?: number;
+    stats?: Record<string, number>;
     _count?: { projects: number };
 };
 
@@ -34,9 +35,8 @@ export const AdminNotices: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
 
-    useEffect(() => {
+    const fetchNotices = () => {
         if (!tenantId) return;
-
         setLoading(true);
         api.get("/notices", { params: { tenantId } })
             .then(res => setNotices(res.data))
@@ -46,7 +46,22 @@ export const AdminNotices: React.FC = () => {
                 addToast("Erro ao carregar editais", "error");
             })
             .finally(() => setLoading(false));
-    }, [tenantId, addToast]);
+    };
+
+    useEffect(() => {
+        fetchNotices();
+    }, [tenantId]);
+
+    const handlePublish = async (id: string) => {
+        try {
+            await api.put(`/notices/${id}/publish`);
+            addToast("Edital publicado com sucesso!", "success");
+            fetchNotices();
+        } catch (err) {
+            console.error(err);
+            addToast("Erro ao publicar edital", "error");
+        }
+    };
 
     const formatDate = (dateStr: string) => {
         if (!dateStr) return "-";
@@ -203,9 +218,18 @@ export const AdminNotices: React.FC = () => {
                                                 )}
 
                                                 {notice._count && (
-                                                    <div className="flex items-center gap-2">
-                                                        <FileText size={14} className="text-zinc-600" />
-                                                        <span><span className="text-white font-bold">{notice._count.projects || 0}</span> inscritos</span>
+                                                    <div className="flex flex-col gap-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <FileText size={14} className="text-zinc-600" />
+                                                            <span><span className="text-white font-bold">{notice._count.projects || 0}</span> inscritos</span>
+                                                        </div>
+                                                        {notice.stats && Object.keys(notice.stats).length > 0 && (
+                                                            <div className="flex gap-2 mt-1">
+                                                                {notice.stats.SUBMITTED > 0 && <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20">{notice.stats.SUBMITTED} Novos</span>}
+                                                                {notice.stats.UNDER_REVIEW > 0 && <span className="text-[10px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20">{notice.stats.UNDER_REVIEW} Em Análise</span>}
+                                                                {notice.stats.APPROVED > 0 && <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20">{notice.stats.APPROVED} Aprovados</span>}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )}
                                             </div>
@@ -213,6 +237,22 @@ export const AdminNotices: React.FC = () => {
 
                                         {/* Actions */}
                                         <div className="flex items-center gap-3 self-start md:self-center border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0 md:pl-6 mt-4 md:mt-0 w-full md:w-auto justify-end">
+                                            {notice.status === "DRAFT" && (
+                                                <Button
+                                                    variant="ghost"
+                                                    className="btn-ghost w-full md:w-auto justify-center text-emerald-400 hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20"
+                                                    onClick={() => handlePublish(notice.id)}
+                                                >
+                                                    <CheckCircle size={16} className="mr-2" /> Publicar
+                                                </Button>
+                                            )}
+                                            <Button
+                                                variant="ghost"
+                                                className="btn-ghost w-full md:w-auto justify-center hover:bg-white/5 border border-transparent hover:border-white/10"
+                                                onClick={() => navigate(`/admin/editais/${notice.id}/projetos`)}
+                                            >
+                                                <Users size={16} className="mr-2" /> Projetos
+                                            </Button>
                                             <Button
                                                 variant="ghost"
                                                 className="btn-ghost w-full md:w-auto justify-center hover:bg-white/5 border border-transparent hover:border-white/10"

@@ -4,7 +4,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button, Input, Select } from "../../../components/ui";
-import { Search, Filter, Briefcase, MapPin, DollarSign, FileText, ExternalLink, Calendar } from "lucide-react";
+import { Search, Filter, Briefcase, MapPin, DollarSign, FileText, ExternalLink, Calendar, Sparkles, TrendingUp } from "lucide-react";
 
 type Project = {
     id: string;
@@ -14,6 +14,12 @@ type Project = {
     targetRegion?: string;
     requestedBudget?: number;
     notice?: { id: string; title: string };
+    aiAnalysis?: {
+        summary: string;
+        scores: Record<string, number>;
+        recommendation: 'APPROVE' | 'REJECT' | 'REVIEW';
+    };
+    aiAnalyzedAt?: string;
     createdAt?: string;
 };
 
@@ -36,6 +42,8 @@ export const AdminProjects: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("date"); // 'date', 'score'
+    const [aiFilter, setAiFilter] = useState(""); // '', 'APPROVE', 'REJECT', 'REVIEW'
 
     useEffect(() => {
         if (!tenantId) return;
@@ -64,9 +72,17 @@ export const AdminProjects: React.FC = () => {
         return new Date(dateStr).toLocaleDateString("pt-BR");
     }
 
-    const filteredProjects = projects.filter(p =>
-        p.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProjects = projects
+        .filter(p => p.title.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter(p => !aiFilter || p.aiAnalysis?.recommendation === aiFilter)
+        .sort((a, b) => {
+            if (sortBy === "score") {
+                const scoreA = a.aiAnalysis?.scores ? (Object.values(a.aiAnalysis.scores).reduce((x, y) => x + y, 0) / Object.values(a.aiAnalysis.scores).length) : 0;
+                const scoreB = b.aiAnalysis?.scores ? (Object.values(b.aiAnalysis.scores).reduce((x, y) => x + y, 0) / Object.values(b.aiAnalysis.scores).length) : 0;
+                return scoreB - scoreA;
+            }
+            return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+        });
 
     return (
         <div className="max-w-6xl mx-auto pb-24 animate-fadeIn">
@@ -105,6 +121,28 @@ export const AdminProjects: React.FC = () => {
                         ))}
                     </Select>
                 </div>
+                <div className="w-full md:w-48">
+                    <Select
+                        value={aiFilter}
+                        onChange={e => setAiFilter(e.target.value)}
+                        className="bg-zinc-900/50 border-white/5 text-white focus:border-gold/30"
+                    >
+                        <option value="">IA: Todos</option>
+                        <option value="APPROVE">IA: Recomendados</option>
+                        <option value="REVIEW">IA: Revisar</option>
+                        <option value="REJECT">IA: Reprovados</option>
+                    </Select>
+                </div>
+                <div className="w-full md:w-48">
+                    <Select
+                        value={sortBy}
+                        onChange={e => setSortBy(e.target.value)}
+                        className="bg-zinc-900/50 border-white/5 text-white focus:border-gold/30"
+                    >
+                        <option value="date">Ordenar por Data</option>
+                        <option value="score">Ordenar por Score IA</option>
+                    </Select>
+                </div>
             </div>
 
             {/* Content */}
@@ -135,15 +173,35 @@ export const AdminProjects: React.FC = () => {
                                 return (
                                     <div key={project.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors group">
                                         <div className="md:col-span-4">
-                                            <div className="font-bold text-white group-hover:text-gold transition-colors text-lg md:text-base">
-                                                {project.title}
-                                            </div>
-                                            {project.targetRegion && (
-                                                <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1">
-                                                    <MapPin size={12} /> {project.targetRegion}
-                                                    {project.createdAt && <span className="mx-1">• {formatDate(project.createdAt)}</span>}
+                                            <div className="flex items-center gap-2 group-hover:text-gold transition-colors">
+                                                <div className="font-bold text-white text-lg md:text-base">
+                                                    {project.title}
                                                 </div>
-                                            )}
+                                                {project.aiAnalysis && (
+                                                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black tracking-tighter shadow-sm
+                                                        ${project.aiAnalysis.recommendation === 'APPROVE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' :
+                                                            project.aiAnalysis.recommendation === 'REJECT' ? 'bg-red-500/20 text-red-400 border border-red-500/20' :
+                                                                'bg-amber-500/20 text-amber-400 border border-amber-500/20'}
+                                                    `}>
+                                                        {project.aiAnalysis.recommendation === 'APPROVE' ? 'IA: OK' :
+                                                            project.aiAnalysis.recommendation === 'REJECT' ? 'IA: REPROVAR' :
+                                                                'IA: REVISAR'}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1">
+                                                {project.targetRegion && (
+                                                    <div className="flex items-center gap-1">
+                                                        <MapPin size={12} /> {project.targetRegion}
+                                                    </div>
+                                                )}
+                                                {project.createdAt && <span className="mx-1">• {formatDate(project.createdAt)}</span>}
+                                                {project.aiAnalysis && project.aiAnalysis.scores && (
+                                                    <div className="flex items-center gap-1 ml-2 text-purple-400 font-bold bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">
+                                                        <Sparkles size={10} /> {Math.round(Object.values(project.aiAnalysis.scores).reduce((a, b) => a + b, 0) / Object.values(project.aiAnalysis.scores).length)}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
 
                                         <div className="md:col-span-3 text-sm text-zinc-400">
