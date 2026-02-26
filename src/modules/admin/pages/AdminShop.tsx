@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon, TrendingUp, AlertTriangle, Filter } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
-import { Input, Button, TextArea } from '../../../components/ui'; // Assuming TextArea exists or use text-area
+import { Input, Button } from '../../../components/ui';
+import { motion, AnimatePresence } from 'framer-motion';
 import "./AdminShared.css";
-
-// Use standard Input/Button/Textarea if available in UI library
-// If not, use standard HTML with admin classes
 
 interface Product {
     id: string;
@@ -20,26 +18,40 @@ interface Product {
     active: boolean;
 }
 
+interface Order {
+    id: string;
+    total: number;
+    status: string;
+    createdAt: string;
+}
+
 export const AdminShop: React.FC = () => {
     const { tenantId } = useAuth();
     const [products, setProducts] = useState<Product[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterCategory, setFilterCategory] = useState('all');
 
     useEffect(() => {
-        fetchProducts();
+        if (tenantId) {
+            fetchData();
+        }
     }, [tenantId]);
 
-    const fetchProducts = async () => {
-        if (!tenantId) return;
+    const fetchData = async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/shop/products?tenantId=${tenantId}&active=all`);
-            setProducts(res.data);
+            const [productsRes, ordersRes] = await Promise.all([
+                api.get(`/shop/products?tenantId=${tenantId}&active=all`),
+                api.get(`/shop/orders?tenantId=${tenantId}`)
+            ]);
+            setProducts(productsRes.data);
+            setOrders(ordersRes.data || []);
         } catch (error) {
-            console.error('Error fetching products:', error);
+            console.error('Error fetching shop data:', error);
         } finally {
             setLoading(false);
         }
@@ -64,188 +76,253 @@ export const AdminShop: React.FC = () => {
         }
     };
 
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.sku?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const categories = ['all', ...new Set(products.map(p => p.category || 'Geral'))];
 
-    const stats = {
-        total: products.length,
-        active: products.filter(p => p.active).length,
-        outOfStock: products.filter(p => p.stock <= 0).length
-    };
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.sku?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = filterCategory === 'all' || (p.category || 'Geral') === filterCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    const totalRevenue = orders
+        .filter(o => o.status === 'PAID')
+        .reduce((sum, o) => sum + Number(o.total), 0);
+
+    const lowStockCount = products.filter(p => p.active && p.stock > 0 && p.stock < 10).length;
+
+    const stats = [
+        {
+            label: 'Receita Total',
+            value: `R$ ${totalRevenue.toFixed(2).replace('.', ',')}`,
+            icon: <TrendingUp size={24} />,
+            color: 'text-green-400',
+            bg: 'bg-green-500/10'
+        },
+        {
+            label: 'Produtos Ativos',
+            value: products.filter(p => p.active).length,
+            icon: <Package size={24} />,
+            color: 'text-amber-400',
+            bg: 'bg-amber-500/10'
+        },
+        {
+            label: 'Baixo Estoque',
+            value: lowStockCount,
+            icon: <AlertTriangle size={24} />,
+            color: 'text-orange-400',
+            bg: 'bg-orange-500/10'
+        },
+        {
+            label: 'Sem Estoque',
+            value: products.filter(p => p.stock <= 0).length,
+            icon: <Archive size={24} />,
+            color: 'text-red-400',
+            bg: 'bg-red-500/10'
+        }
+    ];
 
     return (
-        <div className="max-w-[1400px] mx-auto pb-20 animate-fadeIn">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+        <div className="max-w-[1400px] mx-auto pb-20 animate-fadeIn p-4 md:p-8">
+            {/* Premium Header */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
-                    <h1 className="section-title">🛒 Gestão da Loja</h1>
-                    <p className="text-[var(--fg-muted)]">Gerencie os produtos da loja do museu</p>
+                    <h1 className="text-4xl font-black text-white mb-2 tracking-tight">SHOP <span className="text-amber-500">CONTROL</span></h1>
+                    <p className="text-gray-400 font-medium">Ecossistema de gestão de acervo e vendas</p>
                 </div>
-                <Button
-                    onClick={() => { setEditingProduct(null); setShowForm(true); }}
-                    className="btn-primary"
-                    leftIcon={<Plus size={18} />}
-                >
-                    Novo Produto
-                </Button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="card flex items-center gap-4 p-6">
-                    <div className="p-3 bg-[rgba(212,175,55,0.1)] rounded-xl text-[var(--accent-gold)]">
-                        <Package size={24} />
-                    </div>
-                    <div>
-                        <span className="block text-2xl font-bold text-[var(--fg-main)]">{stats.total}</span>
-                        <span className="text-sm text-[var(--fg-muted)]">Total de Produtos</span>
-                    </div>
-                </div>
-                <div className="card flex items-center gap-4 p-6">
-                    <div className="p-3 bg-green-500/10 rounded-xl text-green-400">
-                        <DollarSign size={24} />
-                    </div>
-                    <div>
-                        <span className="block text-2xl font-bold text-[var(--fg-main)]">{stats.active}</span>
-                        <span className="text-sm text-[var(--fg-muted)]">Produtos Ativos</span>
-                    </div>
-                </div>
-                <div className="card flex items-center gap-4 p-6 border-red-500/20">
-                    <div className="p-3 bg-red-500/10 rounded-xl text-red-400">
-                        <Archive size={24} />
-                    </div>
-                    <div>
-                        <span className="block text-2xl font-bold text-[var(--fg-main)]">{stats.outOfStock}</span>
-                        <span className="text-sm text-[var(--fg-muted)]">Sem Estoque</span>
-                    </div>
+                <div className="flex gap-4">
+                    <Button
+                        onClick={() => { setEditingProduct(null); setShowForm(true); }}
+                        className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-12 px-8 rounded-xl shadow-lg shadow-amber-500/20"
+                        leftIcon={<Plus size={20} />}
+                    >
+                        Adicionar Item
+                    </Button>
                 </div>
             </div>
 
-            {/* Search */}
-            <div className="mb-8">
-                <div className="relative max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--fg-muted)]" size={18} />
+            {/* Stats Dashboard */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                {stats.map((stat, idx) => (
+                    <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="bg-[#1a1c22] border border-white/5 p-6 rounded-2xl shadow-xl hover:border-white/10 transition-colors group"
+                    >
+                        <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                            {stat.icon}
+                        </div>
+                        <span className="text-sm font-bold text-gray-500 uppercase tracking-widest block mb-1">{stat.label}</span>
+                        <span className="text-2xl font-black text-white">{stat.value}</span>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* Filters and Search */}
+            <div className="bg-[#1a1c22] border border-white/5 rounded-2xl p-6 mb-8 flex flex-col lg:flex-row gap-6 items-center">
+                <div className="relative flex-1 w-full">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                     <input
                         type="text"
-                        placeholder="Buscar por nome ou SKU..."
+                        placeholder="Pesquisar por nome ou SKU..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl py-3 pl-10 pr-4 text-[var(--fg-main)] focus:border-[var(--accent-gold)] focus:outline-none transition-colors"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:border-amber-500 focus:outline-none transition-all"
                     />
+                </div>
+
+                <div className="flex items-center gap-4 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
+                    <Filter className="text-gray-500 flex-shrink-0" size={20} />
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setFilterCategory(cat)}
+                            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-all border ${filterCategory === cat
+                                    ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/10'
+                                    : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                                }`}
+                        >
+                            {cat === 'all' ? 'Ver Tudo' : cat}
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            {/* Products Grid */}
+            {/* Products Table/Grid View */}
             {loading ? (
-                <div className="text-center py-20 text-[var(--fg-muted)]">
-                    <div className="w-8 h-8 border-2 border-[var(--accent-gold)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    Carregando produtos...
+                <div className="flex flex-col items-center justify-center py-20 text-gray-500">
+                    <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p className="font-bold uppercase tracking-widest text-xs">Sincronizando estoque...</p>
                 </div>
             ) : filteredProducts.length === 0 ? (
-                <div className="card text-center py-20 flex flex-col items-center">
-                    <div className="w-16 h-16 bg-[var(--bg-surface)] rounded-full flex items-center justify-center mb-4 text-[var(--fg-muted)]">
-                        <Package size={32} />
-                    </div>
-                    <h3 className="text-lg font-bold text-[var(--fg-main)] mb-1">Nenhum produto encontrado</h3>
-                    <p className="text-[var(--fg-muted)]">Tente buscar outro termo ou adicione um novo produto.</p>
+                <div className="bg-[#1a1c22] border-2 border-dashed border-white/10 rounded-3xl text-center py-24">
+                    <Package size={60} className="mx-auto text-gray-700 mb-6 opacity-20" />
+                    <h3 className="text-xl font-bold text-white mb-2">Sem resultados para sua busca</h3>
+                    <p className="text-gray-500">Tente ajustar seus filtros ou cadastre um novo produto.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredProducts.map(product => (
-                        <div key={product.id} className={`card p-0 overflow-hidden group hover:border-[var(--accent-gold)] transition-colors ${!product.active ? 'opacity-70' : ''}`}>
-                            {/* Image Area */}
-                            <div className="relative aspect-[4/3] bg-[var(--bg-surface-active)] flex items-center justify-center overflow-hidden">
-                                {product.imageUrl ? (
-                                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                ) : (
-                                    <ImageIcon size={48} className="text-[var(--fg-muted)] opacity-20" />
-                                )}
-                                {product.stock <= 0 && (
-                                    <div className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                                        Esgotado
-                                    </div>
-                                )}
-                                {!product.active && (
-                                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1">
-                                        <XCircle size={12} /> Inativo
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Content */}
-                            <div className="p-5">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h4 className="font-bold text-[var(--fg-main)] line-clamp-1" title={product.name}>{product.name}</h4>
-                                </div>
-                                <p className="text-xs text-[var(--fg-muted)] mb-4 font-mono">{product.sku || 'Sem SKU'}</p>
-
-                                <div className="flex justify-between items-center mb-4">
-                                    <span className="text-lg font-bold text-green-400">
-                                        R$ {Number(product.price).toFixed(2).replace('.', ',')}
-                                    </span>
-                                    <span className="text-xs text-[var(--fg-muted)] bg-[var(--bg-surface-active)] px-2 py-1 rounded">
-                                        Estoque: <span className={product.stock < 5 ? "text-yellow-500 font-bold" : ""}>{product.stock}</span>
-                                    </span>
-                                </div>
-
-                                <div className="grid grid-cols-3 gap-2 pt-4 border-t border-[var(--border-subtle)]">
-                                    <button
-                                        onClick={() => toggleActive(product)}
-                                        className={`flex items-center justify-center py-2 rounded-lg text-xs font-medium transition-colors
-                                            ${product.active
-                                                ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20'
-                                                : 'bg-[var(--bg-surface-active)] text-[var(--fg-muted)] hover:text-white'}
-                                        `}
-                                        title={product.active ? "Desativar" : "Ativar"}
-                                    >
-                                        <CheckCircle2 size={16} />
-                                    </button>
+                <motion.div
+                    layout
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                >
+                    <AnimatePresence>
+                        {filteredProducts.map(product => (
+                            <motion.div
+                                key={product.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className={`group relative bg-[#1a1c22] border border-white/5 rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-300 ${!product.active ? 'opacity-60 saturate-0' : ''}`}
+                            >
+                                {/* Actions Overlay */}
+                                <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
                                     <button
                                         onClick={() => { setEditingProduct(product); setShowForm(true); }}
-                                        className="flex items-center justify-center py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                                        className="w-10 h-10 bg-black/60 backdrop-blur-md text-blue-400 rounded-xl flex items-center justify-center hover:bg-blue-400 hover:text-black transition-all"
                                         title="Editar"
                                     >
-                                        <Edit size={16} />
+                                        <Edit size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => toggleActive(product)}
+                                        className={`w-10 h-10 bg-black/60 backdrop-blur-md rounded-xl flex items-center justify-center transition-all ${product.active ? 'text-green-400 hover:bg-green-400 hover:text-black' : 'text-gray-400 hover:bg-white hover:text-black'
+                                            }`}
+                                        title={product.active ? "Desativar" : "Ativar"}
+                                    >
+                                        {product.active ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
                                     </button>
                                     <button
                                         onClick={() => handleDelete(product.id)}
-                                        className="flex items-center justify-center py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                                        className="w-10 h-10 bg-black/60 backdrop-blur-md text-red-400 rounded-xl flex items-center justify-center hover:bg-red-400 hover:text-black transition-all"
                                         title="Excluir"
                                     >
-                                        <Trash2 size={16} />
+                                        <Trash2 size={18} />
                                     </button>
                                 </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+
+                                {/* Image Section */}
+                                <div className="aspect-[4/5] bg-black/20 relative overflow-hidden">
+                                    {product.imageUrl ? (
+                                        <img
+                                            src={product.imageUrl}
+                                            alt={product.name}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-800">
+                                            <ImageIcon size={48} />
+                                        </div>
+                                    )}
+
+                                    {/* Stock Badge */}
+                                    <div className="absolute bottom-4 left-4">
+                                        <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-tighter border ${product.stock <= 0 ? 'bg-red-500/20 border-red-500 text-red-500' :
+                                                product.stock < 10 ? 'bg-orange-500/20 border-orange-500 text-orange-500' :
+                                                    'bg-green-500/20 border-green-500 text-green-500'
+                                            }`}>
+                                            Estoque: {product.stock}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Info Section */}
+                                <div className="p-6">
+                                    <div className="mb-2">
+                                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">{product.category || 'Museum Piece'}</p>
+                                        <h4 className="text-lg font-bold text-white line-clamp-1">{product.name}</h4>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xl font-black text-amber-500">
+                                            R$ {Number(product.price).toFixed(2).replace('.', ',')}
+                                        </span>
+                                        <span className="text-[10px] font-mono text-gray-600">{product.sku || 'NO-SKU'}</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
             )}
 
             {/* Form Modal */}
-            {showForm && (
-                <div className="admin-modal-overlay">
-                    <div className="admin-modal animate-in fade-in zoom-in duration-200">
-                        <div className="flex justify-between items-center mb-6 border-b border-[var(--border-subtle)] pb-4">
-                            <h2 className="text-xl font-bold flex items-center gap-2 text-[var(--fg-main)]">
-                                {editingProduct ? <Edit size={20} className="text-[var(--accent-gold)]" /> : <Plus size={20} className="text-[var(--accent-gold)]" />}
-                                {editingProduct ? 'Editar Produto' : 'Novo Produto'}
-                            </h2>
-                            <button onClick={() => setShowForm(false)} className="text-[var(--fg-muted)] hover:text-white transition-colors">
-                                <XCircle size={24} />
-                            </button>
-                        </div>
-
-                        <ProductForm
-                            product={editingProduct}
-                            tenantId={tenantId || ''}
-                            onClose={() => setShowForm(false)}
-                            onSave={() => { setShowForm(false); fetchProducts(); }}
+            <AnimatePresence>
+                {showForm && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+                            onClick={() => setShowForm(false)}
                         />
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-2xl bg-[#1a1c22] border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar"
+                        >
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">
+                                    {editingProduct ? 'Update Product' : 'New Treasure'}
+                                </h2>
+                                <button onClick={() => setShowForm(false)} className="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center text-gray-500 transition-colors">
+                                    <XCircle size={20} />
+                                </button>
+                            </div>
+
+                            <ProductForm
+                                product={editingProduct}
+                                tenantId={tenantId || ''}
+                                onClose={() => setShowForm(false)}
+                                onSave={() => { setShowForm(false); fetchData(); }}
+                            />
+                        </motion.div>
                     </div>
-                </div>
-            )}
+                )}
+            </AnimatePresence>
         </div>
     );
 };
@@ -287,84 +364,101 @@ const ProductForm: React.FC<{
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="form-group">
-                <Input
-                    label="Nome do Produto *"
-                    value={form.name}
-                    onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
-                    required
-                    placeholder="Ex: Caneca do Museu"
-                />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-                <div className="form-group">
-                    <Input
-                        label="Preço R$ *"
-                        type="number"
-                        step="0.01"
-                        value={form.price}
-                        onChange={(e) => setForm(f => ({ ...f, price: parseFloat(e.target.value) }))}
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Produto</label>
+                    <input
+                        value={form.name}
+                        onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
                         required
-                        leftIcon={<DollarSign size={14} />}
+                        placeholder="Nome da peça"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
                     />
                 </div>
-                <div className="form-group">
-                    <Input
-                        label="Estoque"
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Preço</label>
+                    <div className="relative">
+                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" size={18} />
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={form.price}
+                            onChange={(e) => setForm(f => ({ ...f, price: parseFloat(e.target.value) }))}
+                            required
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 pl-12 text-white focus:border-amber-500 focus:outline-none"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">SKU</label>
+                    <input
+                        value={form.sku}
+                        onChange={(e) => setForm(f => ({ ...f, sku: e.target.value }))}
+                        placeholder="Ex: SKU-001"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none font-mono"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Categoria</label>
+                    <input
+                        value={form.category}
+                        onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}
+                        placeholder="Ex: Livros"
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Estoque</label>
+                    <input
                         type="number"
                         value={form.stock}
                         onChange={(e) => setForm(f => ({ ...f, stock: parseInt(e.target.value) }))}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
                     />
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="form-group">
-                    <Input
-                        label="SKU (Código)"
-                        value={form.sku}
-                        onChange={(e) => setForm(f => ({ ...f, sku: e.target.value }))}
-                        placeholder="COD-001"
-                    />
-                </div>
-                <div className="form-group">
-                    <Input
-                        label="Categoria"
-                        value={form.category}
-                        onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))}
-                        placeholder="souvenirs, livros..."
-                    />
-                </div>
-            </div>
-
-            <div className="form-group">
-                <label className="form-label">Descrição</label>
+            <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Descrição</label>
                 <textarea
-                    className="w-full bg-[rgba(10,6,4,0.6)] border border-[var(--border-default)] rounded-md text-[var(--fg-main)] p-3 focus:border-[var(--accent-gold)] focus:outline-none min-h-[80px]"
                     value={form.description}
                     onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
-                    rows={3}
+                    rows={4}
+                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none resize-none"
                 />
             </div>
 
-            <div className="form-group">
-                <Input
-                    label="URL da Imagem"
+            <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest ml-1">Imagem URL</label>
+                <input
                     value={form.imageUrl}
                     onChange={(e) => setForm(f => ({ ...f, imageUrl: e.target.value }))}
-                    placeholder="https://..."
+                    placeholder="https://sua-imagem.com/foto.jpg"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
                 />
             </div>
 
-            <div className="flex gap-3 pt-4">
-                <Button type="button" variant="ghost" onClick={onClose} className="flex-1 btn-ghost">Cancelar</Button>
-                <Button type="submit" isLoading={saving} className="flex-1 btn-primary">
-                    {saving ? 'Salvando...' : 'Salvar Produto'}
+            <div className="flex items-center gap-2 py-4">
+                <input
+                    type="checkbox"
+                    id="active"
+                    checked={form.active}
+                    onChange={(e) => setForm(f => ({ ...f, active: e.target.checked }))}
+                    className="w-5 h-5 accent-amber-500"
+                />
+                <label htmlFor="active" className="text-sm font-bold text-white">Publicado e visível na loja</label>
+            </div>
+
+            <div className="flex gap-4 pt-6">
+                <Button type="button" variant="ghost" onClick={onClose} className="flex-1 h-14 rounded-xl border-white/10 hover:bg-white/5">Cancelar</Button>
+                <Button type="submit" isLoading={saving} className="flex-1 h-14 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-extrabold shadow-lg shadow-amber-500/20">
+                    {saving ? 'Salvando...' : 'Confirmar Alterações'}
                 </Button>
             </div>
         </form>
     );
 };
-

@@ -6,7 +6,7 @@ import { Input, Button, Textarea, Select } from "../../../components/ui";
 import {
   Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
   Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
-  Plus, Edit, Trash2, Palette, Save, Smartphone
+  Plus, Edit, Trash2, Palette, Save, Smartphone, CreditCard, HelpCircle
 } from "lucide-react";
 import "./AdminMuseumSettings.css";
 
@@ -46,6 +46,7 @@ interface MuseumSettings {
   welcomeAudioUrl?: string;
   welcomeVideoUrl?: string;
   capacityPerHour?: number;
+  asaasWalletId?: string;
 }
 
 export const AdminMuseumSettings: React.FC = () => {
@@ -80,6 +81,7 @@ export const AdminMuseumSettings: React.FC = () => {
     historicalFont: true,
     welcomeAudioUrl: "",
     welcomeVideoUrl: "",
+    asaasWalletId: "",
   });
 
   // State
@@ -89,7 +91,7 @@ export const AdminMuseumSettings: React.FC = () => {
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [editingFloorPlan, setEditingFloorPlan] = useState<FloorPlan | null>(null);
   const [newFloorPlan, setNewFloorPlan] = useState({ name: "", floor: 0, imageUrl: "" });
-  const [activeTab, setActiveTab] = useState<"dados" | "multimidia" | "mapa" | "visual" | "preview">("dados");
+  const [activeTab, setActiveTab] = useState<"dados" | "multimidia" | "mapa" | "visual" | "preview" | "financeiro">("dados");
 
   const loadFloorPlans = React.useCallback(async () => {
     if (!tenantId) return;
@@ -212,6 +214,7 @@ export const AdminMuseumSettings: React.FC = () => {
     { id: "multimidia" as const, label: "Multimídia", icon: <Volume2 size={16} /> },
     { id: "mapa" as const, label: "Mapas", icon: <MapIcon size={16} /> },
     { id: "visual" as const, label: "Visual", icon: <Palette size={16} /> },
+    { id: "financeiro" as const, label: "Financeiro", icon: <CreditCard size={16} /> },
     { id: "preview" as const, label: "Preview", icon: <ImageIcon size={16} /> },
   ];
 
@@ -502,6 +505,60 @@ export const AdminMuseumSettings: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "financeiro" && (
+          <div className="visitor-card">
+            <div className="visitor-card-header">
+              <CreditCard className="text-[#d4af37]" size={24} />
+              <h2 className="visitor-card-title">Configurações Financeiras</h2>
+            </div>
+
+            <div className="space-y-6">
+              <div className="p-4 bg-black/20 rounded-xl border border-[#463420] text-sm text-[#c9b58c] flex gap-3 items-start leading-relaxed">
+                <HelpCircle size={32} className="text-[#d4af37] shrink-0" />
+                <p>
+                  Para receber pagamentos diretamente em sua conta, você deve configurar o seu <strong>Wallet ID</strong> do Asaas.
+                  O sistema realizará um split automático: <strong>95% para você</strong> e 5% de taxa da plataforma.
+                </p>
+              </div>
+
+              <div className="visitor-input-group">
+                <label className="flex items-center gap-2">
+                  ID da Carteira Asaas (Wallet ID)
+                  <div className="group relative">
+                    <HelpCircle size={14} className="text-[#d4af37] cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black border border-[#d4af37] rounded-lg text-[10px] invisible group-hover:visible shadow-xl z-50">
+                      Você encontra este ID no menu "Configurações &gt; Webhooks &gt; Token de Autenticação" ou entrando em contato com o suporte Asaas.
+                    </div>
+                  </div>
+                </label>
+                <input
+                  className="visitor-input font-mono"
+                  value={settings.asaasWalletId || ""}
+                  onChange={(e) => setSettings({ ...settings, asaasWalletId: e.target.value })}
+                  placeholder="ex: wall_123456789..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-[#1a1108] rounded-xl border border-[#463420]">
+                  <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">Comissão Plataforma</h4>
+                  <p className="text-2xl font-black text-[#EAE0D5]">5%</p>
+                  <p className="text-[10px] opacity-60">Retidos na transação</p>
+                </div>
+                <div className="p-4 bg-[#1a1108] rounded-xl border border-[#463420]">
+                  <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">Seu Recebimento</h4>
+                  <p className="text-2xl font-black text-[#EAE0D5]">95%</p>
+                  <p className="text-[10px] opacity-60">Direto na sua carteira</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-yellow-900/10 border border-yellow-700/30 text-xs text-yellow-200/70">
+                <strong>Atenção:</strong> Certifique-se de que o Wallet ID está correto. Transferências para IDs incorretos não podem ser estornadas automaticamente.
               </div>
             </div>
           </div>

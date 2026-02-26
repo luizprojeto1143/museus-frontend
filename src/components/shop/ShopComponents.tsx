@@ -1,15 +1,16 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
-import { ShoppingBag, Plus, Minus, Trash2, X, Copy, Check, QrCode, Ticket, Loader2 } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Trash2, X, Copy, Check, QrCode, Ticket, Loader2, ArrowRight, Star, ShieldCheck, Truck, Search, Menu, Package, Clock, CreditCard } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
 import { toast } from 'react-hot-toast';
 import { Button } from '../../components/ui';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Product {
     id: string;
     name: string;
     description?: string;
+    longDescription?: string;
     price: number;
     imageUrl?: string;
     category?: string;
@@ -29,15 +30,15 @@ interface CheckoutModalProps {
 }
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, onSuccess }) => {
-    const { user, tenantId } = useAuth();
+    const { name: authName, email: authEmail, tenantId } = useAuth();
     const [step, setStep] = useState<'details' | 'payment' | 'success'>('details');
     const [loading, setLoading] = useState(false);
 
     // Customer Details
-    const [name, setName] = useState(user?.name || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [phone, setPhone] = useState(user?.phone || '');
-    const [cpf, setCpf] = useState((user as any)?.cpf || '');
+    const [name, setName] = useState(authName || '');
+    const [email, setEmail] = useState(authEmail || '');
+    const [phone, setPhone] = useState('');
+    const [cpf, setCpf] = useState('');
 
     // Payment
     const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'BOLETO'>('PIX');
@@ -148,8 +149,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                     <button
                                         onClick={() => setPaymentMethod('PIX')}
                                         className={`flex items-center justify-center gap-2 p-4 rounded-xl border transition-all ${paymentMethod === 'PIX'
-                                                ? 'bg-green-500/10 border-green-500 text-green-400'
-                                                : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
+                                            ? 'bg-green-500/10 border-green-500 text-green-400'
+                                            : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
                                             }`}
                                     >
                                         <QrCode size={20} />
@@ -158,8 +159,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                     <button
                                         onClick={() => setPaymentMethod('BOLETO')}
                                         className={`flex items-center justify-center gap-2 p-4 rounded-xl border transition-all ${paymentMethod === 'BOLETO'
-                                                ? 'bg-blue-500/10 border-blue-500 text-blue-400'
-                                                : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
+                                            ? 'bg-blue-500/10 border-blue-500 text-blue-400'
+                                            : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
                                             }`}
                                     >
                                         <Ticket size={20} />
@@ -236,74 +237,214 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
 };
 
 /**
- * Product Card Component
+ * Product Detail Drawer
+ */
+interface ProductDetailDrawerProps {
+    product: Product;
+    onClose: () => void;
+    onAddToCart: (product: Product) => void;
+}
+
+const ProductDetailDrawer: React.FC<ProductDetailDrawerProps> = ({ product, onClose, onAddToCart }) => {
+    return (
+        <div className="fixed inset-0 z-[60] flex justify-end animate-fadeIn">
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="relative w-full max-w-2xl bg-[#0f0a06] h-full shadow-2xl overflow-y-auto custom-scrollbar border-l border-[#463420]"
+            >
+                <button
+                    onClick={onClose}
+                    className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10 transition-colors"
+                >
+                    <X size={24} />
+                </button>
+
+                <div className="aspect-video w-full bg-[#1a1108] relative overflow-hidden">
+                    {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-800">
+                            <ShoppingBag size={80} />
+                        </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f0a06] to-transparent opacity-60" />
+                </div>
+
+                <div className="p-8 md:p-12 -mt-12 relative">
+                    <div className="bg-[#1a1108]/90 backdrop-blur-md p-6 rounded-2xl border border-[#463420] shadow-xl mb-8">
+                        <div className="flex flex-wrap items-center gap-3 mb-4">
+                            <span className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold uppercase tracking-widest border border-amber-500/20">
+                                {product.category || 'Museum Collection'}
+                            </span>
+                            {product.stock > 0 && product.stock < 10 && (
+                                <span className="px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold uppercase tracking-widest border border-red-500/20">
+                                    Últimas Unidades
+                                </span>
+                            )}
+                        </div>
+                        <h1 className="text-4xl font-bold text-white mb-2 leading-tight font-serif">{product.name}</h1>
+                        <p className="text-3xl font-bold text-amber-400">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
+                            <ShieldCheck className="text-amber-500 mb-2" size={24} />
+                            <span className="text-xs font-bold text-white uppercase mb-1">Qualidade</span>
+                            <span className="text-[10px] text-gray-400">Certificado pelo Museu</span>
+                        </div>
+                        <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
+                            <Star className="text-amber-500 mb-2" size={24} />
+                            <span className="text-xs font-bold text-white uppercase mb-1">Exclusivo</span>
+                            <span className="text-[10px] text-gray-400">Item Colecionável</span>
+                        </div>
+                        <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
+                            <Truck className="text-amber-500 mb-2" size={24} />
+                            <span className="text-xs font-bold text-white uppercase mb-1">Entrega</span>
+                            <span className="text-[10px] text-gray-400">Envio para todo Brasil</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-8">
+                        <div>
+                            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                <Plus size={18} className="text-amber-500" />
+                                Sobre o Produto
+                            </h3>
+                            <div className="text-gray-300 leading-relaxed space-y-4">
+                                <p>{product.description}</p>
+                                {product.longDescription && <p>{product.longDescription}</p>}
+                                {!product.longDescription && (
+                                    <p>Este item exclusivo da nossa loja foi cuidadosamente selecionado para representar a história e a cultura preservadas em nosso museu. Cada detalhe foi pensado para oferecer não apenas um produto, mas uma parte da experiência do visitante para levar para casa.</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="pt-8 border-t border-white/10">
+                            <div className="flex items-center justify-between gap-6">
+                                <div>
+                                    <p className="text-sm text-gray-400 mb-1">Disponibilidade</p>
+                                    <p className="text-white font-bold">{product.stock > 0 ? `${product.stock} unidades em estoque` : 'Esgotado'}</p>
+                                </div>
+                                <Button
+                                    onClick={() => onAddToCart(product)}
+                                    disabled={product.stock <= 0}
+                                    className="flex-1 py-6 text-lg bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold uppercase tracking-wider"
+                                >
+                                    Adicionar ao Carrinho
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
+/**
+ * Product Card Component 2.0
  */
 export const ProductCard: React.FC<{
     product: Product;
     onAddToCart: (product: Product) => void;
-}> = ({ product, onAddToCart }) => {
+    onOpenDetail: (product: Product) => void;
+}> = ({ product, onAddToCart, onOpenDetail }) => {
     const isOutOfStock = product.stock <= 0;
 
     return (
-        <div className={`group bg-[#1a1c22] border border-gray-800 rounded-2xl overflow-hidden hover:border-amber-500/50 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300 flex flex-col h-full ${isOutOfStock ? 'opacity-60' : ''}`}>
-            <div className="relative aspect-[4/3] overflow-hidden bg-gray-900">
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -8 }}
+            className={`group h-full flex flex-col glass-premium rounded-2xl overflow-hidden transition-all duration-500 hover:border-amber-500/50 ${isOutOfStock ? 'opacity-60 saturate-50' : ''}`}
+        >
+            <div
+                className="relative aspect-[4/5] overflow-hidden bg-gray-900 cursor-pointer"
+                onClick={() => onOpenDetail(product)}
+            >
                 {product.imageUrl ? (
                     <img
                         src={product.imageUrl}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-700">
-                        <ShoppingBag size={48} />
+                    <div className="w-full h-full flex items-center justify-center text-gray-800">
+                        <ShoppingBag size={60} />
                     </div>
                 )}
 
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                    <span className="text-amber-400 text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-1">
+                        Ver Detalhes <ArrowRight size={12} />
+                    </span>
+                </div>
+
                 {isOutOfStock && (
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
-                        <span className="bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                        <span className="bg-red-500/20 text-red-400 border border-red-500/30 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
                             Esgotado
+                        </span>
+                    </div>
+                )}
+
+                {!isOutOfStock && product.stock < 10 && (
+                    <div className="absolute top-4 right-4">
+                        <span className="bg-amber-500 text-black px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-tighter animate-pulse">
+                            Baixo Estoque
                         </span>
                     </div>
                 )}
             </div>
 
-            <div className="p-5 flex flex-col flex-1">
-                <div className="mb-2">
-                    <p className="text-xs text-amber-500 font-medium tracking-wider mb-1 uppercase">{product.category || 'Geral'}</p>
-                    <h4 className="text-lg font-bold text-white leading-tight group-hover:text-amber-400 transition-colors">{product.name}</h4>
+            <div className="p-6 flex flex-col flex-1">
+                <div className="mb-4">
+                    <p className="text-[10px] text-amber-500 font-black tracking-[0.2em] mb-1 uppercase opacity-70">
+                        {product.category || 'Museum Piece'}
+                    </p>
+                    <h4
+                        className="text-lg font-bold text-white leading-tight group-hover:text-amber-400 transition-colors cursor-pointer font-serif"
+                        onClick={() => onOpenDetail(product)}
+                    >
+                        {product.name}
+                    </h4>
                 </div>
 
-                {product.description && (
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">{product.description}</p>
-                )}
-
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-800">
-                    <span className="text-xl font-bold text-white">
-                        R$ {Number(product.price).toFixed(2).replace('.', ',')}
-                    </span>
+                <div className="mt-auto flex items-center justify-between gap-4">
+                    <div>
+                        <p className="text-[10px] text-gray-500 uppercase font-bold mb-0.5">Preço</p>
+                        <span className="text-xl font-bold text-white">
+                            R$ {Number(product.price).toFixed(2).replace('.', ',')}
+                        </span>
+                    </div>
 
                     <button
                         onClick={() => onAddToCart(product)}
                         disabled={isOutOfStock}
                         className={`
-                            flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all
+                            w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300
                             ${isOutOfStock
-                                ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                                : 'bg-amber-500 text-black hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20 active:scale-95'
+                                ? 'bg-gray-800/50 text-gray-600 cursor-not-allowed'
+                                : 'bg-amber-500 text-black hover:bg-white hover:scale-110 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)] shadow-lg shadow-amber-500/20'
                             }
                         `}
                     >
-                        {isOutOfStock ? 'Indisponível' : (
-                            <>
-                                <Plus size={16} />
-                                Comprar
-                            </>
-                        )}
+                        <Plus size={24} />
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
@@ -419,15 +560,24 @@ export const ShoppingCart: React.FC<{
 };
 
 /**
- * Product Grid
+ * Product Grid 2.0
  */
 export const ProductGrid: React.FC = () => {
     const { tenantId } = useAuth();
     const [products, setProducts] = useState<Product[]>([]);
-    const [cart, setCart] = useState<CartItem[]>([]);
+    const [cart, setCart] = useState<CartItem[]>(() => {
+        // Init from localStorage
+        const saved = localStorage.getItem(`cart_${tenantId}`);
+        return saved ? JSON.parse(saved) : [];
+    });
     const [loading, setLoading] = useState(true);
     const [showCart, setShowCart] = useState(false);
     const [showCheckout, setShowCheckout] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+    // Filters
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -445,6 +595,13 @@ export const ProductGrid: React.FC = () => {
             fetchProducts();
         }
     }, [tenantId, fetchProducts]);
+
+    // Persist cart
+    useEffect(() => {
+        if (tenantId) {
+            localStorage.setItem(`cart_${tenantId}`, JSON.stringify(cart));
+        }
+    }, [cart, tenantId]);
 
     const addToCart = (product: Product) => {
         setCart(prev => {
@@ -487,84 +644,164 @@ export const ProductGrid: React.FC = () => {
     const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     const total = cart.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0);
 
+    const categories = ['all', ...new Set(products.map(p => p.category || 'Geral'))];
+
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === 'all' || (p.category || 'Geral') === selectedCategory;
+        return matchesSearch && matchesCategory;
+    });
+
     return (
         <div className="relative">
-            {/* Cart FAB */}
-            {cartItemCount > 0 && (
-                <button
-                    onClick={() => setShowCart(!showCart)}
-                    className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-xl shadow-amber-500/30 flex items-center justify-center z-40 transition-transform hover:scale-110 active:scale-95"
-                >
-                    <ShoppingBag size={24} />
-                    <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-[#0a0a0c]">
-                        {cartItemCount}
-                    </span>
-                </button>
-            )}
-
-            {/* Cart Sidebar Overlay */}
-            {showCart && (
-                <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity"
-                    onClick={() => setShowCart(false)}
-                >
-                    <div
-                        className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[#1f2937] shadow-2xl animate-slideLeft"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={() => setShowCart(false)}
-                            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white"
-                        >
-                            <X size={24} />
-                        </button>
-                        <ShoppingCart
-                            items={cart}
-                            onUpdateQuantity={updateQuantity}
-                            onRemove={removeFromCart}
-                            onCheckout={handleCheckout}
-                        />
+            {/* Search and Filters */}
+            <div className="mb-10 space-y-6">
+                <div className="relative max-w-xl mx-auto">
+                    <input
+                        type="text"
+                        placeholder="O que você está procurando?"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#1a1108] border border-[#463420] rounded-2xl py-4 pl-6 pr-12 text-white focus:border-amber-500 focus:outline-none focus:ring-4 focus:ring-amber-500/10 transition-all text-lg shadow-xl"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-amber-500 rounded-xl text-black">
+                        <ShoppingBag size={20} />
                     </div>
                 </div>
-            )}
+
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setSelectedCategory(cat)}
+                            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border-2 ${selectedCategory === cat
+                                ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/20 scale-105'
+                                : 'bg-[#1a1108] border-[#463420] text-gray-400 hover:border-amber-500/30'
+                                }`}
+                        >
+                            {cat === 'all' ? 'Ver Tudo' : cat}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Cart FAB */}
+            <AnimatePresence>
+                {cartItemCount > 0 && (
+                    <motion.button
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setShowCart(!showCart)}
+                        className="fixed bottom-24 right-6 w-16 h-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-2xl shadow-amber-500/40 flex items-center justify-center z-40"
+                    >
+                        <ShoppingBag size={28} />
+                        <span className="absolute -top-1 -right-1 w-7 h-7 bg-white text-black text-[10px] font-black rounded-full flex items-center justify-center border-4 border-[#0f0a06]">
+                            {cartItemCount}
+                        </span>
+                    </motion.button>
+                )}
+            </AnimatePresence>
+
+            {/* Cart Sidebar Overlay */}
+            <AnimatePresence>
+                {showCart && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                            onClick={() => setShowCart(false)}
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 30, stiffness: 200 }}
+                            className="fixed right-0 top-0 bottom-0 w-full max-w-md glass-premium z-[51] shadow-2xl flex flex-col"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="flex justify-between items-center p-6 border-b border-[#463420]">
+                                <h2 className="text-xl font-bold flex items-center gap-2 text-white font-serif">
+                                    <ShoppingBag className="text-amber-500" /> Seu Carrinho
+                                </h2>
+                                <button onClick={() => setShowCart(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                                    <X size={24} />
+                                </button>
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                                <ShoppingCart
+                                    items={cart}
+                                    onUpdateQuantity={updateQuantity}
+                                    onRemove={removeFromCart}
+                                    onCheckout={handleCheckout}
+                                />
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
 
             {/* Checkout Modal */}
-            {showCheckout && (
-                <CheckoutModal
-                    items={cart}
-                    total={total}
-                    onClose={() => setShowCheckout(false)}
-                    onSuccess={() => {
-                        setCart([]); // Clear cart
-                        // Keep modal open to show payment info
-                    }}
-                />
-            )}
+            <AnimatePresence>
+                {showCheckout && (
+                    <CheckoutModal
+                        items={cart}
+                        total={total}
+                        onClose={() => setShowCheckout(false)}
+                        onSuccess={() => {
+                            setCart([]); // Clear cart
+                        }}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Details Drawer */}
+            <AnimatePresence>
+                {selectedProduct && (
+                    <ProductDetailDrawer
+                        product={selectedProduct}
+                        onClose={() => setSelectedProduct(null)}
+                        onAddToCart={(p) => {
+                            addToCart(p);
+                            setSelectedProduct(null);
+                        }}
+                    />
+                )}
+            </AnimatePresence>
 
             {/* Products Grid */}
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-500">
                     <Loader2 size={40} className="animate-spin text-amber-500 mb-4" />
-                    <p>Carregando produtos...</p>
+                    <p className="font-bold tracking-widest uppercase text-xs">Aguarde, carregando acervo...</p>
                 </div>
-            ) : products.length === 0 ? (
-                <div className="text-center py-20 bg-[#1a1c22]/50 rounded-3xl border-2 border-dashed border-gray-800">
-                    <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-600">
+            ) : filteredProducts.length === 0 ? (
+                <div className="text-center py-20 bg-[#1a1108]/30 rounded-3xl border-2 border-dashed border-[#463420] animate-fadeIn">
+                    <div className="w-20 h-20 bg-amber-500/5 rounded-full flex items-center justify-center mx-auto mb-6 text-amber-500/20">
                         <ShoppingBag size={40} />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">Loja em breve</h3>
-                    <p className="text-gray-400">Nossos produtos estarão disponíveis em breve!</p>
+                    <h3 className="text-xl font-bold text-white mb-2 font-serif">Nenhum tesouro encontrado</h3>
+                    <p className="text-gray-400">Tente buscar por outro termo ou categoria.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {products.map(product => (
+                <motion.div
+                    layout
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+                >
+                    {filteredProducts.map(product => (
                         <ProductCard
                             key={product.id}
                             product={product}
                             onAddToCart={addToCart}
+                            onOpenDetail={(p) => setSelectedProduct(p)}
                         />
                     ))}
-                </div>
+                </motion.div>
             )}
         </div>
     );

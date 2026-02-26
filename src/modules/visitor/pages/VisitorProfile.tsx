@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { Ticket, Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, CheckCircle } from 'lucide-react';
+import { Ticket, Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, CheckCircle, ShoppingBag, Clock, CreditCard, Package } from 'lucide-react';
 import { TicketCard } from "../components/TicketCard";
 import { Button } from "../../../components/ui";
 import "./VisitorProfile.css"; // Import the dedicated CSS
@@ -34,20 +34,34 @@ interface Registration {
     }
 }
 
+interface Order {
+    id: string;
+    total: number;
+    status: string;
+    createdAt: string;
+    paymentMethod: string;
+    items: Array<{
+        product: { name: string };
+        quantity: number;
+        priceAtTime: number;
+    }>;
+}
+
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { name, email, logout, isGuest } = useAuth();
 
-    // Tabs: 'info' | 'tickets' | 'certificates'
-    const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates'>('info');
+    // Tabs: 'info' | 'tickets' | 'certificates' | 'orders'
+    const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates' | 'orders'>('info');
 
     // Data
     const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [registrations, setRegistrations] = useState<Registration[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const handleTabChange = (tab: 'info' | 'tickets' | 'certificates') => {
+    const handleTabChange = (tab: 'info' | 'tickets' | 'certificates' | 'orders') => {
         setActiveTab(tab);
 
         if (tab === 'certificates' && certificates.length === 0) {
@@ -65,6 +79,14 @@ export const VisitorProfile: React.FC = () => {
                 .catch(async () => {
                     setRegistrations([]);
                 })
+                .finally(() => setLoading(false));
+        }
+
+        if (tab === 'orders' && orders.length === 0) {
+            setLoading(true);
+            api.get('/shop/my-orders')
+                .then(res => setOrders(res.data))
+                .catch(console.error)
                 .finally(() => setLoading(false));
         }
     };
@@ -215,6 +237,52 @@ export const VisitorProfile: React.FC = () => {
                         )}
                     </div>
                 );
+
+            case 'orders':
+                return (
+                    <div className="animate-fadeIn space-y-4">
+                        {orders.length === 0 ? (
+                            <div className="empty-state">
+                                <ShoppingBag size={48} style={{ margin: "0 auto", opacity: 0.5 }} />
+                                <p>Você ainda não fez nenhum pedido.</p>
+                                <Button
+                                    onClick={() => navigate('/loja')}
+                                    className="bg-gold hover:bg-gold/90 text-black font-bold rounded-full px-6"
+                                >
+                                    Ver Loja
+                                </Button>
+                            </div>
+                        ) : (
+                            orders.map(order => (
+                                <div key={order.id} className="cert-item" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Pedido #{order.id.slice(-6)}</span>
+                                            <p className="text-sm text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-green-500/10 text-green-400' :
+                                            order.status === 'PENDING' ? 'bg-amber-500/10 text-amber-500' : 'bg-gray-500/10 text-gray-400'
+                                            }`}>
+                                            {order.status === 'PAID' ? 'Pago' : order.status === 'PENDING' ? 'Aguardando Pagamento' : order.status}
+                                        </span>
+                                    </div>
+                                    <div className="space-y-2 mb-4">
+                                        {order.items.map((item, idx) => (
+                                            <div key={idx} className="flex justify-between text-sm">
+                                                <span className="text-gray-300 font-medium">{item.quantity}x {item.product.name}</span>
+                                                <span className="text-white">R$ {(item.priceAtTime * item.quantity).toFixed(2).replace('.', ',')}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="pt-4 border-t border-white/5 flex justify-between items-center">
+                                        <span className="text-gray-400 text-sm">Total</span>
+                                        <span className="text-lg font-black text-amber-400">R$ {Number(order.total).toFixed(2).replace('.', ',')}</span>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                );
         }
     };
 
@@ -274,6 +342,12 @@ export const VisitorProfile: React.FC = () => {
                             className={`profile-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`}
                         >
                             Ingressos
+                        </button>
+                        <button
+                            onClick={() => handleTabChange('orders')}
+                            className={`profile-tab-btn ${activeTab === 'orders' ? 'active' : ''}`}
+                        >
+                            Loja
                         </button>
                         <button
                             onClick={() => handleTabChange('certificates')}
