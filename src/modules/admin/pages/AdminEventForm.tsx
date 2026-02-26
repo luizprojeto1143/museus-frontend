@@ -5,7 +5,7 @@ import { useToast } from "../../../contexts/ToastContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import {
-  Calendar, MapPin, Ticket,
+  Calendar, MapPin, Ticket, Clock,
   ChevronRight, ChevronLeft, CheckCircle, Plus, Trash2, Globe, Video, Save,
   Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft, Upload, Circle
 } from 'lucide-react';
@@ -199,14 +199,39 @@ export const AdminEventForm: React.FC = () => {
     if (!tenantId) return;
     setSaving(true);
     try {
-      const payload = {
-        ...formData,
+      const payload: any = {
+        title: formData.title,
+        description: formData.description,
+        format: formData.format,
+        location: formData.location || undefined,
+        zipCode: formData.zipCode || undefined,
+        address: formData.address || undefined,
+        number: formData.number || undefined,
+        city: formData.city || undefined,
+        state: formData.state || undefined,
+        platform: formData.platform,
+        meetingLink: formData.meetingLink || undefined,
+        producerName: formData.producerName || undefined,
+        producerDescription: formData.producerDescription || undefined,
+        visibility: formData.visibility,
+        status: formData.status,
+        type: formData.type,
+        instructor: formData.instructor || undefined,
+        materials: formData.materials || undefined,
+        certificateRequiresSurvey: formData.certificateRequiresSurvey,
         tenantId,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
         isOnline: formData.format === 'ONLINE',
         minMinutesForCertificate: formData.minMinutesForCertificate ? Number(formData.minMinutesForCertificate) : null
       };
+
+      if (formData.categoryId) payload.categoryId = formData.categoryId;
+      if (formData.spaceId) payload.spaceId = formData.spaceId;
+      if (formData.coverImageUrl) payload.coverImageUrl = formData.coverImageUrl;
+      if (formData.audioUrl) payload.audioUrl = formData.audioUrl;
+      if (formData.videoUrl) payload.videoUrl = formData.videoUrl;
+      if (formData.certificateBackgroundUrl) payload.certificateBackgroundUrl = formData.certificateBackgroundUrl;
 
       let eventId = id;
       if (id) {
