@@ -26,6 +26,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
                 zIndex: 10,
                 display: "flex",
                 gap: "0.5rem",
+                flexWrap: "wrap",
+                justifyContent: "center",
                 ...style
             }}
         >

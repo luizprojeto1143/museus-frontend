@@ -365,8 +365,13 @@
 }
 
 @media (max-width: 768px) {
+    .discovery-hero {
+        padding-top: 5rem;
+    }
+
     .hero-title {
         font-size: 2.5rem;
+        margin-top: 1rem;
     }
 
     .search-container {
@@ -385,7 +390,17 @@
     }
 
     .discovery-top-bar {
+        position: relative;
+        top: 0;
         padding: 0 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .brand-pill {
+        width: fit-content;
+        margin: 0 auto;
     }
 
     .brand-pill span {
