@@ -74,6 +74,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       links: [
         { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: features?.featureEvents ?? true },
         { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫", show: features?.featureEvents ?? true },
+        { to: "/admin/scanner", label: "Scanner (Portaria)", icon: "📱", show: features?.featureEvents ?? true },
         { to: "/admin/espacos", label: "Gestão de Espaços", icon: "🏢", show: true },
         { to: "/admin/calendario", label: "Agenda", icon: "📅", show: true },
         { to: "/admin/certificates", label: "Certificados", icon: "🎓", show: features?.featureCertificates ?? true },
@@ -93,6 +94,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️", show: features?.featureGamification ?? true },
         { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅", show: features?.featureGamification ?? true },
         { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱", show: features?.featureQRCodes ?? true },
+        { to: "/admin/cupons", label: "Cupons e Recompensas", icon: "🎟️", show: features?.featureGamification ?? true },
       ]
     },
     {
@@ -113,7 +115,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈", show: true },
         { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
         { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
-        { to: "/admin/usuarios", label: t("admin.sidebar.users", "Usuários"), icon: "👤", show: true },
+        { to: "/admin/financeiro", label: "Dashboard Financeiro", icon: "💰", show: true },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
       ]
     }

@@ -122,6 +122,8 @@ export const EventDetail: React.FC = () => {
     fetchEventData();
   }, [fetchEventData]);
 
+  const [paymentData, setPaymentData] = useState<{ pixQrCode?: string; pixPayload?: string; invoiceUrl?: string } | null>(null);
+
   const handleRegister = async () => {
     if (!selectedTicketId || !id) {
       addToast("Por favor, selecione um ingresso.", "info");
@@ -129,13 +131,19 @@ export const EventDetail: React.FC = () => {
     }
     setSubmitting(true);
     try {
-      await api.post(`/events/${id}/register`, {
+      const res = await api.post(`/events/${id}/register`, {
         ticketId: selectedTicketId,
         answers
       });
-      setIsCheckoutOpen(false);
-      addToast("Inscrição realizada com sucesso!", "success");
-      fetchEventData();
+
+      if (res.data.payment) {
+        setPaymentData(res.data.payment);
+        addToast("Ingresso reservado! Aguardando pagamento.", "success");
+      } else {
+        setIsCheckoutOpen(false);
+        addToast("Inscrição realizada com sucesso!", "success");
+        fetchEventData();
+      }
     } catch (err) {
       console.error("Registration failed", err);
       addToast(t("common.error", "Erro ao realizar inscrição"), "error");
@@ -377,95 +385,165 @@ export const EventDetail: React.FC = () => {
             </div>
 
             <div className="event-modal-body p-8 overflow-y-auto space-y-10 custom-scrollbar">
-              {/* Ticket Selection */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
-                  <TicketIcon size={14} />
-                  Opções Disponíveis
-                </div>
-                <div className="grid grid-cols-1 gap-3">
-                  {tickets.map(t => (
-                    <button
-                      key={t.id}
-                      onClick={() => setSelectedTicketId(t.id)}
-                      className={`
-                            flex items-center justify-between p-6 rounded-3xl border transition-all text-left
-                            ${selectedTicketId === t.id ? 'bg-blue-600/20 border-blue-500 ring-4 ring-blue-500/10' : 'bg-white/5 border-white/5 hover:border-white/20'}
-                        `}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${selectedTicketId === t.id ? 'border-blue-500 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-white/20'}`}>
-                          {selectedTicketId === t.id && <div className="w-2 h-2 bg-white rounded-full" />}
-                        </div>
-                        <div>
-                          <p className={`font-black text-lg ${selectedTicketId === t.id ? 'text-white' : 'text-slate-300'}`}>{t.name}</p>
-                          <p className="text-xs text-slate-500 font-medium">Restam {t.quantity - t.sold} unidades</p>
-                        </div>
-                      </div>
-                      <div className={`text-xl font-black ${selectedTicketId === t.id ? 'text-white' : 'text-slate-400'}`}>
-                        {Number(t.price) === 0 ? "FREE" : `R$ ${Number(t.price)}`}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {paymentData ? (
+                <div className="payment-checkout-area space-y-8 animate-fadeIn">
+                  <div className="text-center space-y-2">
+                    <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-400">
+                      <TicketIcon size={32} />
+                    </div>
+                    <h4 className="text-xl font-black text-white">Finalize seu Pagamento</h4>
+                    <p className="text-slate-500 text-sm">Escaneie o QR Code abaixo para confirmar sua vaga</p>
+                  </div>
 
-              {/* Dynamic Form Questions */}
-              {event?.customFormSchema && event.customFormSchema.length > 0 && (
-                <div className="event-form-questions space-y-6">
-                  <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
-                    <User size={14} />
-                    Informações Adicionais
-                  </div>
-                  <div className="space-y-5">
-                    {event.customFormSchema.map((field, idx) => (
-                      <div key={idx} className="event-form-group">
-                        {field.type === 'textarea' ? (
-                          <Textarea
-                            label={`${field.label}${field.required ? ' *' : ''}`}
-                            rows={3}
-                            value={answers[field.label] || ''}
-                            onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
-                            placeholder="Descreva aqui..."
-                          />
-                        ) : field.type === 'select' ? (
-                          <Select
-                            label={`${field.label}${field.required ? ' *' : ''}`}
-                            value={answers[field.label] || ''}
-                            onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
-                          >
-                            <option value="">Selecione...</option>
-                            {field.options?.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
-                          </Select>
-                        ) : (
-                          <Input
-                            label={`${field.label}${field.required ? ' *' : ''}`}
-                            type="text"
-                            value={answers[field.label] || ''}
-                            onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
-                            placeholder="Clique para digitar"
-                          />
-                        )}
+                  <div className="flex flex-col items-center gap-6">
+                    {paymentData.pixQrCode && (
+                      <div className="p-4 bg-white rounded-[2rem] shadow-2xl">
+                        <img src={`data:image/png;base64,${paymentData.pixQrCode}`} alt="Pix QR Code" className="w-48 h-48" />
                       </div>
-                    ))}
+                    )}
+
+                    <div className="w-full space-y-3">
+                      <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 text-center">Pix Copia e Cola</p>
+                      <div className="flex gap-2">
+                        <input
+                          readOnly
+                          value={paymentData.pixPayload || ''}
+                          className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs font-mono text-slate-400"
+                        />
+                        <Button
+                          onClick={() => {
+                            navigator.clipboard.writeText(paymentData.pixPayload || '');
+                            addToast("Código copiado!", "success");
+                          }}
+                          className="px-4"
+                        >
+                          Copiar
+                        </Button>
+                      </div>
+                    </div>
+
+                    <a
+                      href={paymentData.invoiceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-400 text-xs font-bold hover:underline"
+                    >
+                      Ver fatura completa no Asaas
+                    </a>
+                  </div>
+
+                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-[11px] text-yellow-500/80 leading-relaxed">
+                    <strong>Atenção:</strong> Após o pagamento, sua inscrição será confirmada automaticamente. Você receberá um e-mail com o seu ingresso assim que o sistema processar a transação.
                   </div>
                 </div>
+              ) : (
+                <>
+                  {/* Ticket Selection */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
+                      <TicketIcon size={14} />
+                      Opções Disponíveis
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
+                      {tickets.map(t => (
+                        <button
+                          key={t.id}
+                          onClick={() => setSelectedTicketId(t.id)}
+                          className={`
+                                flex items-center justify-between p-6 rounded-3xl border transition-all text-left
+                                ${selectedTicketId === t.id ? 'bg-blue-600/20 border-blue-500 ring-4 ring-blue-500/10' : 'bg-white/5 border-white/5 hover:border-white/20'}
+                            `}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${selectedTicketId === t.id ? 'border-blue-500 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-white/20'}`}>
+                              {selectedTicketId === t.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                            </div>
+                            <div>
+                              <p className={`font-black text-lg ${selectedTicketId === t.id ? 'text-white' : 'text-slate-300'}`}>{t.name}</p>
+                              <p className="text-xs text-slate-500 font-medium">Restam {t.quantity - t.sold} unidades</p>
+                            </div>
+                          </div>
+                          <div className={`text-xl font-black ${selectedTicketId === t.id ? 'text-white' : 'text-slate-400'}`}>
+                            {Number(t.price) === 0 ? "FREE" : `R$ ${Number(t.price)}`}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dynamic Form Questions */}
+                  {event?.customFormSchema && event.customFormSchema.length > 0 && (
+                    <div className="event-form-questions space-y-6">
+                      <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
+                        <User size={14} />
+                        Informações Adicionais
+                      </div>
+                      <div className="space-y-5">
+                        {event.customFormSchema.map((field, idx) => (
+                          <div key={idx} className="event-form-group">
+                            {field.type === 'textarea' ? (
+                              <Textarea
+                                label={`${field.label}${field.required ? ' *' : ''}`}
+                                rows={3}
+                                value={answers[field.label] || ''}
+                                onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
+                                placeholder="Descreva aqui..."
+                              />
+                            ) : field.type === 'select' ? (
+                              <Select
+                                label={`${field.label}${field.required ? ' *' : ''}`}
+                                value={answers[field.label] || ''}
+                                onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
+                              >
+                                <option value="">Selecione...</option>
+                                {field.options?.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
+                              </Select>
+                            ) : (
+                              <Input
+                                label={`${field.label}${field.required ? ' *' : ''}`}
+                                type="text"
+                                value={answers[field.label] || ''}
+                                onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
+                                placeholder="Clique para digitar"
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
             <div className="event-modal-footer p-8 border-t border-white/10 flex gap-4 bg-[#0f172a] sticky bottom-0">
-              <Button onClick={() => setIsCheckoutOpen(false)} variant="outline" className="flex-1 py-4 border-white/10 text-slate-400 hover:bg-white/5 rounded-2xl">
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleRegister}
-                disabled={submitting}
-                className="flex-[2] py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20"
-                leftIcon={submitting ? <Loader2 className="animate-spin" size={18} /> : undefined}
-              >
-                {submitting ? "Confirmando..." : "Confirmar Inscrição"}
-                {!submitting && <CheckCircle size={18} className="ml-1" />}
-              </Button>
+              {paymentData ? (
+                <Button
+                  onClick={() => {
+                    setIsCheckoutOpen(false);
+                    setPaymentData(null);
+                    fetchEventData();
+                  }}
+                  className="w-full py-4 rounded-2xl font-black text-lg bg-white/10 text-white hover:bg-white/20"
+                >
+                  Entendi, fechar
+                </Button>
+              ) : (
+                <>
+                  <Button onClick={() => setIsCheckoutOpen(false)} variant="outline" className="flex-1 py-4 border-white/10 text-slate-400 hover:bg-white/5 rounded-2xl">
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleRegister}
+                    disabled={submitting}
+                    className="flex-[2] py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20"
+                    leftIcon={submitting ? <Loader2 className="animate-spin" size={18} /> : undefined}
+                  >
+                    {submitting ? "Confirmando..." : "Confirmar Inscrição"}
+                    {!submitting && <CheckCircle size={18} className="ml-1" />}
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

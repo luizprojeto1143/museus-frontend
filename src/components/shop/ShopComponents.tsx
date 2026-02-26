@@ -44,6 +44,32 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
     const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'BOLETO'>('PIX');
     const [paymentResult, setPaymentResult] = useState<any>(null);
 
+    // Coupons
+    const [redeemedCoupons, setRedeemedCoupons] = useState<any[]>([]);
+    const [selectedCouponCode, setSelectedCouponCode] = useState<string>('');
+
+    useEffect(() => {
+        api.get('/coupons/available')
+            .then(res => {
+                // filter only available
+                const availableToUse = res.data.redeemed.filter((rc: any) => !rc.usedAt);
+                setRedeemedCoupons(availableToUse);
+            })
+            .catch(console.error);
+    }, []);
+
+    const discountAmount = React.useMemo(() => {
+        if (!selectedCouponCode) return 0;
+        const couponData = redeemedCoupons.find(rc => rc.coupon.code === selectedCouponCode)?.coupon;
+        if (!couponData) return 0;
+        if (couponData.discountType === 'PERCENTAGE') {
+            return total * (Number(couponData.discountValue) / 100);
+        }
+        return Number(couponData.discountValue);
+    }, [selectedCouponCode, total, redeemedCoupons]);
+
+    const finalTotal = Math.max(0, total - discountAmount);
+
     const handleConfirmOrder = async () => {
         if (!name || !email || !phone) {
             toast.error("Por favor, preencha todos os campos obrigatórios.");
@@ -59,6 +85,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                 customerPhone: phone,
                 customerCpf: cpf,
                 paymentMethod,
+                couponCode: selectedCouponCode || undefined,
                 items: items.map(item => ({
                     productId: item.product.id,
                     quantity: item.quantity
@@ -100,15 +127,40 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                 <p className="text-gray-400">Confirme seus dados para continuar</p>
                             </div>
 
-                            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 flex justify-between items-center">
-                                <div>
-                                    <p className="text-sm text-gray-400">Total a pagar</p>
-                                    <p className="text-2xl font-bold text-amber-400">R$ {total.toFixed(2).replace('.', ',')}</p>
+                            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 flex flex-col gap-2">
+                                <div className="flex justify-between items-center text-gray-400">
+                                    <span>Subtotal ({items.length} itens)</span>
+                                    <span>R$ {total.toFixed(2).replace('.', ',')}</span>
                                 </div>
-                                <span className="px-3 py-1 bg-gray-700 rounded-lg text-sm text-gray-300">
-                                    {items.length} itens
-                                </span>
+                                {discountAmount > 0 && (
+                                    <div className="flex justify-between items-center text-green-400 font-medium">
+                                        <span>Desconto (Cupom)</span>
+                                        <span>- R$ {discountAmount.toFixed(2).replace('.', ',')}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between items-center pt-2 border-t border-gray-700">
+                                    <span className="text-gray-300 font-bold">Total a Pagar</span>
+                                    <span className="text-2xl font-black text-amber-400">R$ {finalTotal.toFixed(2).replace('.', ',')}</span>
+                                </div>
                             </div>
+
+                            {redeemedCoupons.length > 0 && (
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-semibold text-white mb-1">Meus Cupons</label>
+                                    <select
+                                        value={selectedCouponCode}
+                                        onChange={(e) => setSelectedCouponCode(e.target.value)}
+                                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                                    >
+                                        <option value="">Sem cupom</option>
+                                        {redeemedCoupons.map((rc) => (
+                                            <option key={rc.id} value={rc.coupon.code}>
+                                                {rc.coupon.code} - {rc.coupon.discountType === 'PERCENTAGE' ? `${rc.coupon.discountValue}%` : `R$ ${rc.coupon.discountValue}`} de desconto
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
 
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-white">Seus Dados</h3>
@@ -174,7 +226,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                 isLoading={loading}
                                 className="w-full py-4 text-lg font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black border-none rounded-xl shadow-lg shadow-amber-500/20"
                             >
-                                {loading ? 'Processando...' : `Pagar R$ ${total.toFixed(2).replace('.', ',')}`}
+                                {loading ? 'Processando...' : `Pagar R$ ${finalTotal.toFixed(2).replace('.', ',')}`}
                             </Button>
                         </div>
                     )}

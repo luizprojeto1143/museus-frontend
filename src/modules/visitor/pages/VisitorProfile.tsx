@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { Ticket, Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, CheckCircle, ShoppingBag, Clock, CreditCard, Package } from 'lucide-react';
+import { Ticket, Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, CheckCircle, ShoppingBag, Clock, CreditCard, Package, TicketPercent } from 'lucide-react';
 import { TicketCard } from "../components/TicketCard";
 import { Button } from "../../../components/ui";
 import "./VisitorProfile.css"; // Import the dedicated CSS
@@ -47,21 +47,40 @@ interface Order {
     }>;
 }
 
+interface Coupon {
+    id: string;
+    code: string;
+    discountType: 'PERCENTAGE' | 'FIXED';
+    discountValue: string;
+    xpCost: number;
+    description: string;
+    alreadyRedeemed: boolean;
+}
+
+interface RedeemedCoupon {
+    id: string;
+    redeemedAt: string;
+    usedAt: string | null;
+    coupon: Coupon;
+}
+
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { name, email, logout, isGuest } = useAuth();
 
-    // Tabs: 'info' | 'tickets' | 'certificates' | 'orders'
-    const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates' | 'orders'>('info');
+    // Tabs: 'info' | 'tickets' | 'certificates' | 'orders' | 'rewards'
+    const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates' | 'orders' | 'rewards'>('info');
 
     // Data
     const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [registrations, setRegistrations] = useState<Registration[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
+    const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
+    const [redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const handleTabChange = (tab: 'info' | 'tickets' | 'certificates' | 'orders') => {
+    const handleTabChange = (tab: 'info' | 'tickets' | 'certificates' | 'orders' | 'rewards') => {
         setActiveTab(tab);
 
         if (tab === 'certificates' && certificates.length === 0) {
@@ -88,6 +107,35 @@ export const VisitorProfile: React.FC = () => {
                 .then(res => setOrders(res.data))
                 .catch(console.error)
                 .finally(() => setLoading(false));
+        }
+
+        if (tab === 'rewards' && availableCoupons.length === 0) {
+            setLoading(true);
+            api.get('/coupons/available')
+                .then(res => {
+                    setAvailableCoupons(res.data.available);
+                    setRedeemedCoupons(res.data.redeemed);
+                })
+                .catch(console.error)
+                .finally(() => setLoading(false));
+        }
+    };
+
+    const redeemCoupon = async (couponId: string) => {
+        try {
+            setLoading(true);
+            const { data } = await api.post(`/coupons/${couponId}/redeem`);
+
+            const res = await api.get('/coupons/available');
+            setAvailableCoupons(res.data.available);
+            setRedeemedCoupons(res.data.redeemed);
+
+            alert(data.message || 'Cupom resgatado com sucesso!');
+        } catch (error: any) {
+            console.error(error);
+            alert(error.response?.data?.error || 'Erro ao resgatar cupom.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -283,6 +331,76 @@ export const VisitorProfile: React.FC = () => {
                         )}
                     </div>
                 );
+
+            case 'rewards':
+                return (
+                    <div className="animate-fadeIn space-y-6">
+                        <div className="bg-gradient-to-r from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-xl p-6 text-center">
+                            <Star size={40} className="text-gold mx-auto mb-3" />
+                            <h3 className="text-xl font-bold text-white mb-2">Troque seu XP por Prêmios!</h3>
+                            <p className="text-sm text-gray-400 max-w-sm mx-auto">
+                                Use o XP (Experiência) que você acumulou interagindo com o museu para resgatar cupons de desconto na Lojinha.
+                            </p>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h4 className="text-lg font-bold text-white border-b border-white/10 pb-2">Cupons Disponíveis</h4>
+                            {availableCoupons.length === 0 ? (
+                                <p className="text-gray-500 text-sm italic">Nenhum cupom disponível no momento.</p>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {availableCoupons.map(coupon => (
+                                        <div key={coupon.id} className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col justify-between">
+                                            <div>
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <span className="text-2xl font-black text-gold">
+                                                        {coupon.discountType === 'PERCENTAGE' ? `${coupon.discountValue}%` : `R$ ${coupon.discountValue}`}
+                                                    </span>
+                                                    <span className="bg-gold/10 text-gold px-2 py-1 rounded text-xs font-bold whitespace-nowrap">Custa {coupon.xpCost} XP</span>
+                                                </div>
+                                                <p className="text-white font-bold mb-1">Cupom: <span className="font-mono bg-black/30 px-2 py-0.5 rounded text-gold">{coupon.code}</span></p>
+                                                {coupon.description && <p className="text-xs text-gray-400">{coupon.description}</p>}
+                                            </div>
+                                            <div className="mt-4 pt-4 border-t border-white/10">
+                                                {coupon.alreadyRedeemed ? (
+                                                    <Button className="w-full bg-green-500/20 text-green-400 border-none opacity-50 cursor-not-allowed">
+                                                        Cupom Resgatado
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        onClick={() => redeemCoupon(coupon.id)}
+                                                        className="w-full bg-gold hover:bg-gold/80 text-black font-bold"
+                                                    >
+                                                        Resgatar com XP
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {redeemedCoupons.length > 0 && (
+                            <div className="space-y-4 pt-6 border-t border-white/10">
+                                <h4 className="text-lg font-bold text-white mb-2">Meus Cupons</h4>
+                                <div className="space-y-3">
+                                    {redeemedCoupons.map(rc => (
+                                        <div key={rc.id} className="flex justify-between items-center bg-black/20 rounded-lg p-3 border border-white/5">
+                                            <div>
+                                                <span className="font-mono font-bold text-gold text-sm">{rc.coupon.code}</span>
+                                                <p className="text-xs text-gray-500 mt-1">Resgatado em {new Date(rc.redeemedAt).toLocaleDateString()}</p>
+                                            </div>
+                                            <span className={`text-xs font-bold px-2 py-1 rounded ${rc.usedAt ? 'bg-gray-800 text-gray-500' : 'bg-green-500/20 text-green-400'}`}>
+                                                {rc.usedAt ? 'Utilizado' : 'Disponível na Loja'}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
         }
     };
 
@@ -354,6 +472,12 @@ export const VisitorProfile: React.FC = () => {
                             className={`profile-tab-btn ${activeTab === 'certificates' ? 'active' : ''}`}
                         >
                             Certificados
+                        </button>
+                        <button
+                            onClick={() => handleTabChange('rewards')}
+                            className={`profile-tab-btn ${activeTab === 'rewards' ? 'active' : ''}`}
+                        >
+                            <TicketPercent size={14} className="inline mr-1 mb-0.5" /> Prêmios
                         </button>
                     </div>
 

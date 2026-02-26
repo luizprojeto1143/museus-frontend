@@ -53,8 +53,10 @@ const SecretaryDashboard = React.lazy(() => import("../modules/admin/pages/Secre
 const LegalCompliance = React.lazy(() => import("../modules/admin/pages/LegalCompliance"));
 const AccessibilityTimeline = React.lazy(() => import("../modules/admin/pages/AccessibilityTimeline"));
 const AIUsageDashboard = React.lazy(() => import("../modules/admin/pages/AIUsageDashboard"));
-
 const AdminScannerTrainer = React.lazy(() => import("../modules/admin/pages/AdminScannerTrainer").then(module => ({ default: module.AdminScannerTrainer })));
+const AdminScanner = React.lazy(() => import("../modules/admin/pages/AdminScanner").then(module => ({ default: module.AdminScanner })));
+const AdminFinance = React.lazy(() => import("../modules/admin/pages/AdminFinance").then(module => ({ default: module.AdminFinance })));
+const AdminCoupons = React.lazy(() => import("../modules/admin/pages/AdminCoupons").then(module => ({ default: module.AdminCoupons })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -111,6 +113,9 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/scanner-treinamento" element={ar(AdminScannerTrainer, RequireRole)} />
             <Route path="/admin/mapa-editor" element={ar(AdminMapEditor, RequireRole)} />
             <Route path="/admin/verificar-ingressos" element={ar(AdminTicketVerifier, RequireRole)} />
+            <Route path="/admin/scanner" element={ar(AdminScanner, RequireRole)} />
+            <Route path="/admin/financeiro" element={ar(AdminFinance, RequireRole)} />
+            <Route path="/admin/cupons" element={ar(AdminCoupons, RequireRole)} />
             <Route path="/admin/certificates/*" element={ar(AdminCertificates, RequireRole)} />
             {/* Municipal Management */}
             <Route path="/admin/editais" element={ar(AdminNotices, RequireRole)} />
