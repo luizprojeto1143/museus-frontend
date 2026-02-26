@@ -161,11 +161,25 @@ export const AdminWorkForm: React.FC = () => {
     if (!tenantId) return;
 
     setSaving(true);
-    const payload = {
-      title, artist, year, category, description,
-      room, floor, imageUrl, audioUrl, librasUrl,
-      tenantId, code, published, radius: Number(radius)
+
+    // Clean up payload (Zod schema expects undefined/null, not empty strings for optional UUIDs/URLs)
+    const payload: any = {
+      title,
+      artist: artist || undefined,
+      year: year || undefined,
+      description: description || undefined,
+      room: room || undefined,
+      floor: floor || undefined,
+      tenantId,
+      code: code || undefined,
+      published,
+      radius: Number(radius) || 5
     };
+
+    if (category) payload.categoryId = category;
+    if (imageUrl) payload.imageUrl = imageUrl;
+    if (audioUrl) payload.audioUrl = audioUrl;
+    if (librasUrl) payload.librasUrl = librasUrl;
 
     try {
       if (id) {
