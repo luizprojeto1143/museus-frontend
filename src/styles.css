@@ -811,13 +811,14 @@ textarea {
 }
 
 .layout-sidebar.collapsed {
-  width: 0;
+  width: 0 !important;
+  min-width: 0 !important;
   border-right: none;
   /* Hide border when fully collapsed */
   overflow: visible;
   /* Allow button to float outside */
   padding: 0 !important;
-  flex-basis: 0;
+  flex-basis: 0 !important;
 }
 
 .layout-sidebar.collapsed .app-title,
