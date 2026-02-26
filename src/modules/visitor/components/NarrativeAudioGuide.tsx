@@ -123,18 +123,6 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                         <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full"></div>
                     </div>
                     <p className="text-slate-400 font-medium px-4">{t('visitor.audioGuide.notAvailable', 'Áudio-guia oficial ainda não disponível.')}</p>
-
-                    <Button
-                        onClick={handleGenerateAudio}
-                        disabled={generating}
-                        className="mt-8 mx-auto w-auto px-10 py-6 text-lg rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 border-none hover:opacity-90 transition-all font-black"
-                        leftIcon={generating ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />}
-                    >
-                        {generating ? t('visitor.audioGuide.generating', 'Gerando...') : t('visitor.audioGuide.generateAI', 'Gerar com IA')}
-                    </Button>
-                    <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-slate-600 mt-4 flex items-center justify-center gap-1.5">
-                        <Info size={10} /> {t('visitor.audioGuide.aiDisclaimer', 'Powered by Neural AI Engine')}
-                    </p>
                 </div>
             </section>
         );
