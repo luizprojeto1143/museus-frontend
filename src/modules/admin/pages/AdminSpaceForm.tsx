@@ -81,10 +81,11 @@ export const AdminSpaceForm: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const payload = {
+            const payload: any = {
                 ...formData,
                 resources: formData.resources // Backend handles serialization if needed
             };
+            if (!payload.imageUrl) delete payload.imageUrl;
 
             if (id && id !== 'new') {
                 await api.put(`/spaces/${id}`, payload);
