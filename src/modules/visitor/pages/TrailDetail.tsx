@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
+import { VideoPlayer } from "../../../components/common/VideoPlayer";
 import { getFullUrl } from "../../../utils/url";
 import "./Trails.css";
 
@@ -13,6 +14,7 @@ type TrailDetailData = {
   description?: string;
   duration?: string;
   audioUrl?: string | null;
+  videoUrl?: string | null;
   works: { id: string; title: string }[];
 };
 
@@ -64,6 +66,7 @@ export const TrailDetail: React.FC = () => {
           description: t.description ?? mock.description,
           duration: t.durationLabel ?? t.duration ?? mock.duration,
           audioUrl: getFullUrl(t.audioUrl),
+          videoUrl: getFullUrl(t.videoUrl),
           works
         };
         setApiTrail(mapped);
@@ -121,6 +124,12 @@ export const TrailDetail: React.FC = () => {
       <NarrativeAudioGuide
         audioUrl={trail.audioUrl}
         title={trail.name}
+      />
+
+      {/* VIDEO SECTION */}
+      <VideoPlayer
+        url={trail.videoUrl}
+        title={t('visitor.trailDetail.videoTitle', 'O que esperar desta trilha')}
       />
 
       <section className="trail-works-section">

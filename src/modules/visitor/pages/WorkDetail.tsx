@@ -5,6 +5,7 @@ import { api } from "../../../api/client";
 // AudioDescriptionPlayer removed (unused)
 import { LibrasSection } from "../../../components/accessibility/LibrasPlayer";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
+import { VideoPlayer } from "../../../components/common/VideoPlayer";
 import { useTTS } from "../../../hooks/useTTS";
 import { useTranslation } from "react-i18next";
 import { getFullUrl } from "../../../utils/url";
@@ -367,28 +368,11 @@ export const WorkDetail: React.FC = () => {
 
       {/* VIDEO SECTION */}
       {work.videoUrl && (
-        <section className="video-section">
-          <div className="video-header">
-            <div className="video-icon">
-              <PlayCircle size={28} />
-            </div>
-            <div>
-              <h2>{t('visitor.artwork.videoTitle', 'Vídeo Explicativo')}</h2>
-              <p>{t('visitor.artwork.videoSubtitle', 'Descubra curiosidades e contexto histórico')}</p>
-            </div>
-          </div>
-          <div className="video-container">
-            <video
-              controls
-              preload="metadata"
-              poster={work.imageUrl || undefined}
-              className="video-player"
-            >
-              <source src={work.videoUrl} type="video/mp4" />
-              {t('visitor.artwork.videoNotSupported', 'Seu navegador não suporta vídeos.')}
-            </video>
-          </div>
-        </section>
+        <VideoPlayer
+          url={work.videoUrl}
+          title={t('visitor.artwork.videoTitle', 'Vídeo Explicativo')}
+          poster={work.imageUrl || undefined}
+        />
       )}
 
       {/* ACCESSIBILITY */}
