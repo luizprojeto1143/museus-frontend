@@ -33,6 +33,7 @@ interface MuseumMapProps {
     indoorImageUrl?: string;
     indoorBounds?: [[number, number], [number, number]];
     pois: POI[];
+    initialPoiId?: string | null;
 }
 
 function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
@@ -60,12 +61,28 @@ function deg2rad(deg: number) {
 export const MuseumMap: React.FC<MuseumMapProps> = ({
     outdoorCenter,
     indoorImageUrl,
-    pois
+    pois,
+    initialPoiId
 }) => {
     const [mode, setMode] = useState<MapMode>("outdoor");
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
     const [aspectRatio, setAspectRatio] = useState<number>(1);
     const [destinationId, setDestinationId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (initialPoiId) {
+            const poi = pois.find(p => p.id === initialPoiId);
+            if (poi) {
+                // If the POI has coordinates that look like indoor ( Simple CRS )
+                // but actually we should probably check if it has room/floor? 
+                // For now, let's assume if it's referenced from Detail, we show the floor plan if available
+                if (indoorImageUrl) {
+                    setMode("indoor");
+                }
+                setDestinationId(initialPoiId);
+            }
+        }
+    }, [initialPoiId, pois, indoorImageUrl]);
 
     useEffect(() => {
         if (mode === "indoor" && indoorImageUrl) {

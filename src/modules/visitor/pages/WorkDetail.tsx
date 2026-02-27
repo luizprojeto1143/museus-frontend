@@ -15,7 +15,7 @@ import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
 import { NavigationModal } from "../../../components/navigation/NavigationModal";
 import { useTerminology } from "../../../hooks/useTerminology";
-import { Compass, Share2, Star, Volume2, VolumeX, PlayCircle, ChevronLeft, ChevronRight, Map } from "lucide-react";
+import { Compass, Share2, Star, Volume2, VolumeX, PlayCircle, ChevronLeft, ChevronRight, Map, MapPin } from "lucide-react";
 import "./WorkDetail.css";
 
 type WorkDetailData = {
@@ -329,17 +329,47 @@ export const WorkDetail: React.FC = () => {
 
       {/* MAIN IMAGE */}
       <section className="work-image-section">
-        {work.imageUrl ? (
-          <img
-            src={work.imageUrl}
-            alt={work.title}
-            className="work-main-image"
-          />
-        ) : (
-          <div className="work-image-placeholder">
-            {t("visitor.artwork.imagePlaceholder")}
-          </div>
-        )}
+        <div style={{ position: 'relative' }}>
+          {work.imageUrl ? (
+            <img
+              src={work.imageUrl}
+              alt={work.title}
+              className="work-main-image"
+            />
+          ) : (
+            <div className="work-image-placeholder">
+              {t("visitor.artwork.imagePlaceholder")}
+            </div>
+          )}
+
+          {(work.latitude || work.longitude) && (
+            <button
+              className="view-on-map-btn"
+              onClick={() => navigate(`/mapa?workId=${work.id}`)}
+              style={{
+                position: 'absolute',
+                bottom: '1rem',
+                right: '1rem',
+                background: 'rgba(212, 175, 55, 0.9)',
+                color: '#1a1108',
+                border: 'none',
+                padding: '0.6rem 1rem',
+                borderRadius: '2rem',
+                fontSize: '0.85rem',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                cursor: 'pointer',
+                zIndex: 10
+              }}
+            >
+              <MapPin size={16} />
+              {t('visitor.artwork.viewOnMap', 'Ver na Planta')}
+            </button>
+          )}
+        </div>
       </section>
 
       {/* DESCRIPTION */}

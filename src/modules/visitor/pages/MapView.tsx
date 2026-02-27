@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { MuseumMap } from "../components/MuseumMap";
 import { api } from "../../../api/client";
@@ -7,6 +8,8 @@ import "./MapView.css";
 
 export const MapView: React.FC = () => {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const initialWorkId = searchParams.get("workId");
   const { tenantId } = useAuth();
   const [loading, setLoading] = useState(true);
   const [mapSettings, setMapSettings] = useState<{
@@ -24,18 +27,26 @@ export const MapView: React.FC = () => {
 
     setLoading(true);
     try {
-      const [settingsRes] = await Promise.all([
+      const [settingsRes, worksRes] = await Promise.all([
         api.get(`/tenants/${tenantId}/settings`),
         api.get(`/works`, { params: { tenantId } })
       ]);
 
       const s = settingsRes.data;
+      const works = Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []);
+
       setMapSettings({
         outdoorCenter: [s.latitude || -20.385574, s.longitude || -43.503578],
         indoorImageUrl: s.mapImageUrl
       });
 
-      setPois([]);
+      setPois(works.map((w: any) => ({
+        id: w.id,
+        title: w.title,
+        lat: w.latitude,
+        lng: w.longitude,
+        description: w.room ? `${w.room} • ${w.floor || ""}` : w.artist
+      })));
     } catch (err) {
       console.error("Erro ao carregar dados do mapa", err);
     } finally {
@@ -70,6 +81,7 @@ export const MapView: React.FC = () => {
           outdoorCenter={mapSettings.outdoorCenter}
           indoorImageUrl={mapSettings.indoorImageUrl}
           pois={pois}
+          initialPoiId={initialWorkId}
         />
       </div>
 
