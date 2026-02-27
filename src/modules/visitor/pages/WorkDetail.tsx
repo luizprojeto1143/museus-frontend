@@ -342,7 +342,7 @@ export const WorkDetail: React.FC = () => {
             </div>
           )}
 
-          {(work.latitude || work.longitude) && (
+          {(work.latitude !== undefined && work.latitude !== null && work.longitude !== undefined && work.longitude !== null) && (
             <button
               className="view-on-map-btn"
               onClick={() => navigate(`/mapa?workId=${work.id}`)}
