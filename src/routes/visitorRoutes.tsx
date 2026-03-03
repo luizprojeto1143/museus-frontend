@@ -23,7 +23,6 @@ const Souvenir = React.lazy(() => import("../modules/visitor/pages/Souvenir"));
 const Passport = React.lazy(() => import("../modules/visitor/pages/Passport"));
 const Achievements = React.lazy(() => import("../modules/visitor/pages/Achievements"));
 const QrVisit = React.lazy(() => import("../modules/visitor/pages/QrVisit").then(m => ({ default: m.QrVisit })));
-const TreasureHunt = React.lazy(() => import("../modules/visitor/pages/TreasureHunt"));
 const SmartItineraryWizard = React.lazy(() => import("../modules/visitor/pages/SmartItineraryWizard").then(m => ({ default: m.SmartItineraryWizard })));
 const SmartItineraryResult = React.lazy(() => import("../modules/visitor/pages/SmartItineraryResult").then(m => ({ default: m.SmartItineraryResult })));
 const SchedulingPage = React.lazy(() => import("../modules/visitor/pages/SchedulingPage").then(m => ({ default: m.SchedulingPage })));

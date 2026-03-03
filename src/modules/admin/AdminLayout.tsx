@@ -115,6 +115,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈", show: true },
         { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
         { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
+        { to: "/admin/notificacoes", label: "Notificações Push", icon: "🔔", show: true },
         { to: "/admin/financeiro", label: "Dashboard Financeiro", icon: "💰", show: true },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
       ]

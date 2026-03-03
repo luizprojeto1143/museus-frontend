@@ -40,6 +40,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
     const [phone, setPhone] = useState('');
     const [cpf, setCpf] = useState('');
 
+    // Shipping
+    const [cep, setCep] = useState('');
+    const [street, setStreet] = useState('');
+    const [number, setNumber] = useState('');
+    const [complement, setComplement] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+
     // Payment
     const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'BOLETO'>('PIX');
     const [paymentResult, setPaymentResult] = useState<any>(null);
@@ -89,7 +97,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                 items: items.map(item => ({
                     productId: item.product.id,
                     quantity: item.quantity
-                }))
+                })),
+                shippingAddress: `${street}, ${number}${complement ? ` - ${complement}` : ''}, ${city} - ${state}, CEP: ${cep}`
             };
 
             const res = await api.post('/shop/orders', payload);
@@ -190,6 +199,55 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                             onChange={e => setPhone(e.target.value)}
                                             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
                                             placeholder="(11) 99999-9999"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">CEP</label>
+                                            <input
+                                                value={cep}
+                                                onChange={e => setCep(e.target.value)}
+                                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                                                placeholder="00000-000"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">Estado</label>
+                                            <input
+                                                value={state}
+                                                onChange={e => setState(e.target.value)}
+                                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                                                placeholder="SP"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div className="col-span-2">
+                                            <label className="block text-sm text-gray-400 mb-1">Rua / Logradouro</label>
+                                            <input
+                                                value={street}
+                                                onChange={e => setStreet(e.target.value)}
+                                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                                                placeholder="Rua das Flores"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm text-gray-400 mb-1">Número</label>
+                                            <input
+                                                value={number}
+                                                onChange={e => setNumber(e.target.value)}
+                                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                                                placeholder="123"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm text-gray-400 mb-1">Cidade</label>
+                                        <input
+                                            value={city}
+                                            onChange={e => setCity(e.target.value)}
+                                            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors"
+                                            placeholder="São Paulo"
                                         />
                                     </div>
                                 </div>
@@ -625,7 +683,34 @@ export const ProductGrid: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showCart, setShowCart] = useState(false);
     const [showCheckout, setShowCheckout] = useState(false);
+    const [showCouponStore, setShowCouponStore] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+    // Coupon Store state
+    const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
+
+    const fetchCoupons = useCallback(async () => {
+        try {
+            const res = await api.get('/coupons/available');
+            setAvailableCoupons(res.data.available || []);
+        } catch (error) {
+            console.error('Error fetching coupons:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (tenantId) fetchCoupons();
+    }, [tenantId, fetchCoupons]);
+
+    const handleRedeemCoupon = async (couponId: string) => {
+        try {
+            await api.post(`/coupons/${couponId}/redeem`);
+            toast.success('Cupom resgatado com sucesso!');
+            fetchCoupons(); // Refresh
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Erro ao resgatar cupom');
+        }
+    };
 
     // Filters
     const [searchTerm, setSearchTerm] = useState('');
@@ -723,6 +808,13 @@ export const ProductGrid: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-3">
+                    <button
+                        onClick={() => setShowCouponStore(true)}
+                        className="flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all border-2 border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-black shadow-lg shadow-amber-500/10"
+                    >
+                        <Ticket size={16} /> Loja de Cupons (XP)
+                    </button>
+                    <div className="w-px h-4 bg-gray-700 mx-2 hidden sm:block" />
                     {categories.map(cat => (
                         <button
                             key={cat}
@@ -798,17 +890,57 @@ export const ProductGrid: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            {/* Checkout Modal */}
+            {/* Coupon Store Modal */}
             <AnimatePresence>
-                {showCheckout && (
-                    <CheckoutModal
-                        items={cart}
-                        total={total}
-                        onClose={() => setShowCheckout(false)}
-                        onSuccess={() => {
-                            setCart([]); // Clear cart
-                        }}
-                    />
+                {showCouponStore && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
+                        <div className="bg-[#1f2937] w-full max-w-2xl rounded-2xl border border-gray-700 shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col">
+                            <div className="p-6 border-b border-gray-700 flex justify-between items-center">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-white mb-2 font-serif flex items-center gap-2">
+                                        <Ticket className="text-amber-500" /> Trocar XP por Cupons
+                                    </h2>
+                                    <p className="text-gray-400 text-sm">Use seu XP acumulado para conseguir descontos exclusivos</p>
+                                </div>
+                                <button onClick={() => setShowCouponStore(false)} className="p-2 hover:bg-gray-700 rounded-full transition-colors">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="p-6 overflow-y-auto flex-1 space-y-4 custom-scrollbar">
+                                {availableCoupons.length === 0 ? (
+                                    <div className="text-center py-10 text-gray-500 font-medium">
+                                        Nenhum cupom disponível no momento.
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {availableCoupons.map((coupon) => (
+                                            <div key={coupon.id} className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 flex flex-col justify-between hover:border-amber-500/50 transition-all group">
+                                                <div>
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <span className="bg-amber-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                                                            {coupon.discountType === 'PERCENTAGE' ? `${coupon.discountValue}% OFF` : `R$ ${coupon.discountValue} OFF`}
+                                                        </span>
+                                                        <span className="text-amber-500 font-bold flex items-center gap-1 text-sm bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
+                                                            <Star size={12} fill="currentColor" /> {coupon.xpCost} XP
+                                                        </span>
+                                                    </div>
+                                                    <h4 className="text-white font-bold mb-1 group-hover:text-amber-400 transition-colors uppercase tracking-tight">{coupon.code}</h4>
+                                                    <p className="text-gray-400 text-xs mb-4">Válido em toda a loja virtual do museu.</p>
+                                                </div>
+                                                <Button
+                                                    onClick={() => handleRedeemCoupon(coupon.id)}
+                                                    className="w-full py-2 text-xs font-bold uppercase tracking-widest bg-gray-700 hover:bg-amber-500 hover:text-black border-none"
+                                                >
+                                                    Resgatar Cupom
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 )}
             </AnimatePresence>
 

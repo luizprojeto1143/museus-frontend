@@ -23,16 +23,51 @@ export const ProducerTickets: React.FC = () => {
     const { tenantId } = useAuth();
     const [tickets, setTickets] = useState<TicketBatch[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [events, setEvents] = useState<any[]>([]);
+    const [formData, setFormData] = useState({
+        name: "",
+        price: "",
+        quantity: "",
+        eventId: ""
+    });
+
+    const fetchData = useCallback(async () => {
+        setLoading(true);
+        try {
+            const [ticketsRes, eventsRes] = await Promise.all([
+                api.get("/tickets"),
+                api.get("/events")
+            ]);
+            setTickets(ticketsRes.data);
+            setEvents(eventsRes.data);
+        } catch (err) {
+            console.error("Error fetching data", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
-        // Fetch tickets directly from the real endpoint
-        api.get("/tickets")
-            .then((res) => {
-                setTickets(res.data);
-            })
-            .catch(err => console.error("Error fetching tickets", err))
-            .finally(() => setLoading(false));
-    }, []);
+        fetchData();
+    }, [fetchData]);
+
+    const handleCreateBatch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await api.post("/tickets", {
+                ...formData,
+                price: Number(formData.price),
+                quantity: Number(formData.quantity)
+            });
+            setShowModal(false);
+            setFormData({ name: "", price: "", quantity: "", eventId: "" });
+            fetchData();
+        } catch (err) {
+            console.error("Error creating batch", err);
+            alert("Erro ao criar lote");
+        }
+    };
 
     return (
         <div className="pb-16 animate-in fade-in duration-500">
@@ -42,12 +77,82 @@ export const ProducerTickets: React.FC = () => {
                     <p className="text-[#B0A090]">{t("producer.tickets.subtitle")}</p>
                 </div>
                 <Button
+                    onClick={() => setShowModal(true)}
                     className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] font-bold shadow-lg shadow-[#D4AF37]/20 border-none px-6"
                     leftIcon={<Plus size={20} />}
                 >
                     {t("producer.tickets.newBatch")}
                 </Button>
             </div>
+
+            {/* Create Batch Modal */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <div className="bg-[#1a1108] border border-[#463420] rounded-2xl p-8 w-full max-w-md shadow-2xl relative">
+                        <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-[#B0A090] hover:text-white">
+                            <Plus className="rotate-45" size={24} />
+                        </button>
+                        <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 font-serif">Novo Lote</h2>
+                        <form onSubmit={handleCreateBatch} className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-[#B0A090] mb-1">Nome do Lote</label>
+                                <input
+                                    required
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                    placeholder="Ex: 1º Lote - Meia"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-[#B0A090] mb-1">Preço (R$)</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        step="0.01"
+                                        value={formData.price}
+                                        onChange={e => setFormData({ ...formData, price: e.target.value })}
+                                        className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                        placeholder="0.00"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-[#B0A090] mb-1">Quantidade</label>
+                                    <input
+                                        required
+                                        type="number"
+                                        value={formData.quantity}
+                                        onChange={e => setFormData({ ...formData, quantity: e.target.value })}
+                                        className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                        placeholder="100"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm text-[#B0A090] mb-1">Evento</label>
+                                <select
+                                    required
+                                    value={formData.eventId}
+                                    onChange={e => setFormData({ ...formData, eventId: e.target.value })}
+                                    className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                >
+                                    <option value="">Selecione um evento</option>
+                                    {events.map(ev => (
+                                        <option key={ev.id} value={ev.id}>{ev.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <Button
+                                type="submit"
+                                className="w-full bg-[#D4AF37] text-black font-bold h-12 mt-4"
+                            >
+                                Criar Lote
+                            </Button>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {loading ? (
                 <div className="p-12 text-center text-[#B0A090]">
