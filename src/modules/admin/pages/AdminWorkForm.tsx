@@ -410,8 +410,9 @@ export const AdminWorkForm: React.FC = () => {
                             if (!ctx) return;
 
                             const padding = 40;
-                            const bottomTextHeight = 80;
-                            canvas.width = originalCanvas.width + (padding * 2);
+                            const bottomTextHeight = 100;
+                            const minWidth = 360;
+                            canvas.width = Math.max(originalCanvas.width + (padding * 2), minWidth);
                             canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
 
                             // Background
@@ -427,16 +428,17 @@ export const AdminWorkForm: React.FC = () => {
                             ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
 
                             // Draw QR Code
-                            ctx.drawImage(originalCanvas, padding, padding);
+                            const qrX = (canvas.width - originalCanvas.width) / 2;
+                            ctx.drawImage(originalCanvas, qrX, padding);
 
                             // Draw Text
                             ctx.fillStyle = "#1f2937";
-                            ctx.font = "bold 28px 'Inter', sans-serif";
+                            ctx.font = "bold 32px 'Inter', sans-serif";
                             ctx.textAlign = "center";
-                            ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, canvas.height - 55);
+                            ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, originalCanvas.height + padding + 40);
                             ctx.font = "normal 14px 'Inter', sans-serif";
                             ctx.fillStyle = "#6b7280";
-                            ctx.fillText("Escaneie ou digite no app", canvas.width / 2, canvas.height - 25);
+                            ctx.fillText("Escaneie ou digite no app", canvas.width / 2, originalCanvas.height + padding + 75);
 
                             const url = canvas.toDataURL("image/png");
                             const a = document.createElement("a");
