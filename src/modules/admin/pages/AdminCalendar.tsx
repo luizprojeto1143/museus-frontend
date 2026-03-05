@@ -26,6 +26,7 @@ type Booking = {
 type Space = {
     id: string;
     name: string;
+    type?: string;
 };
 
 // --- Utils ---

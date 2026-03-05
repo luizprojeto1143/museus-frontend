@@ -179,7 +179,7 @@ export const AdminAchievementForm: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-[#0a0a0c]">
+      <div className="flex justify-center items-center h-screen bg-[var(--bg-root)]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin"></div>
           <p className="text-zinc-400 text-sm">Carregando conquista...</p>

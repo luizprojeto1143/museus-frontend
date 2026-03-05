@@ -10,7 +10,7 @@ interface AccessRequest {
     status: string;
     notes: string;
     workId: string;
-    work: { title: string; id: string };
+    work: { title: string; id: string; imageUrl?: string; audioUrl?: string; description?: string };
     tenant: { name: string; slug: string };
     createdAt: string;
 }
@@ -261,7 +261,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                         <div style={{ display: 'flex', overflow: 'hidden', height: '100%' }}>
                             {/* LEFT COLUMN: WORK CONTEXT */}
                             <div style={{ flex: 1, padding: '1.5rem', borderRight: '1px solid rgba(255,255,255,0.05)', overflowY: 'auto' }}>
-                                <h4 style={{ color: '#fbbf24', fontSize: '0.9rem', uppercase: true, fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <h4 style={{ color: '#fbbf24', fontSize: '0.9rem', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <AlertCircle size={14} /> CONTEXTO DA OBRA
                                 </h4>
 

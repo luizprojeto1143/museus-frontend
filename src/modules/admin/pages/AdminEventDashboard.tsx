@@ -66,8 +66,8 @@ export const AdminEventDashboard: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900">{event.title}</h1>
-                    <div className="flex items-center gap-2 text-gray-500 mt-1">
+                    <h1 className="text-3xl font-bold text-white">{event.title}</h1>
+                    <div className="flex items-center gap-2 text-zinc-400 mt-1">
                         <Calendar className="w-4 h-4" />
                         <span>{new Date(event.startDate).toLocaleDateString()}</span>
                         <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-semibold">
@@ -76,13 +76,13 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex gap-3">
-                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center gap-2 px-4 py-2 rounded-lg">
+                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover:bg-gray-50 flex items-center gap-2 px-4 py-2 rounded-lg">
                         <Printer className="w-4 h-4" /> Relatório
                     </Link>
-                    <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-white border border-gray-200 text-blue-600 hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
+                    <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-zinc-900/40 border border-white/10 text-blue-600 hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
                         <CheckSquare className="w-4 h-4" /> Pesquisa
                     </Link>
-                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200">
+                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-zinc-800/50 rounded-lg hover:bg-white/10 transition-colors">
                         <QrCode className="w-4 h-4" /> Check-in
                     </Link>
                     <Link to={`/admin/eventos/${id}`} className="btn flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">
@@ -95,11 +95,11 @@ export const AdminEventDashboard: React.FC = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-zinc-900/40 p-6 rounded-xl shadow-md shadow-black/20 border border-white/5">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Ingressos Vendidos</p>
-                            <h3 className="text-3xl font-bold text-gray-900 mt-2">
+                            <p className="text-sm font-medium text-zinc-400">Ingressos Vendidos</p>
+                            <h3 className="text-3xl font-bold text-white mt-2">
                                 {stats.ticketsSold} <span className="text-gray-400 text-lg font-normal">/ {stats.totalTickets}</span>
                             </h3>
                         </div>
@@ -107,7 +107,7 @@ export const AdminEventDashboard: React.FC = () => {
                             <Users className="w-6 h-6" />
                         </div>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-4">
+                    <div className="w-full bg-zinc-800/50 rounded-full h-2 mt-4">
                         <div
                             className="bg-blue-600 h-2 rounded-full"
                             style={{ width: `${stats.totalTickets > 0 ? (stats.ticketsSold / stats.totalTickets) * 100 : 0}%` }}
@@ -115,11 +115,11 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-zinc-900/40 p-6 rounded-xl shadow-md shadow-black/20 border border-white/5">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Receita Total</p>
-                            <h3 className="text-3xl font-bold text-gray-900 mt-2">
+                            <p className="text-sm font-medium text-zinc-400">Receita Total</p>
+                            <h3 className="text-3xl font-bold text-white mt-2">
                                 R$ {stats.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                             </h3>
                         </div>
@@ -129,11 +129,11 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-zinc-900/40 p-6 rounded-xl shadow-md shadow-black/20 border border-white/5">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-sm font-medium text-gray-500">Visualizações</p>
-                            <h3 className="text-3xl font-bold text-gray-900 mt-2">
+                            <p className="text-sm font-medium text-zinc-400">Visualizações</p>
+                            <h3 className="text-3xl font-bold text-white mt-2">
                                 {stats.views}
                             </h3>
                         </div>
@@ -147,18 +147,18 @@ export const AdminEventDashboard: React.FC = () => {
             {/* Content Row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Recent Registrations */}
-                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200">
-                    <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                        <h3 className="font-bold text-gray-800">Inscrições Recentes</h3>
+                <div className="lg:col-span-2 bg-zinc-900/40 rounded-xl shadow-md shadow-black/20 border border-white/10">
+                    <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                        <h3 className="font-bold text-white">Inscrições Recentes</h3>
                         <Link to={`/admin/eventos/${id}/relatorio`} className="text-blue-600 text-sm font-medium hover:underline">Ver todas</Link>
                     </div>
                     <div className="p-0">
                         {stats.recentRegistrations.length === 0 ? (
-                            <div className="text-center text-gray-500 py-8">
+                            <div className="text-center text-zinc-400 py-8">
                                 Nenhuma inscrição recente.
                             </div>
                         ) : (
-                            <div className="divide-y divide-gray-100">
+                            <div className="divide-y divide-white/5">
                                 {stats.recentRegistrations.map((reg: any) => (
                                     <div key={reg.id} className="p-4 flex justify-between items-center hover:bg-gray-50">
                                         <div className="flex items-center gap-3">
@@ -166,13 +166,13 @@ export const AdminEventDashboard: React.FC = () => {
                                                 {reg.guestName?.charAt(0) || reg.visitor?.name?.charAt(0) || "?"}
                                             </div>
                                             <div>
-                                                <p className="font-medium text-gray-900">{reg.guestName || reg.visitor?.name || "Visitante"}</p>
-                                                <p className="text-xs text-gray-500">{new Date(reg.createdAt).toLocaleDateString()} às {new Date(reg.createdAt).toLocaleTimeString()}</p>
+                                                <p className="font-medium text-white">{reg.guestName || reg.visitor?.name || "Visitante"}</p>
+                                                <p className="text-xs text-zinc-400">{new Date(reg.createdAt).toLocaleDateString()} às {new Date(reg.createdAt).toLocaleTimeString()}</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <span className={`px-2 py-1 rounded text-xs font-semibold ${reg.status === 'CHECKED_IN' ? 'bg-green-100 text-green-700' :
-                                                reg.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                                                reg.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-700' : 'bg-zinc-800/50 text-zinc-300'
                                                 }`}>
                                                 {reg.status === 'CHECKED_IN' ? 'Presente' : 'Confirmado'}
                                             </span>
@@ -191,7 +191,7 @@ export const AdminEventDashboard: React.FC = () => {
                         <QrCode className="w-12 h-12 mx-auto mb-4 opacity-80" />
                         <h3 className="font-bold text-lg mb-2">Check-in Rápido</h3>
                         <p className="text-blue-100 text-sm mb-4">Acesse a câmera para ler QR Codes dos participantes na entrada.</p>
-                        <Link to={`/admin/eventos/${id}/checkin`} className="btn bg-white text-blue-700 hover:bg-blue-50 w-full block">
+                        <Link to={`/admin/eventos/${id}/checkin`} className="btn bg-zinc-900/40 text-blue-700 hover:bg-blue-50 w-full block">
                             Abrir Scanner
                         </Link>
                     </div>

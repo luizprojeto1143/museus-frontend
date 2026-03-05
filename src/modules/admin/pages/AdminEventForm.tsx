@@ -24,10 +24,10 @@ interface TicketData {
 
 // Wizard Steps
 const STEPS = [
-  { id: 0, title: "Básico", desc: "Informações principais", icon: Calendar },
+  { id: 0, title: "B�sico", desc: "Informa��es principais", icon: Calendar },
   { id: 1, title: "Local & Data", desc: "Onde e quando", icon: MapPin },
   { id: 2, title: "Ingressos", desc: "Valores e lotes", icon: Ticket },
-  { id: 3, title: "Divulgação", desc: "Mídia e visibilidade", icon: PlayCircle }
+  { id: 3, title: "Divulga��o", desc: "M�dia e visibilidade", icon: PlayCircle }
 ];
 
 export const AdminEventForm: React.FC = () => {
@@ -183,7 +183,7 @@ export const AdminEventForm: React.FC = () => {
   const nextStep = () => {
     // Simple validation per step could go here
     if (currentStep === 0 && !formData.title) {
-      addToast("Informe o título do evento", "error");
+      addToast("Informe o t�tulo do evento", "error");
       return;
     }
     setDirection(1);
@@ -276,7 +276,7 @@ export const AdminEventForm: React.FC = () => {
     })
   };
 
-  if (loading) return <div className="text-center p-10 text-slate-500">Carregando evento...</div>;
+  if (loading) return <div className="text-center p-10 text-zinc-400">Carregando evento...</div>;
 
   return (
     <div className="max-w-4xl mx-auto pb-20 animate-fadeIn">
@@ -430,7 +430,7 @@ export const AdminEventForm: React.FC = () => {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             style={{ width: "100%" }}
           >
-            {/* STEP 0: BÁSICO */}
+            {/* STEP 0: B�SICO */}
             {currentStep === 0 && (
               <div className="card space-y-6">
                 <div className="form-group">
@@ -466,8 +466,8 @@ export const AdminEventForm: React.FC = () => {
                     >
                       <option value="OTHER">Geral / Outro</option>
                       <option value="WORKSHOP">Oficina / Workshop</option>
-                      <option value="EXHIBITION">Exposição</option>
-                      <option value="SHOW">Show / Apresentação</option>
+                      <option value="EXHIBITION">Exposi��o</option>
+                      <option value="SHOW">Show / Apresenta��o</option>
                       <option value="LECTURE">Palestra / Aula</option>
                     </select>
                   </div>
@@ -477,14 +477,14 @@ export const AdminEventForm: React.FC = () => {
                       <div className="form-group">
                         <label className="form-label">Instrutor / Facilitador</label>
                         <input
-                          placeholder="Nome do responsável..."
+                          placeholder="Nome do respons�vel..."
                           value={formData.instructor}
                           onChange={e => setFormData({ ...formData, instructor: e.target.value })}
                           className="input w-full"
                         />
                       </div>
                       <div className="form-group">
-                        <label className="form-label">Materiais Necessários</label>
+                        <label className="form-label">Materiais Necess�rios</label>
                         <input
                           placeholder="Ex: Tesoura, papel, notebook..."
                           value={formData.materials}
@@ -497,7 +497,7 @@ export const AdminEventForm: React.FC = () => {
 
                   <div className="md:col-span-2 form-group">
                     <label className="form-label">Capa do Evento</label>
-                    <div className="flex gap-2">
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
                       <input
                         type="text"
                         className="input flex-1"
@@ -520,12 +520,12 @@ export const AdminEventForm: React.FC = () => {
                 )}
 
                 <div className="form-group">
-                  <label className="form-label">Descrição Completa</label>
+                  <label className="form-label">Descri��o Completa</label>
                   <textarea
                     value={formData.description}
                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                     rows={5}
-                    placeholder="Descreva os detalhes incríveis do seu evento..."
+                    placeholder="Descreva os detalhes incr�veis do seu evento..."
                     className="input w-full"
                   />
                 </div>
@@ -539,15 +539,15 @@ export const AdminEventForm: React.FC = () => {
                       }`}
                   >
                     <div className="absolute top-4 right-4">
-                      {formData.format === 'PRESENTIAL' ? <CheckCircle className="text-[#22c55e]" /> : <Circle className="text-gray-600" />}
+                      {formData.format === 'PRESENTIAL' ? <CheckCircle className="text-[#22c55e]" /> : <Circle style={{ color: "#475569" }} />}
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                       <div className={`p-3 rounded-lg ${formData.format === 'PRESENTIAL' ? 'bg-[#22c55e]/20 text-[#22c55e]' : 'bg-gray-800 text-gray-400'}`}>
                         <MapPin size={24} />
                       </div>
                       <div>
                         <span className={`block font-bold text-lg ${formData.format === 'PRESENTIAL' ? 'text-[#f5e6d3]' : 'text-gray-400'}`}>Presencial</span>
-                        <p className="text-sm text-gray-500">Em um local físico</p>
+                        <p className="text-sm text-zinc-400">Em um local f�sico</p>
                       </div>
                     </div>
                   </div>
@@ -560,15 +560,15 @@ export const AdminEventForm: React.FC = () => {
                       }`}
                   >
                     <div className="absolute top-4 right-4">
-                      {formData.format === 'ONLINE' ? <CheckCircle className="text-purple-500" /> : <Circle className="text-gray-600" />}
+                      {formData.format === 'ONLINE' ? <CheckCircle className="text-purple-500" /> : <Circle style={{ color: "#475569" }} />}
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                       <div className={`p-3 rounded-lg ${formData.format === 'ONLINE' ? 'bg-purple-500/20 text-purple-500' : 'bg-gray-800 text-gray-400'}`}>
                         <Monitor size={24} />
                       </div>
                       <div>
                         <span className={`block font-bold text-lg ${formData.format === 'ONLINE' ? 'text-[#f5e6d3]' : 'text-gray-400'}`}>Online</span>
-                        <p className="text-sm text-gray-500">Transmissão remota</p>
+                        <p className="text-sm text-zinc-400">Transmiss�o remota</p>
                       </div>
                     </div>
                   </div>
@@ -581,15 +581,15 @@ export const AdminEventForm: React.FC = () => {
               <div className="card space-y-8 animate-fadeIn">
                 <div className="bg-[rgba(255,255,255,0.02)] p-6 rounded-2xl border border-white/5">
                   <h3 className="text-sm font-bold text-gold uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Clock size={16} /> Horários
+                    <Clock size={16} /> Hor�rios
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="form-group">
-                      <label className="form-label">Data e Hora de Início</label>
+                      <label className="form-label">Data e Hora de In�cio</label>
                       <input type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required className="input w-full bg-zinc-900" />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Data e Hora de Término (Opcional)</label>
+                      <label className="form-label">Data e Hora de T�rmino (Opcional)</label>
                       <input type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="input w-full bg-zinc-900" />
                     </div>
                   </div>
@@ -600,27 +600,27 @@ export const AdminEventForm: React.FC = () => {
                     <div className="bg-[rgba(212,175,55,0.05)] p-6 rounded-2xl border border-[#d4af37]/20">
                       <div className="form-group">
                         <label className="form-label flex items-center gap-2">
-                          Reservar Espaço Físico
+                          Reservar Espa�o F�sico
                         </label>
                         <select
                           value={formData.spaceId}
                           onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
                           className="input w-full bg-zinc-900 focus:border-gold"
                         >
-                          <option value="">Selecione um espaço...</option>
+                          <option value="">Selecione um espa�o...</option>
                           {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                         </select>
                         <div className="flex items-start gap-2 mt-3 p-3 bg-black/20 rounded-lg">
                           <CheckCircle size={14} className="text-gold mt-0.5" />
-                          <p className="text-xs text-[#d4af37]/80">O sistema bloqueará automaticamente o horário neste espaço para evitar conflitos com outros eventos.</p>
+                          <p className="text-xs text-[#d4af37]/80">O sistema bloquear� automaticamente o hor�rio neste espa�o para evitar conflitos com outros eventos.</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="form-group md:col-span-2">
-                        <label className="form-label">Nome do Local de Exibição</label>
-                        <input placeholder="Ex: Auditório Principal, Sala de Cinema..." value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} className="input w-full" />
+                        <label className="form-label">Nome do Local de Exibi��o</label>
+                        <input placeholder="Ex: Audit�rio Principal, Sala de Cinema..." value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} className="input w-full" />
                       </div>
 
                       <div className="form-group">
@@ -638,13 +638,13 @@ export const AdminEventForm: React.FC = () => {
                         />
                       </div>
                       <div className="form-group">
-                        <label className="form-label">Endereço</label>
+                        <label className="form-label">Endere�o</label>
                         <input value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="input w-full" />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div className="form-group">
-                          <label className="form-label">Número</label>
+                          <label className="form-label">N�mero</label>
                           <input value={formData.number} onChange={e => setFormData({ ...formData, number: e.target.value })} className="input w-full" />
                         </div>
                         <div className="form-group">
@@ -662,8 +662,8 @@ export const AdminEventForm: React.FC = () => {
                 ) : (
                   <div className="bg-purple-500/5 p-8 rounded-2xl border border-purple-500/20 space-y-6">
                     <div className="flex items-center gap-3 mb-2">
-                      <Monitor className="text-purple-400" />
-                      <h3 className="font-bold text-white">Configuração da Transmissão</h3>
+                      <Monitor style={{ color: "#a78bfa" }} />
+                      <h3 className="font-bold text-white">Configura��o da Transmiss�o</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="form-group">
@@ -675,7 +675,7 @@ export const AdminEventForm: React.FC = () => {
                         </select>
                       </div>
                       <div className="form-group">
-                        <label className="form-label">Link da Reunião / Live</label>
+                        <label className="form-label">Link da Reuni�o / Live</label>
                         <input value={formData.meetingLink} onChange={e => setFormData({ ...formData, meetingLink: e.target.value })} placeholder="https://..." className="input w-full bg-zinc-900 border-purple-500/30" />
                       </div>
                     </div>
@@ -700,8 +700,8 @@ export const AdminEventForm: React.FC = () => {
 
                 {tickets.length === 0 ? (
                   <div className="text-center py-12 border border-dashed border-[rgba(255,255,255,0.1)] rounded-xl bg-[rgba(255,255,255,0.02)]">
-                    <Ticket className="mx-auto text-gray-600 mb-2" size={32} />
-                    <p className="text-gray-500">Nenhum ingresso criado.</p>
+                    <Ticket className="mx-auto text-zinc-300 mb-2" size={32} />
+                    <p style={{ color: "#64748b" }}>Nenhum ingresso criado.</p>
                   </div>
                 ) : (
                   <div className="grid gap-4">
@@ -718,7 +718,7 @@ export const AdminEventForm: React.FC = () => {
                               className="input w-full"
                             />
                           </div>
-                          <div className="grid grid-cols-3 gap-4">
+                          <div className="card-grid">
                             <div className="form-group">
                               <label className="form-label">Tipo</label>
                               <select
@@ -745,7 +745,7 @@ export const AdminEventForm: React.FC = () => {
                             </div>
                             {t.type === 'PAID' && (
                               <div className="form-group">
-                                <label className="form-label">Preço (R$)</label>
+                                <label className="form-label">Pre�o (R$)</label>
                                 <input
                                   type="number"
                                   value={t.price}
@@ -772,14 +772,14 @@ export const AdminEventForm: React.FC = () => {
               </div>
             )}
 
-            {/* STEP 3: DIVULGAÇÃO & REVISÃO */}
+            {/* STEP 3: DIVULGA��O & REVIS�O */}
             {currentStep === 3 && (
               <div className="space-y-6">
                 <div className="card">
-                  <h3 className="card-title mb-6">Mídia & Divulgação</h3>
+                  <h3 className="card-title mb-6">M�dia & Divulga��o</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="form-group">
-                      <label className="form-label">Vídeo de Divulgação (YouTube)</label>
+                      <label className="form-label">V�deo de Divulga��o (YouTube)</label>
                       <input
                         value={formData.videoUrl}
                         onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
@@ -787,14 +787,14 @@ export const AdminEventForm: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <label className="form-label">Áudio Guia (MP3)</label>
-                      <div className="flex gap-2">
+                      <label className="form-label">�udio Guia (MP3)</label>
+                      <div style={{ display: "flex", gap: "0.5rem" }}>
                         <input
                           type="text"
                           className="input flex-1"
                           value={formData.audioUrl}
                           onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
-                          placeholder="URL do aúdio..."
+                          placeholder="URL do a�dio..."
                         />
                         <label className="btn btn-secondary cursor-pointer">
                           <Upload size={18} />
@@ -814,20 +814,20 @@ export const AdminEventForm: React.FC = () => {
                         onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
                         className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PUBLIC" ? 'bg-blue-500/10 border-blue-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
-                        <Globe size={24} className={formData.visibility === "PUBLIC" ? 'text-blue-500' : 'text-gray-500'} />
+                        <Globe size={24} className={formData.visibility === "PUBLIC" ? 'text-blue-500' : 'text-zinc-400'} />
                         <div>
-                          <div className="font-bold text-[#f5e6d3]">Público</div>
-                          <div className="text-xs text-gray-500">Visível no app</div>
+                          <div className="font-bold text-[#f5e6d3]">P�blico</div>
+                          <div className="text-xs text-zinc-400">Vis�vel no app</div>
                         </div>
                       </button>
                       <button
                         onClick={() => setFormData({ ...formData, visibility: "PRIVATE" })}
                         className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PRIVATE" ? 'bg-amber-500/10 border-amber-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
-                        <CheckCircle size={24} className={formData.visibility === "PRIVATE" ? 'text-amber-500' : 'text-gray-500'} />
+                        <CheckCircle size={24} className={formData.visibility === "PRIVATE" ? 'text-amber-500' : 'text-zinc-400'} />
                         <div>
                           <div className="font-bold text-[#f5e6d3]">Privado</div>
-                          <div className="text-xs text-gray-500">Apenas link</div>
+                          <div className="text-xs text-zinc-400">Apenas link</div>
                         </div>
                       </button>
                     </div>
@@ -838,20 +838,20 @@ export const AdminEventForm: React.FC = () => {
                         onClick={() => setFormData({ ...formData, status: "DRAFT" })}
                         className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? 'bg-gray-500/10 border-gray-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
-                        <div className={`w-3 h-3 rounded-full ${formData.status === "DRAFT" ? 'bg-gray-400' : 'bg-gray-700'}`}></div>
+                        <div className={`w-3 h-3 rounded-full ${formData.status === "DRAFT" ? 'bg-zinc-500' : 'bg-transparent border-2 border-zinc-600'}`}></div>
                         <div>
                           <div className="font-bold text-[#f5e6d3]">Rascunho</div>
-                          <div className="text-xs text-gray-500">Oculto do público</div>
+                          <div className="text-xs text-zinc-400">Oculto do pblico</div>
                         </div>
                       </button>
                       <button
                         onClick={() => setFormData({ ...formData, status: "PUBLISHED" })}
                         className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "PUBLISHED" ? 'bg-[#22c55e]/10 border-[#22c55e]' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
-                        <CheckCircle size={24} className={formData.status === "PUBLISHED" ? 'text-[#22c55e]' : 'text-gray-700'} />
+                        <CheckCircle size={24} className={formData.status === "PUBLISHED" ? 'text-[#22c55e]' : 'text-zinc-200'} />
                         <div>
                           <div className="font-bold text-[#f5e6d3]">Publicado</div>
-                          <div className="text-xs text-gray-500">Visível imediatamente</div>
+                          <div className="text-xs text-zinc-400">Vis�vel imediatamente</div>
                         </div>
                       </button>
                     </div>
@@ -874,7 +874,7 @@ export const AdminEventForm: React.FC = () => {
           {currentStep === 0 ? "Cancelar" : "Voltar"}
         </Button>
 
-        <div className="flex gap-2">
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           {currentStep === STEPS.length - 1 ? (
             <Button
               onClick={handleSubmit}
@@ -890,7 +890,7 @@ export const AdminEventForm: React.FC = () => {
               className="btn btn-primary"
               rightIcon={<ChevronRight size={18} />}
             >
-              Próximo
+              Pr�ximo
             </Button>
           )}
         </div>

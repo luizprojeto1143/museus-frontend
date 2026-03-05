@@ -95,9 +95,9 @@ export const AdminSpaces: React.FC = () => {
                     <Loader2 className="animate-spin text-blue-500" size={40} />
                 </div>
             ) : filteredSpaces.length === 0 ? (
-                <div className="text-center p-20 bg-gray-50/5 rounded-3xl border border-gray-200 border-dashed">
+                <div className="text-center p-20 bg-gray-50/5 rounded-3xl border border-white/10 border-dashed">
                     <Building2 size={48} className="mx-auto text-gray-400 mb-4" />
-                    <h3 className="text-xl font-bold text-gray-500">
+                    <h3 className="text-xl font-bold text-zinc-400">
                         {t("admin.spaces.empty", "Nenhum espaço cadastrado")}
                     </h3>
                     <p className="text-gray-400 mt-2 mb-6">Comece adicionando seu primeiro ambiente.</p>
@@ -121,7 +121,7 @@ export const AdminSpaces: React.FC = () => {
                             <tr key={space.id}>
                                 <td>
                                     <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-100 rounded-lg text-gray-500">
+                                        <div className="p-2 bg-zinc-800/50 rounded-lg text-zinc-400">
                                             <MapPin size={16} />
                                         </div>
                                         <span className="font-semibold">{space.name}</span>

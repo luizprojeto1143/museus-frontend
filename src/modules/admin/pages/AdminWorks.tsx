@@ -34,11 +34,14 @@ export const AdminWorks: React.FC = () => {
         const worksList = responseData.data || [];
         const pagination = responseData.pagination || {};
 
-        const apiWorks = worksList.map((w: { id: string; title: string; artist?: string; published?: boolean }) => ({
+        const apiWorks = worksList.map((w: any) => ({
           id: w.id,
           title: w.title,
           artist: w.artist ?? "",
-          published: w.published ?? true
+          published: w.published ?? true,
+          imageUrl: w.imageUrl,
+          description: w.description,
+          year: w.year
         }));
 
         setWorks(apiWorks);

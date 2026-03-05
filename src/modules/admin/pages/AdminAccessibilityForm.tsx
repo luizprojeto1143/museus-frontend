@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -179,7 +179,7 @@ export const AdminAccessibilityForm: React.FC = () => {
 
                     <div className="admin-section">
                         <h2 className="admin-section-title">
-                            <span className="text-blue-400">♿</span> Tipo de Serviço
+                            <span style={{ color: "#60a5fa" }}>♿</span> Tipo de Serviço
                         </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -232,11 +232,12 @@ export const AdminAccessibilityForm: React.FC = () => {
                                     label="Projeto Vinculado"
                                     value={formData.projectId}
                                     onChange={e => setFormData({ ...formData, projectId: e.target.value })}
-                                    options={[
-                                        { value: "", label: "Nenhum projeto vinculado" },
-                                        ...projects.map(p => ({ value: p.id, label: p.title }))
-                                    ]}
-                                />
+                                >
+                                    <option value="">Nenhum projeto vinculado</option>
+                                    {projects.map(p => (
+                                        <option key={p.id} value={p.id}>{p.title}</option>
+                                    ))}
+                                </Select>
                             </div>
 
                             <Textarea
@@ -308,7 +309,7 @@ export const AdminAccessibilityForm: React.FC = () => {
                     {/* Prestador Card */}
                     <div className="admin-section">
                         <h2 className="admin-section-title">
-                            <User className="text-purple-400" size={20} /> Prestador
+                            <User style={{ color: "#a78bfa" }} size={20} /> Prestador
                         </h2>
 
                         {filteredProviders.length === 0 ? (
@@ -331,11 +332,12 @@ export const AdminAccessibilityForm: React.FC = () => {
                                     label="Prestador Designado"
                                     value={formData.providerId}
                                     onChange={e => setFormData({ ...formData, providerId: e.target.value })}
-                                    options={[
-                                        { value: "", label: "Selecione um prestador..." },
-                                        ...filteredProviders.map(p => ({ value: p.id, label: p.name }))
-                                    ]}
-                                />
+                                >
+                                    <option value="">Selecione um prestador...</option>
+                                    {filteredProviders.map(p => (
+                                        <option key={p.id} value={p.id}>{p.name}</option>
+                                    ))}
+                                </Select>
                                 {formData.providerId && (
                                     <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-lg">

@@ -103,7 +103,6 @@ export const ProducerServices: React.FC = () => {
                 <EmptyState
                     title="Nenhum prestador disponível"
                     description="No momento não há prestadores cadastrados nesta categoria. Tente novamente mais tarde."
-                    icon={ShieldCheck}
                 />
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

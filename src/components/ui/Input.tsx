@@ -3,6 +3,7 @@ import React, { InputHTMLAttributes, forwardRef, ReactNode } from 'react';
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     error?: string;
+    helperText?: string;
     containerClassName?: string;
     leftIcon?: ReactNode;
     rightIcon?: ReactNode;
@@ -11,6 +12,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = forwardRef<HTMLInputElement, InputProps>(({
     label,
     error,
+    helperText,
     className = '',
     containerClassName = '',
     id,
@@ -59,6 +61,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
             </div>
             {error && (
                 <p className="mt-1 text-sm text-red-500">{error}</p>
+            )}
+            {helperText && !error && (
+                <p className="mt-1 text-xs text-gray-500">{helperText}</p>
             )}
         </div>
     );

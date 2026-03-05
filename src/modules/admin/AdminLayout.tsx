@@ -95,6 +95,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅", show: features?.featureGamification ?? true },
         { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱", show: features?.featureQRCodes ?? true },
         { to: "/admin/cupons", label: "Cupons e Recompensas", icon: "🎟️", show: features?.featureGamification ?? true },
+        { to: "/admin/colecao", label: "Cards Colecionáveis", icon: "✨", show: features?.featureGamification ?? true },
+        { to: "/admin/battle", label: "Batalha de Museus", icon: "⚔️", show: features?.featureGamification ?? true },
       ]
     },
     {
@@ -118,6 +120,47 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/notificacoes", label: "Notificações Push", icon: "🔔", show: true },
         { to: "/admin/financeiro", label: "Dashboard Financeiro", icon: "💰", show: true },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
+      ]
+    },
+    {
+      label: "Analytics Avançado",
+      links: [
+        { to: "/admin/notas-curador", label: "Notas do Curador", icon: "📝", show: true },
+        { to: "/admin/nps", label: "NPS", icon: "💯", show: true },
+        { to: "/admin/sentimento", label: "Sentimento", icon: "😊", show: true },
+        { to: "/admin/heatmap", label: "Mapa de Calor", icon: "🔥", show: true },
+        { to: "/admin/funil", label: "Funil de Conversão", icon: "📉", show: true },
+        { to: "/admin/moderacao", label: "Moderação", icon: "🛡️", show: true },
+      ]
+    },
+    {
+      label: "Educação & Social",
+      links: [
+        { to: "/admin/educacao", label: "Portal Professores", icon: "🎓", show: true },
+        { to: "/admin/ingressos-grupo", label: "Ingressos Grupo", icon: "👥", show: true },
+        { to: "/admin/modo-crianca", label: "Modo Criança", icon: "👶", show: true },
+        { to: "/admin/assinaturas", label: "Amigo do Museu", icon: "💎", show: true },
+        { to: "/admin/patrocinios", label: "Patrocínios", icon: "🤝", show: true },
+      ]
+    },
+    {
+      label: "Municipal Avançado",
+      links: [
+        { to: "/admin/voluntarios", label: "Voluntários", icon: "🙋", show: true },
+        { to: "/admin/conservacao", label: "Conservação", icon: "🔧", show: true },
+        { to: "/admin/metas-ppa", label: "Metas PPA", icon: "🎯", show: true },
+        { to: "/admin/patrimonio", label: "Patrimônio Imaterial", icon: "📜", show: true },
+        { to: "/admin/calendario-municipal", label: "Calendário Cultural", icon: "🗓️", show: true },
+        { to: "/admin/tce", label: "Exportação TCE", icon: "📄", show: true },
+        { to: "/admin/vazios", label: "Vazios Culturais", icon: "🗺️", show: true },
+      ]
+    },
+    {
+      label: "IA & Marketing",
+      links: [
+        { to: "/admin/ia-descricoes", label: "IA Descrições", icon: "🪄", show: true },
+        { to: "/admin/instagram", label: "Card Instagram", icon: "📸", show: true },
+        { to: "/admin/traducoes", label: "Traduções", icon: "🌍", show: true },
       ]
     }
   ];

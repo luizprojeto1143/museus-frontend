@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { Users, Edit, ShieldCheck, Database, Trash2 } from "lucide-react";
+import { Users, Edit, ShieldCheck, Database, PlusCircle } from "lucide-react";
+import { Button } from "../../../components/ui";
 import "./MasterShared.css";
 
 type UserItem = {
@@ -20,6 +21,7 @@ type UserItem = {
 
 export const MasterUsers: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,6 +53,16 @@ export const MasterUsers: React.FC = () => {
           <h1 className="master-title">
             {t("master.users.title", "Usuários do Sistema")}
           </h1>
+
+          <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem", flexWrap: 'wrap' }}>
+            <Button
+              onClick={() => navigate("/master/users/novo")}
+              leftIcon={<PlusCircle size={18} />}
+              className="w-auto px-8"
+            >
+              Novo Usuário
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -116,11 +128,15 @@ export const MasterUsers: React.FC = () => {
                   </td>
                   <td style={{ textAlign: "right" }}>
                     <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
-                      <Link to={`/master/users/${u.id}`} title="Editar">
-                        <button className="master-btn btn-outline" style={{ width: 'auto', display: 'inline-flex', padding: '0.5rem', height: 'auto', marginTop: 0 }}>
-                          <Edit size={16} />
-                        </button>
-                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/master/users/${u.id}`)}
+                        title="Editar"
+                        className="w-10 h-10 p-0"
+                      >
+                        <Edit size={16} />
+                      </Button>
                     </div>
                   </td>
                 </tr>

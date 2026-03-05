@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useGamification } from "../../gamification/context/GamificationContext";
+import { useAuth } from "../../auth/AuthContext";
 import { Trophy, Lock, CheckCircle2 } from "lucide-react";
 import "./Achievements.css";
 
@@ -114,10 +116,10 @@ export default function Achievements() {
                     {a.description}
                   </p>
 
-                  {!isUnlocked && a.condition && (
+                  {!isUnlocked && (a as any).condition && (
                     <div className="achievement-condition">
                       <Lock size={10} />
-                      {t("visitor.achievements.howToUnlock", "Como desbloquear:")} {a.condition}
+                      {t("visitor.achievements.howToUnlock", "Como desbloquear:")} {(a as any).condition}
                     </div>
                   )}
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { Plus, Edit, Trash2, Shield, Zap, FileText, CheckCircle2, DollarSign } from "lucide-react";
-import { Button, Input, Select, Textarea, Card } from "../../../components/ui";
+import { Button, Input, Select, Textarea } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 
 type Plan = {
@@ -103,7 +103,7 @@ const MasterPlans: React.FC = () => {
                         <div className="bg-blue-600/20 p-6 border-b border-white/5 relative">
                             <div className="flex justify-between items-start">
                                 <h2 className="text-xl font-bold text-white">{plan.name}</h2>
-                                <Shield className="text-blue-400" size={20} />
+                                <Shield style={{ color: "#60a5fa" }} size={20} />
                             </div>
                             {plan.monthlyPrice !== undefined && (
                                 <div className="text-2xl font-black mt-4 flex items-baseline gap-1">
@@ -148,7 +148,7 @@ const MasterPlans: React.FC = () => {
                                 <Button
                                     variant="outline"
                                     onClick={() => { setEditingPlan(plan); setShowForm(true); }}
-                                    className="flex-1"
+                                    style={{ flex: 1 }}
                                     leftIcon={<Edit size={16} />}
                                 >
                                     Editar
@@ -326,7 +326,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
 
                     <div className="space-y-3 p-4 bg-white/5 rounded-xl mb-8">
                         <p className="text-xs font-bold uppercase text-slate-500 mb-2">Recursos Inclusos</p>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                             <CheckboxField
                                 label="Relatórios Executivos"
                                 checked={form.hasExecutiveReports}
@@ -351,8 +351,8 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                     </div>
 
                     <div className="flex gap-4 pt-4 border-t border-white/10 sticky bottom-0 bg-[#0f172a]">
-                        <Button variant="outline" type="button" onClick={onClose} className="flex-1">Cancelar</Button>
-                        <Button type="submit" disabled={saving} className="flex-1">
+                        <Button variant="outline" type="button" onClick={onClose} style={{ flex: 1 }}>Cancelar</Button>
+                        <Button type="submit" disabled={saving} style={{ flex: 1 }}>
                             {saving ? "Salvando..." : "Salvar Plano"}
                         </Button>
                     </div>

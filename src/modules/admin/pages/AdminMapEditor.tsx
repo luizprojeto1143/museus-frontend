@@ -116,7 +116,7 @@ export const AdminMapEditor: React.FC = () => {
                         <MapIcon className="text-gold-500" />
                         Editor de Mapa da Cidade
                     </h1>
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-zinc-500 text-sm">
                         Selecione uma obra na lista e clique no mapa para definir sua localização real.
                     </p>
                 </div>
@@ -135,7 +135,7 @@ export const AdminMapEditor: React.FC = () => {
                 <div className="w-80 flex flex-col bg-surface-dark border border-white/10 rounded-xl overflow-hidden">
                     <div className="p-4 border-b border-white/10">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
                             <input
                                 type="text"
                                 placeholder="Buscar obra..."
@@ -172,7 +172,7 @@ export const AdminMapEditor: React.FC = () => {
                                         )}
                                     </div>
                                     {isSelected && (
-                                        <p className="text-xs text-slate-400 mt-2 flex items-center gap-1 animate-fadeIn">
+                                        <p className="text-xs text-zinc-500 mt-2 flex items-center gap-1 animate-fadeIn">
                                             <Info size={12} />
                                             Clique no mapa para posicionar
                                         </p>
@@ -181,7 +181,7 @@ export const AdminMapEditor: React.FC = () => {
                             );
                         })}
                         {filteredWorks.length === 0 && (
-                            <div className="text-center py-8 text-slate-500">
+                            <div className="text-center py-8 text-zinc-400">
                                 Nenhuma obra encontrada.
                             </div>
                         )}
@@ -214,10 +214,10 @@ export const AdminMapEditor: React.FC = () => {
                                     opacity={selectedWorkId === w.id ? 1 : 0.7}
                                 >
                                     <Popup>
-                                        <div className="text-slate-900 font-bold p-1">
+                                        <div className="text-white font-bold p-1">
                                             {w.title}
                                             {selectedWorkId === w.id && (
-                                                <div className="text-xs text-slate-500 font-normal mt-1">
+                                                <div className="text-xs text-zinc-400 font-normal mt-1">
                                                     (Selecionado)
                                                 </div>
                                             )}

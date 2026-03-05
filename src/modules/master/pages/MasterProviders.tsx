@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { Trash2, Plus, Search, CheckCircle, ShieldCheck, Star, Mail, Phone, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -122,7 +122,6 @@ export const MasterProviders: React.FC = () => {
                 <EmptyState
                     title="Nenhum prestador cadastrado"
                     description="Comece cadastrando um novo parceiro de acessibilidade."
-                    icon={ShieldCheck}
                 />
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -139,7 +138,7 @@ export const MasterProviders: React.FC = () => {
                                         <span className="text-xs text-slate-400">• {provider.completedJobs} jobs</span>
                                     </div>
                                 </div>
-                                <div className="flex gap-2">
+                                <div style={{ display: "flex", gap: "0.5rem" }}>
                                     {provider.active && <CheckCircle size={18} className="text-green-500" />}
                                     <button
                                         onClick={() => handleDelete(provider.id)}
@@ -152,8 +151,8 @@ export const MasterProviders: React.FC = () => {
                             </div>
 
                             <div className="space-y-2 text-sm text-slate-400 mb-6">
-                                <p className="flex items-center gap-2"><Mail size={14} /> {provider.email || "Sem email"}</p>
-                                <p className="flex items-center gap-2"><Phone size={14} /> {provider.phone || "Sem telefone"}</p>
+                                <p style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><Mail size={14} /> {provider.email || "Sem email"}</p>
+                                <p style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><Phone size={14} /> {provider.phone || "Sem telefone"}</p>
                             </div>
 
                             <div className="flex flex-wrap gap-1.5 mb-6">
@@ -196,7 +195,7 @@ export const MasterProviders: React.FC = () => {
                                 <Input label="Telefone" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
                             </div>
 
-                            <div className="space-y-3">
+                            <div style={{ display: "grid", gap: "0.75rem" }}>
                                 <label className="text-sm font-semibold flex items-center gap-2"><Info size={14} /> Serviços Oferecidos</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {serviceOptions.map(opt => (
@@ -219,8 +218,8 @@ export const MasterProviders: React.FC = () => {
                             </div>
 
                             <div className="flex gap-4 pt-4 sticky bottom-0 bg-[#0f172a] border-t border-white/10">
-                                <Button variant="outline" type="button" onClick={() => setModalOpen(false)} className="flex-1">Cancelar</Button>
-                                <Button type="submit" className="flex-1">Salvar</Button>
+                                <Button variant="outline" type="button" onClick={() => setModalOpen(false)} style={{ flex: 1 }}>Cancelar</Button>
+                                <Button type="submit" style={{ flex: 1 }}>Salvar</Button>
                             </div>
                         </form>
                     </div>

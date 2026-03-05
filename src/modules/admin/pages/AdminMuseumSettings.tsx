@@ -331,7 +331,7 @@ export const AdminMuseumSettings: React.FC = () => {
                   <label>Vídeo de Apresentação (URL)</label>
                   <input className="visitor-input" value={settings.welcomeVideoUrl || ""} onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })} placeholder="https://..." />
                 </div>
-                <div className="aspect-video bg-black/40 rounded-lg flex items-center justify-center border border-[#463420]">
+                <div className="aspect-video bg-black/40 rounded-lg flex items-center justify-center border border-[var(--border-default)]">
                   {settings.welcomeVideoUrl ? (
                     <video src={settings.welcomeVideoUrl} controls className="w-full h-full rounded-lg" />
                   ) : (
@@ -409,10 +409,10 @@ export const AdminMuseumSettings: React.FC = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 <div className="space-y-6">
-                  <div className="flex flex-col items-center p-6 bg-[#1a1108] rounded-xl border border-[#463420]">
+                  <div className="flex flex-col items-center p-6 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
                     <div
                       onClick={() => logoInputRef.current?.click()}
-                      className="w-24 h-24 rounded-full border-2 border-dashed border-[#463420] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors bg-black/20"
+                      className="w-24 h-24 rounded-full border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors bg-black/20"
                       role="button"
                       tabIndex={0}
                       aria-label="Fazer upload da logomarca"
@@ -431,7 +431,7 @@ export const AdminMuseumSettings: React.FC = () => {
                   <div className="visitor-input-group">
                     <label>Cor Primária (Destaques e Botões)</label>
                     <div className="flex gap-3">
-                      <input type="color" className="w-14 h-12 bg-transparent border border-[#463420] rounded-lg cursor-pointer p-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
+                      <input type="color" className="w-14 h-12 bg-transparent border border-[var(--border-default)] rounded-lg cursor-pointer p-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
                       <input className="visitor-input flex-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
                     </div>
                   </div>
@@ -439,12 +439,12 @@ export const AdminMuseumSettings: React.FC = () => {
                   <div className="visitor-input-group">
                     <label>Cor Secundária (Bordas e Detalhes)</label>
                     <div className="flex gap-3">
-                      <input type="color" className="w-14 h-12 bg-transparent border border-[#463420] rounded-lg cursor-pointer p-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
+                      <input type="color" className="w-14 h-12 bg-transparent border border-[var(--border-default)] rounded-lg cursor-pointer p-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
                       <input className="visitor-input flex-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
                     </div>
                   </div>
 
-                  <div className="p-4 bg-black/20 rounded-xl border border-[#463420] space-y-4">
+                  <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)] space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-[#EAE0D5] text-sm font-bold block">Tema Escuro</span>
@@ -457,7 +457,7 @@ export const AdminMuseumSettings: React.FC = () => {
                         aria-checked={settings.theme === 'dark'}
                         aria-label="Alternar tema escuro"
                       >
-                        <div className={`absolute top-1 w-4 h-4 bg-[#0f0a05] rounded-full transition-transform ${settings.theme === 'dark' ? 'left-7' : 'left-1'}`} />
+                        <div className={`absolute top-1 w-4 h-4 bg-[var(--bg-root)] rounded-full transition-transform ${settings.theme === 'dark' ? 'left-7' : 'left-1'}`} />
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
@@ -472,7 +472,7 @@ export const AdminMuseumSettings: React.FC = () => {
                         aria-checked={settings.historicalFont}
                         aria-label="Alternar fonte histórica"
                       >
-                        <div className={`absolute top-1 w-4 h-4 bg-[#0f0a05] rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
+                        <div className={`absolute top-1 w-4 h-4 bg-[var(--bg-root)] rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
                       </div>
                     </div>
                   </div>
@@ -518,7 +518,7 @@ export const AdminMuseumSettings: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-              <div className="p-4 bg-black/20 rounded-xl border border-[#463420] text-sm text-[#c9b58c] flex gap-3 items-start leading-relaxed">
+              <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)] text-sm text-[#c9b58c] flex gap-3 items-start leading-relaxed">
                 <HelpCircle size={32} className="text-[#d4af37] shrink-0" />
                 <p>
                   Para receber pagamentos diretamente em sua conta, você deve configurar o seu <strong>Wallet ID</strong> do Asaas.
@@ -545,12 +545,12 @@ export const AdminMuseumSettings: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-[#1a1108] rounded-xl border border-[#463420]">
+                <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
                   <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">Comissão Plataforma</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">5%</p>
                   <p className="text-[10px] opacity-60">Retidos na transação</p>
                 </div>
-                <div className="p-4 bg-[#1a1108] rounded-xl border border-[#463420]">
+                <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
                   <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">Seu Recebimento</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">95%</p>
                   <p className="text-[10px] opacity-60">Direto na sua carteira</p>
@@ -627,7 +627,7 @@ export const AdminMuseumSettings: React.FC = () => {
 
       {showFloorPlanModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm" style={{ fontFamily: 'serif' }}>
-          <div className="visitor-card w-full max-w-md bg-[#1a1108] m-0">
+          <div className="visitor-card w-full max-w-md bg-[var(--bg-card)] m-0">
             <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
             <div className="space-y-4">
               <input className="visitor-input" placeholder="Nome (Ex: Térreo)" value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />

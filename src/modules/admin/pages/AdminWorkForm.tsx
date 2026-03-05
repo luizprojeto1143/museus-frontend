@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { QRCodeCanvas } from "qrcode.react";
 import { api } from "../../../api/client";
@@ -71,6 +71,10 @@ export const AdminWorkForm: React.FC = () => {
   const [audioUrl, setAudioUrl] = useState("");
   const [librasUrl, setLibrasUrl] = useState("");
   const [published, setPublished] = useState(false);
+  const [technique, setTechnique] = useState("");
+  const [period, setPeriod] = useState("");
+  const [workMedium, setWorkMedium] = useState("");
+  const [dimensions, setDimensions] = useState("");
   const [radius, setRadius] = useState(5);
 
   // Fetch Data
@@ -96,6 +100,10 @@ export const AdminWorkForm: React.FC = () => {
         setLibrasUrl(data.librasUrl || "");
         setPublished(data.published ?? true);
         setRadius(data.radius || 5);
+        setTechnique(data.technique || "");
+        setPeriod(data.period || "");
+        setWorkMedium(data.medium || "");
+        setDimensions(data.dimensions || "");
         if (data.qrCode) setCode(data.qrCode.code);
       }).catch(err => {
         console.error(err);
@@ -170,6 +178,10 @@ export const AdminWorkForm: React.FC = () => {
       description: description || undefined,
       room: room || undefined,
       floor: floor || undefined,
+      technique: technique || undefined,
+      period: period || undefined,
+      medium: workMedium || undefined,
+      dimensions: dimensions || undefined,
       tenantId,
       code: code || undefined,
       published,
@@ -324,6 +336,36 @@ export const AdminWorkForm: React.FC = () => {
                   />
                 </div>
 
+                <div className="admin-grid-2">
+                  <Input
+                    label="Técnica"
+                    value={technique}
+                    onChange={e => setTechnique(e.target.value)}
+                    placeholder="Ex: Óleo sobre tela, Escultura em bronze"
+                  />
+                  <Input
+                    label="Período / Estilo"
+                    value={period}
+                    onChange={e => setPeriod(e.target.value)}
+                    placeholder="Ex: Barroco, Impressionismo, Arte Moderna"
+                  />
+                </div>
+
+                <div className="admin-grid-2">
+                  <Input
+                    label="Suporte / Material"
+                    value={workMedium}
+                    onChange={e => setWorkMedium(e.target.value)}
+                    placeholder="Ex: Tela, Madeira, Mármore"
+                  />
+                  <Input
+                    label="Dimensões"
+                    value={dimensions}
+                    onChange={e => setDimensions(e.target.value)}
+                    placeholder="Ex: 85 x 73 cm"
+                  />
+                </div>
+
                 <Textarea
                   label="Descrição Completa"
                   value={description}
@@ -416,9 +458,9 @@ export const AdminWorkForm: React.FC = () => {
                   {/* Audio Upload */}
                   <div className="media-card">
                     <h3 className="admin-section-title">
-                      <Volume2 className="text-blue-400" /> Áudio Guia {isCity ? "do Ponto" : isCultural ? "da Atividade" : "da Obra"}
+                      <Volume2 style={{ color: "#60a5fa" }} /> Áudio Guia {isCity ? "do Ponto" : isCultural ? "da Atividade" : "da Obra"}
                     </h3>
-                    <div className="flex-col gap-4">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {audioUrl && (
                         <audio controls src={audioUrl} style={{ width: '100%' }} />
                       )}
@@ -433,9 +475,9 @@ export const AdminWorkForm: React.FC = () => {
                   {/* Libras Upload */}
                   <div className="media-card">
                     <h3 className="admin-section-title">
-                      <Video className="text-purple-400" /> Vídeo em Libras
+                      <Video style={{ color: "#a78bfa" }} /> Vídeo em Libras
                     </h3>
-                    <div className="flex-col gap-4">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {librasUrl && (
                         <video controls src={librasUrl} style={{ width: '100%', maxHeight: '150px', background: 'black', borderRadius: '8px' }} />
                       )}
@@ -487,7 +529,7 @@ export const AdminWorkForm: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex-col gap-4">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <h3 className="admin-section-title">Ações Adicionais</h3>
 
                     <div
@@ -590,7 +632,7 @@ export const AdminWorkForm: React.FC = () => {
               Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {isCity ? "este ponto" : isCultural ? "esta atividade" : "esta obra"}.
             </p>
 
-            <div className="flex-col gap-4">
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <Select
                 label="Tipo de Serviço"
                 value={requestType}

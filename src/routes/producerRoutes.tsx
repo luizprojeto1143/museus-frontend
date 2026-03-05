@@ -54,6 +54,7 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/gamification" element={pr(AdminAchievements, RequireRole)} />
             <Route path="/producer/services" element={pr(ProducerServices, RequireRole)} />
             <Route path="/producer/tickets" element={pr(ProducerTickets, RequireRole)} />
+            <Route path="/producer/inbox" element={pr(ProducerInbox, RequireRole)} />
             <Route path="/producer/audience" element={pr(ProducerAudience, RequireRole)} />
             <Route path="/producer/reports" element={pr(ProducerReports, RequireRole)} />
             <Route path="/producer/*" element={pr(ProducerDashboard, RequireRole)} />

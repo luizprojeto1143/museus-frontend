@@ -19,6 +19,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isTeacher, setIsTeacher] = useState(false);
   const [termsText, setTermsText] = useState("");
   const [privacyText, setPrivacyText] = useState("");
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -72,7 +73,8 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
         email,
         password,
         age: age ? parseInt(age) : undefined,
-        photoUrl: photoPreview // Note: In a real app, upload first. Assuming base64 or handled by backend for now.
+        photoUrl: photoPreview, // Note: In a real app, upload first. Assuming base64 or handled by backend for now.
+        isTeacher
       });
 
       // Auto login or redirect
@@ -323,6 +325,44 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
               color: "#f5e6d3"
             }}
           />
+
+          {/* Sou Professor? */}
+          <div style={{ marginBottom: "1.5rem" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", fontSize: "0.9rem", color: "#f5e6d3" }}>
+              <div
+                onClick={() => setIsTeacher(!isTeacher)}
+                style={{
+                  width: "44px",
+                  height: "24px",
+                  borderRadius: "12px",
+                  background: isTeacher ? "#d4af37" : "rgba(255,255,255,0.1)",
+                  position: "relative",
+                  cursor: "pointer",
+                  transition: "background 0.3s",
+                  flexShrink: 0,
+                  border: isTeacher ? "none" : "1px solid #463420"
+                }}
+              >
+                <div style={{
+                  width: "18px",
+                  height: "18px",
+                  borderRadius: "50%",
+                  background: "white",
+                  position: "absolute",
+                  top: "3px",
+                  left: isTeacher ? "23px" : "3px",
+                  transition: "left 0.3s",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.3)"
+                }} />
+              </div>
+              <span>
+                🎓 Sou Professor(a)
+                <span style={{ display: "block", fontSize: "0.7rem", color: "#8b7355", marginTop: "2px" }}>
+                  Ativa recursos educativos e agendamento de visitas escolares
+                </span>
+              </span>
+            </label>
+          </div>
 
           {/* Termos de Uso */}
           <div style={{ marginBottom: "1.5rem" }}>

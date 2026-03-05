@@ -117,21 +117,21 @@ export const AdminEventSurvey: React.FC = () => {
     return (
         <div className="p-6 max-w-5xl mx-auto">
             <div className="flex items-center gap-4 mb-6">
-                <Link to={`/admin/eventos/${id}`} className="text-gray-500 hover:text-gray-700">
+                <Link to={`/admin/eventos/${id}`} className="text-zinc-400 hover:text-white transition-colors">
                     <ChevronLeft className="w-6 h-6" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Pesquisa de Satisfação</h1>
-                    <p className="text-sm text-gray-500">Evento: {title}</p>
+                    <h1 className="text-2xl font-bold text-white">Pesquisa de Satisfação</h1>
+                    <p className="text-sm text-zinc-400">Evento: {title}</p>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 min-h-[500px]">
+            <div className="bg-zinc-900/40 rounded-xl shadow-md shadow-black/20 border border-white/10 p-6 min-h-[500px]">
                 {questions.length === 0 ? (
                     <div className="text-center py-12">
                         <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                        <h3 className="text-gray-900 font-medium mb-1">Nenhuma pergunta configurada</h3>
-                        <p className="text-gray-500 mb-6">Crie um formulário para coletar feedback dos participantes.</p>
+                        <h3 className="text-white font-medium mb-1">Nenhuma pergunta configurada</h3>
+                        <p className="text-zinc-400 mb-6">Crie um formulário para coletar feedback dos participantes.</p>
                         <button onClick={addQuestion} className="btn btn-primary">
                             <Plus className="w-4 h-4 mr-2" /> Adicionar Primeira Pergunta
                         </button>
@@ -139,7 +139,7 @@ export const AdminEventSurvey: React.FC = () => {
                 ) : (
                     <div className="space-y-6">
                         {questions.map((q, index) => (
-                            <div key={index} className="bg-gray-50 p-4 rounded-lg border border-gray-200 animate-fadeIn">
+                            <div key={index} className="bg-zinc-900/60 p-4 rounded-lg border border-white/10 animate-fadeIn">
                                 <div className="flex gap-4">
                                     <div className="flex flex-col gap-2 pt-2 text-gray-400">
                                         <button onClick={() => moveQuestion(index, 'up')} disabled={index === 0} className="hover:text-blue-600 disabled:opacity-30">
@@ -153,7 +153,7 @@ export const AdminEventSurvey: React.FC = () => {
                                     <div className="flex-1 space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                                             <div className="col-span-8">
-                                                <label className="text-xs font-semibold text-gray-500 uppercase">Pergunta</label>
+                                                <label className="text-xs font-semibold text-zinc-400 uppercase">Pergunta</label>
                                                 <input
                                                     className="input w-full"
                                                     value={q.question}
@@ -162,7 +162,7 @@ export const AdminEventSurvey: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="col-span-4">
-                                                <label className="text-xs font-semibold text-gray-500 uppercase">Tipo</label>
+                                                <label className="text-xs font-semibold text-zinc-400 uppercase">Tipo</label>
                                                 <select
                                                     className="input w-full"
                                                     value={q.type}
@@ -178,7 +178,7 @@ export const AdminEventSurvey: React.FC = () => {
 
                                         {q.type === 'CHOICE' && (
                                             <div>
-                                                <label className="text-xs font-semibold text-gray-500 uppercase">Opções (separadas por vírgula)</label>
+                                                <label className="text-xs font-semibold text-zinc-400 uppercase">Opções (separadas por vírgula)</label>
                                                 <input
                                                     className="input w-full"
                                                     value={q.options ? q.options.join(', ') : ''}
@@ -189,7 +189,7 @@ export const AdminEventSurvey: React.FC = () => {
                                         )}
 
                                         <div className="flex items-center gap-4">
-                                            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                                            <label className="flex items-center gap-2 text-sm text-zinc-200 cursor-pointer">
                                                 <input
                                                     type="checkbox"
                                                     checked={q.required}
@@ -210,8 +210,8 @@ export const AdminEventSurvey: React.FC = () => {
                             </div>
                         ))}
 
-                        <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                            <button onClick={addQuestion} className="btn border border-dashed border-gray-300 text-gray-600 hover:bg-gray-50">
+                        <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                            <button onClick={addQuestion} className="btn border border-dashed border-gray-300 text-zinc-300 hover:bg-gray-50">
                                 <Plus className="w-4 h-4 mr-2" /> Adicionar Pergunta
                             </button>
 

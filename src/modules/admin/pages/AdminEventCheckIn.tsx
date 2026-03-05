@@ -50,19 +50,19 @@ export const AdminEventCheckIn: React.FC = () => {
     return (
         <div className="max-w-md mx-auto p-6">
             <div className="flex items-center gap-2 mb-6">
-                <Link to={`/admin/eventos/${id}/dashboard`} className="p-2 -ml-2 hover:bg-gray-100 rounded-full">
-                    <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <Link to={`/admin/eventos/${id}/dashboard`} className="p-2 -ml-2 hover:bg-white/5 rounded-full transition-colors">
+                    <ArrowLeft className="w-5 h-5 text-zinc-300" />
                 </Link>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                     Check-in
                 </h1>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="bg-zinc-900/40 rounded-xl shadow-lg border border-white/10 overflow-hidden">
                 <div id="reader" className="w-full h-80 bg-black"></div>
 
                 <div className="p-6">
-                    <p className="text-center text-gray-500 text-sm mb-4">
+                    <p className="text-center text-zinc-400 text-sm mb-4">
                         Aponte a câmera para o QR Code do ingresso
                     </p>
 
@@ -77,7 +77,7 @@ export const AdminEventCheckIn: React.FC = () => {
                                     <p className="text-green-600 text-sm">{new Date().toLocaleTimeString()}</p>
                                 </div>
                             </div>
-                            <div className="text-sm text-gray-700 ml-12">
+                            <div className="text-sm text-zinc-200 ml-12">
                                 <p><strong>Participante:</strong> {scanResult.guestName || "Visitante"}</p>
                                 <p><strong>Ingresso:</strong> {scanResult.code}</p>
                             </div>

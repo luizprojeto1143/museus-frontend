@@ -196,7 +196,6 @@ export const MasterAchievementForm: React.FC = () => {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    as="span"
                                     className="w-full cursor-pointer"
                                     leftIcon={<Upload size={16} />}
                                 >

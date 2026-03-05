@@ -85,6 +85,16 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [tenantId]);
 
+  // Check if visitor is a teacher
+  const [isTeacher, setIsTeacher] = useState(false);
+  useEffect(() => {
+    if (tenantId && email) {
+      api.get(`/visitors/me`)
+        .then(res => setIsTeacher(res.data?.isTeacher || false))
+        .catch(() => { });
+    }
+  }, [tenantId, email]);
+
   const term = useTerminology();
   const isCityMode = useIsCityMode();
 
@@ -102,10 +112,21 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     { to: "/scanner", label: t("visitor.sidebar.scanner", "Scanner"), icon: "📷", feature: "featureQRCodes" },
     { to: "/perfil", label: t("visitor.sidebar.profile"), icon: "👤", feature: null }, // Always visible
     { to: "/livro-visitas", label: t("visitor.sidebar.guestbook"), icon: "✍️", feature: "featureGuestbook" },
+    // New features
+    { to: "/rpg", label: "Meu Personagem", icon: "🗡️", feature: "featureGamification" },
+    { to: "/checkin", label: "Check-in", icon: "📍", feature: null },
+    { to: "/colecao", label: "Colecionáveis", icon: "✨", feature: "featureGamification" },
+    { to: "/assinatura", label: "Amigo do Museu", icon: "💎", feature: null },
+    { to: "/grupo", label: "Ingresso de Grupo", icon: "👥", feature: "featureEvents" },
+    { to: "/professor", label: "Portal Professor", icon: "🎓", feature: "teacherOnly" },
+    { to: "/obras/timeline", label: "Linha do Tempo", icon: "⏳", feature: "featureWorks" },
+    { to: "/obras/comparar", label: "Comparador", icon: "⚖️", feature: "featureWorks" },
+    { to: "/transferir-ingresso", label: "Transferir Ingresso", icon: "🎫", feature: "featureEvents" },
   ];
 
-  // Filter links based on tenant features
+  // Filter links based on tenant features and teacher status
   const links = allLinks.filter(link => {
+    if (link.feature === "teacherOnly") return isTeacher;
     if (!link.feature) return true; // Always show links without feature requirement
     if (!settings) return true; // Show all while loading
     return (settings as Record<string, unknown>)[link.feature] !== false;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
 import { Ticket, Plus, DollarSign, Users, Calendar } from "lucide-react";

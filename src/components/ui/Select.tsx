@@ -1,10 +1,11 @@
-import React, { SelectHTMLAttributes, forwardRef } from 'react';
+import React, { SelectHTMLAttributes, forwardRef, ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
     label?: string;
     error?: string;
     containerClassName?: string;
+    leftIcon?: ReactNode;
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(({
@@ -14,6 +15,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(({
     containerClassName = '',
     id,
     children,
+    leftIcon,
     ...props
 }, ref) => {
     const selectId = id || props.name;

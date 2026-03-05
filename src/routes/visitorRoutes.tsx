@@ -32,6 +32,15 @@ const VisitorProfile = React.lazy(() => import("../modules/visitor/pages/Visitor
 const ShopPage = React.lazy(() => import("../modules/visitor/pages/ShopPage").then(m => ({ default: m.ShopPage })));
 const ChallengesPage = React.lazy(() => import("../modules/visitor/pages/ChallengesPage").then(m => ({ default: m.ChallengesPage })));
 const EventSurveyPage = React.lazy(() => import("../modules/visitor/pages/EventSurveyPage").then(m => ({ default: m.EventSurveyPage })));
+const WorkTimeline = React.lazy(() => import("../modules/visitor/pages/WorkTimeline").then(m => ({ default: m.WorkTimeline })));
+const WorkComparator = React.lazy(() => import("../modules/visitor/pages/WorkComparator").then(m => ({ default: m.WorkComparator })));
+const VisitorMembership = React.lazy(() => import("../modules/visitor/pages/VisitorMembership").then(m => ({ default: m.VisitorMembership })));
+const VisitorCollectibles = React.lazy(() => import("../modules/visitor/pages/VisitorCollectibles").then(m => ({ default: m.VisitorCollectibles })));
+const TicketTransfer = React.lazy(() => import("../modules/visitor/pages/TicketTransfer").then(m => ({ default: m.TicketTransfer })));
+const GroupCheckout = React.lazy(() => import("../modules/visitor/pages/GroupCheckout").then(m => ({ default: m.GroupCheckout })));
+const VisitorRPG = React.lazy(() => import("../modules/visitor/pages/VisitorRPG").then(m => ({ default: m.VisitorRPG })));
+const SocialCheckinPage = React.lazy(() => import("../modules/visitor/pages/SocialCheckinPage").then(m => ({ default: m.SocialCheckinPage })));
+const TeacherPortal = React.lazy(() => import("../modules/visitor/pages/TeacherPortal").then(m => ({ default: m.TeacherPortal })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -77,6 +86,18 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             } />
             <Route path="/ranking" element={vr(LeaderboardPage, RequireRole)} />
             <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
+            {/* Phase 1 — Timeline & Comparator */}
+            <Route path="/obras/timeline" element={vr(WorkTimeline, RequireRole)} />
+            <Route path="/obras/comparar" element={vr(WorkComparator, RequireRole)} />
+            {/* Monetization & Gamification */}
+            <Route path="/assinatura" element={vr(VisitorMembership, RequireRole)} />
+            <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
+            <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
+            {/* Final Batch */}
+            <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />
+            <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
+            <Route path="/checkin" element={vr(SocialCheckinPage, RequireRole)} />
+            <Route path="/professor" element={vr(TeacherPortal, RequireRole)} />
         </>
     );
 }

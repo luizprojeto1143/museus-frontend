@@ -58,6 +58,32 @@ const AdminScanner = React.lazy(() => import("../modules/admin/pages/AdminScanne
 const AdminFinance = React.lazy(() => import("../modules/admin/pages/AdminFinance").then(module => ({ default: module.AdminFinance })));
 const AdminCoupons = React.lazy(() => import("../modules/admin/pages/AdminCoupons").then(m => ({ default: m.AdminCoupons })));
 const AdminNotifications = React.lazy(() => import("../modules/admin/pages/AdminNotifications").then(m => ({ default: m.AdminNotifications })));
+const AdminDonations = React.lazy(() => import("../modules/admin/pages/AdminDonations").then(m => ({ default: m.AdminDonations })));
+const AdminContacts = React.lazy(() => import("../modules/admin/pages/AdminContacts").then(m => ({ default: m.AdminContacts })));
+const AdminNewsletter = React.lazy(() => import("../modules/admin/pages/AdminNewsletter").then(m => ({ default: m.AdminNewsletter })));
+const AdminCuratorNotes = React.lazy(() => import("../modules/admin/pages/AdminCuratorNotes").then(m => ({ default: m.AdminCuratorNotes })));
+const AdminNPS = React.lazy(() => import("../modules/admin/pages/AdminNPS").then(m => ({ default: m.AdminNPS })));
+const AdminSentimentAnalysis = React.lazy(() => import("../modules/admin/pages/AdminSentimentAnalysis").then(m => ({ default: m.AdminSentimentAnalysis })));
+const AdminHeatmap = React.lazy(() => import("../modules/admin/pages/AdminHeatmap").then(m => ({ default: m.AdminHeatmap })));
+const AdminFunnel = React.lazy(() => import("../modules/admin/pages/AdminFunnel").then(m => ({ default: m.AdminFunnel })));
+const AdminTeachers = React.lazy(() => import("../modules/admin/pages/AdminTeachers").then(m => ({ default: m.AdminTeachers })));
+const AdminMemberships = React.lazy(() => import("../modules/admin/pages/AdminMemberships").then(m => ({ default: m.AdminMemberships })));
+const AdminVolunteers = React.lazy(() => import("../modules/admin/pages/AdminVolunteers").then(m => ({ default: m.AdminVolunteers })));
+const AdminConservation = React.lazy(() => import("../modules/admin/pages/AdminConservation").then(m => ({ default: m.AdminConservation })));
+const AdminPPA = React.lazy(() => import("../modules/admin/pages/AdminPPA").then(m => ({ default: m.AdminPPA })));
+const AdminCollectibles = React.lazy(() => import("../modules/admin/pages/AdminCollectibles").then(m => ({ default: m.AdminCollectibles })));
+const AdminTranslations = React.lazy(() => import("../modules/admin/pages/AdminTranslations").then(m => ({ default: m.AdminTranslations })));
+const AdminModeration = React.lazy(() => import("../modules/admin/pages/AdminModeration").then(m => ({ default: m.AdminModeration })));
+const AdminMuseumBattle = React.lazy(() => import("../modules/admin/pages/AdminMuseumBattle").then(m => ({ default: m.AdminMuseumBattle })));
+const AdminSponsorships = React.lazy(() => import("../modules/admin/pages/AdminSponsorships").then(m => ({ default: m.AdminSponsorships })));
+const AdminMunicipalCalendar = React.lazy(() => import("../modules/admin/pages/AdminMunicipalCalendar").then(m => ({ default: m.AdminMunicipalCalendar })));
+const AdminTCEExport = React.lazy(() => import("../modules/admin/pages/AdminTCEExport").then(m => ({ default: m.AdminTCEExport })));
+const AdminKidsMode = React.lazy(() => import("../modules/admin/pages/AdminKidsMode").then(m => ({ default: m.AdminKidsMode })));
+const AdminAIDescriptions = React.lazy(() => import("../modules/admin/pages/AdminAIDescriptions").then(m => ({ default: m.AdminAIDescriptions })));
+const AdminInstagramCard = React.lazy(() => import("../modules/admin/pages/AdminInstagramCard").then(m => ({ default: m.AdminInstagramCard })));
+const AdminHeritage = React.lazy(() => import("../modules/admin/pages/AdminHeritage").then(m => ({ default: m.AdminHeritage })));
+const AdminMunicipalGaps = React.lazy(() => import("../modules/admin/pages/AdminMunicipalGaps").then(m => ({ default: m.AdminMunicipalGaps })));
+const AdminGroupTickets = React.lazy(() => import("../modules/admin/pages/AdminGroupTickets").then(m => ({ default: m.AdminGroupTickets })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -139,6 +165,41 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/conformidade-legal" element={ar(LegalCompliance, RequireRole)} />
             <Route path="/admin/timeline-acessibilidade" element={ar(AccessibilityTimeline, RequireRole)} />
             <Route path="/admin/uso-ia" element={ar(AIUsageDashboard, RequireRole)} />
+            <Route path="/admin/doacoes" element={ar(AdminDonations, RequireRole)} />
+            <Route path="/admin/contatos" element={ar(AdminContacts, RequireRole)} />
+            <Route path="/admin/newsletter" element={ar(AdminNewsletter, RequireRole)} />
+            {/* Phase 1 — Analytics & UX */}
+            <Route path="/admin/notas-curador" element={ar(AdminCuratorNotes, RequireRole)} />
+            <Route path="/admin/nps" element={ar(AdminNPS, RequireRole)} />
+            <Route path="/admin/sentimento" element={ar(AdminSentimentAnalysis, RequireRole)} />
+            <Route path="/admin/heatmap" element={ar(AdminHeatmap, RequireRole)} />
+            <Route path="/admin/funil" element={ar(AdminFunnel, RequireRole)} />
+            {/* Phase 2 — Education */}
+            <Route path="/admin/educacao" element={ar(AdminTeachers, RequireRole)} />
+            {/* Phase 3 — Monetization */}
+            <Route path="/admin/assinaturas" element={ar(AdminMemberships, RequireRole)} />
+            {/* Phase 4 — Municipal */}
+            <Route path="/admin/voluntarios" element={ar(AdminVolunteers, RequireRole)} />
+            <Route path="/admin/conservacao" element={ar(AdminConservation, RequireRole)} />
+            <Route path="/admin/metas-ppa" element={ar(AdminPPA, RequireRole)} />
+            {/* Phase 5 — Gamification, AI & i18n */}
+            <Route path="/admin/colecao" element={ar(AdminCollectibles, RequireRole)} />
+            <Route path="/admin/traducoes" element={ar(AdminTranslations, RequireRole)} />
+            <Route path="/admin/moderacao" element={ar(AdminModeration, RequireRole)} />
+            <Route path="/admin/battle" element={ar(AdminMuseumBattle, RequireRole)} />
+            {/* Monetization extras */}
+            <Route path="/admin/patrocinios" element={ar(AdminSponsorships, RequireRole)} />
+            {/* Municipal extras */}
+            <Route path="/admin/calendario-municipal" element={ar(AdminMunicipalCalendar, RequireRole)} />
+            <Route path="/admin/tce" element={ar(AdminTCEExport, RequireRole)} />
+            {/* Advanced Features */}
+            <Route path="/admin/modo-crianca" element={ar(AdminKidsMode, RequireRole)} />
+            <Route path="/admin/ia-descricoes" element={ar(AdminAIDescriptions, RequireRole)} />
+            <Route path="/admin/instagram" element={ar(AdminInstagramCard, RequireRole)} />
+            {/* Final Batch */}
+            <Route path="/admin/patrimonio" element={ar(AdminHeritage, RequireRole)} />
+            <Route path="/admin/vazios" element={ar(AdminMunicipalGaps, RequireRole)} />
+            <Route path="/admin/ingressos-grupo" element={ar(AdminGroupTickets, RequireRole)} />
         </>
     );
 }

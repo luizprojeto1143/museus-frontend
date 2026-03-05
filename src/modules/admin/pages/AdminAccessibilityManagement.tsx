@@ -63,7 +63,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
         fetchData();
     }, [tenantId]);
 
-    if (loading) return <div className="text-center p-8 text-slate-400">Carregando...</div>;
+    if (loading) return <div className="text-center p-8 text-zinc-500">Carregando...</div>;
     if (!dashboard) return <div className="text-center p-8 text-rose-400">Erro ao carregar dados</div>;
 
     const totalByStatus = dashboard.byStatus.reduce((acc, s) => acc + s._count, 0);
@@ -81,7 +81,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                     onClick={() => setActiveTab("EXECUTIONS")}
                     className={`pb-3 px-2 text-sm font-bold transition-all border-b-2 ${activeTab === "EXECUTIONS"
                         ? "border-blue-500 text-blue-400"
-                        : "border-transparent text-slate-400 hover:text-white"
+                        : "border-transparent text-zinc-500 hover:text-white"
                         }`}
                 >
                     Serviços & Projetos
@@ -90,7 +90,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                     onClick={() => setActiveTab("REQUESTS")}
                     className={`pb-3 px-2 text-sm font-bold transition-all border-b-2 ${activeTab === "REQUESTS"
                         ? "border-purple-500 text-purple-400"
-                        : "border-transparent text-slate-400 hover:text-white"
+                        : "border-transparent text-zinc-500 hover:text-white"
                         }`}
                 >
                     Fábrica de Conteúdo (Master/Obras)
@@ -153,7 +153,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                             <tbody>
                                 {dashboard.recentExecutions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="text-center py-4 text-slate-500">Nenhuma execução encontrada.</td>
+                                        <td colSpan={5} className="text-center py-4 text-zinc-400">Nenhuma execução encontrada.</td>
                                     </tr>
                                 ) : dashboard.recentExecutions.map(exec => {
                                     const info = statusLabels[exec.status] || { label: exec.status, color: "#6b7280" };
@@ -180,7 +180,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
             {activeTab === "REQUESTS" && (
                 <div className="card">
                     <h3 className="mb-4 text-purple-400">Solicitações de Conteúdo para Obras (Master)</h3>
-                    <p className="text-sm text-slate-400 mb-6">
+                    <p className="text-sm text-zinc-500 mb-6">
                         Acompanhe aqui os pedidos de Libras e Audiodescrição feitos diretamente no cadastro de obras para a equipe Master.
                     </p>
 
@@ -197,7 +197,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         <tbody>
                             {workRequests.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-8 text-slate-500">
+                                    <td colSpan={5} className="text-center py-8 text-zinc-400">
                                         Nenhuma solicitação encontrada.<br />
                                         <span className="text-xs">Para solicitar, vá em <b>Acervo &gt; Editar Obra &gt; Acessibilidade Master</b>.</span>
                                     </td>
@@ -219,7 +219,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                         </span>
                                     </td>
                                     <td>{new Date(req.createdAt).toLocaleDateString("pt-BR")}</td>
-                                    <td className="text-sm text-slate-400 max-w-xs truncate">{req.masterNotes || "-"}</td>
+                                    <td className="text-sm text-zinc-500 max-w-xs truncate">{req.masterNotes || "-"}</td>
                                 </tr>
                             ))}
                         </tbody>

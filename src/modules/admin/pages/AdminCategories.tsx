@@ -86,7 +86,7 @@ export const AdminCategories: React.FC = () => {
                 </p>
               )}
 
-              <div className="flex gap-2 mt-4 pt-4 border-t border-[#463420]">
+              <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--border-default)]">
                 <Link
                   to={`/admin/categorias/${cat.id}`}
                   className="flex-1 text-center py-2 rounded bg-[#d4af37] text-[#1a1108] font-bold hover:brightness-110 transition-all"
@@ -103,7 +103,7 @@ export const AdminCategories: React.FC = () => {
             </div>
           ))}
           {categories.length === 0 && (
-            <div className="col-span-full text-center py-12 border border-dashed border-[#463420] rounded-xl bg-[#0f0a05]/50">
+            <div className="col-span-full text-center py-12 border border-dashed border-[var(--border-default)] rounded-xl bg-[var(--bg-root)]/50">
               <p className="text-[#8b7355] text-lg">{t("common.noData")}</p>
               <Link to="/admin/categorias/nova" className="text-[#d4af37] hover:underline mt-2 inline-block">
                 Criar primeira categoria

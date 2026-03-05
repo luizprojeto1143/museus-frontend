@@ -112,14 +112,14 @@ export function AdminCoupons() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Cupons e Recompensas</h1>
-                    <p className="text-gray-600 mt-1">
+                    <h1 className="text-2xl font-bold text-white">Cupons e Recompensas</h1>
+                    <p className="text-zinc-300 mt-1">
                         Gerencie códigos de desconto e defina o custo em XP para visitantes resgatarem.
                     </p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+                    className="flex items-center space-x-2 bg-gold-dark text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
                 >
                     <Plus className="w-5 h-5" />
                     <span>Novo Cupom</span>
@@ -140,22 +140,22 @@ export function AdminCoupons() {
 
             {isLoading ? (
                 <div className="text-center py-12">
-                    <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto" flex></div>
+                    <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto"></div>
                 </div>
             ) : filteredCoupons.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="text-center py-12 bg-zinc-900/40 rounded-xl shadow-md shadow-black/20 border border-white/5">
                     <Tag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900">Nenhum cupom encontrado</h3>
-                    <p className="text-gray-500 mt-1">Crie um cupom para incentivar seus visitantes.</p>
+                    <h3 className="text-lg font-medium text-white">Nenhum cupom encontrado</h3>
+                    <p className="text-zinc-400 mt-1">Crie um cupom para incentivar seus visitantes.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredCoupons.map((coupon) => (
-                        <div key={coupon.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
+                        <div key={coupon.id} className="bg-zinc-900/40 rounded-xl shadow-md shadow-black/20 border border-white/5 overflow-hidden relative group">
                             {/* Header */}
-                            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 border-b border-indigo-100 flex justify-between items-start">
+                            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 border-b border-gold/20 flex justify-between items-start">
                                 <div className="flex items-center space-x-2">
-                                    <Tag className="w-5 h-5 text-indigo-600" />
+                                    <Tag className="w-5 h-5 text-gold-light" />
                                     <h3 className="text-lg font-bold text-indigo-900 tracking-wide">{coupon.code}</h3>
                                 </div>
                                 {/* Active Badge */}
@@ -167,26 +167,26 @@ export function AdminCoupons() {
                             <div className="p-4 space-y-4">
                                 {/* Details */}
                                 <div>
-                                    <div className="text-3xl font-black text-gray-900 mb-1">
+                                    <div className="text-3xl font-black text-white mb-1">
                                         {coupon.discountType === 'PERCENTAGE' ? `${coupon.discountValue}%` : `R$ ${coupon.discountValue}`}
                                     </div>
-                                    <p className="text-sm text-gray-500">de Desconto</p>
+                                    <p className="text-sm text-zinc-400">de Desconto</p>
                                 </div>
 
                                 {coupon.description && (
-                                    <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded truncate" title={coupon.description}>
+                                    <p className="text-sm text-zinc-300 bg-zinc-900/60 p-2 rounded truncate" title={coupon.description}>
                                         {coupon.description}
                                     </p>
                                 )}
 
-                                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                                <div className="flex items-center justify-between pt-2 border-t border-white/5">
                                     <div className="text-sm">
                                         {coupon.xpCost ? (
                                             <span className="font-semibold text-amber-600 flex items-center space-x-1">
                                                 <span>⭐ Custa {coupon.xpCost} XP</span>
                                             </span>
                                         ) : (
-                                            <span className="text-gray-500">Grátis (Marketing)</span>
+                                            <span className="text-zinc-400">Grátis (Marketing)</span>
                                         )}
                                     </div>
                                 </div>
@@ -218,7 +218,7 @@ export function AdminCoupons() {
             {/* Create Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+                    <div className="bg-zinc-900/40 rounded-xl shadow-xl w-full max-w-md p-6 relative">
                         <button
                             onClick={() => setIsModalOpen(false)}
                             className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -226,14 +226,14 @@ export function AdminCoupons() {
                             <X className="w-6 h-6" />
                         </button>
 
-                        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center space-x-2">
-                            <Tag className="w-6 h-6 text-indigo-600" />
+                        <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
+                            <Tag className="w-6 h-6 text-gold-light" />
                             <span>Criar Cupom</span>
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Código</label>
+                                <label className="block text-sm font-medium text-zinc-200 mb-1">Código</label>
                                 <input
                                     type="text"
                                     value={code}
@@ -246,7 +246,7 @@ export function AdminCoupons() {
 
                             <div className="flex gap-4">
                                 <div className="flex-1">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Desconto</label>
+                                    <label className="block text-sm font-medium text-zinc-200 mb-1">Tipo de Desconto</label>
                                     <select
                                         value={discountType}
                                         onChange={(e) => setDiscountType(e.target.value as any)}
@@ -257,7 +257,7 @@ export function AdminCoupons() {
                                     </select>
                                 </div>
                                 <div className="flex-1">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Valor</label>
+                                    <label className="block text-sm font-medium text-zinc-200 mb-1">Valor</label>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -272,7 +272,7 @@ export function AdminCoupons() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Custo em XP (Opcional)</label>
+                                <label className="block text-sm font-medium text-zinc-200 mb-1">Custo em XP (Opcional)</label>
                                 <input
                                     type="number"
                                     min="0"
@@ -282,13 +282,13 @@ export function AdminCoupons() {
                                     placeholder="Ex: 500 (Vazio = Grátis)"
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 />
-                                <p className="text-xs text-gray-500 mt-1">
+                                <p className="text-xs text-zinc-400 mt-1">
                                     Se preenchido, o visitante poderá comprar este cupom usando seu saldo de XP ganho nas interações (ex: Caça ao Tesouro).
                                 </p>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Descrição (Opcional)</label>
+                                <label className="block text-sm font-medium text-zinc-200 mb-1">Descrição (Opcional)</label>
                                 <input
                                     type="text"
                                     value={description}
@@ -302,14 +302,14 @@ export function AdminCoupons() {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                                    className="px-4 py-2 text-zinc-300 hover:bg-gray-50 rounded-lg"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                                    className="px-4 py-2 bg-gold-dark text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                                 >
                                     {isSubmitting ? 'Salvando...' : 'Salvar Cupom'}
                                 </button>

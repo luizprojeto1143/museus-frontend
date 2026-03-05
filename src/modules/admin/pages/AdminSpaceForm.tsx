@@ -242,7 +242,7 @@ export const AdminSpaceForm: React.FC = () => {
                                 onChange={e => setFormData({ ...formData, isBookable: e.target.checked })}
                             />
                             <span className={`block w-12 h-7 rounded-full transition-colors duration-300 ${formData.isBookable ? 'bg-[#22c55e]' : 'bg-gray-600'}`}></span>
-                            <span className={`absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 shadow-sm ${formData.isBookable ? 'translate-x-5' : 'translate-x-0'}`}></span>
+                            <span className={`absolute left-1 top-1 bg-zinc-900/40 w-5 h-5 rounded-full transition-transform duration-300 shadow-md shadow-black/20 ${formData.isBookable ? 'translate-x-5' : 'translate-x-0'}`}></span>
                         </div>
                     </div>
                 </div>

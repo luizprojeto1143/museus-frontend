@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -178,7 +178,7 @@ export const AdminProjects: React.FC = () => {
                                                     {project.title}
                                                 </div>
                                                 {project.aiAnalysis && (
-                                                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black tracking-tighter shadow-sm
+                                                    <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black tracking-tighter shadow-md shadow-black/20
                                                         ${project.aiAnalysis.recommendation === 'APPROVE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/20' :
                                                             project.aiAnalysis.recommendation === 'REJECT' ? 'bg-red-500/20 text-red-400 border border-red-500/20' :
                                                                 'bg-amber-500/20 text-amber-400 border border-amber-500/20'}
@@ -191,7 +191,7 @@ export const AdminProjects: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-1">
                                                 {project.targetRegion && (
-                                                    <div className="flex items-center gap-1">
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
                                                         <MapPin size={12} /> {project.targetRegion}
                                                     </div>
                                                 )}

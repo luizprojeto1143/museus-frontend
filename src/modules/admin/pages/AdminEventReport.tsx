@@ -81,14 +81,14 @@ export const AdminEventReport: React.FC = () => {
     const { event, stats, survey, participants } = report;
 
     return (
-        <div className="p-8 max-w-6xl mx-auto print:p-0 print:max-w-none bg-gray-50 min-h-screen print:bg-white">
+        <div className="p-8 max-w-6xl mx-auto print:p-0 print:max-w-none bg-zinc-900/60 min-h-screen print:bg-white">
             {/* Toolbar - Hidden on Print */}
             <div className="flex justify-between items-center mb-8 print:hidden">
                 <div className="flex items-center gap-4">
-                    <Link to={`/admin/eventos/${id}`} className="btn btn-ghost text-gray-500">
+                    <Link to={`/admin/eventos/${id}`} className="btn btn-ghost text-zinc-400">
                         <ChevronLeft className="w-5 h-5 mr-1" /> Voltar
                     </Link>
-                    <h1 className="text-2xl font-bold text-gray-800">Relatório do Evento</h1>
+                    <h1 className="text-2xl font-bold text-white">Relatório do Evento</h1>
                 </div>
                 <button onClick={() => window.print()} className="btn btn-secondary flex items-center gap-2">
                     <Printer className="w-4 h-4" /> Imprimir / PDF
@@ -96,11 +96,11 @@ export const AdminEventReport: React.FC = () => {
             </div>
 
             {/* Header */}
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-6 print:border-none print:shadow-none print:p-0">
-                <div className="flex justify-between items-start border-b border-gray-100 pb-6 mb-6">
+            <div className="bg-zinc-900/40 p-8 rounded-xl shadow-md shadow-black/20 border border-white/10 mb-6 print:border-none print:shadow-none print:p-0">
+                <div className="flex justify-between items-start border-b border-white/5 pb-6 mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{event.title}</h1>
-                        <div className="flex gap-6 text-gray-500">
+                        <h1 className="text-3xl font-bold text-white mb-2">{event.title}</h1>
+                        <div className="flex gap-6 text-zinc-400">
                             <div className="flex items-center gap-2">
                                 <Calendar className="w-4 h-4" />
                                 {new Date(event.startDate).toLocaleDateString()} {new Date(event.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -115,7 +115,7 @@ export const AdminEventReport: React.FC = () => {
                     </div>
                     <div className="text-right">
                         <p className="text-sm text-gray-400">Organização</p>
-                        <p className="font-semibold text-gray-700">{event.tenant}</p>
+                        <p className="font-semibold text-zinc-200">{event.tenant}</p>
                     </div>
                 </div>
 
@@ -139,9 +139,9 @@ export const AdminEventReport: React.FC = () => {
                             {survey.overallSatisfaction > 0 && <Star className="w-5 h-5 text-yellow-500 fill-current" />}
                         </div>
                     </div>
-                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <p className="text-sm text-gray-600 font-medium mb-1">Receita</p>
-                        <p className="text-3xl font-bold text-gray-900">
+                    <div className="p-4 bg-zinc-900/60 rounded-lg border border-white/5">
+                        <p className="text-sm text-zinc-300 font-medium mb-1">Receita</p>
+                        <p className="text-3xl font-bold text-white">
                             R$ {stats.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </p>
                     </div>
@@ -150,23 +150,23 @@ export const AdminEventReport: React.FC = () => {
 
             {/* Survey Results */}
             {survey.questionsCount > 0 && (
-                <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 mb-6 print:break-inside-avoid">
-                    <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <div className="bg-zinc-900/40 p-8 rounded-xl shadow-md shadow-black/20 border border-white/10 mb-6 print:break-inside-avoid">
+                    <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
                         <TrendingUp className="w-5 h-5 text-blue-600" />
                         Resultados da Pesquisa
-                        <span className="text-sm font-normal text-gray-500 ml-2">({survey.uniqueRespondents} respondentes)</span>
+                        <span className="text-sm font-normal text-zinc-400 ml-2">({survey.uniqueRespondents} respondentes)</span>
                     </h2>
 
                     <div className="space-y-8">
                         {survey.questions.map((q: any) => (
-                            <div key={q.id} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0 print:break-inside-avoid">
-                                <h3 className="font-semibold text-gray-700 mb-4">{q.question}</h3>
+                            <div key={q.id} className="border-b border-white/5 last:border-0 pb-6 last:pb-0 print:break-inside-avoid">
+                                <h3 className="font-semibold text-zinc-200 mb-4">{q.question}</h3>
 
                                 {(q.type === 'STARS' || q.type === 'NPS') && (
-                                    <div className="bg-gray-50 p-4 rounded-lg">
+                                    <div className="bg-zinc-900/60 p-4 rounded-lg">
                                         <div className="flex items-center gap-4 mb-4">
-                                            <div className="text-3xl font-bold text-gray-800">{q.aggregation.average}</div>
-                                            <div className="text-sm text-gray-500">Média<br />de {q.type === 'STARS' ? '5.0' : '10.0'}</div>
+                                            <div className="text-3xl font-bold text-white">{q.aggregation.average}</div>
+                                            <div className="text-sm text-zinc-400">Média<br />de {q.type === 'STARS' ? '5.0' : '10.0'}</div>
 
                                             {q.type === 'NPS' && (
                                                 <div className="ml-8 px-3 py-1 bg-blue-100 text-blue-800 rounded font-bold">
@@ -179,8 +179,8 @@ export const AdminEventReport: React.FC = () => {
                                         <div className="space-y-2">
                                             {Object.entries(q.aggregation.distribution).map(([key, count]: any) => (
                                                 <div key={key} className="flex items-center gap-3 text-sm">
-                                                    <span className="w-4 font-bold text-gray-600">{key}</span>
-                                                    <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                                                    <span className="w-4 font-bold text-zinc-300">{key}</span>
+                                                    <div className="flex-1 h-3 bg-zinc-800 rounded-full overflow-hidden">
                                                         <div
                                                             className="h-full bg-blue-500"
                                                             style={{ width: `${(count / q.totalResponses) * 100}%` }}
@@ -196,9 +196,9 @@ export const AdminEventReport: React.FC = () => {
                                 {q.type === 'CHOICE' && (
                                     <div className="space-y-2">
                                         {Object.entries(q.aggregation.distribution).map(([key, count]: any) => (
-                                            <div key={key} className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                                            <div key={key} className="flex justify-between items-center p-3 bg-zinc-900/60 rounded border border-white/5">
                                                 <span>{key}</span>
-                                                <span className="font-bold bg-white px-2 py-1 rounded shadow-sm text-gray-600">{count}</span>
+                                                <span className="font-bold bg-zinc-900/40 px-2 py-1 rounded shadow-md shadow-black/20 text-zinc-300">{count}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -225,14 +225,14 @@ export const AdminEventReport: React.FC = () => {
             )}
 
             {/* Participants List - Page Break Before */}
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-200 print:break-before-page">
-                <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-gray-600" /> Listagem de Participantes
+            <div className="bg-zinc-900/40 p-8 rounded-xl shadow-md shadow-black/20 border border-white/10 print:break-before-page">
+                <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-zinc-300" /> Listagem de Participantes
                 </h2>
 
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-gray-200 text-sm text-gray-500">
+                        <tr className="border-b border-white/10 text-sm text-zinc-400">
                             <th className="py-2 pl-2">Nome</th>
                             <th className="py-2">Ingresso</th>
                             <th className="py-2">Status</th>
@@ -241,20 +241,20 @@ export const AdminEventReport: React.FC = () => {
                     </thead>
                     <tbody className="text-sm">
                         {participants.map((p: any) => (
-                            <tr key={p.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+                            <tr key={p.id} className="border-b border-white/5 last:border-0 hover:bg-gray-50">
                                 <td className="py-3 pl-2">
-                                    <div className="font-medium text-gray-900">{p.name}</div>
+                                    <div className="font-medium text-white">{p.name}</div>
                                     <div className="text-xs text-gray-400">{p.email}</div>
                                 </td>
-                                <td className="py-3 text-gray-600">{p.ticketName}</td>
+                                <td className="py-3 text-zinc-300">{p.ticketName}</td>
                                 <td className="py-3">
                                     {p.status === 'CHECKED_IN' ? (
                                         <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Presente</span>
                                     ) : (
-                                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">Inscrito</span>
+                                        <span className="px-2 py-1 bg-zinc-800/50 text-zinc-300 rounded-full text-xs">Inscrito</span>
                                     )}
                                 </td>
-                                <td className="py-3 text-right pr-2 text-gray-500 font-mono text-xs">
+                                <td className="py-3 text-right pr-2 text-zinc-400 font-mono text-xs">
                                     {p.checkInDate ? new Date(p.checkInDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
                                 </td>
                             </tr>

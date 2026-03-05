@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -252,7 +252,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                                 <>
                                                     <div className="text-purple-400 font-black text-3xl">{project.finalScore.toFixed(1)}</div>
                                                     <div className="text-[10px] text-zinc-500 uppercase font-bold flex items-center gap-1">
-                                                        <TrendingUp size={10} className="text-purple-400" /> Score Final
+                                                        <TrendingUp size={10} style={{ color: "#a78bfa" }} /> Score Final
                                                     </div>
                                                 </>
                                             ) : avgScore !== null ? (
@@ -277,7 +277,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                                     {statusInfo.label}
                                                 </span>
                                                 {project.aiAnalysis && (
-                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black tracking-tighter border shadow-sm
+                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black tracking-tighter border shadow-md shadow-black/20
                                                     ${project.aiAnalysis.recommendation === 'APPROVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
                                                             project.aiAnalysis.recommendation === 'REJECT' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
                                                                 'bg-amber-500/10 text-amber-400 border-amber-500/20'}

@@ -37,7 +37,7 @@ export const TenantForm: React.FC = () => {
   const [privacyPolicy, setPrivacyPolicy] = useState("");
 
   // Tenant Type and Hierarchy
-  const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE">("MUSEUM");
+  const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA">("MUSEUM");
   const [parentId, setParentId] = useState<string | null>(null);
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
 
@@ -336,7 +336,7 @@ export const TenantForm: React.FC = () => {
     return (
       <div className="flex-col items-center justify-center min-h-[60vh] text-center" style={{ display: 'flex' }}>
         <div className="animate-spin" style={{ marginBottom: '1rem' }}>
-          <CheckCircle2 size={48} className="text-blue-500" />
+          <CheckCircle2 size={48} style={{ color: "#60a5fa" }} />
         </div>
         <p className="text-slate-400">Carregando instituição...</p>
       </div>
@@ -414,7 +414,7 @@ export const TenantForm: React.FC = () => {
           >
             {/* STEP 0: IDENTIFICAÇÃO */}
             {currentStep === 0 && (
-              <div className="flex-col gap-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {/* Type Selection */}
                 <div className="master-grid-2" style={{ marginBottom: '2rem' }}>
                   {typeOptions.map(opt => {
@@ -495,13 +495,13 @@ export const TenantForm: React.FC = () => {
 
             {/* STEP 1: FUNCIONALIDADES */}
             {currentStep === 1 && (
-              <div className="flex-col gap-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem', padding: '1.5rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '1.5rem', border: '1px solid rgba(59, 130, 246, 0.1)' }}>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' }}>Módulos do Sistema</h3>
                   <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Ative ou desative funcionalidades conforme o plano contratado.</p>
                 </div>
 
-                <div className="flex-col gap-4">
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   {featureGroups.map((group, gIdx) => (
                     <div key={gIdx} className="feature-group">
                       <h4 className="feature-group-title">
@@ -529,13 +529,13 @@ export const TenantForm: React.FC = () => {
             {currentStep === 2 && (
               <div className="master-grid-2">
                 {/* Plan Selection */}
-                <div className="flex-col gap-4">
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <div className="wizard-section" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
                     <h3 className="wizard-section-title">
                       <Package size={24} style={{ color: '#60a5fa' }} /> Configuração do Plano
                     </h3>
 
-                    <div className="flex-col gap-4">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       <Select
                         label="Nível de Serviço"
                         value={plan}
@@ -575,7 +575,7 @@ export const TenantForm: React.FC = () => {
                     <h3 className="wizard-section-title">
                       <FileText size={20} style={{ color: '#facc15' }} /> Documentos Legais
                     </h3>
-                    <div className="flex-col gap-4">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       <Textarea
                         label="Termos de Uso"
                         rows={2}
@@ -647,7 +647,7 @@ export const TenantForm: React.FC = () => {
 
             {/* STEP 3: REVISÃO */}
             {currentStep === 3 && (
-              <div className="flex-col gap-4">
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '1.5rem', padding: '2rem', textAlign: 'center', marginBottom: '1.5rem' }}>
                   <div style={{ width: '80px', height: '80px', background: 'rgba(16, 185, 129, 0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                     <CheckCircle2 size={40} />
@@ -661,7 +661,7 @@ export const TenantForm: React.FC = () => {
                 <div className="master-grid-2">
                   <div className="wizard-section">
                     <h3 className="feature-group-title">Dados Gerais</h3>
-                    <div className="flex-col gap-4">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       <div className="flex justify-between">
                         <span style={{ color: '#64748b' }}>Nome:</span>
                         <span style={{ color: '#fff', fontWeight: '500' }}>{name}</span>
@@ -679,7 +679,7 @@ export const TenantForm: React.FC = () => {
 
                   <div className="wizard-section">
                     <h3 className="feature-group-title">Contrato</h3>
-                    <div className="flex-col gap-4">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       <div className="flex justify-between">
                         <span style={{ color: '#64748b' }}>Plano:</span>
                         <span style={{ color: '#34d399', fontWeight: '700' }}>{plan}</span>

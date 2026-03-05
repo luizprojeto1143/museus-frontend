@@ -86,27 +86,27 @@ export const AdminScanner: React.FC = () => {
         <div className="admin-scanner-container max-w-3xl mx-auto p-4 md:p-8 min-h-[80vh] flex flex-col items-center justify-center">
 
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-black text-slate-800 flex items-center justify-center gap-3 mb-2">
-                    <Smartphone className="text-indigo-600" size={32} />
+                <h1 className="text-3xl font-black text-white flex items-center justify-center gap-3 mb-2">
+                    <Smartphone className="text-gold-light" size={32} />
                     Validador de Ingressos
                 </h1>
-                <p className="text-slate-500">Aponte a câmera para o QR Code do visitante ou digite o código manualmente.</p>
+                <p className="text-zinc-400">Aponte a câmera para o QR Code do visitante ou digite o código manualmente.</p>
             </div>
 
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+            <div className="w-full max-w-md bg-zinc-900/40 rounded-3xl shadow-xl border border-white/5 overflow-hidden">
 
                 {/* Scanner View */}
                 {isScanning ? (
                     <div className="p-6">
-                        <div id="reader" className="rounded-2xl overflow-hidden border-2 border-dashed border-slate-300 w-full bg-slate-50 min-h-[300px] flex items-center justify-center">
+                        <div id="reader" className="rounded-2xl overflow-hidden border-2 border-dashed border-white/20 w-full bg-zinc-900/60 min-h-[300px] flex items-center justify-center">
                             {/* HTML5 QR Code injects here */}
                         </div>
 
                         <div className="mt-6 space-y-4">
                             <div className="relative flex items-center">
-                                <div className="flex-grow border-t border-slate-200"></div>
-                                <span className="flex-shrink-0 mx-4 text-slate-400 text-sm font-medium">OU DIGITE O CÓDIGO</span>
-                                <div className="flex-grow border-t border-slate-200"></div>
+                                <div className="flex-grow border-t border-white/10"></div>
+                                <span className="flex-shrink-0 mx-4 text-zinc-500 text-sm font-medium">OU DIGITE O CÓDIGO</span>
+                                <div className="flex-grow border-t border-white/10"></div>
                             </div>
 
                             <div className="flex gap-2">
@@ -115,7 +115,7 @@ export const AdminScanner: React.FC = () => {
                                     value={manualCode}
                                     onChange={(e) => setManualCode(e.target.value.toUpperCase())}
                                     placeholder="Ex: TKT-123XYZ"
-                                    className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 font-mono text-center uppercase"
+                                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 focus:ring-2 focus:ring-indigo-500 font-mono text-center uppercase"
                                 />
                                 <Button
                                     disabled={!manualCode || loading}
@@ -132,11 +132,11 @@ export const AdminScanner: React.FC = () => {
                     <div className="p-8 text-center animate-zoomIn flex flex-col items-center">
                         {loading ? (
                             <div className="py-12 flex flex-col items-center gap-4">
-                                <RefreshCw className="animate-spin text-indigo-500" size={48} />
-                                <p className="text-slate-500 font-medium">Validando ingresso...</p>
+                                <RefreshCw className="animate-spin text-gold" size={48} />
+                                <p className="text-zinc-400 font-medium">Validando ingresso...</p>
                             </div>
                         ) : scanResult ? (
-                            <div className={`w-full rounded-2xl p-8 border-2 shadow-sm ${scanResult.valid ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'
+                            <div className={`w-full rounded-2xl p-8 border-2 shadow-md shadow-black/20 ${scanResult.valid ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'
                                 }`}>
 
                                 <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 shadow-lg ${scanResult.valid ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
@@ -146,26 +146,26 @@ export const AdminScanner: React.FC = () => {
                                     )}
                                 </div>
 
-                                <h2 className={`text-2xl font-black mb-2 ${scanResult.valid ? 'text-emerald-700' : 'text-red-700'}`}>
+                                <h2 className={`text-2xl font-black mb-2 ${scanResult.valid ? 'text-emerald-400' : 'text-red-400'}`}>
                                     {scanResult.message}
                                 </h2>
 
                                 {scanResult.details && (
-                                    <div className="mt-6 bg-white rounded-xl p-6 text-left shadow-sm border border-slate-100 space-y-4">
+                                    <div className="mt-6 bg-zinc-900/40 rounded-xl p-6 text-left shadow-md shadow-black/20 border border-white/5 space-y-4">
                                         <div className="flex items-center gap-3">
-                                            <User className="text-slate-400" size={20} />
+                                            <User className="text-zinc-500" size={20} />
                                             <div>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Visitante</p>
-                                                <p className="font-bold text-slate-800 text-lg">{scanResult.details.guestName}</p>
+                                                <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Visitante</p>
+                                                <p className="font-bold text-white text-lg">{scanResult.details.guestName}</p>
                                             </div>
                                         </div>
-                                        <div className="h-px bg-slate-100"></div>
+                                        <div className="h-px bg-zinc-800/50"></div>
                                         <div className="flex items-center gap-3">
-                                            <Ticket className="text-slate-400" size={20} />
+                                            <Ticket className="text-zinc-500" size={20} />
                                             <div>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Evento</p>
-                                                <p className="font-bold text-slate-700">{scanResult.details.eventName}</p>
-                                                <p className="text-sm text-slate-500">{scanResult.details.ticketType}</p>
+                                                <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Evento</p>
+                                                <p className="font-bold text-zinc-200">{scanResult.details.eventName}</p>
+                                                <p className="text-sm text-zinc-400">{scanResult.details.ticketType}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -185,7 +185,7 @@ export const AdminScanner: React.FC = () => {
                 )}
             </div>
 
-            <div className="mt-8 text-center text-slate-400 text-sm max-w-sm">
+            <div className="mt-8 text-center text-zinc-500 text-sm max-w-sm">
                 <p>Aponte a câmera em um ambiente iluminado para uma leitura mais rápida.</p>
             </div>
         </div>

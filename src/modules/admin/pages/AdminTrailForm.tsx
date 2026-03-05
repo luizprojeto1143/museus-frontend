@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -45,7 +45,7 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
       {...listeners}
       className="flex items-center justify-between p-4 mb-3 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl group hover:border-[var(--accent-gold)] transition-all cursor-grab active:cursor-grabbing"
     >
-      <div className="flex items-center gap-4">
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
         <GripVertical size={20} className="text-[var(--fg-muted)] group-hover:text-[var(--accent-gold)] transition-colors" />
         <span className="text-[var(--fg-main)] font-medium">{title}</span>
       </div>
@@ -356,7 +356,7 @@ export const AdminTrailForm: React.FC = () => {
                   <h3 className="admin-section-title">
                     <Music className="text-[var(--accent-gold)]" /> Áudio-Guia
                   </h3>
-                  <div className="flex-col gap-4">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <p className="text-sm text-[var(--fg-muted)]">
                       Áudio de introdução {term.trail === "Trilha" ? "da trilha" : "do roteiro"} que será reproduzido para os {term.visitors.toLowerCase()}.
                     </p>
@@ -381,9 +381,9 @@ export const AdminTrailForm: React.FC = () => {
 
                 <div className="admin-section">
                   <h3 className="admin-section-title">
-                    <Video className="text-blue-400" /> Vídeo
+                    <Video style={{ color: "#60a5fa" }} /> Vídeo
                   </h3>
-                  <div className="flex-col gap-4">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <p className="text-sm text-[var(--fg-muted)]">
                       URL de vídeo do YouTube ou MP4 para apresentação {term.trail === "Trilha" ? "da trilha" : "do roteiro"}.
                     </p>
@@ -515,7 +515,7 @@ export const AdminTrailForm: React.FC = () => {
             {currentStep === 0 ? "Cancelar" : "Voltar"}
           </Button>
 
-          <div className="flex gap-2">
+          <div style={{ display: "flex", gap: "0.5rem" }}>
             {currentStep === steps.length - 1 ? (
               <Button
                 onClick={handleSubmit}

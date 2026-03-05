@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { Trophy, PlusCircle, Edit, Trash2, Image as ImageIcon } from "lucide-react";
+import { Button } from "../../../components/ui";
 import "./MasterShared.css";
 
 interface Tenant {
@@ -20,6 +21,7 @@ interface Achievement {
 
 export const MasterAchievements: React.FC = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const [tenants, setTenants] = useState<Tenant[]>([]);
     const [selectedTenantId, setSelectedTenantId] = useState<string>("");
     const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -90,12 +92,13 @@ export const MasterAchievements: React.FC = () => {
                     </p>
 
                     <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem" }}>
-                        <Link to={`/master/achievements/novo?tenantId=${selectedTenantId}`}>
-                            <button className="master-btn btn-primary" style={{ width: 'auto', padding: '0.75rem 2rem' }}>
-                                <PlusCircle size={18} />
-                                {t("master.achievements.new")}
-                            </button>
-                        </Link>
+                        <Button
+                            onClick={() => navigate(`/master/achievements/novo?tenantId=${selectedTenantId}`)}
+                            className="w-auto px-8"
+                            leftIcon={<PlusCircle size={18} />}
+                        >
+                            {t("master.achievements.new")}
+                        </Button>
                     </div>
                 </div>
             </section>
@@ -144,17 +147,21 @@ export const MasterAchievements: React.FC = () => {
                                     {ach.code}
                                 </div>
                                 <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    <Link to={`/master/achievements/${ach.id}`}>
-                                        <button className="master-btn btn-outline" style={{ padding: "0.4rem", width: "auto", marginTop: 0 }}>
-                                            <Edit size={14} />
-                                        </button>
-                                    </Link>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => navigate(`/master/achievements/${ach.id}`)}
+                                        title="Editar"
+                                        className="w-10 h-10 p-0"
+                                    >
+                                        <Edit size={16} />
+                                    </Button>
                                     <button
                                         onClick={() => handleDelete(ach.id)}
                                         className="master-btn btn-danger"
-                                        style={{ padding: "0.4rem", width: "auto", marginTop: 0 }}
+                                        style={{ padding: "0.4rem", width: "auto", margin: 0 }}
                                     >
-                                        <Trash2 size={14} />
+                                        <Trash2 size={16} />
                                     </button>
                                 </div>
                             </div>

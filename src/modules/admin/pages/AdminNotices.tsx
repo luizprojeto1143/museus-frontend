@@ -194,7 +194,7 @@ export const AdminNotices: React.FC = () => {
                                         {/* Main Info */}
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-3">
-                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border} shadow-sm`}>
+                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border} shadow-md shadow-black/20`}>
                                                     {statusInfo.label}
                                                 </span>
                                                 <span className="text-zinc-600 text-xs font-mono">#{notice.id.slice(0, 8)}</span>

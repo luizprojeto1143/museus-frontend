@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -13,14 +13,14 @@ import { Input, Textarea, Button, Select } from "../../../components/ui";
 import "./AdminShared.css";
 
 const STATUS_OPTIONS = [
-    { value: "DRAFT", label: "Rascunho", icon: <Clock size={16} />, color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/20" },
+    { value: "DRAFT", label: "Rascunho", icon: <Clock size={16} />, color: "text-zinc-500", bg: "bg-slate-500/10", border: "border-slate-500/20" },
     { value: "SUBMITTED", label: "Submetido", icon: <CheckCircle2 size={16} />, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
     { value: "UNDER_REVIEW", label: "Em Análise", icon: <AlertCircle size={16} />, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
     { value: "APPROVED", label: "Aprovado", icon: <CheckCircle2 size={16} />, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     { value: "REJECTED", label: "Rejeitado", icon: <XCircle size={16} />, color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" },
     { value: "IN_EXECUTION", label: "Em Execução", icon: <LayoutList size={16} />, color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
     { value: "COMPLETED", label: "Concluído", icon: <CheckCircle2 size={16} />, color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
-    { value: "CANCELED", label: "Cancelado", icon: <XCircle size={16} />, color: "text-slate-400", bg: "bg-slate-500/10", border: "border-slate-500/20" }
+    { value: "CANCELED", label: "Cancelado", icon: <XCircle size={16} />, color: "text-zinc-500", bg: "bg-slate-500/10", border: "border-slate-500/20" }
 ];
 
 const CULTURAL_CATEGORIES = [
@@ -428,7 +428,7 @@ export const AdminProjectForm: React.FC = () => {
                             <div className="admin-section border-l-4 border-purple-500 bg-gradient-to-br from-purple-500/5 to-transparent">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="admin-section-title !mb-0">
-                                        <Sparkles className="text-purple-400" size={20} /> Painel de Análise por IA
+                                        <Sparkles style={{ color: "#a78bfa" }} size={20} /> Painel de Análise por IA
                                     </h3>
                                     <Button
                                         variant="outline"
@@ -546,7 +546,7 @@ export const AdminProjectForm: React.FC = () => {
                         {isEdit && (
                             <div className="admin-section border-l-4 border-blue-500 shadow-xl">
                                 <h3 className="admin-section-title">
-                                    <ShieldCheck className="text-blue-400" size={20} /> Avaliação Humana (Parecer)
+                                    <ShieldCheck style={{ color: "#60a5fa" }} size={20} /> Avaliação Humana (Parecer)
                                 </h3>
 
                                 <div className="space-y-6">
@@ -694,7 +694,7 @@ export const AdminProjectForm: React.FC = () => {
                                                 {opt.label}
                                             </span>
                                             {formData.status === opt.value && (
-                                                <div className="ml-auto w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                                                <div className="ml-auto w-2 h-2 rounded-full bg-zinc-900/40 animate-pulse"></div>
                                             )}
                                         </button>
                                     ))}
