@@ -394,9 +394,27 @@ export const AdminWorkForm: React.FC = () => {
                   </div>
 
                   {code && (
-                    <div className="qr-container">
-                      <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={120} level="H" />
-                      <span className="qr-code-display">#{code}</span>
+                    <div className="qr-container flex-col gap-4">
+                      <div id={`qr-${code}`} style={{ display: 'inline-block' }}>
+                        <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={120} level="H" />
+                      </div>
+                      <span className="qr-code-display" style={{ marginTop: '0.5rem' }}>#{code}</span>
+                      <Button
+                        variant="ghost"
+                        leftIcon={<Upload size={16} style={{ transform: 'rotate(180deg)' }} />}
+                        onClick={() => {
+                          const canvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
+                          if (canvas) {
+                            const url = canvas.toDataURL("image/png");
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = `qrcode-${code}.png`;
+                            a.click();
+                          }
+                        }}
+                      >
+                        Baixar QR Code
+                      </Button>
                     </div>
                   )}
                 </div>
