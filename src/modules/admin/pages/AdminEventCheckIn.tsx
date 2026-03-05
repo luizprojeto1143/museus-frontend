@@ -4,6 +4,8 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { ArrowLeft, UserCheck, AlertTriangle } from 'lucide-react';
 import { api } from '../../../api/client';
 import { AxiosError } from 'axios';
+import "./AdminShared.css";
+
 
 type ScanResult = {
     guestName?: string;
@@ -50,7 +52,7 @@ export const AdminEventCheckIn: React.FC = () => {
     return (
         <div className="max-w-md mx-auto p-6">
             <div className="flex items-center gap-2 mb-6">
-                <Link to={`/admin/eventos/${id}/dashboard`} className="p-2 -ml-2 hover:bg-white/5 rounded-full transition-colors">
+                <Link to={`/admin/eventos/${id}/dashboard`} className="p-2 -ml-2 hover:bg-zinc-900/40 border border-gold/20/5 rounded-full transition-colors">
                     <ArrowLeft className="w-5 h-5 text-zinc-300" />
                 </Link>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">

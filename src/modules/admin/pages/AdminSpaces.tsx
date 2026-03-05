@@ -8,6 +8,8 @@ import {
     Settings, Loader2, Search, Filter
 } from "lucide-react";
 import { Button, Input } from "../../../components/ui";
+import "./AdminShared.css";
+
 
 type Space = {
     id: string;
@@ -95,7 +97,7 @@ export const AdminSpaces: React.FC = () => {
                     <Loader2 className="animate-spin text-blue-500" size={40} />
                 </div>
             ) : filteredSpaces.length === 0 ? (
-                <div className="text-center p-20 bg-gray-50/5 rounded-3xl border border-white/10 border-dashed">
+                <div className="text-center p-20 /5 rounded-3xl border border-white/10 border-dashed">
                     <Building2 size={48} className="mx-auto text-gray-400 mb-4" />
                     <h3 className="text-xl font-bold text-zinc-400">
                         {t("admin.spaces.empty", "Nenhum espaço cadastrado")}

@@ -5,6 +5,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { Search, Save, Map as MapIcon, Info } from "lucide-react";
+import "./AdminShared.css";
+
 
 // Fix Leaflet Default Icon
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -157,7 +159,7 @@ export const AdminMapEditor: React.FC = () => {
                                     onClick={() => setSelectedWorkId(w.id)}
                                     className={`p-3 rounded-lg cursor-pointer transition-all border ${isSelected
                                         ? "bg-gold-500/20 border-gold-500/50"
-                                        : "bg-white/5 border-transparent hover:bg-white/10"
+                                        : "bg-zinc-900/40 border border-gold/20/5 border-transparent hover:bg-zinc-900/40 border border-gold/20/10"
                                         }`}
                                 >
                                     <div className="flex justify-between items-start">

@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, GraduationCap, Plus, Calendar, Users, CheckCircle, BookOpen } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminTeachers: React.FC = () => {
     const { tenantId } = useAuth();
@@ -53,10 +55,10 @@ export const AdminTeachers: React.FC = () => {
 
             {/* Tabs */}
             <div style={{ display: "flex", gap: "0.5rem" }}>
-                <button onClick={() => setTab('teachers')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'teachers' ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-400'}`}>
+                <button onClick={() => setTab('teachers')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'teachers' ? 'bg-amber-500 text-black' : 'bg-zinc-900/40 border border-gold/20/5 text-gray-400'}`}>
                     <GraduationCap size={14} style={{ display: "inline", marginRight: "0.25rem" }} /> Professores ({teachers.length})
                 </button>
-                <button onClick={() => setTab('visits')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'visits' ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-400'}`}>
+                <button onClick={() => setTab('visits')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'visits' ? 'bg-amber-500 text-black' : 'bg-zinc-900/40 border border-gold/20/5 text-gray-400'}`}>
                     <Calendar size={14} style={{ display: "inline", marginRight: "0.25rem" }} /> Visitas Escolares ({visits.length})
                 </button>
             </div>
@@ -87,7 +89,7 @@ export const AdminTeachers: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {teachers.map((t: any) => (
-                                <tr key={t.id} className="hover:bg-white/5">
+                                <tr key={t.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                     <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{t.name}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{t.email}</p></td>
                                     <td className="px-6 py-3 text-gray-300 text-sm">{t.school}</td>
                                     <td className="px-6 py-3 text-gray-400 text-sm">{t.subject || '—'}</td>

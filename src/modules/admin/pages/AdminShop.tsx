@@ -167,7 +167,7 @@ export const AdminShop: React.FC = () => {
                     onClick={() => setActiveView('products')}
                     className={`px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all border ${activeView === 'products'
                             ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/10'
-                            : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                            : 'bg-zinc-900/40 border border-gold/20/5 border-white/5 text-gray-400 hover:border-white/20'
                         }`}
                 >
                     <Package size={16} className="inline mr-2 mb-0.5" /> Produtos ({products.length})
@@ -176,7 +176,7 @@ export const AdminShop: React.FC = () => {
                     onClick={() => setActiveView('orders')}
                     className={`px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-widest transition-all border ${activeView === 'orders'
                             ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/10'
-                            : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                            : 'bg-zinc-900/40 border border-gold/20/5 border-white/5 text-gray-400 hover:border-white/20'
                         }`}
                 >
                     <DollarSign size={16} className="inline mr-2 mb-0.5" /> Pedidos ({orders.length})
@@ -225,7 +225,7 @@ export const AdminShop: React.FC = () => {
                                     onClick={() => setFilterCategory(cat)}
                                     className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-all border ${filterCategory === cat
                                         ? 'bg-amber-500 border-amber-500 text-black shadow-lg shadow-amber-500/10'
-                                        : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20'
+                                        : 'bg-zinc-900/40 border border-gold/20/5 border-white/5 text-gray-400 hover:border-white/20'
                                         }`}
                                 >
                                     {cat === 'all' ? 'Ver Tudo' : cat}
@@ -272,7 +272,7 @@ export const AdminShop: React.FC = () => {
                                             </button>
                                             <button
                                                 onClick={() => toggleActive(product)}
-                                                className={`w-10 h-10 bg-black/60 backdrop-blur-md rounded-xl flex items-center justify-center transition-all ${product.active ? 'text-green-400 hover:bg-green-400 hover:text-black' : 'text-gray-400 hover:bg-white hover:text-black'
+                                                className={`w-10 h-10 bg-black/60 backdrop-blur-md rounded-xl flex items-center justify-center transition-all ${product.active ? 'text-green-400 hover:bg-green-400 hover:text-black' : 'text-gray-400 hover:bg-zinc-900/40 border border-gold/20 hover:text-black'
                                                     }`}
                                                 title={product.active ? "Desativar" : "Ativar"}
                                             >
@@ -356,7 +356,7 @@ export const AdminShop: React.FC = () => {
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
                                     {orders.map(order => (
-                                        <tr key={order.id} className="hover:bg-white/5 transition-colors">
+                                        <tr key={order.id} className="hover:bg-zinc-900/40 border border-gold/20/5 transition-colors">
                                             <td className="px-6 py-4">
                                                 <span className="text-amber-500 font-bold text-xs">#{order.id.slice(-6)}</span>
                                                 <p className="text-zinc-400 text-[10px] mt-1">{new Date(order.createdAt).toLocaleDateString('pt-BR')}</p>
@@ -441,7 +441,7 @@ export const AdminShop: React.FC = () => {
                                 <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">
                                     {editingProduct ? 'Update Product' : 'New Treasure'}
                                 </h2>
-                                <button onClick={() => setShowForm(false)} className="w-10 h-10 rounded-full hover:bg-white/5 flex items-center justify-center text-zinc-400 transition-colors">
+                                <button onClick={() => setShowForm(false)} className="w-10 h-10 rounded-full hover:bg-zinc-900/40 border border-gold/20/5 flex items-center justify-center text-zinc-400 transition-colors">
                                     <XCircle size={20} />
                                 </button>
                             </div>
@@ -587,7 +587,7 @@ const ProductForm: React.FC<{
             </div>
 
             <div className="flex gap-4 pt-6">
-                <Button type="button" variant="ghost" onClick={onClose} className="flex-1 h-14 rounded-xl border-white/10 hover:bg-white/5">Cancelar</Button>
+                <Button type="button" variant="ghost" onClick={onClose} className="flex-1 h-14 rounded-xl border-white/10 hover:bg-zinc-900/40 border border-gold/20/5">Cancelar</Button>
                 <Button type="submit" isLoading={saving} className="flex-1 h-14 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-extrabold shadow-lg shadow-amber-500/20">
                     {saving ? 'Salvando...' : 'Confirmar Alterações'}
                 </Button>

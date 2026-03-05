@@ -7,6 +7,8 @@ import { useToast } from "../../../contexts/ToastContext";
 import { Input, Select, Textarea, Button } from "../../../components/ui";
 import { ArrowLeft, Save, Tag, FileText, Layers } from "lucide-react";
 import { useTerminology } from "../../../hooks/useTerminology";
+import "./AdminShared.css";
+
 
 const CATEGORY_TYPES = [
   { value: "WORK", label: "Obras" },
@@ -93,7 +95,7 @@ export const AdminCategoryForm: React.FC = () => {
         <Button
           onClick={() => navigate("/admin/categorias")}
           variant="ghost"
-          className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
+          className="w-10 h-10 p-0 rounded-full bg-zinc-900/40 border border-gold/20/5 hover:bg-zinc-900/40 border border-gold/20/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
         >
           <ArrowLeft size={20} />
         </Button>
@@ -156,7 +158,7 @@ export const AdminCategoryForm: React.FC = () => {
               variant="ghost"
               type="button"
               onClick={() => navigate("/admin/categorias")}
-              className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-white/5"
+              className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-zinc-900/40 border border-gold/20/5"
               disabled={saving}
             >
               {t("common.cancel")}

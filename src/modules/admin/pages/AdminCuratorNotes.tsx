@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Plus, MessageSquare, Pin, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 interface CuratorNote {
     id: string;
@@ -177,7 +179,7 @@ export const AdminCuratorNotes: React.FC = () => {
                                 {note.work?.imageUrl ? (
                                     <img src={note.work.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />
                                 ) : (
-                                    <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+                                    <div className="w-14 h-14 rounded-xl bg-zinc-900/40 border border-gold/20/5 flex items-center justify-center shrink-0">
                                         <ImageIcon size={20} style={{ color: "#475569" }} />
                                     </div>
                                 )}
@@ -194,7 +196,7 @@ export const AdminCuratorNotes: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex gap-1 shrink-0">
-                                    <button onClick={() => onEdit(note)} className="p-2 hover:bg-white/5 rounded-lg transition-colors text-zinc-400 hover:text-white">
+                                    <button onClick={() => onEdit(note)} className="p-2 hover:bg-zinc-900/40 border border-gold/20/5 rounded-lg transition-colors text-zinc-400 hover:text-white">
                                         <Pencil size={14} />
                                     </button>
                                     <button onClick={() => onDelete(note.id)} className="p-2 hover:bg-red-500/10 rounded-lg transition-colors text-zinc-400 hover:text-red-400">

@@ -3,6 +3,8 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Heart, DollarSign, Users, Clock, Gift } from "lucide-react";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 interface DonationStats {
     totalRaised: number;
@@ -94,7 +96,7 @@ export const AdminDonations: React.FC = () => {
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {donations.map(d => (
-                                    <tr key={d.id} className="hover:bg-white/5 transition-colors">
+                                    <tr key={d.id} className="hover:bg-zinc-900/40 border border-gold/20/5 transition-colors">
                                         <td className="px-6 py-4 text-white font-bold text-sm">{d.donorName || "Anônimo"}</td>
                                         <td className="px-6 py-4 text-gray-400 text-sm italic max-w-[300px] truncate">{d.message || "—"}</td>
                                         <td className="px-6 py-4 text-green-400 font-bold">{d.amount ? `R$ ${Number(d.amount).toFixed(2).replace('.', ',')}` : "—"}</td>

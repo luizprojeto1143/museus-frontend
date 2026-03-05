@@ -3,6 +3,8 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, MapPin, Flame, Eye } from "lucide-react";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 interface HeatmapData {
     period: { days: number; since: string };
@@ -109,12 +111,12 @@ export const AdminHeatmap: React.FC = () => {
                     {data.byWork.map((work, idx) => {
                         const heat = getHeatColor(work.visits, maxVisits);
                         return (
-                            <div key={work.workId} className="px-6 py-4 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                            <div key={work.workId} className="px-6 py-4 flex items-center gap-4 hover:bg-zinc-900/40 border border-gold/20/5 transition-colors">
                                 <span className="text-zinc-300 text-xs font-bold w-6">{idx + 1}</span>
                                 {work.imageUrl ? (
                                     <img src={work.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover" />
                                 ) : (
-                                    <div className="w-10 h-10 rounded-lg bg-white/5" />
+                                    <div className="w-10 h-10 rounded-lg bg-zinc-900/40 border border-gold/20/5" />
                                 )}
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{work.title}</p>

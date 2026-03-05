@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, FileText, Download, Calendar } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminTCEExport: React.FC = () => {
     const { tenantId } = useAuth();
@@ -87,7 +89,7 @@ export const AdminTCEExport: React.FC = () => {
                             { label: 'Nota Média do Público', value: stats?.avgRating ? `${stats.avgRating.toFixed(1)}/5` : 'N/A' },
                             { label: 'Receita Registrada', value: stats?.totalRevenue ? `R$ ${stats.totalRevenue.toLocaleString("pt-BR")}` : 'R$ 0,00' }
                         ].map((row, i) => (
-                            <tr key={i} className="hover:bg-white/5">
+                            <tr key={i} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                 <td className="px-6 py-3 text-gray-300 text-sm">{row.label}</td>
                                 <td className="px-6 py-3 text-right text-white font-bold text-sm">{row.value}</td>
                             </tr>

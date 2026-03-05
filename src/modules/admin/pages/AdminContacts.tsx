@@ -2,6 +2,8 @@
 import { api } from "../../../api/client";
 import { Loader2, Mail, Eye, Archive, MessageSquare, User, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 interface ContactMessage {
     id: string;
@@ -50,9 +52,9 @@ export const AdminContacts: React.FC = () => {
         const map: Record<string, { label: string; cls: string }> = {
             NEW: { label: "Novo", cls: "bg-blue-500/10 text-blue-400" },
             READ: { label: "Lido", cls: "bg-green-500/10 text-green-400" },
-            ARCHIVED: { label: "Arquivado", cls: "bg-gray-500/10 text-gray-400" }
+            ARCHIVED: { label: "Arquivado", cls: "0/10 text-gray-400" }
         };
-        const s = map[status] || { label: status, cls: "bg-gray-500/10 text-gray-400" };
+        const s = map[status] || { label: status, cls: "0/10 text-gray-400" };
         return <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-widest ${s.cls}`}>{s.label}</span>;
     };
 

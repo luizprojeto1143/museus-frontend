@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Tag, Check, X, Search } from 'lucide-react';
 import { api } from '../../../api/client';
 import toast from 'react-hot-toast';
+import "./AdminShared.css";
+
 
 interface Coupon {
     id: string;
@@ -192,7 +194,7 @@ export function AdminCoupons() {
                                 </div>
 
                                 {/* Actions Overlay */}
-                                <div className="absolute inset-0 bg-white/95 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                <div className="absolute inset-0 bg-zinc-900/40 border border-gold/20/95 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                                     <button
                                         onClick={() => handleToggle(coupon.id, coupon.isActive)}
                                         className={`p-2 rounded-full ${coupon.isActive ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' : 'bg-green-100 text-green-600 hover:bg-green-200'}`}
@@ -221,7 +223,7 @@ export function AdminCoupons() {
                     <div className="bg-zinc-900/40 rounded-xl shadow-xl w-full max-w-md p-6 relative">
                         <button
                             onClick={() => setIsModalOpen(false)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                            className="absolute top-4 right-4 text-gray-400 hover:text-zinc-400"
                         >
                             <X className="w-6 h-6" />
                         </button>
@@ -302,7 +304,7 @@ export function AdminCoupons() {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-zinc-300 hover:bg-gray-50 rounded-lg"
+                                    className="px-4 py-2 text-zinc-300 hover: rounded-lg"
                                 >
                                     Cancelar
                                 </button>

@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, DollarSign, Plus, ExternalLink, Image as ImageIcon } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminSponsorships: React.FC = () => {
     const { tenantId } = useAuth();
@@ -84,7 +86,7 @@ export const AdminSponsorships: React.FC = () => {
                         {w.imageUrl ? (
                             <img src={w.imageUrl} alt={w.title} className="w-14 h-14 rounded-xl object-cover shrink-0" />
                         ) : (
-                            <div className="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
+                            <div className="w-14 h-14 rounded-xl bg-zinc-900/40 border border-gold/20/5 flex items-center justify-center shrink-0">
                                 <ImageIcon size={20} style={{ color: "#475569" }} />
                             </div>
                         )}
@@ -96,7 +98,7 @@ export const AdminSponsorships: React.FC = () => {
                             {w.sponsorships?.length > 0 ? (
                                 <span className="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded-md font-bold">PATROCINADO</span>
                             ) : (
-                                <span className="text-[10px] bg-white/5 text-zinc-400 px-2 py-0.5 rounded-md font-bold">DISPONÍVEL</span>
+                                <span className="text-[10px] bg-zinc-900/40 border border-gold/20/5 text-zinc-400 px-2 py-0.5 rounded-md font-bold">DISPONÍVEL</span>
                             )}
                         </div>
                     </div>

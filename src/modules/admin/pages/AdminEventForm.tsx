@@ -836,7 +836,7 @@ export const AdminEventForm: React.FC = () => {
                     <div className="flex gap-4">
                       <button
                         onClick={() => setFormData({ ...formData, status: "DRAFT" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? 'bg-gray-500/10 border-gray-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? '0/10 border-gray-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
                         <div className={`w-3 h-3 rounded-full ${formData.status === "DRAFT" ? 'bg-zinc-500' : 'bg-transparent border-2 border-zinc-600'}`}></div>
                         <div>

@@ -3,10 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import {
+
+
     Calendar, MapPin, Users, CheckCircle, XCircle,
     Printer, Download, ChevronLeft, TrendingUp, DollarSign, Star
 } from 'lucide-react';
 // import { Bar, Doughnut } from 'react-chartjs-2'; // Adding chartjs might be too heavy, let's use simple HTML/CSS bars for MVP
+import "./AdminShared.css";
 
 interface TicketBreakdown {
     name: string;
@@ -81,7 +84,7 @@ export const AdminEventReport: React.FC = () => {
     const { event, stats, survey, participants } = report;
 
     return (
-        <div className="p-8 max-w-6xl mx-auto print:p-0 print:max-w-none bg-zinc-900/60 min-h-screen print:bg-white">
+        <div className="p-8 max-w-6xl mx-auto print:p-0 print:max-w-none bg-zinc-900/60 min-h-screen print:bg-zinc-900/40 border border-gold/20">
             {/* Toolbar - Hidden on Print */}
             <div className="flex justify-between items-center mb-8 print:hidden">
                 <div className="flex items-center gap-4">
@@ -241,7 +244,7 @@ export const AdminEventReport: React.FC = () => {
                     </thead>
                     <tbody className="text-sm">
                         {participants.map((p: any) => (
-                            <tr key={p.id} className="border-b border-white/5 last:border-0 hover:bg-gray-50">
+                            <tr key={p.id} className="border-b border-white/5 last:border-0 hover:">
                                 <td className="py-3 pl-2">
                                     <div className="font-medium text-white">{p.name}</div>
                                     <div className="text-xs text-gray-400">{p.email}</div>

@@ -3,6 +3,8 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, TrendingDown, TrendingUp, AlertTriangle, Star, Lightbulb } from "lucide-react";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 interface SentimentReport {
     summary: {
@@ -132,7 +134,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {report.byWork.map(w => (
-                                <tr key={w.workId} className="hover:bg-white/5 transition-colors">
+                                <tr key={w.workId} className="hover:bg-zinc-900/40 border border-gold/20/5 transition-colors">
                                     <td className="px-6 py-3 text-white text-sm font-bold">{w.title}</td>
                                     <td className={`px-6 py-3 text-center font-black ${w.avgRating >= 4 ? 'text-green-400' : w.avgRating >= 3 ? 'text-amber-400' : 'text-red-400'}`}>{w.avgRating}</td>
                                     <td className="px-6 py-3 text-center text-gray-400 text-sm">{w.reviewCount}</td>

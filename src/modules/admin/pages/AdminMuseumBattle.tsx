@@ -2,6 +2,8 @@
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Trophy, Medal, Star, TrendingUp } from "lucide-react";
+import "./AdminShared.css";
+
 
 export const AdminMuseumBattle: React.FC = () => {
     const { tenantId } = useAuth();
@@ -66,7 +68,7 @@ export const AdminMuseumBattle: React.FC = () => {
                         {ranking.map((r: any) => {
                             const isMe = r.tenantId === tenantId;
                             return (
-                                <div key={r.tenantId} className={`px-6 py-4 flex items-center gap-4 ${isMe ? 'bg-amber-500/5' : 'hover:bg-white/5'} transition-colors`}>
+                                <div key={r.tenantId} className={`px-6 py-4 flex items-center gap-4 ${isMe ? 'bg-amber-500/5' : 'hover:bg-zinc-900/40 border border-gold/20/5'} transition-colors`}>
                                     <span className="text-2xl w-10 text-center shrink-0">
                                         {r.rank <= 3 ? medals[r.rank - 1] : <span className="text-zinc-300 text-lg font-bold">{r.rank}</span>}
                                     </span>

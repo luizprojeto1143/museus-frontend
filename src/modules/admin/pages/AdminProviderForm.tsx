@@ -6,6 +6,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Input, Button } from "../../../components/ui";
 import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle, Briefcase, FileText, CheckCircle2 } from "lucide-react";
+import "./AdminShared.css";
+
 
 const ACCESSIBILITY_SERVICES = [
     { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: "🤟" },
@@ -121,7 +123,7 @@ export const AdminProviderForm: React.FC = () => {
                 <Button
                     variant="ghost"
                     onClick={() => navigate("/admin/prestadores")}
-                    className="w-10 h-10 p-0 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
+                    className="w-10 h-10 p-0 rounded-full bg-zinc-900/40 border border-gold/20/5 hover:bg-zinc-900/40 border border-gold/20/10 text-zinc-400 hover:text-white flex items-center justify-center shrink-0 transition-colors"
                 >
                     <ArrowLeft size={20} />
                 </Button>
@@ -281,7 +283,7 @@ export const AdminProviderForm: React.FC = () => {
                             variant="ghost"
                             type="button"
                             onClick={() => navigate("/admin/prestadores")}
-                            className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-white/5"
+                            className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-zinc-900/40 border border-gold/20/5"
                             disabled={saving}
                         >
                             Cancelar

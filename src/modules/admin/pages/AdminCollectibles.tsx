@@ -4,9 +4,11 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Sparkles, Plus, Star, Zap, Crown, Diamond } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 const rarityConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
-    COMMON: { label: 'Comum', color: 'text-gray-400', bg: 'bg-gray-500/10', icon: <Star size={14} /> },
+    COMMON: { label: 'Comum', color: 'text-gray-400', bg: '0/10', icon: <Star size={14} /> },
     RARE: { label: 'Raro', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: <Zap size={14} /> },
     EPIC: { label: 'Épico', color: 'text-purple-400', bg: 'bg-purple-500/10', icon: <Crown size={14} /> },
     LEGENDARY: { label: 'Lendário', color: 'text-amber-400', bg: 'bg-amber-500/10', icon: <Diamond size={14} /> }

@@ -5,6 +5,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button, Input, Select } from "../../../components/ui";
 import { Search, Filter, Briefcase, MapPin, DollarSign, FileText, ExternalLink, Calendar, Sparkles, TrendingUp } from "lucide-react";
+import "./AdminShared.css";
+
 
 type Project = {
     id: string;
@@ -171,7 +173,7 @@ export const AdminProjects: React.FC = () => {
                             {filteredProjects.map(project => {
                                 const statusInfo = statusLabels[project.status] || { label: project.status, color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" };
                                 return (
-                                    <div key={project.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 items-center hover:bg-white/5 transition-colors group">
+                                    <div key={project.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 items-center hover:bg-zinc-900/40 border border-gold/20/5 transition-colors group">
                                         <div className="md:col-span-4">
                                             <div className="flex items-center gap-2 group-hover:text-gold transition-colors">
                                                 <div className="font-bold text-white text-lg md:text-base">
@@ -212,7 +214,7 @@ export const AdminProjects: React.FC = () => {
                                                 </div>
                                             )}
                                             {project.culturalCategory && (
-                                                <span className="inline-block text-[10px] bg-white/5 px-1.5 py-0.5 rounded text-zinc-500 border border-white/5">
+                                                <span className="inline-block text-[10px] bg-zinc-900/40 border border-gold/20/5 px-1.5 py-0.5 rounded text-zinc-500 border border-white/5">
                                                     {project.culturalCategory}
                                                 </span>
                                             )}
@@ -233,7 +235,7 @@ export const AdminProjects: React.FC = () => {
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => navigate(`/admin/projetos/${project.id}`)}
-                                                className="text-zinc-500 hover:text-white hover:bg-white/10"
+                                                className="text-zinc-500 hover:text-white hover:bg-zinc-900/40 border border-gold/20/10"
                                             >
                                                 <ExternalLink size={18} />
                                             </Button>

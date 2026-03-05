@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Instagram, Download, RefreshCw, Image as ImageIcon, Palette, Type } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 const templates = [
     { id: 'classic', name: 'Split Moderno', bg: 'linear-gradient(135deg, #1a1c22, #111827)', textColor: '#ffffff', accentColor: '#d4af37' },
@@ -286,7 +288,7 @@ export const AdminInstagramCard: React.FC = () => {
                             <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Template</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {templates.map(t => (
-                                    <button key={t.id} onClick={() => setTemplate(t)} className={`p-3 rounded-xl border text-sm font-bold text-left transition-all ${template.id === t.id ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-white/10 text-gray-400 hover:bg-white/5'}`}>
+                                    <button key={t.id} onClick={() => setTemplate(t)} className={`p-3 rounded-xl border text-sm font-bold text-left transition-all ${template.id === t.id ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-white/10 text-gray-400 hover:bg-zinc-900/40 border border-gold/20/5'}`}>
                                         <div className="w-full h-4 rounded mb-2" style={{ background: t.bg }} />
                                         {t.name}
                                     </button>

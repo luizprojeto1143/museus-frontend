@@ -6,6 +6,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { useTerminology } from "../../../hooks/useTerminology";
 import { Button, Input } from "../../../components/ui";
 import { Calendar, Clock, MapPin, Search, Plus, Filter, MoreVertical, Edit, BarChart2 } from "lucide-react";
+import "./AdminShared.css";
+
 
 type AdminEventItem = {
   id: string;
@@ -109,7 +111,7 @@ export const AdminEvents: React.FC = () => {
             className="pl-10 bg-zinc-900/50 border-white/5 text-white focus:border-gold/30"
           />
         </div>
-        <Button variant="outline" className="border-white/10 text-zinc-400 hover:bg-white/5 hover:text-white">
+        <Button variant="outline" className="border-white/10 text-zinc-400 hover:bg-zinc-900/40 border border-gold/20/5 hover:text-white">
           <Filter size={18} className="mr-2" /> Filtros
         </Button>
       </div>

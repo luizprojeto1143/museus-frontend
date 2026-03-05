@@ -4,8 +4,10 @@ import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import {
     Plus, Trash2, Save, ArrowDown, ArrowUp,
+    CheckCircle2, AlertCircle, Copy, Check,
     Star, Type, List, CheckSquare, MessageSquare, ChevronLeft
 } from 'lucide-react';
+import "./AdminShared.css";
 
 interface SurveyQuestion {
     id?: string;
@@ -211,7 +213,7 @@ export const AdminEventSurvey: React.FC = () => {
                         ))}
 
                         <div className="flex justify-between items-center pt-4 border-t border-white/5">
-                            <button onClick={addQuestion} className="btn border border-dashed border-gray-300 text-zinc-300 hover:bg-gray-50">
+                            <button onClick={addQuestion} className="btn border border-dashed border-zinc-700 text-zinc-300 hover:">
                                 <Plus className="w-4 h-4 mr-2" /> Adicionar Pergunta
                             </button>
 

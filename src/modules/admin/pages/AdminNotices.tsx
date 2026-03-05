@@ -5,6 +5,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button, Input } from "../../../components/ui";
 import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2, CheckCircle, Users } from "lucide-react";
+import "./AdminShared.css";
+
 
 type Notice = {
     id: string;
@@ -248,14 +250,14 @@ export const AdminNotices: React.FC = () => {
                                             )}
                                             <Button
                                                 variant="ghost"
-                                                className="btn-ghost w-full md:w-auto justify-center hover:bg-white/5 border border-transparent hover:border-white/10"
+                                                className="btn-ghost w-full md:w-auto justify-center hover:bg-zinc-900/40 border border-gold/20/5 border border-transparent hover:border-white/10"
                                                 onClick={() => navigate(`/admin/editais/${notice.id}/projetos`)}
                                             >
                                                 <Users size={16} className="mr-2" /> Projetos
                                             </Button>
                                             <Button
                                                 variant="ghost"
-                                                className="btn-ghost w-full md:w-auto justify-center hover:bg-white/5 border border-transparent hover:border-white/10"
+                                                className="btn-ghost w-full md:w-auto justify-center hover:bg-zinc-900/40 border border-gold/20/5 border border-transparent hover:border-white/10"
                                                 onClick={() => navigate(`/admin/editais/${notice.id}`)}
                                             >
                                                 <Edit size={16} className="mr-2" /> Gerenciar

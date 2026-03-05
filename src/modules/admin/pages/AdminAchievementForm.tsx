@@ -295,7 +295,7 @@ export const AdminAchievementForm: React.FC = () => {
                   />
 
                   <div className="mt-6 flex items-center gap-4">
-                    <label className="flex items-center gap-3 cursor-pointer group p-4 border border-white/10 rounded-xl bg-white/5 hover:bg-white/10 transition-all w-fit">
+                    <label className="flex items-center gap-3 cursor-pointer group p-4 border border-white/10 rounded-xl bg-zinc-900/40 border border-gold/20/5 hover:bg-zinc-900/40 border border-gold/20/10 transition-all w-fit">
                       <div className={`
                           w-5 h-5 rounded border flex items-center justify-center transition-colors
                           ${form.active ? 'bg-gold border-gold' : 'border-zinc-600 group-hover:border-zinc-500'}
@@ -471,7 +471,7 @@ export const AdminAchievementForm: React.FC = () => {
                     </div>
                     <h4 className="text-lg font-bold text-white">{form.title || "Título da Conquista"}</h4>
                     <p className="text-sm text-zinc-400 mt-1 max-w-[200px]">{form.description || "Descrição da conquista..."}</p>
-                    <div className="mt-3 px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-gold border border-gold/20">
+                    <div className="mt-3 px-3 py-1 bg-zinc-900/40 border border-gold/20/5 rounded-full text-xs font-bold text-gold border border-gold/20">
                       +{form.xpReward} XP
                     </div>
                   </div>

@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Mail, Users, Download, Calendar } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 interface Subscriber {
     id: string;
@@ -93,7 +95,7 @@ export const AdminNewsletter: React.FC = () => {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {subscribers.map((s, idx) => (
-                                <tr key={s.id} className="hover:bg-white/5 transition-colors">
+                                <tr key={s.id} className="hover:bg-zinc-900/40 border border-gold/20/5 transition-colors">
                                     <td className="px-6 py-4 text-zinc-300 text-xs">{idx + 1}</td>
                                     <td className="px-6 py-4">
                                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>

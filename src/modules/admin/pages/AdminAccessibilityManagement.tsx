@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import "./AdminShared.css";
+
 
 type Execution = {
     id: string;
@@ -206,7 +208,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                 <tr key={req.id}>
                                     <td className="font-bold text-white">{req.work?.title || "Obra removida"}</td>
                                     <td>
-                                        <span className="text-xs font-mono bg-white/5 px-2 py-1 rounded">
+                                        <span className="text-xs font-mono bg-zinc-900/40 border border-gold/20/5 px-2 py-1 rounded">
                                             {req.type === 'BOTH' ? 'LIBRAS + ÁUDIO' : req.type}
                                         </span>
                                     </td>

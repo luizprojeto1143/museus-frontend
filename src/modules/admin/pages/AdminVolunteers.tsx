@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Heart, Plus, Clock, CheckCircle } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminVolunteers: React.FC = () => {
     const { tenantId } = useAuth();
@@ -73,10 +75,10 @@ export const AdminVolunteers: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {volunteers.map((v: any) => (
-                            <tr key={v.id} className="hover:bg-white/5">
+                            <tr key={v.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                 <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{v.name}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{v.email}</p></td>
                                 <td className="px-6 py-3 text-gray-300 text-sm">{v.availability || '—'}</td>
-                                <td className="px-6 py-3"><div className="flex gap-1 flex-wrap">{(v.skills || []).map((s: string, i: number) => <span key={i} className="text-[10px] bg-white/5 text-gray-400 px-1.5 py-0.5 rounded">{s}</span>)}</div></td>
+                                <td className="px-6 py-3"><div className="flex gap-1 flex-wrap">{(v.skills || []).map((s: string, i: number) => <span key={i} className="text-[10px] bg-zinc-900/40 border border-gold/20/5 text-gray-400 px-1.5 py-0.5 rounded">{s}</span>)}</div></td>
                                 <td className="px-6 py-3 text-center text-amber-400 font-bold"><Clock size={12} style={{ display: "inline", marginRight: "0.25rem" }} />{v.totalHours || 0}h</td>
                                 <td className="px-6 py-3 text-center text-gray-400">{v._count?.shifts || 0}</td>
                             </tr>

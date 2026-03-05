@@ -3,6 +3,8 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Calendar, MapPin, Clock, Users, ExternalLink } from "lucide-react";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminMunicipalCalendar: React.FC = () => {
     const { tenantId } = useAuth();
@@ -87,7 +89,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
                                             <p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.title}</p>
                                             <div className="flex items-center gap-3 text-xs text-zinc-400 mt-0.5">
                                                 {e.location && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><MapPin size={10} />{e.location}</span>}
-                                                {e.type && <span className="text-[10px] bg-white/5 px-1.5 py-0.5 rounded">{e.type}</span>}
+                                                {e.type && <span className="text-[10px] bg-zinc-900/40 border border-gold/20/5 px-1.5 py-0.5 rounded">{e.type}</span>}
                                                 {e.maxCapacity && <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><Users size={10} />{e.maxCapacity}</span>}
                                             </div>
                                         </div>

@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Wrench, Plus, ArrowLeftRight, AlertTriangle, CheckCircle } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminConservation: React.FC = () => {
     const { tenantId } = useAuth();
@@ -57,10 +59,10 @@ export const AdminConservation: React.FC = () => {
             </div>
 
             <div style={{ display: "flex", gap: "0.5rem" }}>
-                <button onClick={() => setTab('conservation')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'conservation' ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-400'}`}>
+                <button onClick={() => setTab('conservation')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'conservation' ? 'bg-amber-500 text-black' : 'bg-zinc-900/40 border border-gold/20/5 text-gray-400'}`}>
                     <Wrench size={14} style={{ display: "inline", marginRight: "0.25rem" }} /> Conservação ({records.length})
                 </button>
-                <button onClick={() => setTab('loans')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'loans' ? 'bg-amber-500 text-black' : 'bg-white/5 text-gray-400'}`}>
+                <button onClick={() => setTab('loans')} className={`px-4 py-2 rounded-full text-xs font-bold ${tab === 'loans' ? 'bg-amber-500 text-black' : 'bg-zinc-900/40 border border-gold/20/5 text-gray-400'}`}>
                     <ArrowLeftRight size={14} style={{ display: "inline", marginRight: "0.25rem" }} /> Empréstimos ({loans.length})
                 </button>
             </div>

@@ -9,6 +9,7 @@ import {
     ExternalLink, MapPin, DollarSign, CheckCircle2, Download, Share, CheckCircle,
     Filter, SortAsc, SortDesc, TrendingUp
 } from "lucide-react";
+import "./AdminShared.css";
 
 type Project = {
     id: string;
@@ -140,7 +141,7 @@ export const AdminNoticeProjects: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div className="flex items-start gap-4">
-                    <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="mt-1 p-1 hover:bg-white/5">
+                    <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="mt-1 p-1 hover:bg-zinc-900/40 border border-gold/20/5">
                         <ArrowLeft size={24} className="text-zinc-500" />
                     </Button>
                     <div>
@@ -244,7 +245,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                 : null;
 
                             return (
-                                <div key={project.id} className="media-card group hover:border-gold/30 hover:bg-white/[0.02] transition-all p-5">
+                                <div key={project.id} className="media-card group hover:border-gold/30 hover:bg-zinc-900/40 border border-gold/20/[0.02] transition-all p-5">
                                     <div className="flex flex-col md:flex-row gap-6">
                                         {/* Score Side */}
                                         <div className="flex md:flex-col items-center justify-center gap-2 border-b md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6 min-w-[100px]">

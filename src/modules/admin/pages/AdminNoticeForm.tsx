@@ -283,7 +283,7 @@ export const AdminNoticeForm: React.FC = () => {
             <div className="mb-12 px-2 md:px-0">
                 <div className="relative w-full">
                     {/* Background Line */}
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-white/5 -z-10 rounded-full transform -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-zinc-900/40 border border-gold/20/5 -z-10 rounded-full transform -translate-y-1/2" />
 
                     {/* Active Progress Line */}
                     <div

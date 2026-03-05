@@ -3,6 +3,8 @@ import { Bell, Send, Loader2, Smartphone, Globe, Info } from "lucide-react";
 import { api } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminNotifications: React.FC = () => {
     const [title, setTitle] = useState("");
@@ -139,7 +141,7 @@ export const AdminNotifications: React.FC = () => {
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                             <Globe className="text-amber-500" size={20} /> Prévia (Web/Android)
                         </h3>
-                        <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10 max-w-xs mx-auto">
+                        <div className="bg-zinc-900/40 border border-gold/20/10 backdrop-blur-md rounded-xl p-4 border border-white/10 max-w-xs mx-auto">
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="w-5 h-5 bg-amber-500 rounded flex items-center justify-center text-[10px] font-bold">M</div>
                                 <span className="text-[10px] opacity-70">Museus Platform • Agora</span>

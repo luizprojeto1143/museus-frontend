@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { Users, DollarSign, Calendar, Eye, Settings, QrCode, Printer, CheckSquare } from 'lucide-react';
+import "./AdminShared.css";
+
 
 interface EventData {
     id: string;
@@ -76,13 +78,13 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex gap-3">
-                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover:bg-gray-50 flex items-center gap-2 px-4 py-2 rounded-lg">
+                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover: flex items-center gap-2 px-4 py-2 rounded-lg">
                         <Printer className="w-4 h-4" /> Relatório
                     </Link>
                     <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-zinc-900/40 border border-white/10 text-blue-600 hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
                         <CheckSquare className="w-4 h-4" /> Pesquisa
                     </Link>
-                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-zinc-800/50 rounded-lg hover:bg-white/10 transition-colors">
+                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-zinc-800/50 rounded-lg hover:bg-zinc-900/40 border border-gold/20/10 transition-colors">
                         <QrCode className="w-4 h-4" /> Check-in
                     </Link>
                     <Link to={`/admin/eventos/${id}`} className="btn flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">
@@ -160,7 +162,7 @@ export const AdminEventDashboard: React.FC = () => {
                         ) : (
                             <div className="divide-y divide-white/5">
                                 {stats.recentRegistrations.map((reg: any) => (
-                                    <div key={reg.id} className="p-4 flex justify-between items-center hover:bg-gray-50">
+                                    <div key={reg.id} className="p-4 flex justify-between items-center hover:">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
                                                 {reg.guestName?.charAt(0) || reg.visitor?.name?.charAt(0) || "?"}

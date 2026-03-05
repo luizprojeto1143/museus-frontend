@@ -4,6 +4,8 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Crown, Users, TrendingUp, Plus, CreditCard } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import "./AdminShared.css";
+
 
 export const AdminMemberships: React.FC = () => {
     const { tenantId } = useAuth();
@@ -112,7 +114,7 @@ export const AdminMemberships: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {members.map((m: any) => (
-                            <tr key={m.id} className="hover:bg-white/5">
+                            <tr key={m.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                 <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{m.visitorName}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{m.visitorEmail}</p></td>
                                 <td className="px-6 py-3 text-gray-300 text-sm">{m.plan?.name || '—'}</td>
                                 <td className="px-6 py-3"><span className={`text-[10px] px-2 py-0.5 rounded-md font-bold ${m.status === 'ACTIVE' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>{m.status}</span></td>
