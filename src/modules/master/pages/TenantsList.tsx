@@ -18,28 +18,20 @@ export const TenantsList: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [apiTenants, setApiTenants] = useState<TenantItem[]>([]);
-
-  const mock: TenantItem[] = [
-    { id: "1", name: "Museu A", slug: "museu-a", createdAt: "2025-01-01" },
-    { id: "2", name: "Cidade histórica B", slug: "cidade-b", createdAt: "2025-01-15" }
-  ];
-
-  const tenants = isDemoMode ? mock : apiTenants;
+  const [tenants, setTenants] = useState<TenantItem[]>([]);
 
   useEffect(() => {
-    if (isDemoMode) return;
 
     api
       .get("/tenants")
       .then((res) => {
         const data = Array.isArray(res.data) ? res.data : [];
-        setApiTenants(data);
+        setTenants(data);
       })
       .catch((err) => {
         console.error("Erro ao carregar museus:", err);
         addToast(t("common.errorLoad"), "error");
-        setApiTenants([]);
+        setTenants([]);
       });
   }, [t, addToast]);
 
@@ -48,7 +40,7 @@ export const TenantsList: React.FC = () => {
 
     try {
       await api.delete(`/tenants/${id}`);
-      setApiTenants(prev => prev.filter(x => x.id !== id));
+      setTenants(prev => prev.filter(x => x.id !== id));
       addToast("Museu deletado com sucesso.", "success");
     } catch (err) {
       console.error(err);
@@ -63,7 +55,7 @@ export const TenantsList: React.FC = () => {
       await api.delete("/tenants/utils/demo");
       const res = await api.get("/tenants");
       const data = Array.isArray(res.data) ? res.data : [];
-      setApiTenants(data);
+      setTenants(data);
       addToast("Dados de demonstração limpos.", "success");
     } catch (err) {
       console.error(err);

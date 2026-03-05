@@ -5,8 +5,9 @@ import { Helmet } from "react-helmet-async";
 import { api, isDemoMode } from "../../../api/client";
 import {
   MapPin, Calendar, Share2,
-  User, CheckCircle, Video, ArrowLeft, Loader2, X, Ticket as TicketIcon, Info
+  User, CheckCircle, Video, ArrowLeft, Loader2, X, Ticket as TicketIcon, Info, Star
 } from "lucide-react";
+import { useAuth } from "../../auth/AuthContext";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { getFullUrl } from "../../../utils/url";
 import { Button, Input, Select, Textarea } from "../../../components/ui";
@@ -63,8 +64,10 @@ export const EventDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { isGuest } = useAuth();
 
   const [event, setEvent] = useState<EventDetailType | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [attendance, setAttendance] = useState<{ attended: boolean; attendance?: unknown } | null>(null);
@@ -75,17 +78,6 @@ export const EventDetail: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const fetchEventData = useCallback(async () => {
-    if (isDemoMode) {
-      setEvent({
-        id: "1", title: "Oficina de Aquarela",
-        description: "Aprenda técnicas fundamentais de aquarela, desde a mistura de cores até o controle da água. Material incluído. Venha explorar sua criatividade em um ambiente inspirador.",
-        location: "Atelier 1", startDate: new Date().toISOString(),
-        isOnline: false, coverImageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f"
-      });
-      setLoading(false);
-      return;
-    }
-
     if (id) {
       setLoading(true);
       try {
@@ -121,6 +113,32 @@ export const EventDetail: React.FC = () => {
   useEffect(() => {
     fetchEventData();
   }, [fetchEventData]);
+
+  useEffect(() => {
+    if (!id || isGuest) return;
+    api.get(`/favorites/check?type=event&id=${id}`)
+      .then(res => setIsFavorite(res.data.isFavorite))
+      .catch(err => console.error("Error checking favorite status", err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isGuest]);
+
+  const toggleFavorite = async () => {
+    if (isGuest) {
+      addToast(t("visitor.favorites.loginRequired", "Crie uma conta para salvar favoritos!"), "info");
+      return;
+    }
+    try {
+      if (isFavorite) {
+        await api.delete(`/favorites/event/${id}`);
+        setIsFavorite(false);
+      } else {
+        await api.post('/favorites', { type: 'event', itemId: id });
+        setIsFavorite(true);
+      }
+    } catch (err) {
+      console.error("Erro ao favoritar", err);
+    }
+  };
 
   const [paymentData, setPaymentData] = useState<{ pixQrCode?: string; pixPayload?: string; invoiceUrl?: string } | null>(null);
 
@@ -203,12 +221,22 @@ export const EventDetail: React.FC = () => {
           {/* Header Info */}
           <div className="event-header">
             <div>
-              <span className={`event-type-badge ${event.isOnline ? 'online' : 'presencial'}`}>
-                {event.isOnline ? "Evento Online" : (
-                  event.type === 'WORKSHOP' ? "Oficina Presencial" :
-                    event.type === 'EXHIBITION' ? "Exposição" : "Presencial"
-                )}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className={`event-type-badge ${event.isOnline ? 'online' : 'presencial'}`}>
+                  {event.isOnline ? "Evento Online" : (
+                    event.type === 'WORKSHOP' ? "Oficina Presencial" :
+                      event.type === 'EXHIBITION' ? "Exposição" : "Presencial"
+                  )}
+                </span>
+
+                <button
+                  onClick={toggleFavorite}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                  title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                >
+                  <Star size={18} fill={isFavorite ? "#d4af37" : "none"} color={isFavorite ? "#d4af37" : "white"} />
+                </button>
+              </div>
               <h1 className="event-title text-4xl md:text-5xl font-black mt-4">{event.title}</h1>
               {event.producerName && (
                 <p className="event-producer text-blue-400 mt-2 font-medium">
