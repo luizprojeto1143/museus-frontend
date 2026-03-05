@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { CheckCircle, AlertTriangle } from "lucide-react";
 import "./QrVisit.css";
@@ -30,19 +30,6 @@ export const QrVisit: React.FC = () => {
 
   useEffect(() => {
     if (!code) return;
-    if (isDemoMode) {
-      setData({
-        id: "demo",
-        code,
-        type: "WORK",
-        referenceId: "demo-work-1",
-        title: t("visitor.qr.demoTitle"),
-        xpReward: 10,
-        tenantId: "demo-tenant"
-      });
-      setLoading(false);
-      return;
-    }
 
     async function load() {
       try {

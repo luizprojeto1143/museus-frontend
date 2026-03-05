@@ -17,43 +17,15 @@ type TenantSummary = {
 
 export const MasterDashboard: React.FC = () => {
   const { t } = useTranslation();
-  const [apiSummaries, setApiSummaries] = useState<TenantSummary[]>([]);
-  const [loading, setLoading] = useState(!isDemoMode);
-
-  const mock: TenantSummary[] = [
-    {
-      tenantId: "1",
-      name: "Museu A",
-      slug: "museu-a",
-      worksCount: 40,
-      trailsCount: 4,
-      eventsCount: 6,
-      visitorsCount: 1200,
-      visitsCount: 3200
-    },
-    {
-      tenantId: "2",
-      name: "Cidade histórica B",
-      slug: "cidade-b",
-      worksCount: 28,
-      trailsCount: 3,
-      eventsCount: 4,
-      visitorsCount: 800,
-      visitsCount: 2100
-    }
-  ];
-
-  const summaries = isDemoMode ? mock : apiSummaries;
+  const [summaries, setSummaries] = useState<TenantSummary[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isDemoMode) {
-      return;
-    }
 
     api
       .get("/analytics/tenants-summary")
       .then((res) => {
-        setApiSummaries(res.data as TenantSummary[]);
+        setSummaries(res.data as TenantSummary[]);
       })
       .catch((err) => {
         console.error("Erro ao buscar analytics de tenants", err);
