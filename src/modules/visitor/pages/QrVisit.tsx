@@ -48,10 +48,6 @@ export const QrVisit: React.FC = () => {
 
   async function handleRegisterAndOpen() {
     if (!data) return;
-    if (isDemoMode) {
-      setFeedback(t("visitor.qr.successDemo", { xp: data.xpReward }));
-      return;
-    }
 
     setRegistering(true);
     setFeedback(null);
