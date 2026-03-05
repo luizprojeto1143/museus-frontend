@@ -382,9 +382,9 @@ export const AdminWorkForm: React.FC = () => {
                 <div className="admin-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div style={{ flex: 1 }}>
                     <Input
-                      label="🔢 Código do Discador"
+                      label="🔢 Código do Discador (Apenas Números)"
                       value={code}
-                      onChange={e => setCode(e.target.value)}
+                      onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
                       placeholder="Ex: 101"
                       style={{ fontSize: '1.5rem', textAlign: 'center', letterSpacing: '0.2em' }}
                     />
@@ -403,17 +403,50 @@ export const AdminWorkForm: React.FC = () => {
                         variant="ghost"
                         leftIcon={<Upload size={16} style={{ transform: 'rotate(180deg)' }} />}
                         onClick={() => {
-                          const canvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
-                          if (canvas) {
+                          const originalCanvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
+                          if (originalCanvas) {
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
+                            if (!ctx) return;
+
+                            const padding = 40;
+                            const bottomTextHeight = 60;
+                            canvas.width = originalCanvas.width + (padding * 2);
+                            canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
+
+                            // Background
+                            ctx.fillStyle = "#ffffff";
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                            // Premium Gold/Purple Border
+                            ctx.strokeStyle = "#c084fc"; // light purple
+                            ctx.lineWidth = 10;
+                            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+                            ctx.strokeStyle = "#fbbf24"; // gold inner border
+                            ctx.lineWidth = 2;
+                            ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+                            // Draw QR Code
+                            ctx.drawImage(originalCanvas, padding, padding);
+
+                            // Draw Text
+                            ctx.fillStyle = "#1f2937";
+                            ctx.font = "bold 28px 'Inter', sans-serif";
+                            ctx.textAlign = "center";
+                            ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, canvas.height - 35);
+                            ctx.font = "normal 14px 'Inter', sans-serif";
+                            ctx.fillStyle = "#6b7280";
+                            ctx.fillText("Escaneie o QR ou digite o código no app", canvas.width / 2, canvas.height - 15);
+
                             const url = canvas.toDataURL("image/png");
                             const a = document.createElement("a");
                             a.href = url;
-                            a.download = `qrcode-${code}.png`;
+                            a.download = `qrcode-moldura-${code}.png`;
                             a.click();
                           }
                         }}
                       >
-                        Baixar QR Code
+                        Baixar QR Code com Moldura
                       </Button>
                     </div>
                   )}

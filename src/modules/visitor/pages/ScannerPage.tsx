@@ -52,9 +52,17 @@ export const ScannerPage: React.FC = () => {
                 }
             );
             setIsScanning(true);
-        } catch (err) {
+        } catch (err: any) {
             console.error("Error starting scanner", err);
-            setError("Não foi possível acessar a câmera. Verifique se você permitiu o acesso.");
+            let errMsg = "Não foi possível acessar a câmera. Verifique se você permitiu o acesso.";
+            if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+                errMsg = "⚠️ O leitor de QR Code exige uma conexão segura (HTTPS). Se você estiver usando um celular, o navegador bloqueia a câmera em conexões HTTP normais.";
+            } else if (err?.name === "NotAllowedError" || err?.message?.includes("Permission")) {
+                errMsg = "Acesso à câmera foi negado. Por favor, libere a permissão nas configurações do seu navegador e recarregue a página.";
+            } else if (err?.name === "NotFoundError" || err?.message?.includes("device")) {
+                errMsg = "Nenhuma câmera foi encontrada no seu dispositivo.";
+            }
+            setError(errMsg);
             addToast("Erro ao acessar câmera", "error");
             setIsScanning(false);
         }

@@ -58,7 +58,7 @@ export const DialerModal: React.FC<DialerModalProps> = ({ isOpen, onClose }) => 
             const data = await res.json();
 
             // Verificar se pertence ao tenant atual (opcional, mas bom para segurança)
-            if (data.tenantId !== tenantId) {
+            if (tenantId && data.tenantId !== tenantId) {
                 throw new Error(t("visitor.dialer.invalidTenant", "Código de outro museu"));
             }
 
