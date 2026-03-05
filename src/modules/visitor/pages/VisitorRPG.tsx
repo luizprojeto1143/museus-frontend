@@ -3,6 +3,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Sword, Shield, Trophy, Star, Sparkles, User } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const classConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
     NOVATO: { label: 'Novato', color: '#9ca3af', bg: 'rgba(156,163,175,0.1)', icon: <User size={20} /> },
@@ -12,6 +13,8 @@ const classConfig: Record<string, { label: string; color: string; bg: string; ic
 };
 
 export const VisitorRPG: React.FC = () => {
+    const { isGuest } = useAuth();
+    const navigate = useNavigate();
     const [rpg, setRpg] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
@@ -39,6 +42,17 @@ export const VisitorRPG: React.FC = () => {
     };
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+
+    if (isGuest) {
+        return (
+            <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
+                <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
+                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para evoluir seu avatar, ganhar níveis e desbloquear novos títulos do museu!</p>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+            </div>
+        );
+    }
+
     if (!rpg) return null;
 
     const cls = classConfig[rpg.characterClass] || classConfig.NOVATO;

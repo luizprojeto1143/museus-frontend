@@ -3,6 +3,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Sparkles, Star, Zap, Crown, Diamond, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const rarityConfig: Record<string, { label: string; color: string; gradient: string; icon: React.ReactNode }> = {
     COMMON: { label: 'Comum', color: '#9ca3af', gradient: 'linear-gradient(135deg, #374151, #1f2937)', icon: <Star size={14} /> },
@@ -12,7 +13,8 @@ const rarityConfig: Record<string, { label: string; color: string; gradient: str
 };
 
 export const VisitorCollectibles: React.FC = () => {
-    const { tenantId } = useAuth();
+    const { tenantId, isGuest } = useAuth();
+    const navigate = useNavigate();
     const [allCards, setAllCards] = useState<any[]>([]);
     const [myCards, setMyCards] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -38,6 +40,16 @@ export const VisitorCollectibles: React.FC = () => {
     const pct = totalCards > 0 ? Math.round((ownedCount / totalCards) * 100) : 0;
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+
+    if (isGuest) {
+        return (
+            <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
+                <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
+                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para colecionar cards, interagir com o museu e ganhar recompensas virtuais!</p>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+            </div>
+        );
+    }
 
     return (
         <div style={{ padding: '1.5rem' }}>

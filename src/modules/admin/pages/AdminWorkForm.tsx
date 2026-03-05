@@ -410,7 +410,7 @@ export const AdminWorkForm: React.FC = () => {
                             if (!ctx) return;
 
                             const padding = 40;
-                            const bottomTextHeight = 60;
+                            const bottomTextHeight = 80;
                             canvas.width = originalCanvas.width + (padding * 2);
                             canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
 
@@ -433,10 +433,10 @@ export const AdminWorkForm: React.FC = () => {
                             ctx.fillStyle = "#1f2937";
                             ctx.font = "bold 28px 'Inter', sans-serif";
                             ctx.textAlign = "center";
-                            ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, canvas.height - 35);
+                            ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, canvas.height - 55);
                             ctx.font = "normal 14px 'Inter', sans-serif";
                             ctx.fillStyle = "#6b7280";
-                            ctx.fillText("Escaneie o QR ou digite o código no app", canvas.width / 2, canvas.height - 15);
+                            ctx.fillText("Escaneie ou digite no app", canvas.width / 2, canvas.height - 25);
 
                             const url = canvas.toDataURL("image/png");
                             const a = document.createElement("a");

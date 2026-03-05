@@ -3,9 +3,11 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Crown, Check, Star, ShieldCheck } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const VisitorMembership: React.FC = () => {
-    const { tenantId, email, name } = useAuth();
+    const { tenantId, email, name, isGuest } = useAuth();
+    const navigate = useNavigate();
     const [plans, setPlans] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [subscribing, setSubscribing] = useState<string | null>(null);
@@ -32,6 +34,16 @@ export const VisitorMembership: React.FC = () => {
     };
 
     if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+
+    if (isGuest) {
+        return (
+            <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
+                <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
+                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para se tornar membro do museu e garantir benefícios exclusivos!</p>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+            </div>
+        );
+    }
 
     return (
         <div className="membership-page" style={{ padding: '1.5rem', maxWidth: '800px', margin: '0 auto' }}>
