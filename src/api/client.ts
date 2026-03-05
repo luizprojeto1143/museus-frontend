@@ -42,6 +42,21 @@ interface StoredAuth {
   name: string | null;
 }
 
+// Variables for Refresh Token Race Condition Fix
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+// Helper to push requests to queue while refreshing
+const subscribeTokenRefresh = (cb: (token: string) => void) => {
+  refreshSubscribers.push(cb);
+};
+
+// Helper to resolve all pending requests
+const onRerefreshed = (token: string) => {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+};
+
 // Global Error Handler for API & Token Refresh Logic
 api.interceptors.response.use(
   (response) => response,
@@ -50,7 +65,18 @@ api.interceptors.response.use(
 
     // Se erro for 401 e ainda não tentamos retry
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Queue the request until refresh is done
+        return new Promise(resolve => {
+          subscribeTokenRefresh((newToken: string) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(api(originalRequest));
+          });
+        });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const raw = window.localStorage.getItem("museus_auth_v1");
@@ -75,6 +101,10 @@ api.interceptors.response.use(
           };
           window.localStorage.setItem("museus_auth_v1", JSON.stringify(updatedStorage));
 
+          // Resume blocked requests
+          isRefreshing = false;
+          onRerefreshed(accessToken);
+
           // Atualizar Header da requisição original
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
@@ -83,10 +113,13 @@ api.interceptors.response.use(
         }
       } catch (refreshError) {
         console.error("Session expired or refresh failed", refreshError);
-        // Logout forçado
+        isRefreshing = false;
+        refreshSubscribers = []; // clear queue
+        // Logout forçado só se realmente for um erro de renew
         window.localStorage.removeItem("museus_auth_v1");
         // Opcional: Redirecionar para login
         window.location.href = "/login";
+        return Promise.reject(refreshError);
       }
     }
 

@@ -416,11 +416,11 @@ export const AdminWorkForm: React.FC = () => {
                             canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
 
                             // Background
-                            ctx.fillStyle = "#ffffff";
+                            ctx.fillStyle = "#0f172a"; // dark premium background
                             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                            // Premium Gold/Purple Border
-                            ctx.strokeStyle = "#c084fc"; // light purple
+                            // Premium Gold/Dark Border
+                            ctx.strokeStyle = "#1e293b"; // slate-800 outer border
                             ctx.lineWidth = 10;
                             ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
                             ctx.strokeStyle = "#fbbf24"; // gold inner border
@@ -429,15 +429,18 @@ export const AdminWorkForm: React.FC = () => {
 
                             // Draw QR Code
                             const qrX = (canvas.width - originalCanvas.width) / 2;
+                            // Preencher um quadrado branco para garantir opacidade do QR se original for transparente
+                            ctx.fillStyle = "#ffffff";
+                            ctx.fillRect(qrX - 5, padding - 5, originalCanvas.width + 10, originalCanvas.height + 10);
                             ctx.drawImage(originalCanvas, qrX, padding);
 
                             // Draw Text
-                            ctx.fillStyle = "#1f2937";
+                            ctx.fillStyle = "#f8fafc"; // white text
                             ctx.font = "bold 32px 'Inter', sans-serif";
                             ctx.textAlign = "center";
                             ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, originalCanvas.height + padding + 40);
                             ctx.font = "normal 14px 'Inter', sans-serif";
-                            ctx.fillStyle = "#6b7280";
+                            ctx.fillStyle = "#94a3b8"; // slate-400
                             ctx.fillText("Escaneie ou digite no app", canvas.width / 2, originalCanvas.height + padding + 75);
 
                             const url = canvas.toDataURL("image/png");
