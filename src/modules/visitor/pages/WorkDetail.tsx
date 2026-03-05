@@ -38,7 +38,7 @@ type WorkDetailData = {
 export const WorkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tenantId, email } = useAuth();
+  const { tenantId, email, isGuest } = useAuth();
   const { t, i18n } = useTranslation();
 
   const [relatedWorks, setRelatedWorks] = useState<WorkDetailData[]>([]);
@@ -85,11 +85,12 @@ export const WorkDetail: React.FC = () => {
   }
 
   useEffect(() => {
-    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    const fav = favorites.some((f: { id: string; type: string }) => f.id === id && f.type === "work");
-    if (fav !== isFavorite) setIsFavorite(fav);
+    if (!id || isGuest) return;
+    api.get(`/favorites/check?type=work&id=${id}`)
+      .then(res => setIsFavorite(res.data.isFavorite))
+      .catch(err => console.error("Error checking favorite status", err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, isGuest]);
 
   useEffect(() => {
     if (!id) return;
@@ -166,23 +167,22 @@ export const WorkDetail: React.FC = () => {
     }
   }, [tenantId, id, email]);
 
-  const toggleFavorite = () => {
-    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+  const toggleFavorite = async () => {
+    if (isGuest) {
+      alert(t("visitor.favorites.loginRequired", "Crie uma conta para salvar favoritos na nuvem."));
+      return;
+    }
 
-    if (isFavorite) {
-      const updated = favorites.filter((f: { id: string; type: string }) => !(f.id === id && f.type === "work"));
-      localStorage.setItem("favorites", JSON.stringify(updated));
-      setIsFavorite(false);
-    } else {
-      favorites.push({
-        id: work?.id,
-        type: "work",
-        title: work?.title,
-        artist: work?.artist,
-        imageUrl: work?.imageUrl
-      });
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-      setIsFavorite(true);
+    try {
+      if (isFavorite) {
+        await api.delete(`/favorites/work/${id}`);
+        setIsFavorite(false);
+      } else {
+        await api.post('/favorites', { type: "work", itemId: id });
+        setIsFavorite(true);
+      }
+    } catch (err) {
+      console.error("Erro ao favoritar", err);
     }
   };
 

@@ -5,6 +5,8 @@ import { api, isDemoMode } from "../../../api/client";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { VideoPlayer } from "../../../components/common/VideoPlayer";
 import { getFullUrl } from "../../../utils/url";
+import { Star } from "lucide-react";
+import { useAuth } from "../../auth/AuthContext";
 import "./Trails.css";
 
 type TrailDetailData = {
@@ -21,27 +23,23 @@ type TrailDetailData = {
 export const TrailDetail: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  const { isGuest } = useAuth();
 
   const [apiTrail, setApiTrail] = useState<TrailDetailData | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [apiLoading, setApiLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const mock: TrailDetailData = React.useMemo(() => ({
-    id: id || "fast",
-    name: id === "fast" ? t("visitor.home.quickTrail") : t("visitor.home.completeTrail"),
-    description:
-      "Descrição da trilha, objetivo, perfil de visitante recomendado e orientações gerais.",
-    duration: id === "fast" ? "45 min" : "2h",
-    works: [
-      { id: "1", title: t("visitor.home.exampleArtwork") + " 1" },
-      { id: "2", title: t("visitor.home.exampleArtwork") + " 2" }
-    ]
-  }), [id, t]);
-
-  const isDemo = isDemoMode || !id;
+  useEffect(() => {
+    if (!id || isGuest) return;
+    api.get(`/favorites/check?type=trail&id=${id}`)
+      .then(res => setIsFavorite(res.data.isFavorite))
+      .catch(err => console.error("Error checking favorite status", err));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, isGuest]);
 
   useEffect(() => {
-    if (isDemo) return;
+    if (!id) return;
 
     setApiLoading(true);
     setError(false);
@@ -57,14 +55,14 @@ export const TrailDetail: React.FC = () => {
               id: tw.work?.id ?? tw.id,
               title: tw.work?.title ?? tw.title ?? "Obra da trilha"
             }))
-            : mock.works;
+            : [];
 
         const mapped: TrailDetailData = {
           id: t.id,
           name: t.title || t.name,
           title: t.title || t.name,
-          description: t.description ?? mock.description,
-          duration: t.durationLabel ?? t.duration ?? mock.duration,
+          description: t.description ?? "",
+          duration: t.durationLabel ?? t.duration ?? "",
           audioUrl: getFullUrl(t.audioUrl),
           videoUrl: getFullUrl(t.videoUrl),
           works
@@ -76,10 +74,29 @@ export const TrailDetail: React.FC = () => {
         setError(true);
       })
       .finally(() => setApiLoading(false));
-  }, [id, isDemo, mock]);
+  }, [id]);
 
-  const trail = isDemo ? mock : apiTrail;
-  const loading = isDemo ? false : apiLoading;
+  const trail = apiTrail;
+  const loading = apiLoading;
+
+  const toggleFavorite = async () => {
+    if (isGuest) {
+      alert(t("visitor.favorites.loginRequired", "Crie uma conta para salvar favoritos na nuvem."));
+      return;
+    }
+
+    try {
+      if (isFavorite) {
+        await api.delete(`/favorites/trail/${id}`);
+        setIsFavorite(false);
+      } else {
+        await api.post('/favorites', { type: "trail", itemId: id });
+        setIsFavorite(true);
+      }
+    } catch (err) {
+      console.error("Erro ao favoritar", err);
+    }
+  };
 
   if (loading) {
     return (
@@ -107,12 +124,35 @@ export const TrailDetail: React.FC = () => {
 
   return (
     <div className="trail-detail-container">
-      <header className="trail-detail-header">
+      <header className="trail-detail-header" style={{ position: 'relative' }}>
         <span className="trail-detail-badge">{t("visitor.trails.badge")}</span>
         <h1 className="trail-detail-title">{trail.name}</h1>
         <p className="trail-detail-meta">
           {trail.duration} • {trail.works.length} {t("visitor.sidebar.artworks")}
         </p>
+
+        <button
+          onClick={toggleFavorite}
+          style={{
+            position: 'absolute',
+            top: '2rem',
+            right: '2rem',
+            background: 'rgba(0,0,0,0.4)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(10px)',
+            color: 'white',
+            borderRadius: '50%',
+            width: '45px',
+            height: '45px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer'
+          }}
+          title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+        >
+          <Star size={20} fill={isFavorite ? "#d4af37" : "none"} color={isFavorite ? "#d4af37" : "white"} />
+        </button>
       </header>
 
       <section className="trail-about-section">

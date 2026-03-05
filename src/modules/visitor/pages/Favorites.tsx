@@ -5,8 +5,11 @@ import { getFullUrl } from "../../../utils/url";
 import { ArrowRight, Trash2, Compass } from "lucide-react";
 import "./Favorites.css";
 
+import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
+
 type FavoriteItem = {
-  id: string;
+  id: string; // id do favorito na tabela
   type: "work" | "trail" | "event";
   title: string;
   artist?: string;
@@ -15,23 +18,25 @@ type FavoriteItem = {
 
 export const Favorites: React.FC = () => {
   const { t } = useTranslation();
-  const [favorites, setFavorites] = useState<FavoriteItem[]>(() => {
-    const stored = localStorage.getItem("favorites");
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch (err) {
-        console.error("Erro ao carregar favoritos", err);
-        return [];
-      }
-    }
-    return [];
-  });
+  const { isGuest, tenantId } = useAuth();
+  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+  const [loading, setLoading] = useState(!isGuest);
 
-  const removeFavorite = (id: string) => {
-    const updated = favorites.filter(f => f.id !== id);
-    setFavorites(updated);
-    localStorage.setItem("favorites", JSON.stringify(updated));
+  React.useEffect(() => {
+    if (isGuest || !tenantId) return;
+    api.get("/favorites")
+      .then(res => setFavorites(res.data))
+      .catch(err => console.error("Erro ao carregar favoritos", err))
+      .finally(() => setLoading(false));
+  }, [isGuest, tenantId]);
+
+  const removeFavorite = async (type: string, itemId: string) => {
+    try {
+      await api.delete(`/favorites/${type}/${itemId}`);
+      setFavorites(prev => prev.filter(f => f.id !== itemId));
+    } catch (err) {
+      console.error("Erro ao remover favorito", err);
+    }
   };
 
   const getLink = (item: FavoriteItem) => {
@@ -57,7 +62,18 @@ export const Favorites: React.FC = () => {
         </p>
       </header>
 
-      {favorites.length === 0 ? (
+      {isGuest ? (
+        <div className="favorites-empty" style={{ border: '1px dashed rgba(212,175,55,0.4)', background: 'rgba(212,175,55,0.05)' }}>
+          <span className="favorites-empty-icon">💎</span>
+          <h3 style={{ color: 'var(--primary-color)' }}>Recurso Exclusivo</h3>
+          <p>Crie sua conta no museu para salvar suas obras, trilhas e eventos favoritos na nuvem e acessá-los de qualquer dispositivo.</p>
+          <Link to="/register" className="favorites-explore-btn" style={{ marginTop: '1rem', background: 'var(--primary-color)', color: '#1a1108' }}>
+            Criar Minha Conta
+          </Link>
+        </div>
+      ) : loading ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>Carregando sua coleção...</div>
+      ) : favorites.length === 0 ? (
         <div className="favorites-empty">
           <span className="favorites-empty-icon">💎</span>
           <h3>{t("visitor.favorites.emptyTitle", "Sua coleção está vazia")}</h3>
@@ -86,7 +102,7 @@ export const Favorites: React.FC = () => {
                 <div className="favorite-content-header">
                   <span className="favorite-type-badge">{getTypeLabel(item.type)}</span>
                   <button
-                    onClick={() => removeFavorite(item.id)}
+                    onClick={() => removeFavorite(item.type, item.id)}
                     className="favorite-remove-btn"
                     title={t("common.remove")}
                   >
