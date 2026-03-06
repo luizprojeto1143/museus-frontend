@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
+import { useAuth } from "../../../modules/auth/AuthContext";
 import "./SecretaryDashboard.css"; // Import the new styles
 
 type DashboardData = {
@@ -42,6 +43,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const SecretaryDashboard: React.FC = () => {
+    const { tenantId } = useAuth();
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -51,7 +53,7 @@ const SecretaryDashboard: React.FC = () => {
 
     const fetchDashboard = async () => {
         try {
-            const response = await api.get("/secretary/dashboard");
+            const response = await api.get("/secretary/dashboard", { params: { tenantId } });
             setData(response.data);
         } catch (err) {
             console.error("Erro ao carregar dashboard", err);
@@ -62,16 +64,7 @@ const SecretaryDashboard: React.FC = () => {
 
     const downloadPdf = async () => {
         try {
-            const response = await api.get("/executive-reports/pdf", {
-                responseType: "blob"
-            });
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", "relatorio-executivo.pdf");
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
+            window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank');
         } catch (err) {
             console.error("Erro ao baixar PDF", err);
         }
@@ -203,7 +196,7 @@ const SecretaryDashboard: React.FC = () => {
                                     </div>
                                 </div>
                                 <span className={`sec-badge ${proj.status === 'APPROVED' ? 'sec-badge-success' :
-                                        proj.status === 'REJECTED' ? 'sec-badge-danger' : 'sec-badge-warning'
+                                    proj.status === 'REJECTED' ? 'sec-badge-danger' : 'sec-badge-warning'
                                     }`}>
                                     {statusLabels[proj.status] || proj.status}
                                 </span>
