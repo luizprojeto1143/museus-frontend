@@ -15,10 +15,12 @@ import {
     Clock
 } from "lucide-react";
 import { api } from "../../api/client";
+import { useAuth } from "../auth/AuthContext";
 import { Button } from "../../components/ui";
 
 export const MunicipalDashboard: React.FC = () => {
     const navigate = useNavigate();
+    const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<any>(null);
     const [period, setPeriod] = useState<"30" | "7" | "90" | "365">("30");
@@ -27,7 +29,7 @@ export const MunicipalDashboard: React.FC = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await api.get("/secretary/dashboard", { params: { periodDays: period } });
+                const res = await api.get("/secretary/dashboard", { params: { periodDays: period, tenantId } });
                 setData(res.data);
             } catch (err) {
                 console.error("Error fetching municipal dashboard", err);
@@ -80,7 +82,7 @@ export const MunicipalDashboard: React.FC = () => {
                         </div>
                     </div>
                     <Button
-                        onClick={() => window.open(`${api.defaults.baseURL}/executive-reports/pdf`, '_blank')}
+                        onClick={() => window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank')}
                         className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20"
                     >
                         Exportar Relatório PDF

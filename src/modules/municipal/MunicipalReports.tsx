@@ -13,10 +13,12 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { api } from "../../api/client";
+import { useAuth } from "../auth/AuthContext";
 import { Button } from "../../components/ui";
 
 export const MunicipalReports: React.FC = () => {
     const navigate = useNavigate();
+    const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState<any>(null);
     const [compliance, setCompliance] = useState<any>(null);
@@ -25,8 +27,8 @@ export const MunicipalReports: React.FC = () => {
         const fetchData = async () => {
             try {
                 const [summaryRes, complianceRes] = await Promise.all([
-                    api.get("/executive-reports/summary"),
-                    api.get("/secretary/legal-compliance")
+                    api.get("/executive-reports/summary", { params: { tenantId } }),
+                    api.get("/secretary/legal-compliance", { params: { tenantId } })
                 ]);
                 setSummary(summaryRes.data);
                 setCompliance(complianceRes.data);
@@ -41,7 +43,7 @@ export const MunicipalReports: React.FC = () => {
 
     const handleDownloadPDF = async () => {
         try {
-            window.open(`${api.defaults.baseURL}/executive-reports/pdf`, '_blank');
+            window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank');
         } catch (err) {
             console.error("Error downloading PDF", err);
         }
