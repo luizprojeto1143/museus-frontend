@@ -15,7 +15,6 @@ type Participant = {
 };
 
 export const ProducerAudience: React.FC = () => {
-    // Mock Data
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -134,8 +133,8 @@ export const ProducerAudience: React.FC = () => {
                                 </div>
                                 <div className="col-span-2">
                                     <span className={`px-2 py-1 rounded-full text-xs font-bold border ${p.status === "CHECKED_IN"
-                                            ? "bg-[#4cd964]/10 text-[#4cd964] border-[#4cd964]/20"
-                                            : "bg-[#ffb340]/10 text-[#ffb340] border-[#ffb340]/20"
+                                        ? "bg-[#4cd964]/10 text-[#4cd964] border-[#4cd964]/20"
+                                        : "bg-[#ffb340]/10 text-[#ffb340] border-[#ffb340]/20"
                                         }`}>
                                         {p.status === "CHECKED_IN" ? "PRESENTE" : "CONFIRMADO"}
                                     </span>

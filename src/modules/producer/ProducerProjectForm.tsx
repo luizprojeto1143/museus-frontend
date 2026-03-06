@@ -527,7 +527,7 @@ export const ProducerProjectForm: React.FC = () => {
                                     <Accessibility size={28} />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-bold text-[#EAE0D5] font-serif">Acessibilidade</h2>
+                                    <p className="text-[#EAE0D5] font-bold">Acessibilidade</p>
                                     <p className="text-[#B0A090] text-sm">Recursos para garantir a inclusão de todos os públicos</p>
                                 </div>
                             </div>
