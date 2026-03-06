@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
+import * as tf from "@tensorflow/tfjs";
+import "@tensorflow/tfjs-backend-webgl";
+import "@tensorflow/tfjs-backend-cpu";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -37,6 +40,9 @@ export const AdminScannerTrainer: React.FC = () => {
 
         const init = async () => {
             try {
+                // Ensure TFJS backend is ready
+                await tf.ready();
+
                 const loadedNet = await mobilenet.load();
                 const loadedClassifier = knnClassifier.create();
 
@@ -77,7 +83,7 @@ export const AdminScannerTrainer: React.FC = () => {
                 return null;
             });
         };
-    }, [tenantId, startCamera, stopCamera]);
+    }, [tenantId]);
 
 
 
