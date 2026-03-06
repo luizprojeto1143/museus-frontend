@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     Users,
     Building2,
@@ -17,6 +18,7 @@ import { api } from "../../api/client";
 import { Button } from "../../components/ui";
 
 export const MunicipalDashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<any>(null);
     const [period, setPeriod] = useState<"30" | "7" | "90" | "365">("30");
@@ -77,7 +79,10 @@ export const MunicipalDashboard: React.FC = () => {
                             ))}
                         </div>
                     </div>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20">
+                    <Button
+                        onClick={() => window.open(`${api.defaults.baseURL}/executive-reports/pdf`, '_blank')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20"
+                    >
                         Exportar Relatório PDF
                     </Button>
                 </div>
@@ -109,7 +114,7 @@ export const MunicipalDashboard: React.FC = () => {
                                 <h3 className="text-xl font-bold text-slate-900">Conformidade por Equipamento</h3>
                                 <p className="text-sm text-slate-500">Status dos recursos de acessibilidade nas unidades culturais.</p>
                             </div>
-                            <Button variant="ghost" size="sm" className="text-blue-600 font-bold hover:bg-blue-50">Ver todos</Button>
+                            <Button variant="ghost" size="sm" onClick={() => navigate('/municipal/compliance')} className="text-blue-600 font-bold hover:bg-blue-50">Ver todos</Button>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
@@ -182,33 +187,28 @@ export const MunicipalDashboard: React.FC = () => {
                             {/* Visual Representation of a Map */}
                             <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '15px 15px' }}></div>
 
-                            {/* Mock Map Markers */}
-                            <div className="absolute top-1/4 left-1/3 group/marker">
-                                <div className="w-8 h-8 bg-blue-600 rounded-full border-4 border-white shadow-lg animate-bounce flex items-center justify-center text-white scale-75">
-                                    <Building2 size={12} />
-                                </div>
-                                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
-                                    Museu da Inconfidência
-                                </div>
-                            </div>
+                            {/* Dynamic Map Markers from API */}
+                            {(data?.equipmentAccessibility || []).map((eq: any, idx: number) => {
+                                // Generating random-ish positions to simulate map since we don't have lat/lng in summary yet
+                                const positions = [
+                                    { top: '25%', left: '33%' },
+                                    { bottom: '33%', right: '25%' },
+                                    { top: '50%', right: '50%' }
+                                ];
+                                const pos = positions[idx % positions.length];
+                                const isCulturalSpace = eq.type !== 'PROJECT';
 
-                            <div className="absolute bottom-1/3 right-1/4 group/marker">
-                                <div className="w-8 h-8 bg-emerald-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75">
-                                    <FileText size={12} />
-                                </div>
-                                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
-                                    Projeto Revivendo Ouro Preto
-                                </div>
-                            </div>
-
-                            <div className="absolute top-1/2 right-1/2 group/marker">
-                                <div className="w-8 h-8 bg-blue-600 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75">
-                                    <Building2 size={12} />
-                                </div>
-                                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
-                                    Teatro Municipal
-                                </div>
-                            </div>
+                                return (
+                                    <div key={eq.id} className="absolute group/marker" style={{ ...pos }}>
+                                        <div className={`w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75 ${isCulturalSpace ? 'bg-blue-600' : 'bg-emerald-500'} ${idx === 0 ? 'animate-bounce' : ''}`}>
+                                            {isCulturalSpace ? <Building2 size={12} /> : <FileText size={12} />}
+                                        </div>
+                                        <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-10">
+                                            {eq.name}
+                                        </div>
+                                    </div>
+                                );
+                            })}
 
                             {/* Map Tools Overlay */}
                             <div className="absolute bottom-6 left-6 flex flex-col gap-2">
@@ -280,7 +280,7 @@ export const MunicipalDashboard: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        <Button variant="outline" className="w-full mt-4 border-slate-200 text-slate-600 font-bold rounded-2xl py-6 hover:bg-slate-50">
+                        <Button onClick={() => navigate('/municipal/projects')} variant="outline" className="w-full mt-4 border-slate-200 text-slate-600 font-bold rounded-2xl py-6 hover:bg-slate-50">
                             Ver Cronograma Completo
                         </Button>
                     </div>

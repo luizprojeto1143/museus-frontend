@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     FileText,
     Download,
@@ -10,25 +11,32 @@ import {
     ShieldCheck,
     ArrowRight
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 import { api } from "../../api/client";
 import { Button } from "../../components/ui";
 
 export const MunicipalReports: React.FC = () => {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [summary, setSummary] = useState<any>(null);
+    const [compliance, setCompliance] = useState<any>(null);
 
     useEffect(() => {
-        const fetchSummary = async () => {
+        const fetchData = async () => {
             try {
-                const res = await api.get("/executive-reports/summary");
-                setSummary(res.data);
+                const [summaryRes, complianceRes] = await Promise.all([
+                    api.get("/executive-reports/summary"),
+                    api.get("/secretary/legal-compliance")
+                ]);
+                setSummary(summaryRes.data);
+                setCompliance(complianceRes.data);
             } catch (err) {
-                console.error("Error fetching executive summary", err);
+                console.error("Error fetching report data", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchSummary();
+        fetchData();
     }, []);
 
     const handleDownloadPDF = async () => {
@@ -123,7 +131,7 @@ export const MunicipalReports: React.FC = () => {
                             <BarChart3 size={48} className="text-blue-500 opacity-50 mb-2" />
                             <h3 className="text-xl font-bold">Relatório de Transparência</h3>
                             <p className="text-sm text-slate-400">Exporte os dados brutos para o Portal da Transparência Municipal.</p>
-                            <Button variant="outline" className="border-slate-700 text-white hover:bg-white/5 font-bold rounded-2xl">
+                            <Button variant="outline" onClick={() => toast("Exportação CSV será disponibilizada na próxima versão da API.", { icon: "ℹ️" })} className="border-slate-700 text-white hover:bg-white/5 font-bold rounded-2xl">
                                 Preparar Dados (CSV)
                             </Button>
                         </div>
@@ -133,39 +141,33 @@ export const MunicipalReports: React.FC = () => {
                     <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                         <div className="p-8 border-b border-slate-100 flex items-center justify-between">
                             <h3 className="text-xl font-bold text-slate-900">Conformidade Legal (Checklist)</h3>
-                            <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full uppercase tracking-widest">Em Dia</span>
+                            <span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-widest ${compliance?.summary?.complianceRate === 100 ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'}`}>
+                                {compliance?.summary?.complianceRate || 0}% Conforme
+                            </span>
                         </div>
                         <div className="p-8 space-y-4">
-                            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white">
-                                        <ShieldCheck size={12} />
+                            {(compliance?.matrix || []).slice(0, 3).map((item: any, idx: number) => (
+                                <div key={idx} className={`flex items-center justify-between p-4 rounded-2xl ${item.compliant ? 'bg-slate-50' : 'bg-rose-50'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-white ${item.compliant ? 'bg-emerald-500' : 'bg-rose-500'}`}>
+                                            <ShieldCheck size={12} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-slate-700 text-sm">{item.law}</span>
+                                            <span className="text-[10px] text-slate-500 uppercase tracking-widest truncate max-w-[150px] lg:max-w-[250px]">{item.requirement}</span>
+                                        </div>
                                     </div>
-                                    <span className="font-bold text-slate-700 text-sm">Lei Brasileira de Inclusão (Art. 42)</span>
+                                    <span className={`text-[10px] font-black uppercase ${item.compliant ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                        {item.compliant ? 'Conforme' : 'Pendente'}
+                                    </span>
                                 </div>
-                                <span className="text-[10px] font-black text-emerald-600 uppercase">Conforme</span>
-                            </div>
-                            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white">
-                                        <ShieldCheck size={12} />
-                                    </div>
-                                    <span className="font-bold text-slate-700 text-sm">Lei Municipal de Incentivo à Cultura</span>
-                                </div>
-                                <span className="text-[10px] font-black text-emerald-600 uppercase">Conforme</span>
-                            </div>
-                            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl opacity-50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-5 h-5 bg-slate-300 rounded-full flex items-center justify-center text-white">
-                                        <ShieldCheck size={12} />
-                                    </div>
-                                    <span className="font-bold text-slate-700 text-sm">Relatório de Impacto de Gênero</span>
-                                </div>
-                                <span className="text-[10px] font-black text-slate-400 uppercase">Não Aplicável</span>
-                            </div>
+                            ))}
+                            {(!compliance?.matrix || compliance.matrix.length === 0) && (
+                                <p className="text-sm text-slate-500 italic text-center py-4">Sem dados de conformidade para exibir</p>
+                            )}
                         </div>
                         <div className="px-8 pb-8 pt-2">
-                            <Button variant="ghost" className="text-blue-600 font-bold hover:bg-blue-50 w-full flex items-center justify-between">
+                            <Button variant="ghost" className="text-blue-600 font-bold hover:bg-blue-50 w-full flex items-center justify-between" onClick={() => navigate('/municipal/compliance')}>
                                 Ver Detalhes da Conformidade <ArrowRight size={18} />
                             </Button>
                         </div>
