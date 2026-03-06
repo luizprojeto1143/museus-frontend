@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import * as tf from "@tensorflow/tfjs";
+import "@tensorflow/tfjs-backend-webgl";
+import "@tensorflow/tfjs-backend-cpu";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import { api } from "../../../api/client";
@@ -30,6 +32,9 @@ export const VisualScannerPage: React.FC = () => {
         const init = async () => {
             try {
                 if (!tenantId) return;
+
+                // Ensure TFJS backend is ready
+                await tf.ready();
 
                 const loadedNet = await mobilenet.load();
                 const loadedClassifier = knnClassifier.create();
