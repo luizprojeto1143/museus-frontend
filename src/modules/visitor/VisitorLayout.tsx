@@ -122,6 +122,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     { to: "/obras/timeline", label: "Linha do Tempo", icon: "⏳", feature: "featureWorks" },
     { to: "/obras/comparar", label: "Comparador", icon: "⚖️", feature: "featureWorks" },
     { to: "/transferir-ingresso", label: "Transferir Ingresso", icon: "🎫", feature: "featureEvents" },
+    // Roadmap 2026
+    { to: "/comunidade", label: "Comunidade", icon: "🏘️", feature: null },
+    { to: "/meus-certificados", label: "Meus Certificados", icon: "🏅", feature: "featureCertificates" },
   ];
 
   // Filter links based on tenant features and teacher status

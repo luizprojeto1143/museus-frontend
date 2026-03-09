@@ -120,6 +120,33 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
+      {/* ROADMAP 2026 SHOWCASE */}
+      <section className="roadmap-showcase" style={{ padding: "0 1.5rem", marginBottom: "3rem" }}>
+        <div className="section-header" style={{ marginBottom: "1.5rem" }}>
+          <span className="badge" style={{ background: "rgba(255, 215, 0, 0.2)", color: "#ffd700", marginBottom: "0.5rem", display: "inline-block" }}>
+            Novidades Março 2026
+          </span>
+          <h2 style={{ fontSize: "1.8rem", fontWeight: "800" }}>Cultura Viva Betim: Nova Fase</h2>
+        </div>
+        <div className="roadmap-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
+          <Link to="/comunidade" className="roadmap-card glass" style={{ padding: "1.5rem", borderRadius: "20px", textDecoration: "none", color: "inherit", transition: "transform 0.3s" }}>
+            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem" }}>🏘️</span>
+            <h3 style={{ marginBottom: "0.5rem" }}>Comunidade com Curadoria</h3>
+            <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>Compartilhe suas memórias e histórias sobre Betim e nossos espaços culturais.</p>
+          </Link>
+          <Link to="/trilhas" className="roadmap-card glass" style={{ padding: "1.5rem", borderRadius: "20px", textDecoration: "none", color: "inherit", transition: "transform 0.3s" }}>
+            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem" }}>🧭</span>
+            <h3 style={{ marginBottom: "0.5rem" }}>Rotas Guiadas & Selos</h3>
+            <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>Complete trilhas, ganhe selos exclusivos e escaneie QR codes em pontos de interesse.</p>
+          </Link>
+          <Link to="/perfil" className="roadmap-card glass" style={{ padding: "1.5rem", borderRadius: "20px", textDecoration: "none", color: "inherit", transition: "transform 0.3s" }}>
+            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem" }}>🏅</span>
+            <h3 style={{ marginBottom: "0.5rem" }}>Meus Certificados</h3>
+            <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>Receba certificados automáticos ao concluir visitas e participar da nossa história.</p>
+          </Link>
+        </div>
+      </section>
+
       {/* WELCOME AUDIO GUIDE */}
       {welcomeAudioUrl && (
         <section style={{ padding: "0 1.5rem", marginTop: "-1rem", marginBottom: "1.5rem" }}>
