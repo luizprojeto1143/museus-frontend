@@ -55,13 +55,13 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const sidebarGroups: SidebarGroup[] = [
     {
-      label: "Painel",
+      label: t("admin.sidebar.painel", "Painel"),
       links: [
         { to: "/admin", label: isCityMode ? "Secretaria de Cultura" : t("admin.sidebar.dashboard"), icon: "📊", show: true },
       ]
     },
     {
-      label: "Conteúdo",
+      label: t("admin.sidebar.conteDo", "Conteúdo"),
       links: [
         { to: "/admin/obras", label: term.works, icon: isCityMode ? "🏛️" : "🖼️", show: features?.featureWorks ?? true },
         { to: "/admin/trilhas", label: term.trails, icon: isCityMode ? "🗺️" : "🧭", show: features?.featureTrails ?? true },
@@ -70,18 +70,18 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       ]
     },
     {
-      label: "Eventos & Espaços",
+      label: t("admin.sidebar.eventosEspaOs", "Eventos & Espaços"),
       links: [
         { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: features?.featureEvents ?? true },
-        { to: "/admin/verificar-ingressos", label: "Verificar Ingressos", icon: "🎫", show: features?.featureEvents ?? true },
-        { to: "/admin/scanner", label: "Scanner (Portaria)", icon: "📱", show: features?.featureEvents ?? true },
-        { to: "/admin/espacos", label: "Gestão de Espaços", icon: "🏢", show: true },
-        { to: "/admin/calendario", label: "Agenda", icon: "📅", show: true },
-        { to: "/admin/certificates", label: "Certificados", icon: "🎓", show: features?.featureCertificates ?? true },
+        { to: "/admin/verificar-ingressos", label: t("admin.sidebar.verificarIngressos", "Verificar Ingressos"), icon: "🎫", show: features?.featureEvents ?? true },
+        { to: "/admin/scanner", label: t("admin.sidebar.scannerPortaria", "Scanner (Portaria)"), icon: "📱", show: features?.featureEvents ?? true },
+        { to: "/admin/espacos", label: t("admin.sidebar.gestODeEspaOs", "Gestão de Espaços"), icon: "🏢", show: true },
+        { to: "/admin/calendario", label: t("admin.sidebar.agenda", "Agenda"), icon: "📅", show: true },
+        { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "🎓", show: features?.featureCertificates ?? true },
       ]
     },
     {
-      label: "Visitantes & Engajamento",
+      label: t("admin.sidebar.visitantesEngajamento", "Visitantes & Engajamento"),
       links: [
         { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "👥", show: true },
         { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐", show: (features?.featureReviews || features?.featureGuestbook) ?? true },
@@ -89,80 +89,80 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       ]
     },
     {
-      label: "Gamificação",
+      label: t("admin.sidebar.gamificaO", "Gamificação"),
       links: [
         { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "🏴‍☠️", show: features?.featureGamification ?? true },
         { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "🏅", show: features?.featureGamification ?? true },
         { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "📱", show: features?.featureQRCodes ?? true },
-        { to: "/admin/cupons", label: "Cupons e Recompensas", icon: "🎟️", show: features?.featureGamification ?? true },
-        { to: "/admin/colecao", label: "Cards Colecionáveis", icon: "✨", show: features?.featureGamification ?? true },
-        { to: "/admin/battle", label: "Batalha de Museus", icon: "⚔️", show: features?.featureGamification ?? true },
+        { to: "/admin/cupons", label: t("admin.sidebar.cuponsERecompensas", "Cupons e Recompensas"), icon: "🎟️", show: features?.featureGamification ?? true },
+        { to: "/admin/colecao", label: t("admin.sidebar.cardsColecionVeis", "Cards Colecionáveis"), icon: "✨", show: features?.featureGamification ?? true },
+        { to: "/admin/battle", label: t("admin.sidebar.batalhaDeMuseus", "Batalha de Museus"), icon: "⚔️", show: features?.featureGamification ?? true },
       ]
     },
     {
-      label: isCityMode ? "Gestão Municipal" : "Gestão Institucional",
+      label: isCityMode ? t("admin.sidebar.gestOMunicipal", "Gestão Municipal") : t("admin.sidebar.gestOInstitucional", "Gestão Institucional"),
       links: [
-        { to: "/admin/editais", label: "Editais", icon: "📋", show: features?.featureEditais ?? false },
-        { to: "/admin/projetos", label: "Projetos Culturais", icon: "🎨", show: features?.featureProjects ?? false },
-        { to: "/admin/prestadores", label: "Prestadores", icon: "👷", show: features?.featureProviders ?? false },
-        { to: "/admin/agendamentos/novo", label: "Solicitar Serviço Presencial", icon: "🤝", show: true },
-        { to: "/admin/acessibilidade-gestao", label: "Gestão Acessibilidade", icon: "♿", show: features?.featureAccessibilityMgmt ?? false },
-        { to: "/admin/relatorios", label: "Relatórios Institucionais", icon: "📊", show: features?.featureInstitutionalReports ?? false },
-        { to: "/admin/equipamentos", label: "Equipamentos Culturais", icon: "🏛️", show: (features?.type === "CITY" || features?.type === "SECRETARIA") ?? false },
+        { to: "/admin/editais", label: t("admin.sidebar.editais", "Editais"), icon: "📋", show: features?.featureEditais ?? false },
+        { to: "/admin/projetos", label: t("admin.sidebar.projetosCulturais", "Projetos Culturais"), icon: "🎨", show: features?.featureProjects ?? false },
+        { to: "/admin/prestadores", label: t("admin.sidebar.prestadores", "Prestadores"), icon: "👷", show: features?.featureProviders ?? false },
+        { to: "/admin/agendamentos/novo", label: t("admin.sidebar.solicitarServiOPresencial", "Solicitar Serviço Presencial"), icon: "🤝", show: true },
+        { to: "/admin/acessibilidade-gestao", label: t("admin.sidebar.gestOAcessibilidade", "Gestão Acessibilidade"), icon: "♿", show: features?.featureAccessibilityMgmt ?? false },
+        { to: "/admin/relatorios", label: t("admin.sidebar.relatRiosInstitucionais", "Relatórios Institucionais"), icon: "📊", show: features?.featureInstitutionalReports ?? false },
+        { to: "/admin/equipamentos", label: t("admin.sidebar.equipamentosCulturais", "Equipamentos Culturais"), icon: "🏛️", show: (features?.type === "CITY" || features?.type === "SECRETARIA") ?? false },
       ]
     },
     {
-      label: "Ferramentas & Config",
+      label: t("admin.sidebar.ferramentasConfig", "Ferramentas & Config"),
       links: [
         { to: "/admin/ia", label: t("admin.sidebar.ai", "Assistente IA"), icon: "🤖", show: features?.featureChatAI ?? true },
         { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈", show: true },
         { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
-        { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
-        { to: "/admin/notificacoes", label: "Notificações Push", icon: "🔔", show: true },
-        { to: "/admin/financeiro", label: "Dashboard Financeiro", icon: "💰", show: true },
-        { to: "/admin/configuracoes/servicos", label: "Serviços Oferecidos", icon: "🤝", show: true },
+        { to: "/admin/mapa-editor", label: t("admin.sidebar.mapaDePinos", "Mapa de Pinos"), icon: "📍", show: true },
+        { to: "/admin/notificacoes", label: t("admin.sidebar.notificaEsPush", "Notificações Push"), icon: "🔔", show: true },
+        { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "💰", show: true },
+        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "🤝", show: true },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
       ]
     },
     {
-      label: "Analytics Avançado",
+      label: t("admin.sidebar.analyticsAvanAdo", "Analytics Avançado"),
       links: [
-        { to: "/admin/notas-curador", label: "Notas do Curador", icon: "📝", show: true },
-        { to: "/admin/nps", label: "NPS", icon: "💯", show: true },
-        { to: "/admin/sentimento", label: "Sentimento", icon: "😊", show: true },
-        { to: "/admin/heatmap", label: "Mapa de Calor", icon: "🔥", show: true },
-        { to: "/admin/funil", label: "Funil de Conversão", icon: "📉", show: true },
-        { to: "/admin/moderacao", label: "Moderação", icon: "🛡️", show: true },
+        { to: "/admin/notas-curador", label: t("admin.sidebar.notasDoCurador", "Notas do Curador"), icon: "📝", show: true },
+        { to: "/admin/nps", label: t("admin.sidebar.nPS", "NPS"), icon: "💯", show: true },
+        { to: "/admin/sentimento", label: t("admin.sidebar.sentimento", "Sentimento"), icon: "😊", show: true },
+        { to: "/admin/heatmap", label: t("admin.sidebar.mapaDeCalor", "Mapa de Calor"), icon: "🔥", show: true },
+        { to: "/admin/funil", label: t("admin.sidebar.funilDeConversO", "Funil de Conversão"), icon: "📉", show: true },
+        { to: "/admin/moderacao", label: t("admin.sidebar.moderaO", "Moderação"), icon: "🛡️", show: true },
       ]
     },
     {
-      label: "Educação & Social",
+      label: t("admin.sidebar.educaOSocial", "Educação & Social"),
       links: [
-        { to: "/admin/educacao", label: "Portal Professores", icon: "🎓", show: true },
-        { to: "/admin/ingressos-grupo", label: "Ingressos Grupo", icon: "👥", show: true },
-        { to: "/admin/modo-crianca", label: "Modo Criança", icon: "👶", show: true },
-        { to: "/admin/assinaturas", label: "Amigo do Museu", icon: "💎", show: true },
-        { to: "/admin/patrocinios", label: "Patrocínios", icon: "🤝", show: true },
+        { to: "/admin/educacao", label: t("admin.sidebar.portalProfessores", "Portal Professores"), icon: "🎓", show: true },
+        { to: "/admin/ingressos-grupo", label: t("admin.sidebar.ingressosGrupo", "Ingressos Grupo"), icon: "👥", show: true },
+        { to: "/admin/modo-crianca", label: t("admin.sidebar.modoCrianA", "Modo Criança"), icon: "👶", show: true },
+        { to: "/admin/assinaturas", label: t("admin.sidebar.amigoDoMuseu", "Amigo do Museu"), icon: "💎", show: true },
+        { to: "/admin/patrocinios", label: t("admin.sidebar.patrocNios", "Patrocínios"), icon: "🤝", show: true },
       ]
     },
     {
-      label: "Municipal Avançado",
+      label: t("admin.sidebar.municipalAvanAdo", "Municipal Avançado"),
       links: [
-        { to: "/admin/voluntarios", label: "Voluntários", icon: "🙋", show: true },
-        { to: "/admin/conservacao", label: "Conservação", icon: "🔧", show: true },
-        { to: "/admin/metas-ppa", label: "Metas PPA", icon: "🎯", show: true },
-        { to: "/admin/patrimonio", label: "Patrimônio Imaterial", icon: "📜", show: true },
-        { to: "/admin/calendario-municipal", label: "Calendário Cultural", icon: "🗓️", show: true },
-        { to: "/admin/tce", label: "Exportação TCE", icon: "📄", show: true },
-        { to: "/admin/vazios", label: "Vazios Culturais", icon: "🗺️", show: true },
+        { to: "/admin/voluntarios", label: t("admin.sidebar.voluntRios", "Voluntários"), icon: "🙋", show: true },
+        { to: "/admin/conservacao", label: t("admin.sidebar.conservaO", "Conservação"), icon: "🔧", show: true },
+        { to: "/admin/metas-ppa", label: t("admin.sidebar.metasPPA", "Metas PPA"), icon: "🎯", show: true },
+        { to: "/admin/patrimonio", label: t("admin.sidebar.patrimNioImaterial", "Patrimônio Imaterial"), icon: "📜", show: true },
+        { to: "/admin/calendario-municipal", label: t("admin.sidebar.calendRioCultural", "Calendário Cultural"), icon: "🗓️", show: true },
+        { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Exportação TCE"), icon: "📄", show: true },
+        { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Vazios Culturais"), icon: "🗺️", show: true },
       ]
     },
     {
-      label: "IA & Marketing",
+      label: t("admin.sidebar.iAMarketing", "IA & Marketing"),
       links: [
-        { to: "/admin/ia-descricoes", label: "IA Descrições", icon: "🪄", show: true },
-        { to: "/admin/instagram", label: "Card Instagram", icon: "📸", show: true },
-        { to: "/admin/traducoes", label: "Traduções", icon: "🌍", show: true },
+        { to: "/admin/ia-descricoes", label: t("admin.sidebar.iADescriEs", "IA Descrições"), icon: "🪄", show: true },
+        { to: "/admin/instagram", label: t("admin.sidebar.cardInstagram", "Card Instagram"), icon: "📸", show: true },
+        { to: "/admin/traducoes", label: t("admin.sidebar.traduEs", "Traduções"), icon: "🌍", show: true },
       ]
     }
   ];

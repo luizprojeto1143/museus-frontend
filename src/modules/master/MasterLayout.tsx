@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
@@ -9,17 +10,17 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const links = [
-    { to: "/master", label: "Dashboard", icon: "📊" },
-    { to: "/master/messages", label: "Caixa de Entrada", icon: "📨" }, // NEW
-    { to: "/master/tenants", label: "Museus / Tenants", icon: "🏛️" },
-    { to: "/master/users", label: "Usuários", icon: "👥" },
-    { to: "/master/providers", label: "Prestadores", icon: "🛠️" }, // NEW
-    { to: "/master/servicos-presenciais", label: "Serviços Presenciais", icon: "🤝" },
-    { to: "/master/seeder", label: "Traffic Gen", icon: "🚦" }, // Assuming 'Users' was a placeholder and 'path' was meant for 'to'
-    { to: "/master/achievements", label: "Conquistas", icon: "🏆" },
-    { to: "/master/audit-logs", label: "Logs de Auditoria", icon: "📋" },
-    { to: "/master/accessibility-requests", label: "Acessibilidade", icon: "♿" },
-    { to: "/master/system-health", label: "Saúde do Sistema", icon: "🖥️" }
+    { to: "/master", label: t("master.sidebar.dashboard", "Dashboard"), icon: "📊" },
+    { to: "/master/messages", label: t("master.sidebar.caixaDeEntrada", "Caixa de Entrada"), icon: "📨" }, // NEW
+    { to: "/master/tenants", label: t("master.sidebar.museusTenants", "Museus / Tenants"), icon: "🏛️" },
+    { to: "/master/users", label: t("master.sidebar.usuRios", "Usuários"), icon: "👥" },
+    { to: "/master/providers", label: t("master.sidebar.prestadores", "Prestadores"), icon: "🛠️" }, // NEW
+    { to: "/master/servicos-presenciais", label: t("master.sidebar.serviOsPresenciais", "Serviços Presenciais"), icon: "🤝" },
+    { to: "/master/seeder", label: t("master.sidebar.trafficGen", "Traffic Gen"), icon: "🚦" }, // Assuming 'Users' was a placeholder and 'path' was meant for 'to'
+    { to: "/master/achievements", label: t("master.sidebar.conquistas", "Conquistas"), icon: "🏆" },
+    { to: "/master/audit-logs", label: t("master.sidebar.logsDeAuditoria", "Logs de Auditoria"), icon: "📋" },
+    { to: "/master/accessibility-requests", label: t("master.sidebar.acessibilidade", "Acessibilidade"), icon: "♿" },
+    { to: "/master/system-health", label: t("master.sidebar.saDeDoSistema", "Saúde do Sistema"), icon: "🖥️" }
   ];
 
   return (
@@ -44,8 +45,8 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
           <div className="app-brand">
             <span className="app-logo" style={{ borderColor: "#d4af37", color: "#d4af37" }}>MT</span>
             <div>
-              <div className="app-title" style={{ color: "#d4af37", fontFamily: "Georgia, serif" }}>Master Panel</div>
-              <div className="app-subtitle" style={{ color: "#8b7355" }}>Gestão Global</div>
+              <div className="app-title" style={{ color: "#d4af37", fontFamily: "Georgia, serif" }}>{t("master.layout.panel", "Master Panel")}</div>
+              <div className="app-subtitle" style={{ color: "#8b7355" }}>{t("master.layout.management", "Gestão Global")}</div>
             </div>
           </div>
         </div>
@@ -73,7 +74,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
             style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444", background: "rgba(239, 68, 68, 0.05)" }}
           >
             <span style={{ fontSize: "1.2rem" }}>🚪</span>
-            <span>Sair</span>
+            <span>{t("master.layout.logout", "Sair")}</span>
           </button>
         </div>
       </aside>
