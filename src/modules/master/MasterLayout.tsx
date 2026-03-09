@@ -14,6 +14,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
     { to: "/master/tenants", label: "Museus / Tenants", icon: "🏛️" },
     { to: "/master/users", label: "Usuários", icon: "👥" },
     { to: "/master/providers", label: "Prestadores", icon: "🛠️" }, // NEW
+    { to: "/master/servicos-presenciais", label: "Serviços Presenciais", icon: "🤝" },
     { to: "/master/seeder", label: "Traffic Gen", icon: "🚦" }, // Assuming 'Users' was a placeholder and 'path' was meant for 'to'
     { to: "/master/achievements", label: "Conquistas", icon: "🏆" },
     { to: "/master/audit-logs", label: "Logs de Auditoria", icon: "📋" },

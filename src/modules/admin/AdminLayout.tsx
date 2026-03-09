@@ -105,6 +105,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/editais", label: "Editais", icon: "📋", show: features?.featureEditais ?? false },
         { to: "/admin/projetos", label: "Projetos Culturais", icon: "🎨", show: features?.featureProjects ?? false },
         { to: "/admin/prestadores", label: "Prestadores", icon: "👷", show: features?.featureProviders ?? false },
+        { to: "/admin/agendamentos/novo", label: "Solicitar Serviço Presencial", icon: "🤝", show: features?.featureAccessibilityMgmt ?? true },
         { to: "/admin/acessibilidade-gestao", label: "Gestão Acessibilidade", icon: "♿", show: features?.featureAccessibilityMgmt ?? false },
         { to: "/admin/relatorios", label: "Relatórios Institucionais", icon: "📊", show: features?.featureInstitutionalReports ?? false },
         { to: "/admin/equipamentos", label: "Equipamentos Culturais", icon: "🏛️", show: (features?.type === "CITY" || features?.type === "SECRETARIA") ?? false },
@@ -119,6 +120,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/mapa-editor", label: "Mapa de Pinos", icon: "📍", show: true },
         { to: "/admin/notificacoes", label: "Notificações Push", icon: "🔔", show: true },
         { to: "/admin/financeiro", label: "Dashboard Financeiro", icon: "💰", show: true },
+        { to: "/admin/configuracoes/servicos", label: "Serviços Oferecidos", icon: "🤝", show: features?.featureAccessibilityMgmt ?? true },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
       ]
     },

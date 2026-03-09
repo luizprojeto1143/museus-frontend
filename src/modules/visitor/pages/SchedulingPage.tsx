@@ -20,6 +20,10 @@ export const SchedulingPage: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState("10:00");
+    const [selectedService, setSelectedService] = useState("");
+    const [participants, setParticipants] = useState("1");
+
+    const [inPersonServices, setInPersonServices] = useState<{ id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -32,10 +36,14 @@ export const SchedulingPage: React.FC = () => {
     const fetchBookings = async () => {
         setInitialLoading(true);
         try {
-            const res = await api.get("/bookings/my");
-            setBookings(res.data);
+            const [bookingsRes, servicesRes] = await Promise.all([
+                api.get("/bookings/my"),
+                api.get(`/tenant-services/${tenantId}`)
+            ]);
+            setBookings(bookingsRes.data);
+            setInPersonServices(servicesRes.data);
         } catch (error) {
-            console.error("Failed to fetch bookings", error);
+            console.error("Failed to fetch data", error);
         } finally {
             setInitialLoading(false);
         }
@@ -53,7 +61,9 @@ export const SchedulingPage: React.FC = () => {
 
             await api.post("/bookings", {
                 date: dateTime.toISOString(),
-                tenantId
+                tenantId,
+                inPersonServiceId: selectedService || undefined,
+                participants: parseInt(participants) || 1
             });
 
             setMessage({ type: "success", text: t("visitor.scheduling.success", "Agendamento realizado com sucesso!") });
@@ -117,6 +127,32 @@ export const SchedulingPage: React.FC = () => {
                             <option value="15:00">15:00</option>
                             <option value="16:00">16:00</option>
                         </select>
+                    </div>
+
+                    <div className="scheduling-form-group">
+                        <label>Serviço Presencial (Opcional)</label>
+                        <select
+                            className="scheduling-select"
+                            value={selectedService}
+                            onChange={(e) => setSelectedService(e.target.value)}
+                        >
+                            <option value="">Nenhum</option>
+                            {inPersonServices.map(srv => (
+                                <option key={srv.id} value={srv.id}>{srv.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="scheduling-form-group">
+                        <label>Participantes</label>
+                        <input
+                            type="number"
+                            min="1"
+                            className="scheduling-input"
+                            value={participants}
+                            onChange={(e) => setParticipants(e.target.value)}
+                            required
+                        />
                     </div>
 
                     {message && (

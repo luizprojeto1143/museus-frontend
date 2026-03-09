@@ -18,6 +18,7 @@ import { MasterMessages } from "../modules/master/pages/MasterMessages";
 import MasterPlans from "../modules/master/pages/MasterPlans";
 import { MasterProviders } from "../modules/master/pages/MasterProviders";
 import { MasterAICosts } from "../modules/master/pages/MasterAICosts";
+import { MasterInPersonServices } from "../modules/master/pages/MasterInPersonServices";
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -50,6 +51,7 @@ export function masterRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/master/plans" element={mr(MasterPlans, RequireRole)} />
             <Route path="/master/providers" element={mr(MasterProviders, RequireRole)} />
             <Route path="/master/ai-costs" element={mr(MasterAICosts, RequireRole)} />
+            <Route path="/master/servicos-presenciais" element={mr(MasterInPersonServices, RequireRole)} />
         </>
     );
 }

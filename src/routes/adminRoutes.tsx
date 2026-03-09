@@ -30,6 +30,8 @@ const AdminInternalUsers = React.lazy(() => import("../modules/admin/pages/Admin
 const AdminCertificates = React.lazy(() => import("../modules/admin/certificates").then(m => ({ default: m.AdminCertificates })));
 const AdminReviews = React.lazy(() => import("../modules/admin/pages/AdminReviews").then(m => ({ default: m.AdminReviews })));
 const AdminShop = React.lazy(() => import("../modules/admin/pages/AdminShop").then(m => ({ default: m.AdminShop })));
+const AdminBookingForm = React.lazy(() => import("../modules/admin/pages/AdminBookingForm").then(m => ({ default: m.AdminBookingForm })));
+const AdminInPersonServices = React.lazy(() => import("../modules/admin/pages/AdminInPersonServices").then(m => ({ default: m.AdminInPersonServices })));
 const AdminSpaces = React.lazy(() => import("../modules/admin/pages/AdminSpaces").then(m => ({ default: m.AdminSpaces })));
 const AdminSpaceForm = React.lazy(() => import("../modules/admin/pages/AdminSpaceForm").then(m => ({ default: m.AdminSpaceForm })));
 const AdminCalendar = React.lazy(() => import("../modules/admin/pages/AdminCalendar").then(m => ({ default: m.AdminCalendar })));
@@ -116,6 +118,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/espacos" element={ar(AdminSpaces, RequireRole)} />
             <Route path="/admin/espacos/novo" element={ar(AdminSpaceForm, RequireRole)} />
             <Route path="/admin/espacos/:id" element={ar(AdminSpaceForm, RequireRole)} />
+            <Route path="/admin/agendamentos/novo" element={ar(AdminBookingForm, RequireRole)} />
             <Route path="/admin/equipamentos" element={ar(AdminEquipments, RequireRole)} />
             <Route path="/admin/equipamentos/novo" element={ar(AdminEquipmentForm, RequireRole)} />
             <Route path="/admin/equipamentos/:id" element={ar(AdminEquipmentForm, RequireRole)} />
@@ -127,6 +130,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/visitantes" element={ar(AdminVisitors, RequireRole)} />
             <Route path="/admin/visitantes/:id" element={ar(AdminVisitorProfile, RequireRole)} />
             <Route path="/admin/configuracoes" element={ar(AdminMuseumSettings, RequireRole)} />
+            <Route path="/admin/configuracoes/servicos" element={ar(AdminInPersonServices, RequireRole)} />
             <Route path="/admin/treasure-hunt" element={ar(AdminTreasureHunt, RequireRole)} />
             <Route path="/admin/conquistas" element={ar(AdminAchievements, RequireRole)} />
             <Route path="/admin/conquistas/nova" element={ar(AdminAchievementForm, RequireRole)} />
