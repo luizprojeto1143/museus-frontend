@@ -143,6 +143,37 @@ export const AdminDashboard: React.FC = () => {
     <div>
       <h1 className="section-title">🏛 {t("admin.dashboard.title")}</h1>
 
+      {/* ROADMAP 2026 ANNOUNCEMENT */}
+      <div className="card" style={{
+        background: "linear-gradient(135deg, rgba(212,175,55,0.15), rgba(205,127,50,0.05))",
+        border: "1px solid rgba(212,175,55,0.3)",
+        borderRadius: "1.5rem",
+        padding: "1.5rem",
+        marginBottom: "2rem",
+        display: "flex",
+        alignItems: "center",
+        gap: "1.5rem",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        <div style={{ fontSize: "3rem" }}>🚀</div>
+        <div style={{ flex: 1 }}>
+          <span className="badge" style={{ background: "#d4af37", color: "#1a1a1a", fontWeight: "bold", marginBottom: "0.5rem", display: "inline-block" }}>
+            NOVIDADES: ROADMAP MARÇO 2026
+          </span>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: "800", marginBottom: "0.25rem" }}>Cultura Viva Betim: Sistema Atualizado</h2>
+          <p style={{ color: "var(--fg-muted)", fontSize: "0.95rem" }}>
+            Implementamos 10 novas funcionalidades: Comunidade, Quizzes, Rotas Guiadas, Timelines, Certificados Automáticos e muito mais.
+            Confira o menu <b>Roadmap 2026</b> na barra lateral para gerenciar!
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button className="btn btn-primary" onClick={() => window.location.href = "/admin/comunidade"}>
+            Ver Moderação
+          </button>
+        </div>
+      </div>
+
 
       {/* 1.3 ALERTAS E NOTIFICAÇÕES */}
       {data.alerts.length > 0 && (

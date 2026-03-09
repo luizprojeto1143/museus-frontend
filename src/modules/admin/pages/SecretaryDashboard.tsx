@@ -44,7 +44,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const SecretaryDashboard: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -120,99 +120,83 @@ const SecretaryDashboard: React.FC = () => {
                     value={data.cards.pendingAccessibility}
                     icon="♿"
                     color="#f59e0b"
-                />
-                <Card
-                    title="Eventos"
-                    value={data.cards.totalEvents}
-                    icon="📅"
-                    color="#8b5cf6"
-                />
+                    key={idx}
+                    className={`sec-alert-item ${alert.severity === "WARNING" ? "sec-alert-warning" : "sec-alert-info"
+                        }`}
+                >
+                    <span>{alert.message}</span>
             </div>
-
-            {/* Alerts */}
-            {data.alerts.length > 0 && (
-                <div className="sec-alerts">
-                    <h2 className="sec-section-title">{t("admin.secretarydashboard.AlertasDeAteno", `⚠️ Alertas de Atenção`)}</h2>
-                    <div className="sec-alert-list">
-                        {data.alerts.map((alert, idx) => (
-                            <div
-                                key={idx}
-                                className={`sec-alert-item ${alert.severity === "WARNING" ? "sec-alert-warning" : "sec-alert-info"
-                                    }`}
-                            >
-                                <span>{alert.message}</span>
-                            </div>
                         ))}
-                    </div>
-                </div>
+        </div>
+                </div >
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
-                {/* Equipment Accessibility Status */}
-                <div>
-                    <h2 className="sec-section-title">Status de Equipamentos</h2>
-                    <div className="sec-table-container">
-                        <table className="sec-table">
-                            <thead>
-                                <tr>
-                                    <th>Equipamento</th>
-                                    <th style={{ textAlign: 'center' }}>Tipo</th>
-                                    <th style={{ textAlign: 'center' }}>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.equipmentAccessibility.map((eq) => (
-                                    <tr key={eq.id}>
-                                        <td style={{ fontWeight: 500 }}>{eq.name}</td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <span style={{ fontSize: '0.8rem', color: 'var(--sec-text-muted)' }}>{eq.type}</span>
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            {eq.pendingRequests > 0 ? (
-                                                <span className="sec-badge sec-badge-warning">
-                                                    {eq.pendingRequests} pendente(s)
-                                                </span>
-                                            ) : eq.hasAccessibility ? (
-                                                <span className="sec-badge sec-badge-success">OK</span>
-                                            ) : (
-                                                <span className="sec-badge sec-badge-danger">Sem cadastro</span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                {/* Recent Projects */}
-                <div>
-                    <h2 className="sec-section-title">Projetos Recentes</h2>
-                    <div className="sec-project-list">
-                        {data.recentProjects.map((proj) => (
-                            <div key={proj.id} className="sec-project-item">
-                                <div>
-                                    <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--sec-primary)' }}>{proj.title}</div>
-                                    <div style={{ fontSize: '0.85rem', color: 'var(--sec-text-muted)', marginTop: '0.25rem' }}>
-                                        {new Date(proj.createdAt).toLocaleDateString("pt-BR")}
-                                    </div>
-                                </div>
-                                <span className={`sec-badge ${proj.status === 'APPROVED' ? 'sec-badge-success' :
-                                    proj.status === 'REJECTED' ? 'sec-badge-danger' : 'sec-badge-warning'
-                                    }`}>
-                                    {statusLabels[proj.status] || proj.status}
-                                </span>
-                            </div>
-                        ))}
-                        {data.recentProjects.length === 0 && (
-                            <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--sec-text-muted)', background: 'white', borderRadius: '8px', border: '1px dashed var(--sec-border)' }}>
-                                Nenhum projeto recente.
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+    {/* Equipment Accessibility Status */}
+    <div>
+        <h2 className="sec-section-title">Status de Equipamentos</h2>
+        <div className="sec-table-container">
+            <table className="sec-table">
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th style={{ textAlign: 'center' }}>Tipo</th>
+                        <th style={{ textAlign: 'center' }}>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.equipmentAccessibility.map((eq) => (
+                        <tr key={eq.id}>
+                            <td style={{ fontWeight: 500 }}>{eq.name}</td>
+                            <td style={{ textAlign: 'center' }}>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--sec-text-muted)' }}>{eq.type}</span>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                                {eq.pendingRequests > 0 ? (
+                                    <span className="sec-badge sec-badge-warning">
+                                        {eq.pendingRequests} pendente(s)
+                                    </span>
+                                ) : eq.hasAccessibility ? (
+                                    <span className="sec-badge sec-badge-success">OK</span>
+                                ) : (
+                                    <span className="sec-badge sec-badge-danger">Sem cadastro</span>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
+    </div>
+
+    {/* Recent Projects */}
+    <div>
+        <h2 className="sec-section-title">Projetos Recentes</h2>
+        <div className="sec-project-list">
+            {data.recentProjects.map((proj) => (
+                <div key={proj.id} className="sec-project-item">
+                    <div>
+                        <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--sec-primary)' }}>{proj.title}</div>
+                        <div style={{ fontSize: '0.85rem', color: 'var(--sec-text-muted)', marginTop: '0.25rem' }}>
+                            {new Date(proj.createdAt).toLocaleDateString("pt-BR")}
+                        </div>
+                    </div>
+                    <span className={`sec-badge ${proj.status === 'APPROVED' ? 'sec-badge-success' :
+                        proj.status === 'REJECTED' ? 'sec-badge-danger' : 'sec-badge-warning'
+                        }`}>
+                        {statusLabels[proj.status] || proj.status}
+                    </span>
+                </div>
+            ))}
+            {data.recentProjects.length === 0 && (
+                <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--sec-text-muted)', background: 'white', borderRadius: '8px', border: '1px dashed var(--sec-border)' }}>
+                    Nenhum projeto recente.
+                </div>
+            )}
+        </div>
+    </div>
+</div>
+        </div >
     );
 };
 
