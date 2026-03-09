@@ -1,492 +1,1247 @@
 {
-    "common": {
-        "loading": "Loading...",
-        "save": "Save",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "edit": "Edit",
-        "back": "Back",
-        "search": "Search",
-        "actions": "Actions",
-        "confirm": "Confirm",
-        "confirmDelete": "Are you sure you want to delete?",
-        "success": "Success",
-        "error": "Error",
-        "view": "View",
-        "solved": "Solved!",
-        "minutes": "minutes",
-        "next": "Next",
-        "noData": "No data found.",
-        "menu": "Menu",
-        "all": "All",
-        "images": "Images",
-        "audios": "Audios",
-        "videos": "Videos",
-        "noResults": "No results found.",
-        "modes": {
-            "museum": {
-                "work": "Artwork",
-                "works": "Artworks",
-                "trail": "Trail",
-                "trails": "Trails",
-                "room": "Room",
-                "floor": "Floor"
-            },
-            "city": {
-                "work": "Point of Interest",
-                "works": "Points of Interest",
-                "trail": "Tour",
-                "trails": "Tours",
-                "room": "Region",
-                "floor": "District"
-            }
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "search": "Search",
+    "actions": "Actions",
+    "confirm": "Confirm",
+    "confirmDelete": "Are you sure you want to delete?",
+    "success": "Success",
+    "error": "Error",
+    "view": "View",
+    "solved": "Solved!",
+    "minutes": "minutes",
+    "next": "Next",
+    "noData": "No data found.",
+    "menu": "Menu",
+    "all": "All",
+    "images": "Images",
+    "audios": "Audios",
+    "videos": "Videos",
+    "noResults": "No results found.",
+    "modes": {
+      "museum": {
+        "work": "Artwork",
+        "works": "Artworks",
+        "trail": "Trail",
+        "trails": "Trails",
+        "room": "Room",
+        "floor": "Floor",
+        "rooms": "Rooms",
+        "floors": "Floors"
+      },
+      "city": {
+        "work": "Point of Interest",
+        "works": "Points of Interest",
+        "trail": "Tour",
+        "trails": "Tours",
+        "room": "Region",
+        "floor": "District",
+        "rooms": "Regions",
+        "floors": "Neighborhoods"
+      },
+      "cultural_space": {
+        "work": "Activity",
+        "works": "Activities",
+        "trail": "Project",
+        "trails": "Projects",
+        "room": "Space",
+        "rooms": "Spaces",
+        "floor": "Floor",
+        "floors": "Flooring"
+      }
+    },
+    "uploading": "Sending...",
+    "errorLoad": "Error loading data",
+    "anonymous": "Anonymous",
+    "createdAt": "Created in",
+    "date": "Date",
+    "activity": "Activity",
+    "errorUpload": "Upload error",
+    "saving": "Saving...",
+    "generating": "Generating...",
+    "remove": "Remove",
+    "sending": "Sending...",
+    "details": "Details",
+    "share": "To share",
+    "errorConnection": "Connection error",
+    "visitor": "Visitor",
+    "you": "You",
+    "cancelled": "Canceled",
+    "confirmed": "Confirmed",
+    "work": "Work",
+    "works": "Collection",
+    "artist": "Artist",
+    "technique": "Technique",
+    "dimensions": "Dimensions",
+    "trail": "Trail",
+    "trails": "Trails",
+    "room": "Room",
+    "rooms": "Rooms",
+    "floor": "To walk",
+    "floors": "Floors",
+    "event": "Event",
+    "events": "Events",
+    "visitors": "Visitors",
+    "featuredWorks": "Featured Works"
+  },
+  "dashboard": {
+    "title": "Control Panel"
+  },
+  "welcome": {
+    "title": "Cultura Viva",
+    "subtitle": "Your cultural journey starts here",
+    "firstTime": "Welcome to Cultura Viva, {{name}}!",
+    "selectTenantAlert": "Select a museum!",
+    "errorSave": "Error saving achievement",
+    "errorUpload": "Error uploading image",
+    "returning": "Good to see you again, {{name}}!",
+    "explore": "Explore",
+    "login": "Login"
+  },
+  "uploads": {
+    "title": "Files",
+    "subtitle": "Manage all stored images, audios, and videos.",
+    "newUpload": "New File",
+    "stats": {
+      "total": "Total Files",
+      "usedSpace": "Used Space",
+      "images": "Images"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Access your account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Login",
+      "forgotPassword": "Forgot password",
+      "noAccount": "No account? Register"
+    },
+    "register": {
+      "title": "Create your account",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "submit": "Register",
+      "hasAccount": "Have an account? Login"
+    },
+    "errors": {
+      "generic": "Internal error during registration. Please try again later.",
+      "termsRequired": "You must accept the terms.",
+      "passwordMismatch": "Passwords don't match.",
+      "registerFailed": "Registration failed. Check the data."
+    }
+  },
+  "visitor": {
+    "sidebar": {
+      "home": "Home",
+      "artworks": "Artworks",
+      "trails": "Trails",
+      "map": "Map",
+      "events": "Events",
+      "favorites": "Favorites",
+      "aiChat": "AI Chat",
+      "souvenir": "Souvenir",
+      "passport": "Passport",
+      "profile": "My Profile",
+      "achievements": "Achievements",
+      "visualScanner": "Visual Scanner",
+      "leaderboard": "Leaderboard",
+      "changeMuseum": "Change Museum",
+      "logout": "Logout",
+      "scheduling": "Scheduling",
+      "smartItinerary": "Smart Itinerary",
+      "treasureHunt": "Treasure Hunt",
+      "guestbook": "Guestbook",
+      "installApp": "Install App",
+      "scanner": "Scanner"
+    },
+    "noResults": "No results found.",
+    "dialer": {
+      "button": "Enter Code"
+    },
+    "chat": {
+      "title": "Virtual Guide",
+      "placeholder": "Type your question...",
+      "send": "Send",
+      "you": "You",
+      "guide": "Guide",
+      "welcome": "Hello! I am your virtual guide. Ask me about the artworks or the museum!",
+      "error": "An error occurred. Please try again."
+    },
+    "search": {
+      "title": "Search"
+    },
+    "home": {
+      "badge": "Welcome",
+      "title": "Hello, {{name}}",
+      "subtitle": "Explore the history and culture of our museums.",
+      "startTrail": "Start Trail",
+      "viewMap": "View Map",
+      "featuredArtworks": "Featured Artworks",
+      "featuredSubtitle": "Discover some of the most iconic pieces in our collection.",
+      "exampleArtwork": "Example Artwork",
+      "guestArtist": "Guest Artist",
+      "painting": "Painting",
+      "accessible": "Accessible",
+      "exampleDisclaimer": "* Image for illustration purposes only.",
+      "viewDetails": "View Details",
+      "recommendedTrails": "Recommended Trails",
+      "trailsSubtitle": "Curated itineraries for you to make the most of your visit.",
+      "quickTrail": "Quick Trail",
+      "quickTrailDesc": "Ideal for those short on time.",
+      "museumSuggestion": "Museum Suggestion",
+      "viewTrails": "View Trails",
+      "completeTrail": "Complete Trail",
+      "completeTrailDesc": "Discover the entire collection in detail.",
+      "chooseTrail": "Choose Trail"
+    },
+    "scan": {
+      "title": "Scan QR Code",
+      "instruction": "Point camera at artwork QR Code",
+      "permission": "We need permission to access camera"
+    },
+    "artwork": {
+      "details": "Artwork Details",
+      "audioGuide": "Audio Guide",
+      "play": "Play",
+      "pause": "Pause",
+      "badge": "Artwork",
+      "location": "Location",
+      "unknownRoom": "Unknown room",
+      "unknownFloor": "Unknown floor",
+      "imagePlaceholder": "Artwork image placeholder.",
+      "description": "Description",
+      "noDescription": "Description not available",
+      "stopReading": "Stop Reading",
+      "listenDescription": "Listen to Description",
+      "defaultDescription": "Complete description of the artwork.",
+      "accessibility": "Accessibility",
+      "audioDescription": "Audio Description",
+      "audioDescriptionText": "Narration describing the visual elements of the artwork for blind or low-vision people.",
+      "libras": "Libras (Sign Language)",
+      "librasText": "Video in Libras with the main explanation about the artwork.",
+      "aiInteraction": "AI Interaction",
+      "aiInteractionText": "Chat with our Artificial Intelligence to discover more fascinating details about this artwork.",
+      "logout": "Logout",
+      "notFound": "Artwork not found",
+      "relatedWorks": "Related Artworks",
+      "relatedWork": "Related Artwork",
+      "relatedArtist": "Related Artist",
+      "viewDetails": "View Details"
+    },
+    "selectMuseum": {
+      "title": "Select Museum",
+      "subtitle": "Choose the museum you want to visit",
+      "loading": "Loading museums...",
+      "errorLoading": "Failed to load museum list.",
+      "noMuseums": "No museums found.",
+      "adminHint": "Tip: Register a museum in the Master panel to start."
+    },
+    "favorites": {
+      "title": "Your Favorites",
+      "subtitle": "Artworks and trails you loved",
+      "empty": "You don't have any favorites yet.",
+      "explore": "Explore Artworks"
+    },
+    "museums": {
+      "title": "Manage Museums",
+      "add": "Add Museum",
+      "name": "Museum Name",
+      "location": "Location"
+    },
+    "artworks": {
+      "title": "Manage Artworks",
+      "add": "Add Artwork",
+      "name": "Artwork Title",
+      "artist": "Artist",
+      "description": "Description"
+    },
+    "works": {
+      "title": "Artworks Gallery",
+      "subtitle": "Explore the complete museum collection"
+    },
+    "map": {
+      "title": "Interactive Map",
+      "subtitle": "Navigate through the museum and find the artworks",
+      "legend": "Legend",
+      "generate": "Generate Souvenir",
+      "error": "Error generating souvenir."
+    },
+    "trails": {
+      "title": "Trails",
+      "subtitle": "Thematic itineraries for your visit",
+      "mapTracking": "Map tracking",
+      "viewDetails": "View Details",
+      "badge": "Trail"
+    },
+    "trailDetail": {
+      "loading": "Loading trail...",
+      "about": "About the trail",
+      "artworks": "Artworks in this trail",
+      "clickDetails": "Click to view details",
+      "notFound": "Trail not found"
+    },
+    "events": {
+      "title": "Events",
+      "subtitle": "Check the cultural program",
+      "location": "Location"
+    },
+    "eventDetail": {
+      "notFound": "Event not found.",
+      "backToEvents": "Back to Events",
+      "about": "About the event",
+      "participateAlert": "To participate, go to the event location at the scheduled time.",
+      "participate": "Participate"
+    },
+    "passport": {
+      "title": "My Passport",
+      "subtitle": "Your record of visits and experiences",
+      "totalXp": "Total XP",
+      "work": "Artwork",
+      "visitedAt": "Visited at"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "subtitle": "Your medals and awards"
+    },
+    "visualScanner": {
+      "title": "Visual Recognition",
+      "loadingModel": "Loading AI model...",
+      "loadingWorks": "Loading artworks for recognition...",
+      "startCamera": "Start Camera",
+      "stopCamera": "Stop Camera",
+      "noArtworks": "No artworks registered for recognition.",
+      "instruction": "Point camera at an artwork to identify it.",
+      "analyzing": "Analyzing...",
+      "confidence": "Confidence",
+      "viewDetails": "View Details"
+    },
+    "leaderboard": {
+      "title": "Global Leaderboard",
+      "subtitle": "top explorers of culture",
+      "rank": "Rank",
+      "visitor": "Visitor",
+      "xp": "XP",
+      "loading": "Loading leaderboard...",
+      "empty": "No visitors scored yet."
+    },
+    "treasure": {
+      "title": "Treasure Hunt",
+      "subtitle": "Decipher the riddles, find the artworks and win rewards!",
+      "noClues": "No clues available at the moment.",
+      "clue": "Clue",
+      "completed": "You found the treasure!"
+    },
+    "itinerary": {
+      "title": "Plan your Visit",
+      "timeQuestion": "How much time do you have?",
+      "interestsQuestion": "What do you like?",
+      "accessibilityQuestion": "Accessibility Needs",
+      "generate": "Generate Itinerary"
+    },
+    "pwa": {
+      "install": {
+        "title": "Install App",
+        "desc": "For a better experience, add this app to your home screen.",
+        "ios": {
+          "step1": "Tap the Share button",
+          "step2": "Scroll down and select",
+          "step3": "Tap 'Add' in the top corner"
+        },
+        "android": {
+          "step1": "Tap the browser menu icon (3 dots)",
+          "step2": "Select 'Install app' or 'Add to Home screen'"
         }
+      }
+    },
+    "ai": {
+      "chatTitle": "Chat AI",
+      "welcome": "Hello! I'm the museum's virtual guide. Ask me about works, schedules or curiosities!",
+      "askAboutWork": "Tell me about this work...",
+      "askAnything": "Ask anything...",
+      "placeholder": "Enter your question here..."
+    },
+    "smartRoute": {
+      "title": "Smart Route",
+      "subtitle": "Tell us how much time you have, and we'll create the route.",
+      "generate": "✨ Generate My Itinerary",
+      "tryAgain": "Try Another",
+      "start": "Start",
+      "works": "Works"
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "dashboard": "Control Panel",
+      "artworks": "Artworks",
+      "trails": "Trails",
+      "events": "Events",
+      "qrcodes": "QR Codes",
+      "categories": "Categories",
+      "visitors": "Visitors",
+      "achievements": "Achievements",
+      "ai": "AI Assistant",
+      "analytics": "Analytics",
+      "uploads": "Files",
+      "users": "Users",
+      "treasureHunt": "Treasure Hunt",
+      "settings": "Settings",
+      "logout": "Logout",
+      "reviews": "Moderation",
+      "shop": "Store",
+      "scanner": "AI Reader"
+    },
+    "uploads": {
+      "title": "File Manager",
+      "subtitle": "View and manage all museum media files",
+      "newUpload": "New Upload",
+      "stats": {
+        "total": "Total Files",
+        "usedSpace": "Used Space",
+        "images": "Images"
+      }
+    },
+    "museums": {
+      "title": "Museum Overview"
+    },
+    "museumSettings": {
+      "title": "Museum Settings",
+      "subtitle": "Customize the appearance and information of your museum",
+      "institutionalData": "Institutional Data",
+      "labels": {
+        "name": "Museum Name",
+        "mission": "Mission / Description",
+        "address": "Address",
+        "openingHours": "Opening Hours",
+        "whatsapp": "WhatsApp",
+        "email": "Contact E-mail",
+        "website": "Official Website"
+      },
+      "placeholders": {
+        "mission": "Describe the mission and history of the museum...",
+        "address": "Street, Number, Neighborhood, City - State"
+      },
+      "images": {
+        "title": "Images and Visual Identity",
+        "logo": "Museum Logo",
+        "cover": "Cover Image (App)",
+        "appIcon": "App Icon",
+        "banner": "Promotional Banner",
+        "clickToUpload": "Click to upload image"
+      },
+      "map": {
+        "title": "Map Configuration",
+        "floorPlan": "Floor Plan (Indoor)",
+        "coordinates": "Coordinates (Outdoor)"
+      },
+      "colors": {
+        "title": "Colors and Theme",
+        "primary": "Primary Color",
+        "secondary": "Secondary Color",
+        "theme": "Default Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "historicalFont": "Use historical font (Serif)"
+      },
+      "preview": {
+        "title": "Preview",
+        "text": "This is an example of how the text will look in the app with the selected colors.",
+        "button": "Example Button"
+      },
+      "saving": "Saving...",
+      "save": "Save Settings",
+      "success": "Settings saved successfully!",
+      "error": "Error saving settings."
+    },
+    "trailForm": {
+      "editTitle": "Edit Trail",
+      "newTitle": "New Trail",
+      "subtitle": "Create thematic itineraries for visitors",
+      "labels": {
+        "name": "Trail Name",
+        "description": "Description",
+        "works": "Add Artworks"
+      },
+      "placeholders": {
+        "name": "Ex: Baroque Trail"
+      },
+      "demoSave": "Demo Mode: Trail saved locally!",
+      "selectWork": "Select a work...",
+      "add": "Add",
+      "orderTitle": "Trail Order",
+      "orderSubtitle": "Drag works to define the order. This will be the suggested sequence for the visitor.",
+      "empty": "No works added yet. Click a work on the left to add it."
     },
     "dashboard": {
-        "title": "Control Panel"
+      "title": "Control Panel",
+      "subtitle": "Museum Overview",
+      "select": "Select...",
+      "loading": "Loading...",
+      "empty": "No achievements found for this museum.",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure you want to delete this achievement?",
+      "errorLoad": "Error loading achievements",
+      "errorDelete": "Error deleting achievement",
+      "stats": {
+        "visitors": "Visitors this month",
+        "qrScans": "QR Code Scans",
+        "xpDistributed": "XP Distributed",
+        "monthlyGrowth": "Monthly Growth"
+      },
+      "charts": {
+        "visitsByDay": "Visits by Day",
+        "accessBySource": "Access by Source",
+        "xpByCategory": "XP by Category"
+      },
+      "growth": {
+        "summary": "Growth Summary",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "topWorks": "Top Works",
+      "topTrails": "Top Trails",
+      "topEvents": "Top Events",
+      "visits": "visits",
+      "completions": "completions",
+      "views": "views",
+      "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      },
+      "upcomingBookings": "Upcoming Space Reservations"
     },
-    "welcome": {
-        "title": "Cultura Viva",
-        "subtitle": "Your cultural journey starts here",
-        "firstTime": "Welcome to Cultura Viva, {{name}}!",
+    "scanner": {
+      "title": "AI Scanner Training",
+      "subtitle": "Manage classes and train the model to recognize works."
+    },
+    "errors": {
+      "delete": "Error deleting item",
+      "save": "Error saving data"
+    },
+    "treasure": {
+      "title": "Treasure Hunt",
+      "subtitle": "Manage clues and rewards.",
+      "add": "New Track",
+      "automatedTitle": "Automatic Title",
+      "automatedDescription": "Automatic Description"
+    },
+    "works": {
+      "title": "Works",
+      "subtitle": "Manage the museum collection",
+      "new": "New Work",
+      "table": {
+        "title": "Title",
+        "artist": "Artist",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "published": "Published",
+        "draft": "Sketch"
+      }
+    },
+    "workForm": {
+      "editTitle": "Edit Work",
+      "newTitle": "New Work",
+      "subtitle": "Fill in the work details",
+      "labels": {
+        "title": "Title",
+        "artist": "Artist",
+        "year": "Year",
+        "category": "Category",
+        "room": "Room",
+        "floor": "To walk",
+        "description": "Description",
+        "image": "Image of the Work",
+        "audio": "Audio (Guide)",
+        "libras": "Video (Libras)",
+        "publish": "Publish immediately",
+        "id": "Work ID (For QR Code)"
+      },
+      "success": {
+        "image": "Image sent!",
+        "audio": "Audio sent!",
+        "libras": "Video sent!"
+      },
+      "defaultDescription": "Full description of the work...",
+      "demoSave": "Demo Mode: Work saved!"
+    },
+    "trails": {
+      "title": "Trails",
+      "subtitle": "Manage museum itineraries",
+      "confirmDelete": "Are you sure you want to delete this track?",
+      "new": "New Trail",
+      "table": {
+        "name": "Name",
+        "works": "Works",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "events": {
+      "title": "Events",
+      "subtitle": "Manage cultural programming",
+      "new": "New Event",
+      "table": {
+        "title": "Title",
+        "date": "Date",
+        "time": "Time",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "eventForm": {
+      "editTitle": "Edit Event",
+      "newTitle": "New Event",
+      "subtitle": "Fill in the event details",
+      "labels": {
+        "title": "Event Name",
+        "category": "Subject/Category",
+        "format": "Format",
+        "description": "Description",
+        "location": "Location",
+        "startDate": "Start",
+        "endDate": "End",
+        "coverImage": "Cover Image (URL)",
+        "zipCode": "zip code",
+        "city": "City",
+        "state": "State",
+        "address": "Address",
+        "number": "Number",
+        "platform": "Platform",
+        "meetingLink": "Transmission Link",
+        "producerName": "Producer Name",
+        "producerDescription": "Producer Description",
+        "certificateBg": "Certificate Background Image",
+        "minMinutes": "Min. Minutes for Certificate",
+        "surveyRequired": "Require Satisfaction Survey",
+        "visibility": "Visibility",
+        "audioUrl": "Introductory Audio URL",
+        "videoUrl": "Promotional Video URL"
+      },
+      "steps": {
+        "basic": "Basic Information",
+        "whenWhere": "When and Where",
+        "tickets": "Tickets",
+        "promotion": "Disclosure"
+      },
+      "formats": {
+        "presential": "In person",
+        "online": "Online"
+      },
+      "visibility": {
+        "public": "Public",
+        "private": "Private",
+        "publicDesc": "Visible to everyone in search",
+        "privateDesc": "Only those who have the link"
+      },
+      "tickets": {
+        "title": "Tickets",
+        "create": "Create Ticket",
+        "empty": "No tickets created yet.",
+        "itemTitle": "Ticket",
+        "name": "Name",
+        "quantity": "Amount",
+        "type": "Type",
+        "price": "Price",
+        "free": "Free",
+        "paid": "Paid"
+      },
+      "placeholders": {
+        "title": "Ex: Art Workshop",
+        "description": "Event details...",
+        "location": "Main Auditorium"
+      },
+      "demoSave": "Demo Mode: Event saved!"
+    },
+    "categories": {
+      "title": "Categories",
+      "subtitle": "Manage collection categories",
+      "new": "New Category",
+      "table": {
+        "name": "Name",
+        "description": "Description",
+        "actions": "Actions"
+      }
+    },
+    "categoryForm": {
+      "editTitle": "Edit Category",
+      "newTitle": "New Category",
+      "subtitle": "Fill in the category data",
+      "labels": {
+        "name": "Name",
+        "type": "Type",
+        "description": "Description"
+      },
+      "types": {
+        "WORK": "Work",
+        "TRAIL": "Trail",
+        "EVENT": "Event",
+        "GENERAL": "General"
+      },
+      "placeholders": {
+        "name": "Ex: Painting",
+        "description": "Category description..."
+      },
+      "demoSave": "Demo Mode: Category saved!"
+    },
+    "qrCodes": {
+      "title": "QR Codes",
+      "subtitle": "Generate and manage QR Codes for works and locations",
+      "new": "New QR Code",
+      "cancel": "Cancel",
+      "generate": "Generate QR Code",
+      "download": "Download PNG",
+      "print": "Print",
+      "listTitle": "Generated QR Codes",
+      "helper": "Resource internal ID (e.g. work ID)",
+      "labels": {
+        "type": "Resource Type",
+        "reference": "Reference ID",
+        "customUrl": "Custom URL"
+      },
+      "types": {
+        "work": "Work",
+        "trail": "Trail",
+        "event": "Event",
+        "space": "Space",
+        "custom": "External Link"
+      },
+      "table": {
+        "code": "Code",
+        "type": "Type",
+        "reference": "Reference"
+      }
+    },
+    "visitors": {
+      "title": "Visitors",
+      "subtitle": "Manage and track all museum visitors",
+      "history": "Visit History",
+      "exportCSV": "Export CSV",
+      "totalVisitors": "Total Visitors",
+      "avgXP": "Medium XP",
+      "avgAge": "Middle Ages",
+      "searchPlaceholder": "Search by name or email...",
+      "loading": "Loading visitors...",
+      "noData": "No visitors found.",
+      "table": {
+        "name": "Name",
+        "email": "E-mail",
+        "age": "Age",
+        "xp": "XP",
+        "trails": "Trails",
+        "works": "Works",
+        "lastAccess": "Last Access",
+        "actions": "Actions"
+      },
+      "viewDetails": "View Details"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "subtitle": "Gerencie badges e achievements gamificadas para engajar visitantes",
+      "new": "New Conquest",
+      "stats": {
+        "total": "Total Achievements",
+        "active": "Active",
+        "unlocked": "Fully Unlocked"
+      },
+      "empty": "No achievements registered yet.",
+      "createFirst": "Create first achievement",
+      "card": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "code": "Code",
+        "xp": "XP Reward",
+        "condition": "Condition",
+        "unlocked": "Unlocked",
+        "times": "times",
+        "auto": "Automatic Fire",
+        "edit": "Edit",
+        "disable": "Disable",
+        "enable": "Activate"
+      },
+      "alerts": {
+        "confirmDelete": "Are you sure you want to delete this achievement?",
+        "errorLoad": "Error loading achievements",
+        "errorDelete": "Error deleting achievement",
+        "errorUpdate": "Error updating achievement"
+      }
+    },
+    "achievementForm": {
+      "editTitle": "Edit Achievement",
+      "newTitle": "New Conquest",
+      "editSubtitle": "Change achievement data",
+      "newSubtitle": "Create a new gamified achievement",
+      "sections": {
+        "basic": "Basic Information",
+        "automation": "Automation",
+        "status": "Status"
+      },
+      "labels": {
+        "code": "Unique Code",
+        "title": "Title",
+        "description": "Description",
+        "xp": "XP Reward",
+        "icon": "Conquest Icon",
+        "autoTrigger": "Automatic Fire",
+        "triggerType": "Trigger Type",
+        "triggerValue": "Trigger Value",
+        "condition": "Condition (explanatory text)",
+        "active": "Active achievement"
+      },
+      "placeholders": {
+        "code": "Ex: FIRST_VISIT, COLLECTOR_100",
+        "title": "Ex: First Visit, Construction Explorer",
+        "description": "Describe how the visitor unlocks this achievement",
+        "triggerValue": "Ex: 100 XP, 5 visits, 3 trails",
+        "condition": "Ex: Reach 100 XP, Visit 5 works, Complete 3 trails"
+      },
+      "helpers": {
+        "codeEdit": "Code cannot be changed after creation",
+        "codeNew": "Use capital letters and underscore",
+        "clickUpload": "Click to send image",
+        "autoTrigger": "When active, the achievement automatically unlocks upon reaching the condition"
+      },
+      "triggers": {
+        "xp": "Reach XP",
+        "visit": "Number of Visits",
+        "trail": "Complete Trails",
+        "category": "Complete Category",
+        "custom": "Custom"
+      },
+      "buttons": {
+        "saving": "Saving...",
+        "saveEdit": "Save Changes",
+        "saveNew": "Create Achievement"
+      },
+      "alerts": {
+        "errorLoad": "Error loading achievement",
+        "required": "Code and title are mandatory",
+        "successUpdate": "Achievement updated!",
+        "successCreate": "Achievement created!",
+        "errorSave": "Error saving achievement",
+        "errorUpload": "Error when uploading"
+      }
+    },
+    "aiAssistant": {
+      "title": "AI Assistant",
+      "subtitle": "Configure the personality and behavior of the museum's AI chat",
+      "sections": {
+        "prompt": "AI Instructions",
+        "promptSubtitle": "Key instructions that define the AI's personality and knowledge",
+        "context": "Historical Context",
+        "references": "Internal References",
+        "referencesSubtitle": "URLs or names of works that AI can reference",
+        "advanced": "Advanced Parameters",
+        "test": "Test Wizard",
+        "testSubtitle": "Ask questions to see how the AI ​​responds with current settings"
+      },
+      "labels": {
+        "systemPrompt": "Complete Instructions",
+        "tone": "Tone of Voice",
+        "style": "Speech Style",
+        "context": "Information about the Museum and Collection",
+        "references": "List of References (one per line)",
+        "temperature": "Creativity",
+        "maxTokens": "Response Size",
+        "testMessage": "Test Message"
+      },
+      "placeholders": {
+        "systemPrompt": "You are a cultural guide specialized in baroque art from Minas Gerais. Respond in an educational and engaging way...",
+        "context": "The museum was founded in 1750... Our collection includes pieces from the colonial period...",
+        "references": "Work: Monalisa Colonial\nTrail: Sacred Art\nEvent: Gold Exhibition",
+        "testMessage": "Tell me about the Baroque period..."
+      },
+      "options": {
+        "tone": {
+          "formal": "Educational Formal",
+          "friendly": "Friendly and Accessible",
+          "enthusiastic": "Passionate Enthusiast",
+          "academic": "Rigorous Academic"
+        },
+        "style": {
+          "historical": "Historical-Cultural",
+          "contemporary": "Dynamic Contemporary",
+          "poetic": "Artistic Poetic",
+          "didactic": "Simple Didactic"
+        }
+      },
+      "helpers": {
+        "temperature": "0 = Most accurate, 1 = Most creative",
+        "maxTokens": "Maximum response size",
+        "tip": "Tip: Test different settings to find the ideal tone for your museum. Remember to configure the OPENAI_API_KEY variable in the backend."
+      },
+      "buttons": {
+        "testing": "Testing...",
+        "test": "Test Response",
+        "saving": "Saving...",
+        "save": "Save Configuration"
+      },
+      "alerts": {
+        "success": "AI Assistant successfully configured!",
+        "errorSave": "Error saving configuration",
+        "emptyTest": "Enter a message to test",
+        "errorTest": "Error when testing. Check your OpenAI credentials."
+      },
+      "response": "AI response:"
+    }
+  },
+  "master": {
+    "userForm": {
+      "editTitle": "Edit User",
+      "newTitle": "New User",
+      "subtitle": "Fill in the user data to grant access to the system.",
+      "labels": {
+        "name": "Full Name",
+        "email": "Access E-mail",
+        "password": "Password",
+        "role": "Access Level",
+        "tenant": "Linked to Museum (Tenant)"
+      },
+      "placeholders": {
+        "name": "Ex: John Doe",
+        "email": "john@email.com",
+        "password": "Secure password",
+        "passwordEdit": "New password (optional)",
+        "selectTenant": "Select a museum..."
+      },
+      "roles": {
+        "master": "Master (Global Access)",
+        "admin": "Admin (Museum Manager)"
+      },
+      "helpers": {
+        "tenant": "ADMIN users must be linked to a specific museum. MASTER users have access to everything.",
+        "passwordEdit": "Leave blank to keep current password."
+      },
+      "alerts": {
+        "selectTenant": "Please select a museum for the Admin user.",
+        "errorSave": "Error saving user. Please try again."
+      },
+      "demoAlert": "This is a demo version. User creation is simulated."
+    },
+    "dashboard": {
+      "title": "General Dashboard (Master)",
+      "subtitle": "Visão consolidada dos museus, cidades históricas e espaços culturais atendidos pela sua plataforma.",
+      "totalVisitors": "Total Visitors",
+      "totalVisitorsDesc": "Sum of all registered visitors across all active clients.",
+      "totalVisits": "Total Visits",
+      "totalVisitsDesc": "Check-ins on works, trails and spaces over time.",
+      "summaryByTenant": "Summary by Client",
+      "table": {
+        "client": "Customer",
+        "slug": "Link (URL)",
+        "works": "Works",
+        "trails": "Trails",
+        "events": "Events",
+        "visitors": "Visitors",
+        "visits": "Visits"
+      }
+    },
+    "tenants": {
+      "title": "Institutions/Accounts",
+      "subtitle": "Manage all institutions and cities on the platform.",
+      "new": "New Institution",
+      "table": {
+        "name": "Name",
+        "slug": "Link (URL)",
+        "createdAt": "Created in",
+        "actions": "Actions",
+        "edit": "Edit"
+      }
+    },
+    "tenantForm": {
+      "editTitle": "Edit Institution",
+      "newTitle": "New Institution",
+      "subtitle": "Create a new institution or city on the platform.",
+      "labels": {
+        "name": "Name",
+        "slug": "Custom Link (URL)",
+        "adminEmail": "Administrator Email",
+        "adminName": "Administrator Name",
+        "adminPassword": "Initial Password",
+        "type": "Type of Institution",
+        "plan": "Subscription Plan",
+        "maxWorks": "Limit of Works"
+      },
+      "types": {
+        "museum": "Museum / Cultural Space",
+        "producer": "Event Producer/Organizer"
+      },
+      "placeholders": {
+        "name": "Ex: Museum of Modern Art",
+        "slug": "Ex: mam-sp",
+        "adminName": "Manager's name",
+        "adminEmail": "email@museu.com",
+        "adminPassword": "Strong password"
+      },
+      "helpers": {
+        "slug": "Unique identifier in the URL (e.g. meumuseu.com/app/slug)"
+      },
+      "plans": {
+        "start": "Start (50 works)",
+        "pro": "Pro (200 works)",
+        "enterprise": "Enterprise (500 works)",
+        "custom": "Custom"
+      }
+    },
+    "achievements": {
+      "title": "Achievement Management",
+      "subtitle": "Manage the platform's gamified achievements",
+      "loading": "Loading...",
+      "errorLoad": "Error loading achievements",
+      "select": "Select...",
+      "empty": "No achievements found",
+      "confirmDelete": "Are you sure you want to delete?",
+      "errorDelete": "Error when deleting",
+      "selectTenant": "Select an institution",
+      "new": "New Conquest",
+      "form": {
+        "selectTenantAlert": "Select an institution!",
+        "errorSave": "Error saving achievement",
+        "newTitle": "New Conquest",
+        "tenant": "Institution",
+        "code": "Code",
+        "codePlaceholder": "Ex: BADGE_1",
+        "codeHelp": "Unique code for identification",
+        "title": "Title",
+        "titlePlaceholder": "Ex: Beginner Explorer",
+        "description": "Description",
+        "descriptionPlaceholder": "Description of the achievement...",
+        "imageUrl": "Image/Icon URL",
+        "imageUrlPlaceholder": "https://...",
+        "upload": "Upload",
+        "errorUpload": "Upload error",
+        "saving": "Saving..."
+      }
+    },
+    "accessibility": {
+      "errorLoad": "Error loading requests",
+      "uploadCheckLibras": "Confirm Upload of Libras",
+      "uploadCheckAudio": "Confirm Audio Upload",
+      "success": "Success",
+      "errorSubmit": "Error when sending"
+    },
+    "users": {
+      "table": {
+        "name": "Name",
+        "email": "E-mail",
+        "role": "Profile",
+        "tenant": "Institution",
+        "action": "Actions"
+      }
+    }
+  },
+  "museum": {
+    "featuredWorks": "Featured Works"
+  },
+  "producer": {
+    "layout": {
+      "title": "Producer Area",
+      "menu": {
+        "overview": "Overview",
+        "projects": "My Projects",
+        "tickets": "Box office",
+        "audience": "My Audience",
+        "services": "Hire Services",
+        "reports": "Accountability",
+        "management": "Management"
+      },
+      "logout": "To go out"
+    },
+    "dashboard": {
+      "title": "Producer Overview",
+      "subtitle": "Track the performance of your projects in real time.",
+      "metrics": {
+        "revenue": "Ticket Revenue",
+        "ticketsSold": "Tickets Sold",
+        "activeEvents": "Active Events",
+        "rouanet": "Rouanet quota",
+        "vsLastMonth": "vs previous month",
+        "accumulated": "Accumulated total",
+        "createNew": "Create New",
+        "used": "of the funds used"
+      },
+      "nextEvents": {
+        "title": "Upcoming Events",
+        "viewAll": "See all",
+        "sales": "Sales",
+        "manage": "Manage",
+        "create": "Create New Event"
+      },
+      "services": {
+        "lbiTitle": "LBI pending issues",
+        "lbiText": "Your event needs audio description to comply with the law.",
+        "hire": "Hire Service",
+        "reports": "Reports",
+        "minc": "Accountability (MinC)",
+        "participants": "Export Participant List"
+      }
+    },
+    "tickets": {
+      "title": "Box office",
+      "subtitle": "Manage ticket lots, prices and availability.",
+      "newBatch": "New Lot",
+      "loading": "Loading box office...",
+      "status": {
+        "active": "Active Sales",
+        "paused": "Paused"
+      },
+      "price": "Price",
+      "sold": "Sold",
+      "revenue": "Revenue",
+      "free": "Free"
+    },
+    "reports": {
+      "title": "Accountability",
+      "subtitle": "Financial and accessibility reports for the Rouanet Law.",
+      "metrics": {
+        "revenue": "Fundraising (Revenue)",
+        "tickets": "Ticket Sales",
+        "ticketsSold": "Tickets Sold",
+        "totalIssued": "Total issued",
+        "audience": "Present Audience",
+        "checkIns": "Total check-ins performed"
+      },
+      "available": "Available Reports",
+      "accessibility": {
+        "title": "Accessibility Report",
+        "subtitle": "LBI Compliance (Law 13,146)",
+        "desc": "Technical document proving the offer of Libras, Audio Description and Physical Accessibility at the event.",
+        "download": "Download PDF"
+      },
+      "financial": {
+        "title": "Financial Provision",
+        "subtitle": "Annex IV - Execution",
+        "desc": "Export of all box office and sales transactions formatted for the Salic system.",
+        "download": "Download Excel"
+      }
+    },
+    "accessibility": {
+      "errorLoad": "Error loading requests",
+      "uploadCheckLibras": "Pounds voucher",
+      "uploadCheckAudio": "Audio description receipt",
+      "success": "Request updated successfully",
+      "errorSubmit": "Error updating request"
+    },
+    "users": {
+      "title": "Administrative Users",
+      "subtitle": "Manage museum administrators (ADMIN) and platform managers (MASTER).",
+      "new": "New User",
+      "table": {
+        "name": "Name",
+        "email": "E-mail",
+        "role": "Profile",
+        "tenant": "Institution",
+        "actions": "Actions",
+        "edit": "Edit"
+      }
+    },
+    "achievements": {
+      "title": "Achievement Management",
+      "subtitle": "Create and manage global or museum-specific achievements.",
+      "selectTenant": "Select a customer to view achievements",
+      "select": "Select...",
+      "empty": "No achievements found.",
+      "errorLoad": "Error loading achievements.",
+      "new": "New Conquest",
+      "table": {
+        "icon": "Icon",
+        "title": "Title",
+        "description": "Description",
+        "xp": "XP",
+        "actions": "Actions"
+      },
+      "form": {
+        "newTitle": "New Conquest",
+        "editTitle": "Edit Achievement",
+        "tenant": "Museum (Optional)",
+        "select": "Select...",
+        "code": "Code (unique ID)",
+        "codePlaceholder": "Ex: FIRST_VISIT",
+        "codeHelp": "Unique code in uppercase (ex: VISITOR_100)",
+        "title": "Title",
+        "titlePlaceholder": "Ex: Beginner Explorer",
+        "description": "Description",
+        "descriptionPlaceholder": "Describe how to earn this achievement...",
+        "imageUrl": "Image/Icon",
+        "imageUrlPlaceholder": "https://...",
+        "upload": "Send File",
+        "uploading": "Sending...",
+        "saving": "Saving...",
         "selectTenantAlert": "Select a museum!",
         "errorSave": "Error saving achievement",
         "errorUpload": "Error uploading image",
-        "returning": "Good to see you again, {{name}}!",
-        "explore": "Explore",
-        "login": "Login"
+        "save": "Save",
+        "cancel": "Cancel"
+      }
     },
-    "uploads": {
-        "title": "Files",
-        "subtitle": "Manage all stored images, audios, and videos.",
-        "newUpload": "New File",
-        "stats": {
-            "total": "Total Files",
-            "usedSpace": "Used Space",
-            "images": "Images"
-        }
-    },
-    "auth": {
-        "login": {
-            "title": "Access your account",
-            "email": "Email",
-            "password": "Password",
-            "submit": "Login",
-            "forgotPassword": "Forgot password",
-            "noAccount": "No account? Register"
-        },
-        "register": {
-            "title": "Create your account",
-            "name": "Name",
-            "email": "Email",
-            "password": "Password",
-            "confirmPassword": "Confirm password",
-            "submit": "Register",
-            "hasAccount": "Have an account? Login"
-        },
-        "errors": {
-            "generic": "Internal error during registration. Please try again later."
-        }
-    },
-    "visitor": {
-        "sidebar": {
-            "home": "Home",
-            "artworks": "Artworks",
-            "trails": "Trails",
-            "map": "Map",
-            "events": "Events",
-            "favorites": "Favorites",
-            "aiChat": "AI Chat",
-            "souvenir": "Souvenir",
-            "passport": "Passport",
-            "profile": "My Profile",
-            "achievements": "Achievements",
-            "visualScanner": "Visual Scanner",
-            "leaderboard": "Leaderboard",
-            "changeMuseum": "Change Museum",
-            "logout": "Logout",
-            "scheduling": "Scheduling",
-            "smartItinerary": "Smart Itinerary",
-            "treasureHunt": "Treasure Hunt",
-            "guestbook": "Guestbook",
-            "installApp": "Install App",
-            "scanner": "Scanner"
-        },
-        "noResults": "No results found.",
-        "dialer": {
-            "button": "Enter Code"
-        },
-        "chat": {
-            "title": "Virtual Guide",
-            "placeholder": "Type your question...",
-            "send": "Send",
-            "you": "You",
-            "guide": "Guide",
-            "welcome": "Hello! I am your virtual guide. Ask me about the artworks or the museum!",
-            "error": "An error occurred. Please try again."
-        },
-        "search": {
-            "title": "Search"
-        },
-        "home": {
-            "badge": "Welcome",
-            "title": "Hello, {{name}}",
-            "subtitle": "Explore the history and culture of our museums.",
-            "startTrail": "Start Trail",
-            "viewMap": "View Map",
-            "featuredArtworks": "Featured Artworks",
-            "featuredSubtitle": "Discover some of the most iconic pieces in our collection.",
-            "exampleArtwork": "Example Artwork",
-            "guestArtist": "Guest Artist",
-            "painting": "Painting",
-            "accessible": "Accessible",
-            "exampleDisclaimer": "* Image for illustration purposes only.",
-            "viewDetails": "View Details",
-            "recommendedTrails": "Recommended Trails",
-            "trailsSubtitle": "Curated itineraries for you to make the most of your visit.",
-            "quickTrail": "Quick Trail",
-            "quickTrailDesc": "Ideal for those short on time.",
-            "museumSuggestion": "Museum Suggestion",
-            "viewTrails": "View Trails",
-            "completeTrail": "Complete Trail",
-            "completeTrailDesc": "Discover the entire collection in detail.",
-            "chooseTrail": "Choose Trail"
-        },
-        "scan": {
-            "title": "Scan QR Code",
-            "instruction": "Point camera at artwork QR Code",
-            "permission": "We need permission to access camera"
-        },
-        "artwork": {
-            "details": "Artwork Details",
-            "audioGuide": "Audio Guide",
-            "play": "Play",
-            "pause": "Pause",
-            "badge": "Artwork",
-            "location": "Location",
-            "unknownRoom": "Unknown room",
-            "unknownFloor": "Unknown floor",
-            "imagePlaceholder": "Artwork image placeholder.",
-            "description": "Description",
-            "noDescription": "Description not available",
-            "stopReading": "Stop Reading",
-            "listenDescription": "Listen to Description",
-            "defaultDescription": "Complete description of the artwork.",
-            "accessibility": "Accessibility",
-            "audioDescription": "Audio Description",
-            "audioDescriptionText": "Narration describing the visual elements of the artwork for blind or low-vision people.",
-            "libras": "Libras (Sign Language)",
-            "librasText": "Video in Libras with the main explanation about the artwork.",
-            "aiInteraction": "AI Interaction",
-            "aiInteractionText": "Chat with our Artificial Intelligence to discover more fascinating details about this artwork.",
-            "logout": "Logout",
-            "notFound": "Artwork not found",
-            "relatedWorks": "Related Artworks",
-            "relatedWork": "Related Artwork",
-            "relatedArtist": "Related Artist",
-            "viewDetails": "View Details"
-        },
-        "selectMuseum": {
-            "title": "Select Museum",
-            "subtitle": "Choose the museum you want to visit",
-            "loading": "Loading museums...",
-            "errorLoading": "Failed to load museum list.",
-            "noMuseums": "No museums found.",
-            "adminHint": "Tip: Register a museum in the Master panel to start."
-        },
-        "favorites": {
-            "title": "Your Favorites",
-            "subtitle": "Artworks and trails you loved",
-            "empty": "You don't have any favorites yet.",
-            "explore": "Explore Artworks"
-        },
-        "museums": {
-            "title": "Manage Museums",
-            "add": "Add Museum",
-            "name": "Museum Name",
-            "location": "Location"
-        },
-        "artworks": {
-            "title": "Manage Artworks",
-            "add": "Add Artwork",
-            "name": "Artwork Title",
-            "artist": "Artist",
-            "description": "Description"
-        },
-        "works": {
-            "title": "Artworks Gallery",
-            "subtitle": "Explore the complete museum collection"
-        },
-        "map": {
-            "title": "Interactive Map",
-            "subtitle": "Navigate through the museum and find the artworks",
-            "legend": "Legend",
-            "generate": "Generate Souvenir",
-            "error": "Error generating souvenir."
-        },
-        "trails": {
-            "title": "Trails",
-            "subtitle": "Thematic itineraries for your visit",
-            "mapTracking": "Map tracking",
-            "viewDetails": "View Details",
-            "badge": "Trail"
-        },
-        "trailDetail": {
-            "loading": "Loading trail...",
-            "about": "About the trail",
-            "artworks": "Artworks in this trail",
-            "clickDetails": "Click to view details",
-            "notFound": "Trail not found"
-        },
-        "events": {
-            "title": "Events",
-            "subtitle": "Check the cultural program",
-            "location": "Location"
-        },
-        "eventDetail": {
-            "notFound": "Event not found.",
-            "backToEvents": "Back to Events",
-            "about": "About the event",
-            "participateAlert": "To participate, go to the event location at the scheduled time.",
-            "participate": "Participate"
-        },
-        "passport": {
-            "title": "My Passport",
-            "subtitle": "Your record of visits and experiences",
-            "totalXp": "Total XP",
-            "work": "Artwork",
-            "visitedAt": "Visited at"
-        },
-        "achievements": {
-            "title": "Achievements",
-            "subtitle": "Your medals and awards"
-        },
-        "visualScanner": {
-            "title": "Visual Recognition",
-            "loadingModel": "Loading AI model...",
-            "loadingWorks": "Loading artworks for recognition...",
-            "startCamera": "Start Camera",
-            "stopCamera": "Stop Camera",
-            "noArtworks": "No artworks registered for recognition.",
-            "instruction": "Point camera at an artwork to identify it.",
-            "analyzing": "Analyzing...",
-            "confidence": "Confidence",
-            "viewDetails": "View Details"
-        },
-        "leaderboard": {
-            "title": "Global Leaderboard",
-            "subtitle": "top explorers of culture",
-            "rank": "Rank",
-            "visitor": "Visitor",
-            "xp": "XP",
-            "loading": "Loading leaderboard...",
-            "empty": "No visitors scored yet."
-        },
-        "treasure": {
-            "title": "Treasure Hunt",
-            "subtitle": "Decipher the riddles, find the artworks and win rewards!",
-            "noClues": "No clues available at the moment.",
-            "clue": "Clue",
-            "completed": "You found the treasure!"
-        },
-        "itinerary": {
-            "title": "Plan your Visit",
-            "timeQuestion": "How much time do you have?",
-            "interestsQuestion": "What do you like?",
-            "accessibilityQuestion": "Accessibility Needs",
-            "generate": "Generate Itinerary"
-        },
-        "pwa": {
-            "install": {
-                "title": "Install App",
-                "desc": "For a better experience, add this app to your home screen.",
-                "ios": {
-                    "step1": "Tap the Share button",
-                    "step2": "Scroll down and select",
-                    "step3": "Tap 'Add' in the top corner"
-                },
-                "android": {
-                    "step1": "Tap the browser menu icon (3 dots)",
-                    "step2": "Select 'Install app' or 'Add to Home screen'"
-                }
-            }
-        }
-    },
-    "admin": {
-        "sidebar": {
-            "dashboard": "Control Panel",
-            "artworks": "Artworks",
-            "trails": "Trails",
-            "events": "Events",
-            "qrcodes": "QR Codes",
-            "categories": "Categories",
-            "visitors": "Visitors",
-            "achievements": "Achievements",
-            "ai": "AI Assistant",
-            "analytics": "Analytics",
-            "uploads": "Files",
-            "users": "Users",
-            "treasureHunt": "Treasure Hunt",
-            "settings": "Settings",
-            "logout": "Logout"
-        },
-        "uploads": {
-            "title": "File Manager",
-            "subtitle": "View and manage all museum media files",
-            "newUpload": "New Upload",
-            "stats": {
-                "total": "Total Files",
-                "usedSpace": "Used Space",
-                "images": "Images"
-            }
-        },
-        "museums": {
-            "title": "Museum Overview"
-        },
-        "museumSettings": {
-            "title": "Museum Settings",
-            "subtitle": "Customize the appearance and information of your museum",
-            "institutionalData": "Institutional Data",
-            "labels": {
-                "name": "Museum Name",
-                "mission": "Mission / Description",
-                "address": "Address",
-                "openingHours": "Opening Hours",
-                "whatsapp": "WhatsApp",
-                "email": "Contact E-mail",
-                "website": "Official Website"
-            },
-            "placeholders": {
-                "mission": "Describe the mission and history of the museum...",
-                "address": "Street, Number, Neighborhood, City - State"
-            },
-            "images": {
-                "title": "Images and Visual Identity",
-                "logo": "Museum Logo",
-                "cover": "Cover Image (App)",
-                "appIcon": "App Icon",
-                "banner": "Promotional Banner",
-                "clickToUpload": "Click to upload image"
-            },
-            "map": {
-                "title": "Map Configuration",
-                "floorPlan": "Floor Plan (Indoor)",
-                "coordinates": "Coordinates (Outdoor)"
-            },
-            "colors": {
-                "title": "Colors and Theme",
-                "primary": "Primary Color",
-                "secondary": "Secondary Color",
-                "theme": "Default Theme",
-                "light": "Light",
-                "dark": "Dark",
-                "historicalFont": "Use historical font (Serif)"
-            },
-            "preview": {
-                "title": "Preview",
-                "text": "This is an example of how the text will look in the app with the selected colors.",
-                "button": "Example Button"
-            },
-            "saving": "Saving...",
-            "save": "Save Settings",
-            "success": "Settings saved successfully!",
-            "error": "Error saving settings."
-        },
-        "trailForm": {
-            "editTitle": "Edit Trail",
-            "newTitle": "New Trail",
-            "subtitle": "Create thematic itineraries for visitors",
-            "labels": {
-                "name": "Trail Name",
-                "description": "Description",
-                "works": "Add Artworks"
-            },
-            "placeholders": {
-                "name": "Ex: Baroque Trail"
-            },
-            "demoSave": "Demo Mode: Trail saved locally!",
-            "selectWork": "Select a work...",
-            "add": "Add",
-            "orderTitle": "Trail Order",
-            "orderSubtitle": "Drag works to define the order. This will be the suggested sequence for the visitor.",
-            "empty": "No works added yet. Click a work on the left to add it."
-        },
-        "dashboard": {
-            "title": "Control Panel",
-            "subtitle": "Museum Overview",
-            "select": "Select...",
-            "loading": "Loading...",
-            "empty": "No achievements found for this museum.",
-            "edit": "Edit",
-            "delete": "Delete",
-            "confirmDelete": "Are you sure you want to delete this achievement?",
-            "errorLoad": "Error loading achievements",
-            "errorDelete": "Error deleting achievement",
-            "stats": {
-                "visitors": "Visitors this month",
-                "qrScans": "QR Code Scans",
-                "xpDistributed": "XP Distributed",
-                "monthlyGrowth": "Monthly Growth"
-            },
-            "charts": {
-                "visitsByDay": "Visits by Day",
-                "accessBySource": "Access by Source",
-                "xpByCategory": "XP by Category"
-            },
-            "growth": {
-                "summary": "Growth Summary",
-                "weekly": "Weekly",
-                "monthly": "Monthly"
-            },
-            "topWorks": "Top Works",
-            "topTrails": "Top Trails",
-            "topEvents": "Top Events",
-            "visits": "visits",
-            "completions": "completions",
-            "views": "views",
-            "days": {
-                "mon": "Mon",
-                "tue": "Tue",
-                "wed": "Wed",
-                "thu": "Thu",
-                "fri": "Fri",
-                "sat": "Sat",
-                "sun": "Sun"
-            }
-        }
-    },
-    "master": {
-        "userForm": {
-            "editTitle": "Edit User",
-            "newTitle": "New User",
-            "subtitle": "Fill in the user data to grant access to the system.",
-            "labels": {
-                "name": "Full Name",
-                "email": "Access E-mail",
-                "password": "Password",
-                "role": "Access Level",
-                "tenant": "Linked to Museum (Tenant)"
-            },
-            "placeholders": {
-                "name": "Ex: John Doe",
-                "email": "john@email.com",
-                "password": "Secure password",
-                "passwordEdit": "New password (optional)",
-                "selectTenant": "Select a museum..."
-            },
-            "roles": {
-                "master": "Master (Global Access)",
-                "admin": "Admin (Museum Manager)"
-            },
-            "helpers": {
-                "tenant": "ADMIN users must be linked to a specific museum. MASTER users have access to everything.",
-                "passwordEdit": "Leave blank to keep current password."
-            },
-            "alerts": {
-                "selectTenant": "Please select a museum for the Admin user.",
-                "errorSave": "Error saving user. Please try again."
-            },
-            "demoAlert": "This is a demo version. User creation is simulated."
-        }
+    "userForm": {
+      "editTitle": "Edit User",
+      "newTitle": "New User",
+      "subtitle": "Fill in user data to grant access to the system.",
+      "labels": {
+        "name": "Full name",
+        "email": "Access Email",
+        "password": "Password",
+        "role": "Access Level",
+        "tenant": "Linked to the Institution"
+      },
+      "placeholders": {
+        "name": "Ex: João Silva",
+        "email": "joao@email.com",
+        "password": "Secure password",
+        "passwordEdit": "New password (optional)",
+        "selectTenant": "Select a museum..."
+      },
+      "roles": {
+        "master": "Master (Global Access)",
+        "admin": "Admin (Museum Manager)"
+      },
+      "helpers": {
+        "tenant": "ADMIN users must be linked to an institution. MASTER users have access to everything.",
+        "passwordEdit": "Leave blank to keep the current password."
+      },
+      "alerts": {
+        "selectTenant": "Please select a museum for the Admin user.",
+        "errorSave": "Error saving user. Please try again."
+      },
+      "demoAlert": "This is a demo version. User creation is simulated."
     }
+  },
+  "pwa": {
+    "install": {
+      "title": "Install Application",
+      "desc": "Install our app for a better experience!",
+      "ios": {
+        "step1": "Tap the Share button",
+        "step2": "Role para baixo",
+        "step3": "Select 'Add to Home Screen'"
+      },
+      "android": {
+        "step1": "Tap menu (three dots)",
+        "step2": "Select 'Install app'"
+      }
+    }
+  }
 }
