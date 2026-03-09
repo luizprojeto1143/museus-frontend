@@ -41,6 +41,11 @@ const GroupCheckout = React.lazy(() => import("../modules/visitor/pages/GroupChe
 const VisitorRPG = React.lazy(() => import("../modules/visitor/pages/VisitorRPG").then(m => ({ default: m.VisitorRPG })));
 const SocialCheckinPage = React.lazy(() => import("../modules/visitor/pages/SocialCheckinPage").then(m => ({ default: m.SocialCheckinPage })));
 const TeacherPortal = React.lazy(() => import("../modules/visitor/pages/TeacherPortal").then(m => ({ default: m.TeacherPortal })));
+const CommunityFeed = React.lazy(() => import("../modules/visitor/pages/CommunityFeed").then(m => ({ default: m.CommunityFeed })));
+const ArchitecturalTimeline = React.lazy(() => import("../modules/visitor/pages/ArchitecturalTimeline").then(m => ({ default: m.ArchitecturalTimeline })));
+const RouteMap = React.lazy(() => import("../modules/visitor/pages/RouteMap").then(m => ({ default: m.RouteMap })));
+const FamilyTimeline = React.lazy(() => import("../modules/visitor/pages/FamilyTimeline").then(m => ({ default: m.FamilyTimeline })));
+const CertificateList = React.lazy(() => import("../modules/visitor/pages/CertificateList").then(m => ({ default: m.CertificateList })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -98,6 +103,12 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
             <Route path="/checkin" element={vr(SocialCheckinPage, RequireRole)} />
             <Route path="/professor" element={vr(TeacherPortal, RequireRole)} />
+            {/* Roadmap 2026 */}
+            <Route path="/comunidade" element={vr(CommunityFeed, RequireRole)} />
+            <Route path="/linha-do-tempo/:spaceId" element={vr(ArchitecturalTimeline, RequireRole)} />
+            <Route path="/rota/:routeId" element={vr(RouteMap, RequireRole)} />
+            <Route path="/familia/:profileId" element={vr(FamilyTimeline, RequireRole)} />
+            <Route path="/meus-certificados" element={vr(CertificateList, RequireRole)} />
         </>
     );
 }

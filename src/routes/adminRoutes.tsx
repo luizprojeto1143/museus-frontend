@@ -86,6 +86,11 @@ const AdminInstagramCard = React.lazy(() => import("../modules/admin/pages/Admin
 const AdminHeritage = React.lazy(() => import("../modules/admin/pages/AdminHeritage").then(m => ({ default: m.AdminHeritage })));
 const AdminMunicipalGaps = React.lazy(() => import("../modules/admin/pages/AdminMunicipalGaps").then(m => ({ default: m.AdminMunicipalGaps })));
 const AdminGroupTickets = React.lazy(() => import("../modules/admin/pages/AdminGroupTickets").then(m => ({ default: m.AdminGroupTickets })));
+const AdminCommunityModeration = React.lazy(() => import("../modules/admin/pages/AdminCommunityModeration").then(m => ({ default: m.AdminCommunityModeration })));
+const AdminQuizBuilder = React.lazy(() => import("../modules/admin/pages/AdminQuizBuilder").then(m => ({ default: m.AdminQuizBuilder })));
+const AdminTimelineBuilder = React.lazy(() => import("../modules/admin/pages/AdminTimelineBuilder").then(m => ({ default: m.AdminTimelineBuilder })));
+const AdminSubmissionReview = React.lazy(() => import("../modules/admin/pages/AdminSubmissionReview").then(m => ({ default: m.AdminSubmissionReview })));
+const AdminFamilyBuilder = React.lazy(() => import("../modules/admin/pages/AdminFamilyBuilder").then(m => ({ default: m.AdminFamilyBuilder })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -204,6 +209,12 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/patrimonio" element={ar(AdminHeritage, RequireRole)} />
             <Route path="/admin/vazios" element={ar(AdminMunicipalGaps, RequireRole)} />
             <Route path="/admin/ingressos-grupo" element={ar(AdminGroupTickets, RequireRole)} />
+            {/* Roadmap 2026 */}
+            <Route path="/admin/comunidade" element={ar(AdminCommunityModeration, RequireRole)} />
+            <Route path="/admin/quiz-builder" element={ar(AdminQuizBuilder, RequireRole)} />
+            <Route path="/admin/timelines" element={ar(AdminTimelineBuilder, RequireRole)} />
+            <Route path="/admin/submissoes" element={ar(AdminSubmissionReview, RequireRole)} />
+            <Route path="/admin/familia" element={ar(AdminFamilyBuilder, RequireRole)} />
         </>
     );
 }

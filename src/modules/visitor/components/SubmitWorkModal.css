@@ -1,0 +1,110 @@
+.submission-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.submission-card {
+    width: 100%;
+    max-width: 600px;
+    padding: 2.5rem;
+    border-radius: 2rem;
+    border: 1px solid var(--border-subtle);
+}
+
+.image-upload-area {
+    margin-top: 2rem;
+    border: 2px dashed var(--border-subtle);
+    border-radius: 1.5rem;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.image-upload-area:hover {
+    border-color: var(--accent-primary);
+    background: rgba(var(--accent-primary-rgb), 0.05);
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+}
+
+.preview-container {
+    width: 100%;
+    height: 100%;
+}
+
+.preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-img {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.submission-success {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.success-icon-bg {
+    width: 120px;
+    height: 120px;
+    background: rgba(34, 197, 94, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+}
+
+.submission-success h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #22c55e;
+}
+
+.submission-success p {
+    opacity: 0.7;
+    line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+    .submission-card {
+        padding: 1.5rem;
+    }
+}

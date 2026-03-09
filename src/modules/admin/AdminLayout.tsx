@@ -164,6 +164,16 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/instagram", label: t("admin.sidebar.cardInstagram", "Card Instagram"), icon: "📸", show: true },
         { to: "/admin/traducoes", label: t("admin.sidebar.traduEs", "Traduções"), icon: "🌍", show: true },
       ]
+    },
+    {
+      label: "Roadmap 2026",
+      links: [
+        { to: "/admin/comunidade", label: "Moderação Comunidade", icon: "💬", show: true },
+        { to: "/admin/quiz-builder", label: "Construtor de Quizzes", icon: "❓", show: true },
+        { to: "/admin/timelines", label: "Linhas do Tempo", icon: "🕒", show: true },
+        { to: "/admin/submissoes", label: "Curadoria de Obras", icon: "📥", show: true },
+        { to: "/admin/familia", label: "Memória Familiar", icon: "🌳", show: true },
+      ]
     }
   ];
 

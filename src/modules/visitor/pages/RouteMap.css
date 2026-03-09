@@ -1,0 +1,146 @@
+.route-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    overflow: hidden;
+}
+
+.map-placeholder {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.map-dummy {
+    text-align: center;
+    opacity: 0.8;
+}
+
+.map-overlay-top {
+    position: absolute;
+    top: 2rem;
+    left: 1.5rem;
+    right: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.map-overlay-top h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 0;
+}
+
+.map-overlay-top span {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navigation-card {
+    margin: 1.5rem;
+    padding: 2rem;
+    border-radius: 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.nav-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.destination-name {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.btn-next-step {
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(var(--accent-primary-rgb), 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-next-step:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #333;
+    box-shadow: none;
+}
+
+.route-progress {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+    background: var(--accent-primary);
+}
+
+.progress-dot.current {
+    transform: scale(1.5);
+    box-shadow: 0 0 10px var(--accent-primary);
+}
+
+@media (max-width: 640px) {
+    .navigation-card {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    .destination-name {
+        font-size: 1.1rem;
+    }
+
+    .btn-next-step {
+        padding: 1.25rem;
+        font-size: 1.1rem;
+    }
+}
