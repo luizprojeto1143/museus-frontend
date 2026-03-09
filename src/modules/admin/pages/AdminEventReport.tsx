@@ -80,8 +80,8 @@ export const AdminEventReport: React.FC = () => {
         }
     }, [id, tenantId]);
 
-    if (loading) return <div className="p-8">{t("admin.eventreport.carregandoRelatrio", "Carregando relatório...")}</div>;
-    if (!report) return <div className="p-8">{t("admin.eventreport.erroAoCarregarRelatrio", "Erro ao carregar relatório.")}</div>;
+    if (loading) return <div className="p-8">{t("admin.eventreport.carregandoRelatrio", `Carregando relatório...`)}</div>;
+    if (!report) return <div className="p-8">{t("admin.eventreport.erroAoCarregarRelatrio", `Erro ao carregar relatório.`)}</div>;
 
     const { event, stats, survey, participants } = report;
 
@@ -93,7 +93,7 @@ export const AdminEventReport: React.FC = () => {
                     <Link to={`/admin/eventos/${id}`} className="btn btn-ghost text-zinc-400">
                         <ChevronLeft className="w-5 h-5 mr-1" /> Voltar
                     </Link>
-                    <h1 className="text-2xl font-bold text-white">{t("admin.eventreport.relatrioDoEvento", "Relatório do Evento")}</h1>
+                    <h1 className="text-2xl font-bold text-white">{t("admin.eventreport.relatrioDoEvento", `Relatório do Evento`)}</h1>
                 </div>
                 <button onClick={() => window.print()} className="btn btn-secondary flex items-center gap-2">
                     <Printer className="w-4 h-4" /> Imprimir / PDF
@@ -119,7 +119,7 @@ export const AdminEventReport: React.FC = () => {
                         </div>
                     </div>
                     <div className="text-right">
-                        <p className="text-sm text-gray-400">{t("admin.eventreport.organizao", "Organização")}</p>
+                        <p className="text-sm text-gray-400">{t("admin.eventreport.organizao", `Organização`)}</p>
                         <p className="font-semibold text-zinc-200">{event.tenant}</p>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ export const AdminEventReport: React.FC = () => {
                         </div>
                     </div>
                     <div className="p-4 bg-purple-50 rounded-lg border border-purple-100">
-                        <p className="text-sm text-purple-600 font-medium mb-1">{t("admin.eventreport.satisfaoGeral", "Satisfação Geral")}</p>
+                        <p className="text-sm text-purple-600 font-medium mb-1">{t("admin.eventreport.satisfaoGeral", `Satisfação Geral`)}</p>
                         <div className="flex items-center gap-2">
                             <p className="text-3xl font-bold text-purple-900">{survey.overallSatisfaction > 0 ? survey.overallSatisfaction : '-'}</p>
                             {survey.overallSatisfaction > 0 && <Star className="w-5 h-5 text-yellow-500 fill-current" />}

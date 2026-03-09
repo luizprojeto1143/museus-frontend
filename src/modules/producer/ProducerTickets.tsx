@@ -106,7 +106,7 @@ export const ProducerTickets: React.FC = () => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm text-[#B0A090] mb-1">{t("producer.producertickets.preoR", "Preço (R$)")}</label>
+                                    <label className="block text-sm text-[#B0A090] mb-1">{t("producer.producertickets.preoR", `Preço (R$)`)}</label>
                                     <input
                                         required
                                         type="number"

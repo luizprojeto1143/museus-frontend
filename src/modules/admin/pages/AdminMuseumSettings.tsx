@@ -222,7 +222,8 @@ export const AdminMuseumSettings: React.FC = () => {
     <div className="visitor-theme-container max-w-5xl mx-auto px-4 pt-8">
       <div className="mb-6">
         <h1 className="visitor-theme-title flex items-center gap-3">
-          <Settings size={32} />{t("admin.museumsettings.configuraesDoMuseu", "Configurações do Museu")}</h1>
+          <Settings size={32} /> Configurações do Museu
+        </h1>
         <p className="visitor-theme-subtitle">
           Personalize a identidade visual e dados institucionais com estilo.
         </p>
@@ -256,20 +257,20 @@ export const AdminMuseumSettings: React.FC = () => {
             <div className="space-y-4">
               <div className="visitor-input-group">
                 <label>Nome do Museu *</label>
-                <input className="visitor-input" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} placeholder={t("admin.museumsettings.exMuseuHistrico", "Ex: Museu Histórico")} />
+                <input className="visitor-input" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} placeholder={t("admin.museumsettings.exMuseuHistrico", `Ex: Museu Histórico`)} />
               </div>
               <div className="visitor-input-group">
-                <label>{t("admin.museumsettings.missoDescrio", "Missão / Descrição")}</label>
+                <label>{t("admin.museumsettings.missoDescrio", `Missão / Descrição`)}</label>
                 <textarea className="visitor-input" rows={3} value={settings.mission} onChange={(e) => setSettings({ ...settings, mission: e.target.value })} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="visitor-input-group">
-                  <label>{t("admin.museumsettings.endereo", "Endereço")}</label>
+                  <label>{t("admin.museumsettings.endereo", `Endereço`)}</label>
                   <input className="visitor-input" value={settings.address} onChange={(e) => setSettings({ ...settings, address: e.target.value })} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="visitor-input-group">
-                    <label>{t("admin.museumsettings.horrio", "Horário")}</label>
+                    <label>{t("admin.museumsettings.horrio", `Horário`)}</label>
                     <input className="visitor-input" value={settings.openingHours} onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })} />
                   </div>
                   <div className="visitor-input-group">
@@ -300,34 +301,34 @@ export const AdminMuseumSettings: React.FC = () => {
           <div className="visitor-card">
             <div className="visitor-card-header">
               <Volume2 className="text-[#d4af37]" size={24} />
-              <h2 className="visitor-card-title">{t("admin.museumsettings.boasvindasMultimdia", "Boas-vindas Multimídia")}</h2>
+              <h2 className="visitor-card-title">{t("admin.museumsettings.boasvindasMultimdia", `Boas-vindas Multimídia`)}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <label className="text-[#c9b58c] text-sm font-bold">{t("admin.museumsettings.udioDeNarrao", "Áudio de Narração")}</label>
+                <label className="text-[#c9b58c] text-sm font-bold">{t("admin.museumsettings.udioDeNarrao", `Áudio de Narração`)}</label>
                 <div
                   onClick={() => document.getElementById('welcome-audio-upload')?.click()}
                   className="upload-area"
                   role="button"
-                  aria-label={t("admin.museumsettings.fazerUploadDeUdioDeBoasvindas", "Fazer upload de áudio de boas-vindas")}
+                  aria-label={t("admin.museumsettings.fazerUploadDeUdioDeBoasvindas", `Fazer upload de áudio de boas-vindas`)}
                   tabIndex={0}
                   onKeyDown={(e) => e.key === 'Enter' && document.getElementById('welcome-audio-upload')?.click()}
                 >
                   <Upload size={24} className="mx-auto text-[#d4af37] mb-2" />
-                  <span className="text-xs text-[#c9b58c]">{t("admin.museumsettings.enviarUdioMp3", "Enviar Áudio (MP3)")}</span>
+                  <span className="text-xs text-[#c9b58c]">{t("admin.museumsettings.enviarUdioMp3", `Enviar Áudio (MP3)`)}</span>
                   <input id="welcome-audio-upload" type="file" accept="audio/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])} />
                 </div>
                 {settings.welcomeAudioUrl && (
                   <div className="floor-plan-item">
                     <Headphones size={18} className="text-[#d4af37]" aria-hidden="true" />
-                    <span className="text-sm text-[#EAE0D5] flex-1">{t("admin.museumsettings.udioConfigurado", "Áudio Configurado")}</span>
-                    <audio controls src={settings.welcomeAudioUrl} className="h-6 w-24" aria-label={t("admin.museumsettings.playerDeUdioDeBoasvindas", "Player de áudio de boas-vindas")} />
+                    <span className="text-sm text-[#EAE0D5] flex-1">{t("admin.museumsettings.udioConfigurado", `Áudio Configurado`)}</span>
+                    <audio controls src={settings.welcomeAudioUrl} className="h-6 w-24" aria-label={t("admin.museumsettings.playerDeUdioDeBoasvindas", `Player de áudio de boas-vindas`)} />
                   </div>
                 )}
               </div>
               <div className="space-y-3">
                 <div className="visitor-input-group">
-                  <label>{t("admin.museumsettings.vdeoDeApresentaoUrl", "Vídeo de Apresentação (URL)")}</label>
+                  <label>{t("admin.museumsettings.vdeoDeApresentaoUrl", `Vídeo de Apresentação (URL)`)}</label>
                   <input className="visitor-input" value={settings.welcomeVideoUrl || ""} onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })} placeholder="https://..." />
                 </div>
                 <div className="aspect-video bg-black/40 rounded-lg flex items-center justify-center border border-[var(--border-default)]">
@@ -347,7 +348,7 @@ export const AdminMuseumSettings: React.FC = () => {
             <div className="visitor-card-header justify-between">
               <div className="flex items-center gap-3">
                 <MapIcon className="text-[#d4af37]" size={24} />
-                <h2 className="visitor-card-title">{t("admin.museumsettings.plantasELocalizao", "Plantas e Localização")}</h2>
+                <h2 className="visitor-card-title">{t("admin.museumsettings.plantasELocalizao", `Plantas e Localização`)}</h2>
               </div>
               <button onClick={() => setShowFloorPlanModal(true)} className="btn-ghost-gold px-3 py-1 rounded-full text-xs font-bold">
                 + Adicionar Andar
@@ -428,7 +429,7 @@ export const AdminMuseumSettings: React.FC = () => {
                   </div>
 
                   <div className="visitor-input-group">
-                    <label>{t("admin.museumsettings.corPrimriaDestaquesEBotes", "Cor Primária (Destaques e Botões)")}</label>
+                    <label>{t("admin.museumsettings.corPrimriaDestaquesEBotes", `Cor Primária (Destaques e Botões)`)}</label>
                     <div className="flex gap-3">
                       <input type="color" className="w-14 h-12 bg-transparent border border-[var(--border-default)] rounded-lg cursor-pointer p-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
                       <input className="visitor-input flex-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
@@ -436,7 +437,7 @@ export const AdminMuseumSettings: React.FC = () => {
                   </div>
 
                   <div className="visitor-input-group">
-                    <label>{t("admin.museumsettings.corSecundriaBordasEDetalhes", "Cor Secundária (Bordas e Detalhes)")}</label>
+                    <label>{t("admin.museumsettings.corSecundriaBordasEDetalhes", `Cor Secundária (Bordas e Detalhes)`)}</label>
                     <div className="flex gap-3">
                       <input type="color" className="w-14 h-12 bg-transparent border border-[var(--border-default)] rounded-lg cursor-pointer p-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
                       <input className="visitor-input flex-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
@@ -461,7 +462,7 @@ export const AdminMuseumSettings: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-[#EAE0D5] text-sm font-bold block">{t("admin.museumsettings.fonteHistrica", "Fonte Histórica")}</span>
+                        <span className="text-[#EAE0D5] text-sm font-bold block">{t("admin.museumsettings.fonteHistrica", `Fonte Histórica`)}</span>
                         <span className="text-[10px] text-[#c9b58c]">Estilo Serifado Premium</span>
                       </div>
                       <div
@@ -469,7 +470,7 @@ export const AdminMuseumSettings: React.FC = () => {
                         className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
                         role="switch"
                         aria-checked={settings.historicalFont}
-                        aria-label={t("admin.museumsettings.alternarFonteHistrica", "Alternar fonte histórica")}
+                        aria-label={t("admin.museumsettings.alternarFonteHistrica", `Alternar fonte histórica`)}
                       >
                         <div className={`absolute top-1 w-4 h-4 bg-[var(--bg-root)] rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
                       </div>
@@ -479,7 +480,7 @@ export const AdminMuseumSettings: React.FC = () => {
 
                 {/* LIVE PREVIEW COLUMN */}
                 <div className="hidden lg:block sticky top-8">
-                  <p className="text-[10px] text-[#c9b58c] mb-2 uppercase font-black tracking-widest text-center">{t("admin.museumsettings.visualizaoEmTempoReal", "Visualização em Tempo Real")}</p>
+                  <p className="text-[10px] text-[#c9b58c] mb-2 uppercase font-black tracking-widest text-center">{t("admin.museumsettings.visualizaoEmTempoReal", `Visualização em Tempo Real`)}</p>
                   <div
                     className="rounded-[2.5rem] border-[8px] border-[#2c1e10] p-4 shadow-2xl relative overflow-hidden aspect-[9/16] w-[260px] mx-auto transition-all duration-500"
                     style={{
@@ -513,7 +514,7 @@ export const AdminMuseumSettings: React.FC = () => {
           <div className="visitor-card">
             <div className="visitor-card-header">
               <CreditCard className="text-[#d4af37]" size={24} />
-              <h2 className="visitor-card-title">{t("admin.museumsettings.configuraesFinanceiras", "Configurações Financeiras")}</h2>
+              <h2 className="visitor-card-title">{t("admin.museumsettings.configuraesFinanceiras", `Configurações Financeiras`)}</h2>
             </div>
 
             <div className="space-y-6">
@@ -521,7 +522,7 @@ export const AdminMuseumSettings: React.FC = () => {
                 <HelpCircle size={32} className="text-[#d4af37] shrink-0" />
                 <p>
                   Para receber pagamentos diretamente em sua conta, você deve configurar o seu <strong>Wallet ID</strong> do Asaas.
-                  O sistema realizará um split automático: <strong>95% para você</strong> e 5% de taxa da plataforma.
+                  O sistema realizará um split automático: <strong>{t("admin.museumsettings.95ParaVoc", `95% para você`)}</strong> e 5% de taxa da plataforma.
                 </p>
               </div>
 
@@ -530,7 +531,9 @@ export const AdminMuseumSettings: React.FC = () => {
                   ID da Carteira Asaas (Wallet ID)
                   <div className="group relative">
                     <HelpCircle size={14} className="text-[#d4af37] cursor-help" />
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black border border-[#d4af37] rounded-lg text-[10px] invisible group-hover:visible shadow-xl z-50">{t("admin.museumsettings.vocEncontraEsteIdNoMenuConfigu", "Você encontra este ID no menu "Configurações &gt; Webhooks &gt; Token de Autenticação" ou entrando em contato com o suporte Asaas.")}</div>
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black border border-[#d4af37] rounded-lg text-[10px] invisible group-hover:visible shadow-xl z-50">{t("admin.museumsettings.vocEncontraEsteIdNoMenuConfiguraesGtWebh", `
+                      Você encontra este ID no menu "Configurações &gt; Webhooks &gt; Token de Autenticação" ou entrando em contato com o suporte Asaas.
+                    `)}</div>
                   </div>
                 </label>
                 <input
@@ -543,9 +546,9 @@ export const AdminMuseumSettings: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">{t("admin.museumsettings.comissoPlataforma", "Comissão Plataforma")}</h4>
+                  <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">{t("admin.museumsettings.comissoPlataforma", `Comissão Plataforma`)}</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">5%</p>
-                  <p className="text-[10px] opacity-60">{t("admin.museumsettings.retidosNaTransao", "Retidos na transação")}</p>
+                  <p className="text-[10px] opacity-60">{t("admin.museumsettings.retidosNaTransao", `Retidos na transação`)}</p>
                 </div>
                 <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
                   <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">Seu Recebimento</h4>
@@ -555,14 +558,15 @@ export const AdminMuseumSettings: React.FC = () => {
               </div>
 
               <div className="p-4 rounded-xl bg-yellow-900/10 border border-yellow-700/30 text-xs text-yellow-200/70">
-                <strong>{t("admin.museumsettings.ateno", "Atenção:")}</strong>{t("admin.museumsettings.certifiqueseDeQueOWalletIdEstC", "Certifique-se de que o Wallet ID está correto. Transferências para IDs incorretos não podem ser estornadas automaticamente.")}</div>
+                <strong>{t("admin.museumsettings.ateno", `Atenção:`)}</strong> Certifique-se de que o Wallet ID está correto. Transferências para IDs incorretos não podem ser estornadas automaticamente.
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === "preview" && (
           <div className="visitor-card">
-            <h2 className="visitor-card-title" style={{ marginBottom: "1.5rem" }}>{t("admin.museumsettings.simulaoCompleta", "Simulação Completa")}</h2>
+            <h2 className="visitor-card-title" style={{ marginBottom: "1.5rem" }}>{t("admin.museumsettings.simulaoCompleta", `Simulação Completa`)}</h2>
             <div className="flex justify-center py-8">
               <div
                 className="rounded-[3rem] border-[12px] border-[#2c1e10] p-6 relative overflow-hidden shadow-2xl transition-all duration-300 w-full max-w-[320px] aspect-[9/19]"
@@ -606,14 +610,17 @@ export const AdminMuseumSettings: React.FC = () => {
       <div className="admin-wizard-footer">
         <div className="admin-wizard-footer-inner justify-end">
           <div className="flex items-center gap-4">
-            <span className="text-xs text-[#c9b58c] font-medium">{t("admin.museumsettings.alteraesNoSalvas", "Alterações não salvas")}</span>
+            <span className="text-xs text-[#c9b58c] font-medium">{t("admin.museumsettings.alteraesNoSalvas", `
+              Alterações não salvas
+            `)}</span>
             <Button
               onClick={handleSave}
               isLoading={saving}
               className="btn-primary-gold px-8 py-3 rounded-xl"
-              leftIcon={<Save size={18} />{t("admin.museumsettings.SalvarConfiguraes", "}
+              leftIcon={<Save size={18} />}
             >
-              Salvar Configurações")}</Button>
+              Salvar Configurações
+            </Button>
           </div>
         </div>
       </div>
@@ -623,7 +630,7 @@ export const AdminMuseumSettings: React.FC = () => {
           <div className="visitor-card w-full max-w-md bg-[var(--bg-card)] m-0">
             <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
             <div className="space-y-4">
-              <input className="visitor-input" placeholder={t("admin.museumsettings.nomeExTrreo", "Nome (Ex: Térreo)")} value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
+              <input className="visitor-input" placeholder={t("admin.museumsettings.nomeExTrreo", `Nome (Ex: Térreo)`)} value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
               <input className="visitor-input" type="number" placeholder="Ordem" value={newFloorPlan.floor} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })} />
               <div
                 onClick={() => floorPlanInputRef.current?.click()}

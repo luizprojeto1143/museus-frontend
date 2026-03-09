@@ -86,17 +86,19 @@ export const AdminInternalUsers: React.FC = () => {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
-          <h1 className="section-title">{t("admin.internalusers.UsuriosInternos", "👤 Usuários Internos")}</h1>
+          <h1 className="section-title">{t("admin.internalusers.UsuriosInternos", `👤 Usuários Internos`)}</h1>
 
         </div>
-        <Link to="/admin/usuarios/novo" className="btn btn-primary">{t("admin.internalusers.NovoUsurio", "+ Novo Usuário")}</Link>
+        <Link to="/admin/usuarios/novo" className="btn btn-primary">{t("admin.internalusers.NovoUsurio", `
+          + Novo Usuário
+        `)}</Link>
       </div>
 
       {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
         <div className="stat-card">
           <div className="stat-value">{users.length}</div>
-          <div className="stat-label">{t("admin.internalusers.totalDeUsurios", "Total de Usuários")}</div>
+          <div className="stat-label">{t("admin.internalusers.totalDeUsurios", `Total de Usuários`)}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{users.filter(u => u.role === "MASTER").length}</div>
@@ -112,11 +114,11 @@ export const AdminInternalUsers: React.FC = () => {
         </div>
       </div>
 
-      {loading && <p>{t("admin.internalusers.carregandoUsurios", "Carregando usuários...")}</p>}
+      {loading && <p>{t("admin.internalusers.carregandoUsurios", `Carregando usuários...`)}</p>}
 
       {!loading && users.length === 0 && (
         <div className="card">
-          <p>{t("admin.internalusers.nenhumUsurioCadastradoAinda", "Nenhum usuário cadastrado ainda.")}</p>
+          <p>{t("admin.internalusers.nenhumUsurioCadastradoAinda", `Nenhum usuário cadastrado ainda.`)}</p>
         </div>
       )}
 
@@ -129,8 +131,8 @@ export const AdminInternalUsers: React.FC = () => {
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
-                <th>{t("admin.internalusers.ltimoLogin", "Último Login")}</th>
-                <th>{t("admin.internalusers.aes", "Ações")}</th>
+                <th>{t("admin.internalusers.ltimoLogin", `Último Login`)}</th>
+                <th>{t("admin.internalusers.aes", `Ações`)}</th>
               </tr>
             </thead>
             <tbody>
@@ -211,11 +213,11 @@ export const AdminInternalUsers: React.FC = () => {
 
       {/* Permissões */}
       <div className="card" style={{ marginTop: "2rem" }}>
-        <h2 className="card-title">{t("admin.internalusers.MatrizDePermisses", "🔐 Matriz de Permissões")}</h2>
+        <h2 className="card-title">{t("admin.internalusers.MatrizDePermisses", `🔐 Matriz de Permissões`)}</h2>
         <table className="table" style={{ marginTop: "1rem" }}>
           <thead>
             <tr>
-              <th>{t("admin.internalusers.funo", "Função")}</th>
+              <th>{t("admin.internalusers.funo", `Função`)}</th>
               <th>MASTER</th>
               <th>ADMIN</th>
             </tr>
@@ -237,7 +239,7 @@ export const AdminInternalUsers: React.FC = () => {
               <td style={{ color: "#22c55e" }}>✓</td>
             </tr>
             <tr>
-              <td>{t("admin.internalusers.gerenciarUsuriosInternos", "Gerenciar Usuários Internos")}</td>
+              <td>{t("admin.internalusers.gerenciarUsuriosInternos", `Gerenciar Usuários Internos`)}</td>
               <td style={{ color: "#22c55e" }}>✓</td>
               <td style={{ color: "#f59e0b" }}>Parcial</td>
             </tr>

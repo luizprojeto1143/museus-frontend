@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Calendar, MapPin, Clock, Users, ExternalLink } from "lucide-react";
@@ -47,8 +47,8 @@ export const AdminMunicipalCalendar: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.municipalcalendar.calendrioCultural", "Calendário Cultural")}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.municipalcalendar.visoUnificadaDaProgramaoMunici", "Visão unificada da programação municipal")}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.municipalcalendar.calendrioCultural", `Calendário Cultural`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.municipalcalendar.visoUnificadaDaProgramaoMunicipal", `Visão unificada da programação municipal`)}</p>
                 </div>
                 <input type="month" value={month} onChange={e => setMonth(e.target.value)} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} />
             </div>
@@ -58,7 +58,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
                 <div className="stat-card">
                     <Calendar style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
                     <p className="stat-value">{filteredEvents.length}</p>
-                    <p className="stat-label">Eventos no Mês</p>
+                    <p className="stat-label">{t("admin.municipalcalendar.eventosNoMs", `Eventos no Mês`)}</p>
                 </div>
                 <div className="stat-card">
                     <p className="stat-value">{grouped.size}</p>
@@ -74,7 +74,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
             {grouped.size === 0 ? (
                 <div className="card" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <Calendar size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
-                    <p style={{ color: "#64748b" }}>Nenhum evento neste mês</p>
+                    <p style={{ color: "#64748b" }}>{t("admin.municipalcalendar.nenhumEventoNesteMs", `Nenhum evento neste mês`)}</p>
                 </div>
             ) : (
                 <div className="space-y-6">

@@ -125,7 +125,7 @@ export const AdminEventSurvey: React.FC = () => {
                     <ChevronLeft className="w-6 h-6" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-white">{t("admin.eventsurvey.pesquisaDeSatisfao", "Pesquisa de Satisfação")}</h1>
+                    <h1 className="text-2xl font-bold text-white">{t("admin.eventsurvey.pesquisaDeSatisfao", `Pesquisa de Satisfação`)}</h1>
                     <p className="text-sm text-zinc-400">Evento: {title}</p>
                 </div>
             </div>
@@ -135,7 +135,7 @@ export const AdminEventSurvey: React.FC = () => {
                     <div className="text-center py-12">
                         <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                         <h3 className="text-white font-medium mb-1">Nenhuma pergunta configurada</h3>
-                        <p className="text-zinc-400 mb-6">{t("admin.eventsurvey.crieUmFormulrioParaColetarFeed", "Crie um formulário para coletar feedback dos participantes.")}</p>
+                        <p className="text-zinc-400 mb-6">{t("admin.eventsurvey.crieUmFormulrioParaColetarFeedbackDosPar", `Crie um formulário para coletar feedback dos participantes.`)}</p>
                         <button onClick={addQuestion} className="btn btn-primary">
                             <Plus className="w-4 h-4 mr-2" /> Adicionar Primeira Pergunta
                         </button>
@@ -172,9 +172,9 @@ export const AdminEventSurvey: React.FC = () => {
                                                     value={q.type}
                                                     onChange={e => updateQuestion(index, 'type', e.target.value)}
                                                 >
-                                                    <option value="STARS">{t("admin.eventsurvey.AvaliaoEstrelas", "⭐ Avaliação (Estrelas)")}</option>
+                                                    <option value="STARS">{t("admin.eventsurvey.AvaliaoEstrelas", `⭐ Avaliação (Estrelas)`)}</option>
                                                     <option value="TEXT">📝 Texto Livre</option>
-                                                    <option value="CHOICE">{t("admin.eventsurvey.MltiplaEscolha", "🔘 Múltipla Escolha")}</option>
+                                                    <option value="CHOICE">{t("admin.eventsurvey.MltiplaEscolha", `🔘 Múltipla Escolha`)}</option>
                                                     <option value="NPS">📊 NPS (0-10)</option>
                                                 </select>
                                             </div>
@@ -182,7 +182,7 @@ export const AdminEventSurvey: React.FC = () => {
 
                                         {q.type === 'CHOICE' && (
                                             <div>
-                                                <label className="text-xs font-semibold text-zinc-400 uppercase">{t("admin.eventsurvey.opesSeparadasPorVrgula", "Opções (separadas por vírgula)")}</label>
+                                                <label className="text-xs font-semibold text-zinc-400 uppercase">{t("admin.eventsurvey.opesSeparadasPorVrgula", `Opções (separadas por vírgula)`)}</label>
                                                 <input
                                                     className="input w-full"
                                                     value={q.options ? q.options.join(', ') : ''}
@@ -197,10 +197,11 @@ export const AdminEventSurvey: React.FC = () => {
                                                 <input
                                                     type="checkbox"
                                                     checked={q.required}
-                                                    onChange={e =>{t("admin.eventsurvey.updatequestionindexRequiredEta", "updateQuestion(index, 'required', e.target.checked)}
+                                                    onChange={e => updateQuestion(index, 'required', e.target.checked)}
                                                     className="w-4 h-4 text-blue-600 rounded"
                                                 />
-                                                Obrigatória")}</label>
+                                                Obrigatória
+                                            </label>
                                         </div>
                                     </div>
 

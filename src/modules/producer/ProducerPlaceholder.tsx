@@ -10,7 +10,9 @@ export const ProducerPlaceholder: React.FC<{ title: string }> = ({ title }) => {
                 <Construction size={40} className="text-[#D4AF37]" />
             </div>
             <h1 className="text-3xl font-bold text-[#EAE0D5] mb-2 font-serif">{title}</h1>
-            <p className="text-[#B0A090] max-w-md">{t("producer.producerplaceholder.estaFuncionalidadeEstEmDesenvo", "Esta funcionalidade está em desenvolvimento e estará disponível na próxima atualização do Portal do Produtor.")}</p>
+            <p className="text-[#B0A090] max-w-md">{t("producer.producerplaceholder.estaFuncionalidadeEstEmDesenvolvimentoEE", `
+                Esta funcionalidade está em desenvolvimento e estará disponível na próxima atualização do Portal do Produtor.
+            `)}</p>
         </div>
     );
 };

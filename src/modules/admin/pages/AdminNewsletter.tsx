@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Mail, Users, Download, Calendar } from "lucide-react";
@@ -82,7 +82,7 @@ export const AdminNewsletter: React.FC = () => {
                 <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <Mail size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <h3 className="text-lg font-bold text-white mb-1">Nenhum inscrito</h3>
-                    <p style={{ color: "#64748b" }}>{t("admin.newsletter.osInscritosNaNewsletterAparece", "Os inscritos na newsletter aparecerão aqui.")}</p>
+                    <p style={{ color: "#64748b" }}>{t("admin.newsletter.osInscritosNaNewsletterApareceroAqui", `Os inscritos na newsletter aparecerão aqui.`)}</p>
                 </div>
             ) : (
                 <div className="card" style={{ overflow: "hidden", padding: 0 }}>
@@ -92,7 +92,7 @@ export const AdminNewsletter: React.FC = () => {
                                 <th className="px-6 py-4">#</th>
                                 <th className="px-6 py-4">Email</th>
                                 <th className="px-6 py-4">Nome</th>
-                                <th className="px-6 py-4">{t("admin.newsletter.dataDeInscrio", "Data de Inscrição")}</th>
+                                <th className="px-6 py-4">{t("admin.newsletter.dataDeInscrio", `Data de Inscrição`)}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">

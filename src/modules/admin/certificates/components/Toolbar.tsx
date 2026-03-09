@@ -295,7 +295,7 @@ export const Toolbar: React.FC = () => {
                                 <QrCode size={22} color="#d4af37" />
                             </div>
                             <span style={styles.elementLabel}>QR Code</span>
-                            <span style={styles.elementSub}>{t("admin.toolbar.validao", "Validação")}</span>
+                            <span style={styles.elementSub}>{t("admin.toolbar.validao", `Validação`)}</span>
                         </button>
                     </div>
                 </div>
@@ -303,7 +303,9 @@ export const Toolbar: React.FC = () => {
                 {/* Variables */}
                 <div style={styles.section}>
                     <h3 style={styles.sectionTitle}>
-                        <div style={styles.sectionLine} />{t("admin.toolbar.variveisDinmicas", "Variáveis Dinâmicas")}</h3>
+                        <div style={styles.sectionLine} />
+                        Variáveis Dinâmicas
+                    </h3>
                     <div>
                         {variables.map(v => (
                             <button
@@ -355,7 +357,7 @@ export const Toolbar: React.FC = () => {
                                     <ImageIcon size={24} />
                                 </div>
                                 <span style={styles.bgText}>Clique para adicionar</span>
-                                <span style={styles.bgSubtext}>{t("admin.toolbar.pngJpgAt5mb", "PNG, JPG até 5MB")}</span>
+                                <span style={styles.bgSubtext}>{t("admin.toolbar.pngJpgAt5mb", `PNG, JPG até 5MB`)}</span>
                             </>
                         )}
                     </div>

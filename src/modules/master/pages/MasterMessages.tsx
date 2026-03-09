@@ -58,7 +58,7 @@ export const MasterMessages: React.FC = () => {
                     <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "#d4af37", display: "flex", alignItems: "center", gap: "1rem" }}>
                         <Mail /> Caixa de Entrada
                     </h1>
-                    <p style={{ opacity: 0.7 }}>{t("master.messages.solicitaesDeContatoELeadsDaLan", "Solicitações de contato e leads da Landing Page.")}</p>
+                    <p style={{ opacity: 0.7 }}>{t("master.messages.solicitaesDeContatoELeadsDaLandingPage", `Solicitações de contato e leads da Landing Page.`)}</p>
                 </div>
                 <button onClick={fetchMessages} style={{ background: "transparent", border: "1px solid #d4af37", color: "#d4af37", padding: "0.5rem 1rem", borderRadius: "0.5rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     <RefreshCw size={16} /> Atualizar

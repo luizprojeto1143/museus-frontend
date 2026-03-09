@@ -170,7 +170,8 @@ export const TotemValidator: React.FC = () => {
                                 alignItems: "center",
                                 gap: "0.5rem"
                             }}>
-                                <RotateCcw size={24} />{t("totem.totemvalidator.prximo3s", "Próximo (3s)")}</button>
+                                <RotateCcw size={24} /> Próximo (3s)
+                            </button>
                         </div>
                     )}
 
@@ -214,8 +215,8 @@ export const TotemValidator: React.FC = () => {
                 </div>
 
                 <div style={{ textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
-                    <p>{t("totem.totemvalidator.aponteOCdigoQrParaACmera", "Aponte o código QR para a câmera")}</p>
-                    <p style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>{t("totem.totemvalidator.noPrecisaTocarEmNadaLeituraAut", "Não precisa tocar em nada, leitura automática")}</p>
+                    <p>{t("totem.totemvalidator.aponteOCdigoQrParaACmera", `Aponte o código QR para a câmera`)}</p>
+                    <p style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>{t("totem.totemvalidator.noPrecisaTocarEmNadaLeituraAutomtica", `Não precisa tocar em nada, leitura automática`)}</p>
                 </div>
             </div>
         </div>

@@ -120,7 +120,7 @@ export const ProducerEventForm: React.FC = () => {
                         <h1 className="text-3xl font-bold text-[#D4AF37] font-serif">
                             {id ? "Editar Evento" : "Novo Evento"}
                         </h1>
-                        <p className="text-[#B0A090]">{t("producer.producereventform.preenchaAsInformaesParaDivulga", "Preencha as informações para divulgar na agenda cultural.")}</p>
+                        <p className="text-[#B0A090]">{t("producer.producerevent.preenchaAsInformaesParaDivulgarNaAgendaC", `Preencha as informações para divulgar na agenda cultural.`)}</p>
                     </div>
                 </div>
 
@@ -129,10 +129,11 @@ export const ProducerEventForm: React.FC = () => {
                     {/* Basic Info */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
-                            <Info size={18} />{t("producer.producereventform.informaesBsicas", "Informações Básicas")}</div>
+                            <Info size={18} /> Informações Básicas
+                        </div>
 
                         <Input
-                            label={t("producer.producereventform.ttuloDoEvento", "Título do Evento")}
+                            label={t("producer.producerevent.ttuloDoEvento", `Título do Evento`)}
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
@@ -143,12 +144,12 @@ export const ProducerEventForm: React.FC = () => {
                         />
 
                         <Textarea
-                            label={t("producer.producereventform.descrio", "Descrição")}
+                            label={t("producer.producerevent.descrio", `Descrição`)}
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
                             rows={5}
-                            placeholder={t("producer.producereventform.descrevaOEventoAtraesEDetalhes", "Descreva o evento, atrações e detalhes importantes...")}
+                            placeholder={t("producer.producerevent.descrevaOEventoAtraesEDetalhesImportante", `Descreva o evento, atrações e detalhes importantes...`)}
                             className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                         />
 
@@ -179,7 +180,7 @@ export const ProducerEventForm: React.FC = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-4">
                                 <Input
-                                    label={t("producer.producereventform.dataIncio", "Data Início")}
+                                    label={t("producer.producerevent.dataIncio", `Data Início`)}
                                     name="startDate"
                                     type="date"
                                     value={formData.startDate}
@@ -188,7 +189,7 @@ export const ProducerEventForm: React.FC = () => {
                                     className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
                                 />
                                 <Input
-                                    label={t("producer.producereventform.horrioIncio", "Horário Início")}
+                                    label={t("producer.producerevent.horrioIncio", `Horário Início`)}
                                     name="startTime"
                                     type="time"
                                     value={formData.startTime}
@@ -207,7 +208,7 @@ export const ProducerEventForm: React.FC = () => {
                                     className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
                                 />
                                 <Input
-                                    label={t("producer.producereventform.horrioFim", "Horário Fim")}
+                                    label={t("producer.producerevent.horrioFim", `Horário Fim`)}
                                     name="endTime"
                                     type="time"
                                     value={formData.endTime}
@@ -222,10 +223,11 @@ export const ProducerEventForm: React.FC = () => {
                     {/* Location & Media */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
-                            <MapPin size={18} />{t("producer.producereventform.localizaoEMdia", "Localização e Mídia")}</div>
+                            <MapPin size={18} /> Localização e Mídia
+                        </div>
 
                         <Input
-                            label={t("producer.producereventform.localizao", "Localização")}
+                            label={t("producer.producerevent.localizao", `Localização`)}
                             name="location"
                             value={formData.location}
                             onChange={handleChange}

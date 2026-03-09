@@ -74,7 +74,9 @@ export const TenantsList: React.FC = () => {
           <h1 className="master-title">
             Gerenciar Clientes
           </h1>
-          <p className="master-subtitle">{t("master.tenantslist.crieNovasInstituiesGerencieAss", "Crie novas instituições, gerencie assinaturas e controle o acesso de cada conta.")}</p>
+          <p className="master-subtitle">{t("master.tenantslist.crieNovasInstituiesGerencieAssinaturasEC", `
+            Crie novas instituições, gerencie assinaturas e controle o acesso de cada conta.
+          `)}</p>
 
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem", flexWrap: 'wrap' }}>
             <Button

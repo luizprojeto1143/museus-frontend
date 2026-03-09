@@ -338,13 +338,13 @@ export const AdminWorkForm: React.FC = () => {
 
                 <div className="admin-grid-2">
                   <Input
-                    label={t("admin.workform.tcnica", "Técnica")}
+                    label={t("admin.work.tcnica", `Técnica`)}
                     value={technique}
                     onChange={e => setTechnique(e.target.value)}
-                    placeholder={t("admin.workform.exLeoSobreTelaEsculturaEmBronz", "Ex: Óleo sobre tela, Escultura em bronze")}
+                    placeholder={t("admin.work.exLeoSobreTelaEsculturaEmBronze", `Ex: Óleo sobre tela, Escultura em bronze`)}
                   />
                   <Input
-                    label={t("admin.workform.perodoEstilo", "Período / Estilo")}
+                    label={t("admin.work.perodoEstilo", `Período / Estilo`)}
                     value={period}
                     onChange={e => setPeriod(e.target.value)}
                     placeholder="Ex: Barroco, Impressionismo, Arte Moderna"
@@ -356,10 +356,10 @@ export const AdminWorkForm: React.FC = () => {
                     label="Suporte / Material"
                     value={workMedium}
                     onChange={e => setWorkMedium(e.target.value)}
-                    placeholder={t("admin.workform.exTelaMadeiraMrmore", "Ex: Tela, Madeira, Mármore")}
+                    placeholder={t("admin.work.exTelaMadeiraMrmore", `Ex: Tela, Madeira, Mármore`)}
                   />
                   <Input
-                    label={t("admin.workform.dimenses", "Dimensões")}
+                    label={t("admin.work.dimenses", `Dimensões`)}
                     value={dimensions}
                     onChange={e => setDimensions(e.target.value)}
                     placeholder="Ex: 85 x 73 cm"
@@ -367,7 +367,7 @@ export const AdminWorkForm: React.FC = () => {
                 </div>
 
                 <Textarea
-                  label={t("admin.workform.descrioCompleta", "Descrição Completa")}
+                  label={t("admin.work.descrioCompleta", `Descrição Completa`)}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={6}
@@ -382,7 +382,7 @@ export const AdminWorkForm: React.FC = () => {
                 <div className="admin-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div style={{ flex: 1 }}>
                     <Input
-                      label={t("admin.workform.CdigoDoDiscadorApenasNmeros", "🔢 Código do Discador (Apenas Números)")}
+                      label={t("admin.work.CdigoDoDiscadorApenasNmeros", `🔢 Código do Discador (Apenas Números)`)}
                       value={code}
                       onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
                       placeholder="Ex: 101"
@@ -473,7 +473,7 @@ export const AdminWorkForm: React.FC = () => {
                     />
                   </div>
                   <Input
-                    label={t("admin.workform.raioDeDetecoM", "Raio de Detecção (m)")}
+                    label={t("admin.work.raioDeDetecoM", `Raio de Detecção (m)`)}
                     type="number"
                     value={radius}
                     onChange={e => setRadius(Number(e.target.value))}
@@ -531,7 +531,8 @@ export const AdminWorkForm: React.FC = () => {
                   {/* Libras Upload */}
                   <div className="media-card">
                     <h3 className="admin-section-title">
-                      <Video style={{ color: "#a78bfa" }} />{t("admin.workform.vdeoEmLibras", "Vídeo em Libras")}</h3>
+                      <Video style={{ color: "#a78bfa" }} /> Vídeo em Libras
+                    </h3>
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       {librasUrl && (
                         <video controls src={librasUrl} style={{ width: '100%', maxHeight: '150px', background: 'black', borderRadius: '8px' }} />
@@ -561,7 +562,7 @@ export const AdminWorkForm: React.FC = () => {
                     <h3 className="admin-section-title">Resumo</h3>
                     <div className="summary-card">
                       <div className="summary-row">
-                        <span className="summary-label">{t("admin.workform.nomettulo", "Nome/Título:")}</span>
+                        <span className="summary-label">{t("admin.work.nomettulo", `Nome/Título:`)}</span>
                         <span className="summary-value">{title}</span>
                       </div>
                       <div className="summary-row">
@@ -569,11 +570,11 @@ export const AdminWorkForm: React.FC = () => {
                         <span className="summary-value">{artist}</span>
                       </div>
                       <div className="summary-row">
-                        <span className="summary-label">{t("admin.workform.cdigo", "Código:")}</span>
+                        <span className="summary-label">{t("admin.work.cdigo", `Código:`)}</span>
                         <span className="summary-value">#{code}</span>
                       </div>
                       <div className="summary-row">
-                        <span className="summary-label">{t("admin.workform.mdias", "Mídias:")}</span>
+                        <span className="summary-label">{t("admin.work.mdias", `Mídias:`)}</span>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           {imageUrl && <ImageIcon size={16} color="var(--status-success)" />}
                           {audioUrl && <Volume2 size={16} color="var(--status-success)" />}
@@ -585,7 +586,7 @@ export const AdminWorkForm: React.FC = () => {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <h3 className="admin-section-title">{t("admin.workform.aesAdicionais", "Ações Adicionais")}</h3>
+                    <h3 className="admin-section-title">{t("admin.work.aesAdicionais", `Ações Adicionais`)}</h3>
 
                     <div
                       onClick={() => setPublished(!published)}
@@ -632,7 +633,7 @@ export const AdminWorkForm: React.FC = () => {
                       </div>
                       <div>
                         <div style={{ fontWeight: 'bold', color: '#c084fc' }}>Acessibilidade Master</div>
-                        <p style={{ fontSize: '0.8rem', color: '#e9d5ff' }}>{t("admin.workform.solicitarProduoDeLibrasudio", "Solicitar produção de Libras/Áudio")}</p>
+                        <p style={{ fontSize: '0.8rem', color: '#e9d5ff' }}>{t("admin.work.solicitarProduoDeLibrasudio", `Solicitar produção de Libras/Áudio`)}</p>
                       </div>
                     </div>
                   </div>
@@ -667,9 +668,10 @@ export const AdminWorkForm: React.FC = () => {
               <Button
                 onClick={nextStep}
                 className="btn-primary"
-                rightIcon={<ChevronRight size={18} />{t("admin.workform.Prximo", "}
+                rightIcon={<ChevronRight size={18} />}
               >
-                Próximo")}</Button>
+                Próximo
+              </Button>
             )}
           </div>
         </div>
@@ -688,20 +690,20 @@ export const AdminWorkForm: React.FC = () => {
 
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <Select
-                label={t("admin.workform.tipoDeServio", "Tipo de Serviço")}
+                label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
                 value={requestType}
                 onChange={(e) => setRequestType(e.target.value as any)}
               >
-                <option value="LIBRAS">{t("admin.workform.apenasVdeoEmLibras", "Apenas Vídeo em Libras")}</option>
-                <option value="AUDIO_DESC">{t("admin.workform.apenasAudiodescrio", "Apenas Audiodescrição")}</option>
-                <option value="BOTH">{t("admin.workform.comboLibrasUdio", "Combo (Libras + Áudio)")}</option>
+                <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>
+                <option value="AUDIO_DESC">{t("admin.work.apenasAudiodescrio", `Apenas Audiodescrição`)}</option>
+                <option value="BOTH">{t("admin.work.comboLibrasUdio", `Combo (Libras + Áudio)`)}</option>
               </Select>
 
               <Textarea
-                label={t("admin.workform.observaes", "Observações")}
+                label={t("admin.work.observaes", `Observações`)}
                 value={requestNotes}
                 onChange={e => setRequestNotes(e.target.value)}
-                placeholder={t("admin.workform.exPrioridadeAltaDetalhesEspecf", "Ex: Prioridade alta, detalhes específicos...")}
+                placeholder={t("admin.work.exPrioridadeAltaDetalhesEspecficos", `Ex: Prioridade alta, detalhes específicos...`)}
                 rows={3}
               />
             </div>

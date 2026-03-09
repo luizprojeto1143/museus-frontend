@@ -73,7 +73,9 @@ export const ProducerNotices: React.FC = () => {
                             <FileText size={40} />
                         </div>
                         <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">Nenhum edital aberto</h3>
-                        <p className="text-[#B0A090] max-w-md mx-auto">{t("producer.producernotices.noMomentoNoHEditaisComInscries", "No momento não há editais com inscrições abertas. Fique atento às novidades.")}</p>
+                        <p className="text-[#B0A090] max-w-md mx-auto">{t("producer.producernotices.noMomentoNoHEditaisComInscriesAbertasFiq", `
+                            No momento não há editais com inscrições abertas. Fique atento às novidades.
+                        `)}</p>
                     </div>
                 ) : (
                     notices.map(notice => (
@@ -86,7 +88,9 @@ export const ProducerNotices: React.FC = () => {
                                     <FileText size={24} />
                                 </div>
                                 {notice.status === "INSCRIPTIONS_OPEN" ? (
-                                    <span className="bg-[#4cd964]/10 text-[#4cd964] text-xs font-bold px-3 py-1 rounded-full uppercase border border-[#4cd964]/20">{t("producer.producernotices.inscriesAbertas", "Inscrições Abertas")}</span>
+                                    <span className="bg-[#4cd964]/10 text-[#4cd964] text-xs font-bold px-3 py-1 rounded-full uppercase border border-[#4cd964]/20">{t("producer.producernotices.inscriesAbertas", `
+                                        Inscrições Abertas
+                                    `)}</span>
                                 ) : notice.status === "RESULTS_PUBLISHED" ? (
                                     <span className="bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/20">
                                         Resultados Publicados
@@ -123,18 +127,18 @@ export const ProducerNotices: React.FC = () => {
                             <div className="bg-black/20 p-4 rounded-xl text-sm space-y-2 mb-6 border border-[#463420]/50">
                                 {notice.totalBudget && (
                                     <div className="flex justify-between items-center text-[#B0A090] pb-2 border-b border-[#463420]/30">
-                                        <span>{t("producer.producernotices.recursoDisponvel", "Recurso disponível")}</span>
+                                        <span>{t("producer.producernotices.recursoDisponvel", `Recurso disponível`)}</span>
                                         <span className="text-[#EAE0D5] font-bold">R$ {Number(notice.totalBudget).toLocaleString()}</span>
                                     </div>
                                 )}
                                 {notice.maxPerProject && (
                                     <div className="flex justify-between items-center text-[#B0A090] pb-2 border-b border-[#463420]/30">
-                                        <span>{t("producer.producernotices.mximoPorProjeto", "Máximo por projeto")}</span>
+                                        <span>{t("producer.producernotices.mximoPorProjeto", `Máximo por projeto`)}</span>
                                         <span className="text-[#D4AF37] font-bold">Até R$ {Number(notice.maxPerProject).toLocaleString()}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between items-center text-[#B0A090]">
-                                    <span className="flex items-center gap-2"><Calendar size={14} />{t("producer.producernotices.incio", "Início")}</span>
+                                    <span className="flex items-center gap-2"><Calendar size={14} /> Início</span>
                                     <span className="text-[#EAE0D5] font-bold">{new Date(notice.inscriptionStart).toLocaleDateString()}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-[#B0A090]">

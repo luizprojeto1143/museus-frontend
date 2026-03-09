@@ -47,7 +47,7 @@ export const ProducerNoticeResults: React.FC = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
                 <div className="w-10 h-10 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="text-zinc-500">{t("producer.producernoticeresults.carregandoClassificao", "Carregando classificação...")}</p>
+                <p className="text-zinc-500">{t("producer.producernoticeresults.carregandoClassificao", `Carregando classificação...`)}</p>
             </div>
         );
     }
@@ -56,8 +56,8 @@ export const ProducerNoticeResults: React.FC = () => {
         return (
             <div className="max-w-4xl mx-auto py-20 text-center">
                 <FileText size={48} className="mx-auto text-zinc-700 mb-4" />
-                <h2 className="text-2xl font-bold text-white mb-2">{t("producer.producernoticeresults.classificaoIndisponvel", "Classificação Indisponível")}</h2>
-                <p className="text-zinc-500 mb-8">{t("producer.producernoticeresults.osResultadosOficiaisAindaNoFor", "Os resultados oficiais ainda não foram publicados para este edital.")}</p>
+                <h2 className="text-2xl font-bold text-white mb-2">{t("producer.producernoticeresults.classificaoIndisponvel", `Classificação Indisponível`)}</h2>
+                <p className="text-zinc-500 mb-8">{t("producer.producernoticeresults.osResultadosOficiaisAindaNoForamPublicad", `Os resultados oficiais ainda não foram publicados para este edital.`)}</p>
                 <Button onClick={() => navigate(-1)} variant="outline">Voltar</Button>
             </div>
         );
@@ -149,7 +149,8 @@ export const ProducerNoticeResults: React.FC = () => {
             <div className="mt-8 p-6 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-4">
                 <TrendingUp size={24} className="text-blue-400 shrink-0" />
                 <p className="text-xs text-blue-400/80 leading-relaxed">
-                    <strong>Nota sobre o Ranking:</strong>{t("producer.producernoticeresults.aClassificaoFinalCompostaPelaM", "A classificação final é composta pela média ponderada entre a análise técnica da Inteligência Artificial (critérios objetivos e aderência ao edital) e a avaliação do Comitê de Cultura (critérios subjetivos e mérito cultural).")}</p>
+                    <strong>Nota sobre o Ranking:</strong> A classificação final é composta pela média ponderada entre a análise técnica da Inteligência Artificial (critérios objetivos e aderência ao edital) e a avaliação do Comitê de Cultura (critérios subjetivos e mérito cultural).
+                </p>
             </div>
         </div>
     );

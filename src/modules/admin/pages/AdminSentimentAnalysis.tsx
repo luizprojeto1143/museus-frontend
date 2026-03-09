@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, TrendingDown, TrendingUp, AlertTriangle, Star, Lightbulb } from "lucide-react";
@@ -52,8 +52,8 @@ export const AdminSentimentAnalysis: React.FC = () => {
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
             <div>
-                <h1 className="section-title" style={{ margin: 0 }}>{t("admin.sentimentanalysis.anliseDeSentimento", "Análise de Sentimento")}</h1>
-                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.sentimentanalysis.intelignciaSobreAsAvaliaesDosV", "Inteligência sobre as avaliações dos visitantes")}</p>
+                <h1 className="section-title" style={{ margin: 0 }}>{t("admin.sentimentanalysis.anliseDeSentimento", `Análise de Sentimento`)}</h1>
+                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.sentimentanalysis.intelignciaSobreAsAvaliaesDosVisitantes", `Inteligência sobre as avaliações dos visitantes`)}</p>
             </div>
 
             {/* Summary Cards */}
@@ -61,7 +61,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
                 <div className="stat-card">
                     <Star style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
                     <p className="stat-value">{s.avgRating}</p>
-                    <p className="stat-label">{t("admin.sentimentanalysis.mdiaGeral", "Média Geral")}</p>
+                    <p className="stat-label">{t("admin.sentimentanalysis.mdiaGeral", `Média Geral`)}</p>
                 </div>
                 <div className="stat-card">
                     <TrendingUp className="mx-auto text-green-500 mb-2" size={24} />
@@ -75,7 +75,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
                 </div>
                 <div className="stat-card">
                     <p className="stat-value">{s.total}</p>
-                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-2">{t("admin.sentimentanalysis.totalAvaliaes", "Total Avaliações")}</p>
+                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-2">{t("admin.sentimentanalysis.totalAvaliaes", `Total Avaliações`)}</p>
                 </div>
             </div>
 
@@ -83,7 +83,8 @@ export const AdminSentimentAnalysis: React.FC = () => {
             {report.insights.length > 0 && (
                 <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6">
                     <h2 className="text-lg font-bold text-amber-400 mb-3 flex items-center gap-2">
-                        <Lightbulb size={20} />{t("admin.sentimentanalysis.insightsAutomticos", "Insights Automáticos")}</h2>
+                        <Lightbulb size={20} /> Insights Automáticos
+                    </h2>
                     <ul style={{ display: "grid", gap: "0.5rem" }}>
                         {report.insights.map((insight, i) => (
                             <li key={i} className="text-gray-300 text-sm">{insight}</li>
@@ -127,8 +128,8 @@ export const AdminSentimentAnalysis: React.FC = () => {
                         <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                             <tr>
                                 <th className="px-6 py-3">Obra</th>
-                                <th className="px-6 py-3 text-center">{t("admin.sentimentanalysis.mdia", "Média")}</th>
-                                <th className="px-6 py-3 text-center">{t("admin.sentimentanalysis.avaliaes", "Avaliações")}</th>
+                                <th className="px-6 py-3 text-center">{t("admin.sentimentanalysis.mdia", `Média`)}</th>
+                                <th className="px-6 py-3 text-center">{t("admin.sentimentanalysis.avaliaes", `Avaliações`)}</th>
                                 <th className="px-6 py-3 text-center">👍</th>
                                 <th className="px-6 py-3 text-center">👎</th>
                             </tr>
@@ -152,7 +153,8 @@ export const AdminSentimentAnalysis: React.FC = () => {
             {report.recentNegative.length > 0 && (
                 <div className="card" style={{ border: "1px solid rgba(239,68,68,0.2)" }}>
                     <h2 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
-                        <AlertTriangle size={20} />{t("admin.sentimentanalysis.avaliaesNegativasRecentes", "Avaliações Negativas Recentes")}</h2>
+                        <AlertTriangle size={20} /> Avaliações Negativas Recentes
+                    </h2>
                     <div style={{ display: "grid", gap: "0.75rem" }}>
                         {report.recentNegative.map((r, i) => (
                             <div key={i} className="flex items-start gap-3 py-3 border-b border-white/5 last:border-0">

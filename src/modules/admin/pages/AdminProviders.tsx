@@ -74,10 +74,10 @@ export const AdminProviders: React.FC = () => {
                         <tr>
                             <th>Nome</th>
                             <th>Contato</th>
-                            <th>{t("admin.providers.servios", "Serviços")}</th>
+                            <th>{t("admin.providers.servios", `Serviços`)}</th>
                             <th>Trabalhos</th>
                             <th>Status</th>
-                            <th style={{ textAlign: "right" }}>{t("admin.providers.aes", "Ações")}</th>
+                            <th style={{ textAlign: "right" }}>{t("admin.providers.aes", `Ações`)}</th>
                         </tr>
                     </thead>
                     <tbody>

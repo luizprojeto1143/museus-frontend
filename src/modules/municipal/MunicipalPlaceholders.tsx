@@ -37,7 +37,7 @@ export const MunicipalEquipments: React.FC = () => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 font-serif">Equipamentos Culturais</h1>
-                    <p className="text-slate-500">{t("municipal.municipalplaceholders.gestoDeMuseusBibliotecasECentr", "Gestão de museus, bibliotecas e centros culturais vinculados")}</p>
+                    <p className="text-slate-500">{t("municipal.municipalplaceholders.gestoDeMuseusBibliotecasECentrosCulturai", `Gestão de museus, bibliotecas e centros culturais vinculados`)}</p>
                 </div>
                 <Button
                     leftIcon={<Plus size={18} />}
@@ -51,7 +51,7 @@ export const MunicipalEquipments: React.FC = () => {
                 <div className="bg-white border-2 border-dashed border-slate-200 rounded-3xl text-center py-24">
                     <Building2 size={60} className="mx-auto text-slate-300 mb-6" />
                     <h3 className="text-xl font-bold text-slate-700 mb-2">Nenhum equipamento vinculado</h3>
-                    <p className="text-slate-400">{t("municipal.municipalplaceholders.equipamentosCulturaisFilhosApa", "Equipamentos culturais filhos aparecerão aqui.")}</p>
+                    <p className="text-slate-400">{t("municipal.municipalplaceholders.equipamentosCulturaisFilhosApareceroAqui", `Equipamentos culturais filhos aparecerão aqui.`)}</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -131,7 +131,7 @@ export const MunicipalProjects: React.FC = () => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 font-serif">Projetos e Editais</h1>
-                    <p className="text-slate-500">{t("municipal.municipalplaceholders.monitoramentoDeExecuoFsicaEFin", "Monitoramento de execução física e financeira")}</p>
+                    <p className="text-slate-500">{t("municipal.municipalplaceholders.monitoramentoDeExecuoFsicaEFinanceira", `Monitoramento de execução física e financeira`)}</p>
                 </div>
                 <div className="flex gap-2">
                     <Button
@@ -143,9 +143,10 @@ export const MunicipalProjects: React.FC = () => {
                     </Button>
                     <Button
                         leftIcon={<Plus size={18} />}
-                        onClick={() =>{t("municipal.municipalplaceholders.navigateadminprojetosnovoLanar", "navigate("/admin/projetos/novo")}
+                        onClick={() => navigate("/admin/projetos/novo")}
                     >
-                        Lançar Projeto Especial")}</Button>
+                        Lançar Projeto Especial
+                    </Button>
                 </div>
             </div>
 
@@ -175,7 +176,8 @@ export const MunicipalProjects: React.FC = () => {
 
             <section>
                 <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <Users className="text-amber-500" size={20} />{t("municipal.municipalplaceholders.projetosEmExecuo", "Projetos em Execução")}</h2>
+                    <Users className="text-amber-500" size={20} /> Projetos em Execução
+                </h2>
                 <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold tracking-widest">
@@ -183,7 +185,7 @@ export const MunicipalProjects: React.FC = () => {
                                 <th className="px-6 py-4">Projeto</th>
                                 <th className="px-6 py-4">Proponente</th>
                                 <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4 text-right">{t("municipal.municipalplaceholders.ao", "Ação")}</th>
+                                <th className="px-6 py-4 text-right">{t("municipal.municipalplaceholders.ao", `Ação`)}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -247,7 +249,7 @@ export const MunicipalCompliance: React.FC = () => {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 font-serif">Matriz de Conformidade Legal</h1>
-                    <p className="text-slate-500">{t("municipal.municipalplaceholders.acompanhamentoAutomticoDeNorma", "Acompanhamento automático de normativas federais (LBI, NBR 9050)")}</p>
+                    <p className="text-slate-500">{t("municipal.municipalplaceholders.acompanhamentoAutomticoDeNormativasFeder", `Acompanhamento automático de normativas federais (LBI, NBR 9050)`)}</p>
                 </div>
                 <div className="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl font-bold flex items-center gap-2">
                     <Star size={18} fill="currentColor" /> {data?.summary?.complianceRate}% Conforme
@@ -260,7 +262,7 @@ export const MunicipalCompliance: React.FC = () => {
                         <tr>
                             <th className="px-6 py-4">Lei / Normativa</th>
                             <th className="px-6 py-4">Requisito</th>
-                            <th className="px-6 py-4">Evidência no Sistema</th>
+                            <th className="px-6 py-4">{t("municipal.municipalplaceholders.evidnciaNoSistema", `Evidência no Sistema`)}</th>
                             <th className="px-6 py-4 text-center">Status</th>
                         </tr>
                     </thead>
@@ -369,27 +371,28 @@ export const MunicipalSettings: React.FC = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div>
-                <h1 className="text-3xl font-bold text-slate-900 font-serif">{t("municipal.municipalplaceholders.configuraesDaSecretaria", "Configurações da Secretaria")}</h1>
-                <p className="text-slate-500">{t("municipal.municipalplaceholders.identidadeVisualContatoLocaliz", "Identidade visual, contato, localização e parâmetros globais do município")}</p>
+                <h1 className="text-3xl font-bold text-slate-900 font-serif">{t("municipal.municipalplaceholders.configuraesDaSecretaria", `Configurações da Secretaria`)}</h1>
+                <p className="text-slate-500">{t("municipal.municipalplaceholders.identidadeVisualContatoLocalizaoEParmetr", `Identidade visual, contato, localização e parâmetros globais do município`)}</p>
             </div>
 
             <div className="max-w-3xl space-y-8">
                 {/* Identity */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-5">
                     <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
-                        <Building2 size={20} className="text-amber-500" />{t("municipal.municipalplaceholders.identificao", "Identificação")}</h2>
-                    <TextInput label={t("municipal.municipalplaceholders.nomeDaSecretariaInstituio", "Nome da Secretaria / Instituição")} field="name" placeholder="Ex: Secretaria Municipal de Cultura" icon={<Building2 size={14} />} />
-                    <TextInput label={t("municipal.municipalplaceholders.endereoSede", "Endereço Sede")} field="address" placeholder={t("municipal.municipalplaceholders.exPraaTiradentes123", "Ex: Praça Tiradentes, 123")} icon={<MapPin size={14} />} />
-                    <TextArea label={t("municipal.municipalplaceholders.misso", "Missão")} field="mission" placeholder={t("municipal.municipalplaceholders.missoInstitucionalDaSecretaria", "Missão institucional da secretaria...")} />
+                        <Building2 size={20} className="text-amber-500" /> Identificação
+                    </h2>
+                    <TextInput label={t("municipal.municipalplaceholders.nomeDaSecretariaInstituio", `Nome da Secretaria / Instituição`)} field="name" placeholder="Ex: Secretaria Municipal de Cultura" icon={<Building2 size={14} />} />
+                    <TextInput label={t("municipal.municipalplaceholders.endereoSede", `Endereço Sede`)} field="address" placeholder={t("municipal.municipalplaceholders.exPraaTiradentes123", `Ex: Praça Tiradentes, 123`)} icon={<MapPin size={14} />} />
+                    <TextArea label={t("municipal.municipalplaceholders.misso", `Missão`)} field="mission" placeholder={t("municipal.municipalplaceholders.missoInstitucionalDaSecretaria", `Missão institucional da secretaria...`)} />
                     <div className="grid grid-cols-2 gap-4">
                         <TextInput label="CNPJ" field="cnpj" placeholder="00.000.000/0000-00" icon={<Hash size={14} />} />
-                        <TextInput label={t("municipal.municipalplaceholders.naturezaJurdica", "Natureza Jurídica")} field="legalNature" placeholder={t("municipal.municipalplaceholders.pblicoMunicipal", "Público Municipal")} />
+                        <TextInput label={t("municipal.municipalplaceholders.naturezaJurdica", `Natureza Jurídica`)} field="legalNature" placeholder={t("municipal.municipalplaceholders.pblicoMunicipal", `Público Municipal`)} />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <TextInput label="Tipologia" field="typology" placeholder="Ex: Museu, Centro Cultural" />
-                        <NumberInput label={t("municipal.municipalplaceholders.anoDeFundao", "Ano de Fundação")} field="foundationYear" placeholder="Ex: 1985" />
+                        <NumberInput label={t("municipal.municipalplaceholders.anoDeFundao", `Ano de Fundação`)} field="foundationYear" placeholder="Ex: 1985" />
                     </div>
-                    <TextInput label="Representante Legal" field="legalRepresentative" placeholder={t("municipal.municipalplaceholders.nomeCompletoDoResponsvel", "Nome completo do responsável")} />
+                    <TextInput label="Representante Legal" field="legalRepresentative" placeholder={t("municipal.municipalplaceholders.nomeCompletoDoResponsvel", `Nome completo do responsável`)} />
                 </div>
 
                 {/* Contact */}
@@ -407,14 +410,16 @@ export const MunicipalSettings: React.FC = () => {
                 {/* Schedule */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-5">
                     <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
-                        <Clock size={20} className="text-amber-500" />{t("municipal.municipalplaceholders.horrioDeFuncionamento", "Horário de Funcionamento")}</h2>
-                    <TextArea label={t("municipal.municipalplaceholders.horrios", "Horários")} field="openingHours" placeholder={t("municipal.municipalplaceholders.segsex8h17h10sb9h13h", "Seg-Sex: 8h-17h&#10;Sáb: 9h-13h")} rows={4} />
+                        <Clock size={20} className="text-amber-500" /> Horário de Funcionamento
+                    </h2>
+                    <TextArea label={t("municipal.municipalplaceholders.horrios", `Horários`)} field="openingHours" placeholder={t("municipal.municipalplaceholders.segsex8h17h10sb9h13h", `Seg-Sex: 8h-17h&#10;Sáb: 9h-13h`)} rows={4} />
                 </div>
 
                 {/* Location */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-5">
                     <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
-                        <MapPin size={20} className="text-amber-500" />{t("municipal.municipalplaceholders.geolocalizao", "Geolocalização")}</h2>
+                        <MapPin size={20} className="text-amber-500" /> Geolocalização
+                    </h2>
                     <div className="grid grid-cols-2 gap-4">
                         <NumberInput label="Latitude" field="latitude" placeholder="-20.3855" />
                         <NumberInput label="Longitude" field="longitude" placeholder="-43.5035" />
@@ -424,20 +429,21 @@ export const MunicipalSettings: React.FC = () => {
                 {/* Media */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm space-y-5">
                     <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
-                        <Image size={20} className="text-amber-500" />{t("municipal.municipalplaceholders.mdiaEIdentidadeVisual", "Mídia e Identidade Visual")}</h2>
+                        <Image size={20} className="text-amber-500" /> Mídia e Identidade Visual
+                    </h2>
                     <TextInput label="Logo URL" field="logoUrl" placeholder="https://..." icon={<Image size={14} />} />
                     <TextInput label="Imagem de Capa" field="coverImageUrl" placeholder="https://..." icon={<Image size={14} />} />
                     <TextInput label="Banner URL" field="bannerUrl" placeholder="https://..." icon={<Image size={14} />} />
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">{t("municipal.municipalplaceholders.corPrimria", "Cor Primária")}</label>
+                            <label className="block text-sm font-bold text-slate-700 mb-2">{t("municipal.municipalplaceholders.corPrimria", `Cor Primária`)}</label>
                             <div className="flex gap-2">
                                 <input type="color" value={settings.primaryColor || "#f59e0b"} onChange={e => updateField("primaryColor", e.target.value)} className="h-10 w-10 overflow-hidden rounded-lg cursor-pointer border-none" />
                                 <input type="text" value={settings.primaryColor || ""} onChange={e => updateField("primaryColor", e.target.value)} className="flex-1 border border-slate-200 rounded-xl px-4 py-2 text-xs" />
                             </div>
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">{t("municipal.municipalplaceholders.corSecundria", "Cor Secundária")}</label>
+                            <label className="block text-sm font-bold text-slate-700 mb-2">{t("municipal.municipalplaceholders.corSecundria", `Cor Secundária`)}</label>
                             <div className="flex gap-2">
                                 <input type="color" value={settings.secondaryColor || "#1e293b"} onChange={e => updateField("secondaryColor", e.target.value)} className="h-10 w-10 overflow-hidden rounded-lg cursor-pointer border-none" />
                                 <input type="text" value={settings.secondaryColor || ""} onChange={e => updateField("secondaryColor", e.target.value)} className="flex-1 border border-slate-200 rounded-xl px-4 py-2 text-xs" />
@@ -452,7 +458,7 @@ export const MunicipalSettings: React.FC = () => {
                         <Shield size={20} className="text-amber-500" /> Termos Legais (LGPD)
                     </h2>
                     <TextArea label="Termos de Uso" field="termsOfUse" placeholder="Texto dos termos de uso (aceita Markdown/HTML)..." rows={6} />
-                    <TextArea label={t("municipal.municipalplaceholders.polticaDePrivacidade", "Política de Privacidade")} field="privacyPolicy" placeholder={t("municipal.municipalplaceholders.textoDaPolticaDePrivacidade", "Texto da política de privacidade...")} rows={6} />
+                    <TextArea label={t("municipal.municipalplaceholders.polticaDePrivacidade", `Política de Privacidade`)} field="privacyPolicy" placeholder={t("municipal.municipalplaceholders.textoDaPolticaDePrivacidade", `Texto da política de privacidade...`)} rows={6} />
                 </div>
 
                 <div className="flex justify-end pb-10">

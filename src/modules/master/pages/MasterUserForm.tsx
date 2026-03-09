@@ -144,7 +144,7 @@ export const MasterUserForm: React.FC = () => {
           <div className="master-icon-wrapper master-icon-blue">
             <User size={24} />
           </div>
-          <h3>{t("master.userform.dadosDoUsurio", "Dados do Usuário")}</h3>
+          <h3>{t("master.user.dadosDoUsurio", `Dados do Usuário`)}</h3>
         </div>
 
         <div className="master-form space-y-4">

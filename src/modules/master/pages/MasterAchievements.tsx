@@ -81,7 +81,9 @@ export const MasterAchievements: React.FC = () => {
             {/* HERO SECTION */}
             <section className="master-hero">
                 <div className="master-hero-content">
-                    <span className="master-badge">{t("master.achievements.Gamificao", "🏆 Gamificação")}</span>
+                    <span className="master-badge">{t("master.achievements.Gamificao", `
+                        🏆 Gamificação
+                    `)}</span>
                     <h1 className="master-title">
                         Conquistas e Medalhas
                     </h1>

@@ -57,7 +57,7 @@ export const VisitorCollectibles: React.FC = () => {
         <div style={{ padding: '1.5rem' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                 <Sparkles size={36} style={{ color: '#d4af37', margin: '0 auto 0.5rem' }} />
-                <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>{t("visitor.collectibles.minhaColeo", "Minha Coleção")}</h1>
+                <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>{t("visitor.collectibles.minhaColeo", `Minha Coleção`)}</h1>
                 <p style={{ color: '#888', fontSize: '0.85rem' }}>{ownedCount} de {totalCards} cards • {pct}% completo</p>
                 <div style={{ width: '100%', maxWidth: '300px', margin: '0.75rem auto 0', height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
                     <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #d4af37, #f5d76e)', borderRadius: '3px', transition: 'width 0.5s' }} />
@@ -108,7 +108,7 @@ export const VisitorCollectibles: React.FC = () => {
             {tab === 'collection' && myCards.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#666' }}>
                     <Sparkles size={48} style={{ opacity: 0.2, margin: '0 auto 1rem' }} />
-                    <p>{t("visitor.collectibles.vocAindaNoColetouNenhumCard", "Você ainda não coletou nenhum card")}</p>
+                    <p>{t("visitor.collectibles.vocAindaNoColetouNenhumCard", `Você ainda não coletou nenhum card`)}</p>
                     <p style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>Visite obras e complete desafios para ganhar cards!</p>
                 </div>
             )}

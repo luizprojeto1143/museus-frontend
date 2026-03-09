@@ -223,10 +223,10 @@ export const WorkComparator: React.FC = () => {
                     <div style={{ padding: '0 1.25rem 1rem' }}>
                         <CompareRow label="Artista" left={leftWork.artist} right={rightWork.artist} />
                         <CompareRow label="Ano" left={leftWork.year} right={rightWork.year} />
-                        <CompareRow label={t("visitor.workcomparator.perodo", "Período")} left={leftWork.period} right={rightWork.period} />
-                        <CompareRow label={t("visitor.workcomparator.tcnica", "Técnica")} left={leftWork.technique} right={rightWork.technique} />
+                        <CompareRow label={t("visitor.workcomparator.perodo", `Período`)} left={leftWork.period} right={rightWork.period} />
+                        <CompareRow label={t("visitor.workcomparator.tcnica", `Técnica`)} left={leftWork.technique} right={rightWork.technique} />
                         <CompareRow label="Suporte" left={leftWork.medium} right={rightWork.medium} />
-                        <CompareRow label={t("visitor.workcomparator.dimenses", "Dimensões")} left={leftWork.dimensions} right={rightWork.dimensions} />
+                        <CompareRow label={t("visitor.workcomparator.dimenses", `Dimensões`)} left={leftWork.dimensions} right={rightWork.dimensions} />
                         <CompareRow label="Sala" left={leftWork.room} right={rightWork.room} />
                         <CompareRow label="Andar" left={leftWork.floor} right={rightWork.floor} />
                     </div>
@@ -240,7 +240,7 @@ export const WorkComparator: React.FC = () => {
                             <p style={{
                                 color: '#d4af37', fontSize: '0.6rem', fontWeight: 800,
                                 textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem'
-                            }}>{t("visitor.workcomparator.descrio", "Descrição")}</p>
+                            }}>{t("visitor.workcomparator.descrio", `Descrição`)}</p>
                             <p style={{
                                 color: '#aaa', fontSize: '0.8rem', lineHeight: '1.6',
                                 display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden'
@@ -250,7 +250,7 @@ export const WorkComparator: React.FC = () => {
                             <p style={{
                                 color: '#d4af37', fontSize: '0.6rem', fontWeight: 800,
                                 textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem'
-                            }}>{t("visitor.workcomparator.descrio", "Descrição")}</p>
+                            }}>{t("visitor.workcomparator.descrio", `Descrição`)}</p>
                             <p style={{
                                 color: '#aaa', fontSize: '0.8rem', lineHeight: '1.6',
                                 display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden'
@@ -279,7 +279,8 @@ export const WorkComparator: React.FC = () => {
                         fontFamily: 'Georgia, serif'
                     }}>Selecione duas obras</h3>
                     <p style={{ color: '#666', fontSize: '0.85rem', lineHeight: '1.5' }}>
-                        Escolha as obras acima para comparar<br />{t("visitor.workcomparator.estiloPerodoETcnica", "estilo, período e técnica.")}</p>
+                        Escolha as obras acima para comparar<br />estilo, período e técnica.
+                    </p>
                 </div>
             )}
         </div>

@@ -20,6 +20,7 @@ type ComplianceData = {
 };
 
 const LegalCompliance: React.FC = () => {
+  const { t } = useTranslation();
     const [data, setData] = useState<ComplianceData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -49,9 +50,9 @@ const LegalCompliance: React.FC = () => {
     return (
         <div style={{ padding: 24 }}>
             <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Matriz de Conformidade Legal</h1>
-            <p style={{ color: "#6b7280", marginBottom: 24 }}>
+            <p style={{ color: "#6b7280", marginBottom: 24 }}>{t("admin.legalcompliance.mapeamentoEntreFuncionalidadesDoSistemaE", `
                 Mapeamento entre funcionalidades do sistema e exigências legais de acessibilidade
-            </p>
+            `)}</p>
 
             {/* Summary Card */}
             <div style={{
@@ -95,15 +96,15 @@ const LegalCompliance: React.FC = () => {
                             <th style={{ padding: 16, textAlign: "left", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>
                                 Lei / Norma
                             </th>
-                            <th style={{ padding: 16, textAlign: "left", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>
+                            <th style={{ padding: 16, textAlign: "left", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>{t("admin.legalcompliance.exigncia", `
                                 Exigência
-                            </th>
+                            `)}</th>
                             <th style={{ padding: 16, textAlign: "left", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>
                                 Como Atendemos
                             </th>
-                            <th style={{ padding: 16, textAlign: "left", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>
+                            <th style={{ padding: 16, textAlign: "left", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>{t("admin.legalcompliance.evidncia", `
                                 Evidência
-                            </th>
+                            `)}</th>
                             <th style={{ padding: 16, textAlign: "center", fontWeight: 600, borderBottom: "2px solid #e5e7eb" }}>
                                 Status
                             </th>
@@ -163,13 +164,13 @@ const LegalCompliance: React.FC = () => {
 
             {/* Legal References */}
             <div style={{ marginTop: 32, padding: 24, backgroundColor: "#f9fafb", borderRadius: 12 }}>
-                <h3 style={{ fontWeight: 600, marginBottom: 12 }}>📚 Referências Legais</h3>
+                <h3 style={{ fontWeight: 600, marginBottom: 12 }}>{t("admin.legalcompliance.RefernciasLegais", `📚 Referências Legais`)}</h3>
                 <ul style={{ color: "#6b7280", lineHeight: 1.8, paddingLeft: 20 }}>
-                    <li><strong>Lei 13.146/2015 (LBI)</strong>{t("admin.legalcompliance.LeiBrasileiraDeInclusoDaPessoa", "- Lei Brasileira de Inclusão da Pessoa com Deficiência")}</li>
-                    <li><strong>Lei 10.098/2000</strong>{t("admin.legalcompliance.NormasGeraisECritriosBsicosPar", "- Normas gerais e critérios básicos para acessibilidade")}</li>
-                    <li><strong>NBR 9050:2020</strong>{t("admin.legalcompliance.AcessibilidadeAEdificaesMobili", "- Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos")}</li>
+                    <li><strong>Lei 13.146/2015 (LBI)</strong> - Lei Brasileira de Inclusão da Pessoa com Deficiência</li>
+                    <li><strong>Lei 10.098/2000</strong> - Normas gerais e critérios básicos para acessibilidade</li>
+                    <li><strong>NBR 9050:2020</strong> - Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos</li>
                     <li><strong>Decreto 5.296/2004</strong> - Regulamenta lei de acessibilidade</li>
-                    <li><strong>Lei 12.527/2011 (LAI)</strong>{t("admin.legalcompliance.LeiDeAcessoInformao", "- Lei de Acesso à Informação")}</li>
+                    <li><strong>Lei 12.527/2011 (LAI)</strong> - Lei de Acesso à Informação</li>
                 </ul>
             </div>
         </div>

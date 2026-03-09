@@ -44,6 +44,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const SecretaryDashboard: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [data, setData] = useState<DashboardData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -93,10 +94,11 @@ const SecretaryDashboard: React.FC = () => {
             <div className="sec-header">
                 <div className="sec-title">
                     <h1>Painel da Secretaria</h1>
-                    <p>{t("admin.secretarydashboard.visoExecutivaDaGestoCulturalMu", "Visão executiva da gestão cultural municipal")}</p>
+                    <p>{t("admin.secretarydashboard.visoExecutivaDaGestoCulturalMunicipal", `Visão executiva da gestão cultural municipal`)}</p>
                 </div>
                 <button onClick={downloadPdf} className="sec-btn-export">
-                    <span>📄</span>{t("admin.secretarydashboard.exportarRelatrioPdf", "Exportar Relatório PDF")}</button>
+                    <span>📄</span> Exportar Relatório PDF
+                </button>
             </div>
 
             {/* KPI Cards */}
@@ -130,7 +132,7 @@ const SecretaryDashboard: React.FC = () => {
             {/* Alerts */}
             {data.alerts.length > 0 && (
                 <div className="sec-alerts">
-                    <h2 className="sec-section-title">{t("admin.secretarydashboard.AlertasDeAteno", "⚠️ Alertas de Atenção")}</h2>
+                    <h2 className="sec-section-title">{t("admin.secretarydashboard.AlertasDeAteno", `⚠️ Alertas de Atenção`)}</h2>
                     <div className="sec-alert-list">
                         {data.alerts.map((alert, idx) => (
                             <div

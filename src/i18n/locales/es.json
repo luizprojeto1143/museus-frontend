@@ -141,7 +141,9 @@
     },
     "forgotpassword": {
       "VocReceberAsInstruesDeRecupera": ", recibirá instrucciones de recuperación en poco tiempo.",
-      "digiteSeuEmailParaReceberAsIns": "Ingrese su correo electrónico para recibir instrucciones de reinicio."
+      "digiteSeuEmailParaReceberAsIns": "Ingrese su correo electrónico para recibir instrucciones de reinicio.",
+      "VocReceberAsInstruesDeRecuperaoEmInstant": ", recibirá instrucciones de recuperación en poco tiempo.",
+      "digiteSeuEmailParaReceberAsInstruesDeRed": "Ingrese su correo electrónico para recibir instrucciones de reinicio."
     },
     "registerproducer": {
       "cadastreseParaSubmeterProjetos": "Regístrate para presentar proyectos y gestionar tu producción cultural",
@@ -153,11 +155,15 @@
       "vnculo": "Vínculo:",
       "nomeCompletoRazoSocial": "Nombre completo / Nombre de la empresa *",
       "sitePortflioOpcional": "Sitio web/portafolio (opcional)",
-      "breveBiografiaOuDescrioDaAtuao": "Breve biografía o descripción de actividades culturales..."
+      "breveBiografiaOuDescrioDaAtuao": "Breve biografía o descripción de actividades culturales...",
+      "cadastreseParaSubmeterProjetosEGerenciar": "Regístrate para presentar proyectos y gestionar tu producción cultural",
+      "aoVincularSeusProjetosApareceroNosRelatr": "Al vincularse, sus proyectos aparecerán en los informes del Departamento de Cultura.",
+      "breveBiografiaOuDescrioDaAtuaoCultural": "Breve biografía o descripción de actividades culturales..."
     },
     "resetpassword": {
       "suaSenhaFoiAtualizadaComSucess": "Su contraseña se ha actualizado correctamente. Ahora puedes iniciar sesión.",
-      "noMnimo6Caracteres": "Al menos 6 caracteres"
+      "noMnimo6Caracteres": "Al menos 6 caracteres",
+      "suaSenhaFoiAtualizadaComSucessoVocJPodeF": "Su contraseña se ha actualizado correctamente. Ahora puedes iniciar sesión."
     }
   },
   "visitor": {
@@ -272,7 +278,8 @@
       "empty": "Aún no tienes favoritos.",
       "explore": "Explorar obras",
       "crieSuaContaNoMuseuParaSalvarS": "Crea tu cuenta de museo para guardar tus obras, rutas y eventos favoritos en la nube y acceder a ellos desde cualquier dispositivo.",
-      "carregandoSuaColeo": "Cargando tu colección..."
+      "carregandoSuaColeo": "Cargando tu colección...",
+      "crieSuaContaNoMuseuParaSalvarSuasObrasTr": "Crea tu cuenta de museo para guardar tus obras, rutas y eventos favoritos en la nube y acceder a ellos desde cualquier dispositivo."
     },
     "museums": {
       "title": "Gestionar Museus",
@@ -331,14 +338,16 @@
       "work": "Trabajar",
       "visitedAt": "Visitado el",
       "registreseParaComearAColeciona": "Regístrese para comenzar a coleccionar estampillas, ganar XP y desbloquear logros exclusivos durante su visita.",
-      "comearAgora": "Empezar ahora"
+      "comearAgora": "Empezar ahora",
+      "registreseParaComearAColecionarCarimbosG": "Regístrese para comenzar a coleccionar estampillas, ganar XP y desbloquear logros exclusivos durante su visita."
     },
     "achievements": {
       "title": "Logros",
       "subtitle": "Tus medallas y premios",
       "galeriaDeTrofus": "Galería de trofeos",
       "cadaObraVisitadaECadaDesafioCo": "Cada obra visitada y cada desafío completado otorga una medalla exclusiva. ¡Crea tu cuenta para comenzar tu colección!",
-      "comearMinhaColeo": "Iniciar mi colección"
+      "comearMinhaColeo": "Iniciar mi colección",
+      "cadaObraVisitadaECadaDesafioConcludoRend": "Cada obra visitada y cada desafío completado otorga una medalla exclusiva. ¡Crea tu cuenta para comenzar tu colección!"
     },
     "visualScanner": {
       "title": "Reconocimiento Visual",
@@ -412,7 +421,8 @@
     },
     "checkoutmodal": {
       "ltimos": "(¡Último!)",
-      "vocPrecisarFazerLoginParaConcl": "Deberá iniciar sesión para completar."
+      "vocPrecisarFazerLoginParaConcl": "Deberá iniciar sesión para completar.",
+      "vocPrecisarFazerLoginParaConcluir": "Deberá iniciar sesión para completar."
     },
     "installguidemodal": {
       "adicionarTelaDeIncio": "\"Agregar a la pantalla de inicio\""
@@ -421,13 +431,15 @@
       "vocEstAqui": "Usted está aquí.",
       "suaLocalizao": "Tu ubicación",
       "imagemDaPlantaNoConfigurada": "Imagen de planta no configurada.",
-      "setdestinationidpoiidIrParaC": "setDestinationId(poi.id)}\r\n                                        >\r\n                                            Ve aquí 🏃"
+      "setdestinationidpoiidIrParaC": "setDestinationId(poi.id)}\r\n                                        >\r\n                                            Ve aquí 🏃",
+      "irParaC": "Ve aquí 🏃"
     },
     "narrativeaudioguide": {
       "udioDescritivo": "Audio descriptivo",
       "experinciaNarrativaAcessvel": "Experiencia narrativa accesible",
       "useFonesDeOuvidoParaImersoTota": "Utilice auriculares para una inmersión total",
-      "avanar10s": "Avanzar 10s"
+      "avanar10s": "Avanzar 10s",
+      "useFonesDeOuvidoParaImersoTotal": "Utilice auriculares para una inmersión total"
     },
     "proximityalert": {
       "vocEstPrximo": "¡Estás cerca!"
@@ -439,12 +451,14 @@
       "ateno": "Atención:",
       "esteOSeuIngressoQueDarAcessoAo": "Esta es tu entrada que te dará acceso al evento.",
       "horrio": "Tiempo:",
-      "cdigo": "Código"
+      "cdigo": "Código",
+      "esteOSeuIngressoQueDarAcessoAoEvento": "Esta es tu entrada que te dará acceso al evento."
     },
     "challengespage": {
       "desafiosECaasAoTesouro": "Desafíos y búsqueda del tesoro",
       "completeMissesInterativasECaas": "Completa misiones interactivas y búsquedas del tesoro en el museo para ganar XP y ascender en la clasificación. ¡Crea tu cuenta para registrar tu progreso!",
-      "nenhumaCaaAtiva": "Sin caza activa"
+      "nenhumaCaaAtiva": "Sin caza activa",
+      "completeMissesInterativasECaasAoTesouroP": "Completa misiones interactivas y búsquedas del tesoro en el museo para ganar XP y ascender en la clasificación. ¡Crea tu cuenta para registrar tu progreso!"
     },
     "eventdetail": {
       "eventoNoEncontrado": "Evento no encontrado",
@@ -457,7 +471,11 @@
       "ateno": "Atención:",
       "apsOPagamentoSuaInscrioSerConf": "Después del pago, su registro será confirmado automáticamente. Recibirás un correo electrónico con tu boleto una vez que el sistema procese la transacción.",
       "opesDisponveis": "Opciones disponibles",
-      "informaesAdicionais": "información adicional"
+      "informaesAdicionais": "información adicional",
+      "acessarTransmisso": "Acceder a la transmisión",
+      "linkDeAcessoSerLiberadoApsAInscrio": "El enlace de acceso se publicará después del registro.",
+      "selecioneSuaModalidadeDeParticipao": "Selecciona tu modalidad de participación",
+      "apsOPagamentoSuaInscrioSerConfirmadaAuto": "Después del pago, su registro será confirmado automáticamente. Recibirás un correo electrónico con tu boleto una vez que el sistema procese la transacción."
     },
     "eventslist": {
       "exploreAProgramaoEPlanejeSuaVi": "Explora el horario y planifica tu visita.",
@@ -465,7 +483,10 @@
       "organizandoProgramao": "Organizando la programación...",
       "noEncontramosEventosParaEstePe": "No encontramos eventos para este período o categoría.",
       "incio": "Comenzar",
-      "grtis": "Gratis"
+      "grtis": "Gratis",
+      "prximos": "Próximo",
+      "exploreAProgramaoEPlanejeSuaVisita": "Explora el horario y planifica tu visita.",
+      "noEncontramosEventosParaEstePerodoOuCate": "No encontramos eventos para este período o categoría."
     },
     "eventsurveypage": {
       "suasRespostasForamEnviadasComS": "Tus respuestas se han enviado correctamente y nos ayudarán a mejorar aún más.",
@@ -473,7 +494,11 @@
       "esteEventoNoPossuiUmaPesquisaA": "Este evento no tiene actualmente una búsqueda activa.",
       "pesquisaDeSatisfao": "Encuesta de Satisfacción",
       "paraValidarSuaParticipaoInform": "Para validar tu participación ingresa tu correo electrónico.",
-      "suaOpinioImportanteParaNs": "Tu opinión es importante para nosotros..."
+      "suaOpinioImportanteParaNs": "Tu opinión es importante para nosotros...",
+      "voltarParaOIncio": "Volver al principio",
+      "suasRespostasForamEnviadasComSucessoENos": "Tus respuestas se han enviado correctamente y nos ayudarán a mejorar aún más.",
+      "esteEventoNoPossuiUmaPesquisaAtivaNoMome": "Este evento no tiene actualmente una búsqueda activa.",
+      "paraValidarSuaParticipaoInformeSeuEmail": "Para validar tu participación ingresa tu correo electrónico."
     },
     "groupcheckout": {
       "solicitaoEnviada": "¡Solicitud enviada!",
@@ -486,22 +511,28 @@
       "crieSuaContaParaComearAPontuar": "¡Crea tu cuenta para comenzar a anotar!"
     },
     "scannerhub": {
-      "escaneieOCdigoQuadradoAoLadoDa": "Escanee el código cuadrado al lado de la obra."
+      "escaneieOCdigoQuadradoAoLadoDa": "Escanee el código cuadrado al lado de la obra.",
+      "escaneieOCdigoQuadradoAoLadoDaObra": "Escanee el código cuadrado al lado de la obra.",
+      "aponteACmeraParaAObraEDeixeAIaIdentifica": "Apunta la cámara al trabajo y deja que la IA lo identifique."
     },
     "scannerpage": {
       "procurandoCdigo": "Buscando código..."
     },
     "selectmuseum": {
       "localizaoAtiva": "Ubicación activa",
-      "ativeALocalizao": "Activar ubicación"
+      "ativeALocalizao": "Activar ubicación",
+      "patrimnioVivo": "Patrimonio vivo"
     },
     "shoppage": {
       "coleoExclusiva": "Colección exclusiva",
-      "rplicaArqueolgica": "Réplica arqueológica"
+      "rplicaArqueolgica": "Réplica arqueológica",
+      "destaqueDoMs": "Lo más destacado del mes"
     },
     "socialcheckinpage": {
       "marquePresenaECompartilheSuaVi": "¡Regístrate y comparte tu visita!",
-      "ningumFezCheckinAindaSejaOPrim": "Nadie se ha registrado todavía. ¡Sé el primero!"
+      "ningumFezCheckinAindaSejaOPrim": "Nadie se ha registrado todavía. ¡Sé el primero!",
+      "marquePresenaECompartilheSuaVisita": "¡Regístrate y comparte tu visita!",
+      "ningumFezCheckinAindaSejaOPrimeiro": "Nadie se ha registrado todavía. ¡Sé el primero!"
     },
     "teacherportal": {
       "srieTurma": "Serie / Clase"
@@ -521,7 +552,10 @@
     "membership": {
       "crieUmaContaGratuitaParaSeTorn": "¡Crea una cuenta gratuita para convertirte en miembro del museo y garantizar beneficios exclusivos!",
       "apoieACulturaEGanheBenefciosEx": "Apoye la cultura y obtenga beneficios exclusivos",
-      "nenhumPlanoDisponvelNoMomento": "No hay planes disponibles en este momento"
+      "nenhumPlanoDisponvelNoMomento": "No hay planes disponibles en este momento",
+      "crieUmaContaGratuitaParaSeTornarMembroDo": "¡Crea una cuenta gratuita para convertirte en miembro del museo y garantizar beneficios exclusivos!",
+      "apoieACulturaEGanheBenefciosExclusivos": "Apoye la cultura y obtenga beneficios exclusivos",
+      "ms": "/mes"
     },
     "profile": {
       "encerrarSessoNesteDispositivo": "Cerrar sesión en este dispositivo",
@@ -529,11 +563,14 @@
       "vocAindaNoFezNenhumPedido": "Aún no has realizado ningún pedido.",
       "cuponsDisponveis": "Cupones disponibles",
       "nenhumCupomDisponvelNoMomento": "No hay cupones disponibles en este momento.",
-      "informaes": "Información"
+      "informaes": "Información",
+      "troqueSeuXpPorPrmios": "¡Cambia tu XP por premios!",
+      "useOXpExperinciaQueVocAcumulouInteragind": "Utilice la XP (Experiencia) que acumuló al interactuar con el museo para canjear cupones de descuento en la Tienda."
     },
     "rpg": {
       "crieUmaContaGratuitaParaEvolui": "¡Crea una cuenta gratuita para evolucionar tu avatar, ganar niveles y desbloquear nuevos títulos de museos!",
-      "caminhoDeEvoluo": "Camino de la evolución"
+      "caminhoDeEvoluo": "Camino de la evolución",
+      "crieUmaContaGratuitaParaEvoluirSeuAvatar": "¡Crea una cuenta gratuita para evolucionar tu avatar, ganar niveles y desbloquear nuevos títulos de museos!"
     },
     "workcomparator": {
       "descrio": "Descripción",
@@ -546,7 +583,8 @@
       "VocEstExplorandoComoVisitanteC": "✨Estás explorando como visitante. ¡Crea una cuenta para guardar favoritos y ganar sellos!",
       "criarContaGrtis": "Crear cuenta gratuita",
       "setisdialeropentrueArialabelab": "setIsDialerOpen(verdadero)}\r\n              aria-label=\"Abrir teclado numérico\"\r\n            >\r\n              🔢",
-      "abrirTecladoNumrico": "Abrir teclado numérico"
+      "abrirTecladoNumrico": "Abrir teclado numérico",
+      "VocEstExplorandoComoVisitanteCrieUmaCont": "✨Estás explorando como visitante. ¡Crea una cuenta para guardar favoritos y ganar sellos!"
     }
   },
   "admin": {
@@ -748,7 +786,9 @@
       "upcomingBookings": "Próximas reservas de espacio",
       "noFoiPossvelCarregarOsDadosDoD": "No se pueden cargar los datos del panel. Comprueba tu conexión y vuelve a intentarlo.",
       "noHEventosPublicadosParaOsPrxi": "No hay eventos publicados para los próximos días.",
-      "noHReservasAgendadas": "No hay reservas programadas."
+      "noHReservasAgendadas": "No hay reservas programadas.",
+      "noFoiPossvelCarregarOsDadosDoDashboardVe": "No se pueden cargar los datos del panel. Comprueba tu conexión y vuelve a intentarlo.",
+      "noHEventosPublicadosParaOsPrximosDias": "No hay eventos publicados para los próximos días."
     },
     "scanner": {
       "title": "Entrenamiento de escáner de IA",
@@ -756,7 +796,10 @@
       "aponteACmeraParaOQrCodeDoVisit": "Apunte la cámara al código QR del visitante o ingrese el código manualmente.",
       "ouDigiteOCdigo": "O INTRODUCIR EL CÓDIGO",
       "EscanearPrximo": "}\r\n                                >\r\n                                    Escanear siguiente",
-      "aponteACmeraEmUmAmbienteIlumin": "Apunte la cámara a un entorno brillante para una lectura más rápida."
+      "aponteACmeraEmUmAmbienteIlumin": "Apunte la cámara a un entorno brillante para una lectura más rápida.",
+      "escanearPrximo": "Escanear siguiente",
+      "aponteACmeraParaOQrCodeDoVisitanteOuDigi": "Apunte la cámara al código QR del visitante o ingrese el código manualmente.",
+      "aponteACmeraEmUmAmbienteIluminadoParaUma": "Apunte la cámara a un entorno brillante para una lectura más rápida."
     },
     "errors": {
       "delete": "Error al eliminar el artículo",
@@ -783,7 +826,8 @@
         "published": "Publicado",
         "draft": "Bosquejo"
       },
-      "setpagepP1Prxima": "setPágina(p => p + 1)}\n              >\n                Siguiente ▶"
+      "setpagepP1Prxima": "setPágina(p => p + 1)}\n              >\n                Siguiente ▶",
+      "prxima": "Siguiente ▶"
     },
     "workForm": {
       "editTitle": "Editar trabajo",
@@ -844,7 +888,8 @@
       },
       "gerencieTodaAProgramaoCultural": "Gestionar toda la programación cultural.",
       "relatrio": "Informe",
-      "setpagepP1Classnameborderwhite": "setPágina(p => p + 1)}\n            className=\"borde-blanco/10 texto-zinc-400 hover:texto-blanco\"\n          >\n            Siguiente ▶"
+      "setpagepP1Classnameborderwhite": "setPágina(p => p + 1)}\n            className=\"borde-blanco/10 texto-zinc-400 hover:texto-blanco\"\n          >\n            Siguiente ▶",
+      "prxima": "Siguiente ▶"
     },
     "eventForm": {
       "editTitle": "Editar evento",
@@ -1172,7 +1217,8 @@
       "nenhumaRegraDeAutomaoCriada": "No se crearon reglas de automatización."
     },
     "certificatetemplates": {
-      "navigateadmincertificatesrules": "navegar('/admin/certificados/reglas')}>\r\n                        🤖 Reglas y automatización"
+      "navigateadmincertificatesrules": "navegar('/admin/certificados/reglas')}>\r\n                        🤖 Reglas y automatización",
+      "RegrasEAutomao": "🤖 Reglas y automatización"
     },
     "certificatecanvas": {
       "reaDoCertificado": "Área de certificado"
@@ -1194,7 +1240,9 @@
     "accessibilitytimeline": {
       "histricoInstitucionalDeAesDeAc": "Historia institucional de las acciones de accesibilidad: blindaje político y prueba de política pública continua",
       "nenhumaAoDeAcessibilidadeRegis": "No se registraron acciones de accesibilidad",
-      "tempoDeExecuo": "Tiempo de ejecución"
+      "tempoDeExecuo": "Tiempo de ejecución",
+      "histricoInstitucionalDeAesDeAcessibilida": "Historia institucional de las acciones de accesibilidad: blindaje político y prueba de política pública continua",
+      "nenhumaAoDeAcessibilidadeRegistrada": "No se registraron acciones de accesibilidad"
     },
     "accessibilityform": {
       "tipoDeServio": "Tipo de Servicio",
@@ -1204,7 +1252,8 @@
       "SalvarSolicitao": "}\r\n                    >\r\n                        Guardar solicitud",
       "descrioDosEntregveis": "Descripción de los entregables",
       "oramentoAprovadoR": "Presupuesto aprobado (R$)",
-      "statusDaValidao": "Estado de validación"
+      "statusDaValidao": "Estado de validación",
+      "salvarSolicitao": "Guardar solicitud\")}"
     },
     "accessibilitymanagement": {
       "GestoDeAcessibilidade": "♿ Gestión de accesibilidad",
@@ -1216,7 +1265,10 @@
       "servio": "Servicio",
       "nenhumaExecuoEncontrada": "No se encontraron ejecuciones.",
       "solicitaesDeContedoParaObrasMa": "Solicitudes de Contenidos para Obras (Master)",
-      "acompanheAquiOsPedidosDeLibras": "Siga aquí las solicitudes de Libras y Audiodescripción realizadas directamente en el registro de obras para el equipo Master."
+      "acompanheAquiOsPedidosDeLibras": "Siga aquí las solicitudes de Libras y Audiodescripción realizadas directamente en el registro de obras para el equipo Master.",
+      "NovaSolicitao": "+ Nueva Solicitud",
+      "solicitaesDeContedoParaObrasMaster": "Solicitudes de Contenidos para Obras (Master)",
+      "acompanheAquiOsPedidosDeLibrasEAudiodesc": "Siga aquí las solicitudes de Libras y Audiodescripción realizadas directamente en el registro de obras para el equipo Master."
     },
     "achievementform": {
       "informaesBsicas": "Información básica",
@@ -1228,7 +1280,8 @@
       "cdigo": "Código:",
       "prvisualizao": "Avance",
       "Prximo": "}\n              >\n                Siguiente",
-      "cdigoNico": "Código único"
+      "cdigoNico": "Código único",
+      "prximo": "Próximo\")}"
     },
     "aidescriptions": {
       "geradorDeDescriesIa": "Generador de descripciones de IA",
@@ -1236,7 +1289,8 @@
       "semDescrio": "Sin descripción",
       "comDescrio": "Con descripción",
       "gerarDescrio": "Generar descripción",
-      "obrasSemDescrio": "Funciona sin descripción"
+      "obrasSemDescrio": "Funciona sin descripción",
+      "crieDescriesRicasParaSuasObrasComIntelig": "Crea descripciones ricas para tus obras con inteligencia artificial."
     },
     "analytics": {
       "AnalyticsAvanado": "📊 Análisis avanzado",
@@ -1246,10 +1300,12 @@
       "idadeMdia": "Edad media",
       "HorriosDePico": "⏰ Horas pico",
       "intensidadeDeVisitaoDasObras": "Intensidad de visitas a obras",
-      "DistribuioPorIdade": "👥 Distribución de edad"
+      "DistribuioPorIdade": "👥 Distribución de edad",
+      "TendnciaDeVisitantes": "📈 Tendencia de visitantes"
     },
     "bookingform": {
-      "EnviarSolicitao": "}\r\n                    >\r\n                        Enviar solicitud"
+      "EnviarSolicitao": "}\r\n                    >\r\n                        Enviar solicitud",
+      "enviarSolicitao": "Enviar solicitud\")}"
     },
     "calendar": {
       "espaos": "Espacios",
@@ -1257,7 +1313,9 @@
       "horrioDeIncio": "Hora de inicio",
       "horrioDeTrmino": "Hora de finalización",
       "finalidadeDaOcupao": "Propósito de la ocupación",
-      "exTreinamentoDeEquipeManutenoP": "Ej: Formación de equipos, Mantenimiento preventivo, Grabación de vídeo..."
+      "exTreinamentoDeEquipeManutenoP": "Ej: Formación de equipos, Mantenimiento preventivo, Grabación de vídeo...",
+      "gestoCentralizadaDaOcupaoEHorriosDosAmbi": "Gestión centralizada de la ocupación y horarios de los entornos museísticos.",
+      "exTreinamentoDeEquipeManutenoPreventivaG": "Ej: Formación de equipos, Mantenimiento preventivo, Grabación de vídeo..."
     },
     "categoryform": {
       "gerencieAsCategoriasParaOrgani": "Administre categorías para organizar su contenido.",
@@ -1281,7 +1339,8 @@
       "condio": "Condición",
       "crtico": "Crítico",
       "prxima": "Próximo",
-      "nenhumEmprstimoRegistrado": "No hay préstamos registrados"
+      "nenhumEmprstimoRegistrado": "No hay préstamos registrados",
+      "manutenoRestauroEmprstimosDeObras": "Mantenimiento, restauración, préstamo de obras."
     },
     "coupons": {
       "gerencieCdigosDeDescontoEDefin": "Administre códigos de descuento y establezca el costo de XP para que los visitantes lo canjeen.",
@@ -1290,16 +1349,22 @@
       "sePreenchidoOVisitantePoderCom": "Si lo completa, el visitante podrá comprar este cupón utilizando su saldo de XP obtenido de las interacciones (por ejemplo, Búsqueda del tesoro).",
       "descrioOpcional": "Descripción (opcional)",
       "buscarPorCdigoOuDescrio": "Buscar por código o descripción...",
-      "ex500VazioGrtis": "Ej: 500 (Vacío = Gratis)"
+      "ex500VazioGrtis": "Ej: 500 (Vacío = Gratis)",
+      "gerencieCdigosDeDescontoEDefinaOCustoEmX": "Administre códigos de descuento y establezca el costo de XP para que los visitantes lo canjeen.",
+      "sePreenchidoOVisitantePoderComprarEsteCu": "Si lo completa, el visitante podrá comprar este cupón utilizando su saldo de XP obtenido de las interacciones (por ejemplo, Búsqueda del tesoro)."
     },
     "curatornotes": {
       "comentriosContextuaisSobreObra": "Comentarios contextuales sobre obras de la colección.",
-      "exEstaObraRetrataOCotidianoDaM": "Ej: Esta obra retrata la vida cotidiana de la minería en Minas Gerais en el siglo XVIII..."
+      "exEstaObraRetrataOCotidianoDaM": "Ej: Esta obra retrata la vida cotidiana de la minería en Minas Gerais en el siglo XVIII...",
+      "comentriosContextuaisSobreObrasDoAcervo": "Comentarios contextuales sobre obras de la colección.",
+      "exEstaObraRetrataOCotidianoDaMineraoEmMi": "Ej: Esta obra retrata la vida cotidiana de la minería en Minas Gerais en el siglo XVIII...",
+      "adicioneNotasDeCuradorSObrasDoAcervoPara": "Agregue notas del curador a las obras de la colección para enriquecer la experiencia del visitante."
     },
     "donations": {
       "doaes": "Donaciones",
       "painelDeArrecadaoEMuralDeDoado": "Panel de recaudación de fondos y muro de donantes",
-      "nenhumaDoaoRegistradaAinda": "Aún no se han registrado donaciones."
+      "nenhumaDoaoRegistradaAinda": "Aún no se han registrado donaciones.",
+      "painelDeArrecadaoEMuralDeDoadores": "Panel de recaudación de fondos y muro de donantes"
     },
     "equipmentform": {
       "identificao": "Identificación",
@@ -1310,14 +1375,17 @@
     },
     "eventcheckin": {
       "setscanresultnullClassnamebtnB": "setScanResult(null)} className=\"btn btn-primary w-full mt-4\">\r\n                                Leer siguiente",
-      "cdigoDoIngresso": "Código de entrada"
+      "cdigoDoIngresso": "Código de entrada",
+      "lerPrximo": "Leer siguiente",
+      "aponteACmeraParaOQrCodeDoIngresso": "Apunta la cámara al código QR del billete"
     },
     "eventdashboard": {
       "relatrio": "Informe",
       "visualizaes": "Vistas",
       "inscriesRecentes": "Registros Recientes",
       "nenhumaInscrioRecente": "No hay registros recientes.",
-      "checkinRpido": "Registro rápido"
+      "checkinRpido": "Registro rápido",
+      "acesseACmeraParaLerQrCodesDosParticipant": "Accede a la cámara para leer los códigos QR de los participantes en la entrada."
     },
     "eventreport": {
       "carregandoRelatrio": "Cargando informe...",
@@ -1332,7 +1400,9 @@
       "AvaliaoEstrelas": "⭐ Calificación (Estrellas)",
       "MltiplaEscolha": "🔘 Opción múltiple",
       "opesSeparadasPorVrgula": "Opciones (separadas por coma)",
-      "updatequestionindexRequiredEta": "updateQuestion(índice, 'obligatorio', e.target.checked)}\r\n                                                    className=\"w-4 h-4 texto-azul-600 redondeado\"\r\n                                                />\r\n                                                Obligatorio"
+      "updatequestionindexRequiredEta": "updateQuestion(índice, 'obligatorio', e.target.checked)}\r\n                                                    className=\"w-4 h-4 texto-azul-600 redondeado\"\r\n                                                />\r\n                                                Obligatorio",
+      "obrigatria": "Obligatorio",
+      "crieUmFormulrioParaColetarFeedbackDosPar": "Cree un formulario para recopilar comentarios de los participantes."
     },
     "finance": {
       "visoConsolidadaDasReceitasProc": "Vista consolidada de recetas procesadas localmente y vía Asaas.",
@@ -1341,7 +1411,8 @@
       "receitaLquidaEstimadaMuseu": "Ingresos netos estimados (museo)",
       "distribuio": "Distribución",
       "doaes": "Donaciones",
-      "receitaDiriaLtimos7Dias": "Ingresos diarios (últimos 7 días)"
+      "receitaDiriaLtimos7Dias": "Ingresos diarios (últimos 7 días)",
+      "visoConsolidadaDasReceitasProcessadasLoc": "Vista consolidada de recetas procesadas localmente y vía Asaas."
     },
     "funnel": {
       "funilDeConverso": "Embudo de conversión",
@@ -1354,7 +1425,9 @@
       "gerencieSolicitaesDeIngressosP": "Gestionar solicitudes de entradas para grupos y escuelas.",
       "totalSolicitaes": "Solicitudes totales",
       "nenhumaSolicitaoDeGrupo": "No hay solicitudes de grupo",
-      "solicitaesDeIngressosEmGrupoAp": "Las solicitudes de entradas para grupos aparecerán aquí"
+      "solicitaesDeIngressosEmGrupoAp": "Las solicitudes de entradas para grupos aparecerán aquí",
+      "gerencieSolicitaesDeIngressosParaGruposE": "Gestionar solicitudes de entradas para grupos y escuelas.",
+      "solicitaesDeIngressosEmGrupoApareceroAqu": "Las solicitudes de entradas para grupos aparecerán aquí"
     },
     "heatmap": {
       "heatmapDeCirculao": "Mapa de calor de circulación",
@@ -1365,11 +1438,16 @@
       "ttulo": "Título *",
       "regio": "Región",
       "descrio": "Descripción",
-      "cliqueEmNovoRegistroParaComear": "Haga clic en \"Nuevo registro\" para comenzar"
+      "cliqueEmNovoRegistroParaComear": "Haga clic en \"Nuevo registro\" para comenzar",
+      "registroDeSaberesCelebraesEExpressesCult": "Registro de conocimientos, celebraciones y expresiones culturales",
+      "PatrimnioImaterial": "📜 Patrimonio Inmaterial",
+      "registrarPatrimnioImaterial": "Registrar Patrimonio Inmaterial",
+      "nenhumPatrimnioImaterialRegistrado": "No hay patrimonio inmaterial registrado"
     },
     "instagramcard": {
       "prvia10801080": "Vista previa 1080×1080",
-      "deixeEmBrancoParaUsarADescrioD": "Déjelo en blanco para usar la descripción del trabajo."
+      "deixeEmBrancoParaUsarADescrioD": "Déjelo en blanco para usar la descripción del trabajo.",
+      "deixeEmBrancoParaUsarADescrioDaObra": "Déjelo en blanco para usar la descripción del trabajo."
     },
     "internalusers": {
       "UsuriosInternos": "👤 Usuarios internos",
@@ -1392,32 +1470,45 @@
       "TtuloDaObra": "🎨 Título de la Obra",
       "umaPinturaBemAntigaEBonitaOArt": "¡Un cuadro muy antiguo y hermoso! El artista utilizó pinturas especiales para que pareciera que había una luz brillando. Genial, ¿verdad? ✨",
       "configuraes": "Ajustes",
-      "faixaEtria": "Rango de edad"
+      "faixaEtria": "Rango de edad",
+      "estaPinturaLeoSobreTelaDatadaDoPerodoBar": "Este óleo sobre lienzo, que data del período barroco brasileño, presenta características de claroscuro propias de la escuela barroca...",
+      "umaPinturaBemAntigaEBonitaOArtistaUsouTi": "¡Un cuadro muy antiguo y hermoso! El artista utilizó pinturas especiales para que pareciera que había una luz brillando. Genial, ¿verdad? ✨"
     },
     "mapeditor": {
       "selecioneUmaObraNaListaEClique": "Seleccione una obra de la lista y haga clic en el mapa para definir su ubicación real.",
-      "selecioneUmaObraNaListaLateral": "Seleccione un trabajo de la lista lateral para comenzar"
+      "selecioneUmaObraNaListaLateral": "Seleccione un trabajo de la lista lateral para comenzar",
+      "selecioneUmaObraNaListaECliqueNoMapaPara": "Seleccione una obra de la lista y haga clic en el mapa para definir su ubicación real.",
+      "selecioneUmaObraNaListaLateralParaComear": "Seleccione un trabajo de la lista lateral para comenzar"
     },
     "memberships": {
       "preoMensalR": "Precio Mensual (R$)",
       "preoAnualR": "Precio Anual (R$)",
-      "descrio": "Descripción"
+      "descrio": "Descripción",
+      "ms": "/mes"
     },
     "moderation": {
       "moderaoDeAvaliaes": "Moderación de revisión",
-      "reviseEModereAvaliaesDosVisita": "Revisar y moderar las reseñas de los visitantes."
+      "reviseEModereAvaliaesDosVisita": "Revisar y moderar las reseñas de los visitantes.",
+      "reviseEModereAvaliaesDosVisitantes": "Revisar y moderar las reseñas de los visitantes."
     },
     "municipalcalendar": {
       "calendrioCultural": "Calendario Cultural",
-      "visoUnificadaDaProgramaoMunici": "Visión unificada de la programación municipal"
+      "visoUnificadaDaProgramaoMunici": "Visión unificada de la programación municipal",
+      "visoUnificadaDaProgramaoMunicipal": "Visión unificada de la programación municipal",
+      "eventosNoMs": "Eventos en el mes",
+      "nenhumEventoNesteMs": "No hay eventos este mes"
     },
     "municipalgaps": {
       "mapeamentoDeReasECategoriasCul": "Mapeo de áreas y categorías culturales sin cobertura.",
       "vaziosIdentificadosAoRecomenda": "Huecos identificados: acción recomendada",
-      "asSeguintesCategoriasNoPossuem": "Las siguientes categorías no tienen eventos o actividades registrados. Considere la posibilidad de crear iniciativas para cubrir estas brechas."
+      "asSeguintesCategoriasNoPossuem": "Las siguientes categorías no tienen eventos o actividades registrados. Considere la posibilidad de crear iniciativas para cubrir estas brechas.",
+      "mapeamentoDeReasECategoriasCulturaisSemC": "Mapeo de áreas y categorías culturales sin cobertura.",
+      "vaziosIdentificadosAoRecomendada": "Huecos identificados: acción recomendada",
+      "asSeguintesCategoriasNoPossuemEventosOuA": "Las siguientes categorías no tienen eventos o actividades registrados. Considere la posibilidad de crear iniciativas para cubrir estas brechas."
     },
     "museumbattle": {
-      "suaPosio": "Tu posición"
+      "suaPosio": "Tu posición",
+      "nenhumRankingParaEsteMs": "No hay clasificaciones para este mes"
     },
     "museumsettings": {
       "configuraesDoMuseu": "Configuración del museo",
@@ -1447,11 +1538,16 @@
       "nomeExTrreo": "Nombre (Ej: Planta Baja)",
       "fazerUploadDeUdioDeBoasvindas": "Subir audio de bienvenida",
       "playerDeUdioDeBoasvindas": "Reproductor de audio de bienvenida",
-      "alternarFonteHistrica": "Alternar fuente histórica"
+      "alternarFonteHistrica": "Alternar fuente histórica",
+      "salvarConfiguraes": "Guardar configuración",
+      "vocEncontraEsteIdNoMenuConfiguraesGtWebh": "Puede encontrar esta ID en el menú \"Configuración > Webhooks > Token de autenticación\" o comunicándose con el soporte de Asaas.",
+      "certifiqueseDeQueOWalletIdEstCorretoTran": "Asegúrese de que la ID de Wallet sea correcta. Las transferencias a identificaciones incorrectas no se pueden revertir automáticamente.",
+      "95ParaVoc": "95% para ti"
     },
     "newsletter": {
       "osInscritosNaNewsletterAparece": "Los suscriptores del boletín aparecerán aquí.",
-      "dataDeInscrio": "Fecha de registro"
+      "dataDeInscrio": "Fecha de registro",
+      "osInscritosNaNewsletterApareceroAqui": "Los suscriptores del boletín aparecerán aquí."
     },
     "noticeform": {
       "perodoDeInscrio": "Período de registro",
@@ -1478,7 +1574,8 @@
       "divulgaoDosResultados": "Divulgación de resultados",
       "prazoFinalDeExecuo": "Plazo de ejecución final",
       "mnimoR": "Mínimo (R$)",
-      "mximoR": "Máximo (R$)"
+      "mximoR": "Máximo (R$)",
+      "prximo": "Próximo\")}"
     },
     "noticeprojects": {
       "emAnlise": "En análisis",
@@ -1490,7 +1587,8 @@
       "inscriesAbertas": "Inscripciones abiertas",
       "emAvaliao": "En evaluación",
       "comeceCriandoSeuPrimeiroEdital": "Comienza creando tu primer aviso de promoción cultural para recibir solicitudes.",
-      "buscarPorTtuloOuStatus": "Buscar por título o estado..."
+      "buscarPorTtuloOuStatus": "Buscar por título o estado...",
+      "comeceCriandoSeuPrimeiroEditalDeFomentoC": "Comienza creando tu primer aviso de promoción cultural para recibir solicitudes."
     },
     "notifications": {
       "notificaesPush": "Notificaciones push",
@@ -1502,14 +1600,19 @@
       "useEmojisParaChamarAAtenoMasSe": "Utiliza emojis para llamar la atención, pero sin exagerar.",
       "aMensagemSerEnviadaParaTodosOs": "El mensaje se enviará a todos los dispositivos registrados (Android, iOS y Web).",
       "prviaWebandroid": "Vista previa (Web/Android)",
-      "exExposioNovaAmanh": "Ej: ¡Nueva exposición mañana!"
+      "exExposioNovaAmanh": "Ej: ¡Nueva exposición mañana!",
+      "envieMensagensEmTempoRealParaTodosOsUsur": "Envía mensajes en tiempo real a todos los usuarios de tu museo/institución.",
+      "sejaBreveEDiretoNotificaesCurtasTmMaiorT": "Sea breve y directo: las notificaciones breves tienen una mayor tasa de clics.",
+      "useEmojisParaChamarAAtenoMasSemExageros": "Utiliza emojis para llamar la atención, pero sin exagerar.",
+      "aMensagemSerEnviadaParaTodosOsDispositiv": "El mensaje se enviará a todos los dispositivos registrados (Android, iOS y Web)."
     },
     "nps": {
       "ltimos3Meses": "últimos 3 meses",
       "ltimos6Meses": "últimos 6 meses",
       "ltimoAno": "El año pasado",
       "distribuioDeNotas": "Distribución de calificaciones",
-      "comentriosRecentes": "Comentarios recientes"
+      "comentriosRecentes": "Comentarios recientes",
+      "de0A10QuantoVocRecomendariaEsteMuseu": "\"De 0 a 10, ¿cuánto recomendarías este museo?\""
     },
     "ppa": {
       "ttulo": "Título",
@@ -1536,7 +1639,8 @@
       "descrioDetalhada": "Descripción detallada",
       "observaesDaReviso": "Notas de revisión",
       "pblicoPrevisto": "Audiencia esperada",
-      "pblicoReal": "Audiencia real"
+      "pblicoReal": "Audiencia real",
+      "pedirReviso": "Solicitar revisión\")}"
     },
     "projects": {
       "oramento": "Presupuesto"
@@ -1572,7 +1676,8 @@
       "CentralDeModerao": "🛡️ Centro de moderación",
       "gerencieAvaliaesEMensagensDaCo": "Administrar reseñas y mensajes de la comunidad",
       "carregandoAvaliaes": "Cargando reseñas...",
-      "ocultoParaOPblico": "Oculto del público"
+      "ocultoParaOPblico": "Oculto del público",
+      "gerencieAvaliaesEMensagensDaComunidade": "Administrar reseñas y mensajes de la comunidad"
     },
     "sentimentanalysis": {
       "anliseDeSentimento": "Análisis de sentimiento",
@@ -1582,7 +1687,8 @@
       "insightsAutomticos": "Información automática",
       "mdia": "Promedio",
       "avaliaes": "Reseñas",
-      "avaliaesNegativasRecentes": "Reseñas negativas recientes"
+      "avaliaesNegativasRecentes": "Reseñas negativas recientes",
+      "intelignciaSobreAsAvaliaesDosVisitantes": "Inteligencia sobre las opiniones de los visitantes"
     },
     "shop": {
       "ecossistemaDeGestoDeAcervoEVen": "Ecosistema de gestión de cobros y ventas",
@@ -1592,7 +1698,9 @@
       "preo": "Precio",
       "descrio": "Descripción",
       "publicadoEVisvelNaLoja": "Publicado y visible en la tienda.",
-      "nomeDaPea": "Nombre de la pieza"
+      "nomeDaPea": "Nombre de la pieza",
+      "ecossistemaDeGestoDeAcervoEVendas": "Ecosistema de gestión de cobros y ventas",
+      "osPedidosDosClientesApareceroAqui": "Los pedidos de los clientes aparecerán aquí."
     },
     "spaceform": {
       "informaesBsicas": "Información básica",
@@ -1610,22 +1718,27 @@
     },
     "spaces": {
       "navigateadminespacosnovoVarian": "navegar(\"/admin/espacos/novo\")} variante=\"esquema\">\r\n                        Agregar espacio",
-      "aes": "Comportamiento"
+      "aes": "Comportamiento",
+      "adicionarEspao": "Agregar espacio"
     },
     "sponsorships": {
       "patrocnios": "Patrocinios",
       "gestoDePatrocniosEApoiosAObras": "Gestión de patrocinios y apoyo a obras específicas.",
       "novoPatrocnio": "Nuevo patrocinio",
-      "disponvel": "DISPONIBLE"
+      "disponvel": "DISPONIBLE",
+      "gestoDePatrocniosEApoiosAObrasEspecficas": "Gestión de patrocinios y apoyo a obras específicas."
     },
     "tceexport": {
       "exportaoTcemg": "Exportación TCE-MG",
       "relatrioFormatadoParaOTribunal": "Informe formateado para el Tribunal de Cuentas",
-      "esteUmRelatrioSimplificadoPara": "Este es un informe simplificado. Para cumplir con el formato exacto del TCE-MG, ajuste los campos según el modelo oficial de su municipio."
+      "esteUmRelatrioSimplificadoPara": "Este es un informe simplificado. Para cumplir con el formato exacto del TCE-MG, ajuste los campos según el modelo oficial de su municipio.",
+      "relatrioFormatadoParaOTribunalDeContas": "Informe formateado para el Tribunal de Cuentas",
+      "esteUmRelatrioSimplificadoParaAtenderAoF": "Este es un informe simplificado. Para cumplir con el formato exacto del TCE-MG, ajuste los campos según el modelo oficial de su municipio."
     },
     "teachers": {
       "portalEducao": "Portal educativo",
-      "professoresVisitasEscolaresEAt": "Profesores, visitas escolares y actividades educativas."
+      "professoresVisitasEscolaresEAt": "Profesores, visitas escolares y actividades educativas.",
+      "professoresVisitasEscolaresEAtividadesPe": "Profesores, visitas escolares y actividades educativas."
     },
     "ticketverifier": {
       "cdigo": "Código:",
@@ -1640,7 +1753,8 @@
       "udioguia": "Audioguía",
       "vdeo": "Video",
       "mdias": "Medios de comunicación:",
-      "Prximo": "}\n              >\n                Siguiente"
+      "Prximo": "}\n              >\n                Siguiente",
+      "prximo": "Próximo\")}"
     },
     "translations": {
       "internacionalizao": "Internacionalización",
@@ -1651,7 +1765,9 @@
       "descrioTraduzida": "Descripción traducida"
     },
     "treasurehunt": {
-      "obraRelacionadaOndeEstAPistaOu": "Trabajo relacionado (Dónde está la pista o solución)"
+      "obraRelacionadaOndeEstAPistaOu": "Trabajo relacionado (Dónde está la pista o solución)",
+      "obraRelacionadaOndeEstAPistaOuASoluo": "Trabajo relacionado (Dónde está la pista o solución)",
+      "ordemNaSequncia": "Orden en secuencia"
     },
     "volunteers": {
       "voluntrios": "Voluntarios",
@@ -1683,7 +1799,8 @@
       "CdigoDoDiscadorApenasNmeros": "🔢 Código de marcador (solo números)",
       "raioDeDetecoM": "Radio de detección (m)",
       "tipoDeServio": "Tipo de Servicio",
-      "observaes": "Observaciones"
+      "observaes": "Observaciones",
+      "prximo": "Próximo\")}"
     },
     "aiusagedashboard": {
       "90LimiteQuaseAtingidoAteno": "= 90? \"¡Límite casi alcanzado!\" : \"Atención\"}",
@@ -1691,18 +1808,184 @@
       "histricoDeUso": "Historial de uso",
       "nenhumHistricoDisponvel": "No hay historial disponible",
       "perodo": "Período",
-      "anlises": "Analítica"
+      "anlises": "Analítica",
+      "90ConsidereFazerUpgradeDoPlanoParaEvitar": "= 90? \"Considere actualizar su plan para evitar interrupciones\". : \"Supervise su uso para no exceder el límite\". }",
+      "usoDeIntelignciaArtificial": "Uso de Inteligencia Artificial",
+      "msAtual": "Mes actual"
     },
     "legalcompliance": {
       "LeiBrasileiraDeInclusoDaPessoa": "- Ley Brasileña de Inclusión de Personas con Discapacidad",
       "NormasGeraisECritriosBsicosPar": "- Normas generales y criterios básicos de accesibilidad",
       "AcessibilidadeAEdificaesMobili": "- Accesibilidad a edificios, mobiliario, espacios y equipamiento urbano.",
-      "LeiDeAcessoInformao": "- Ley de Acceso a la Información"
+      "LeiDeAcessoInformao": "- Ley de Acceso a la Información",
+      "LeiBrasileiraDeInclusoDaPessoaComDeficin": "- Ley Brasileña de Inclusión de Personas con Discapacidad",
+      "NormasGeraisECritriosBsicosParaAcessibil": "- Normas generales y criterios básicos de accesibilidad",
+      "AcessibilidadeAEdificaesMobilirioEspaosE": "- Accesibilidad a edificios, mobiliario, espacios y equipamiento urbano.",
+      "mapeamentoEntreFuncionalidadesDoSistemaE": "Mapeo entre las funcionalidades del sistema y los requisitos legales de accesibilidad",
+      "exigncia": "Requisito",
+      "evidncia": "Evidencia",
+      "RefernciasLegais": "📚 Referencias Legales"
     },
     "secretarydashboard": {
       "visoExecutivaDaGestoCulturalMu": "Visión ejecutiva de la gestión cultural municipal",
       "exportarRelatrioPdf": "Exportar informe PDF",
-      "AlertasDeAteno": "⚠️ Alertas de atención"
+      "AlertasDeAteno": "⚠️ Alertas de atención",
+      "visoExecutivaDaGestoCulturalMunicipal": "Visión ejecutiva de la gestión cultural municipal"
+    },
+    "certificaterule": {
+      "novaRegraDeAutomao": "Nueva regla de automatización",
+      "mnimoDeXp": "XP mínima",
+      "salvarRegraAutomtica": "Guardar regla automática",
+      "exCertificadoTrilhaHistrica": "Ej: Certificado de Sendero Histórico"
+    },
+    "accessibility": {
+      "tipoDeServio": "Tipo de Servicio",
+      "detalhesDaSolicitao": "Detalles de la solicitud",
+      "statusEOramento": "Estado y presupuesto",
+      "situaoAtual": "Situación actual",
+      "salvarSolicitao": "Guardar solicitud",
+      "descrioDosEntregveis": "Descripción de los entregables",
+      "oramentoAprovadoR": "Presupuesto aprobado (R$)",
+      "statusDaValidao": "Estado de validación"
+    },
+    "achievement": {
+      "informaesBsicas": "Información básica",
+      "desbloqueioAutomtico": "Desbloqueo automático",
+      "seMarcadoOSistemaAConcederAutomaticament": "Si se marca, el sistema lo otorgará automáticamente una vez que se cumpla la condición.",
+      "xpConcedidoAoVisitanteQuandoAConquistaDe": "XP otorgado al visitante cuando se desbloquea el logro.",
+      "cone": "Icono",
+      "ttulo": "Título:",
+      "cdigo": "Código:",
+      "prvisualizao": "Avance",
+      "prximo": "Próximo",
+      "cdigoNico": "Código único"
+    },
+    "booking": {
+      "enviarSolicitao": "Enviar solicitud"
+    },
+    "category": {
+      "gerencieAsCategoriasParaOrganizarSeuCont": "Administre categorías para organizar su contenido.",
+      "informaes": "Información",
+      "descrevaOPropsitoDestaCategoria": "Describe el propósito de esta categoría...",
+      "tipoDeContedo": "Tipo de contenido"
+    },
+    "equipment": {
+      "identificao": "Identificación",
+      "identificadorNicoUsadoNaUrlDoMuseu": "Identificador único utilizado en la URL del museo.",
+      "oGestorPoderAlterarEstaSenhaNoPrimeiroAc": "El administrador podrá cambiar esta contraseña en el primer acceso.",
+      "mdulosHabilitados": "Módulos habilitados",
+      "gamificao": "Gamificación"
+    },
+    "notice": {
+      "perodoDeInscrio": "Período de registro",
+      "execuoEResultados": "Ejecución y Resultados",
+      "oramentoGeral": "Presupuesto General",
+      "regiesAlvo": "Regiones objetivo",
+      "nenhumaRegioRestritaAbrangnciaGlobal": "Sin región restringida (cobertura global)",
+      "quaseL": "¡Casi llegamos!",
+      "ttulo": "Título:",
+      "oramento": "Presupuesto:",
+      "inscries": "Registro:",
+      "configuraesFinais": "Configuraciones finales",
+      "mostrarPontuaoFinalParaOPblico": "Mostrar la puntuación final al público.",
+      "prximo": "Próximo",
+      "breveApresentaoDoEdital": "Breve presentación del aviso...",
+      "descrevaOQueEsteEditalBuscaFomentarSerUs": "Describe qué busca promover este aviso... (Será utilizado por la IA para valorar méritos)",
+      "listeOsCritriosDeEliminaoOuPontuaoSerUsa": "Enumere los criterios de eliminación o puntuación... (Será utilizado por la IA para la lista de verificación)",
+      "ttuloDoEdital": "Título del aviso *",
+      "descrioObjetivoDoEdital": "Descripción/Propósito del Aviso *",
+      "objetivosEstratgicosParaAnliseIa": "Objetivos estratégicos (para análisis de IA) *",
+      "requisitosTcnicosCritriosParaAnliseIa": "Requisitos/criterios técnicos (para análisis de IA) *",
+      "aberturaDasInscries": "Apertura de Inscripciones*",
+      "encerramentoDasInscries": "Cierre de Inscripciones*",
+      "divulgaoDosResultados": "Divulgación de resultados",
+      "prazoFinalDeExecuo": "Plazo de ejecución final",
+      "mnimoR": "Mínimo (R$)",
+      "mximoR": "Máximo (R$)"
+    },
+    "project": {
+      "gestoDePropostasCulturaisEEditais": "Gestión de propuestas y avisos culturales.",
+      "informaesDoProjeto": "Información del proyecto",
+      "painelDeAnlisePorIa": "Panel de análisis de IA",
+      "resumoDaAnlise": "Resumen del análisis",
+      "recomendaoIa": "Recomendación de IA",
+      "pontuaoTcnica": "Puntuación técnica",
+      "pontosCrticos": "Puntos críticos",
+      "nenhumaAnliseAutomticaGeradaAindaOuProje": "Aún no se ha generado ningún análisis automático ni hay proyecto pendiente de presentación.",
+      "avaliaoHumanaParecer": "Evaluación Humana (Opinión)",
+      "mdiaIaHumana": "(IA promedio + humano)",
+      "pedirReviso": "Solicitar revisión",
+      "mtricasEdital": "Métricas y aviso",
+      "breveResumoParaListagemPblica": "Breve resumen para cotización pública...",
+      "descrevaComoOsRecursosSeroImplementados": "Describa cómo se implementarán las funciones...",
+      "descrevaOsMotivosDaDecisoOuAesNecessrias": "Describa los motivos de la decisión o acciones necesarias...",
+      "ttuloDoProjeto": "Título del proyecto *",
+      "regioDeAtuao": "Región de operación",
+      "descrioDetalhada": "Descripción detallada",
+      "observaesDaReviso": "Notas de revisión",
+      "pblicoPrevisto": "Audiencia esperada",
+      "pblicoReal": "Audiencia real",
+      "nenhumProjetoAutnomo": "Ninguno (proyecto independiente)"
+    },
+    "provider": {
+      "gestoDePrestadores": "Gestión de proveedores",
+      "cadastreProfissionaisOuEmpresasEspeciali": "Dar de alta a profesionales o empresas especializadas en servicios de accesibilidad (LIBRAS, Audiodescripción, etc.).",
+      "informaesBsicas": "Información básica",
+      "pessoaJurdicaEmpresa": "Persona Jurídica (Empresa)",
+      "pessoaFsicaAutnomo": "Individuo (autónomo)",
+      "ServiosOferecidos": "♿ Servicios ofrecidos",
+      "selecioneTodosOsServiosDeAcessibilidadeQ": "Selecciona todos los servicios de accesibilidad que ofrece este proveedor:",
+      "avaliaoEHistrico": "Evaluación e Historia",
+      "prestadorAtivoDisponvelParaNovosTrabalho": "Proveedor activo (disponible para nuevo trabajo)",
+      "nomeOuRazoSocial": "Nombre o Razón Social",
+      "avaliao05": "Calificación (0-5)",
+      "trabalhosConcludos": "Trabajo completado"
+    },
+    "space": {
+      "informaesBsicas": "Información básica",
+      "nomeDoEspao": "Nombre del espacio",
+      "auditrio": "Sala",
+      "laboratrio": "Laboratorio",
+      "estdio": "Estudio",
+      "reaExterna": "Área Externa",
+      "descrio": "Descripción",
+      "configuraes": "Ajustes",
+      "disponvelParaReserva": "Disponible para reserva",
+      "permitirQueEsteEspaoSejaReservadoNoCalen": "Permita que se reserve este espacio en el calendario.",
+      "exSalaDeEnsaio1AuditrioPrincipal": "Ej: Sala de Ensayo 1, Auditorio Principal...",
+      "descrevaOEspaoDimensesFinalidade": "Describe el espacio, dimensiones, finalidad..."
+    },
+    "trail": {
+      "udioguia": "Audioguía",
+      "vdeo": "Video",
+      "mdias": "Medios de comunicación:",
+      "prximo": "Próximo"
+    },
+    "work": {
+      "vdeoEmLibras": "Vídeo en Libras",
+      "nomettulo": "Nombre/Título:",
+      "cdigo": "Código:",
+      "mdias": "Medios de comunicación:",
+      "aesAdicionais": "Acciones adicionales",
+      "solicitarProduoDeLibrasudio": "Solicitar Libras/Producción de audio",
+      "prximo": "Próximo",
+      "apenasVdeoEmLibras": "Sólo vídeo en Libras",
+      "apenasAudiodescrio": "Solo audiodescripción",
+      "comboLibrasUdio": "Combo (Libras + Audio)",
+      "exLeoSobreTelaEsculturaEmBronze": "Ej: Óleo sobre lienzo, Escultura en bronce.",
+      "exTelaMadeiraMrmore": "Ej: lienzo, madera, mármol",
+      "exPrioridadeAltaDetalhesEspecficos": "Ej: alta prioridad, detalles específicos...",
+      "tcnica": "Técnica",
+      "perodoEstilo": "Período/Estilo",
+      "dimenses": "Dimensiones",
+      "descrioCompleta": "Descripción completa",
+      "CdigoDoDiscadorApenasNmeros": "🔢 Código de marcador (solo números)",
+      "raioDeDetecoM": "Radio de detección (m)",
+      "tipoDeServio": "Tipo de Servicio",
+      "observaes": "Observaciones"
+    },
+    "scannertrainer": {
+      "dicaTirePeloMenos10FotosDeNgulosDiferent": "Consejo: toma al menos 10 fotografías desde diferentes ángulos para cada obra."
     }
   },
   "museum": {
@@ -1824,7 +2107,9 @@
       "gestoGlobal": "Gestión Global",
       "ClassnamewautoPx8NovoUsurio": "}\n              nombre de clase=\"w-auto px-8\"\n            >\n              Nuevo usuario",
       "todosOsUsurios": "Todos los usuarios",
-      "listaGeralDeTodosOsUsuriosCada": "Lista general de todos los usuarios registrados en la plataforma"
+      "listaGeralDeTodosOsUsuriosCada": "Lista general de todos los usuarios registrados en la plataforma",
+      "novoUsurio": "Nuevo usuario",
+      "listaGeralDeTodosOsUsuriosCadastradosNaP": "Lista general de todos los usuarios registrados en la plataforma"
     },
     "inPersonServices": {
       "heroBadge": "Servicios en persona",
@@ -1862,13 +2147,15 @@
       "descrio": "Descripción:",
       "cliqueParaSelecionarVdeo": "Haga clic para seleccionar vídeo",
       "arquivoDeUdioMp3": "Archivo de audio (.mp3)",
-      "cliqueParaSelecionarUdio": "Haga clic para seleccionar audio"
+      "cliqueParaSelecionarUdio": "Haga clic para seleccionar audio",
+      "gerenciePedidosDeLibrasEAudiodescrioDosM": "Gestionar solicitudes de Libras y Audiodescripciones de museos y enviar los archivos tramitados."
     },
     "aicosts": {
       "nenhumDadoDisponvel": "No hay datos disponibles.",
       "anlises": "Analítica",
       "nenhumConsumoRegistradoNestePe": "No se registró consumo en este período.",
-      "tenantsPrximosDoLimite80": "Inquilinos cerca del límite (80%+)"
+      "tenantsPrximosDoLimite80": "Inquilinos cerca del límite (80%+)",
+      "nenhumConsumoRegistradoNestePerodo": "No se registró consumo en este período."
     },
     "auditlogs": {
       "SeguranaAuditoria": "🔍 Seguridad y auditoría",
@@ -1876,7 +2163,8 @@
       "usurios": "Usuarios",
       "ao": "Acción",
       "todasAes": "Todas las acciones",
-      "histricoDeAes": "Historial de acciones"
+      "histricoDeAes": "Historial de acciones",
+      "monitoreTodasAsAesRealizadasNoPainelAdmi": "Supervise todas las acciones tomadas en el panel de administración para garantizar la seguridad y el cumplimiento."
     },
     "inpersonservices": {
       "nenhumServioConfigurado": "No hay servicios configurados.",
@@ -1892,7 +2180,8 @@
       "descrevaOsDetalhesDesteServio": "Describe los detalles de este servicio..."
     },
     "messages": {
-      "solicitaesDeContatoELeadsDaLan": "Solicitudes de contacto y clientes potenciales de la página de destino."
+      "solicitaesDeContatoELeadsDaLan": "Solicitudes de contacto y clientes potenciales de la página de destino.",
+      "solicitaesDeContatoELeadsDaLandingPage": "Solicitudes de contacto y clientes potenciales de la página de destino."
     },
     "plans": {
       "gerencieCamadasDeServioELimite": "Administrar niveles de servicio y límites para instituciones",
@@ -1907,25 +2196,32 @@
       "preoMensalR": "Precio Mensual (R$)",
       "maxUsurios": "Usuarios máximos",
       "relatriosExecutivos": "Informes Ejecutivos",
-      "conformidadeJurdica": "Cumplimiento legal"
+      "conformidadeJurdica": "Cumplimiento legal",
+      "gerencieCamadasDeServioELimitesParaInsti": "Administrar niveles de servicio y límites para instituciones",
+      "ms": "/mes"
     },
     "providers": {
       "gerencieOsParceirosHomologados": "Gestionar socios aprobados para servicios de accesibilidad",
       "serviosOferecidos": "Servicios ofrecidos",
       "breveResumoDosServios": "Breve resumen de servicios...",
-      "descrio": "Descripción"
+      "descrio": "Descripción",
+      "gerencieOsParceirosHomologadosParaServio": "Gestionar socios aprobados para servicios de accesibilidad"
     },
     "seeder": {
       "simuladorDeTrfego": "Simulador de tráfico",
       "crieVidaNoSeuMuseuGereVisitant": "Crea vida en tu museo. Genere visitantes virtuales y simule interacciones reales para probar paneles y funciones.",
       "RodarSimulaoCompleta": "}\r\n                        >\r\n                            Ejecutar simulación completa",
       "LtimaSimulao": "✅ Última simulación",
-      "limpezaDeDadosRemoveApenasUsur": "Limpieza de datos. solo elimina los usuarios marcados como \"isFake\"."
+      "limpezaDeDadosRemoveApenasUsur": "Limpieza de datos. solo elimina los usuarios marcados como \"isFake\".",
+      "rodarSimulaoCompleta": "Ejecutar simulación completa",
+      "crieVidaNoSeuMuseuGereVisitantesVirtuais": "Crea vida en tu museo. Genere visitantes virtuales y simule interacciones reales para probar paneles y funciones.",
+      "limpezaDeDadosRemoveApenasUsuriosMarcado": "Limpieza de datos. solo elimina los usuarios marcados como \"isFake\"."
     },
     "systemhealth": {
       "sadeDoSistema": "Estado del sistema",
       "acompanheOStatusDosServiosUsoD": "Realice un seguimiento del estado de los servicios, el uso de recursos y la conectividad en tiempo real.",
-      "memria": "Memoria"
+      "memria": "Memoria",
+      "acompanheOStatusDosServiosUsoDeRecursosE": "Realice un seguimiento del estado de los servicios, el uso de recursos y la conectividad en tiempo real."
     },
     "userform": {
       "dadosDoUsurio": "Datos de usuario"
@@ -1945,10 +2241,31 @@
       "coleAPolticaAqui": "Pegue la política aquí...",
       "vnculoHierrquicoOpcional": "Enlace jerárquico (opcional)",
       "nvelDeServio": "Nivel de servicio",
-      "polticaDePrivacidade": "política de privacidad"
+      "polticaDePrivacidade": "política de privacidad",
+      "prximo": "Próximo\")}"
     },
     "tenantslist": {
-      "crieNovasInstituiesGerencieAss": "Cree nuevas instituciones, administre suscripciones y controle el acceso de cada cuenta."
+      "crieNovasInstituiesGerencieAss": "Cree nuevas instituciones, administre suscripciones y controle el acceso de cada cuenta.",
+      "crieNovasInstituiesGerencieAssinaturasEC": "Cree nuevas instituciones, administre suscripciones y controle el acceso de cada cuenta."
+    },
+    "user": {
+      "dadosDoUsurio": "Datos de usuario"
+    },
+    "tenant": {
+      "carregandoInstituio": "Cargando institución...",
+      "semVnculoIndependente": "No adjunto (Independiente)",
+      "vinculeAUmaCidadesecretariaParaAparecerN": "Enlace a una Ciudad/Departamento para aparecer en informes agregados de gestión pública.",
+      "mdulosDoSistema": "Módulos del sistema",
+      "configuraoDoPlano": "Configuración del plan",
+      "startBsico": "Inicio (Básico)",
+      "esteUsurioTerPermissoTotalAdminSobreANov": "Este usuario tendrá permiso completo (ADMIN) en la nueva institución.",
+      "aEdioDeAdministradoresFeitaNaAbaUsurios": "Los administradores se pueden editar en la pestaña \"Usuarios\".",
+      "reviseOsDadosAbaixoAntesDeCriarOAmbiente": "Revise los datos a continuación antes de crear el entorno institucional.",
+      "prximo": "Próximo",
+      "coleAPolticaAqui": "Pegue la política aquí...",
+      "vnculoHierrquicoOpcional": "Enlace jerárquico (opcional)",
+      "nvelDeServio": "Nivel de servicio",
+      "polticaDePrivacidade": "política de privacidad"
     }
   },
   "producer": {
@@ -2127,11 +2444,13 @@
     "produceraudience": {
       "meuPblicoCrm": "Mi audiencia (CRM)",
       "visualizeQuemSoSeusVisitantesE": "Visualice quiénes son sus visitantes y exporte datos para marketing.",
-      "aes": "Comportamiento"
+      "aes": "Comportamiento",
+      "visualizeQuemSoSeusVisitantesEExporteDad": "Visualice quiénes son sus visitantes y exporte datos para marketing."
     },
     "producerdashboard": {
       "comeceCriandoSeuPrimeiroEvento": "Comience creando su primer evento para atraer visitantes y vender entradas. ¡En tan solo unos pasos, tu espacio cultural estará en el mapa!",
-      "incio": "Comenzar"
+      "incio": "Comenzar",
+      "comeceCriandoSeuPrimeiroEventoParaAtrair": "Comience creando su primer evento para atraer visitantes y vender entradas. ¡En tan solo unos pasos, tu espacio cultural estará en el mapa!"
     },
     "producereventform": {
       "preenchaAsInformaesParaDivulga": "Rellena los datos para publicar en la agenda cultural.",
@@ -2147,7 +2466,9 @@
     },
     "producerevents": {
       "gerencieSeusEventosExposiesEWo": "Gestiona tus eventos, exposiciones y talleres.",
-      "comeceCriandoSeuPrimeiroEvento": "Comience creando su primer evento o exposición que aparezca en la programación de la ciudad."
+      "comeceCriandoSeuPrimeiroEvento": "Comience creando su primer evento o exposición que aparezca en la programación de la ciudad.",
+      "gerencieSeusEventosExposiesEWorkshops": "Gestiona tus eventos, exposiciones y talleres.",
+      "comeceCriandoSeuPrimeiroEventoOuExposioP": "Comience creando su primer evento o exposición que aparezca en la programación de la ciudad."
     },
     "producerinbox": {
       "solicitaoDePagamento": "Solicitud de pago",
@@ -2160,17 +2481,21 @@
       "carregandoClassificao": "Cargando calificación...",
       "classificaoIndisponvel": "Calificación no disponible",
       "osResultadosOficiaisAindaNoFor": "Los resultados oficiales aún no han sido publicados para este aviso.",
-      "aClassificaoFinalCompostaPelaM": "La clasificación final se compone de la media ponderada entre el análisis técnico de la Inteligencia Artificial (criterios objetivos y adherencia al aviso) y la evaluación de la Comisión de Cultura (criterios subjetivos y mérito cultural)."
+      "aClassificaoFinalCompostaPelaM": "La clasificación final se compone de la media ponderada entre el análisis técnico de la Inteligencia Artificial (criterios objetivos y adherencia al aviso) y la evaluación de la Comisión de Cultura (criterios subjetivos y mérito cultural).",
+      "osResultadosOficiaisAindaNoForamPublicad": "Los resultados oficiales aún no han sido publicados para este aviso.",
+      "aClassificaoFinalCompostaPelaMdiaPondera": "La clasificación final se compone de la media ponderada entre el análisis técnico de la Inteligencia Artificial (criterios objetivos y adherencia al aviso) y la evaluación de la Comisión de Cultura (criterios subjetivos y mérito cultural)."
     },
     "producernotices": {
       "noMomentoNoHEditaisComInscries": "Actualmente no hay avisos con inscripciones abiertas. Estén atentos a las novedades.",
       "inscriesAbertas": "Inscripciones abiertas",
       "recursoDisponvel": "recurso disponible",
       "mximoPorProjeto": "Máximo por proyecto",
-      "incio": "Comenzar"
+      "incio": "Comenzar",
+      "noMomentoNoHEditaisComInscriesAbertasFiq": "Actualmente no hay avisos con inscripciones abiertas. Estén atentos a las novedades."
     },
     "producerplaceholder": {
-      "estaFuncionalidadeEstEmDesenvo": "Esta funcionalidad está en desarrollo y estará disponible en la próxima actualización del Portal del Productor."
+      "estaFuncionalidadeEstEmDesenvo": "Esta funcionalidad está en desarrollo y estará disponible en la próxima actualización del Portal del Productor.",
+      "estaFuncionalidadeEstEmDesenvolvimentoEE": "Esta funcionalidad está en desarrollo y estará disponible en la próxima actualización del Portal del Productor."
     },
     "producerprofile": {
       "gerencieSuasInformaesPessoaisE": "Gestiona tu información personal y de contacto.",
@@ -2178,7 +2503,11 @@
       "Classnamebgd4af37Text1a1108Hov": "}\r\n                            className=\"bg-[#D4AF37] texto-[#1a1108] hover:bg-[#c5a028] px-8 fuente-bold h-12 sombra-lg sombra-[#D4AF37]/20 borde-ninguno\"\r\n                        >\r\n                            Guardar cambios",
       "conteUmPoucoSobreSuaTrajetriaC": "Cuéntanos un poco sobre tu origen cultural...",
       "sitePortflioRedesSociais": "Sitio web / Portafolio / Redes Sociales",
-      "biografiaApresentao": "Biografía / Introducción"
+      "biografiaApresentao": "Biografía / Introducción",
+      "salvarAlteraes": "Guardar cambios",
+      "gerencieSuasInformaesPessoaisEDeContato": "Gestiona tu información personal y de contacto.",
+      "informaesVisveisParaAdministradoresEEmSe": "Información visible para los administradores y en sus proyectos.",
+      "conteUmPoucoSobreSuaTrajetriaCultural": "Cuéntanos un poco sobre tu origen cultural..."
     },
     "producerprojectform": {
       "inscrioVinculada": "Registro vinculado",
@@ -2207,7 +2536,9 @@
     "producerservices": {
       "encontrePrestadoresHomologados": "Encuentre proveedores aprobados para hacer accesible su proyecto y cumplir con los requisitos legales.\r\n                    Contrata directamente a través de la plataforma a través de canales seguros.",
       "SolicitarOramento": "}\r\n                                >\r\n                                    Solicitar una cotización",
-      "nenhumPrestadorDisponvel": "Ningún proveedor disponible"
+      "nenhumPrestadorDisponvel": "Ningún proveedor disponible",
+      "solicitarOramento": "Solicitar una cotización",
+      "encontrePrestadoresHomologadosParaTornar": "Encuentre proveedores aprobados para hacer accesible su proyecto y cumplir con los requisitos legales. Contrata directamente a través de la plataforma a través de canales seguros."
     },
     "producersettings": {
       "configuraes": "Ajustes",
@@ -2216,10 +2547,47 @@
       "perfilPblicoVisvelNaPlataforma": "Perfil público visible en la plataforma",
       "segurana": "Seguridad",
       "ativarAutenticaoDeDoisFatores2": "Habilite la autenticación de dos factores (2FA)",
-      "Classnamebgd4af37Text1a1108Hov": "}\r\n                        className=\"bg-[#D4AF37] texto-[#1a1108] hover:bg-[#c5a028] px-8 py-6 fuente-bold texto-lg sombra-lg sombra-[#D4AF37]/20 borde-ninguno redondeado-xl\"\r\n                    >\r\n                        Guardar cambios"
+      "Classnamebgd4af37Text1a1108Hov": "}\r\n                        className=\"bg-[#D4AF37] texto-[#1a1108] hover:bg-[#c5a028] px-8 py-6 fuente-bold texto-lg sombra-lg sombra-[#D4AF37]/20 borde-ninguno redondeado-xl\"\r\n                    >\r\n                        Guardar cambios",
+      "salvarAlteraes": "Guardar cambios",
+      "receberAtualizaesDeProjetosPorEmail": "Reciba actualizaciones del proyecto por correo electrónico",
+      "ativarAutenticaoDeDoisFatores2fa": "Habilite la autenticación de dos factores (2FA)",
+      "gerencieSuasPrefernciasDeContaEPrivacida": "Administre su cuenta y preferencias de privacidad."
     },
     "producertickets": {
       "preoR": "Precio (R$)"
+    },
+    "producerevent": {
+      "preenchaAsInformaesParaDivulgarNaAgendaC": "Rellena los datos para publicar en la agenda cultural.",
+      "informaesBsicas": "Información básica",
+      "localizaoEMdia": "Ubicación y medios",
+      "descrevaOEventoAtraesEDetalhesImportante": "Describe el evento, atracciones y detalles importantes...",
+      "ttuloDoEvento": "Título del evento",
+      "descrio": "Descripción",
+      "dataIncio": "Fecha de inicio",
+      "horrioIncio": "Hora de inicio",
+      "horrioFim": "Hora de finalización",
+      "localizao": "Ubicación"
+    },
+    "producerproject": {
+      "inscrioVinculada": "Registro vinculado",
+      "parecerDaAvaliao": "Opinión de evaluación",
+      "prestaoDeContas": "Responsabilidad",
+      "projetosComDescriesDetalhadasEOramentosR": "Los proyectos con descripciones detalladas y presupuestos realistas tienen un 40% más de probabilidades de ser aprobados rápidamente.",
+      "recursosParaGarantirAInclusoDeTodosOsPbl": "Recursos para asegurar la inclusión de todos los públicos",
+      "esteEditalExigeAApresentaoDeUmPlanoDeAce": "Este aviso requiere la presentación de un plan de accesibilidad para su presentación.",
+      "aesDeAcessibilidade": "Acciones de accesibilidad",
+      "serviosOferecidos": "Servicios ofrecidos",
+      "aguardandoAprovao": "En espera de aprobación",
+      "aPrestaoDeContasSerLiberadaAssimQueOProj": "Las cuentas se liberarán tan pronto como se apruebe el proyecto o comience su ejecución.",
+      "vendaSeuPeixeEmAt200Caracteres": "Vende tu pescado en hasta 200 caracteres...",
+      "descrevaDetalhadamenteComoOsRecursosDeAc": "Describa en detalle cómo se garantizarán las funciones de accesibilidad...",
+      "ttuloDoProjeto": "Título del proyecto",
+      "oramentoR": "Presupuesto (R$)",
+      "pblicoEstimado": "Audiencia estimada",
+      "descrioCompleta": "Descripción completa",
+      "dataDeIncio": "Fecha de inicio",
+      "dataDeTrmino": "Fecha de finalización",
+      "descrioDaImplementao": "Descripción de la implementación"
     }
   },
   "pwa": {
@@ -2243,7 +2611,9 @@
       "exportarRelatrioPdf": "Exportar informe PDF",
       "distribuioEspacialDasUnidadesC": "Distribución espacial de unidades culturales y puntos de interés.",
       "alertasDeGesto": "Alertas de gestión",
-      "nenhumAlertaCrticoPendente": "No hay alertas críticas pendientes."
+      "nenhumAlertaCrticoPendente": "No hay alertas críticas pendientes.",
+      "distribuioEspacialDasUnidadesCulturaisEP": "Distribución espacial de unidades culturales y puntos de interés.",
+      "pendncias": "Asuntos pendientes"
     },
     "municipallayout": {
       "mduloMunicipal": "Módulo Municipal",
@@ -2251,7 +2621,8 @@
       "secretrioa": "Secretario",
       "encerrarSesso": "Finalizar la sesión",
       "2024PlataformaCulturaVivaGesto": "© 2024 Plataforma Cultura Viva • Gestión de Impacto Municipal",
-      "abrirMenuDeNavegao": "Abrir menú de navegación"
+      "abrirMenuDeNavegao": "Abrir menú de navegación",
+      "2024PlataformaCulturaVivaGestoDeImpactoM": "© 2024 Plataforma Cultura Viva • Gestión de Impacto Municipal"
     },
     "municipalplaceholders": {
       "gestoDeMuseusBibliotecasECentr": "Gestión de museos, bibliotecas y centros culturales vinculados",
@@ -2281,25 +2652,36 @@
       "naturezaJurdica": "Naturaleza Jurídica",
       "anoDeFundao": "Año de fundación",
       "horrios": "Horarios",
-      "polticaDePrivacidade": "política de privacidad"
+      "polticaDePrivacidade": "política de privacidad",
+      "lanarProjetoEspecial": "Lanzar proyecto especial",
+      "gestoDeMuseusBibliotecasECentrosCulturai": "Gestión de museos, bibliotecas y centros culturales vinculados",
+      "equipamentosCulturaisFilhosApareceroAqui": "Aquí aparecerán instalaciones culturales para niños.",
+      "monitoramentoDeExecuoFsicaEFinanceira": "Seguimiento de la ejecución física y financiera.",
+      "acompanhamentoAutomticoDeNormativasFeder": "Monitoreo automático de normas federales (LBI, NBR 9050)",
+      "identidadeVisualContatoLocalizaoEParmetr": "Identidad visual, contacto, ubicación y parámetros globales del municipio.",
+      "evidnciaNoSistema": "Evidencia en el sistema"
     },
     "municipalreports": {
       "centralDeRelatriosExecutivos": "Centro de informes ejecutivos",
       "documentosOficiaisEIndicadores": "Documentos oficiales e indicadores estratégicos para la toma de decisiones.",
       "taxaDeAdeso": "Cuota de membresía",
       "aesPorTipo": "Acciones por tipo",
-      "relatrioDeTransparncia": "Informe de Transparencia"
+      "relatrioDeTransparncia": "Informe de Transparencia",
+      "documentosOficiaisEIndicadoresEstratgico": "Documentos oficiales e indicadores estratégicos para la toma de decisiones.",
+      "exporteOsDadosBrutosParaOPortalDaTranspa": "Exportar los datos brutos al Portal de Transparencia Municipal."
     }
   },
   "provider": {
     "providerdashboard": {
       "SuaAgendaEstEmDiaPorEnquanto": "): (\r\n                            \"Tu agenda está actualizada por ahora\".\r\n                        )}",
-      "mantenhaSeuPerfilAtualizadoPar": "Mantén tu perfil actualizado para atraer más productores culturales. El tiempo medio de respuesta influye en su clasificación en la plataforma."
+      "mantenhaSeuPerfilAtualizadoPar": "Mantén tu perfil actualizado para atraer más productores culturales. El tiempo medio de respuesta influye en su clasificación en la plataforma.",
+      "mantenhaSeuPerfilAtualizadoParaAtrairMai": "Mantén tu perfil actualizado para atraer más productores culturales. El tiempo medio de respuesta influye en su clasificación en la plataforma."
     },
     "providerinbox": {
       "solicitaoDePagamento": "Solicitud de pago",
       "centralDeNegociaes": "Centro de comercio",
-      "selecioneUmaConversaAoLadoPara": "Seleccione una conversación lateral para responder a los productores y negociar sus servicios."
+      "selecioneUmaConversaAoLadoPara": "Seleccione una conversación lateral para responder a los productores y negociar sus servicios.",
+      "selecioneUmaConversaAoLadoParaResponderA": "Seleccione una conversación lateral para responder a los productores y negociar sus servicios."
     },
     "providerlayout": {
       "irParaVisoDoVisitante": "Ir a la vista de visitantes",
@@ -2313,10 +2695,13 @@
       "emailParaOramentos": "Correo electrónico para estimaciones",
       "descrioBio": "Descripción / Biografía",
       "serviosOferecidos": "Servicios ofrecidos",
-      "conteUmPoucoSobreSuaExperincia": "Cuéntanos un poco de tu experiencia y los servicios que ofreces..."
+      "conteUmPoucoSobreSuaExperincia": "Cuéntanos un poco de tu experiencia y los servicios que ofreces...",
+      "gerencieComoOsProdutoresVisualizamSeusSe": "Administre cómo los productores ven sus servicios.",
+      "conteUmPoucoSobreSuaExperinciaEOsServios": "Cuéntanos un poco de tu experiencia y los servicios que ofreces..."
     },
     "providerservices": {
-      "meusServios": "Mis servicios"
+      "meusServios": "Mis servicios",
+      "escolhaAsEspecialidadesQueVocOferecePara": "Elige las especialidades que ofreces para aparecer en las búsquedas de productores."
     },
     "providersettings": {
       "configuraesDoPerfil": "Configuración de perfil",
@@ -2324,7 +2709,9 @@
       "nomePblicoInstitucional": "Nombre público/institucional",
       "emailPblico": "Correo electrónico público",
       "descrioProfissionalCurrculoRes": "Descripción Profesional / Resumen CV",
-      "SalvarAlteraes": "}\r\n                        Guardar cambios"
+      "SalvarAlteraes": "}\r\n                        Guardar cambios",
+      "personalizeComoOsProdutoresCulturaisVero": "Personalice cómo los productores culturales verán su servicio.",
+      "descrioProfissionalCurrculoResumido": "Descripción Profesional / Resumen CV"
     }
   },
   "public": {
@@ -2334,7 +2721,8 @@
       "oCdigoFornecidoNoFoiEncontrado": "El código proporcionado no se encontró o ha sido revocado.",
       "erroNaVerificao": "Error de verificación",
       "dataDeEmisso": "Fecha de asunto",
-      "cdigoDeAutenticidade": "Código de autenticidad"
+      "cdigoDeAutenticidade": "Código de autenticidad",
+      "oCdigoFornecidoNoFoiEncontradoOuFoiRevog": "El código proporcionado no se encontró o ha sido revocado."
     },
     "contactform": {
       "nossaEquipeEntrarEmContatoEmBr": "Nuestro equipo se pondrá en contacto en breve.",
@@ -2343,7 +2731,8 @@
       "suporteTcnico": "Apoyo técnico"
     },
     "globalevents": {
-      "exploreEventosExposiesEOficina": "Explore eventos, exposiciones y talleres en todos nuestros museos asociados."
+      "exploreEventosExposiesEOficina": "Explore eventos, exposiciones y talleres en todos nuestros museos asociados.",
+      "exploreEventosExposiesEOficinasEmTodosOs": "Explore eventos, exposiciones y talleres en todos nuestros museos asociados."
     },
     "landingpage": {
       "solues": "Soluciones",
@@ -2370,7 +2759,24 @@
       "comeceSuaTransformaoDigital": "Comienza tu Transformación Digital",
       "junteseAosMuseusEProjetosCultu": "Súmate a los museos y proyectos culturales que ya están en el futuro.\r\n                    Crea tu espacio ahora mismo.",
       "reaDoCliente": "Área de Clientes",
-      "navegaoPrincipal": "Navegación principal"
+      "navegaoPrincipal": "Navegación principal",
+      "aSoluoCompletaParaDigitalizarMuseusECida": "La solución completa para digitalizar museos y ciudades históricas. Atrae a los visitantes con la gamificación, cumple con excelencia la Ley Rouanet y ten el control total de tu colección.",
+      "tudoOQueVocPrecisaParaModernizarSuaInsti": "Todo lo que necesitas para modernizar tu institución.",
+      "sistemaDeXpConquistasENveisQueTransforma": "Sistema de XP, logros y niveles que convierte la visita en un viaje apasionante. Aumente la retención y el interés entre el público joven con desafíos interactivos.",
+      "semNecessidadeDeDownloadNasLojasSeusVisi": "No es necesario descargarlo de las tiendas. Sus visitantes acceden instantáneamente a la guía multimedia a través de códigos QR inteligentes repartidos por toda la colección.",
+      "mapasInterativosRoteirosSugeridosPorIaEI": "Mapas interactivos, rutas sugeridas por IA e integración con la economía local. Conecta tu museo con el ecosistema de la ciudad.",
+      "garantaAAprovaoDaSuaPrestaoDeContasNossa": "Asegurar la aprobación de sus estados financieros. Nuestra plataforma ya viene con el paquete técnico necesario y ofrecemos producción de contenido como servicio.",
+      "narraoDescritivaParaDeficientesVisuais": "Narración descriptiva para personas con discapacidad visual.",
+      "nossaEquipeDeEspecialistasProduzOsVdeosD": "Nuestro equipo de expertos produce videos y descripciones de audio de Libras para su colección.",
+      "tireSuasDvidasSobreALeiRouanetPlanosEImp": "Haga sus preguntas sobre la Ley Rouanet, Planes e Implementación.",
+      "junteseAosMuseusEProjetosCulturaisQueJEs": "Súmate a los museos y proyectos culturales que ya están en el futuro. Crea tu espacio ahora mismo.",
+      "emExperinciaViva": "en Experiencia Viviente."
+    },
+    "contact": {
+      "nossaEquipeEntrarEmContatoEmBreve": "Nuestro equipo se pondrá en contacto en breve.",
+      "adequaoLeiRouanetLbi": "Adecuación de la Ley Rouanet (LBI)",
+      "planosEPreos": "Planes y Precios",
+      "suporteTcnico": "Apoyo técnico"
     }
   },
   "totem": {
@@ -2388,7 +2794,8 @@
     "totemvalidator": {
       "prximo3s": "Siguiente (3s)",
       "aponteOCdigoQrParaACmera": "Apunta el código QR a la cámara",
-      "noPrecisaTocarEmNadaLeituraAut": "No es necesario tocar nada, lectura automática."
+      "noPrecisaTocarEmNadaLeituraAut": "No es necesario tocar nada, lectura automática.",
+      "noPrecisaTocarEmNadaLeituraAutomtica": "No es necesario tocar nada, lectura automática."
     }
   }
 }

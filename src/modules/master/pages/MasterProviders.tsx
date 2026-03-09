@@ -107,7 +107,7 @@ export const MasterProviders: React.FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-bold flex items-center gap-2">🛠️ Prestadores de Acessibilidade</h1>
-                    <p className="opacity-70 mt-1">{t("master.providers.gerencieOsParceirosHomologados", "Gerencie os parceiros homologados para serviços de acessibilidade")}</p>
+                    <p className="opacity-70 mt-1">{t("master.providers.gerencieOsParceirosHomologadosParaServio", `Gerencie os parceiros homologados para serviços de acessibilidade`)}</p>
                 </div>
                 <Button onClick={() => setModalOpen(true)} leftIcon={<Plus size={18} />} className="w-full md:w-auto">
                     Novo Prestador
@@ -183,11 +183,11 @@ export const MasterProviders: React.FC = () => {
                             <Input label="Nome" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
 
                             <Textarea
-                                label={t("master.providers.descrio", "Descrição")}
+                                label={t("master.providers.descrio", `Descrição`)}
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
-                                placeholder={t("master.providers.breveResumoDosServios", "Breve resumo dos serviços...")}
+                                placeholder={t("master.providers.breveResumoDosServios", `Breve resumo dos serviços...`)}
                             />
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -196,7 +196,7 @@ export const MasterProviders: React.FC = () => {
                             </div>
 
                             <div style={{ display: "grid", gap: "0.75rem" }}>
-                                <label className="text-sm font-semibold flex items-center gap-2"><Info size={14} />{t("master.providers.serviosOferecidos", "Serviços Oferecidos")}</label>
+                                <label className="text-sm font-semibold flex items-center gap-2"><Info size={14} /> Serviços Oferecidos</label>
                                 <div className="grid grid-cols-2 gap-2">
                                     {serviceOptions.map(opt => (
                                         <button

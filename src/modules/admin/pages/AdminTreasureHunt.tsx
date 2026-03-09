@@ -202,7 +202,7 @@ export const AdminTreasureHunt: React.FC = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>{t("admin.treasurehunt.obraRelacionadaOndeEstAPistaOu", "Obra Relacionada (Onde está a pista ou a solução)")}</label>
+                                <label>{t("admin.treasurehunt.obraRelacionadaOndeEstAPistaOuASoluo", `Obra Relacionada (Onde está a pista ou a solução)`)}</label>
                                 <select
                                     className="input"
                                     value={formData.workId}
@@ -216,7 +216,7 @@ export const AdminTreasureHunt: React.FC = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>Ordem na sequência</label>
+                                <label>{t("admin.treasurehunt.ordemNaSequncia", `Ordem na sequência`)}</label>
                                 <input
                                     type="number"
                                     className="input"

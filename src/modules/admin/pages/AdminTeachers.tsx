@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, GraduationCap, Plus, Calendar, Users, CheckCircle, BookOpen } from "lucide-react";
@@ -49,8 +49,8 @@ export const AdminTeachers: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.teachers.portalEducao", "Portal Educação")}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.teachers.professoresVisitasEscolaresEAt", "Professores, visitas escolares e atividades pedagógicas")}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.teachers.portalEducao", `Portal Educação`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.teachers.professoresVisitasEscolaresEAtividadesPe", `Professores, visitas escolares e atividades pedagógicas`)}</p>
                 </div>
                 <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Novo Professor</Button>
             </div>

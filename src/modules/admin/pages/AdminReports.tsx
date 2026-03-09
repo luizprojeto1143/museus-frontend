@@ -173,11 +173,11 @@ Trabalhos realizados: ${data.providers.totalJobs}
     };
 
     if (loading) {
-        return <div className="loading">{t("admin.reports.carregandoRelatrio", "Carregando relatório...")}</div>;
+        return <div className="loading">{t("admin.reports.carregandoRelatrio", `Carregando relatório...`)}</div>;
     }
 
     if (!data) {
-        return <div className="card">{t("admin.reports.erroAoCarregarDadosDoRelatrio", "Erro ao carregar dados do relatório")}</div>;
+        return <div className="card">{t("admin.reports.erroAoCarregarDadosDoRelatrio", `Erro ao carregar dados do relatório`)}</div>;
     }
 
     return (
@@ -185,7 +185,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
                 <div>
-                    <h1 className="section-title"><BarChart2 size={28} style={{ marginRight: "0.5rem" }} />{t("admin.reports.relatriosInstitucionais", "Relatórios Institucionais")}</h1>
+                    <h1 className="section-title"><BarChart2 size={28} style={{ marginRight: "0.5rem" }} />Relatórios Institucionais</h1>
 
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
@@ -196,7 +196,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
                         onChange={e => setDateRange({ ...dateRange, start: e.target.value })}
                         style={{ width: "auto" }}
                     />
-                    <span>{t("admin.reports.at", "até")}</span>
+                    <span>{t("admin.reports.at", `até`)}</span>
                     <input
                         type="date"
                         className="input"
@@ -230,7 +230,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
                 <div className="card" style={{ textAlign: "center", borderLeft: "4px solid #8b5cf6" }}>
                     <Users size={32} color="#8b5cf6" style={{ marginBottom: "0.5rem" }} />
                     <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{data.projects.totalAudience.toLocaleString("pt-BR")}</div>
-                    <div style={{ color: "var(--fg-muted)" }}>{t("admin.reports.pblicoImpactado", "Público Impactado")}</div>
+                    <div style={{ color: "var(--fg-muted)" }}>{t("admin.reports.pblicoImpactado", `Público Impactado`)}</div>
                 </div>
 
                 <div className="card" style={{ textAlign: "center", borderLeft: "4px solid #f59e0b" }}>
@@ -278,9 +278,9 @@ Trabalhos realizados: ${data.providers.totalJobs}
 
                 {/* Acessibilidade por Serviço */}
                 <div className="card">
-                    <h3 style={{ marginBottom: "1rem" }}>{t("admin.reports.AcessibilidadePorServio", "♿ Acessibilidade por Serviço")}</h3>
+                    <h3 style={{ marginBottom: "1rem" }}>{t("admin.reports.AcessibilidadePorServio", `♿ Acessibilidade por Serviço`)}</h3>
                     {Object.entries(data.accessibility.byService).length === 0 ? (
-                        <p style={{ color: "var(--fg-muted)" }}>{t("admin.reports.nenhumServioRegistrado", "Nenhum serviço registrado")}</p>
+                        <p style={{ color: "var(--fg-muted)" }}>{t("admin.reports.nenhumServioRegistrado", `Nenhum serviço registrado`)}</p>
                     ) : (
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                             {Object.entries(data.accessibility.byService).map(([service, count]) => (

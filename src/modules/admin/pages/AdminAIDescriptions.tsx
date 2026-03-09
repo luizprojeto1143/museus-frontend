@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Wand2, RefreshCw, Check, Copy, Image as ImageIcon } from "lucide-react";
@@ -59,8 +59,8 @@ export const AdminAIDescriptions: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.aidescriptions.geradorDeDescriesIa", "Gerador de Descrições IA")}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.aidescriptions.crieDescriesRicasParaSuasObras", "Crie descrições ricas para suas obras com inteligência artificial")}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.aidescriptions.geradorDeDescriesIa", `Gerador de Descrições IA`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.aidescriptions.crieDescriesRicasParaSuasObrasComIntelig", `Crie descrições ricas para suas obras com inteligência artificial`)}</p>
                 </div>
             </div>
 
@@ -72,17 +72,17 @@ export const AdminAIDescriptions: React.FC = () => {
                 </div>
                 <div className="stat-card" style={{ borderColor: "rgba(212,175,55,0.2)" }}>
                     <p className="stat-value" style={{ color: "#d4af37" }}>{worksWithoutDesc.length}</p>
-                    <p className="stat-label">{t("admin.aidescriptions.semDescrio", "Sem Descrição")}</p>
+                    <p className="stat-label">{t("admin.aidescriptions.semDescrio", `Sem Descrição`)}</p>
                 </div>
                 <div className="stat-card">
                     <p className="stat-value" style={{ color: "#22c55e" }}>{works.length - worksWithoutDesc.length}</p>
-                    <p className="stat-label">{t("admin.aidescriptions.comDescrio", "Com Descrição")}</p>
+                    <p className="stat-label">{t("admin.aidescriptions.comDescrio", `Com Descrição`)}</p>
                 </div>
             </div>
 
             {/* Generator */}
             <div className="card" style={{ display: "grid", gap: "1rem" }}>
-                <h2 className="card-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}><Wand2 size={20} style={{ color: "#a78bfa" }} />{t("admin.aidescriptions.gerarDescrio", "Gerar Descrição")}</h2>
+                <h2 className="card-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}><Wand2 size={20} style={{ color: "#a78bfa" }} /> Gerar Descrição</h2>
                 <div>
                     <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Selecione uma Obra</label>
                     <select value={selected || ''} onChange={e => { setSelected(e.target.value); setGenerated(''); }} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -117,7 +117,7 @@ export const AdminAIDescriptions: React.FC = () => {
             {/* Works without description */}
             {worksWithoutDesc.length > 0 && (
                 <div>
-                    <h2 className="card-title">{t("admin.aidescriptions.obrasSemDescrio", "Obras sem Descrição")}</h2>
+                    <h2 className="card-title">{t("admin.aidescriptions.obrasSemDescrio", `Obras sem Descrição`)}</h2>
                     <div style={{ display: "grid", gap: "0.5rem" }}>
                         {worksWithoutDesc.slice(0, 10).map((w: any) => (
                             <div key={w.id} className="card" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", borderColor: "rgba(212,175,55,0.1)", transition: "all 0.2s" }} onClick={() => { setSelected(w.id); setGenerated(''); }}>

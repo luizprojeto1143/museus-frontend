@@ -273,7 +273,7 @@ export const AdminProjectForm: React.FC = () => {
                     <h1 className="admin-wizard-title">
                         {isEdit ? 'Editar Projeto' : 'Novo Projeto'}
                     </h1>
-                    <p className="admin-wizard-subtitle">{t("admin.projectform.gestoDePropostasCulturaisEEdit", "Gestão de propostas culturais e editais.")}</p>
+                    <p className="admin-wizard-subtitle">{t("admin.project.gestoDePropostasCulturaisEEditais", `Gestão de propostas culturais e editais.`)}</p>
                 </div>
             </div>
 
@@ -286,11 +286,12 @@ export const AdminProjectForm: React.FC = () => {
                         {/* BASIC INFO CARD */}
                         <div className="admin-section">
                             <h3 className="admin-section-title">
-                                <FileText className="text-[var(--accent-gold)]" size={20} />{t("admin.projectform.informaesDoProjeto", "Informações do Projeto")}</h3>
+                                <FileText className="text-[var(--accent-gold)]" size={20} /> Informações do Projeto
+                            </h3>
 
                             <div className="form-group">
                                 <Input
-                                    label={t("admin.projectform.ttuloDoProjeto", "Título do Projeto *")}
+                                    label={t("admin.project.ttuloDoProjeto", `Título do Projeto *`)}
                                     value={formData.title}
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     placeholder="Ex: Festival de Jazz de Betim 2024"
@@ -318,7 +319,7 @@ export const AdminProjectForm: React.FC = () => {
 
                                 <div className="form-group">
                                     <Input
-                                        label={t("admin.projectform.regioDeAtuao", "Região de Atuação")}
+                                        label={t("admin.project.regioDeAtuao", `Região de Atuação`)}
                                         value={formData.targetRegion}
                                         onChange={e => setFormData({ ...formData, targetRegion: e.target.value })}
                                         placeholder="Ex: Centro, Zona Norte"
@@ -333,13 +334,13 @@ export const AdminProjectForm: React.FC = () => {
                                     rows={3}
                                     value={formData.summary}
                                     onChange={e => setFormData({ ...formData, summary: e.target.value })}
-                                    placeholder={t("admin.projectform.breveResumoParaListagemPblica", "Breve resumo para listagem pública...")}
+                                    placeholder={t("admin.project.breveResumoParaListagemPblica", `Breve resumo para listagem pública...`)}
                                 />
                             </div>
 
                             <div className="form-group">
                                 <Textarea
-                                    label={t("admin.projectform.descrioDetalhada", "Descrição Detalhada")}
+                                    label={t("admin.project.descrioDetalhada", `Descrição Detalhada`)}
                                     rows={6}
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -415,7 +416,7 @@ export const AdminProjectForm: React.FC = () => {
                                                 ...formData,
                                                 accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
                                             })}
-                                            placeholder={t("admin.projectform.descrevaComoOsRecursosSeroImpl", "Descreva como os recursos serão implementados...")}
+                                            placeholder={t("admin.project.descrevaComoOsRecursosSeroImplementados", `Descreva como os recursos serão implementados...`)}
                                         />
                                     </div>
                                 </div>
@@ -427,7 +428,8 @@ export const AdminProjectForm: React.FC = () => {
                             <div className="admin-section border-l-4 border-purple-500 bg-gradient-to-br from-purple-500/5 to-transparent">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="admin-section-title !mb-0">
-                                        <Sparkles style={{ color: "#a78bfa" }} size={20} />{t("admin.projectform.painelDeAnlisePorIa", "Painel de Análise por IA")}</h3>
+                                        <Sparkles style={{ color: "#a78bfa" }} size={20} /> Painel de Análise por IA
+                                    </h3>
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -445,7 +447,7 @@ export const AdminProjectForm: React.FC = () => {
                                         {/* Summary & Recommendation */}
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div className="md:col-span-2">
-                                                <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-2">{t("admin.projectform.resumoDaAnlise", "Resumo da Análise")}</div>
+                                                <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-2">{t("admin.project.resumoDaAnlise", `Resumo da Análise`)}</div>
                                                 <p className="text-sm text-[var(--fg-main)] leading-relaxed italic">
                                                     "{formData.aiAnalysis.summary}"
                                                 </p>
@@ -455,7 +457,7 @@ export const AdminProjectForm: React.FC = () => {
                                                     formData.aiAnalysis.recommendation === 'REJECT' ? 'bg-red-500/10 border-red-500/20' :
                                                         'bg-amber-500/10 border-amber-500/20'}
                                             `}>
-                                                <div className="text-[10px] font-bold uppercase mb-1 opacity-70">{t("admin.projectform.recomendaoIa", "Recomendação IA")}</div>
+                                                <div className="text-[10px] font-bold uppercase mb-1 opacity-70">{t("admin.project.recomendaoIa", `Recomendação IA`)}</div>
                                                 <div className={`text-lg font-black tracking-tighter
                                                     ${formData.aiAnalysis.recommendation === 'APPROVE' ? 'text-emerald-400' :
                                                         formData.aiAnalysis.recommendation === 'REJECT' ? 'text-red-400' :
@@ -470,7 +472,7 @@ export const AdminProjectForm: React.FC = () => {
 
                                         {/* Scores Grid */}
                                         <div>
-                                            <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-4">{t("admin.projectform.pontuaoTcnica", "Pontuação Técnica")}</div>
+                                            <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-4">{t("admin.project.pontuaoTcnica", `Pontuação Técnica`)}</div>
                                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                                                 {Object.entries(formData.aiAnalysis.scores || {}).map(([key, value]: [string, any]) => (
                                                     <div key={key} className="bg-black/20 p-3 rounded-xl border border-white/5 text-center">
@@ -497,7 +499,8 @@ export const AdminProjectForm: React.FC = () => {
                                             </div>
                                             <div className="bg-red-500/5 p-4 rounded-2xl border border-red-500/10">
                                                 <div className="flex items-center gap-2 text-red-400 font-bold text-xs uppercase mb-3 text-red-400/80">
-                                                    <ThumbsDown size={14} />{t("admin.projectform.pontosCrticos", "Pontos Críticos")}</div>
+                                                    <ThumbsDown size={14} /> Pontos Críticos
+                                                </div>
                                                 <ul className="space-y-2">
                                                     {formData.aiAnalysis.weaknesses?.map((w: string, i: number) => (
                                                         <li key={i} className="text-xs text-[var(--fg-main)] flex gap-2">
@@ -533,7 +536,7 @@ export const AdminProjectForm: React.FC = () => {
                                 ) : (
                                     <div className="py-12 flex flex-col items-center justify-center text-center opacity-60">
                                         <Sparkles size={48} className="text-purple-500/30 mb-4" />
-                                        <p className="text-sm max-w-xs">{t("admin.projectform.nenhumaAnliseAutomticaGeradaAi", "Nenhuma análise automática gerada ainda ou projeto pendente de submissão.")}</p>
+                                        <p className="text-sm max-w-xs">{t("admin.project.nenhumaAnliseAutomticaGeradaAindaOuProje", `Nenhuma análise automática gerada ainda ou projeto pendente de submissão.`)}</p>
                                     </div>
                                 )}
                             </div>
@@ -543,18 +546,19 @@ export const AdminProjectForm: React.FC = () => {
                         {isEdit && (
                             <div className="admin-section border-l-4 border-blue-500 shadow-xl">
                                 <h3 className="admin-section-title">
-                                    <ShieldCheck style={{ color: "#60a5fa" }} size={20} />{t("admin.projectform.avaliaoHumanaParecer", "Avaliação Humana (Parecer)")}</h3>
+                                    <ShieldCheck style={{ color: "#60a5fa" }} size={20} /> Avaliação Humana (Parecer)
+                                </h3>
 
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                         <div className="md:col-span-2">
                                             <div className="form-group">
                                                 <Textarea
-                                                    label={t("admin.projectform.observaesDaReviso", "Observações da Revisão")}
+                                                    label={t("admin.project.observaesDaReviso", `Observações da Revisão`)}
                                                     rows={4}
                                                     value={formData.reviewNotes}
                                                     onChange={e => setFormData({ ...formData, reviewNotes: e.target.value })}
-                                                    placeholder={t("admin.projectform.descrevaOsMotivosDaDecisoOuAes", "Descreva os motivos da decisão ou ações necessárias...")}
+                                                    placeholder={t("admin.project.descrevaOsMotivosDaDecisoOuAesNecessrias", `Descreva os motivos da decisão ou ações necessárias...`)}
                                                     className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm"
                                                 />
                                             </div>
@@ -589,7 +593,7 @@ export const AdminProjectForm: React.FC = () => {
                                                         return "0.0";
                                                     })()}
                                                 </div>
-                                                <div className="text-[9px] text-zinc-600 mt-1 italic">{t("admin.projectform.mdiaIaHumana", "(Média IA + Humana)")}</div>
+                                                <div className="text-[9px] text-zinc-600 mt-1 italic">{t("admin.project.mdiaIaHumana", `(Média IA + Humana)`)}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -601,9 +605,10 @@ export const AdminProjectForm: React.FC = () => {
                                             onClick={() => handleUpdateStatus('UNDER_REVIEW')}
                                             disabled={saving}
                                             className="border-amber-500/50 text-amber-500 hover:bg-amber-500/10 font-bold"
-                                            leftIcon={<RefreshCw size={16} />{t("admin.projectform.PedirReviso", "}
+                                            leftIcon={<RefreshCw size={16} />}
                                         >
-                                            Pedir Revisão")}</Button>
+                                            Pedir Revisão
+                                        </Button>
                                         <Button
                                             type="button"
                                             variant="outline"
@@ -700,7 +705,8 @@ export const AdminProjectForm: React.FC = () => {
                         {/* NUMBERS CARD */}
                         <div className="admin-section">
                             <h3 className="admin-section-title">
-                                <DollarSign className="text-[var(--accent-gold)]" size={20} />{t("admin.projectform.mtricasEdital", "Métricas & Edital")}</h3>
+                                <DollarSign className="text-[var(--accent-gold)]" size={20} /> Métricas & Edital
+                            </h3>
 
                             <div className="space-y-4">
                                 <div className="p-4 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-subtle)]">
@@ -710,7 +716,7 @@ export const AdminProjectForm: React.FC = () => {
                                         value={formData.noticeId}
                                         onChange={e => setFormData({ ...formData, noticeId: e.target.value })}
                                     >
-                                        <option value="">Nenhum (Projeto Autônomo)</option>
+                                        <option value="">{t("admin.project.nenhumProjetoAutnomo", `Nenhum (Projeto Autônomo)`)}</option>
                                         {notices.map(n => (
                                             <option key={n.id} value={n.id}>{n.title}</option>
                                         ))}
@@ -744,7 +750,7 @@ export const AdminProjectForm: React.FC = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="form-group">
                                         <Input
-                                            label={t("admin.projectform.pblicoPrevisto", "Público Previsto")}
+                                            label={t("admin.project.pblicoPrevisto", `Público Previsto`)}
                                             type="number"
                                             value={formData.expectedAudience}
                                             onChange={e => setFormData({ ...formData, expectedAudience: e.target.value })}
@@ -753,7 +759,7 @@ export const AdminProjectForm: React.FC = () => {
                                     </div>
                                     <div className="form-group">
                                         <Input
-                                            label={t("admin.projectform.pblicoReal", "Público Real")}
+                                            label={t("admin.project.pblicoReal", `Público Real`)}
                                             type="number"
                                             value={formData.actualAudience}
                                             onChange={e => setFormData({ ...formData, actualAudience: e.target.value })}

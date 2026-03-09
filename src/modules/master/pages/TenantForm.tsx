@@ -343,7 +343,7 @@ export const TenantForm: React.FC = () => {
         <div className="animate-spin" style={{ marginBottom: '1rem' }}>
           <CheckCircle2 size={48} style={{ color: "#60a5fa" }} />
         </div>
-        <p className="text-slate-400">{t("master.tenantform.carregandoInstituio", "Carregando instituição...")}</p>
+        <p className="text-slate-400">{t("master.tenant.carregandoInstituio", `Carregando instituição...`)}</p>
       </div>
     );
   }
@@ -478,18 +478,20 @@ export const TenantForm: React.FC = () => {
                     <div className="flex-col mt-4">
                       <div style={{ marginBottom: '1rem' }}>
                         <Select
-                          label={t("master.tenantform.vnculoHierrquicoOpcional", "Vínculo Hierárquico (Opcional)")}
+                          label={t("master.tenant.vnculoHierrquicoOpcional", `Vínculo Hierárquico (Opcional)`)}
                           value={parentId || ""}
                           onChange={e => setParentId(e.target.value || null)}
                         >
-                          <option value="">{t("master.tenantform.semVnculoIndependente", "Sem vínculo (Independente)")}</option>
+                          <option value="">{t("master.tenant.semVnculoIndependente", `Sem vínculo (Independente)`)}</option>
                           {cities.map(c => (
                             <option key={c.id} value={c.id}>{c.name}</option>
                           ))}
                         </Select>
                       </div>
                       <div style={{ fontSize: '0.85rem', color: '#64748b', padding: '1rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#60a5fa', display: 'block', marginBottom: '0.25rem' }}>Dica:</strong>{t("master.tenantform.vinculeAUmaCidadesecretariaPar", "Vincule a uma Cidade/Secretaria para aparecer nos relatórios agregados da gestão pública.")}</div>
+                        <strong style={{ color: '#60a5fa', display: 'block', marginBottom: '0.25rem' }}>Dica:</strong>
+                        Vincule a uma Cidade/Secretaria para aparecer nos relatórios agregados da gestão pública.
+                      </div>
                     </div>
                   )}
                 </div>
@@ -500,7 +502,7 @@ export const TenantForm: React.FC = () => {
             {currentStep === 1 && (
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem', padding: '1.5rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '1.5rem', border: '1px solid rgba(59, 130, 246, 0.1)' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' }}>{t("master.tenantform.mdulosDoSistema", "Módulos do Sistema")}</h3>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' }}>{t("master.tenant.mdulosDoSistema", `Módulos do Sistema`)}</h3>
                   <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Ative ou desative funcionalidades conforme o plano contratado.</p>
                 </div>
 
@@ -535,11 +537,12 @@ export const TenantForm: React.FC = () => {
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <div className="wizard-section" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
                     <h3 className="wizard-section-title">
-                      <Package size={24} style={{ color: '#60a5fa' }} />{t("master.tenantform.configuraoDoPlano", "Configuração do Plano")}</h3>
+                      <Package size={24} style={{ color: '#60a5fa' }} /> Configuração do Plano
+                    </h3>
 
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                       <Select
-                        label={t("master.tenantform.nvelDeServio", "Nível de Serviço")}
+                        label={t("master.tenant.nvelDeServio", `Nível de Serviço`)}
                         value={plan}
                         onChange={e => {
                           const newPlan = e.target.value;
@@ -549,7 +552,7 @@ export const TenantForm: React.FC = () => {
                           else if (newPlan === "ENTERPRISE") setMaxWorks(500);
                         }}
                       >
-                        <option value="START">{t("master.tenantform.startBsico", "Start (Básico)")}</option>
+                        <option value="START">{t("master.tenant.startBsico", `Start (Básico)`)}</option>
                         <option value="PRO">Professional</option>
                         <option value="ENTERPRISE">Enterprise</option>
                         <option value="CUSTOM">Customizado</option>
@@ -586,12 +589,13 @@ export const TenantForm: React.FC = () => {
                         placeholder="Cole os termos aqui..."
                       />
                       <Textarea
-                        label={t("master.tenantform.polticaDePrivacidade", "Política de Privacidade")}
+                        label={t("master.tenant.polticaDePrivacidade", `Política de Privacidade`)}
                         rows={2}
                         value={privacyPolicy}
-                        onChange={e =>{t("master.tenantform.setprivacypolicyetargetvaluePl", "setPrivacyPolicy(e.target.value)}
-                        placeholder={t("master.tenantform.coleAPolticaAqui", "Cole a política aqui...")}
-                      />")}</div>
+                        onChange={e => setPrivacyPolicy(e.target.value)}
+                        placeholder={t("master.tenant.coleAPolticaAqui", `Cole a política aqui...`)}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -630,12 +634,16 @@ export const TenantForm: React.FC = () => {
                           leftIcon={<Lock size={16} />}
                         />
                       </div>
-                      <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(236, 72, 153, 0.1)', border: '1px solid rgba(236, 72, 153, 0.2)', borderRadius: '12px', fontSize: '0.85rem', color: '#fbcfe8', lineHeight: '1.5' }}>{t("master.tenantform.esteUsurioTerPermissoTotalAdmi", "Este usuário terá permissão total (ADMIN) sobre a nova instituição.")}</div>
+                      <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(236, 72, 153, 0.1)', border: '1px solid rgba(236, 72, 153, 0.2)', borderRadius: '12px', fontSize: '0.85rem', color: '#fbcfe8', lineHeight: '1.5' }}>{t("master.tenant.esteUsurioTerPermissoTotalAdminSobreANov", `
+                        Este usuário terá permissão total (ADMIN) sobre a nova instituição.
+                      `)}</div>
                     </div>
                   ) : (
                     <div className="wizard-section" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.5, textAlign: 'center' }}>
                       <Users size={48} className="text-slate-600 mb-4" />
-                      <p className="text-slate-500 text-sm">{t("master.tenantform.aEdioDeAdministradoresFeitaNaA", "A edição de administradores é feita na aba "Usuários".")}</p>
+                      <p className="text-slate-500 text-sm">{t("master.tenant.aEdioDeAdministradoresFeitaNaAbaUsurios", `
+                        A edição de administradores é feita na aba "Usuários".
+                      `)}</p>
                     </div>
                   )}
                 </div>
@@ -650,7 +658,9 @@ export const TenantForm: React.FC = () => {
                     <CheckCircle2 size={40} />
                   </div>
                   <h2 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' }}>Tudo pronto!</h2>
-                  <p style={{ color: '#94a3b8', maxWidth: '400px', margin: '0 auto' }}>{t("master.tenantform.reviseOsDadosAbaixoAntesDeCria", "Revise os dados abaixo antes de criar o ambiente da instituição.")}</p>
+                  <p style={{ color: '#94a3b8', maxWidth: '400px', margin: '0 auto' }}>{t("master.tenant.reviseOsDadosAbaixoAntesDeCriarOAmbiente", `
+                    Revise os dados abaixo antes de criar o ambiente da instituição.
+                  `)}</p>
                 </div>
 
                 <div className="master-grid-2">
@@ -721,9 +731,10 @@ export const TenantForm: React.FC = () => {
               <Button
                 onClick={nextStep}
                 className="btn-primary"
-                rightIcon={<ChevronRight size={20} />{t("master.tenantform.Prximo", "}
+                rightIcon={<ChevronRight size={20} />}
               >
-                Próximo")}</Button>
+                Próximo
+              </Button>
             )}
           </div>
         </div>

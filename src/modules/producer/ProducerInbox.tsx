@@ -196,7 +196,9 @@ export const ProducerInbox: React.FC = () => {
                                             {msg.type === "PAYMENT_REQUEST" ? (
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2 font-bold opacity-80">
-                                                        <DollarSign size={16} />{t("producer.producerinbox.solicitaoDePagamento", "Solicitação de Pagamento")}</div>
+                                                        <DollarSign size={16} />
+                                                        Solicitação de Pagamento
+                                                    </div>
                                                     <p>{msg.content}</p>
                                                     <Button size="sm" className="mt-2 w-full bg-[#1a1108] text-[#d4af37] border border-[#d4af37]">
                                                         Pagar Agora (Simulado)
@@ -240,7 +242,7 @@ export const ProducerInbox: React.FC = () => {
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-[#d4af37]/30">
                         <Mail size={48} className="mb-4 opacity-50" />
-                        <p>{t("producer.producerinbox.selecioneUmaConversaParaComear", "Selecione uma conversa para começar")}</p>
+                        <p>{t("producer.producerinbox.selecioneUmaConversaParaComear", `Selecione uma conversa para começar`)}</p>
                     </div>
                 )}
             </div>

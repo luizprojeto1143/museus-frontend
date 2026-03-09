@@ -116,8 +116,8 @@ export const LeaderboardPage: React.FC = () => {
                             <span className="my-rank-value">?</span>
                         </div>
                         <div className="my-rank-info-text">
-                            <span className="my-rank-position-label">{t("visitor.leaderboardpage.vocAindaNoEstNoRanking", "Você ainda não está no ranking")}</span>
-                            <span className="my-rank-name" style={{ color: "var(--primary-color)" }}>{t("visitor.leaderboardpage.crieSuaContaParaComearAPontuar", "Crie sua conta para começar a pontuar!")}</span>
+                            <span className="my-rank-position-label">{t("visitor.leaderboardpage.vocAindaNoEstNoRanking", `Você ainda não está no ranking`)}</span>
+                            <span className="my-rank-name" style={{ color: "var(--primary-color)" }}>{t("visitor.leaderboardpage.crieSuaContaParaComearAPontuar", `Crie sua conta para começar a pontuar!`)}</span>
                         </div>
                     </div>
                 </div>

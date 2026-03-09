@@ -34,6 +34,7 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 };
 
 const AccessibilityTimeline: React.FC = () => {
+  const { t } = useTranslation();
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -61,10 +62,14 @@ const AccessibilityTimeline: React.FC = () => {
             <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
                 Linha do Tempo de Acessibilidade
             </h1>
-            <p style={{ color: "#6b7280", marginBottom: 32 }}>{t("admin.accessibilitytimeline.histricoInstitucionalDeAesDeAc", "Histórico institucional de ações de acessibilidade - blindagem política e prova de política pública contínua")}</p>
+            <p style={{ color: "#6b7280", marginBottom: 32 }}>{t("admin.accessibilitytimeline.histricoInstitucionalDeAesDeAcessibilida", `
+                Histórico institucional de ações de acessibilidade - blindagem política e prova de política pública contínua
+            `)}</p>
 
             {timeline.length === 0 ? (
-                <div style={{ textAlign: "center", padding: 48, color: "#9ca3af" }}>{t("admin.accessibilitytimeline.nenhumaAoDeAcessibilidadeRegis", "Nenhuma ação de acessibilidade registrada")}</div>
+                <div style={{ textAlign: "center", padding: 48, color: "#9ca3af" }}>{t("admin.accessibilitytimeline.nenhumaAoDeAcessibilidadeRegistrada", `
+                    Nenhuma ação de acessibilidade registrada
+                `)}</div>
             ) : (
                 <div style={{ position: "relative" }}>
                     {/* Vertical Line */}
@@ -169,7 +174,7 @@ const AccessibilityTimeline: React.FC = () => {
 
                                         {item.delayDays !== null && item.delayDays !== undefined && (
                                             <div>
-                                                <div style={{ color: "#9ca3af", marginBottom: 2 }}>{t("admin.accessibilitytimeline.tempoDeExecuo", "Tempo de Execução")}</div>
+                                                <div style={{ color: "#9ca3af", marginBottom: 2 }}>{t("admin.accessibilitytimeline.tempoDeExecuo", `Tempo de Execução`)}</div>
                                                 <div style={{
                                                     fontWeight: 500,
                                                     color: item.delayDays > 30 ? "#ef4444" : item.delayDays > 14 ? "#f59e0b" : "#10b981"

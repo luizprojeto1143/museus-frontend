@@ -126,7 +126,9 @@ export const ProducerDashboard: React.FC = () => {
                     <h2 className="onboarding-title">
                         Bem-vindo ao Cultura Viva!
                     </h2>
-                    <p className="onboarding-text">{t("producer.producerdashboard.comeceCriandoSeuPrimeiroEvento", "Comece criando seu primeiro evento para atrair visitantes e vender ingressos. Em poucos passos, seu espaço cultural estará no mapa!")}</p>
+                    <p className="onboarding-text">{t("producer.producerdashboard.comeceCriandoSeuPrimeiroEventoParaAtrair", `
+                        Comece criando seu primeiro evento para atrair visitantes e vender ingressos. Em poucos passos, seu espaço cultural estará no mapa!
+                    `)}</p>
                     <div className="onboarding-actions">
                         <button className="btn btn-primary btn-lg" onClick={() => navigate("/producer/events/new")}>
                             <Plus size={18} /> Criar Primeiro Evento
@@ -214,7 +216,7 @@ export const ProducerDashboard: React.FC = () => {
                                     <span className="strip-hour-mini">
                                         {evt.time || "00:00"}
                                     </span>
-                                    <span className="strip-label-mini">{t("producer.producerdashboard.incio", "Início")}</span>
+                                    <span className="strip-label-mini">{t("producer.producerdashboard.incio", `Início`)}</span>
                                 </div>
 
                                 <div className="card-main-mini">

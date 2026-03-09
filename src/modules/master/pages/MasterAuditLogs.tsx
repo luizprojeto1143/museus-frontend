@@ -83,11 +83,15 @@ export const MasterAuditLogs: React.FC = () => {
             {/* HERO SECTION */}
             <section className="master-hero">
                 <div className="master-hero-content">
-                    <span className="master-badge">{t("master.auditlogs.SeguranaAuditoria", "🔍 Segurança & Auditoria")}</span>
+                    <span className="master-badge">{t("master.auditlogs.SeguranaAuditoria", `
+                        🔍 Segurança & Auditoria
+                    `)}</span>
                     <h1 className="master-title">
                         Logs do Sistema
                     </h1>
-                    <p className="master-subtitle">{t("master.auditlogs.monitoreTodasAsAesRealizadasNo", "Monitore todas as ações realizadas no painel administrativo para segurança e conformidade.")}</p>
+                    <p className="master-subtitle">{t("master.auditlogs.monitoreTodasAsAesRealizadasNoPainelAdmi", `
+                        Monitore todas as ações realizadas no painel administrativo para segurança e conformidade.
+                    `)}</p>
                 </div>
 
                 <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -118,19 +122,19 @@ export const MasterAuditLogs: React.FC = () => {
                             <option value="Work">Obras</option>
                             <option value="Event">Eventos</option>
                             <option value="Visitor">Visitantes</option>
-                            <option value="User">{t("master.auditlogs.usurios", "Usuários")}</option>
+                            <option value="User">{t("master.auditlogs.usurios", `Usuários`)}</option>
                             <option value="Trail">Trilhas</option>
                             <option value="Product">Produtos</option>
                         </select>
                     </div>
 
                     <div className="master-input-group">
-                        <label>{t("master.auditlogs.ao", "Ação")}</label>
+                        <label>{t("master.auditlogs.ao", `Ação`)}</label>
                         <select
                             value={filters.action}
                             onChange={(e) => setFilters(f => ({ ...f, action: e.target.value }))}
                         >
-                            <option value="">{t("master.auditlogs.todasAes", "Todas Ações")}</option>
+                            <option value="">{t("master.auditlogs.todasAes", `Todas Ações`)}</option>
                             <option value="CREATE">Criar</option>
                             <option value="UPDATE">Atualizar</option>
                             <option value="DELETE">Excluir</option>
@@ -153,7 +157,7 @@ export const MasterAuditLogs: React.FC = () => {
                     <div className="master-icon-wrapper master-icon-purple">
                         <Database size={24} />
                     </div>
-                    <h3>{t("master.auditlogs.histricoDeAes", "Histórico de Ações")}</h3>
+                    <h3>{t("master.auditlogs.histricoDeAes", `Histórico de Ações`)}</h3>
                 </div>
 
                 {loading ? (

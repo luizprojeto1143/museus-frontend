@@ -67,8 +67,8 @@ export const AdminHeritage: React.FC = () => {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>📜 Patrimônio Imaterial</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.25rem' }}>{t("admin.heritage.registroDeSaberesCelebraesEExp", "Registro de saberes, celebrações e expressões culturais")}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.heritage.PatrimnioImaterial", `📜 Patrimônio Imaterial`)}</h1>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.25rem' }}>{t("admin.heritage.registroDeSaberesCelebraesEExpressesCult", `Registro de saberes, celebrações e expressões culturais`)}</p>
                 </div>
                 <button
                     onClick={() => setShowForm(true)}
@@ -103,12 +103,12 @@ export const AdminHeritage: React.FC = () => {
             {showForm && (
                 <div className="card" style={{ marginBottom: '1.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.02)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                        <h2 className="card-title" style={{ margin: 0 }}>Registrar Patrimônio Imaterial</h2>
+                        <h2 className="card-title" style={{ margin: 0 }}>{t("admin.heritage.registrarPatrimnioImaterial", `Registrar Patrimônio Imaterial`)}</h2>
                         <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888' }}><X size={20} /></button>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                         <div>
-                            <label style={labelStyle}>{t("admin.heritage.ttulo", "Título *")}</label>
+                            <label style={labelStyle}>{t("admin.heritage.ttulo", `Título *`)}</label>
                             <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Ex: Congada de Betim" />
                         </div>
                         <div>
@@ -122,12 +122,12 @@ export const AdminHeritage: React.FC = () => {
                             <input value={form.holders} onChange={e => setForm({ ...form, holders: e.target.value })} placeholder="Mestres, comunidades..." style={inputStyle} />
                         </div>
                         <div>
-                            <label style={labelStyle}>{t("admin.heritage.regio", "Região")}</label>
+                            <label style={labelStyle}>{t("admin.heritage.regio", `Região`)}</label>
                             <input value={form.region} onChange={e => setForm({ ...form, region: e.target.value })} placeholder="Bairro, distrito..." style={inputStyle} />
                         </div>
                     </div>
                     <div style={{ marginBottom: '1rem' }}>
-                        <label style={labelStyle}>{t("admin.heritage.descrio", "Descrição")}</label>
+                        <label style={labelStyle}>{t("admin.heritage.descrio", `Descrição`)}</label>
                         <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} style={{ ...inputStyle, resize: 'none' }} placeholder="Descreva o patrimônio cultural..." />
                     </div>
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
@@ -180,8 +180,8 @@ export const AdminHeritage: React.FC = () => {
             {items.length === 0 && (
                 <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
                     <Scroll size={48} style={{ margin: '0 auto 1rem', color: '#64748b', opacity: 0.3 }} />
-                    <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>Nenhum patrimônio imaterial registrado</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.heritage.cliqueEmNovoRegistroParaComear", "Clique em "Novo Registro" para começar")}</p>
+                    <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>{t("admin.heritage.nenhumPatrimnioImaterialRegistrado", `Nenhum patrimônio imaterial registrado`)}</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.heritage.cliqueEmNovoRegistroParaComear", `Clique em "Novo Registro" para começar`)}</p>
                 </div>
             )}
         </div>

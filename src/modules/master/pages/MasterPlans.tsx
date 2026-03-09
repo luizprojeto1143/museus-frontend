@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { Plus, Edit, Trash2, Shield, Zap, FileText, CheckCircle2, DollarSign } from "lucide-react";
 import { Button, Input, Select, Textarea } from "../../../components/ui";
@@ -41,6 +41,7 @@ const slaTierLabels: Record<string, string> = {
 };
 
 const MasterPlans: React.FC = () => {
+  const { t } = useTranslation();
     const { addToast } = useToast();
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
@@ -87,7 +88,7 @@ const MasterPlans: React.FC = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-bold">Planos Contratuais</h1>
-                    <p className="opacity-70 mt-1">{t("master.plans.gerencieCamadasDeServioELimite", "Gerencie camadas de serviço e limites para instituições")}</p>
+                    <p className="opacity-70 mt-1">{t("master.plans.gerencieCamadasDeServioELimitesParaInsti", `Gerencie camadas de serviço e limites para instituições`)}</p>
                 </div>
                 <Button
                     onClick={() => { setEditingPlan(null); setShowForm(true); }}
@@ -110,7 +111,7 @@ const MasterPlans: React.FC = () => {
                                 <div className="text-2xl font-black mt-4 flex items-baseline gap-1">
                                     <span className="text-sm font-normal opacity-70">R$</span>
                                     {plan.monthlyPrice.toLocaleString("pt-BR")}
-                                    <span className="text-sm font-normal opacity-70">/mês</span>
+                                    <span className="text-sm font-normal opacity-70">{t("master.plans.ms", `/mês`)}</span>
                                 </div>
                             )}
                         </div>
@@ -126,15 +127,15 @@ const MasterPlans: React.FC = () => {
                                 <FeatureRow label="Obras" value={plan.maxWorks} />
                                 <FeatureRow label="Eventos" value={plan.maxEvents} />
                                 <FeatureRow label="Projetos Ativos" value={plan.maxActiveProjects} />
-                                <FeatureRow label={t("master.plans.usurios", "Usuários")} value={plan.maxUsers} />
+                                <FeatureRow label={t("master.plans.usurios", `Usuários`)} value={plan.maxUsers} />
                                 <FeatureRow label="Equipamentos Filhos" value={plan.maxChildTenants} />
-                                <FeatureRow label={t("master.plans.nvelIa", "Nível IA")} value={aiTierLabels[plan.aiTier]} />
+                                <FeatureRow label={t("master.plans.nvelIa", `Nível IA`)} value={aiTierLabels[plan.aiTier]} />
                                 <FeatureRow label="SLA" value={slaTierLabels[plan.slaTier]} />
                             </div>
 
                             <div className="mt-6 flex flex-wrap gap-1.5">
                                 {plan.hasExecutiveReports && <FeatureBadge label="Executivo" />}
-                                {plan.hasLegalCompliance && <FeatureBadge label={t("master.plans.jurdico", "Jurídico")} />}
+                                {plan.hasLegalCompliance && <FeatureBadge label={t("master.plans.jurdico", `Jurídico`)} />}
                                 {plan.hasAPIAccess && <FeatureBadge label="API" />}
                                 {plan.hasWhiteLabel && <FeatureBadge label="White Label" />}
                             </div>
@@ -257,7 +258,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                         </div>
                         <div className="col-span-1 sm:col-span-2">
                             <Textarea
-                                label={t("master.plans.descrio", "Descrição")}
+                                label={t("master.plans.descrio", `Descrição`)}
                                 value={form.description}
                                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                                 rows={3}
@@ -265,7 +266,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                         </div>
 
                         <Input
-                            label={t("master.plans.preoMensalR", "Preço Mensal (R$)")}
+                            label={t("master.plans.preoMensalR", `Preço Mensal (R$)`)}
                             type="number"
                             value={form.monthlyPrice}
                             onChange={(e) => setForm({ ...form, monthlyPrice: Number(e.target.value) })}
@@ -292,7 +293,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                             leftIcon={<FileText size={16} />}
                         />
                         <Input
-                            label={t("master.plans.maxUsurios", "Max Usuários")}
+                            label={t("master.plans.maxUsurios", `Max Usuários`)}
                             type="number"
                             value={form.maxUsers}
                             onChange={(e) => setForm({ ...form, maxUsers: Number(e.target.value) })}
@@ -309,9 +310,9 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                             value={form.aiTier}
                             onChange={(e) => setForm({ ...form, aiTier: e.target.value })}
                         >
-                            <option value="BASIC">{t("master.plans.bsico", "Básico")}</option>
-                            <option value="CONTINUOUS">{t("master.plans.contnuo", "Contínuo")}</option>
-                            <option value="ADVANCED">{t("master.plans.avanado", "Avançado")}</option>
+                            <option value="BASIC">{t("master.plans.bsico", `Básico`)}</option>
+                            <option value="CONTINUOUS">{t("master.plans.contnuo", `Contínuo`)}</option>
+                            <option value="ADVANCED">{t("master.plans.avanado", `Avançado`)}</option>
                         </Select>
 
                         <Select
@@ -319,7 +320,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                             value={form.slaTier}
                             onChange={(e) => setForm({ ...form, slaTier: e.target.value })}
                         >
-                            <option value="STANDARD">{t("master.plans.padro48h", "Padrão (48h)")}</option>
+                            <option value="STANDARD">{t("master.plans.padro48h", `Padrão (48h)`)}</option>
                             <option value="EXTENDED">Estendido (24h)</option>
                             <option value="DEDICATED">Dedicado (4h)</option>
                         </Select>
@@ -329,12 +330,12 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                         <p className="text-xs font-bold uppercase text-slate-500 mb-2">Recursos Inclusos</p>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                             <CheckboxField
-                                label={t("master.plans.relatriosExecutivos", "Relatórios Executivos")}
+                                label={t("master.plans.relatriosExecutivos", `Relatórios Executivos`)}
                                 checked={form.hasExecutiveReports}
                                 onChange={(v) => setForm({ ...form, hasExecutiveReports: v })}
                             />
                             <CheckboxField
-                                label={t("master.plans.conformidadeJurdica", "Conformidade Jurídica")}
+                                label={t("master.plans.conformidadeJurdica", `Conformidade Jurídica`)}
                                 checked={form.hasLegalCompliance}
                                 onChange={(v) => setForm({ ...form, hasLegalCompliance: v })}
                             />

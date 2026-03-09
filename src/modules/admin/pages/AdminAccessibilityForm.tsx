@@ -179,7 +179,8 @@ export const AdminAccessibilityForm: React.FC = () => {
 
                     <div className="admin-section">
                         <h2 className="admin-section-title">
-                            <span style={{ color: "#60a5fa" }}>♿</span>{t("admin.accessibilityform.tipoDeServio", "Tipo de Serviço")}</h2>
+                            <span style={{ color: "#60a5fa" }}>♿</span> Tipo de Serviço
+                        </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {ACCESSIBILITY_SERVICES.map(service => (
@@ -215,7 +216,8 @@ export const AdminAccessibilityForm: React.FC = () => {
 
                     <div className="admin-section">
                         <h2 className="admin-section-title">
-                            <FileText className="text-[var(--accent-gold)]" size={20} />{t("admin.accessibilityform.detalhesDaSolicitao", "Detalhes da Solicitação")}</h2>
+                            <FileText className="text-[var(--accent-gold)]" size={20} /> Detalhes da Solicitação
+                        </h2>
 
                         <div className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -239,7 +241,7 @@ export const AdminAccessibilityForm: React.FC = () => {
                             </div>
 
                             <Textarea
-                                label={t("admin.accessibilityform.descrioDosEntregveis", "Descrição dos Entregáveis")}
+                                label={t("admin.accessibility.descrioDosEntregveis", `Descrição dos Entregáveis`)}
                                 value={formData.deliverables}
                                 onChange={e => setFormData({ ...formData, deliverables: e.target.value })}
                                 placeholder="Descreva detalhadamente o que deve ser entregue..."
@@ -254,11 +256,11 @@ export const AdminAccessibilityForm: React.FC = () => {
 
                     {/* Status Card */}
                     <div className="admin-section">
-                        <h2 className="admin-section-title">{t("admin.accessibilityform.statusEOramento", "Status e Orçamento")}</h2>
+                        <h2 className="admin-section-title">{t("admin.accessibility.statusEOramento", `Status e Orçamento`)}</h2>
 
                         <div className="space-y-6">
                             <div>
-                                <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">{t("admin.accessibilityform.situaoAtual", "Situação Atual")}</label>
+                                <label className="text-xs font-bold text-[var(--fg-muted)] uppercase mb-2 block">{t("admin.accessibility.situaoAtual", `Situação Atual`)}</label>
                                 <div className="grid grid-cols-1 gap-2">
                                     {STATUS_OPTIONS.map(opt => (
                                         <button
@@ -282,7 +284,7 @@ export const AdminAccessibilityForm: React.FC = () => {
 
                             <div className="pt-6 border-t border-[var(--border-subtle)]">
                                 <Input
-                                    label={t("admin.accessibilityform.oramentoAprovadoR", "Orçamento Aprovado (R$)")}
+                                    label={t("admin.accessibility.oramentoAprovadoR", `Orçamento Aprovado (R$)`)}
                                     type="number"
                                     value={formData.approvedBudget}
                                     onChange={e => setFormData({ ...formData, approvedBudget: e.target.value })}
@@ -294,7 +296,7 @@ export const AdminAccessibilityForm: React.FC = () => {
 
                             <div className="pt-4">
                                 <Input
-                                    label={t("admin.accessibilityform.statusDaValidao", "Status da Validação")}
+                                    label={t("admin.accessibility.statusDaValidao", `Status da Validação`)}
                                     value={formData.validationStatus}
                                     onChange={e => setFormData({ ...formData, validationStatus: e.target.value })}
                                     placeholder="Ex: Aprovado pelo especialista"
@@ -366,9 +368,10 @@ export const AdminAccessibilityForm: React.FC = () => {
                         onClick={handleSubmit}
                         isLoading={saving}
                         className="btn-primary"
-                        leftIcon={<Save size={18} />{t("admin.accessibilityform.SalvarSolicitao", "}
+                        leftIcon={<Save size={18} />}
                     >
-                        Salvar Solicitação")}</Button>
+                        Salvar Solicitação
+                    </Button>
                 </div>
             </div>
         </div>

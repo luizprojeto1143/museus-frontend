@@ -81,7 +81,8 @@ export const AdminEventDashboard: React.FC = () => {
                 </div>
                 <div className="flex gap-3">
                     <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover: flex items-center gap-2 px-4 py-2 rounded-lg">
-                        <Printer className="w-4 h-4" />{t("admin.eventdashboard.relatrio", "Relatório")}</Link>
+                        <Printer className="w-4 h-4" /> Relatório
+                    </Link>
                     <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-zinc-900/40 border border-white/10 text-blue-600 hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
                         <CheckSquare className="w-4 h-4" /> Pesquisa
                     </Link>
@@ -135,7 +136,7 @@ export const AdminEventDashboard: React.FC = () => {
                 <div className="bg-zinc-900/40 p-6 rounded-xl shadow-md shadow-black/20 border border-white/5">
                     <div className="flex justify-between items-start">
                         <div>
-                            <p className="text-sm font-medium text-zinc-400">{t("admin.eventdashboard.visualizaes", "Visualizações")}</p>
+                            <p className="text-sm font-medium text-zinc-400">{t("admin.eventdashboard.visualizaes", `Visualizações`)}</p>
                             <h3 className="text-3xl font-bold text-white mt-2">
                                 {stats.views}
                             </h3>
@@ -152,12 +153,14 @@ export const AdminEventDashboard: React.FC = () => {
                 {/* Recent Registrations */}
                 <div className="lg:col-span-2 bg-zinc-900/40 rounded-xl shadow-md shadow-black/20 border border-white/10">
                     <div className="p-6 border-b border-white/5 flex justify-between items-center">
-                        <h3 className="font-bold text-white">{t("admin.eventdashboard.inscriesRecentes", "Inscrições Recentes")}</h3>
+                        <h3 className="font-bold text-white">{t("admin.eventdashboard.inscriesRecentes", `Inscrições Recentes`)}</h3>
                         <Link to={`/admin/eventos/${id}/relatorio`} className="text-blue-600 text-sm font-medium hover:underline">Ver todas</Link>
                     </div>
                     <div className="p-0">
                         {stats.recentRegistrations.length === 0 ? (
-                            <div className="text-center text-zinc-400 py-8">{t("admin.eventdashboard.nenhumaInscrioRecente", "Nenhuma inscrição recente.")}</div>
+                            <div className="text-center text-zinc-400 py-8">{t("admin.eventdashboard.nenhumaInscrioRecente", `
+                                Nenhuma inscrição recente.
+                            `)}</div>
                         ) : (
                             <div className="divide-y divide-white/5">
                                 {stats.recentRegistrations.map((reg: any) => (
@@ -190,8 +193,8 @@ export const AdminEventDashboard: React.FC = () => {
                 <div className="space-y-6">
                     <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-6 text-white text-center">
                         <QrCode className="w-12 h-12 mx-auto mb-4 opacity-80" />
-                        <h3 className="font-bold text-lg mb-2">{t("admin.eventdashboard.checkinRpido", "Check-in Rápido")}</h3>
-                        <p className="text-blue-100 text-sm mb-4">Acesse a câmera para ler QR Codes dos participantes na entrada.</p>
+                        <h3 className="font-bold text-lg mb-2">{t("admin.eventdashboard.checkinRpido", `Check-in Rápido`)}</h3>
+                        <p className="text-blue-100 text-sm mb-4">{t("admin.eventdashboard.acesseACmeraParaLerQrCodesDosParticipant", `Acesse a câmera para ler QR Codes dos participantes na entrada.`)}</p>
                         <Link to={`/admin/eventos/${id}/checkin`} className="btn bg-zinc-900/40 text-blue-700 hover:bg-blue-50 w-full block">
                             Abrir Scanner
                         </Link>

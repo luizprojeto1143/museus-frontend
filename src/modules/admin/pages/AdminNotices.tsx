@@ -128,7 +128,7 @@ export const AdminNotices: React.FC = () => {
                     </div>
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-transparent opacity-50"></div>
                     <div className="relative z-10">
-                        <p className="stat-label text-emerald-400/70 mb-1">{t("admin.notices.inscriesAbertas", "Inscrições Abertas")}</p>
+                        <p className="stat-label text-emerald-400/70 mb-1">{t("admin.notices.inscriesAbertas", `Inscrições Abertas`)}</p>
                         <h3 className="stat-value text-white mb-2 text-5xl">{open}</h3>
                         <div className="w-12 h-1 bg-emerald-500 rounded-full opacity-50"></div>
                     </div>
@@ -140,7 +140,7 @@ export const AdminNotices: React.FC = () => {
                     </div>
                     <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-transparent opacity-50"></div>
                     <div className="relative z-10">
-                        <p className="stat-label text-purple-400/70 mb-1">{t("admin.notices.emAvaliao", "Em Avaliação")}</p>
+                        <p className="stat-label text-purple-400/70 mb-1">{t("admin.notices.emAvaliao", `Em Avaliação`)}</p>
                         <h3 className="stat-value text-white mb-2 text-5xl">{evaluating}</h3>
                         <div className="w-12 h-1 bg-purple-500 rounded-full opacity-50"></div>
                     </div>
@@ -153,7 +153,7 @@ export const AdminNotices: React.FC = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
                     <input
                         type="text"
-                        placeholder={t("admin.notices.buscarPorTtuloOuStatus", "Buscar por título ou status...")}
+                        placeholder={t("admin.notices.buscarPorTtuloOuStatus", `Buscar por título ou status...`)}
                         className="w-full bg-zinc-950/50 border border-transparent rounded-lg pl-10 pr-4 py-3 text-white focus:outline-none focus:bg-zinc-900 transition-colors placeholder:text-zinc-600"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
@@ -178,7 +178,7 @@ export const AdminNotices: React.FC = () => {
                             <FileText className="text-zinc-700 group-hover:text-gold transition-colors" size={32} />
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-2">Nenhum edital encontrado</h3>
-                        <p className="mb-8 max-w-md text-zinc-400">{t("admin.notices.comeceCriandoSeuPrimeiroEdital", "Comece criando seu primeiro edital de fomento cultural para receber inscrições.")}</p>
+                        <p className="mb-8 max-w-md text-zinc-400">{t("admin.notices.comeceCriandoSeuPrimeiroEditalDeFomentoC", `Comece criando seu primeiro edital de fomento cultural para receber inscrições.`)}</p>
                         <Link to="/admin/editais/novo">
                             <Button className="btn-secondary hover:text-white border-white/10 hover:border-gold/30 transition-all">
                                 Criar Primeiro Edital

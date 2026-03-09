@@ -354,7 +354,8 @@ export const AdminTrailForm: React.FC = () => {
               <div className="flex-col gap-8">
                 <div className="admin-section">
                   <h3 className="admin-section-title">
-                    <Music className="text-[var(--accent-gold)]" />{t("admin.trailform.udioguia", "Áudio-Guia")}</h3>
+                    <Music className="text-[var(--accent-gold)]" /> Áudio-Guia
+                  </h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <p className="text-sm text-[var(--fg-muted)]">
                       Áudio de introdução {term.trail === "Trilha" ? "da trilha" : "do roteiro"} que será reproduzido para os {term.visitors.toLowerCase()}.
@@ -380,7 +381,8 @@ export const AdminTrailForm: React.FC = () => {
 
                 <div className="admin-section">
                   <h3 className="admin-section-title">
-                    <Video style={{ color: "#60a5fa" }} />{t("admin.trailform.vdeo", "Vídeo")}</h3>
+                    <Video style={{ color: "#60a5fa" }} /> Vídeo
+                  </h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <p className="text-sm text-[var(--fg-muted)]">
                       URL de vídeo do YouTube ou MP4 para apresentação {term.trail === "Trilha" ? "da trilha" : "do roteiro"}.
@@ -486,7 +488,7 @@ export const AdminTrailForm: React.FC = () => {
                         <span className="summary-value">{selectedWorks.length}</span>
                       </div>
                       <div className="summary-row">
-                        <span className="summary-label">{t("admin.trailform.mdias", "Mídias:")}</span>
+                        <span className="summary-label">{t("admin.trail.mdias", `Mídias:`)}</span>
                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                           {audioUrl && <Music size={16} color="var(--status-success)" />}
                           {videoUrl && <Video size={16} color="var(--status-success)" />}
@@ -527,9 +529,10 @@ export const AdminTrailForm: React.FC = () => {
               <Button
                 onClick={nextStep}
                 className="btn-primary"
-                rightIcon={<ChevronRight size={18} />{t("admin.trailform.Prximo", "}
+                rightIcon={<ChevronRight size={18} />}
               >
-                Próximo")}</Button>
+                Próximo
+              </Button>
             )}
           </div>
         </div>

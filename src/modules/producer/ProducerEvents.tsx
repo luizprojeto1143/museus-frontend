@@ -48,7 +48,7 @@ export const ProducerEvents: React.FC = () => {
             <div className="flex justify-between items-end mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meus Eventos</h1>
-                    <p className="text-[#B0A090]">{t("producer.producerevents.gerencieSeusEventosExposiesEWo", "Gerencie seus eventos, exposições e workshops.")}</p>
+                    <p className="text-[#B0A090]">{t("producer.producerevents.gerencieSeusEventosExposiesEWorkshops", `Gerencie seus eventos, exposições e workshops.`)}</p>
                 </div>
                 <button
                     onClick={() => navigate("/producer/events/new")}
@@ -68,7 +68,9 @@ export const ProducerEvents: React.FC = () => {
                         <Calendar size={40} />
                     </div>
                     <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">Nenhum evento encontrado</h3>
-                    <p className="text-[#B0A090] mb-8 max-w-md mx-auto">{t("producer.producerevents.comeceCriandoSeuPrimeiroEvento", "Comece criando seu primeiro evento ou exposição para aparecer na programação da cidade.")}</p>
+                    <p className="text-[#B0A090] mb-8 max-w-md mx-auto">{t("producer.producerevents.comeceCriandoSeuPrimeiroEventoOuExposioP", `
+                        Comece criando seu primeiro evento ou exposição para aparecer na programação da cidade.
+                    `)}</p>
                     <button
                         onClick={() => navigate("/producer/events/new")}
                         className="px-6 py-3 border border-[#D4AF37] text-[#D4AF37] rounded-lg hover:bg-[#D4AF37] hover:text-[#1a1108] transition-all font-bold"

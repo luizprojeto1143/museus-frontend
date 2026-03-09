@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useState, useEffect } from 'react';
+import { useTranslation } from "react-i18next";
 import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon, TrendingUp, AlertTriangle, Filter } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
@@ -150,7 +150,7 @@ export const AdminShop: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
                     <h1 className="text-4xl font-black text-white mb-2 tracking-tight">SHOP <span className="text-amber-500">CONTROL</span></h1>
-                    <p className="text-gray-400 font-medium">{t("admin.shop.ecossistemaDeGestoDeAcervoEVen", "Ecossistema de gestão de acervo e vendas")}</p>
+                    <p className="text-gray-400 font-medium">{t("admin.shop.ecossistemaDeGestoDeAcervoEVendas", `Ecossistema de gestão de acervo e vendas`)}</p>
                 </div>
                 <div className="flex gap-4">
                     <Button
@@ -340,7 +340,7 @@ export const AdminShop: React.FC = () => {
                         <div className="card" style={{ textAlign: "center", padding: "6rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                             <DollarSign size={60} className="mx-auto text-zinc-200 mb-6 opacity-20" />
                             <h3 className="text-xl font-bold text-white mb-2">Nenhum pedido ainda</h3>
-                            <p style={{ color: "#64748b" }}>{t("admin.shop.osPedidosDosClientesApareceroA", "Os pedidos dos clientes aparecerão aqui.")}</p>
+                            <p style={{ color: "#64748b" }}>{t("admin.shop.osPedidosDosClientesApareceroAqui", `Os pedidos dos clientes aparecerão aqui.`)}</p>
                         </div>
                     ) : (
                         <div className="card" style={{ overflow: "hidden", padding: 0 }}>
@@ -349,11 +349,11 @@ export const AdminShop: React.FC = () => {
                                     <tr>
                                         <th className="px-6 py-4">Pedido</th>
                                         <th className="px-6 py-4">Cliente</th>
-                                        <th className="px-6 py-4">{t("admin.shop.endereoDeEntrega", "Endereço de Entrega")}</th>
+                                        <th className="px-6 py-4">{t("admin.shop.endereoDeEntrega", `Endereço de Entrega`)}</th>
                                         <th className="px-6 py-4">Itens</th>
                                         <th className="px-6 py-4">Total</th>
                                         <th className="px-6 py-4">Status</th>
-                                        <th className="px-6 py-4">{t("admin.shop.ao", "Ação")}</th>
+                                        <th className="px-6 py-4">{t("admin.shop.ao", `Ação`)}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -507,12 +507,12 @@ const ProductForm: React.FC<{
                         value={form.name}
                         onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
                         required
-                        placeholder={t("admin.shop.nomeDaPea", "Nome da peça")}
+                        placeholder={t("admin.shop.nomeDaPea", `Nome da peça`)}
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
                     />
                 </div>
                 <div style={{ display: "grid", gap: "0.5rem" }}>
-                    <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">{t("admin.shop.preo", "Preço")}</label>
+                    <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">{t("admin.shop.preo", `Preço`)}</label>
                     <div className="relative">
                         <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-500" size={18} />
                         <input
@@ -558,7 +558,7 @@ const ProductForm: React.FC<{
             </div>
 
             <div style={{ display: "grid", gap: "0.5rem" }}>
-                <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">{t("admin.shop.descrio", "Descrição")}</label>
+                <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">{t("admin.shop.descrio", `Descrição`)}</label>
                 <textarea
                     value={form.description}
                     onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
@@ -585,7 +585,7 @@ const ProductForm: React.FC<{
                     onChange={(e) => setForm(f => ({ ...f, active: e.target.checked }))}
                     className="w-5 h-5 accent-amber-500"
                 />
-                <label htmlFor="active" className="text-sm font-bold text-white">{t("admin.shop.publicadoEVisvelNaLoja", "Publicado e visível na loja")}</label>
+                <label htmlFor="active" className="text-sm font-bold text-white">{t("admin.shop.publicadoEVisvelNaLoja", `Publicado e visível na loja`)}</label>
             </div>
 
             <div className="flex gap-4 pt-6">

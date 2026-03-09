@@ -195,7 +195,7 @@ export const SelectMuseum: React.FC = () => {
           </div>
 
           <h1 className="hero-title mt-16">
-            Descubra o <span className="text-gradient">Patrimônio Vivo</span>
+            Descubra o <span className="text-gradient">{t("visitor.selectmuseum.patrimnioVivo", `Patrimônio Vivo`)}</span>
           </h1>
           <p className="hero-subtitle">
             {isRegisterMode
@@ -248,10 +248,12 @@ export const SelectMuseum: React.FC = () => {
           </h2>
           {userLocation ? (
             <span className="location-badge success">
-              <MapPin size={14} />{t("visitor.selectmuseum.localizaoAtiva", "Localização Ativa")}</span>
+              <MapPin size={14} /> Localização Ativa
+            </span>
           ) : (
             <span className="location-badge warning">
-              <MapPin size={14} />{t("visitor.selectmuseum.ativeALocalizao", "Ative a localização")}</span>
+              <MapPin size={14} /> Ative a localização
+            </span>
           )}
         </div>
 

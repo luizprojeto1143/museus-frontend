@@ -127,7 +127,9 @@ export const RegisterProducer: React.FC = () => {
                     <h2 style={{ color: "#d4af37", marginBottom: "0.5rem", fontSize: "1.8rem", fontWeight: "bold" }}>
                         🎬 Sou Produtor Cultural
                     </h2>
-                    <p style={{ color: "#B0A090", fontSize: "0.95rem" }}>{t("auth.registerproducer.cadastreseParaSubmeterProjetos", "Cadastre-se para submeter projetos e gerenciar sua produção cultural")}</p>
+                    <p style={{ color: "#B0A090", fontSize: "0.95rem" }}>{t("auth.registerproducer.cadastreseParaSubmeterProjetosEGerenciar", `
+                        Cadastre-se para submeter projetos e gerenciar sua produção cultural
+                    `)}</p>
                 </div>
 
                 {/* Progress Steps */}
@@ -161,14 +163,16 @@ export const RegisterProducer: React.FC = () => {
                     {/* Step 1: Basic Info */}
                     {step === 1 && (
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            <h3 style={{ color: "#e2e8f0", fontSize: "1.1rem", marginBottom: "0.5rem" }}>{t("auth.registerproducer.DadosBsicos", "📋 Dados Básicos")}</h3>
+                            <h3 style={{ color: "#e2e8f0", fontSize: "1.1rem", marginBottom: "0.5rem" }}>{t("auth.registerproducer.DadosBsicos", `
+                                📋 Dados Básicos
+                            `)}</h3>
 
                             <div style={inputWrapperStyle}>
                                 <User size={18} color="#64748b" />
                                 <input
                                     type="text"
                                     name="name"
-                                    placeholder={t("auth.registerproducer.nomeCompletoRazoSocial", "Nome Completo / Razão Social *")}
+                                    placeholder={t("auth.registerproducer.nomeCompletoRazoSocial", `Nome Completo / Razão Social *`)}
                                     required
                                     value={formData.name}
                                     onChange={handleChange}
@@ -223,14 +227,16 @@ export const RegisterProducer: React.FC = () => {
                     {/* Step 2: Profile & City */}
                     {step === 2 && (
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            <h3 style={{ color: "#e2e8f0", fontSize: "1.1rem", marginBottom: "0.5rem" }}>{t("auth.registerproducer.PerfilEVnculo", "🎭 Perfil e Vínculo")}</h3>
+                            <h3 style={{ color: "#e2e8f0", fontSize: "1.1rem", marginBottom: "0.5rem" }}>{t("auth.registerproducer.PerfilEVnculo", `
+                                🎭 Perfil e Vínculo
+                            `)}</h3>
 
                             <div style={inputWrapperStyle}>
                                 <Globe size={18} color="#64748b" />
                                 <input
                                     type="text"
                                     name="website"
-                                    placeholder={t("auth.registerproducer.sitePortflioOpcional", "Site / Portfólio (opcional)")}
+                                    placeholder={t("auth.registerproducer.sitePortflioOpcional", `Site / Portfólio (opcional)`)}
                                     value={formData.website}
                                     onChange={handleChange}
                                     style={inputStyle}
@@ -240,7 +246,7 @@ export const RegisterProducer: React.FC = () => {
                             <textarea
                                 name="bio"
                                 rows={3}
-                                placeholder={t("auth.registerproducer.breveBiografiaOuDescrioDaAtuao", "Breve biografia ou descrição da atuação cultural...")}
+                                placeholder={t("auth.registerproducer.breveBiografiaOuDescrioDaAtuaoCultural", `Breve biografia ou descrição da atuação cultural...`)}
                                 value={formData.bio}
                                 onChange={handleChange}
                                 style={{
@@ -263,7 +269,9 @@ export const RegisterProducer: React.FC = () => {
                                 <label style={{ display: "block", color: "#d4af37", fontWeight: "600", marginBottom: "0.5rem" }}>
                                     🏙️ Vincular a uma Cidade (opcional)
                                 </label>
-                                <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginBottom: "0.75rem" }}>{t("auth.registerproducer.aoVincularSeusProjetosAparecer", "Ao vincular, seus projetos aparecerão nos relatórios da Secretaria de Cultura.")}</p>
+                                <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginBottom: "0.75rem" }}>{t("auth.registerproducer.aoVincularSeusProjetosApareceroNosRelatr", `
+                                    Ao vincular, seus projetos aparecerão nos relatórios da Secretaria de Cultura.
+                                `)}</p>
                                 <select
                                     value={selectedCity}
                                     onChange={e => setSelectedCity(e.target.value)}
@@ -277,7 +285,7 @@ export const RegisterProducer: React.FC = () => {
                                         fontSize: "0.95rem"
                                     }}
                                 >
-                                    <option value="">{t("auth.registerproducer.cadastroIndependenteSemVnculo", "Cadastro independente (sem vínculo)")}</option>
+                                    <option value="">{t("auth.registerproducer.cadastroIndependenteSemVnculo", `Cadastro independente (sem vínculo)`)}</option>
                                     {cities.map(city => (
                                         <option key={city.id} value={city.id}>{city.name}</option>
                                     ))}
@@ -298,7 +306,9 @@ export const RegisterProducer: React.FC = () => {
                     {/* Step 3: Password */}
                     {step === 3 && (
                         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            <h3 style={{ color: "#e2e8f0", fontSize: "1.1rem", marginBottom: "0.5rem" }}>{t("auth.registerproducer.Segurana", "🔐 Segurança")}</h3>
+                            <h3 style={{ color: "#e2e8f0", fontSize: "1.1rem", marginBottom: "0.5rem" }}>{t("auth.registerproducer.Segurana", `
+                                🔐 Segurança
+                            `)}</h3>
 
                             <div style={inputWrapperStyle}>
                                 <Lock size={18} color="#64748b" />
@@ -337,7 +347,7 @@ export const RegisterProducer: React.FC = () => {
                                 <div style={{ fontSize: "0.9rem", color: "#94a3b8" }}>
                                     <div><strong>Nome:</strong> {formData.name}</div>
                                     <div><strong>E-mail:</strong> {formData.email}</div>
-                                    <div><strong>{t("auth.registerproducer.vnculo", "Vínculo:")}</strong> {selectedCity ? cities.find(c => c.id === selectedCity)?.name : "Independente"}</div>
+                                    <div><strong>{t("auth.registerproducer.vnculo", `Vínculo:`)}</strong> {selectedCity ? cities.find(c => c.id === selectedCity)?.name : "Independente"}</div>
                                 </div>
                             </div>
 

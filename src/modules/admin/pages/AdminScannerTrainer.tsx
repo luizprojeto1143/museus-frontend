@@ -172,9 +172,9 @@ export const AdminScannerTrainer: React.FC = () => {
                         📸 Capturar Exemplo
                     </button>
 
-                    <p style={{ fontSize: "0.9rem", color: "#666", marginBottom: "1rem" }}>
+                    <p style={{ fontSize: "0.9rem", color: "#666", marginBottom: "1rem" }}>{t("admin.scannertrainer.dicaTirePeloMenos10FotosDeNgulosDiferent", `
                         Dica: Tire pelo menos 10 fotos de ângulos diferentes para cada obra.
-                    </p>
+                    `)}</p>
 
                     <h4>Exemplos Capturados:</h4>
                     <ul style={{ maxHeight: "200px", overflowY: "auto", border: "1px solid #eee", padding: "0.5rem", borderRadius: "0.5rem" }}>

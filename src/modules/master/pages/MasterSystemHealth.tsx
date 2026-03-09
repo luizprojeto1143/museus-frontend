@@ -91,8 +91,12 @@ export const MasterSystemHealth: React.FC = () => {
                     <span className="master-badge">
                         🖥️ Monitoramento
                     </span>
-                    <h1 className="master-title">{t("master.systemhealth.sadeDoSistema", "Saúde do Sistema")}</h1>
-                    <p className="master-subtitle">{t("master.systemhealth.acompanheOStatusDosServiosUsoD", "Acompanhe o status dos serviços, uso de recursos e conectividade em tempo real.")}</p>
+                    <h1 className="master-title">{t("master.systemhealth.sadeDoSistema", `
+                        Saúde do Sistema
+                    `)}</h1>
+                    <p className="master-subtitle">{t("master.systemhealth.acompanheOStatusDosServiosUsoDeRecursosE", `
+                        Acompanhe o status dos serviços, uso de recursos e conectividade em tempo real.
+                    `)}</p>
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -226,7 +230,7 @@ export const MasterSystemHealth: React.FC = () => {
                         <div className="master-icon-wrapper master-icon-pink">
                             <HardDrive size={24} />
                         </div>
-                        <h3>{t("master.systemhealth.memria", "Memória")}</h3>
+                        <h3>{t("master.systemhealth.memria", `Memória`)}</h3>
                     </div>
 
                     <div style={{ padding: '0.5rem 0' }}>

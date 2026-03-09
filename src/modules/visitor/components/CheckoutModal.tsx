@@ -116,7 +116,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                                         <span className="free">Gratuito</span>
                                     )}
                                     {ticket.quantity - ticket.sold < 10 && (
-                                        <span className="checkout-ticket-warning">{t("visitor.checkoutmodal.ltimos", "(Últimos!)")}</span>
+                                        <span className="checkout-ticket-warning">{t("visitor.checkoutmodal.ltimos", `(Últimos!)`)}</span>
                                     )}
                                 </p>
                             </div>
@@ -154,7 +154,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                         {loading ? 'Processando...' : `Confirmar Inscrição (${totalItems})`}
                     </button>
                     {!isAuthenticated && (
-                        <p className="checkout-login-note">{t("visitor.checkoutmodal.vocPrecisarFazerLoginParaConcl", "Você precisará fazer login para concluir.")}</p>
+                        <p className="checkout-login-note">{t("visitor.checkoutmodal.vocPrecisarFazerLoginParaConcluir", `
+                            Você precisará fazer login para concluir.
+                        `)}</p>
                     )}
                 </div>
             </div>

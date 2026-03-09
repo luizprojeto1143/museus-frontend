@@ -65,8 +65,8 @@ export const ProviderServices: React.FC = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">{t("provider.providerservices.meusServios", "Meus Serviços")}</h1>
-                <p className="text-[#b794f4] mt-2">Escolha as especialidades que você oferece para aparecer nas buscas dos produtores.</p>
+                <h1 className="text-3xl font-black text-white tracking-tight">{t("provider.providerservices.meusServios", `Meus Serviços`)}</h1>
+                <p className="text-[#b794f4] mt-2">{t("provider.providerservices.escolhaAsEspecialidadesQueVocOferecePara", `Escolha as especialidades que você oferece para aparecer nas buscas dos produtores.`)}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

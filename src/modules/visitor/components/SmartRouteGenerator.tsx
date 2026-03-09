@@ -83,7 +83,7 @@ export const SmartRouteGenerator: React.FC = () => {
 
             {!result ? (
                 <div>
-                    <p style={{ fontSize: "0.85rem", marginBottom: "0.5rem", color: "#aaa" }}>{t("visitor.smartroutegenerator.tempoDisponvel", "Tempo Disponível:")}</p>
+                    <p style={{ fontSize: "0.85rem", marginBottom: "0.5rem", color: "#aaa" }}>{t("visitor.smartroutegenerator.tempoDisponvel", `Tempo Disponível:`)}</p>
                     <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
                         {[15, 30, 45, 60, 90, 120].map(m => (
                             <button

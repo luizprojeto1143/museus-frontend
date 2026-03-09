@@ -73,7 +73,7 @@ export const AdminBookingForm: React.FC = () => {
     const handleSubmit = async () => {
         if (!tenantId) return;
         if (!formData.inPersonServiceId || !formData.date || !formData.startTime || !formData.endTime) {
-            return alert("Por favor, preencha os campos obrigatórios (Serviço, {t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).");
+            return alert(`Por favor, preencha os campos obrigatórios (Serviço, ${t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).`);
         }
 
         setSaving(true);
@@ -147,7 +147,7 @@ export const AdminBookingForm: React.FC = () => {
 
                         <div className="space-y-4">
                             <Select
-                                label="{t("admin.bookingForm.serviceLabel", "Selecione o Serviço Presencial *")}"
+                                label={t("admin.bookingForm.serviceLabel", "Selecione o Serviço Presencial *")}
                                 value={formData.inPersonServiceId}
                                 onChange={e => setFormData({ ...formData, inPersonServiceId: e.target.value })}
                             >
@@ -173,20 +173,20 @@ export const AdminBookingForm: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Input
-                                label="{t("admin.bookingForm.date", "Data *")}"
+                                label={t("admin.bookingForm.date", "Data *")}
                                 type="date"
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
                             />
                             <Input
-                                label="{t("admin.bookingForm.start", "Início *")}"
+                                label={t("admin.bookingForm.start", "Início *")}
                                 type="time"
                                 value={formData.startTime}
                                 onChange={e => setFormData({ ...formData, startTime: e.target.value })}
                                 leftIcon={<Clock size={16} />}
                             />
                             <Input
-                                label="{t("admin.bookingForm.end", "Término *")}"
+                                label={t("admin.bookingForm.end", "Término *")}
                                 type="time"
                                 value={formData.endTime}
                                 onChange={e => setFormData({ ...formData, endTime: e.target.value })}
@@ -203,7 +203,7 @@ export const AdminBookingForm: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Select
-                                label="{t("admin.bookingForm.spaceLabel", "Espaço (Opcional)")}"
+                                label={t("admin.bookingForm.spaceLabel", "Espaço (Opcional)")}
                                 value={formData.spaceId}
                                 onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
                             >
@@ -213,7 +213,7 @@ export const AdminBookingForm: React.FC = () => {
                                 ))}
                             </Select>
                             <Select
-                                label="{t("admin.bookingForm.eventLabel", "Evento Vinculado (Opcional)")}"
+                                label={t("admin.bookingForm.eventLabel", "Evento Vinculado (Opcional)")}
                                 value={formData.eventId}
                                 onChange={e => setFormData({ ...formData, eventId: e.target.value })}
                             >
@@ -233,7 +233,7 @@ export const AdminBookingForm: React.FC = () => {
 
                         <div className="space-y-6">
                             <Input
-                                label="{t("admin.bookingForm.participants", "Quantidade de Participantes")}"
+                                label={t("admin.bookingForm.participants", "Quantidade de Participantes")}
                                 type="number"
                                 min="1"
                                 value={formData.participants}
@@ -243,10 +243,10 @@ export const AdminBookingForm: React.FC = () => {
                             />
 
                             <Textarea
-                                label="{t("admin.bookingForm.observations", "Observações e Necessidades Específicas")}"
+                                label={t("admin.bookingForm.observations", "Observações e Necessidades Específicas")}
                                 value={formData.purpose}
                                 onChange={e => setFormData({ ...formData, purpose: e.target.value })}
-                                placeholder="{t("admin.bookingForm.observationsPlaceholder", "Forneça detalhes que possam ajudar o prestador de serviço...")}"
+                                placeholder={t("admin.bookingForm.observationsPlaceholder", "Forneça detalhes que possam ajudar o prestador de serviço...")}
                                 rows={4}
                             />
                         </div>
@@ -264,9 +264,10 @@ export const AdminBookingForm: React.FC = () => {
                         onClick={handleSubmit}
                         isLoading={saving}
                         className="btn-primary"
-                        leftIcon={<Save size={18} />{t("admin.bookingform.EnviarSolicitao", "}
+                        leftIcon={<Save size={18} />}
                     >
-                        Enviar Solicitação")}</Button>
+                        Enviar Solicitação
+                    </Button>
                 </div>
             </div>
         </div>

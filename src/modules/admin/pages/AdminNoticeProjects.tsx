@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -167,7 +167,7 @@ export const AdminNoticeProjects: React.FC = () => {
                         >
                             <option value="ALL">Todos Status</option>
                             <option value="SUBMITTED">Novos</option>
-                            <option value="UNDER_REVIEW">{t("admin.noticeprojects.emAnlise", "Em Análise")}</option>
+                            <option value="UNDER_REVIEW">{t("admin.noticeprojects.emAnlise", `Em Análise`)}</option>
                             <option value="APPROVED">Aprovados</option>
                             <option value="REJECTED">Reprovados</option>
                         </select>
@@ -182,8 +182,8 @@ export const AdminNoticeProjects: React.FC = () => {
                         >
                             <option value="ALL">Todas IA</option>
                             <option value="APPROVE">Recomendados</option>
-                            <option value="REVIEW">{t("admin.noticeprojects.paraReviso", "Para Revisão")}</option>
-                            <option value="REJECT">{t("admin.noticeprojects.reprovaoIa", "Reprovação IA")}</option>
+                            <option value="REVIEW">{t("admin.noticeprojects.paraReviso", `Para Revisão`)}</option>
+                            <option value="REJECT">{t("admin.noticeprojects.reprovaoIa", `Reprovação IA`)}</option>
                         </select>
                     </div>
 
@@ -268,7 +268,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                             ) : (
                                                 <>
                                                     <div className="text-zinc-700 font-black text-3xl">--</div>
-                                                    <div className="text-[10px] text-zinc-600 uppercase font-bold">{t("admin.noticeprojects.semAnlise", "Sem Análise")}</div>
+                                                    <div className="text-[10px] text-zinc-600 uppercase font-bold">{t("admin.noticeprojects.semAnlise", `Sem Análise`)}</div>
                                                 </>
                                             )}
                                         </div>

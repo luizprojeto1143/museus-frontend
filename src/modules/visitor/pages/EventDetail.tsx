@@ -180,7 +180,7 @@ export const EventDetail: React.FC = () => {
   if (!event) return (
     <div className="event-error p-20 text-center">
       <Info className="mx-auto text-slate-300 mb-4" size={64} />
-      <h2 className="text-2xl font-bold text-slate-400">{t("visitor.eventdetail.eventoNoEncontrado", "Evento não encontrado")}</h2>
+      <h2 className="text-2xl font-bold text-slate-400">{t("visitor.eventdetail.eventoNoEncontrado", `Evento não encontrado`)}</h2>
       <Button onClick={() => navigate('/eventos')} variant="outline" className="mt-6 mx-auto w-auto px-8">
         Voltar para Eventos
       </Button>
@@ -299,7 +299,7 @@ export const EventDetail: React.FC = () => {
                     )}
                     {event.materials && (
                       <div>
-                        <p className="text-sm font-bold text-purple-300 uppercase tracking-widest mb-1">{t("visitor.eventdetail.materiaisNecessrios", "Materiais Necessários")}</p>
+                        <p className="text-sm font-bold text-purple-300 uppercase tracking-widest mb-1">{t("visitor.eventdetail.materiaisNecessrios", `Materiais Necessários`)}</p>
                         <p className="text-slate-300">{event.materials}</p>
                       </div>
                     )}
@@ -340,10 +340,13 @@ export const EventDetail: React.FC = () => {
                       <span className="text-white font-bold">{event.platform || "Zoom/Meet"}</span>
                     </div>
                     {attendance ? (
-                      <Button onClick={() =>{t("visitor.eventdetail.windowopeneventmeetinglinkBlan", "window.open(event.meetingLink, '_blank')} className="w-full py-6 text-lg rounded-2xl">
-                        Acessar Transmissão")}</Button>
+                      <Button onClick={() => window.open(event.meetingLink, '_blank')} className="w-full py-6 text-lg rounded-2xl">
+                        Acessar Transmissão
+                      </Button>
                     ) : (
-                      <div className="event-online-notice p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl text-center text-sm font-medium">{t("visitor.eventdetail.linkDeAcessoSerLiberadoApsAIns", "Link de acesso será liberado após a inscrição")}</div>
+                      <div className="event-online-notice p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl text-center text-sm font-medium">{t("visitor.eventdetail.linkDeAcessoSerLiberadoApsAInscrio", `
+                        Link de acesso será liberado após a inscrição
+                      `)}</div>
                     )}
                   </div>
                 ) : (
@@ -354,7 +357,9 @@ export const EventDetail: React.FC = () => {
                       {event.city && <p className="text-slate-500 text-xs mt-0.5">{event.city} - {event.state}</p>}
                     </div>
                     <div className="event-map-placeholder aspect-video bg-black/40 rounded-2xl flex flex-col items-center justify-center border border-white/5 text-slate-500 text-xs gap-2">
-                      <MapPin size={24} className="opacity-20" />{t("visitor.eventdetail.mapaIndisponvelModoDemo", "Mapa Indisponível (Modo Demo)")}</div>
+                      <MapPin size={24} className="opacity-20" />
+                      Mapa Indisponível (Modo Demo)
+                    </div>
                   </div>
                 )}
               </div>
@@ -374,7 +379,8 @@ export const EventDetail: React.FC = () => {
           <div className="event-price-info px-4">
             <p className="event-price-label text-[10px] uppercase font-black tracking-tighter text-slate-500">Valor Inicial</p>
             <p className="event-price-value text-2xl font-black text-white">
-              {tickets.length > 0 ? (Math.min(...tickets.map(t => Number(t.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(t =>{t("visitor.eventdetail.numbertpriceIndisponvel", "Number(t.price)))}`) : 'Indisponível'}")}</p>
+              {tickets.length > 0 ? (Math.min(...tickets.map(t => Number(t.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(t => Number(t.price)))}`) : 'Indisponível'}
+            </p>
           </div>
 
           {attendance ? (
@@ -399,7 +405,7 @@ export const EventDetail: React.FC = () => {
             <div className="event-modal-header p-8 border-b border-white/10 flex justify-between items-center">
               <div>
                 <h3 className="text-2xl font-black text-white">Ingressos</h3>
-                <p className="text-slate-500 text-sm">{t("visitor.eventdetail.selecioneSuaModalidadeDePartic", "Selecione sua modalidade de participação")}</p>
+                <p className="text-slate-500 text-sm">{t("visitor.eventdetail.selecioneSuaModalidadeDeParticipao", `Selecione sua modalidade de participação`)}</p>
               </div>
               <button onClick={() => setIsCheckoutOpen(false)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
                 <X size={20} />
@@ -455,14 +461,17 @@ export const EventDetail: React.FC = () => {
                   </div>
 
                   <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-[11px] text-yellow-500/80 leading-relaxed">
-                    <strong>{t("visitor.eventdetail.ateno", "Atenção:")}</strong>{t("visitor.eventdetail.apsOPagamentoSuaInscrioSerConf", "Após o pagamento, sua inscrição será confirmada automaticamente. Você receberá um e-mail com o seu ingresso assim que o sistema processar a transação.")}</div>
+                    <strong>{t("visitor.eventdetail.ateno", `Atenção:`)}</strong> Após o pagamento, sua inscrição será confirmada automaticamente. Você receberá um e-mail com o seu ingresso assim que o sistema processar a transação.
+                  </div>
                 </div>
               ) : (
                 <>
                   {/* Ticket Selection */}
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
-                      <TicketIcon size={14} />{t("visitor.eventdetail.opesDisponveis", "Opções Disponíveis")}</div>
+                      <TicketIcon size={14} />
+                      Opções Disponíveis
+                    </div>
                     <div className="grid grid-cols-1 gap-3">
                       {tickets.map(t => (
                         <button
@@ -494,7 +503,9 @@ export const EventDetail: React.FC = () => {
                   {event?.customFormSchema && event.customFormSchema.length > 0 && (
                     <div className="event-form-questions space-y-6">
                       <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
-                        <User size={14} />{t("visitor.eventdetail.informaesAdicionais", "Informações Adicionais")}</div>
+                        <User size={14} />
+                        Informações Adicionais
+                      </div>
                       <div className="space-y-5">
                         {event.customFormSchema.map((field, idx) => (
                           <div key={idx} className="event-form-group">

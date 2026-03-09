@@ -90,8 +90,10 @@ export const ProducerServices: React.FC = () => {
                 <h1 className="text-4xl md:text-5xl font-bold text-[#EAE0D5] font-serif">
                     Marketplace de <span className="text-[#D4AF37]">Acessibilidade</span>
                 </h1>
-                <p className="max-w-2xl mx-auto text-[#B0A090] text-lg leading-relaxed">{t("producer.producerservices.encontrePrestadoresHomologados", "Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais.
-                    Contrate direto pela plataforma através de canais seguros.")}</p>
+                <p className="max-w-2xl mx-auto text-[#B0A090] text-lg leading-relaxed">{t("producer.producerservices.encontrePrestadoresHomologadosParaTornar", `
+                    Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais.
+                    Contrate direto pela plataforma através de canais seguros.
+                `)}</p>
             </div>
 
             {loading ? (
@@ -101,7 +103,7 @@ export const ProducerServices: React.FC = () => {
                 </div>
             ) : providers.length === 0 ? (
                 <EmptyState
-                    title={t("producer.producerservices.nenhumPrestadorDisponvel", "Nenhum prestador disponível")}
+                    title={t("producer.producerservices.nenhumPrestadorDisponvel", `Nenhum prestador disponível`)}
                     description="No momento não há prestadores cadastrados nesta categoria. Tente novamente mais tarde."
                 />
             ) : (
@@ -140,9 +142,10 @@ export const ProducerServices: React.FC = () => {
                                 <Button
                                     onClick={() => handleRequestQuote(provider)}
                                     className="w-full py-4 bg-[#D4AF37] hover:bg-[#c5a028] text-[#1a1108] border-none rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20"
-                                    leftIcon={<MessageSquare size={18} fill="currentColor" />{t("producer.producerservices.SolicitarOramento", "}
+                                    leftIcon={<MessageSquare size={18} fill="currentColor" />}
                                 >
-                                    Solicitar Orçamento")}</Button>
+                                    Solicitar Orçamento
+                                </Button>
                                 <Button
                                     onClick={() => handleWhatsApp(provider)}
                                     variant="ghost"

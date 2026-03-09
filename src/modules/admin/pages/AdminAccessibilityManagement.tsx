@@ -75,7 +75,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
     return (
         <div>
             <div style={{ marginBottom: "2rem" }}>
-                <h1 className="section-title">{t("admin.accessibilitymanagement.GestoDeAcessibilidade", "♿ Gestão de Acessibilidade")}</h1>
+                <h1 className="section-title">{t("admin.accessibilitymanagement.GestoDeAcessibilidade", `♿ Gestão de Acessibilidade`)}</h1>
 
             </div>
 
@@ -87,14 +87,18 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         ? "border-blue-500 text-blue-400"
                         : "border-transparent text-zinc-500 hover:text-white"
                         }`}
-                >{t("admin.accessibilitymanagement.serviosProjetos", "Serviços & Projetos")}</button>
+                >
+                    Serviços & Projetos
+                </button>
                 <button
                     onClick={() => setActiveTab("REQUESTS")}
                     className={`pb-3 px-2 text-sm font-bold transition-all border-b-2 ${activeTab === "REQUESTS"
                         ? "border-purple-500 text-purple-400"
                         : "border-transparent text-zinc-500 hover:text-white"
                         }`}
-                >{t("admin.accessibilitymanagement.fbricaDeContedoMasterobras", "Fábrica de Conteúdo (Master/Obras)")}</button>
+                >
+                    Fábrica de Conteúdo (Master/Obras)
+                </button>
             </div>
 
             {activeTab === "EXECUTIONS" && (
@@ -118,7 +122,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
 
                     {/* By Service Type */}
                     <div className="card" style={{ marginBottom: "2rem" }}>
-                        <h3 style={{ marginBottom: "1rem" }}>{t("admin.accessibilitymanagement.porTipoDeServio", "Por Tipo de Serviço")}</h3>
+                        <h3 style={{ marginBottom: "1rem" }}>{t("admin.accessibilitymanagement.porTipoDeServio", `Por Tipo de Serviço`)}</h3>
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                             {dashboard.byService.map(s => (
                                 <div key={s.serviceType} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -132,17 +136,18 @@ export const AdminAccessibilityManagement: React.FC = () => {
                     {/* Recent Executions */}
                     <div className="card">
                         <div className="flex justify-between items-center mb-4">
-                            <h3>{t("admin.accessibilitymanagement.solicitaesRecentesServios", "Solicitações Recentes (Serviços)")}</h3>
+                            <h3>{t("admin.accessibilitymanagement.solicitaesRecentesServios", `Solicitações Recentes (Serviços)`)}</h3>
                             <button
-                                onClick={() =>{t("admin.accessibilitymanagement.windowlocationhrefAdminacessib", "window.location.href = '/admin/acessibilidade/novo'}
+                                onClick={() => window.location.href = '/admin/acessibilidade/novo'}
                                 className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition-colors"
                             >
-                                + Nova Solicitação")}</button>
+                                + Nova Solicitação
+                            </button>
                         </div>
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>{t("admin.accessibilitymanagement.servio", "Serviço")}</th>
+                                    <th>{t("admin.accessibilitymanagement.servio", `Serviço`)}</th>
                                     <th>Projeto</th>
                                     <th>Prestador</th>
                                     <th>Status</th>
@@ -152,7 +157,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                             <tbody>
                                 {dashboard.recentExecutions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="text-center py-4 text-zinc-400">{t("admin.accessibilitymanagement.nenhumaExecuoEncontrada", "Nenhuma execução encontrada.")}</td>
+                                        <td colSpan={5} className="text-center py-4 text-zinc-400">{t("admin.accessibilitymanagement.nenhumaExecuoEncontrada", `Nenhuma execução encontrada.`)}</td>
                                     </tr>
                                 ) : dashboard.recentExecutions.map(exec => {
                                     const info = statusLabels[exec.status] || { label: exec.status, color: "#6b7280" };
@@ -178,8 +183,10 @@ export const AdminAccessibilityManagement: React.FC = () => {
 
             {activeTab === "REQUESTS" && (
                 <div className="card">
-                    <h3 className="mb-4 text-purple-400">{t("admin.accessibilitymanagement.solicitaesDeContedoParaObrasMa", "Solicitações de Conteúdo para Obras (Master)")}</h3>
-                    <p className="text-sm text-zinc-500 mb-6">{t("admin.accessibilitymanagement.acompanheAquiOsPedidosDeLibras", "Acompanhe aqui os pedidos de Libras e Audiodescrição feitos diretamente no cadastro de obras para a equipe Master.")}</p>
+                    <h3 className="mb-4 text-purple-400">{t("admin.accessibilitymanagement.solicitaesDeContedoParaObrasMaster", `Solicitações de Conteúdo para Obras (Master)`)}</h3>
+                    <p className="text-sm text-zinc-500 mb-6">{t("admin.accessibilitymanagement.acompanheAquiOsPedidosDeLibrasEAudiodesc", `
+                        Acompanhe aqui os pedidos de Libras e Audiodescrição feitos diretamente no cadastro de obras para a equipe Master.
+                    `)}</p>
 
                     <table className="table">
                         <thead>

@@ -103,14 +103,17 @@ export const AdminCategoryForm: React.FC = () => {
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
             {isEdit ? t("admin.categoryForm.editTitle") : t("admin.categoryForm.newTitle")}
           </h1>
-          <p className="text-zinc-400 text-sm font-medium mt-1">{t("admin.categoryform.gerencieAsCategoriasParaOrgani", "Gerencie as categorias para organizar seu conteúdo.")}</p>
+          <p className="text-zinc-400 text-sm font-medium mt-1">{t("admin.category.gerencieAsCategoriasParaOrganizarSeuCont", `
+            Gerencie as categorias para organizar seu conteúdo.
+          `)}</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Tag className="text-gold" size={20} />{t("admin.categoryform.informaes", "Informações")}</h2>
+            <Tag className="text-gold" size={20} /> Informações
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
@@ -126,7 +129,7 @@ export const AdminCategoryForm: React.FC = () => {
             </div>
 
             <Select
-              label={t("admin.categoryform.tipoDeContedo", "Tipo de Conteúdo")}
+              label={t("admin.category.tipoDeContedo", `Tipo de Conteúdo`)}
               value={type}
               onChange={(e) => setType(e.target.value)}
               className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
@@ -143,7 +146,7 @@ export const AdminCategoryForm: React.FC = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            placeholder={t("admin.categoryform.descrevaOPropsitoDestaCategori", "Descreva o propósito desta categoria...")}
+            placeholder={t("admin.category.descrevaOPropsitoDestaCategoria", `Descreva o propósito desta categoria...`)}
             className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
           />
         </div>

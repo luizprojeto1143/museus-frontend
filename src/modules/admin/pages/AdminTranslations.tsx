@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Globe, Plus, Languages } from "lucide-react";
@@ -61,10 +61,10 @@ export const AdminTranslations: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.translations.internacionalizao", "Internacionalização")}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.translations.traduesDasFichasDasObras", "Traduções das fichas das obras")}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.translations.internacionalizao", `Internacionalização`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.translations.traduesDasFichasDasObras", `Traduções das fichas das obras`)}</p>
                 </div>
-                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />{t("admin.translations.novaTraduo", "}>Nova Tradução")}</Button>
+                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Nova Tradução</Button>
             </div>
 
             {/* Stats */}
@@ -72,7 +72,7 @@ export const AdminTranslations: React.FC = () => {
                 <div className="stat-card">
                     <Globe className="mx-auto text-blue-500 mb-2" size={24} />
                     <p className="stat-value">{data?.total || 0}</p>
-                    <p className="stat-label">{t("admin.translations.totalTradues", "Total Traduções")}</p>
+                    <p className="stat-label">{t("admin.translations.totalTradues", `Total Traduções`)}</p>
                 </div>
                 <div className="stat-card">
                     <Languages style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
@@ -89,7 +89,7 @@ export const AdminTranslations: React.FC = () => {
 
             {showForm && (
                 <div className="card" style={{ display: "grid", gap: "1rem" }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.translations.novaTraduo", "Nova Tradução")}</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.translations.novaTraduo", `Nova Tradução`)}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -102,8 +102,8 @@ export const AdminTranslations: React.FC = () => {
                             </select>
                         </div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.ttuloTraduzido", "Título Traduzido")}</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.descrioTraduzida", "Descrição Traduzida")}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.ttuloTraduzido", `Título Traduzido`)}</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.descrioTraduzida", `Descrição Traduzida`)}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                         <Button onClick={onSave}>Salvar</Button>

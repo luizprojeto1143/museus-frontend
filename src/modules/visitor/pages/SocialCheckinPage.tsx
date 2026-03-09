@@ -56,7 +56,7 @@ export const SocialCheckinPage: React.FC = () => {
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                 <MapPin size={36} style={{ color: '#d4af37', margin: '0 auto 0.5rem' }} />
                 <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>Check-in</h1>
-                <p style={{ color: '#888', fontSize: '0.85rem' }}>{t("visitor.socialcheckinpage.marquePresenaECompartilheSuaVi", "Marque presença e compartilhe sua visita!")}</p>
+                <p style={{ color: '#888', fontSize: '0.85rem' }}>{t("visitor.socialcheckinpage.marquePresenaECompartilheSuaVisita", `Marque presença e compartilhe sua visita!`)}</p>
             </div>
 
             {/* Post form */}
@@ -89,7 +89,7 @@ export const SocialCheckinPage: React.FC = () => {
                 {checkins.length === 0 && (
                     <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
                         <Smile size={36} style={{ opacity: 0.2, margin: '0 auto 0.75rem' }} />
-                        <p style={{ fontSize: '0.85rem' }}>{t("visitor.socialcheckinpage.ningumFezCheckinAindaSejaOPrim", "Ninguém fez check-in ainda. Seja o primeiro!")}</p>
+                        <p style={{ fontSize: '0.85rem' }}>{t("visitor.socialcheckinpage.ningumFezCheckinAindaSejaOPrimeiro", `Ninguém fez check-in ainda. Seja o primeiro!`)}</p>
                     </div>
                 )}
             </div>

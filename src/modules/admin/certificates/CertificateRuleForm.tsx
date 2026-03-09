@@ -55,7 +55,7 @@ export const CertificateRuleForm: React.FC = () => {
 
     return (
         <div className="p-6 max-w-2xl bg-white rounded-lg shadow m-6">
-            <h1 className="text-2xl font-bold mb-6">{t("admin.certificateruleform.novaRegraDeAutomao", "Nova Regra de Automação")}</h1>
+            <h1 className="text-2xl font-bold mb-6">{t("admin.certificaterule.novaRegraDeAutomao", `Nova Regra de Automação`)}</h1>
 
             <div className="space-y-4">
                 <div>
@@ -63,9 +63,10 @@ export const CertificateRuleForm: React.FC = () => {
                     <input
                         className="w-full p-2 border rounded"
                         value={name}
-                        onChange={e =>{t("admin.certificateruleform.setnameetargetvaluePlaceholder", "setName(e.target.value)}
-                        placeholder={t("admin.certificateruleform.exCertificadoTrilhaHistrica", "Ex: Certificado Trilha Histórica")}
-                    />")}</div>
+                        onChange={e => setName(e.target.value)}
+                        placeholder={t("admin.certificaterule.exCertificadoTrilhaHistrica", `Ex: Certificado Trilha Histórica`)}
+                    />
+                </div>
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Gatilho (Quando emitir?)</label>
@@ -98,7 +99,7 @@ export const CertificateRuleForm: React.FC = () => {
 
                 {triggerType === 'XP_THRESHOLD' && (
                     <div className="p-4 bg-gray-50 rounded border">
-                        <label className="block text-sm font-medium mb-1">{t("admin.certificateruleform.mnimoDeXp", "Mínimo de XP")}</label>
+                        <label className="block text-sm font-medium mb-1">{t("admin.certificaterule.mnimoDeXp", `Mínimo de XP`)}</label>
                         <input
                             type="number"
                             className="w-full p-2 border rounded"
@@ -123,7 +124,9 @@ export const CertificateRuleForm: React.FC = () => {
                 </div>
 
                 <div className="pt-4">
-                    <Button onClick={handleSave} disabled={!name || !templateId}>{t("admin.certificateruleform.salvarRegraAutomtica", "Salvar Regra Automática")}</Button>
+                    <Button onClick={handleSave} disabled={!name || !templateId}>{t("admin.certificaterule.salvarRegraAutomtica", `
+                        Salvar Regra Automática
+                    `)}</Button>
                 </div>
             </div>
         </div>

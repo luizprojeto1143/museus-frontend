@@ -190,7 +190,7 @@ export const VisitorProfile: React.FC = () => {
                                     </div>
                                     <div className="text-left">
                                         <h4 className="text-base font-bold text-red-500">Sair da Conta</h4>
-                                        <span className="text-sm text-red-400/70 block font-normal">{t("visitor.profile.encerrarSessoNesteDispositivo", "Encerrar sessão neste dispositivo")}</span>
+                                        <span className="text-sm text-red-400/70 block font-normal">{t("visitor.profile.encerrarSessoNesteDispositivo", `Encerrar sessão neste dispositivo`)}</span>
                                     </div>
                                 </div>
                                 <ChevronRight size={20} className="text-red-500/50" />
@@ -205,7 +205,7 @@ export const VisitorProfile: React.FC = () => {
                         {registrations.length === 0 ? (
                             <div className="empty-state">
                                 <Ticket size={48} style={{ margin: "0 auto", opacity: 0.5 }} />
-                                <p>{t("visitor.profile.vocAindaNoTemIngressos", "Você ainda não tem ingressos.")}</p>
+                                <p>{t("visitor.profile.vocAindaNoTemIngressos", `Você ainda não tem ingressos.`)}</p>
                                 <Button
                                     onClick={() => navigate('/eventos')}
                                     className="bg-gold hover:bg-gold/90 text-black font-bold rounded-full px-6"
@@ -292,7 +292,7 @@ export const VisitorProfile: React.FC = () => {
                         {orders.length === 0 ? (
                             <div className="empty-state">
                                 <ShoppingBag size={48} style={{ margin: "0 auto", opacity: 0.5 }} />
-                                <p>{t("visitor.profile.vocAindaNoFezNenhumPedido", "Você ainda não fez nenhum pedido.")}</p>
+                                <p>{t("visitor.profile.vocAindaNoFezNenhumPedido", `Você ainda não fez nenhum pedido.`)}</p>
                                 <Button
                                     onClick={() => navigate('/loja')}
                                     className="bg-gold hover:bg-gold/90 text-black font-bold rounded-full px-6"
@@ -337,16 +337,16 @@ export const VisitorProfile: React.FC = () => {
                     <div className="animate-fadeIn space-y-6">
                         <div className="bg-gradient-to-r from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-xl p-6 text-center">
                             <Star size={40} className="text-gold mx-auto mb-3" />
-                            <h3 className="text-xl font-bold text-white mb-2">Troque seu XP por Prêmios!</h3>
-                            <p className="text-sm text-gray-400 max-w-sm mx-auto">
+                            <h3 className="text-xl font-bold text-white mb-2">{t("visitor.profile.troqueSeuXpPorPrmios", `Troque seu XP por Prêmios!`)}</h3>
+                            <p className="text-sm text-gray-400 max-w-sm mx-auto">{t("visitor.profile.useOXpExperinciaQueVocAcumulouInteragind", `
                                 Use o XP (Experiência) que você acumulou interagindo com o museu para resgatar cupons de desconto na Lojinha.
-                            </p>
+                            `)}</p>
                         </div>
 
                         <div className="space-y-4">
-                            <h4 className="text-lg font-bold text-white border-b border-white/10 pb-2">{t("visitor.profile.cuponsDisponveis", "Cupons Disponíveis")}</h4>
+                            <h4 className="text-lg font-bold text-white border-b border-white/10 pb-2">{t("visitor.profile.cuponsDisponveis", `Cupons Disponíveis`)}</h4>
                             {availableCoupons.length === 0 ? (
-                                <p className="text-gray-500 text-sm italic">{t("visitor.profile.nenhumCupomDisponvelNoMomento", "Nenhum cupom disponível no momento.")}</p>
+                                <p className="text-gray-500 text-sm italic">{t("visitor.profile.nenhumCupomDisponvelNoMomento", `Nenhum cupom disponível no momento.`)}</p>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {availableCoupons.map(coupon => (
@@ -452,7 +452,9 @@ export const VisitorProfile: React.FC = () => {
                         <button
                             onClick={() => handleTabChange('info')}
                             className={`profile-tab-btn ${activeTab === 'info' ? 'active' : ''}`}
-                        >{t("visitor.profile.informaes", "Informações")}</button>
+                        >
+                            Informações
+                        </button>
                         <button
                             onClick={() => handleTabChange('tickets')}
                             className={`profile-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`}

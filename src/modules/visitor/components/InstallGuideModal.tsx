@@ -41,7 +41,7 @@ export const InstallGuideModal: React.FC<InstallGuideModalProps> = ({ isOpen, on
                             </li>
                             <li>
                                 {t('pwa.install.ios.step2', 'Role para baixo e selecione')}
-                                <span className="install-guide-strong">{t("visitor.installguidemodal.adicionarTelaDeIncio", ""Adicionar à Tela de Início"")}</span>
+                                <span className="install-guide-strong">{t("visitor.installguidemodal.adicionarTelaDeIncio", ` "Adicionar à Tela de Início"`)}</span>
                                 <span> ➕</span>
                             </li>
                             <li>{t('pwa.install.ios.step3', 'Toque em "Adicionar" no canto superior')}</li>

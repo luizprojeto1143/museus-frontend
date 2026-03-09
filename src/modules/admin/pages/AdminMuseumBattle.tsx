@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Trophy, Medal, Star, TrendingUp } from "lucide-react";
@@ -42,7 +42,7 @@ export const AdminMuseumBattle: React.FC = () => {
             {/* My Position */}
             {myRank && (
                 <div className="bg-gradient-to-r from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-3xl p-8 text-center">
-                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">{t("admin.museumbattle.suaPosio", "Sua Posição")}</p>
+                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">{t("admin.museumbattle.suaPosio", `Sua Posição`)}</p>
                     <p className="text-6xl font-black text-amber-400">#{myRank.rank}</p>
                     <p className="text-white font-bold mt-1">{myRank.name}</p>
                     <p className="text-2xl font-black text-white mt-2">{myRank.score} <span className="text-zinc-400 text-sm">pts</span></p>
@@ -62,7 +62,7 @@ export const AdminMuseumBattle: React.FC = () => {
                 {ranking.length === 0 ? (
                     <div className="py-16 text-center">
                         <Trophy size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
-                        <p style={{ color: "#64748b" }}>Nenhum ranking para este mês</p>
+                        <p style={{ color: "#64748b" }}>{t("admin.museumbattle.nenhumRankingParaEsteMs", `Nenhum ranking para este mês`)}</p>
                         <p className="text-zinc-300 text-xs mt-1">O Master precisa calcular o ranking primeiro</p>
                     </div>
                 ) : (

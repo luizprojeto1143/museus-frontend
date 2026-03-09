@@ -48,7 +48,7 @@ export const AdminMunicipalGaps: React.FC = () => {
         <div>
             <div style={{ marginBottom: '2rem' }}>
                 <h1 className="section-title">🗺️ Vazios Culturais</h1>
-                <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.municipalgaps.mapeamentoDeReasECategoriasCul", "Mapeamento de áreas e categorias culturais sem cobertura")}</p>
+                <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.municipalgaps.mapeamentoDeReasECategoriasCulturaisSemC", `Mapeamento de áreas e categorias culturais sem cobertura`)}</p>
             </div>
 
             {data && (
@@ -108,8 +108,11 @@ export const AdminMunicipalGaps: React.FC = () => {
                     {data.gapCategories.length > 0 && data.gapCategories[0] !== 'Nenhum vazio identificado' && (
                         <div className="card" style={{ border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.03)' }}>
                             <h3 className="card-title" style={{ color: '#f87171', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <AlertTriangle size={18} />{t("admin.municipalgaps.vaziosIdentificadosAoRecomenda", "Vazios Identificados — Ação Recomendada")}</h3>
-                            <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1rem' }}>{t("admin.municipalgaps.asSeguintesCategoriasNoPossuem", "As seguintes categorias não possuem eventos ou atividades registradas. Considere criar iniciativas para cobrir essas lacunas.")}</p>
+                                <AlertTriangle size={18} /> Vazios Identificados — Ação Recomendada
+                            </h3>
+                            <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginBottom: '1rem' }}>{t("admin.municipalgaps.asSeguintesCategoriasNoPossuemEventosOuA", `
+                                As seguintes categorias não possuem eventos ou atividades registradas. Considere criar iniciativas para cobrir essas lacunas.
+                            `)}</p>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
                                 {data.gapCategories.map((gap: string) => (
                                     <div key={gap} style={{

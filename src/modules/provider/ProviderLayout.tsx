@@ -91,7 +91,8 @@ export const ProviderLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                     </button>
                     <div className="mt-4 flex justify-center">
                         <Link to="/home" className="text-xs text-[#b794f4] hover:text-white flex items-center gap-1">
-                            <ExternalLink size={12} />{t("provider.providerlayout.irParaVisoDoVisitante", "Ir para Visão do Visitante")}</Link>
+                            <ExternalLink size={12} /> Ir para Visão do Visitante
+                        </Link>
                     </div>
                 </div>
             </aside>
@@ -106,7 +107,7 @@ export const ProviderLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                     <div className="flex items-center gap-6">
                         <div className="hidden md:flex items-center gap-2 text-xs font-bold text-[#b794f4]">
                             <Star size={14} className="text-yellow-400" />
-                            <span>{t("provider.providerlayout.avaliao49", "Avaliação: 4.9")}</span>
+                            <span>{t("provider.providerlayout.avaliao49", `Avaliação: 4.9`)}</span>
                         </div>
                         <span className="bg-[#9f7aea]/20 text-[#9f7aea] px-4 py-1.5 rounded-full text-[0.7rem] uppercase font-black tracking-widest border border-[#9f7aea]/30">
                             Prestador de Acessibilidade

@@ -55,7 +55,7 @@ export const ProviderProfile: React.FC = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-black text-white tracking-tight">Meu Perfil de Prestador</h1>
-                    <p className="text-[#b794f4] mt-1">{t("provider.providerprofile.gerencieComoOsProdutoresVisual", "Gerencie como os produtores visualizam seus serviços.")}</p>
+                    <p className="text-[#b794f4] mt-1">{t("provider.providerprofile.gerencieComoOsProdutoresVisualizamSeusSe", `Gerencie como os produtores visualizam seus serviços.`)}</p>
                 </div>
                 <Button
                     onClick={handleSave}
@@ -80,13 +80,15 @@ export const ProviderProfile: React.FC = () => {
                     </div>
 
                     <div className="bg-[#1a0f2c] p-6 rounded-3xl border border-[#3b2164] space-y-4">
-                        <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-2">{t("provider.providerprofile.estatsticas", "Estatísticas")}</h3>
+                        <h3 className="text-white font-bold text-sm uppercase tracking-widest flex items-center gap-2">{t("provider.providerprofile.estatsticas", `
+                            Estatísticas
+                        `)}</h3>
                         <div className="flex justify-between items-center text-sm">
-                            <span className="text-[#b794f4]">{t("provider.providerprofile.avaliaoMdia", "Avaliação Média")}</span>
+                            <span className="text-[#b794f4]">{t("provider.providerprofile.avaliaoMdia", `Avaliação Média`)}</span>
                             <span className="text-white font-bold">4.9 / 5.0</span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
-                            <span className="text-[#b794f4]">{t("provider.providerprofile.projetosConcludos", "Projetos Concluídos")}</span>
+                            <span className="text-[#b794f4]">{t("provider.providerprofile.projetosConcludos", `Projetos Concluídos`)}</span>
                             <span className="text-white font-bold">{profile.completedJobs || 0}</span>
                         </div>
                     </div>
@@ -106,7 +108,7 @@ export const ProviderProfile: React.FC = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-bold text-[#b794f4] uppercase tracking-widest ml-1">{t("provider.providerprofile.emailParaOramentos", "E-mail para Orçamentos")}</label>
+                                <label className="text-xs font-bold text-[#b794f4] uppercase tracking-widest ml-1">{t("provider.providerprofile.emailParaOramentos", `E-mail para Orçamentos`)}</label>
                                 <Input
                                     value={profile.email}
                                     onChange={e => setProfile({ ...profile, email: e.target.value })}
@@ -135,17 +137,17 @@ export const ProviderProfile: React.FC = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-[#b794f4] uppercase tracking-widest ml-1">{t("provider.providerprofile.descrioBio", "Descrição / Bio")}</label>
+                            <label className="text-xs font-bold text-[#b794f4] uppercase tracking-widest ml-1">{t("provider.providerprofile.descrioBio", `Descrição / Bio`)}</label>
                             <Textarea
                                 value={profile.description}
                                 onChange={e => setProfile({ ...profile, description: e.target.value })}
                                 className="bg-[#0f0a1a] border-[#3b2164] text-white focus:border-[#9f7aea] min-h-[150px]"
-                                placeholder={t("provider.providerprofile.conteUmPoucoSobreSuaExperincia", "Conte um pouco sobre sua experiência e os serviços que oferece...")}
+                                placeholder={t("provider.providerprofile.conteUmPoucoSobreSuaExperinciaEOsServios", `Conte um pouco sobre sua experiência e os serviços que oferece...`)}
                             />
                         </div>
 
                         <div className="space-y-4">
-                            <label className="text-xs font-bold text-[#b794f4] uppercase tracking-widest ml-1">{t("provider.providerprofile.serviosOferecidos", "Serviços Oferecidos")}</label>
+                            <label className="text-xs font-bold text-[#b794f4] uppercase tracking-widest ml-1">{t("provider.providerprofile.serviosOferecidos", `Serviços Oferecidos`)}</label>
                             <div className="flex flex-wrap gap-2">
                                 {["LIBRAS", "AUDIODESCRICAO", "LEGENDA", "ADAPTACAO_FISICA"].map(service => (
                                     <button

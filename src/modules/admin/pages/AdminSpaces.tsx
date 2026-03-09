@@ -103,8 +103,9 @@ export const AdminSpaces: React.FC = () => {
                         {t("admin.spaces.empty", "Nenhum espaço cadastrado")}
                     </h3>
                     <p className="text-gray-400 mt-2 mb-6">Comece adicionando seu primeiro ambiente.</p>
-                    <Button onClick={() =>{t("admin.spaces.navigateadminespacosnovoVarian", "navigate("/admin/espacos/novo")} variant="outline">
-                        Adicionar Espaço")}</Button>
+                    <Button onClick={() => navigate("/admin/espacos/novo")} variant="outline">
+                        Adicionar Espaço
+                    </Button>
                 </div>
             ) : (
                 <table className="table">
@@ -114,7 +115,7 @@ export const AdminSpaces: React.FC = () => {
                             <th>Tipo</th>
                             <th>Capacidade</th>
                             <th>Status</th>
-                            <th style={{ textAlign: "right" }}>{t("admin.spaces.aes", "Ações")}</th>
+                            <th style={{ textAlign: "right" }}>{t("admin.spaces.aes", `Ações`)}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -45,7 +45,9 @@ export const GlobalEvents: React.FC = () => {
                 <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(90deg, #d4af37, #f3e5b5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
                     Agenda Cultural Unificada
                 </h1>
-                <p style={{ opacity: 0.7, fontSize: "1.1rem" }}>{t("public.globalevents.exploreEventosExposiesEOficina", "Explore eventos, exposições e oficinas em todos os nossos museus parceiros.")}</p>
+                <p style={{ opacity: 0.7, fontSize: "1.1rem" }}>{t("public.globalevents.exploreEventosExposiesEOficinasEmTodosOs", `
+                    Explore eventos, exposições e oficinas em todos os nossos museus parceiros.
+                `)}</p>
             </header>
 
             {/* Search */}

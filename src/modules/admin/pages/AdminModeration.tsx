@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Shield, Check, X, AlertTriangle, MessageSquare } from "lucide-react";
@@ -39,8 +39,8 @@ export const AdminModeration: React.FC = () => {
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
             <div>
-                <h1 className="section-title" style={{ margin: 0 }}>{t("admin.moderation.moderaoDeAvaliaes", "Moderação de Avaliações")}</h1>
-                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.moderation.reviseEModereAvaliaesDosVisita", "Revise e modere avaliações dos visitantes")}</p>
+                <h1 className="section-title" style={{ margin: 0 }}>{t("admin.moderation.moderaoDeAvaliaes", `Moderação de Avaliações`)}</h1>
+                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.moderation.reviseEModereAvaliaesDosVisitantes", `Revise e modere avaliações dos visitantes`)}</p>
             </div>
 
             {/* Stats */}

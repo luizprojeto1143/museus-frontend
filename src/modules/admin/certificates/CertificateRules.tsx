@@ -35,7 +35,7 @@ export const CertificateRules: React.FC = () => {
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">{t("admin.certificaterules.automaoDeCertificados", "Automação de Certificados")}</h1>
+                <h1 className="text-2xl font-bold">{t("admin.certificaterules.automaoDeCertificados", `Automação de Certificados`)}</h1>
                 <Button onClick={() => navigate('/admin/certificates/rules/new')}>
                     <Plus size={20} className="mr-2" /> Nova Regra
                 </Button>
@@ -49,7 +49,7 @@ export const CertificateRules: React.FC = () => {
                             <th className="text-left p-4">Gatilho</th>
                             <th className="text-left p-4">Modelo</th>
                             <th className="text-left p-4">Status</th>
-                            <th className="text-right p-4">{t("admin.certificaterules.aes", "Ações")}</th>
+                            <th className="text-right p-4">{t("admin.certificaterules.aes", `Ações`)}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,7 +80,9 @@ export const CertificateRules: React.FC = () => {
                         ))}
                         {rules.length === 0 && (
                             <tr>
-                                <td colSpan={5} className="p-8 text-center text-gray-500">{t("admin.certificaterules.nenhumaRegraDeAutomaoCriada", "Nenhuma regra de automação criada.")}</td>
+                                <td colSpan={5} className="p-8 text-center text-gray-500">{t("admin.certificaterules.nenhumaRegraDeAutomaoCriada", `
+                                    Nenhuma regra de automação criada.
+                                `)}</td>
                             </tr>
                         )}
                     </tbody>

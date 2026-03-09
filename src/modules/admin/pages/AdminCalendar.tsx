@@ -31,6 +31,7 @@ type Space = {
 
 // --- Utils ---
 const getDaysInMonth = (date: Date) => {
+  const { t } = useTranslation();
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -56,7 +57,6 @@ const getDaysInMonth = (date: Date) => {
 };
 
 export const AdminCalendar: React.FC = () => {
-  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const { addToast } = useToast();
 
@@ -226,9 +226,11 @@ export const AdminCalendar: React.FC = () => {
                         </div>
                         <div>
                             <h1 className="section-title" style={{ margin: 0, fontSize: "2.5rem" }}>
-                                Agenda de <span style={{ color: "var(--accent-gold)" }}>{t("admin.calendar.espaos", "Espaços")}</span>
+                                Agenda de <span style={{ color: "var(--accent-gold)" }}>{t("admin.calendar.espaos", `Espaços`)}</span>
                             </h1>
-                            <p className="section-subtitle" style={{ margin: 0, opacity: 0.8 }}>{t("admin.calendar.gestoCentralizadaDaOcupaoEHorr", "Gestão centralizada da ocupação e horários dos ambientes do museu.")}</p>
+                            <p className="section-subtitle" style={{ margin: 0, opacity: 0.8 }}>{t("admin.calendar.gestoCentralizadaDaOcupaoEHorriosDosAmbi", `
+                                Gestão centralizada da ocupação e horários dos ambientes do museu.
+                            `)}</p>
                         </div>
                     </div>
                 </div>
@@ -492,7 +494,7 @@ export const AdminCalendar: React.FC = () => {
 
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
                                 <div className="form-group" style={{ margin: 0 }}>
-                                    <label className="form-label">{t("admin.calendar.horrioDeIncio", "Horário de Início")}</label>
+                                    <label className="form-label">{t("admin.calendar.horrioDeIncio", `Horário de Início`)}</label>
                                     <div style={{ position: "relative" }}>
                                         <Clock size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--accent-gold)", opacity: 0.5 }} />
                                         <input
@@ -505,7 +507,7 @@ export const AdminCalendar: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="form-group" style={{ margin: 0 }}>
-                                    <label className="form-label">{t("admin.calendar.horrioDeTrmino", "Horário de Término")}</label>
+                                    <label className="form-label">{t("admin.calendar.horrioDeTrmino", `Horário de Término`)}</label>
                                     <div style={{ position: "relative" }}>
                                         <Clock size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--fg-muted)", opacity: 0.5 }} />
                                         <input
@@ -520,12 +522,12 @@ export const AdminCalendar: React.FC = () => {
                             </div>
 
                             <div className="form-group" style={{ margin: 0 }}>
-                                <label className="form-label">{t("admin.calendar.finalidadeDaOcupao", "Finalidade da Ocupação")}</label>
+                                <label className="form-label">{t("admin.calendar.finalidadeDaOcupao", `Finalidade da Ocupação`)}</label>
                                 <textarea
                                     value={formData.purpose}
                                     onChange={e => setFormData({ ...formData, purpose: e.target.value })}
                                     style={{ width: "100%", minHeight: "120px" }}
-                                    placeholder={t("admin.calendar.exTreinamentoDeEquipeManutenoP", "Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo...")}
+                                    placeholder={t("admin.calendar.exTreinamentoDeEquipeManutenoPreventivaG", `Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo...`)}
                                 />
                             </div>
 

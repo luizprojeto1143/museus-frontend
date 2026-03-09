@@ -66,9 +66,9 @@ export const AdminEventCheckIn: React.FC = () => {
                 <div id="reader" className="w-full h-80 bg-black"></div>
 
                 <div className="p-6">
-                    <p className="text-center text-zinc-400 text-sm mb-4">
+                    <p className="text-center text-zinc-400 text-sm mb-4">{t("admin.eventcheckin.aponteACmeraParaOQrCodeDoIngresso", `
                         Aponte a câmera para o QR Code do ingresso
-                    </p>
+                    `)}</p>
 
                     {scanResult && (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-4 animate-fadeIn">
@@ -85,8 +85,9 @@ export const AdminEventCheckIn: React.FC = () => {
                                 <p><strong>Participante:</strong> {scanResult.guestName || "Visitante"}</p>
                                 <p><strong>Ingresso:</strong> {scanResult.code}</p>
                             </div>
-                            <button onClick={() =>{t("admin.eventcheckin.setscanresultnullClassnamebtnB", "setScanResult(null)} className="btn btn-primary w-full mt-4">
-                                Ler Próximo")}</button>
+                            <button onClick={() => setScanResult(null)} className="btn btn-primary w-full mt-4">
+                                Ler Próximo
+                            </button>
                         </div>
                     )}
 
@@ -112,7 +113,7 @@ export const AdminEventCheckIn: React.FC = () => {
                 <div className="flex gap-2">
                     <input
                         className="input flex-1"
-                        placeholder={t("admin.eventcheckin.cdigoDoIngresso", "Código do ingresso")}
+                        placeholder={t("admin.eventcheckin.cdigoDoIngresso", `Código do ingresso`)}
                         onKeyDown={e => {
                             if (e.key === 'Enter') handleCheckIn((e.target as HTMLInputElement).value);
                         }}

@@ -79,7 +79,7 @@ export const TotemSearch: React.FC = () => {
                         type="text"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
-                        placeholder={t("totem.totemsearch.nomeCpfOuCdigoDoIngresso", "Nome, CPF ou Código do Ingresso")}
+                        placeholder={t("totem.totemsearch.nomeCpfOuCdigoDoIngresso", `Nome, CPF ou Código do Ingresso`)}
                         style={{
                             width: "100%",
                             padding: "1.5rem 1.5rem 1.5rem 3.5rem",
@@ -149,7 +149,9 @@ export const TotemSearch: React.FC = () => {
 
                         {ticket.status === 'CHECKED_IN' ? (
                             <span style={{ color: "#22c55e", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                <CheckCircle size={18} />{t("totem.totemsearch.jEntrou", "Já entrou")}</span>
+                                <CheckCircle size={18} />
+                                Já entrou
+                            </span>
                         ) : ticket.status === 'CANCELED' ? (
                             <span style={{ color: "#ef4444", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                 <XCircle size={18} />

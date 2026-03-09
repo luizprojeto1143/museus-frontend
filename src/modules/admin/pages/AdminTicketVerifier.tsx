@@ -152,17 +152,19 @@ export const AdminTicketVerifier: React.FC = () => {
                                     <h3>✓ Check-in Confirmado!</h3>
                                     <div className="result-details">
                                         <p><strong>Participante:</strong> {scanResult.guestName || "Visitante"}</p>
-                                        <p><strong>{t("admin.ticketverifier.cdigo", "Código:")}</strong> {scanResult.code}</p>
+                                        <p><strong>{t("admin.ticketverifier.cdigo", `Código:`)}</strong> {scanResult.code}</p>
                                         {scanResult.eventTitle && (
                                             <p><strong>Evento:</strong> {scanResult.eventTitle}</p>
                                         )}
                                         {scanResult.ticketType && (
                                             <p><strong>Tipo:</strong> {scanResult.ticketType}</p>
                                         )}
-                                        <p><strong>{t("admin.ticketverifier.horrio", "Horário:")}</strong> {new Date().toLocaleTimeString('pt-BR')}</p>
+                                        <p><strong>{t("admin.ticketverifier.horrio", `Horário:`)}</strong> {new Date().toLocaleTimeString('pt-BR')}</p>
                                     </div>
                                 </div>
-                                <button onClick={resetScanner} className="btn-next">{t("admin.ticketverifier.prximoIngresso", "Próximo Ingresso")}</button>
+                                <button onClick={resetScanner} className="btn-next">{t("admin.ticketverifier.prximoIngresso", `
+                                    Próximo Ingresso
+                                `)}</button>
                             </div>
                         )}
 
@@ -172,7 +174,7 @@ export const AdminTicketVerifier: React.FC = () => {
                                     <AlertTriangle size={32} />
                                 </div>
                                 <div className="result-content">
-                                    <h3>{t("admin.ticketverifier.ErroNaVerificao", "✗ Erro na Verificação")}</h3>
+                                    <h3>{t("admin.ticketverifier.ErroNaVerificao", `✗ Erro na Verificação`)}</h3>
                                     <p className="error-message">{error}</p>
                                 </div>
                                 <button onClick={resetScanner} className="btn-retry">
@@ -190,7 +192,7 @@ export const AdminTicketVerifier: React.FC = () => {
                                 type="text"
                                 value={manualCode}
                                 onChange={(e) => setManualCode(e.target.value)}
-                                placeholder={t("admin.ticketverifier.digiteOCdigoDoIngresso", "Digite o código do ingresso")}
+                                placeholder={t("admin.ticketverifier.digiteOCdigoDoIngresso", `Digite o código do ingresso`)}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') handleCheckIn(manualCode);
                                 }}
@@ -207,9 +209,9 @@ export const AdminTicketVerifier: React.FC = () => {
 
                 {/* Events Sidebar */}
                 <div className="events-sidebar">
-                    <h3><Calendar size={18} />{t("admin.ticketverifier.eventosComInscries", "Eventos com Inscrições")}</h3>
+                    <h3><Calendar size={18} /> Eventos com Inscrições</h3>
                     {recentEvents.length === 0 ? (
-                        <p className="no-events">{t("admin.ticketverifier.nenhumEventoComInscries", "Nenhum evento com inscrições")}</p>
+                        <p className="no-events">{t("admin.ticketverifier.nenhumEventoComInscries", `Nenhum evento com inscrições`)}</p>
                     ) : (
                         <div className="events-list">
                             {recentEvents.map((event) => (

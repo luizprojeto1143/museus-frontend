@@ -48,8 +48,8 @@ export const ProducerSettings: React.FC = () => {
     return (
         <div className="max-w-4xl mx-auto pb-16 animate-in fade-in duration-500">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.producersettings.configuraes", "Configurações")}</h1>
-                <p className="text-[#B0A090]">Gerencie suas preferências de conta e privacidade.</p>
+                <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.producersettings.configuraes", `Configurações`)}</h1>
+                <p className="text-[#B0A090]">{t("producer.producersettings.gerencieSuasPrefernciasDeContaEPrivacida", `Gerencie suas preferências de conta e privacidade.`)}</p>
             </div>
 
             <div className="space-y-6">
@@ -57,9 +57,10 @@ export const ProducerSettings: React.FC = () => {
                 {/* Notifications Section */}
                 <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
                     <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
-                        <Bell size={20} className="text-[#D4AF37]" />{t("producer.producersettings.notificaes", "Notificações")}</h3>
+                        <Bell size={20} className="text-[#D4AF37]" /> Notificações
+                    </h3>
                     <div className="flex justify-between items-center py-2">
-                        <span className="text-[#B0A090] text-sm">{t("producer.producersettings.receberAtualizaesDeProjetosPor", "Receber atualizações de projetos por e-mail")}</span>
+                        <span className="text-[#B0A090] text-sm">{t("producer.producersettings.receberAtualizaesDeProjetosPorEmail", `Receber atualizações de projetos por e-mail`)}</span>
                         <div
                             onClick={() => toggleSetting('emailNotifications')}
                             className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
@@ -78,7 +79,7 @@ export const ProducerSettings: React.FC = () => {
                         <Globe size={20} className="text-[#D4AF37]" /> Privacidade
                     </h3>
                     <div className="flex justify-between items-center py-2">
-                        <span className="text-[#B0A090] text-sm">{t("producer.producersettings.perfilPblicoVisvelNaPlataforma", "Perfil Público visível na plataforma")}</span>
+                        <span className="text-[#B0A090] text-sm">{t("producer.producersettings.perfilPblicoVisvelNaPlataforma", `Perfil Público visível na plataforma`)}</span>
                         <div
                             onClick={() => toggleSetting('publicProfile')}
                             className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
@@ -94,9 +95,10 @@ export const ProducerSettings: React.FC = () => {
                 {/* Security Section */}
                 <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
                     <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
-                        <Shield size={20} className="text-[#D4AF37]" />{t("producer.producersettings.segurana", "Segurança")}</h3>
+                        <Shield size={20} className="text-[#D4AF37]" /> Segurança
+                    </h3>
                     <div className="flex justify-between items-center py-2 mb-6">
-                        <span className="text-[#B0A090] text-sm">{t("producer.producersettings.ativarAutenticaoDeDoisFatores2", "Ativar Autenticação de Dois Fatores (2FA)")}</span>
+                        <span className="text-[#B0A090] text-sm">{t("producer.producersettings.ativarAutenticaoDeDoisFatores2fa", `Ativar Autenticação de Dois Fatores (2FA)`)}</span>
                         <div
                             onClick={() => toggleSetting('twoFactor')}
                             className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
@@ -122,10 +124,11 @@ export const ProducerSettings: React.FC = () => {
                     <Button
                         onClick={handleSave}
                         isLoading={loading}
-                        leftIcon={<Save size={20} />{t("producer.producersettings.Classnamebgd4af37Text1a1108Hov", "}
+                        leftIcon={<Save size={20} />}
                         className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[#D4AF37]/20 border-none rounded-xl"
                     >
-                        Salvar Alterações")}</Button>
+                        Salvar Alterações
+                    </Button>
                 </div>
 
             </div>

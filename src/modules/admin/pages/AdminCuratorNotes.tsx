@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Plus, MessageSquare, Pin, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
@@ -108,7 +108,7 @@ export const AdminCuratorNotes: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                     <h1 className="section-title" style={{ margin: 0 }}>Notas do Curador</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.curatornotes.comentriosContextuaisSobreObra", "Comentários contextuais sobre obras do acervo")}</p>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.curatornotes.comentriosContextuaisSobreObrasDoAcervo", `Comentários contextuais sobre obras do acervo`)}</p>
                 </div>
                 <Button onClick={() => { resetForm(); setShowForm(true); }} leftIcon={<Plus size={16} />}>
                     Nova Nota
@@ -138,7 +138,7 @@ export const AdminCuratorNotes: React.FC = () => {
                             value={content}
                             onChange={e => setContent(e.target.value)}
                             rows={4}
-                            placeholder={t("admin.curatornotes.exEstaObraRetrataOCotidianoDaM", "Ex: Esta obra retrata o cotidiano da mineração em Minas Gerais no século XVIII...")}
+                            placeholder={t("admin.curatornotes.exEstaObraRetrataOCotidianoDaMineraoEmMi", `Ex: Esta obra retrata o cotidiano da mineração em Minas Gerais no século XVIII...`)}
                             style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }}
                         />
                     </div>
@@ -171,7 +171,7 @@ export const AdminCuratorNotes: React.FC = () => {
                 <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <MessageSquare size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <h3 className="text-lg font-bold text-white mb-1">Nenhuma nota cadastrada</h3>
-                    <p style={{ color: "#64748b" }}>Adicione notas de curador às obras do acervo para enriquecer a experiência do visitante.</p>
+                    <p style={{ color: "#64748b" }}>{t("admin.curatornotes.adicioneNotasDeCuradorSObrasDoAcervoPara", `Adicione notas de curador às obras do acervo para enriquecer a experiência do visitante.`)}</p>
                 </div>
             ) : (
                 <div style={{ display: "grid", gap: "0.75rem" }}>

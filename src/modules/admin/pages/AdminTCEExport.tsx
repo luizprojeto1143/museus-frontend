@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, FileText, Download, Calendar } from "lucide-react";
@@ -58,8 +58,8 @@ export const AdminTCEExport: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.tceexport.exportaoTcemg", "Exportação TCE-MG")}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.tceexport.relatrioFormatadoParaOTribunal", "Relatório formatado para o Tribunal de Contas")}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.tceexport.exportaoTcemg", `Exportação TCE-MG`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.tceexport.relatrioFormatadoParaOTribunalDeContas", `Relatório formatado para o Tribunal de Contas`)}</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <select value={year} onChange={e => setYear(Number(e.target.value))} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -102,7 +102,7 @@ export const AdminTCEExport: React.FC = () => {
 
             <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5">
                 <p className="text-amber-400 text-sm font-bold mb-1">⚠️ Nota</p>
-                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.tceexport.esteUmRelatrioSimplificadoPara", "Este é um relatório simplificado. Para atender ao formato exato do TCE-MG, ajuste os campos conforme o modelo oficial do seu município.")}</p>
+                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.tceexport.esteUmRelatrioSimplificadoParaAtenderAoF", `Este é um relatório simplificado. Para atender ao formato exato do TCE-MG, ajuste os campos conforme o modelo oficial do seu município.`)}</p>
             </div>
         </div>
     );

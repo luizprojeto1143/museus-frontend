@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 ﻿import React, { useState, useRef, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Instagram, Download, RefreshCw, Image as ImageIcon, Palette, Type } from "lucide-react";
@@ -300,7 +300,7 @@ export const AdminInstagramCard: React.FC = () => {
 
                         <div>
                             <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Texto Customizado (opcional)</label>
-                            <textarea value={customText} onChange={e => setCustomText(e.target.value)} rows={3} placeholder={t("admin.instagramcard.deixeEmBrancoParaUsarADescrioD", "Deixe em branco para usar a descrição da obra")} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none resize-none focus:border-amber-500" />
+                            <textarea value={customText} onChange={e => setCustomText(e.target.value)} rows={3} placeholder={t("admin.instagramcard.deixeEmBrancoParaUsarADescrioDaObra", `Deixe em branco para usar a descrição da obra`)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none resize-none focus:border-amber-500" />
                         </div>
 
                         <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -312,7 +312,7 @@ export const AdminInstagramCard: React.FC = () => {
 
                 {/* Preview */}
                 <div className="card">
-                    <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">{t("admin.instagramcard.prvia10801080", "Prévia 1080×1080")}</p>
+                    <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">{t("admin.instagramcard.prvia10801080", `Prévia 1080×1080`)}</p>
                     <canvas ref={canvasRef} style={{ width: '100%', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.1)' }} />
                 </div>
             </div>

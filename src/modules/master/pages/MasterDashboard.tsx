@@ -44,7 +44,9 @@ export const MasterDashboard: React.FC = () => {
           <span className="master-badge">
             📊 Dashboard Central
           </span>
-          <h1 className="master-title">{t("master.dashboard.visoGeralDoSistema", "Visão Geral do Sistema")}</h1>
+          <h1 className="master-title">{t("master.dashboard.visoGeralDoSistema", `
+            Visão Geral do Sistema
+          `)}</h1>
           <p className="master-subtitle">
             Monitore o desempenho de todos os museus, visitantes e acessos em tempo real.
           </p>

@@ -258,7 +258,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder={t("auth.register.mnimo6Caracteres", "Mínimo 6 caracteres")}
+            placeholder={t("auth.register.mnimo6Caracteres", `Mínimo 6 caracteres`)}
             style={{
               width: "100%",
               marginBottom: "1.2rem",
@@ -473,7 +473,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                 {termsText || "Termos de uso padrão da plataforma..."}
                 {privacyText && (
                   <>
-                    <h4 style={{ color: "#d4af37", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade", "Política de Privacidade")}</h4>
+                    <h4 style={{ color: "#d4af37", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade", `Política de Privacidade`)}</h4>
                     {privacyText}
                   </>
                 )}

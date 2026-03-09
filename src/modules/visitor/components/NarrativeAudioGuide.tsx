@@ -139,8 +139,8 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                     <Headphones size={28} />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-white leading-tight">{t("visitor.narrativeaudioguide.udioDescritivo", "Áudio Descritivo")}</h2>
-                    <p className="text-slate-500 text-sm">{t("visitor.narrativeaudioguide.experinciaNarrativaAcessvel", "Experiência Narrativa Acessível")}</p>
+                    <h2 className="text-xl font-bold text-white leading-tight">{t("visitor.narrativeaudioguide.udioDescritivo", `Áudio Descritivo`)}</h2>
+                    <p className="text-slate-500 text-sm">{t("visitor.narrativeaudioguide.experinciaNarrativaAcessvel", `Experiência Narrativa Acessível`)}</p>
                 </div>
             </div>
 
@@ -225,7 +225,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                         <button
                             onClick={() => isCurrentTrack && seek(currentTime + 10)}
                             className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all active:scale-95 disabled:opacity-50"
-                            title={t("visitor.narrativeaudioguide.avanar10s", "Avançar 10s")}
+                            title={t("visitor.narrativeaudioguide.avanar10s", `Avançar 10s`)}
                             disabled={!isCurrentTrack}
                         >
                             <SkipForward size={24} />
@@ -234,7 +234,8 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                 </div>
 
                 <p className="text-center mt-10 text-[10px] font-bold text-slate-600 uppercase tracking-[0.3em] flex items-center justify-center gap-2">
-                    <Headphones size={12} />{t("visitor.narrativeaudioguide.useFonesDeOuvidoParaImersoTota", "Use fones de ouvido para imersão total")}</p>
+                    <Headphones size={12} /> Use fones de ouvido para imersão total
+                </p>
             </div>
         </section>
     );

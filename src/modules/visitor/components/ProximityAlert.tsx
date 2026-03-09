@@ -21,11 +21,11 @@ interface ProximityAlertProps {
 }
 
 export const ProximityAlert: React.FC<ProximityAlertProps> = ({
-  const { t } = useTranslation();
     alerts,
     onDismiss,
     onDismissAll
 }) => {
+  const { t } = useTranslation();
     const navigate = useNavigate();
 
     if (alerts.length === 0) return null;
@@ -83,7 +83,7 @@ export const ProximityAlert: React.FC<ProximityAlertProps> = ({
                 <div className="proximity-alert-content">
                     <div className="proximity-alert-badge">
                         <MapPin size={12} />
-                        <span>{t("visitor.proximityalert.vocEstPrximo", "Você está próximo!")}</span>
+                        <span>{t("visitor.proximityalert.vocEstPrximo", `Você está próximo!`)}</span>
                     </div>
 
                     <h4 className="proximity-alert-title">{currentAlert.title}</h4>
