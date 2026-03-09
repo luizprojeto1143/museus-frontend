@@ -100,7 +100,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       ]
     },
     {
-      label: "Gestão Municipal",
+      label: isCityMode ? "Gestão Municipal" : "Gestão Institucional",
       links: [
         { to: "/admin/editais", label: "Editais", icon: "📋", show: features?.featureEditais ?? false },
         { to: "/admin/projetos", label: "Projetos Culturais", icon: "🎨", show: features?.featureProjects ?? false },
