@@ -1,1199 +1,1225 @@
 {
-    "common": {
-        "loading": "Carregando...",
-        "save": "Salvar",
-        "cancel": "Cancelar",
-        "delete": "Excluir",
-        "edit": "Editar",
-        "back": "Voltar",
-        "search": "Buscar",
-        "actions": "Ações",
-        "confirm": "Confirmar",
-        "confirmDelete": "Tem certeza que deseja excluir?",
-        "success": "Sucesso",
-        "error": "Erro",
-        "view": "Ver",
-        "solved": "Resolvido!",
-        "minutes": "minutos",
-        "next": "Próximo",
-        "noData": "Nenhum dado encontrado.",
-        "menu": "Menu",
-        "all": "Todos",
-        "images": "Imagens",
-        "audios": "Áudios",
-        "videos": "Vídeos",
-        "uploading": "Enviando...",
-        "errorLoad": "Erro ao carregar dados",
-        "anonymous": "Anônimo",
-        "createdAt": "Criado em",
-        "date": "Data",
-        "activity": "Atividade",
-        "errorUpload": "Erro no upload",
-        "saving": "Salvando...",
-        "generating": "Gerando...",
-        "remove": "Remover",
-        "sending": "Enviando...",
-        "details": "Detalhes",
-        "share": "Compartilhar",
-        "errorConnection": "Erro de conexão",
-        "visitor": "Visitante",
-        "you": "Você",
-        "cancelled": "Cancelado",
-        "confirmed": "Confirmado",
+  "common": {
+    "loading": "Carregando...",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "back": "Voltar",
+    "search": "Buscar",
+    "actions": "Ações",
+    "confirm": "Confirmar",
+    "confirmDelete": "Tem certeza que deseja excluir?",
+    "success": "Sucesso",
+    "error": "Erro",
+    "view": "Ver",
+    "solved": "Resolvido!",
+    "minutes": "minutos",
+    "next": "Próximo",
+    "noData": "Nenhum dado encontrado.",
+    "menu": "Menu",
+    "all": "Todos",
+    "images": "Imagens",
+    "audios": "Áudios",
+    "videos": "Vídeos",
+    "uploading": "Enviando...",
+    "errorLoad": "Erro ao carregar dados",
+    "anonymous": "Anônimo",
+    "createdAt": "Criado em",
+    "date": "Data",
+    "activity": "Atividade",
+    "errorUpload": "Erro no upload",
+    "saving": "Salvando...",
+    "generating": "Gerando...",
+    "remove": "Remover",
+    "sending": "Enviando...",
+    "details": "Detalhes",
+    "share": "Compartilhar",
+    "errorConnection": "Erro de conexão",
+    "visitor": "Visitante",
+    "you": "Você",
+    "cancelled": "Cancelado",
+    "confirmed": "Confirmado",
+    "work": "Obra",
+    "works": "Acervo",
+    "artist": "Artista",
+    "technique": "Técnica",
+    "dimensions": "Dimensões",
+    "trail": "Trilha",
+    "trails": "Trilhas",
+    "room": "Sala",
+    "rooms": "Salas",
+    "floor": "Andar",
+    "floors": "Andares",
+    "event": "Evento",
+    "events": "Eventos",
+    "visitors": "Visitantes",
+    "featuredWorks": "Obras em Destaque",
+    "modes": {
+      "museum": {
         "work": "Obra",
-        "works": "Acervo",
-        "artist": "Artista",
-        "technique": "Técnica",
-        "dimensions": "Dimensões",
+        "works": "Obras",
         "trail": "Trilha",
         "trails": "Trilhas",
         "room": "Sala",
         "rooms": "Salas",
         "floor": "Andar",
-        "floors": "Andares",
-        "event": "Evento",
-        "events": "Eventos",
-        "visitors": "Visitantes",
-        "featuredWorks": "Obras em Destaque",
-        "modes": {
-            "museum": {
-                "work": "Obra",
-                "works": "Obras",
-                "trail": "Trilha",
-                "trails": "Trilhas",
-                "room": "Sala",
-                "rooms": "Salas",
-                "floor": "Andar",
-                "floors": "Andares"
-            },
-            "city": {
-                "work": "Ponto Turístico",
-                "works": "Pontos Turísticos",
-                "trail": "Roteiro",
-                "trails": "Roteiros",
-                "room": "Região",
-                "rooms": "Regiões",
-                "floor": "Bairro",
-                "floors": "Bairros"
-            },
-            "cultural_space": {
-                "work": "Atividade",
-                "works": "Atividades",
-                "trail": "Projeto",
-                "trails": "Projetos",
-                "room": "Espaço",
-                "rooms": "Espaços",
-                "floor": "Pavimento",
-                "floors": "Pavimentos"
-            }
-        }
+        "floors": "Andares"
+      },
+      "city": {
+        "work": "Ponto Turístico",
+        "works": "Pontos Turísticos",
+        "trail": "Roteiro",
+        "trails": "Roteiros",
+        "room": "Região",
+        "rooms": "Regiões",
+        "floor": "Bairro",
+        "floors": "Bairros"
+      },
+      "cultural_space": {
+        "work": "Atividade",
+        "works": "Atividades",
+        "trail": "Projeto",
+        "trails": "Projetos",
+        "room": "Espaço",
+        "rooms": "Espaços",
+        "floor": "Pavimento",
+        "floors": "Pavimentos"
+      }
+    }
+  },
+  "museum": {
+    "featuredWorks": "Obras em Destaque"
+  },
+  "dashboard": {
+    "title": "Painel de Controle"
+  },
+  "welcome": {
+    "title": "Cultura Viva",
+    "subtitle": "Sua jornada cultural começa aqui",
+    "firstTime": "Bem-vindo ao Cultura Viva, {{name}}!",
+    "selectTenantAlert": "Selecione um museu!",
+    "errorSave": "Erro ao salvar conquista",
+    "errorUpload": "Erro ao fazer upload da imagem",
+    "returning": "Que bom te ver de novo, {{name}}!",
+    "explore": "Explorar",
+    "login": "Login"
+  },
+  "uploads": {
+    "title": "Galeria de Mídia",
+    "subtitle": "Gerencie todas as imagens, áudios e vídeos armazenados.",
+    "newUpload": "Novo Arquivo",
+    "stats": {
+      "total": "Arquivos Totais",
+      "usedSpace": "Espaço Usado",
+      "images": "Imagens"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Acesse sua conta",
+      "email": "E-mail",
+      "password": "Senha",
+      "submit": "Entrar",
+      "forgotPassword": "Esqueci minha senha",
+      "noAccount": "Não tem uma conta? Cadastre-se"
     },
-    "museum": {
-        "featuredWorks": "Obras em Destaque"
+    "register": {
+      "title": "Crie sua conta",
+      "name": "Nome",
+      "email": "E-mail",
+      "password": "Senha",
+      "confirmPassword": "Confirme a senha",
+      "submit": "Cadastrar",
+      "hasAccount": "Já tem uma conta? Entre"
+    },
+    "errors": {
+      "generic": "Erro interno ao realizar cadastro. Tente novamente mais tarde.",
+      "termsRequired": "Você precisa aceitar os termos.",
+      "passwordMismatch": "As senhas não conferem.",
+      "registerFailed": "Falha no cadastro. Verifique os dados."
+    }
+  },
+  "visitor": {
+    "ai": {
+      "chatTitle": "Chat IA",
+      "welcome": "Olá! Sou o guia virtual do museu. Pergunte-me sobre obras, horários ou curiosidades!",
+      "askAboutWork": "Me fale sobre esta obra...",
+      "askAnything": "Pergunte qualquer coisa...",
+      "placeholder": "Digite sua pergunta aqui..."
+    },
+    "sidebar": {
+      "home": "Início",
+      "artworks": "Obras",
+      "trails": "Trilhas",
+      "map": "Mapa",
+      "events": "Eventos",
+      "favorites": "Favoritos",
+      "aiChat": "Chat IA",
+      "souvenir": "Souvenir",
+      "passport": "Passaporte",
+      "profile": "Meu Perfil",
+      "achievements": "Conquistas",
+      "visualScanner": "Scanner Visual",
+      "leaderboard": "Ranking",
+      "changeMuseum": "Trocar Museu",
+      "logout": "Sair",
+      "scheduling": "Agendamento",
+      "smartItinerary": "Roteiro Inteligente",
+      "treasureHunt": "Caça ao Tesouro",
+      "guestbook": "Livro de Visitas",
+      "installApp": "Instalar App",
+      "scanner": "Leitor QR"
+    },
+    "smartRoute": {
+      "title": "Roteiro Inteligente",
+      "subtitle": "Diga quanto tempo você tem, e nós criamos o trajeto.",
+      "generate": "✨ Gerar Meu Roteiro",
+      "tryAgain": "Tentar Outro",
+      "start": "Iniciar",
+      "works": "Obras"
+    },
+    "noResults": "Nenhum resultado encontrado.",
+    "dialer": {
+      "button": "Digitar Código"
+    },
+    "chat": {
+      "title": "Guia Virtual",
+      "placeholder": "Digite sua pergunta...",
+      "send": "Enviar",
+      "you": "Você",
+      "guide": "Guia",
+      "welcome": "Olá! Sou seu guia virtual. Pergunte-me sobre as obras ou o museu!",
+      "error": "Ocorreu um erro. Tente novamente."
+    },
+    "search": {
+      "title": "Buscar"
+    },
+    "home": {
+      "badge": "Bem-vindo",
+      "title": "Olá, {{name}}",
+      "subtitle": "Explore a história e a cultura dos nossos museus.",
+      "startTrail": "Começar Trilha",
+      "viewMap": "Ver Mapa",
+      "featuredArtworks": "Obras em Destaque",
+      "featuredSubtitle": "Conheça algumas das peças mais icônicas do nosso acervo.",
+      "exampleArtwork": "Obra Exemplo",
+      "guestArtist": "Artista Convidado",
+      "painting": "Pintura",
+      "accessible": "Acessível",
+      "exampleDisclaimer": "* Imagem meramente ilustrativa.",
+      "viewDetails": "Ver Detalhes",
+      "recommendedTrails": "Trilhas Recomendadas",
+      "trailsSubtitle": "Roteiros curados para você aproveitar ao máximo.",
+      "quickTrail": "Trilha Rápida",
+      "quickTrailDesc": "Ideal para quem tem pouco tempo.",
+      "museumSuggestion": "Sugestão do Museu",
+      "viewTrails": "Ver Trilhas",
+      "completeTrail": "Trilha Completa",
+      "completeTrailDesc": "Conheça todo o acervo em detalhes.",
+      "chooseTrail": "Escolher Trilha"
+    },
+    "scan": {
+      "title": "Escanear QR Code",
+      "instruction": "Aponte a câmera para o QR Code da obra",
+      "permission": "Precisamos de permissão para acessar a câmera"
+    },
+    "artwork": {
+      "details": "Detalhes da Obra",
+      "audioGuide": "Audioguia",
+      "play": "Ouvir",
+      "pause": "Pausar",
+      "badge": "Obra",
+      "location": "Localização",
+      "unknownRoom": "Sala não informada",
+      "unknownFloor": "andar não informado",
+      "imagePlaceholder": "Imagem indisponível.",
+      "description": "Descrição",
+      "noDescription": "Descrição não disponível",
+      "stopReading": "Parar Leitura",
+      "listenDescription": "Ouvir Descrição",
+      "defaultDescription": "Descrição completa da obra, incluindo contexto histórico, técnica utilizada, curiosidades e relação com o acervo.",
+      "accessibility": "Acessibilidade",
+      "audioDescription": "Audiodescrição",
+      "audioDescriptionText": "Narração com descrição dos elementos visuais da obra para pessoas cegas ou com baixa visão.",
+      "libras": "Libras",
+      "librasText": "Vídeo em Libras com a explicação principal sobre a obra, pensado para a comunidade surda.",
+      "aiInteraction": "Interação com IA",
+      "aiInteractionText": "Converse com nossa Inteligência Artificial para descobrir mais detalhes fascinantes sobre esta obra.",
+      "logout": "Sair",
+      "notFound": "Obra não encontrada",
+      "relatedWorks": "Obras Relacionadas",
+      "relatedWork": "Obra Relacionada",
+      "relatedArtist": "Artista Relacionado",
+      "viewDetails": "Ver Detalhes"
+    },
+    "selectMuseum": {
+      "title": "Selecione o Museu",
+      "subtitle": "Escolha o museu que deseja visitar",
+      "loading": "Carregando museus...",
+      "errorLoading": "Falha ao carregar lista de museus.",
+      "noMuseums": "Nenhum museu encontrado.",
+      "adminHint": "Dica: Cadastre um museu no painel Master para começar."
+    },
+    "favorites": {
+      "title": "Seus Favoritos",
+      "subtitle": "Obras e trilhas que você amou",
+      "empty": "Você ainda não tem favoritos.",
+      "explore": "Explorar Obras"
+    },
+    "museums": {
+      "title": "Gerenciar Museus",
+      "add": "Adicionar Museu",
+      "name": "Nome do Museu",
+      "location": "Localização"
+    },
+    "artworks": {
+      "title": "Gerenciar Obras",
+      "add": "Adicionar Obra",
+      "name": "Título da Obra",
+      "artist": "Artista",
+      "description": "Descrição"
+    },
+    "works": {
+      "title": "Galeria de Obras",
+      "subtitle": "Explore o acervo completo do museu"
+    },
+    "map": {
+      "title": "Mapa Interativo",
+      "subtitle": "Navegue pelo museu e encontre as obras",
+      "legend": "Legenda",
+      "generate": "Gerar Souvenir",
+      "error": "Erro ao gerar souvenir."
+    },
+    "trails": {
+      "title": "Trilhas",
+      "subtitle": "Roteiros temáticos para sua visita",
+      "mapTracking": "Acompanhamento no mapa",
+      "viewDetails": "Ver Detalhes",
+      "badge": "Trilha"
+    },
+    "trailDetail": {
+      "loading": "Carregando trilha...",
+      "about": "Sobre a trilha",
+      "artworks": "Obras nesta trilha",
+      "clickDetails": "Clique para ver detalhes",
+      "notFound": "Trilha não encontrada"
+    },
+    "events": {
+      "title": "Eventos",
+      "subtitle": "Confira a programação cultural",
+      "location": "Local"
+    },
+    "eventDetail": {
+      "notFound": "Evento não encontrado.",
+      "backToEvents": "Voltar para Eventos",
+      "about": "Sobre o evento",
+      "participateAlert": "Para participar, dirija-se ao local do evento no horário marcado.",
+      "participate": "Participar"
+    },
+    "passport": {
+      "title": "Meu Passaporte",
+      "subtitle": "Seu registro de visitas e experiências",
+      "totalXp": "XP Total",
+      "work": "Obra",
+      "visitedAt": "Visitado em"
+    },
+    "achievements": {
+      "title": "Conquistas",
+      "subtitle": "Suas medalhas e prêmios"
+    },
+    "visualScanner": {
+      "title": "Reconhecimento Visual",
+      "loadingModel": "Carregando modelo de IA...",
+      "loadingWorks": "Carregando obras para reconhecimento...",
+      "startCamera": "Iniciar Câmera",
+      "stopCamera": "Parar Câmera",
+      "noArtworks": "Nenhuma obra cadastrada para reconhecimento.",
+      "instruction": "Aponte a câmera para uma obra para identificá-la.",
+      "analyzing": "Analisando...",
+      "confidence": "Confiança",
+      "viewDetails": "Ver Detalhes"
+    },
+    "leaderboard": {
+      "title": "Ranking Global",
+      "subtitle": "Os maiores exploradores da cultura",
+      "rank": "Posição",
+      "visitor": "Visitante",
+      "xp": "XP",
+      "loading": "Carregando ranking...",
+      "empty": "Nenhum visitante pontuou ainda."
+    },
+    "treasure": {
+      "title": "Caça ao Tesouro",
+      "subtitle": "Decifre as charadas, encontre as obras e ganhe recompensas!",
+      "noClues": "Nenhuma pista disponível no momento.",
+      "clue": "Pista",
+      "completed": "Você encontrou o tesouro!"
+    },
+    "itinerary": {
+      "title": "Planeje sua Visita",
+      "timeQuestion": "Quanto tempo você tem?",
+      "interestsQuestion": "O que você gosta?",
+      "accessibilityQuestion": "Necessidades de Acessibilidade",
+      "generate": "Gerar Roteiro"
+    },
+    "scheduling": {
+      "inPersonService": "Serviço Presencial (Opcional)",
+      "noSpecialService": "Nenhum serviço especial",
+      "participants": "Participantes"
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "dashboard": "Painel de Controle",
+      "artworks": "Obras",
+      "trails": "Trilhas",
+      "events": "Eventos",
+      "qrcodes": "QR Codes",
+      "categories": "Categorias",
+      "visitors": "Visitantes",
+      "achievements": "Conquistas",
+      "ai": "Assistente IA",
+      "analytics": "Estatísticas",
+      "uploads": "Galeria de Mídia",
+      "users": "Usuários",
+      "treasureHunt": "Caça ao Tesouro",
+      "settings": "Configurações",
+      "reviews": "Moderação",
+      "shop": "Loja",
+      "scanner": "Leitor IA",
+      "logout": "Sair"
+    },
+    "scanner": {
+      "title": "Treinamento do Scanner IA",
+      "subtitle": "Gerencie as classes e treine o modelo para reconhecer obras."
+    },
+    "errors": {
+      "delete": "Erro ao excluir item",
+      "save": "Erro ao salvar dados"
+    },
+    "treasure": {
+      "title": "Caça ao Tesouro",
+      "subtitle": "Gerencie as pistas e recompensas.",
+      "add": "Nova Pista",
+      "automatedTitle": "Título Automático",
+      "automatedDescription": "Descrição Automática"
+    },
+    "uploads": {
+      "title": "Galeria de Mídia",
+      "subtitle": "Visualize e gerencie todos os arquivos de mídia do museu",
+      "newUpload": "Novo Upload",
+      "stats": {
+        "total": "Total de Arquivos",
+        "usedSpace": "Espaço Utilizado",
+        "images": "Imagens"
+      }
+    },
+    "museums": {
+      "title": "Visão Geral do Museu"
+    },
+    "museumSettings": {
+      "title": "Configurações do Museu",
+      "subtitle": "Personalize a aparência e informações do seu museu",
+      "institutionalData": "Dados Institucionais",
+      "labels": {
+        "name": "Nome do Museu",
+        "mission": "Missão / Descrição",
+        "address": "Endereço",
+        "openingHours": "Horário de Funcionamento",
+        "whatsapp": "WhatsApp",
+        "email": "E-mail de Contato",
+        "website": "Site Oficial"
+      },
+      "placeholders": {
+        "mission": "Descreva a missão e história do museu...",
+        "address": "Rua, Número, Bairro, Cidade - UF"
+      },
+      "images": {
+        "title": "Imagens e Identidade Visual",
+        "logo": "Logo do Museu",
+        "cover": "Imagem de Capa (App)",
+        "appIcon": "Ícone do App",
+        "banner": "Banner Promocional",
+        "clickToUpload": "Clique para enviar imagem"
+      },
+      "map": {
+        "title": "Configuração de Mapa",
+        "floorPlan": "Planta Baixa (Indoor)",
+        "coordinates": "Coordenadas (Outdoor)"
+      },
+      "colors": {
+        "title": "Cores e Tema",
+        "primary": "Cor Primária",
+        "secondary": "Cor Secundária",
+        "theme": "Tema Padrão",
+        "light": "Claro",
+        "dark": "Escuro",
+        "historicalFont": "Usar fonte histórica (Serif)"
+      },
+      "preview": {
+        "title": "Visualização",
+        "text": "Este é um exemplo de como o texto ficará no aplicativo com as cores selecionadas.",
+        "button": "Botão Exemplo"
+      },
+      "saving": "Salvando...",
+      "save": "Salvar Configurações",
+      "success": "Configurações salvas com sucesso!",
+      "error": "Erro ao salvar configurações."
+    },
+    "trailForm": {
+      "editTitle": "Editar Trilha",
+      "newTitle": "Nova Trilha",
+      "subtitle": "Crie roteiros temáticos para os visitantes",
+      "labels": {
+        "name": "Nome da Trilha",
+        "description": "Descrição",
+        "works": "Adicionar Obras"
+      },
+      "placeholders": {
+        "name": "Ex: Trilha do Barroco"
+      },
+      "demoSave": "Modo Demo: Trilha salva localmente!",
+      "selectWork": "Selecione uma obra...",
+      "add": "Adicionar",
+      "orderTitle": "Ordem da trilha",
+      "orderSubtitle": "Arraste as obras para definir a ordem. Esta será a sequência sugerida ao visitante.",
+      "empty": "Nenhuma obra adicionada ainda. Clique em uma obra à esquerda para adicioná-la."
     },
     "dashboard": {
-        "title": "Painel de Controle"
+      "title": "Painel de Controle",
+      "subtitle": "Visão geral do museu",
+      "select": "Selecione...",
+      "loading": "Carregando...",
+      "empty": "Nenhuma conquista encontrada para este museu.",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "confirmDelete": "Tem certeza que deseja excluir esta conquista?",
+      "errorLoad": "Erro ao carregar conquistas",
+      "errorDelete": "Erro ao excluir conquista",
+      "stats": {
+        "visitors": "Visitantes este mês",
+        "qrScans": "Scans de QR Code",
+        "xpDistributed": "XP Distribuido",
+        "monthlyGrowth": "Crescimento Mensal"
+      },
+      "charts": {
+        "visitsByDay": "Visitas por Dia",
+        "accessBySource": "Acesso por Origem",
+        "xpByCategory": "XP por Categoria"
+      },
+      "upcomingBookings": "Próximas Reservas de Espaço",
+      "growth": {
+        "summary": "Resumo de Crescimento",
+        "weekly": "Semanal",
+        "monthly": "Mensual"
+      },
+      "topWorks": "Top Obras",
+      "topTrails": "Top Trilhas",
+      "topEvents": "Top Events",
+      "visits": "visitas",
+      "completions": "completados",
+      "views": "visualizações",
+      "days": {
+        "mon": "Seg",
+        "tue": "Ter",
+        "wed": "Qua",
+        "thu": "Qui",
+        "fri": "Sex",
+        "sat": "Sáb",
+        "sun": "Dom"
+      }
     },
-    "welcome": {
-        "title": "Cultura Viva",
-        "subtitle": "Sua jornada cultural começa aqui",
-        "firstTime": "Bem-vindo ao Cultura Viva, {{name}}!",
+    "works": {
+      "title": "Obras",
+      "subtitle": "Gerencie o acervo do museu",
+      "new": "Nova Obra",
+      "table": {
+        "title": "Título",
+        "artist": "Artista",
+        "status": "Status",
+        "actions": "Ações"
+      },
+      "status": {
+        "published": "Publicado",
+        "draft": "Rascunho"
+      }
+    },
+    "workForm": {
+      "editTitle": "Editar Obra",
+      "newTitle": "Nova Obra",
+      "subtitle": "Preencha os dados da obra",
+      "labels": {
+        "title": "Título",
+        "artist": "Artista",
+        "year": "Ano",
+        "category": "Categoria",
+        "room": "Sala",
+        "floor": "Andar",
+        "description": "Descrição",
+        "image": "Imagem da Obra",
+        "audio": "Áudio (Guia)",
+        "libras": "Vídeo (Libras)",
+        "publish": "Publicar imediatamente",
+        "id": "ID da Obra (Para QR Code)"
+      },
+      "success": {
+        "image": "Imagem enviada!",
+        "audio": "Áudio enviado!",
+        "libras": "Vídeo enviado!"
+      },
+      "defaultDescription": "Descrição completa da obra...",
+      "demoSave": "Modo Demo: Obra salva!"
+    },
+    "trails": {
+      "title": "Trilhas",
+      "subtitle": "Gerencie os roteiros do museu",
+      "confirmDelete": "Tem certeza que deseja excluir esta trilha?",
+      "new": "Nova Trilha",
+      "table": {
+        "name": "Nome",
+        "works": "Obras",
+        "status": "Status",
+        "actions": "Ações"
+      },
+      "status": {
+        "active": "Ativa",
+        "inactive": "Inativa"
+      }
+    },
+    "events": {
+      "title": "Eventos",
+      "subtitle": "Gerencie a programação cultural",
+      "new": "Novo Evento",
+      "table": {
+        "title": "Título",
+        "date": "Data",
+        "time": "Horário",
+        "status": "Status",
+        "actions": "Ações"
+      },
+      "status": {
+        "active": "Ativo",
+        "inactive": "Inativo"
+      }
+    },
+    "eventForm": {
+      "editTitle": "Editar Evento",
+      "newTitle": "Novo Evento",
+      "subtitle": "Preencha os dados do evento",
+      "labels": {
+        "title": "Nome do Evento",
+        "category": "Assunto / Categoria",
+        "format": "Formato",
+        "description": "Descrição",
+        "location": "Local",
+        "startDate": "Início",
+        "endDate": "Fim",
+        "coverImage": "Imagem de Capa (URL)",
+        "zipCode": "CEP",
+        "city": "Cidade",
+        "state": "Estado",
+        "address": "Endereço",
+        "number": "Número",
+        "platform": "Plataforma",
+        "meetingLink": "Link da Transmissão",
+        "producerName": "Nome do Produtor",
+        "producerDescription": "Descrição do Produtor",
+        "certificateBg": "Imagem de Fundo do Certificado",
+        "minMinutes": "Min. Minutos para Certificado",
+        "surveyRequired": "Exigir Pesquisa de Satisfação",
+        "visibility": "Visibilidade",
+        "audioUrl": "URL do Áudio Introdutório",
+        "videoUrl": "URL do Vídeo Promocional"
+      },
+      "steps": {
+        "basic": "Informações Básicas",
+        "whenWhere": "Quando e Onde",
+        "tickets": "Ingressos",
+        "promotion": "Divulgação"
+      },
+      "formats": {
+        "presential": "Presencial",
+        "online": "Online"
+      },
+      "visibility": {
+        "public": "Público",
+        "private": "Privado",
+        "publicDesc": "Visível para todos na busca",
+        "privateDesc": "Apenas quem tem o link"
+      },
+      "tickets": {
+        "title": "Ingressos",
+        "create": "Criar Ingresso",
+        "empty": "Nenhum ingresso criado ainda.",
+        "itemTitle": "Ingresso",
+        "name": "Nome",
+        "quantity": "Quantidade",
+        "type": "Tipo",
+        "price": "Preço",
+        "free": "Gratuito",
+        "paid": "Pago"
+      },
+      "placeholders": {
+        "title": "Ex: Oficina de Arte",
+        "description": "Detalhes do evento...",
+        "location": "Auditório Principal"
+      },
+      "demoSave": "Modo Demo: Evento salvo!"
+    },
+    "categories": {
+      "title": "Categorias",
+      "subtitle": "Gerencie as categorias do acervo",
+      "new": "Nova Categoria",
+      "table": {
+        "name": "Nome",
+        "description": "Descrição",
+        "actions": "Ações"
+      }
+    },
+    "categoryForm": {
+      "editTitle": "Editar Categoria",
+      "newTitle": "Nova Categoria",
+      "subtitle": "Preencha os dados da categoria",
+      "labels": {
+        "name": "Nome",
+        "type": "Tipo",
+        "description": "Descrição"
+      },
+      "types": {
+        "WORK": "Obra",
+        "TRAIL": "Trilha",
+        "EVENT": "Evento",
+        "GENERAL": "Geral"
+      },
+      "placeholders": {
+        "name": "Ex: Pintura",
+        "description": "Descrição da categoria..."
+      },
+      "demoSave": "Modo Demo: Categoria salva!"
+    },
+    "qrCodes": {
+      "title": "QR Codes",
+      "subtitle": "Gere e gerencie QR Codes para obras e locais",
+      "new": "Novo QR Code",
+      "cancel": "Cancelar",
+      "generate": "Gerar QR Code",
+      "download": "Baixar PNG",
+      "print": "Imprimir",
+      "listTitle": "QR Codes Gerados",
+      "helper": "ID interno do recurso (ex: ID da obra)",
+      "labels": {
+        "type": "Tipo de Recurso",
+        "reference": "ID de Referência",
+        "customUrl": "URL Personalizada"
+      },
+      "types": {
+        "work": "Obra",
+        "trail": "Trilha",
+        "event": "Evento",
+        "space": "Espaço",
+        "custom": "Link Externo"
+      },
+      "table": {
+        "code": "Código",
+        "type": "Tipo",
+        "reference": "Referência"
+      }
+    },
+    "visitors": {
+      "title": "Visitantes",
+      "subtitle": "Gerencie e acompanhe todos os visitantes do museu",
+      "history": "Histórico de Visitas",
+      "exportCSV": "Exportar CSV",
+      "totalVisitors": "Total de Visitantes",
+      "avgXP": "XP Médio",
+      "avgAge": "Idade Média",
+      "searchPlaceholder": "Buscar por nome ou email...",
+      "loading": "Carregando visitantes...",
+      "noData": "Nenhum visitante encontrado.",
+      "table": {
+        "name": "Nome",
+        "email": "Email",
+        "age": "Idade",
+        "xp": "XP",
+        "trails": "Trilhas",
+        "works": "Obras",
+        "lastAccess": "Último Acesso",
+        "actions": "Ações"
+      },
+      "viewDetails": "Ver Detalhes"
+    },
+    "achievements": {
+      "title": "Conquistas",
+      "subtitle": "Gerencie badges e achievements gamificadas para engajar visitantes",
+      "new": "Nova Conquista",
+      "stats": {
+        "total": "Total de Conquistas",
+        "active": "Ativas",
+        "unlocked": "Total Desbloqueadas"
+      },
+      "empty": "Nenhuma conquista cadastrada ainda.",
+      "createFirst": "Criar primeira conquista",
+      "card": {
+        "active": "Ativa",
+        "inactive": "Inativa",
+        "code": "Código",
+        "xp": "XP Recompensa",
+        "condition": "Condição",
+        "unlocked": "Desbloqueada",
+        "times": "vezes",
+        "auto": "Disparo Automático",
+        "edit": "Editar",
+        "disable": "Desativar",
+        "enable": "Ativar"
+      },
+      "alerts": {
+        "confirmDelete": "Tem certeza que deseja excluir esta conquista?",
+        "errorLoad": "Erro ao carregar conquistas",
+        "errorDelete": "Erro ao excluir conquista",
+        "errorUpdate": "Erro ao atualizar conquista"
+      }
+    },
+    "achievementForm": {
+      "editTitle": "Editar Conquista",
+      "newTitle": "Nova Conquista",
+      "editSubtitle": "Altere os dados da conquista",
+      "newSubtitle": "Crie uma nova conquista gamificada",
+      "sections": {
+        "basic": "Informações Básicas",
+        "automation": "Automação",
+        "status": "Status"
+      },
+      "labels": {
+        "code": "Código Único",
+        "title": "Título",
+        "description": "Descrição",
+        "xp": "XP Recompensa",
+        "icon": "Ícone da Conquista",
+        "autoTrigger": "Disparo Automático",
+        "triggerType": "Tipo de Gatilho",
+        "triggerValue": "Valor do Gatilho",
+        "condition": "Condição (texto explicativo)",
+        "active": "Conquista ativa"
+      },
+      "placeholders": {
+        "code": "Ex: PRIMEIRA_VISITA, COLECIONADOR_100",
+        "title": "Ex: Primeira Visita, Explorador de Obras",
+        "description": "Descreva como o visitante desbloqueia esta conquista",
+        "triggerValue": "Ex: 100 XP, 5 visitas, 3 trilhas",
+        "condition": "Ex: Atingir 100 XP, Visitar 5 obras, Concluir 3 trilhas"
+      },
+      "helpers": {
+        "codeEdit": "Código não pode ser alterado após criação",
+        "codeNew": "Use letras maiúsculas e underscore",
+        "clickUpload": "Clique para enviar imagem",
+        "autoTrigger": "Quando ativo, a conquista é desbloqueada automaticamente ao atingir a condição"
+      },
+      "triggers": {
+        "xp": "Atingir XP",
+        "visit": "Número de Visitas",
+        "trail": "Concluir Trilhas",
+        "category": "Completar Categoria",
+        "custom": "Personalizado"
+      },
+      "buttons": {
+        "saving": "Salvando...",
+        "saveEdit": "Salvar Alterações",
+        "saveNew": "Criar Conquista"
+      },
+      "alerts": {
+        "errorLoad": "Erro ao carregar conquista",
+        "required": "Código e título são obrigatórios",
+        "successUpdate": "Conquista atualizada!",
+        "successCreate": "Conquista criada!",
+        "errorSave": "Erro ao salvar conquista",
+        "errorUpload": "Erro ao fazer upload"
+      }
+    },
+    "aiAssistant": {
+      "title": "Assistente IA",
+      "subtitle": "Configure a personalidade e comportamento do chat IA do museu",
+      "sections": {
+        "prompt": "Instruções da IA",
+        "promptSubtitle": "Instruções principais que definem a personalidade e conhecimento da IA",
+        "context": "Contexto Histórico",
+        "references": "Referências Internas",
+        "referencesSubtitle": "URLs ou nomes de obras que a IA pode mencionar",
+        "advanced": "Parâmetros Avançados",
+        "test": "Testar Assistente",
+        "testSubtitle": "Faça perguntas para ver como a IA responde com as configurações atuais"
+      },
+      "labels": {
+        "systemPrompt": "Instruções Completas",
+        "tone": "Tom de Voz",
+        "style": "Estilo de Fala",
+        "context": "Informações sobre o Museu e Acervo",
+        "references": "Lista de Referências (uma por linha)",
+        "temperature": "Criatividade",
+        "maxTokens": "Tamanho da Resposta",
+        "testMessage": "Mensagem de Teste"
+      },
+      "placeholders": {
+        "systemPrompt": "Você é um guia cultural especializado em arte barroca mineira. Responda de forma educativa e envolvente...",
+        "context": "O museu foi fundado em 1750... Nosso acervo inclui peças do período colonial...",
+        "references": "Obra: Monalisa Colonial\nTrilha: Arte Sacra\nEvento: Exposição de Ouro",
+        "testMessage": "Me conte sobre o período barroco..."
+      },
+      "options": {
+        "tone": {
+          "formal": "Formal Educativo",
+          "friendly": "Amigável e Acessível",
+          "enthusiastic": "Entusiasta Apaixonado",
+          "academic": "Acadêmico Rigoroso"
+        },
+        "style": {
+          "historical": "Histórico-Cultural",
+          "contemporary": "Contemporâneo Dinâmico",
+          "poetic": "Poético Artístico",
+          "didactic": "Didático Simples"
+        }
+      },
+      "helpers": {
+        "temperature": "0 = Mais preciso, 1 = Mais criativo",
+        "maxTokens": "Tamanho máximo da resposta",
+        "tip": "Dica: Teste diferentes configurações para encontrar o tom ideal para seu museu. Lembre-se de configurar a variável OPENAI_API_KEY no backend."
+      },
+      "buttons": {
+        "testing": "Testando...",
+        "test": "Testar Resposta",
+        "saving": "Salvando...",
+        "save": "Salvar Configuração"
+      },
+      "alerts": {
+        "success": "Assistente IA configurado com sucesso!",
+        "errorSave": "Erro ao salvar configuração",
+        "emptyTest": "Digite uma mensagem para testar",
+        "errorTest": "Erro ao testar. Verifique suas credenciais OpenAI."
+      },
+      "response": "Resposta da IA:"
+    },
+    "inPersonServices": {
+      "title": "Configuração de Serviços Presenciais",
+      "subtitle": "Nesta tela, você pode escolher quais serviços presenciais (oferecidos pelo Master) estarão disponíveis para os visitantes agendarem em sua instituição.",
+      "available": "Serviços Disponíveis",
+      "empty": "Nenhum serviço disponibilizado pelo Master no momento.",
+      "activeBadge": "Ativo no Museu",
+      "disabledBadge": "Desativado",
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "bookingForm": {
+      "title": "Solicitar Serviço Presencial",
+      "subtitle": "Faça uma solicitação para intérprete de Libras, guias ou outros serviços para o seu equipamento."
+    }
+  },
+  "master": {
+    "dashboard": {
+      "title": "Dashboard Geral (Master)",
+      "subtitle": "Visão consolidada dos museus, cidades históricas e espaços culturais atendidos pela sua plataforma.",
+      "totalVisitors": "Total de Visitantes",
+      "totalVisitorsDesc": "Soma de todos os visitantes cadastrados em todos os clientes ativos.",
+      "totalVisits": "Total de Visitas",
+      "totalVisitsDesc": "Check-ins em obras, trilhas e espaços ao longo do tempo.",
+      "summaryByTenant": "Resumo por Cliente",
+      "table": {
+        "client": "Cliente",
+        "slug": "Link (URL)",
+        "works": "Obras",
+        "trails": "Trilhas",
+        "events": "Eventos",
+        "visitors": "Visitantes",
+        "visits": "Visitas"
+      }
+    },
+    "tenants": {
+      "title": "Instituições / Contas",
+      "subtitle": "Gerencie todas as instituições e cidades da plataforma.",
+      "new": "Nova Instituição",
+      "table": {
+        "name": "Nome",
+        "slug": "Link (URL)",
+        "createdAt": "Criado em",
+        "actions": "Ações",
+        "edit": "Editar"
+      }
+    },
+    "tenantForm": {
+      "editTitle": "Editar Instituição",
+      "newTitle": "Nova Instituição",
+      "subtitle": "Crie uma nova instituição ou cidade na plataforma.",
+      "labels": {
+        "name": "Nome",
+        "slug": "Link Personalizado (URL)",
+        "adminEmail": "Email do Administrador",
+        "adminName": "Nome do Administrador",
+        "adminPassword": "Senha Inicial",
+        "type": "Tipo de Instituição",
+        "plan": "Plano de Assinatura",
+        "maxWorks": "Limite de Obras"
+      },
+      "types": {
+        "museum": "Museu / Espaço Cultural",
+        "producer": "Produtora / Organizador de Eventos"
+      },
+      "placeholders": {
+        "name": "Ex: Museu de Arte Moderna",
+        "slug": "Ex: mam-sp",
+        "adminName": "Nome do Gestor",
+        "adminEmail": "email@museu.com",
+        "adminPassword": "Senha forte"
+      },
+      "helpers": {
+        "slug": "Identificador único na URL (ex: meumuseu.com/app/slug)"
+      },
+      "plans": {
+        "start": "Start (50 obras)",
+        "pro": "Pro (200 obras)",
+        "enterprise": "Enterprise (500 obras)",
+        "custom": "Personalizado"
+      }
+    },
+    "achievements": {
+      "title": "Gestão de Conquistas",
+      "subtitle": "Gerencie as conquistas gamificadas da plataforma",
+      "loading": "Carregando...",
+      "errorLoad": "Erro ao carregar conquistas",
+      "select": "Selecione...",
+      "empty": "Nenhuma conquista encontrada",
+      "confirmDelete": "Tem certeza que deseja excluir?",
+      "errorDelete": "Erro ao excluir",
+      "selectTenant": "Selecione uma instituição",
+      "new": "Nova Conquista",
+      "form": {
+        "selectTenantAlert": "Selecione uma instituição!",
+        "errorSave": "Erro ao salvar conquista",
+        "newTitle": "Nova Conquista",
+        "tenant": "Instituição",
+        "code": "Código",
+        "codePlaceholder": "Ex: BADGE_1",
+        "codeHelp": "Código único para identificação",
+        "title": "Título",
+        "titlePlaceholder": "Ex: Explorador Iniciante",
+        "description": "Descrição",
+        "descriptionPlaceholder": "Descrição da conquista...",
+        "imageUrl": "URL da Imagem / Ícone",
+        "imageUrlPlaceholder": "https://...",
+        "upload": "Upload",
+        "errorUpload": "Erro no upload",
+        "saving": "Salvando..."
+      }
+    },
+    "accessibility": {
+      "errorLoad": "Erro ao carregar solicitações",
+      "uploadCheckLibras": "Confirmar Upload de Libras",
+      "uploadCheckAudio": "Confirmar Upload de Áudio",
+      "success": "Sucesso",
+      "errorSubmit": "Erro ao enviar"
+    },
+    "users": {
+      "table": {
+        "name": "Nome",
+        "email": "E-mail",
+        "role": "Perfil",
+        "tenant": "Instituição",
+        "action": "Ações"
+      }
+    },
+    "inPersonServices": {
+      "heroBadge": "Serviços Presenciais",
+      "heroTitle": "Configuração e Demandas",
+      "heroSubtitle": "Gerencie os tipos de serviços oferecidos pelo Master e acompanhe os agendamentos realizados pelos museus.",
+      "card1Title": "Serviços Ofertados",
+      "card2Title": "Solicitações de Agendamento"
+    }
+  },
+  "producer": {
+    "layout": {
+      "title": "Área do Produtor",
+      "menu": {
+        "overview": "Visão Geral",
+        "projects": "Meus Projetos",
+        "tickets": "Bilheteria",
+        "audience": "Meu Público",
+        "services": "Contratar Serviços",
+        "reports": "Prestação de Contas",
+        "management": "Gestão"
+      },
+      "logout": "Sair"
+    },
+    "dashboard": {
+      "title": "Visão Geral do Produtor",
+      "subtitle": "Acompanhe o desempenho dos seus projetos em tempo real.",
+      "metrics": {
+        "revenue": "Receita de Ingressos",
+        "ticketsSold": "Ingressos Vendidos",
+        "activeEvents": "Eventos Ativos",
+        "rouanet": "Cota Rouanet",
+        "vsLastMonth": "vs mês anterior",
+        "accumulated": "Total acumulado",
+        "createNew": "Criar Novo",
+        "used": "da verba utilizada"
+      },
+      "nextEvents": {
+        "title": "Próximos Eventos",
+        "viewAll": "Ver todos",
+        "sales": "Vendas",
+        "manage": "Gerenciar",
+        "create": "Criar Novo Evento"
+      },
+      "services": {
+        "lbiTitle": "Pendências LBI",
+        "lbiText": "Seu evento precisa de audiodescrição para cumprir a lei.",
+        "hire": "Contratar Serviço",
+        "reports": "Relatórios",
+        "minc": "Prestação de Contas (MinC)",
+        "participants": "Exportar Lista de Participantes"
+      }
+    },
+    "tickets": {
+      "title": "Bilheteria",
+      "subtitle": "Gerencie lotes, preços e disponibilidade de ingressos.",
+      "newBatch": "Novo Lote",
+      "loading": "Carregando bilheteria...",
+      "status": {
+        "active": "Vendas Ativas",
+        "paused": "Pausado"
+      },
+      "price": "Preço",
+      "sold": "Vendidos",
+      "revenue": "Receita",
+      "free": "Grátis"
+    },
+    "reports": {
+      "title": "Prestação de Contas",
+      "subtitle": "Relatórios financeiros e de acessibilidade para Lei Rouanet.",
+      "metrics": {
+        "revenue": "Captação (Receita)",
+        "tickets": "Vendas de Ingressos",
+        "ticketsSold": "Ingressos Vendidos",
+        "totalIssued": "Total emitido",
+        "audience": "Público Presente",
+        "checkIns": "Total de check-ins realizados"
+      },
+      "available": "Relatórios Disponíveis",
+      "accessibility": {
+        "title": "Relatório de Acessibilidade",
+        "subtitle": "Compliance LBI (Lei 13.146)",
+        "desc": "Documento técnico comprovando a oferta de Libras, Audiodescrição e Acessibilidade Física no evento.",
+        "download": "Baixar PDF"
+      },
+      "financial": {
+        "title": "Prestação Financeira",
+        "subtitle": "Anexo IV - Execução",
+        "desc": "Exportação de todas as transações de bilheteria e vendas formatadas para o sistema Salic.",
+        "download": "Baixar Excel"
+      }
+    },
+    "accessibility": {
+      "errorLoad": "Erro ao carregar solicitações",
+      "uploadCheckLibras": "Comprovante Libras",
+      "uploadCheckAudio": "Comprovante Audiodescrição",
+      "success": "Solicitação atualizada com sucesso",
+      "errorSubmit": "Erro ao atualizar solicitação"
+    },
+    "users": {
+      "title": "Usuários Administrativos",
+      "subtitle": "Gerencie administradores de museus (ADMIN) e gestores da plataforma (MASTER).",
+      "new": "Novo Usuário",
+      "table": {
+        "name": "Nome",
+        "email": "E-mail",
+        "role": "Perfil",
+        "tenant": "Instituição",
+        "actions": "Ações",
+        "edit": "Editar"
+      }
+    },
+    "achievements": {
+      "title": "Gestão de Conquistas",
+      "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
+      "selectTenant": "Selecione um cliente para ver as conquistas",
+      "select": "Selecione...",
+      "empty": "Nenhuma conquista encontrada.",
+      "errorLoad": "Erro ao carregar conquistas.",
+      "new": "Nova Conquista",
+      "table": {
+        "icon": "Ícone",
+        "title": "Título",
+        "description": "Descrição",
+        "xp": "XP",
+        "actions": "Ações"
+      },
+      "form": {
+        "newTitle": "Nova Conquista",
+        "editTitle": "Editar Conquista",
+        "tenant": "Museu (Opcional)",
+        "select": "Selecione...",
+        "code": "Código (ID único)",
+        "codePlaceholder": "Ex: PRIMEIRA_VISITA",
+        "codeHelp": "Código único em maiúsculas (ex: VISITOR_100)",
+        "title": "Título",
+        "titlePlaceholder": "Ex: Explorador Iniciante",
+        "description": "Descrição",
+        "descriptionPlaceholder": "Descreva como ganhar esta conquista...",
+        "imageUrl": "Imagem / Ícone",
+        "imageUrlPlaceholder": "https://...",
+        "upload": "Enviar Arquivo",
+        "uploading": "Enviando...",
+        "saving": "Salvando...",
         "selectTenantAlert": "Selecione um museu!",
         "errorSave": "Erro ao salvar conquista",
         "errorUpload": "Erro ao fazer upload da imagem",
-        "returning": "Que bom te ver de novo, {{name}}!",
-        "explore": "Explorar",
-        "login": "Login"
+        "save": "Salvar",
+        "cancel": "Cancelar"
+      }
     },
-    "uploads": {
-        "title": "Galeria de Mídia",
-        "subtitle": "Gerencie todas as imagens, áudios e vídeos armazenados.",
-        "newUpload": "Novo Arquivo",
-        "stats": {
-            "total": "Arquivos Totais",
-            "usedSpace": "Espaço Usado",
-            "images": "Imagens"
-        }
-    },
-    "auth": {
-        "login": {
-            "title": "Acesse sua conta",
-            "email": "E-mail",
-            "password": "Senha",
-            "submit": "Entrar",
-            "forgotPassword": "Esqueci minha senha",
-            "noAccount": "Não tem uma conta? Cadastre-se"
-        },
-        "register": {
-            "title": "Crie sua conta",
-            "name": "Nome",
-            "email": "E-mail",
-            "password": "Senha",
-            "confirmPassword": "Confirme a senha",
-            "submit": "Cadastrar",
-            "hasAccount": "Já tem uma conta? Entre"
-        },
-        "errors": {
-            "generic": "Erro interno ao realizar cadastro. Tente novamente mais tarde.",
-            "termsRequired": "Você precisa aceitar os termos.",
-            "passwordMismatch": "As senhas não conferem.",
-            "registerFailed": "Falha no cadastro. Verifique os dados."
-        }
-    },
-    "visitor": {
-        "ai": {
-            "chatTitle": "Chat IA",
-            "welcome": "Olá! Sou o guia virtual do museu. Pergunte-me sobre obras, horários ou curiosidades!",
-            "askAboutWork": "Me fale sobre esta obra...",
-            "askAnything": "Pergunte qualquer coisa...",
-            "placeholder": "Digite sua pergunta aqui..."
-        },
-        "sidebar": {
-            "home": "Início",
-            "artworks": "Obras",
-            "trails": "Trilhas",
-            "map": "Mapa",
-            "events": "Eventos",
-            "favorites": "Favoritos",
-            "aiChat": "Chat IA",
-            "souvenir": "Souvenir",
-            "passport": "Passaporte",
-            "profile": "Meu Perfil",
-            "achievements": "Conquistas",
-            "visualScanner": "Scanner Visual",
-            "leaderboard": "Ranking",
-            "changeMuseum": "Trocar Museu",
-            "logout": "Sair",
-            "scheduling": "Agendamento",
-            "smartItinerary": "Roteiro Inteligente",
-            "treasureHunt": "Caça ao Tesouro",
-            "guestbook": "Livro de Visitas",
-            "installApp": "Instalar App",
-            "scanner": "Leitor QR"
-        },
-        "smartRoute": {
-            "title": "Roteiro Inteligente",
-            "subtitle": "Diga quanto tempo você tem, e nós criamos o trajeto.",
-            "generate": "✨ Gerar Meu Roteiro",
-            "tryAgain": "Tentar Outro",
-            "start": "Iniciar",
-            "works": "Obras"
-        },
-        "noResults": "Nenhum resultado encontrado.",
-        "dialer": {
-            "button": "Digitar Código"
-        },
-        "chat": {
-            "title": "Guia Virtual",
-            "placeholder": "Digite sua pergunta...",
-            "send": "Enviar",
-            "you": "Você",
-            "guide": "Guia",
-            "welcome": "Olá! Sou seu guia virtual. Pergunte-me sobre as obras ou o museu!",
-            "error": "Ocorreu um erro. Tente novamente."
-        },
-        "search": {
-            "title": "Buscar"
-        },
-        "home": {
-            "badge": "Bem-vindo",
-            "title": "Olá, {{name}}",
-            "subtitle": "Explore a história e a cultura dos nossos museus.",
-            "startTrail": "Começar Trilha",
-            "viewMap": "Ver Mapa",
-            "featuredArtworks": "Obras em Destaque",
-            "featuredSubtitle": "Conheça algumas das peças mais icônicas do nosso acervo.",
-            "exampleArtwork": "Obra Exemplo",
-            "guestArtist": "Artista Convidado",
-            "painting": "Pintura",
-            "accessible": "Acessível",
-            "exampleDisclaimer": "* Imagem meramente ilustrativa.",
-            "viewDetails": "Ver Detalhes",
-            "recommendedTrails": "Trilhas Recomendadas",
-            "trailsSubtitle": "Roteiros curados para você aproveitar ao máximo.",
-            "quickTrail": "Trilha Rápida",
-            "quickTrailDesc": "Ideal para quem tem pouco tempo.",
-            "museumSuggestion": "Sugestão do Museu",
-            "viewTrails": "Ver Trilhas",
-            "completeTrail": "Trilha Completa",
-            "completeTrailDesc": "Conheça todo o acervo em detalhes.",
-            "chooseTrail": "Escolher Trilha"
-        },
-        "scan": {
-            "title": "Escanear QR Code",
-            "instruction": "Aponte a câmera para o QR Code da obra",
-            "permission": "Precisamos de permissão para acessar a câmera"
-        },
-        "artwork": {
-            "details": "Detalhes da Obra",
-            "audioGuide": "Audioguia",
-            "play": "Ouvir",
-            "pause": "Pausar",
-            "badge": "Obra",
-            "location": "Localização",
-            "unknownRoom": "Sala não informada",
-            "unknownFloor": "andar não informado",
-            "imagePlaceholder": "Imagem indisponível.",
-            "description": "Descrição",
-            "noDescription": "Descrição não disponível",
-            "stopReading": "Parar Leitura",
-            "listenDescription": "Ouvir Descrição",
-            "defaultDescription": "Descrição completa da obra, incluindo contexto histórico, técnica utilizada, curiosidades e relação com o acervo.",
-            "accessibility": "Acessibilidade",
-            "audioDescription": "Audiodescrição",
-            "audioDescriptionText": "Narração com descrição dos elementos visuais da obra para pessoas cegas ou com baixa visão.",
-            "libras": "Libras",
-            "librasText": "Vídeo em Libras com a explicação principal sobre a obra, pensado para a comunidade surda.",
-            "aiInteraction": "Interação com IA",
-            "aiInteractionText": "Converse com nossa Inteligência Artificial para descobrir mais detalhes fascinantes sobre esta obra.",
-            "logout": "Sair",
-            "notFound": "Obra não encontrada",
-            "relatedWorks": "Obras Relacionadas",
-            "relatedWork": "Obra Relacionada",
-            "relatedArtist": "Artista Relacionado",
-            "viewDetails": "Ver Detalhes"
-        },
-        "selectMuseum": {
-            "title": "Selecione o Museu",
-            "subtitle": "Escolha o museu que deseja visitar",
-            "loading": "Carregando museus...",
-            "errorLoading": "Falha ao carregar lista de museus.",
-            "noMuseums": "Nenhum museu encontrado.",
-            "adminHint": "Dica: Cadastre um museu no painel Master para começar."
-        },
-        "favorites": {
-            "title": "Seus Favoritos",
-            "subtitle": "Obras e trilhas que você amou",
-            "empty": "Você ainda não tem favoritos.",
-            "explore": "Explorar Obras"
-        },
-        "museums": {
-            "title": "Gerenciar Museus",
-            "add": "Adicionar Museu",
-            "name": "Nome do Museu",
-            "location": "Localização"
-        },
-        "artworks": {
-            "title": "Gerenciar Obras",
-            "add": "Adicionar Obra",
-            "name": "Título da Obra",
-            "artist": "Artista",
-            "description": "Descrição"
-        },
-        "works": {
-            "title": "Galeria de Obras",
-            "subtitle": "Explore o acervo completo do museu"
-        },
-        "map": {
-            "title": "Mapa Interativo",
-            "subtitle": "Navegue pelo museu e encontre as obras",
-            "legend": "Legenda",
-            "generate": "Gerar Souvenir",
-            "error": "Erro ao gerar souvenir."
-        },
-        "trails": {
-            "title": "Trilhas",
-            "subtitle": "Roteiros temáticos para sua visita",
-            "mapTracking": "Acompanhamento no mapa",
-            "viewDetails": "Ver Detalhes",
-            "badge": "Trilha"
-        },
-        "trailDetail": {
-            "loading": "Carregando trilha...",
-            "about": "Sobre a trilha",
-            "artworks": "Obras nesta trilha",
-            "clickDetails": "Clique para ver detalhes",
-            "notFound": "Trilha não encontrada"
-        },
-        "events": {
-            "title": "Eventos",
-            "subtitle": "Confira a programação cultural",
-            "location": "Local"
-        },
-        "eventDetail": {
-            "notFound": "Evento não encontrado.",
-            "backToEvents": "Voltar para Eventos",
-            "about": "Sobre o evento",
-            "participateAlert": "Para participar, dirija-se ao local do evento no horário marcado.",
-            "participate": "Participar"
-        },
-        "passport": {
-            "title": "Meu Passaporte",
-            "subtitle": "Seu registro de visitas e experiências",
-            "totalXp": "XP Total",
-            "work": "Obra",
-            "visitedAt": "Visitado em"
-        },
-        "achievements": {
-            "title": "Conquistas",
-            "subtitle": "Suas medalhas e prêmios"
-        },
-        "visualScanner": {
-            "title": "Reconhecimento Visual",
-            "loadingModel": "Carregando modelo de IA...",
-            "loadingWorks": "Carregando obras para reconhecimento...",
-            "startCamera": "Iniciar Câmera",
-            "stopCamera": "Parar Câmera",
-            "noArtworks": "Nenhuma obra cadastrada para reconhecimento.",
-            "instruction": "Aponte a câmera para uma obra para identificá-la.",
-            "analyzing": "Analisando...",
-            "confidence": "Confiança",
-            "viewDetails": "Ver Detalhes"
-        },
-        "leaderboard": {
-            "title": "Ranking Global",
-            "subtitle": "Os maiores exploradores da cultura",
-            "rank": "Posição",
-            "visitor": "Visitante",
-            "xp": "XP",
-            "loading": "Carregando ranking...",
-            "empty": "Nenhum visitante pontuou ainda."
-        },
-        "treasure": {
-            "title": "Caça ao Tesouro",
-            "subtitle": "Decifre as charadas, encontre as obras e ganhe recompensas!",
-            "noClues": "Nenhuma pista disponível no momento.",
-            "clue": "Pista",
-            "completed": "Você encontrou o tesouro!"
-        },
-        "itinerary": {
-            "title": "Planeje sua Visita",
-            "timeQuestion": "Quanto tempo você tem?",
-            "interestsQuestion": "O que você gosta?",
-            "accessibilityQuestion": "Necessidades de Acessibilidade",
-            "generate": "Gerar Roteiro"
-        }
-    },
-    "admin": {
-        "sidebar": {
-            "dashboard": "Painel de Controle",
-            "artworks": "Obras",
-            "trails": "Trilhas",
-            "events": "Eventos",
-            "qrcodes": "QR Codes",
-            "categories": "Categorias",
-            "visitors": "Visitantes",
-            "achievements": "Conquistas",
-            "ai": "Assistente IA",
-            "analytics": "Estatísticas",
-            "uploads": "Galeria de Mídia",
-            "users": "Usuários",
-            "treasureHunt": "Caça ao Tesouro",
-            "settings": "Configurações",
-            "reviews": "Moderação",
-            "shop": "Loja",
-            "scanner": "Leitor IA",
-            "logout": "Sair"
-        },
-        "scanner": {
-            "title": "Treinamento do Scanner IA",
-            "subtitle": "Gerencie as classes e treine o modelo para reconhecer obras."
-        },
-        "errors": {
-            "delete": "Erro ao excluir item",
-            "save": "Erro ao salvar dados"
-        },
-        "treasure": {
-            "title": "Caça ao Tesouro",
-            "subtitle": "Gerencie as pistas e recompensas.",
-            "add": "Nova Pista",
-            "automatedTitle": "Título Automático",
-            "automatedDescription": "Descrição Automática"
-        },
-        "uploads": {
-            "title": "Galeria de Mídia",
-            "subtitle": "Visualize e gerencie todos os arquivos de mídia do museu",
-            "newUpload": "Novo Upload",
-            "stats": {
-                "total": "Total de Arquivos",
-                "usedSpace": "Espaço Utilizado",
-                "images": "Imagens"
-            }
-        },
-        "museums": {
-            "title": "Visão Geral do Museu"
-        },
-        "museumSettings": {
-            "title": "Configurações do Museu",
-            "subtitle": "Personalize a aparência e informações do seu museu",
-            "institutionalData": "Dados Institucionais",
-            "labels": {
-                "name": "Nome do Museu",
-                "mission": "Missão / Descrição",
-                "address": "Endereço",
-                "openingHours": "Horário de Funcionamento",
-                "whatsapp": "WhatsApp",
-                "email": "E-mail de Contato",
-                "website": "Site Oficial"
-            },
-            "placeholders": {
-                "mission": "Descreva a missão e história do museu...",
-                "address": "Rua, Número, Bairro, Cidade - UF"
-            },
-            "images": {
-                "title": "Imagens e Identidade Visual",
-                "logo": "Logo do Museu",
-                "cover": "Imagem de Capa (App)",
-                "appIcon": "Ícone do App",
-                "banner": "Banner Promocional",
-                "clickToUpload": "Clique para enviar imagem"
-            },
-            "map": {
-                "title": "Configuração de Mapa",
-                "floorPlan": "Planta Baixa (Indoor)",
-                "coordinates": "Coordenadas (Outdoor)"
-            },
-            "colors": {
-                "title": "Cores e Tema",
-                "primary": "Cor Primária",
-                "secondary": "Cor Secundária",
-                "theme": "Tema Padrão",
-                "light": "Claro",
-                "dark": "Escuro",
-                "historicalFont": "Usar fonte histórica (Serif)"
-            },
-            "preview": {
-                "title": "Visualização",
-                "text": "Este é um exemplo de como o texto ficará no aplicativo com as cores selecionadas.",
-                "button": "Botão Exemplo"
-            },
-            "saving": "Salvando...",
-            "save": "Salvar Configurações",
-            "success": "Configurações salvas com sucesso!",
-            "error": "Erro ao salvar configurações."
-        },
-        "trailForm": {
-            "editTitle": "Editar Trilha",
-            "newTitle": "Nova Trilha",
-            "subtitle": "Crie roteiros temáticos para os visitantes",
-            "labels": {
-                "name": "Nome da Trilha",
-                "description": "Descrição",
-                "works": "Adicionar Obras"
-            },
-            "placeholders": {
-                "name": "Ex: Trilha do Barroco"
-            },
-            "demoSave": "Modo Demo: Trilha salva localmente!",
-            "selectWork": "Selecione uma obra...",
-            "add": "Adicionar",
-            "orderTitle": "Ordem da trilha",
-            "orderSubtitle": "Arraste as obras para definir a ordem. Esta será a sequência sugerida ao visitante.",
-            "empty": "Nenhuma obra adicionada ainda. Clique em uma obra à esquerda para adicioná-la."
-        },
-        "dashboard": {
-            "title": "Painel de Controle",
-            "subtitle": "Visão geral do museu",
-            "select": "Selecione...",
-            "loading": "Carregando...",
-            "empty": "Nenhuma conquista encontrada para este museu.",
-            "edit": "Editar",
-            "delete": "Excluir",
-            "confirmDelete": "Tem certeza que deseja excluir esta conquista?",
-            "errorLoad": "Erro ao carregar conquistas",
-            "errorDelete": "Erro ao excluir conquista",
-            "stats": {
-                "visitors": "Visitantes este mês",
-                "qrScans": "Scans de QR Code",
-                "xpDistributed": "XP Distribuido",
-                "monthlyGrowth": "Crescimento Mensal"
-            },
-            "charts": {
-                "visitsByDay": "Visitas por Dia",
-                "accessBySource": "Acesso por Origem",
-                "xpByCategory": "XP por Categoria"
-            },
-            "upcomingBookings": "Próximas Reservas de Espaço",
-            "growth": {
-                "summary": "Resumo de Crescimento",
-                "weekly": "Semanal",
-                "monthly": "Mensual"
-            },
-            "topWorks": "Top Obras",
-            "topTrails": "Top Trilhas",
-            "topEvents": "Top Events",
-            "visits": "visitas",
-            "completions": "completados",
-            "views": "visualizações",
-            "days": {
-                "mon": "Seg",
-                "tue": "Ter",
-                "wed": "Qua",
-                "thu": "Qui",
-                "fri": "Sex",
-                "sat": "Sáb",
-                "sun": "Dom"
-            }
-        },
-        "works": {
-            "title": "Obras",
-            "subtitle": "Gerencie o acervo do museu",
-            "new": "Nova Obra",
-            "table": {
-                "title": "Título",
-                "artist": "Artista",
-                "status": "Status",
-                "actions": "Ações"
-            },
-            "status": {
-                "published": "Publicado",
-                "draft": "Rascunho"
-            }
-        },
-        "workForm": {
-            "editTitle": "Editar Obra",
-            "newTitle": "Nova Obra",
-            "subtitle": "Preencha os dados da obra",
-            "labels": {
-                "title": "Título",
-                "artist": "Artista",
-                "year": "Ano",
-                "category": "Categoria",
-                "room": "Sala",
-                "floor": "Andar",
-                "description": "Descrição",
-                "image": "Imagem da Obra",
-                "audio": "Áudio (Guia)",
-                "libras": "Vídeo (Libras)",
-                "publish": "Publicar imediatamente",
-                "id": "ID da Obra (Para QR Code)"
-            },
-            "success": {
-                "image": "Imagem enviada!",
-                "audio": "Áudio enviado!",
-                "libras": "Vídeo enviado!"
-            },
-            "defaultDescription": "Descrição completa da obra...",
-            "demoSave": "Modo Demo: Obra salva!"
-        },
-        "trails": {
-            "title": "Trilhas",
-            "subtitle": "Gerencie os roteiros do museu",
-            "confirmDelete": "Tem certeza que deseja excluir esta trilha?",
-            "new": "Nova Trilha",
-            "table": {
-                "name": "Nome",
-                "works": "Obras",
-                "status": "Status",
-                "actions": "Ações"
-            },
-            "status": {
-                "active": "Ativa",
-                "inactive": "Inativa"
-            }
-        },
-        "events": {
-            "title": "Eventos",
-            "subtitle": "Gerencie a programação cultural",
-            "new": "Novo Evento",
-            "table": {
-                "title": "Título",
-                "date": "Data",
-                "time": "Horário",
-                "status": "Status",
-                "actions": "Ações"
-            },
-            "status": {
-                "active": "Ativo",
-                "inactive": "Inativo"
-            }
-        },
-        "eventForm": {
-            "editTitle": "Editar Evento",
-            "newTitle": "Novo Evento",
-            "subtitle": "Preencha os dados do evento",
-            "labels": {
-                "title": "Nome do Evento",
-                "category": "Assunto / Categoria",
-                "format": "Formato",
-                "description": "Descrição",
-                "location": "Local",
-                "startDate": "Início",
-                "endDate": "Fim",
-                "coverImage": "Imagem de Capa (URL)",
-                "zipCode": "CEP",
-                "city": "Cidade",
-                "state": "Estado",
-                "address": "Endereço",
-                "number": "Número",
-                "platform": "Plataforma",
-                "meetingLink": "Link da Transmissão",
-                "producerName": "Nome do Produtor",
-                "producerDescription": "Descrição do Produtor",
-                "certificateBg": "Imagem de Fundo do Certificado",
-                "minMinutes": "Min. Minutos para Certificado",
-                "surveyRequired": "Exigir Pesquisa de Satisfação",
-                "visibility": "Visibilidade",
-                "audioUrl": "URL do Áudio Introdutório",
-                "videoUrl": "URL do Vídeo Promocional"
-            },
-            "steps": {
-                "basic": "Informações Básicas",
-                "whenWhere": "Quando e Onde",
-                "tickets": "Ingressos",
-                "promotion": "Divulgação"
-            },
-            "formats": {
-                "presential": "Presencial",
-                "online": "Online"
-            },
-            "visibility": {
-                "public": "Público",
-                "private": "Privado",
-                "publicDesc": "Visível para todos na busca",
-                "privateDesc": "Apenas quem tem o link"
-            },
-            "tickets": {
-                "title": "Ingressos",
-                "create": "Criar Ingresso",
-                "empty": "Nenhum ingresso criado ainda.",
-                "itemTitle": "Ingresso",
-                "name": "Nome",
-                "quantity": "Quantidade",
-                "type": "Tipo",
-                "price": "Preço",
-                "free": "Gratuito",
-                "paid": "Pago"
-            },
-            "placeholders": {
-                "title": "Ex: Oficina de Arte",
-                "description": "Detalhes do evento...",
-                "location": "Auditório Principal"
-            },
-            "demoSave": "Modo Demo: Evento salvo!"
-        },
-        "categories": {
-            "title": "Categorias",
-            "subtitle": "Gerencie as categorias do acervo",
-            "new": "Nova Categoria",
-            "table": {
-                "name": "Nome",
-                "description": "Descrição",
-                "actions": "Ações"
-            }
-        },
-        "categoryForm": {
-            "editTitle": "Editar Categoria",
-            "newTitle": "Nova Categoria",
-            "subtitle": "Preencha os dados da categoria",
-            "labels": {
-                "name": "Nome",
-                "type": "Tipo",
-                "description": "Descrição"
-            },
-            "types": {
-                "WORK": "Obra",
-                "TRAIL": "Trilha",
-                "EVENT": "Evento",
-                "GENERAL": "Geral"
-            },
-            "placeholders": {
-                "name": "Ex: Pintura",
-                "description": "Descrição da categoria..."
-            },
-            "demoSave": "Modo Demo: Categoria salva!"
-        },
-        "qrCodes": {
-            "title": "QR Codes",
-            "subtitle": "Gere e gerencie QR Codes para obras e locais",
-            "new": "Novo QR Code",
-            "cancel": "Cancelar",
-            "generate": "Gerar QR Code",
-            "download": "Baixar PNG",
-            "print": "Imprimir",
-            "listTitle": "QR Codes Gerados",
-            "helper": "ID interno do recurso (ex: ID da obra)",
-            "labels": {
-                "type": "Tipo de Recurso",
-                "reference": "ID de Referência",
-                "customUrl": "URL Personalizada"
-            },
-            "types": {
-                "work": "Obra",
-                "trail": "Trilha",
-                "event": "Evento",
-                "space": "Espaço",
-                "custom": "Link Externo"
-            },
-            "table": {
-                "code": "Código",
-                "type": "Tipo",
-                "reference": "Referência"
-            }
-        },
-        "visitors": {
-            "title": "Visitantes",
-            "subtitle": "Gerencie e acompanhe todos os visitantes do museu",
-            "history": "Histórico de Visitas",
-            "exportCSV": "Exportar CSV",
-            "totalVisitors": "Total de Visitantes",
-            "avgXP": "XP Médio",
-            "avgAge": "Idade Média",
-            "searchPlaceholder": "Buscar por nome ou email...",
-            "loading": "Carregando visitantes...",
-            "noData": "Nenhum visitante encontrado.",
-            "table": {
-                "name": "Nome",
-                "email": "Email",
-                "age": "Idade",
-                "xp": "XP",
-                "trails": "Trilhas",
-                "works": "Obras",
-                "lastAccess": "Último Acesso",
-                "actions": "Ações"
-            },
-            "viewDetails": "Ver Detalhes"
-        },
-        "achievements": {
-            "title": "Conquistas",
-            "subtitle": "Gerencie badges e achievements gamificadas para engajar visitantes",
-            "new": "Nova Conquista",
-            "stats": {
-                "total": "Total de Conquistas",
-                "active": "Ativas",
-                "unlocked": "Total Desbloqueadas"
-            },
-            "empty": "Nenhuma conquista cadastrada ainda.",
-            "createFirst": "Criar primeira conquista",
-            "card": {
-                "active": "Ativa",
-                "inactive": "Inativa",
-                "code": "Código",
-                "xp": "XP Recompensa",
-                "condition": "Condição",
-                "unlocked": "Desbloqueada",
-                "times": "vezes",
-                "auto": "Disparo Automático",
-                "edit": "Editar",
-                "disable": "Desativar",
-                "enable": "Ativar"
-            },
-            "alerts": {
-                "confirmDelete": "Tem certeza que deseja excluir esta conquista?",
-                "errorLoad": "Erro ao carregar conquistas",
-                "errorDelete": "Erro ao excluir conquista",
-                "errorUpdate": "Erro ao atualizar conquista"
-            }
-        },
-        "achievementForm": {
-            "editTitle": "Editar Conquista",
-            "newTitle": "Nova Conquista",
-            "editSubtitle": "Altere os dados da conquista",
-            "newSubtitle": "Crie uma nova conquista gamificada",
-            "sections": {
-                "basic": "Informações Básicas",
-                "automation": "Automação",
-                "status": "Status"
-            },
-            "labels": {
-                "code": "Código Único",
-                "title": "Título",
-                "description": "Descrição",
-                "xp": "XP Recompensa",
-                "icon": "Ícone da Conquista",
-                "autoTrigger": "Disparo Automático",
-                "triggerType": "Tipo de Gatilho",
-                "triggerValue": "Valor do Gatilho",
-                "condition": "Condição (texto explicativo)",
-                "active": "Conquista ativa"
-            },
-            "placeholders": {
-                "code": "Ex: PRIMEIRA_VISITA, COLECIONADOR_100",
-                "title": "Ex: Primeira Visita, Explorador de Obras",
-                "description": "Descreva como o visitante desbloqueia esta conquista",
-                "triggerValue": "Ex: 100 XP, 5 visitas, 3 trilhas",
-                "condition": "Ex: Atingir 100 XP, Visitar 5 obras, Concluir 3 trilhas"
-            },
-            "helpers": {
-                "codeEdit": "Código não pode ser alterado após criação",
-                "codeNew": "Use letras maiúsculas e underscore",
-                "clickUpload": "Clique para enviar imagem",
-                "autoTrigger": "Quando ativo, a conquista é desbloqueada automaticamente ao atingir a condição"
-            },
-            "triggers": {
-                "xp": "Atingir XP",
-                "visit": "Número de Visitas",
-                "trail": "Concluir Trilhas",
-                "category": "Completar Categoria",
-                "custom": "Personalizado"
-            },
-            "buttons": {
-                "saving": "Salvando...",
-                "saveEdit": "Salvar Alterações",
-                "saveNew": "Criar Conquista"
-            },
-            "alerts": {
-                "errorLoad": "Erro ao carregar conquista",
-                "required": "Código e título são obrigatórios",
-                "successUpdate": "Conquista atualizada!",
-                "successCreate": "Conquista criada!",
-                "errorSave": "Erro ao salvar conquista",
-                "errorUpload": "Erro ao fazer upload"
-            }
-        },
-        "aiAssistant": {
-            "title": "Assistente IA",
-            "subtitle": "Configure a personalidade e comportamento do chat IA do museu",
-            "sections": {
-                "prompt": "Instruções da IA",
-                "promptSubtitle": "Instruções principais que definem a personalidade e conhecimento da IA",
-                "context": "Contexto Histórico",
-                "references": "Referências Internas",
-                "referencesSubtitle": "URLs ou nomes de obras que a IA pode mencionar",
-                "advanced": "Parâmetros Avançados",
-                "test": "Testar Assistente",
-                "testSubtitle": "Faça perguntas para ver como a IA responde com as configurações atuais"
-            },
-            "labels": {
-                "systemPrompt": "Instruções Completas",
-                "tone": "Tom de Voz",
-                "style": "Estilo de Fala",
-                "context": "Informações sobre o Museu e Acervo",
-                "references": "Lista de Referências (uma por linha)",
-                "temperature": "Criatividade",
-                "maxTokens": "Tamanho da Resposta",
-                "testMessage": "Mensagem de Teste"
-            },
-            "placeholders": {
-                "systemPrompt": "Você é um guia cultural especializado em arte barroca mineira. Responda de forma educativa e envolvente...",
-                "context": "O museu foi fundado em 1750... Nosso acervo inclui peças do período colonial...",
-                "references": "Obra: Monalisa Colonial\nTrilha: Arte Sacra\nEvento: Exposição de Ouro",
-                "testMessage": "Me conte sobre o período barroco..."
-            },
-            "options": {
-                "tone": {
-                    "formal": "Formal Educativo",
-                    "friendly": "Amigável e Acessível",
-                    "enthusiastic": "Entusiasta Apaixonado",
-                    "academic": "Acadêmico Rigoroso"
-                },
-                "style": {
-                    "historical": "Histórico-Cultural",
-                    "contemporary": "Contemporâneo Dinâmico",
-                    "poetic": "Poético Artístico",
-                    "didactic": "Didático Simples"
-                }
-            },
-            "helpers": {
-                "temperature": "0 = Mais preciso, 1 = Mais criativo",
-                "maxTokens": "Tamanho máximo da resposta",
-                "tip": "Dica: Teste diferentes configurações para encontrar o tom ideal para seu museu. Lembre-se de configurar a variável OPENAI_API_KEY no backend."
-            },
-            "buttons": {
-                "testing": "Testando...",
-                "test": "Testar Resposta",
-                "saving": "Salvando...",
-                "save": "Salvar Configuração"
-            },
-            "alerts": {
-                "success": "Assistente IA configurado com sucesso!",
-                "errorSave": "Erro ao salvar configuração",
-                "emptyTest": "Digite uma mensagem para testar",
-                "errorTest": "Erro ao testar. Verifique suas credenciais OpenAI."
-            },
-            "response": "Resposta da IA:"
-        }
-    },
-    "master": {
-        "dashboard": {
-            "title": "Dashboard Geral (Master)",
-            "subtitle": "Visão consolidada dos museus, cidades históricas e espaços culturais atendidos pela sua plataforma.",
-            "totalVisitors": "Total de Visitantes",
-            "totalVisitorsDesc": "Soma de todos os visitantes cadastrados em todos os clientes ativos.",
-            "totalVisits": "Total de Visitas",
-            "totalVisitsDesc": "Check-ins em obras, trilhas e espaços ao longo do tempo.",
-            "summaryByTenant": "Resumo por Cliente",
-            "table": {
-                "client": "Cliente",
-                "slug": "Link (URL)",
-                "works": "Obras",
-                "trails": "Trilhas",
-                "events": "Eventos",
-                "visitors": "Visitantes",
-                "visits": "Visitas"
-            }
-        },
-        "tenants": {
-            "title": "Instituições / Contas",
-            "subtitle": "Gerencie todas as instituições e cidades da plataforma.",
-            "new": "Nova Instituição",
-            "table": {
-                "name": "Nome",
-                "slug": "Link (URL)",
-                "createdAt": "Criado em",
-                "actions": "Ações",
-                "edit": "Editar"
-            }
-        },
-        "tenantForm": {
-            "editTitle": "Editar Instituição",
-            "newTitle": "Nova Instituição",
-            "subtitle": "Crie uma nova instituição ou cidade na plataforma.",
-            "labels": {
-                "name": "Nome",
-                "slug": "Link Personalizado (URL)",
-                "adminEmail": "Email do Administrador",
-                "adminName": "Nome do Administrador",
-                "adminPassword": "Senha Inicial",
-                "type": "Tipo de Instituição",
-                "plan": "Plano de Assinatura",
-                "maxWorks": "Limite de Obras"
-            },
-            "types": {
-                "museum": "Museu / Espaço Cultural",
-                "producer": "Produtora / Organizador de Eventos"
-            },
-            "placeholders": {
-                "name": "Ex: Museu de Arte Moderna",
-                "slug": "Ex: mam-sp",
-                "adminName": "Nome do Gestor",
-                "adminEmail": "email@museu.com",
-                "adminPassword": "Senha forte"
-            },
-            "helpers": {
-                "slug": "Identificador único na URL (ex: meumuseu.com/app/slug)"
-            },
-            "plans": {
-                "start": "Start (50 obras)",
-                "pro": "Pro (200 obras)",
-                "enterprise": "Enterprise (500 obras)",
-                "custom": "Personalizado"
-            }
-        },
-        "achievements": {
-            "title": "Gestão de Conquistas",
-            "subtitle": "Gerencie as conquistas gamificadas da plataforma",
-            "loading": "Carregando...",
-            "errorLoad": "Erro ao carregar conquistas",
-            "select": "Selecione...",
-            "empty": "Nenhuma conquista encontrada",
-            "confirmDelete": "Tem certeza que deseja excluir?",
-            "errorDelete": "Erro ao excluir",
-            "selectTenant": "Selecione uma instituição",
-            "new": "Nova Conquista",
-            "form": {
-                "selectTenantAlert": "Selecione uma instituição!",
-                "errorSave": "Erro ao salvar conquista",
-                "newTitle": "Nova Conquista",
-                "tenant": "Instituição",
-                "code": "Código",
-                "codePlaceholder": "Ex: BADGE_1",
-                "codeHelp": "Código único para identificação",
-                "title": "Título",
-                "titlePlaceholder": "Ex: Explorador Iniciante",
-                "description": "Descrição",
-                "descriptionPlaceholder": "Descrição da conquista...",
-                "imageUrl": "URL da Imagem / Ícone",
-                "imageUrlPlaceholder": "https://...",
-                "upload": "Upload",
-                "errorUpload": "Erro no upload",
-                "saving": "Salvando..."
-            }
-        },
-        "accessibility": {
-            "errorLoad": "Erro ao carregar solicitações",
-            "uploadCheckLibras": "Confirmar Upload de Libras",
-            "uploadCheckAudio": "Confirmar Upload de Áudio",
-            "success": "Sucesso",
-            "errorSubmit": "Erro ao enviar"
-        },
-        "users": {
-            "table": {
-                "name": "Nome",
-                "email": "E-mail",
-                "role": "Perfil",
-                "tenant": "Instituição",
-                "action": "Ações"
-            }
-        }
-    },
-    "producer": {
-        "layout": {
-            "title": "Área do Produtor",
-            "menu": {
-                "overview": "Visão Geral",
-                "projects": "Meus Projetos",
-                "tickets": "Bilheteria",
-                "audience": "Meu Público",
-                "services": "Contratar Serviços",
-                "reports": "Prestação de Contas",
-                "management": "Gestão"
-            },
-            "logout": "Sair"
-        },
-        "dashboard": {
-            "title": "Visão Geral do Produtor",
-            "subtitle": "Acompanhe o desempenho dos seus projetos em tempo real.",
-            "metrics": {
-                "revenue": "Receita de Ingressos",
-                "ticketsSold": "Ingressos Vendidos",
-                "activeEvents": "Eventos Ativos",
-                "rouanet": "Cota Rouanet",
-                "vsLastMonth": "vs mês anterior",
-                "accumulated": "Total acumulado",
-                "createNew": "Criar Novo",
-                "used": "da verba utilizada"
-            },
-            "nextEvents": {
-                "title": "Próximos Eventos",
-                "viewAll": "Ver todos",
-                "sales": "Vendas",
-                "manage": "Gerenciar",
-                "create": "Criar Novo Evento"
-            },
-            "services": {
-                "lbiTitle": "Pendências LBI",
-                "lbiText": "Seu evento precisa de audiodescrição para cumprir a lei.",
-                "hire": "Contratar Serviço",
-                "reports": "Relatórios",
-                "minc": "Prestação de Contas (MinC)",
-                "participants": "Exportar Lista de Participantes"
-            }
-        },
-        "tickets": {
-            "title": "Bilheteria",
-            "subtitle": "Gerencie lotes, preços e disponibilidade de ingressos.",
-            "newBatch": "Novo Lote",
-            "loading": "Carregando bilheteria...",
-            "status": {
-                "active": "Vendas Ativas",
-                "paused": "Pausado"
-            },
-            "price": "Preço",
-            "sold": "Vendidos",
-            "revenue": "Receita",
-            "free": "Grátis"
-        },
-        "reports": {
-            "title": "Prestação de Contas",
-            "subtitle": "Relatórios financeiros e de acessibilidade para Lei Rouanet.",
-            "metrics": {
-                "revenue": "Captação (Receita)",
-                "tickets": "Vendas de Ingressos",
-                "ticketsSold": "Ingressos Vendidos",
-                "totalIssued": "Total emitido",
-                "audience": "Público Presente",
-                "checkIns": "Total de check-ins realizados"
-            },
-            "available": "Relatórios Disponíveis",
-            "accessibility": {
-                "title": "Relatório de Acessibilidade",
-                "subtitle": "Compliance LBI (Lei 13.146)",
-                "desc": "Documento técnico comprovando a oferta de Libras, Audiodescrição e Acessibilidade Física no evento.",
-                "download": "Baixar PDF"
-            },
-            "financial": {
-                "title": "Prestação Financeira",
-                "subtitle": "Anexo IV - Execução",
-                "desc": "Exportação de todas as transações de bilheteria e vendas formatadas para o sistema Salic.",
-                "download": "Baixar Excel"
-            }
-        },
-        "accessibility": {
-            "errorLoad": "Erro ao carregar solicitações",
-            "uploadCheckLibras": "Comprovante Libras",
-            "uploadCheckAudio": "Comprovante Audiodescrição",
-            "success": "Solicitação atualizada com sucesso",
-            "errorSubmit": "Erro ao atualizar solicitação"
-        },
-        "users": {
-            "title": "Usuários Administrativos",
-            "subtitle": "Gerencie administradores de museus (ADMIN) e gestores da plataforma (MASTER).",
-            "new": "Novo Usuário",
-            "table": {
-                "name": "Nome",
-                "email": "E-mail",
-                "role": "Perfil",
-                "tenant": "Instituição",
-                "actions": "Ações",
-                "edit": "Editar"
-            }
-        },
-        "achievements": {
-            "title": "Gestão de Conquistas",
-            "subtitle": "Crie e gerencie as conquistas globais ou específicas por museu.",
-            "selectTenant": "Selecione um cliente para ver as conquistas",
-            "select": "Selecione...",
-            "empty": "Nenhuma conquista encontrada.",
-            "errorLoad": "Erro ao carregar conquistas.",
-            "new": "Nova Conquista",
-            "table": {
-                "icon": "Ícone",
-                "title": "Título",
-                "description": "Descrição",
-                "xp": "XP",
-                "actions": "Ações"
-            },
-            "form": {
-                "newTitle": "Nova Conquista",
-                "editTitle": "Editar Conquista",
-                "tenant": "Museu (Opcional)",
-                "select": "Selecione...",
-                "code": "Código (ID único)",
-                "codePlaceholder": "Ex: PRIMEIRA_VISITA",
-                "codeHelp": "Código único em maiúsculas (ex: VISITOR_100)",
-                "title": "Título",
-                "titlePlaceholder": "Ex: Explorador Iniciante",
-                "description": "Descrição",
-                "descriptionPlaceholder": "Descreva como ganhar esta conquista...",
-                "imageUrl": "Imagem / Ícone",
-                "imageUrlPlaceholder": "https://...",
-                "upload": "Enviar Arquivo",
-                "uploading": "Enviando...",
-                "saving": "Salvando...",
-                "selectTenantAlert": "Selecione um museu!",
-                "errorSave": "Erro ao salvar conquista",
-                "errorUpload": "Erro ao fazer upload da imagem",
-                "save": "Salvar",
-                "cancel": "Cancelar"
-            }
-        },
-        "userForm": {
-            "editTitle": "Editar Usuário",
-            "newTitle": "Novo Usuário",
-            "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
-            "labels": {
-                "name": "Nome Completo",
-                "email": "E-mail de Acesso",
-                "password": "Senha",
-                "role": "Nível de Acesso",
-                "tenant": "Vinculado à Instituição"
-            },
-            "placeholders": {
-                "name": "Ex: João Silva",
-                "email": "joao@email.com",
-                "password": "Senha segura",
-                "passwordEdit": "Nova senha (opcional)",
-                "selectTenant": "Selecione um museu..."
-            },
-            "roles": {
-                "master": "Master (Acesso Global)",
-                "admin": "Admin (Gestor de Museu)"
-            },
-            "helpers": {
-                "tenant": "Usuários ADMIN devem estar vinculados a uma instituição. Usuários MASTER têm acesso a tudo.",
-                "passwordEdit": "Deixe em branco para manter a senha atual."
-            },
-            "alerts": {
-                "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
-                "errorSave": "Erro ao salvar usuário. Tente novamente."
-            },
-            "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
-        }
-    },
-    "pwa": {
-        "install": {
-            "title": "Instalar Aplicativo",
-            "desc": "Instale nosso app para uma melhor experiência!",
-            "ios": {
-                "step1": "Toque no botão Compartilhar",
-                "step2": "Role para baixo",
-                "step3": "Selecione 'Adicionar à Tela de Início'"
-            },
-            "android": {
-                "step1": "Toque no menu (três pontos)",
-                "step2": "Selecione 'Instalar aplicativo'"
-            }
-        }
+    "userForm": {
+      "editTitle": "Editar Usuário",
+      "newTitle": "Novo Usuário",
+      "subtitle": "Preencha os dados do usuário para conceder acesso ao sistema.",
+      "labels": {
+        "name": "Nome Completo",
+        "email": "E-mail de Acesso",
+        "password": "Senha",
+        "role": "Nível de Acesso",
+        "tenant": "Vinculado à Instituição"
+      },
+      "placeholders": {
+        "name": "Ex: João Silva",
+        "email": "joao@email.com",
+        "password": "Senha segura",
+        "passwordEdit": "Nova senha (opcional)",
+        "selectTenant": "Selecione um museu..."
+      },
+      "roles": {
+        "master": "Master (Acesso Global)",
+        "admin": "Admin (Gestor de Museu)"
+      },
+      "helpers": {
+        "tenant": "Usuários ADMIN devem estar vinculados a uma instituição. Usuários MASTER têm acesso a tudo.",
+        "passwordEdit": "Deixe em branco para manter a senha atual."
+      },
+      "alerts": {
+        "selectTenant": "Por favor, selecione um museu para o usuário Admin.",
+        "errorSave": "Erro ao salvar usuário. Tente novamente."
+      },
+      "demoAlert": "Esta é uma versão de demonstração. A criação de usuários é simulada."
     }
+  },
+  "pwa": {
+    "install": {
+      "title": "Instalar Aplicativo",
+      "desc": "Instale nosso app para uma melhor experiência!",
+      "ios": {
+        "step1": "Toque no botão Compartilhar",
+        "step2": "Role para baixo",
+        "step3": "Selecione 'Adicionar à Tela de Início'"
+      },
+      "android": {
+        "step1": "Toque no menu (três pontos)",
+        "step2": "Selecione 'Instalar aplicativo'"
+      }
+    }
+  }
 }

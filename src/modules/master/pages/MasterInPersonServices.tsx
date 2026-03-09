@@ -128,13 +128,13 @@ export const MasterInPersonServices: React.FC = () => {
             <section className="master-hero">
                 <div className="master-hero-content">
                     <span className="master-badge">
-                        🤝 Serviços Presenciais
+                        🤝 {t("master.inPersonServices.heroBadge", "Serviços Presenciais")}
                     </span>
                     <h1 className="master-title">
-                        Configuração e Demandas
+                        {t("master.inPersonServices.heroTitle", "Configuração e Demandas")}
                     </h1>
                     <p className="master-subtitle">
-                        Gerencie os tipos de serviços oferecidos pelo Master e acompanhe os agendamentos realizados pelos museus.
+                        {t("master.inPersonServices.heroSubtitle", "Gerencie os tipos de serviços oferecidos pelo Master e acompanhe os agendamentos realizados pelos museus.")}
                     </p>
                 </div>
             </section>
@@ -147,7 +147,7 @@ export const MasterInPersonServices: React.FC = () => {
                             <div className="master-icon-wrapper master-icon-blue">
                                 <HandMetal size={24} />
                             </div>
-                            <h3 style={{ margin: 0 }}>Serviços Ofertados</h3>
+                            <h3 style={{ margin: 0 }}>{t("master.inPersonServices.card1Title", "Serviços Ofertados")}</h3>
                         </div>
                         <button
                             className="master-btn btn-primary"
@@ -195,7 +195,7 @@ export const MasterInPersonServices: React.FC = () => {
                         <div className="master-icon-wrapper master-icon-yellow">
                             <Clock size={24} />
                         </div>
-                        <h3 style={{ margin: 0 }}>Solicitações de Agendamento ({requests.length})</h3>
+                        <h3 style={{ margin: 0 }}>{t("master.inPersonServices.card2Title", "Solicitações de Agendamento")} ({requests.length})</h3>
                     </div>
 
                     {requests.length === 0 ? (

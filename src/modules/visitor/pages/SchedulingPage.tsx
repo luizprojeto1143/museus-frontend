@@ -130,7 +130,7 @@ export const SchedulingPage: React.FC = () => {
                     </div>
 
                     <div className="scheduling-form-group">
-                        <label>Serviço Presencial (Opcional)</label>
+                        <label>{t("visitor.scheduling.inPersonService", "Serviço Presencial (Opcional)")}</label>
                         <select
                             className="scheduling-select"
                             value={selectedService}
@@ -144,7 +144,7 @@ export const SchedulingPage: React.FC = () => {
                     </div>
 
                     <div className="scheduling-form-group">
-                        <label>Participantes</label>
+                        <label>{t("visitor.scheduling.participants", "Participantes")}</label>
                         <input
                             type="number"
                             min="1"

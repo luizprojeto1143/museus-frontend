@@ -73,7 +73,7 @@ export const AdminBookingForm: React.FC = () => {
     const handleSubmit = async () => {
         if (!tenantId) return;
         if (!formData.inPersonServiceId || !formData.date || !formData.startTime || !formData.endTime) {
-            return alert("Por favor, preencha os campos obrigatórios (Serviço, Data e Horários).");
+            return alert("Por favor, preencha os campos obrigatórios (Serviço, {t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).");
         }
 
         setSaving(true);
@@ -128,10 +128,10 @@ export const AdminBookingForm: React.FC = () => {
                 </Button>
                 <div>
                     <h1 className="admin-wizard-title">
-                        Solicitar Serviço Presencial
+                        {t("admin.bookingForm.title", "Solicitar Serviço Presencial")}
                     </h1>
                     <p className="admin-wizard-subtitle">
-                        Faça uma solicitação para intérprete de Libras, guias ou outros serviços para o seu equipamento.
+                        {t("admin.bookingForm.subtitle", "Faça uma solicitação para intérprete de Libras, guias ou outros serviços para o seu equipamento.")}
                     </p>
                 </div>
             </div>
@@ -142,16 +142,16 @@ export const AdminBookingForm: React.FC = () => {
                     {/* SERVIÇO */}
                     <div className="admin-section">
                         <h2 className="admin-section-title">
-                            <span style={{ color: "#60a5fa" }}>🤝</span> Serviço Desejado
+                            <span style={{ color: "#60a5fa" }}>🤝</span> {t("admin.bookingForm.serviceTab", "Serviço Desejado")}
                         </h2>
 
                         <div className="space-y-4">
                             <Select
-                                label="Selecione o Serviço Presencial *"
+                                label="{t("admin.bookingForm.serviceLabel", "Selecione o Serviço Presencial *")}"
                                 value={formData.inPersonServiceId}
                                 onChange={e => setFormData({ ...formData, inPersonServiceId: e.target.value })}
                             >
-                                <option value="">Escolha um serviço...</option>
+                                <option value="">{t("admin.bookingForm.chooseService", "Escolha um serviço...")}</option>
                                 {services.map(s => (
                                     <option key={s.id} value={s.id}>{s.name}</option>
                                 ))}
@@ -168,25 +168,25 @@ export const AdminBookingForm: React.FC = () => {
                     {/* DATA E HORÁRIO */}
                     <div className="admin-section">
                         <h2 className="admin-section-title">
-                            <Calendar className="text-[var(--accent-gold)]" size={20} /> Data e Horário
+                            <Calendar className="text-[var(--accent-gold)]" size={20} /> {t("admin.bookingForm.dateTimeTab", "Data e Horário")}
                         </h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Input
-                                label="Data *"
+                                label="{t("admin.bookingForm.date", "Data *")}"
                                 type="date"
                                 value={formData.date}
                                 onChange={e => setFormData({ ...formData, date: e.target.value })}
                             />
                             <Input
-                                label="Início *"
+                                label="{t("admin.bookingForm.start", "Início *")}"
                                 type="time"
                                 value={formData.startTime}
                                 onChange={e => setFormData({ ...formData, startTime: e.target.value })}
                                 leftIcon={<Clock size={16} />}
                             />
                             <Input
-                                label="Término *"
+                                label="{t("admin.bookingForm.end", "Término *")}"
                                 type="time"
                                 value={formData.endTime}
                                 onChange={e => setFormData({ ...formData, endTime: e.target.value })}
@@ -203,21 +203,21 @@ export const AdminBookingForm: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <Select
-                                label="Espaço (Opcional)"
+                                label="{t("admin.bookingForm.spaceLabel", "Espaço (Opcional)")}"
                                 value={formData.spaceId}
                                 onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
                             >
-                                <option value="">Nenhum espaço reservado</option>
+                                <option value="">{t("admin.bookingForm.noSpace", "Nenhum espaço reservado")}</option>
                                 {spaces.map(sp => (
                                     <option key={sp.id} value={sp.id}>{sp.name}</option>
                                 ))}
                             </Select>
                             <Select
-                                label="Evento Vinculado (Opcional)"
+                                label="{t("admin.bookingForm.eventLabel", "Evento Vinculado (Opcional)")}"
                                 value={formData.eventId}
                                 onChange={e => setFormData({ ...formData, eventId: e.target.value })}
                             >
-                                <option value="">Nenhum evento específico</option>
+                                <option value="">{t("admin.bookingForm.noEvent", "Nenhum evento específico")}</option>
                                 {events.map(ev => (
                                     <option key={ev.id} value={ev.id}>{ev.title}</option>
                                 ))}
@@ -229,11 +229,11 @@ export const AdminBookingForm: React.FC = () => {
                 <div className="space-y-8">
                     {/* DETALHES ADICIONAIS */}
                     <div className="admin-section">
-                        <h2 className="admin-section-title">Detalhes Adicionais</h2>
+                        <h2 className="admin-section-title">{t("admin.bookingForm.detailsTab", "Detalhes Adicionais")}</h2>
 
                         <div className="space-y-6">
                             <Input
-                                label="Quantidade de Participantes"
+                                label="{t("admin.bookingForm.participants", "Quantidade de Participantes")}"
                                 type="number"
                                 min="1"
                                 value={formData.participants}
@@ -243,10 +243,10 @@ export const AdminBookingForm: React.FC = () => {
                             />
 
                             <Textarea
-                                label="Observações e Necessidades Específicas"
+                                label="{t("admin.bookingForm.observations", "Observações e Necessidades Específicas")}"
                                 value={formData.purpose}
                                 onChange={e => setFormData({ ...formData, purpose: e.target.value })}
-                                placeholder="Forneça detalhes que possam ajudar o prestador de serviço..."
+                                placeholder="{t("admin.bookingForm.observationsPlaceholder", "Forneça detalhes que possam ajudar o prestador de serviço...")}"
                                 rows={4}
                             />
                         </div>
@@ -258,7 +258,7 @@ export const AdminBookingForm: React.FC = () => {
             <div className="admin-wizard-footer">
                 <div className="admin-wizard-footer-inner">
                     <span className="text-xs text-[var(--fg-muted)] font-medium ml-2 hidden sm:block">
-                        A solicitação ficará pendente até aprovação
+                        {t("admin.bookingForm.pendingNotice", "A solicitação ficará pendente até aprovação")}
                     </span>
                     <Button
                         onClick={handleSubmit}

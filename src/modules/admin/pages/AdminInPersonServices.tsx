@@ -72,22 +72,21 @@ export const AdminInPersonServices: React.FC = () => {
             <header className="mb-8">
                 <h1 className="text-3xl font-serif text-[var(--accent-gold)] flex items-center gap-3">
                     <HandMetal size={32} />
-                    Configuração de Serviços Presenciais
+                    {t("admin.inPersonServices.title", "Configuração de Serviços Presenciais")}
                 </h1>
                 <p className="text-[var(--fg-muted)] mt-2">
-                    Nesta tela, você pode escolher quais serviços presenciais (oferecidos pelo Master)
-                    estarão disponíveis para os visitantes agendarem em sua instituição.
+                    {t("admin.inPersonServices.subtitle", "Nesta tela, você pode escolher quais serviços presenciais (oferecidos pelo Master) estarão disponíveis para os visitantes agendarem em sua instituição.")}
                 </p>
             </header>
 
             <div className="admin-card">
                 <div className="admin-card-header mb-6">
-                    <h2 className="text-xl text-white">Serviços Disponíveis</h2>
+                    <h2 className="text-xl text-white">{t("admin.inPersonServices.available", "Serviços Disponíveis")}</h2>
                 </div>
 
                 <div className="space-y-4">
                     {services.length === 0 ? (
-                        <p className="text-[var(--fg-muted)] text-center py-8">Nenhum serviço disponibilizado pelo Master no momento.</p>
+                        <p className="text-[var(--fg-muted)] text-center py-8">{t("admin.inPersonServices.empty", "Nenhum serviço disponibilizado pelo Master no momento.")}</p>
                     ) : (
                         services.map(srv => (
                             <div
@@ -102,7 +101,7 @@ export const AdminInPersonServices: React.FC = () => {
                                         {srv.name}
                                         {srv.enabled ? (
                                             <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded flex items-center gap-1">
-                                                <CheckCircle2 size={12} /> Ativo no Museu
+                                                <CheckCircle2 size={12} /> {t("admin.inPersonServices.activeBadge", "Ativo no Museu")}
                                             </span>
                                         ) : (
                                             <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded flex items-center gap-1">
@@ -124,7 +123,7 @@ export const AdminInPersonServices: React.FC = () => {
                                         <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--accent-gold)]"></div>
                                     </label>
                                     <span className="text-[10px] text-[var(--fg-muted)] mt-1 uppercase tracking-wider font-semibold">
-                                        {srv.enabled ? "Ativo" : "Inativo"}
+                                        {srv.enabled ? t("admin.inPersonServices.active", "Ativo") : t("admin.inPersonServices.inactive", "Inativo")}
                                     </span>
                                 </div>
                             </div>

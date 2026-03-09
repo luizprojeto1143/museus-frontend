@@ -375,6 +375,11 @@
       "tryAgain": "Try Another",
       "start": "Start",
       "works": "Works"
+    },
+    "scheduling": {
+      "inPersonService": "In-person Service (Optional)",
+      "noSpecialService": "No special services",
+      "participants": "Participants"
     }
   },
   "admin": {
@@ -905,6 +910,20 @@
         "errorTest": "Error when testing. Check your OpenAI credentials."
       },
       "response": "AI response:"
+    },
+    "inPersonServices": {
+      "title": "Configuring In-Person Services",
+      "subtitle": "On this screen, you can choose which in-person services (offered by Master) will be available for visitors to schedule at your institution.",
+      "available": "Available Services",
+      "empty": "No services available from Master at this time.",
+      "activeBadge": "Ativo no Museu",
+      "disabledBadge": "Disabled",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "bookingForm": {
+      "title": "Request In-Person Service",
+      "subtitle": "Make a request for a Libras interpreter, guides or other services for your equipment."
     }
   },
   "master": {
@@ -1050,6 +1069,13 @@
         "tenant": "Institution",
         "action": "Actions"
       }
+    },
+    "inPersonServices": {
+      "heroBadge": "In-person Services",
+      "heroTitle": "Configuration and Demands",
+      "heroSubtitle": "Manage the types of services offered by Master and monitor appointments made by museums.",
+      "card1Title": "Services Offered",
+      "card2Title": "Scheduling Requests"
     }
   },
   "museum": {

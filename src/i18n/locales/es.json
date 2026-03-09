@@ -375,6 +375,11 @@
       "tryAgain": "Prueba con otro",
       "start": "Comenzar",
       "works": "Obras"
+    },
+    "scheduling": {
+      "inPersonService": "Servicio Presencial (Opcional)",
+      "noSpecialService": "Sin servicios especiales",
+      "participants": "Participantes"
     }
   },
   "admin": {
@@ -905,6 +910,20 @@
         "errorTest": "Error al realizar la prueba. Verifique sus credenciales de OpenAI."
       },
       "response": "Respuesta de la IA:"
+    },
+    "inPersonServices": {
+      "title": "Configurar servicios en persona",
+      "subtitle": "En esta pantalla, puede elegir qué servicios presenciales (ofrecidos por Master) estarán disponibles para que los visitantes los programen en su institución.",
+      "available": "Servicios disponibles",
+      "empty": "No hay servicios disponibles de Master en este momento.",
+      "activeBadge": "Activo en el Museo",
+      "disabledBadge": "Desactivado",
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "bookingForm": {
+      "title": "Solicitar servicio en persona",
+      "subtitle": "Solicite un intérprete Libras, guías u otros servicios para su equipo."
     }
   },
   "museum": {
@@ -1021,6 +1040,13 @@
         "tenant": "Institución",
         "action": "Comportamiento"
       }
+    },
+    "inPersonServices": {
+      "heroBadge": "Servicios en persona",
+      "heroTitle": "Configuración y Demandas",
+      "heroSubtitle": "Gestionar los tipos de servicios que ofrece Master y realizar el seguimiento de las citas realizadas por los museos.",
+      "card1Title": "Servicios ofrecidos",
+      "card2Title": "Solicitudes de programación"
     }
   },
   "producer": {
