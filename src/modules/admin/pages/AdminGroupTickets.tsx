@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -5,6 +6,7 @@ import { Loader2, Users, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export const AdminGroupTickets: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [tickets, setTickets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -47,14 +49,14 @@ export const AdminGroupTickets: React.FC = () => {
         <div>
             <div style={{ marginBottom: '2rem' }}>
                 <h1 className="section-title">👥 Ingressos de Grupo</h1>
-                <p style={{ color: '#64748b', fontSize: '0.85rem' }}>Gerencie solicitações de ingressos para grupos e escolas</p>
+                <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.grouptickets.gerencieSolicitaesDeIngressosP", "Gerencie solicitações de ingressos para grupos e escolas")}</p>
             </div>
 
             {/* Stats */}
             <div className="card-grid" style={{ marginBottom: '2rem' }}>
                 <div className="stat-card">
                     <div className="stat-value">{tickets.length}</div>
-                    <div className="stat-label">Total Solicitações</div>
+                    <div className="stat-label">{t("admin.grouptickets.totalSolicitaes", "Total Solicitações")}</div>
                 </div>
                 <div className="stat-card" style={{ borderColor: 'rgba(245,158,11,0.2)' }}>
                     <div className="stat-value" style={{ color: '#f59e0b' }}>{pending}</div>
@@ -130,8 +132,8 @@ export const AdminGroupTickets: React.FC = () => {
             {tickets.length === 0 && (
                 <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
                     <Users size={48} style={{ margin: '0 auto 1rem', color: '#64748b', opacity: 0.3 }} />
-                    <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>Nenhuma solicitação de grupo</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>Solicitações de ingressos em grupo aparecerão aqui</p>
+                    <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>{t("admin.grouptickets.nenhumaSolicitaoDeGrupo", "Nenhuma solicitação de grupo")}</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.grouptickets.solicitaesDeIngressosEmGrupoAp", "Solicitações de ingressos em grupo aparecerão aqui")}</p>
                 </div>
             )}
         </div>

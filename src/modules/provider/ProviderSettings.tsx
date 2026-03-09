@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { Settings, Loader2, Save, User as UserIcon, Phone, FileText } from "lucide-react";
 import { api } from "../../api/client";
 import { toast } from "react-hot-toast";
 
 export const ProviderSettings: React.FC = () => {
+  const { t } = useTranslation();
     const [provider, setProvider] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -46,16 +48,15 @@ export const ProviderSettings: React.FC = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-10">
             <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">Configurações do Perfil</h1>
-                <p className="text-[#b794f4] mt-2">Personalize como os produtores culturais verão seu serviço.</p>
+                <h1 className="text-3xl font-black text-white tracking-tight">{t("provider.providersettings.configuraesDoPerfil", "Configurações do Perfil")}</h1>
+                <p className="text-[#b794f4] mt-2">{t("provider.providersettings.personalizeComoOsProdutoresCul", "Personalize como os produtores culturais verão seu serviço.")}</p>
             </div>
 
             <form onSubmit={handleSave} className="bg-[#1a0f2c] border border-[#3b2164] rounded-2xl p-8 shadow-xl max-w-3xl space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-[#b794f4] flex items-center gap-2">
-                            <UserIcon size={16} /> Nome Público / Institucional
-                        </label>
+                            <UserIcon size={16} />{t("provider.providersettings.nomePblicoInstitucional", "Nome Público / Institucional")}</label>
                         <input
                             type="text"
                             value={provider.name || ""}
@@ -87,7 +88,7 @@ export const ProviderSettings: React.FC = () => {
                         />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-[#b794f4]">Email Público</label>
+                        <label className="text-sm font-bold text-[#b794f4]">{t("provider.providersettings.emailPblico", "Email Público")}</label>
                         <input
                             type="email"
                             value={provider.email || ""}
@@ -99,8 +100,7 @@ export const ProviderSettings: React.FC = () => {
 
                 <div className="space-y-2">
                     <label className="text-sm font-bold text-[#b794f4] flex items-center gap-2">
-                        <FileText size={16} /> Descrição Profissional / Currículo resumido
-                    </label>
+                        <FileText size={16} />{t("provider.providersettings.descrioProfissionalCurrculoRes", "Descrição Profissional / Currículo resumido")}</label>
                     <textarea
                         rows={4}
                         value={provider.description || ""}
@@ -115,9 +115,8 @@ export const ProviderSettings: React.FC = () => {
                         disabled={saving}
                         className="bg-[#9f7aea] hover:bg-[#805ad5] text-white font-black px-8 py-3 rounded-xl transition-all flex items-center gap-2 disabled:opacity-50"
                     >
-                        {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-                        Salvar Alterações
-                    </button>
+                        {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />{t("provider.providersettings.SalvarAlteraes", "}
+                        Salvar Alterações")}</button>
                 </div>
             </form>
         </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { Bell, Send, Loader2, Smartphone, Globe, Info } from "lucide-react";
 import { api } from "../../../api/client";
@@ -7,6 +8,7 @@ import "./AdminShared.css";
 
 
 export const AdminNotifications: React.FC = () => {
+  const { t } = useTranslation();
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [url, setUrl] = useState("/");
@@ -57,8 +59,8 @@ export const AdminNotifications: React.FC = () => {
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="flex justify-between items-start">
                 <div>
-                    <h1 className="text-3xl font-bold text-white font-serif">Notificações Push</h1>
-                    <p className="text-zinc-400">Envie mensagens em tempo real para todos os usuários do seu museu/instituição.</p>
+                    <h1 className="text-3xl font-bold text-white font-serif">{t("admin.notifications.notificaesPush", "Notificações Push")}</h1>
+                    <p className="text-zinc-400">{t("admin.notifications.envieMensagensEmTempoRealParaT", "Envie mensagens em tempo real para todos os usuários do seu museu/instituição.")}</p>
                 </div>
                 <Button variant="outline" onClick={handleTest} disabled={sending} leftIcon={<Smartphone size={18} />}>
                     Testar em mim
@@ -73,16 +75,15 @@ export const AdminNotifications: React.FC = () => {
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-zinc-200 mb-2">Título da Notificação</label>
+                            <label className="block text-sm font-bold text-zinc-200 mb-2">{t("admin.notifications.ttuloDaNotificao", "Título da Notificação")}</label>
                             <input
                                 type="text"
                                 value={title}
-                                onChange={e => setTitle(e.target.value)}
+                                onChange={e =>{t("admin.notifications.settitleetargetvalueClassnamew", "setTitle(e.target.value)}
                                 className="w-full border border-white/10 rounded-xl px-4 py-2 focus:border-amber-500 transition-colors outline-none"
-                                placeholder="Ex: Exposição Nova Amanhã!"
+                                placeholder={t("admin.notifications.exExposioNovaAmanh", "Ex: Exposição Nova Amanhã!")}
                                 required
-                            />
-                        </div>
+                            />")}</div>
                         <div>
                             <label className="block text-sm font-bold text-zinc-200 mb-2">Mensagem (Corpo)</label>
                             <textarea
@@ -124,13 +125,12 @@ export const AdminNotifications: React.FC = () => {
                 <div className="space-y-6">
                     <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-6">
                         <h3 className="text-amber-400 font-bold flex items-center gap-2 mb-3">
-                            <Info size={18} /> Boas Práticas
-                        </h3>
+                            <Info size={18} />{t("admin.notifications.boasPrticas", "Boas Práticas")}</h3>
                         <ul className="text-amber-300 text-sm space-y-2 list-disc pl-4">
-                            <li>Seja breve e direto: notificações curtas têm maior taxa de clique.</li>
-                            <li>Use emojis para chamar a atenção, mas sem exageros.</li>
+                            <li>{t("admin.notifications.sejaBreveEDiretoNotificaesCurt", "Seja breve e direto: notificações curtas têm maior taxa de clique.")}</li>
+                            <li>{t("admin.notifications.useEmojisParaChamarAAtenoMasSe", "Use emojis para chamar a atenção, mas sem exageros.")}</li>
                             <li>Sempre teste o envio em si mesmo antes de disparar para toda a base.</li>
-                            <li>A mensagem será enviada para todos os dispositivos (Android, iOS e Web) registrados.</li>
+                            <li>{t("admin.notifications.aMensagemSerEnviadaParaTodosOs", "A mensagem será enviada para todos os dispositivos (Android, iOS e Web) registrados.")}</li>
                         </ul>
                     </div>
 
@@ -139,8 +139,7 @@ export const AdminNotifications: React.FC = () => {
                             <Smartphone size={100} />
                         </div>
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                            <Globe className="text-amber-500" size={20} /> Prévia (Web/Android)
-                        </h3>
+                            <Globe className="text-amber-500" size={20} />{t("admin.notifications.prviaWebandroid", "Prévia (Web/Android)")}</h3>
                         <div className="bg-zinc-900/40 border border-gold/20/10 backdrop-blur-md rounded-xl p-4 border border-white/10 max-w-xs mx-auto">
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="w-5 h-5 bg-amber-500 rounded flex items-center justify-center text-[10px] font-bold">M</div>

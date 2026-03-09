@@ -350,7 +350,7 @@ export const AdminNoticeForm: React.FC = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="md:col-span-1 form-group">
                                         <Input
-                                            label="Título do Edital *"
+                                            label={t("admin.noticeform.ttuloDoEdital", "Título do Edital *")}
                                             value={formData.title}
                                             onChange={e => setFormData({ ...formData, title: e.target.value })}
                                             placeholder="Ex: Edital de Fomento à Cultura 2024"
@@ -420,33 +420,33 @@ export const AdminNoticeForm: React.FC = () => {
 
                                 <div className="form-group">
                                     <Textarea
-                                        label="Descrição / Objetivo do Edital *"
+                                        label={t("admin.noticeform.descrioObjetivoDoEdital", "Descrição / Objetivo do Edital *")}
                                         rows={4}
                                         value={formData.description}
                                         onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                        placeholder="Breve apresentação do edital..."
+                                        placeholder={t("admin.noticeform.breveApresentaoDoEdital", "Breve apresentação do edital...")}
                                         required
                                     />
                                 </div>
 
                                 <div className="form-group">
                                     <Textarea
-                                        label="Objetivos Estratégicos (Para Análise IA) *"
+                                        label={t("admin.noticeform.objetivosEstratgicosParaAnlise", "Objetivos Estratégicos (Para Análise IA) *")}
                                         rows={4}
                                         value={formData.objectives}
                                         onChange={e => setFormData({ ...formData, objectives: e.target.value })}
-                                        placeholder="Descreva o que este edital busca fomentar... (Será usado pela IA para avaliar mérito)"
+                                        placeholder={t("admin.noticeform.descrevaOQueEsteEditalBuscaFom", "Descreva o que este edital busca fomentar... (Será usado pela IA para avaliar mérito)")}
                                         required
                                     />
                                 </div>
 
                                 <div className="form-group">
                                     <Textarea
-                                        label="Requisitos Técnicos / Critérios (Para Análise IA) *"
+                                        label={t("admin.noticeform.requisitosTcnicosCritriosParaA", "Requisitos Técnicos / Critérios (Para Análise IA) *")}
                                         rows={4}
                                         value={formData.requirements}
                                         onChange={e => setFormData({ ...formData, requirements: e.target.value })}
-                                        placeholder="Liste os critérios de eliminação ou pontuação... (Será usado pela IA para checklist)"
+                                        placeholder={t("admin.noticeform.listeOsCritriosDeEliminaoOuPon", "Liste os critérios de eliminação ou pontuação... (Será usado pela IA para checklist)")}
                                         required
                                     />
                                 </div>
@@ -458,12 +458,11 @@ export const AdminNoticeForm: React.FC = () => {
                             <div className="space-y-6">
                                 <div className="admin-section">
                                     <h3 className="admin-section-title">
-                                        <MousePointerClick size={20} className="text-gold" /> Período de Inscrição
-                                    </h3>
+                                        <MousePointerClick size={20} className="text-gold" />{t("admin.noticeform.perodoDeInscrio", "Período de Inscrição")}</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="form-group">
                                             <Input
-                                                label="Abertura das Inscrições *"
+                                                label={t("admin.noticeform.aberturaDasInscries", "Abertura das Inscrições *")}
                                                 type="date"
                                                 value={formData.inscriptionStart}
                                                 onChange={e => setFormData({ ...formData, inscriptionStart: e.target.value })}
@@ -471,7 +470,7 @@ export const AdminNoticeForm: React.FC = () => {
                                         </div>
                                         <div className="form-group">
                                             <Input
-                                                label="Encerramento das Inscrições *"
+                                                label={t("admin.noticeform.encerramentoDasInscries", "Encerramento das Inscrições *")}
                                                 type="date"
                                                 value={formData.inscriptionEnd}
                                                 onChange={e => setFormData({ ...formData, inscriptionEnd: e.target.value })}
@@ -482,12 +481,11 @@ export const AdminNoticeForm: React.FC = () => {
 
                                 <div className="admin-section">
                                     <h3 className="admin-section-title">
-                                        <Calendar size={20} className="text-gold" /> Execução e Resultados
-                                    </h3>
+                                        <Calendar size={20} className="text-gold" />{t("admin.noticeform.execuoEResultados", "Execução e Resultados")}</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="form-group">
                                             <Input
-                                                label="Divulgação dos Resultados"
+                                                label={t("admin.noticeform.divulgaoDosResultados", "Divulgação dos Resultados")}
                                                 type="date"
                                                 value={formData.resultsDate}
                                                 onChange={e => setFormData({ ...formData, resultsDate: e.target.value })}
@@ -495,7 +493,7 @@ export const AdminNoticeForm: React.FC = () => {
                                         </div>
                                         <div className="form-group">
                                             <Input
-                                                label="Prazo Final de Execução"
+                                                label={t("admin.noticeform.prazoFinalDeExecuo", "Prazo Final de Execução")}
                                                 type="date"
                                                 value={formData.executionEnd}
                                                 onChange={e => setFormData({ ...formData, executionEnd: e.target.value })}
@@ -512,7 +510,7 @@ export const AdminNoticeForm: React.FC = () => {
                                 {/* Orçamento */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="admin-section">
-                                        <h3 className="admin-section-title">Orçamento Geral</h3>
+                                        <h3 className="admin-section-title">{t("admin.noticeform.oramentoGeral", "Orçamento Geral")}</h3>
                                         <div className="form-group">
                                             <Input
                                                 label="Valor Total do Edital (R$)"
@@ -529,7 +527,7 @@ export const AdminNoticeForm: React.FC = () => {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="form-group">
                                                 <Input
-                                                    label="Mínimo (R$)"
+                                                    label={t("admin.noticeform.mnimoR", "Mínimo (R$)")}
                                                     type="number"
                                                     step="0.01"
                                                     value={formData.minPerProject}
@@ -539,7 +537,7 @@ export const AdminNoticeForm: React.FC = () => {
                                             </div>
                                             <div className="form-group">
                                                 <Input
-                                                    label="Máximo (R$)"
+                                                    label={t("admin.noticeform.mximoR", "Máximo (R$)")}
                                                     type="number"
                                                     step="0.01"
                                                     value={formData.maxPerProject}
@@ -582,8 +580,7 @@ export const AdminNoticeForm: React.FC = () => {
                                 {/* Regiões */}
                                 <div className="admin-section">
                                     <label className="text-base font-medium text-white mb-4 block flex items-center gap-2">
-                                        <MapPin size={16} className="text-gold" /> Regiões Alvo
-                                    </label>
+                                        <MapPin size={16} className="text-gold" />{t("admin.noticeform.regiesAlvo", "Regiões Alvo")}</label>
                                     <div className="flex gap-2 mb-4">
                                         <div className="flex-1 form-group">
                                             <Input
@@ -603,7 +600,7 @@ export const AdminNoticeForm: React.FC = () => {
                                     </div>
                                     <div className="flex flex-wrap gap-2 p-4 bg-zinc-950/30 rounded-lg min-h-[60px] border border-white/5">
                                         {formData.targetRegions.length === 0 && (
-                                            <p className="text-zinc-500 italic text-sm">Nenhuma região restrita (Abrangência Global)</p>
+                                            <p className="text-zinc-500 italic text-sm">{t("admin.noticeform.nenhumaRegioRestritaAbrangncia", "Nenhuma região restrita (Abrangência Global)")}</p>
                                         )}
                                         {formData.targetRegions.map(region => (
                                             <span key={region} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 border border-white/10 text-sm text-white">
@@ -627,7 +624,7 @@ export const AdminNoticeForm: React.FC = () => {
                             <div className="space-y-6">
                                 <div className="text-center p-8 bg-green-500/10 rounded-2xl border border-green-500/30">
                                     <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
-                                    <h2 className="text-2xl font-bold text-white mb-2">Quase lá!</h2>
+                                    <h2 className="text-2xl font-bold text-white mb-2">{t("admin.noticeform.quaseL", "Quase lá!")}</h2>
                                     <p className="text-zinc-400">Revise os dados abaixo antes de publicar.</p>
                                 </div>
 
@@ -636,17 +633,17 @@ export const AdminNoticeForm: React.FC = () => {
                                         <h3 className="admin-section-title">Resumo</h3>
                                         <div className="space-y-3">
                                             <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                                <span className="text-zinc-400">Título:</span>
+                                                <span className="text-zinc-400">{t("admin.noticeform.ttulo", "Título:")}</span>
                                                 <span className="text-white font-medium">{formData.title}</span>
                                             </div>
                                             <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                                <span className="text-zinc-400">Orçamento:</span>
+                                                <span className="text-zinc-400">{t("admin.noticeform.oramento", "Orçamento:")}</span>
                                                 <span className="text-green-400 font-medium">
                                                     {formData.totalBudget ? `R$ ${Number(formData.totalBudget).toLocaleString()}` : 'N/A'}
                                                 </span>
                                             </div>
                                             <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                                <span className="text-zinc-400">Inscrições:</span>
+                                                <span className="text-zinc-400">{t("admin.noticeform.inscries", "Inscrições:")}</span>
                                                 <span className="text-white text-sm">
                                                     {formData.inscriptionStart ? new Date(formData.inscriptionStart).toLocaleDateString() : 'N/A'} até {formData.inscriptionEnd ? new Date(formData.inscriptionEnd).toLocaleDateString() : 'N/A'}
                                                 </span>
@@ -655,7 +652,7 @@ export const AdminNoticeForm: React.FC = () => {
                                     </div>
 
                                     <div className="admin-section">
-                                        <h3 className="admin-section-title mb-4">Configurações Finais</h3>
+                                        <h3 className="admin-section-title mb-4">{t("admin.noticeform.configuraesFinais", "Configurações Finais")}</h3>
 
                                         <div
                                             onClick={() => setFormData(prev => ({ ...prev, requiresAccessibilityPlan: !prev.requiresAccessibilityPlan }))}
@@ -689,7 +686,7 @@ export const AdminNoticeForm: React.FC = () => {
                                                 <TrendingUp size={24} className={formData.showScoresInResults ? 'text-gold' : 'text-zinc-500'} />
                                                 <div>
                                                     <div className={`font-bold ${formData.showScoresInResults ? 'text-white' : 'text-zinc-500'}`}>Exibir Notas no Ranking</div>
-                                                    <div className="text-xs text-zinc-400">Mostrar pontuação final para o público</div>
+                                                    <div className="text-xs text-zinc-400">{t("admin.noticeform.mostrarPontuaoFinalParaOPblico", "Mostrar pontuação final para o público")}</div>
                                                 </div>
                                             </div>
                                             {formData.showScoresInResults && <CheckCircle size={20} className="text-gold" />}
@@ -727,10 +724,9 @@ export const AdminNoticeForm: React.FC = () => {
                             <Button
                                 onClick={nextStep}
                                 className="btn-primary"
-                                rightIcon={<ChevronRight size={18} />}
+                                rightIcon={<ChevronRight size={18} />{t("admin.noticeform.Prximo", "}
                             >
-                                Próximo
-                            </Button>
+                                Próximo")}</Button>
                         )}
                     </div>
                 </div>

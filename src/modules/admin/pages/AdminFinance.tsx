@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../../modules/auth/AuthContext';
@@ -36,6 +37,7 @@ interface FinanceData {
 const COLORS = ['#d4af37', '#10b981', '#3b82f6', '#a855f7'];
 
 export const AdminFinance: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [data, setData] = useState<FinanceData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -93,13 +95,11 @@ export const AdminFinance: React.FC = () => {
                         <DollarSign className="text-gold" size={32} />
                         Dashboard Financeiro
                     </h1>
-                    <p className="text-zinc-400 text-sm font-medium mt-1">
-                        Visão consolidada das receitas processadas localmente e via Asaas.
-                    </p>
+                    <p className="text-zinc-400 text-sm font-medium mt-1">{t("admin.finance.visoConsolidadaDasReceitasProc", "Visão consolidada das receitas processadas localmente e via Asaas.")}</p>
                 </div>
                 <div className="bg-gold/10 border border-gold/20 px-4 py-2 rounded-xl text-gold text-sm font-bold flex items-center gap-2 shadow-md shadow-black/20 shadow-gold/5 backdrop-blur-sm">
                     <TrendingUp size={16} />
-                    <span>Liquidação D+1</span>
+                    <span>{t("admin.finance.liquidaoD1", "Liquidação D+1")}</span>
                 </div>
             </div>
 
@@ -110,7 +110,7 @@ export const AdminFinance: React.FC = () => {
                         <CreditCard size={16} className="text-zinc-500" /> Receita Bruta
                     </div>
                     <div className="text-3xl font-black text-white">{formatCurrency(data.summary.grossTotal)}</div>
-                    <p className="text-[11px] text-zinc-500 mt-2 font-medium">Soma de todas as vendas e doações</p>
+                    <p className="text-[11px] text-zinc-500 mt-2 font-medium">{t("admin.finance.somaDeTodasAsVendasEDoaes", "Soma de todas as vendas e doações")}</p>
                 </div>
 
                 <div className="bg-zinc-900/40 hover:bg-zinc-900/60 transition-colors rounded-3xl p-6 border border-white/5 flex flex-col justify-center">
@@ -125,9 +125,7 @@ export const AdminFinance: React.FC = () => {
                     <div className="absolute top-0 right-0 p-6 opacity-5 text-gold group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
                         <DollarSign size={100} />
                     </div>
-                    <div className="text-gold/80 font-bold text-xs uppercase tracking-wider flex items-center gap-2 mb-3 relative z-10">
-                        Receita Líquida Estimada (Museu)
-                    </div>
+                    <div className="text-gold/80 font-bold text-xs uppercase tracking-wider flex items-center gap-2 mb-3 relative z-10">{t("admin.finance.receitaLquidaEstimadaMuseu", "Receita Líquida Estimada (Museu)")}</div>
                     <div className="text-5xl font-black text-gold relative z-10 drop-shadow-md">
                         {formatCurrency(data.summary.netTotal)}
                     </div>
@@ -146,7 +144,7 @@ export const AdminFinance: React.FC = () => {
                 {/* Gráfico Origem Receita */}
                 <div className="bg-zinc-900/40 rounded-3xl p-6 border border-white/5">
                     <h2 className="text-lg font-bold text-white mb-6 border-b border-white/5 pb-4 flex items-center justify-between">
-                        <span>Distribuição</span>
+                        <span>{t("admin.finance.distribuio", "Distribuição")}</span>
                         <PieChartIcon size={18} className="text-zinc-500" />
                     </h2>
 
@@ -193,7 +191,7 @@ export const AdminFinance: React.FC = () => {
                         </div>
                         <div className="bg-zinc-900/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-white/5 hover:border-emerald-500/30 transition-colors cursor-default">
                             <Heart size={20} className="text-emerald-500 mb-2" />
-                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Doações</span>
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{t("admin.finance.doaes", "Doações")}</span>
                         </div>
                         <div className="bg-zinc-900/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-white/5 hover:border-blue-500/30 transition-colors cursor-default">
                             <Ticket size={20} className="text-blue-500 mb-2" />
@@ -205,7 +203,7 @@ export const AdminFinance: React.FC = () => {
                 {/* Gráfico 7 Dias */}
                 <div className="bg-zinc-900/40 rounded-3xl p-6 border border-white/5 lg:col-span-2 flex flex-col">
                     <h2 className="text-lg font-bold text-white mb-6 border-b border-white/5 pb-4 flex items-center justify-between">
-                        <span>Receita Diária (Últimos 7 dias)</span>
+                        <span>{t("admin.finance.receitaDiriaLtimos7Dias", "Receita Diária (Últimos 7 dias)")}</span>
                         <ArrowUpRight size={18} className="text-zinc-500" />
                     </h2>
                     <div className="flex-1 w-full min-h-[350px]">

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -23,6 +24,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export const AdminHeritage: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -66,7 +68,7 @@ export const AdminHeritage: React.FC = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
                     <h1 className="section-title" style={{ margin: 0 }}>📜 Patrimônio Imaterial</h1>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.25rem' }}>Registro de saberes, celebrações e expressões culturais</p>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.25rem' }}>{t("admin.heritage.registroDeSaberesCelebraesEExp", "Registro de saberes, celebrações e expressões culturais")}</p>
                 </div>
                 <button
                     onClick={() => setShowForm(true)}
@@ -106,7 +108,7 @@ export const AdminHeritage: React.FC = () => {
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                         <div>
-                            <label style={labelStyle}>Título *</label>
+                            <label style={labelStyle}>{t("admin.heritage.ttulo", "Título *")}</label>
                             <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Ex: Congada de Betim" />
                         </div>
                         <div>
@@ -120,12 +122,12 @@ export const AdminHeritage: React.FC = () => {
                             <input value={form.holders} onChange={e => setForm({ ...form, holders: e.target.value })} placeholder="Mestres, comunidades..." style={inputStyle} />
                         </div>
                         <div>
-                            <label style={labelStyle}>Região</label>
+                            <label style={labelStyle}>{t("admin.heritage.regio", "Região")}</label>
                             <input value={form.region} onChange={e => setForm({ ...form, region: e.target.value })} placeholder="Bairro, distrito..." style={inputStyle} />
                         </div>
                     </div>
                     <div style={{ marginBottom: '1rem' }}>
-                        <label style={labelStyle}>Descrição</label>
+                        <label style={labelStyle}>{t("admin.heritage.descrio", "Descrição")}</label>
                         <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} style={{ ...inputStyle, resize: 'none' }} placeholder="Descreva o patrimônio cultural..." />
                     </div>
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
@@ -179,7 +181,7 @@ export const AdminHeritage: React.FC = () => {
                 <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
                     <Scroll size={48} style={{ margin: '0 auto 1rem', color: '#64748b', opacity: 0.3 }} />
                     <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>Nenhum patrimônio imaterial registrado</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>Clique em "Novo Registro" para começar</p>
+                    <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.heritage.cliqueEmNovoRegistroParaComear", "Clique em "Novo Registro" para começar")}</p>
                 </div>
             )}
         </div>

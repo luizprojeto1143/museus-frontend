@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -11,6 +12,7 @@ interface FunnelStage {
 }
 
 export const AdminFunnel: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [funnel, setFunnel] = useState<FunnelStage[]>([]);
     const [loading, setLoading] = useState(true);
@@ -37,8 +39,8 @@ export const AdminFunnel: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Funil de Conversão</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Da primeira visita até a fidelização</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.funnel.funilDeConverso", "Funil de Conversão")}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.funnel.daPrimeiraVisitaAtAFidelizao", "Da primeira visita até a fidelização")}</p>
                 </div>
                 <select value={days} onChange={e => setDays(Number(e.target.value))} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                     <option value={7}>7 dias</option><option value={30}>30 dias</option><option value={90}>90 dias</option>
@@ -78,15 +80,15 @@ export const AdminFunnel: React.FC = () => {
 
             {funnel.length >= 2 && (
                 <div className="card">
-                    <h2 className="card-title">Análise</h2>
+                    <h2 className="card-title">{t("admin.funnel.anlise", "Análise")}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div className="bg-black/30 rounded-xl p-4 text-center">
-                            <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">Taxa de Ativação</p>
+                            <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">{t("admin.funnel.taxaDeAtivao", "Taxa de Ativação")}</p>
                             <p className="text-2xl font-black text-cyan-400">{funnel[0]?.count > 0 ? Math.round((funnel[1]?.count / funnel[0]?.count) * 100) : 0}%</p>
                             <p className="text-zinc-300 text-[10px]">Cadastrados → Ativos</p>
                         </div>
                         <div className="bg-black/30 rounded-xl p-4 text-center">
-                            <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">Taxa de Retenção</p>
+                            <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">{t("admin.funnel.taxaDeReteno", "Taxa de Retenção")}</p>
                             <p className="text-2xl font-black text-purple-400">{funnel[0]?.count > 0 ? (funnel[4]?.pct || 0) : 0}%</p>
                             <p className="text-zinc-300 text-[10px]">Cadastrados → Retornaram</p>
                         </div>

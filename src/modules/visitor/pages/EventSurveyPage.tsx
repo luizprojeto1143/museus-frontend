@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
@@ -15,6 +16,7 @@ interface SurveyQuestion {
 }
 
 export const EventSurveyPage: React.FC = () => {
+  const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const { isAuthenticated, email: authEmail } = useAuth();
     const navigate = useNavigate();
@@ -111,10 +113,9 @@ export const EventSurveyPage: React.FC = () => {
                         <CheckCircle className="w-10 h-10 text-green-500" />
                     </div>
                     <h2 className="text-3xl font-bold text-white mb-2">Obrigado!</h2>
-                    <p className="text-slate-400 mb-8 leading-relaxed">Suas respostas foram enviadas com sucesso e nos ajudarão a melhorar cada vez mais.</p>
-                    <Button onClick={() => navigate('/')} className="w-full py-4 text-lg">
-                        Voltar para o Início
-                    </Button>
+                    <p className="text-slate-400 mb-8 leading-relaxed">{t("visitor.eventsurveypage.suasRespostasForamEnviadasComS", "Suas respostas foram enviadas com sucesso e nos ajudarão a melhorar cada vez mais.")}</p>
+                    <Button onClick={() =>{t("visitor.eventsurveypage.navigateClassnamewfullPy4Textl", "navigate('/')} className="w-full py-4 text-lg">
+                        Voltar para o Início")}</Button>
                 </div>
             </div>
         );
@@ -125,7 +126,7 @@ export const EventSurveyPage: React.FC = () => {
             <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4">
                 <div className="text-center">
                     <MessageSquare className="w-16 h-16 text-white/10 mx-auto mb-4" />
-                    <p className="text-slate-500 italic">Este evento não possui uma pesquisa ativa no momento.</p>
+                    <p className="text-slate-500 italic">{t("visitor.eventsurveypage.esteEventoNoPossuiUmaPesquisaA", "Este evento não possui uma pesquisa ativa no momento.")}</p>
                 </div>
             </div>
         );
@@ -137,7 +138,7 @@ export const EventSurveyPage: React.FC = () => {
                 <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
                     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-10 text-white">
                         <h1 className="text-3xl font-bold mb-2">{eventTitle}</h1>
-                        <p className="text-blue-100/70 font-medium uppercase tracking-wider text-sm">Pesquisa de Satisfação</p>
+                        <p className="text-blue-100/70 font-medium uppercase tracking-wider text-sm">{t("visitor.eventsurveypage.pesquisaDeSatisfao", "Pesquisa de Satisfação")}</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="p-10 space-y-10">
@@ -152,7 +153,7 @@ export const EventSurveyPage: React.FC = () => {
                                     placeholder="nome@email.com"
                                     leftIcon={<Mail size={16} />}
                                 />
-                                <p className="text-xs text-blue-400 font-medium">Para validar sua participação, informe seu e-mail.</p>
+                                <p className="text-xs text-blue-400 font-medium">{t("visitor.eventsurveypage.paraValidarSuaParticipaoInform", "Para validar sua participação, informe seu e-mail.")}</p>
                             </div>
                         )}
 
@@ -221,7 +222,7 @@ export const EventSurveyPage: React.FC = () => {
                                     <Textarea
                                         value={answers[q.id] || ''}
                                         onChange={e => handleAnswer(q.id, e.target.value)}
-                                        placeholder="Sua opinião é importante para nós..."
+                                        placeholder={t("visitor.eventsurveypage.suaOpinioImportanteParaNs", "Sua opinião é importante para nós...")}
                                         rows={4}
                                     />
                                 )}

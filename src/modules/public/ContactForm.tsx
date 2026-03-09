@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { Mail, Send, CheckCircle, AlertCircle } from "lucide-react";
 import { api } from "../../api/client";
 
 export const ContactForm: React.FC = () => {
+  const { t } = useTranslation();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
@@ -32,7 +34,7 @@ export const ContactForm: React.FC = () => {
             <div role="alert" style={{ textAlign: "center", padding: "3rem", background: "rgba(34, 197, 94, 0.1)", borderRadius: "var(--radius-lg)", border: "1px solid var(--status-success)" }}>
                 <CheckCircle size={48} color="var(--status-success)" style={{ marginBottom: "1rem" }} aria-hidden="true" />
                 <h3 style={{ color: "var(--status-success)", marginBottom: "0.5rem" }}>Mensagem Enviada!</h3>
-                <p style={{ fontFamily: "var(--font-body)" }}>Nossa equipe entrará em contato em breve.</p>
+                <p style={{ fontFamily: "var(--font-body)" }}>{t("public.contactform.nossaEquipeEntrarEmContatoEmBr", "Nossa equipe entrará em contato em breve.")}</p>
                 <button
                     onClick={() => setStatus("idle")}
                     style={{
@@ -91,9 +93,9 @@ export const ContactForm: React.FC = () => {
                     onChange={e => setSubject(e.target.value)}
                     style={{ width: "100%", padding: "0.8rem", background: "var(--bg-page)", border: "1px solid var(--border-strong)", borderRadius: "var(--radius-md)", color: "var(--fg-main)", fontFamily: "var(--font-body)" }}
                 >
-                    <option value="Consultoria LBI">Adequação Lei Rouanet (LBI)</option>
-                    <option value="Comercial">Planos e Preços</option>
-                    <option value="Suporte">Suporte Técnico</option>
+                    <option value="Consultoria LBI">{t("public.contactform.adequaoLeiRouanetLbi", "Adequação Lei Rouanet (LBI)")}</option>
+                    <option value="Comercial">{t("public.contactform.planosEPreos", "Planos e Preços")}</option>
+                    <option value="Suporte">{t("public.contactform.suporteTcnico", "Suporte Técnico")}</option>
                 </select>
             </div>
 

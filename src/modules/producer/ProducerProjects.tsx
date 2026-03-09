@@ -87,7 +87,7 @@ export const ProducerProjects: React.FC = () => {
                             <div className="w-20 h-20 bg-black/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#463420]">
                                 <FileText size={40} />
                             </div>
-                            <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">Você ainda não tem projetos</h3>
+                            <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">{t("producer.producerprojects.vocAindaNoTemProjetos", "Você ainda não tem projetos")}</h3>
                             <p className="text-[#B0A090] mb-8 max-w-md mx-auto">
                                 Crie projetos para participar de editais ou para captar recursos via Lei de Incentivo.
                             </p>

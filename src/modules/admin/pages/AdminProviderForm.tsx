@@ -109,7 +109,7 @@ export const AdminProviderForm: React.FC = () => {
                         <ArrowLeft size={16} /> Voltar
                     </button>
                     <span>/</span>
-                    <span className="text-zinc-500">Gestão de Prestadores</span>
+                    <span className="text-zinc-500">{t("admin.providerform.gestoDePrestadores", "Gestão de Prestadores")}</span>
                 </div>
 
                 <h1 className="text-3xl font-bold text-white flex items-center gap-3">
@@ -118,9 +118,7 @@ export const AdminProviderForm: React.FC = () => {
                     </div>
                     {isEdit ? "Editar Prestador" : "Novo Prestador de Serviço"}
                 </h1>
-                <p className="text-zinc-400 max-w-2xl text-lg">
-                    Cadastre profissionais ou empresas especializadas em serviços de acessibilidade (LIBRAS, Audiodescrição, etc).
-                </p>
+                <p className="text-zinc-400 max-w-2xl text-lg">{t("admin.providerform.cadastreProfissionaisOuEmpresa", "Cadastre profissionais ou empresas especializadas em serviços de acessibilidade (LIBRAS, Audiodescrição, etc).")}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8 mt-6">
@@ -128,12 +126,11 @@ export const AdminProviderForm: React.FC = () => {
                 {/* Dados Principais */}
                 <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
                     <h2 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/5 pb-4">
-                        <User size={20} className="text-gold" /> Informações Básicas
-                    </h2>
+                        <User size={20} className="text-gold" />{t("admin.providerform.informaesBsicas", "Informações Básicas")}</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Input
-                            label="Nome ou Razão Social"
+                            label={t("admin.providerform.nomeOuRazoSocial", "Nome ou Razão Social")}
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
@@ -150,8 +147,8 @@ export const AdminProviderForm: React.FC = () => {
                                 onChange={handleChange}
                                 className="w-full bg-zinc-900/50 border border-white/10 text-white rounded-xl px-4 py-2.5 outline-none focus:border-gold/50 transition-colors"
                             >
-                                <option value="COMPANY">Pessoa Jurídica (Empresa)</option>
-                                <option value="INDIVIDUAL">Pessoa Física (Autônomo)</option>
+                                <option value="COMPANY">{t("admin.providerform.pessoaJurdicaEmpresa", "Pessoa Jurídica (Empresa)")}</option>
+                                <option value="INDIVIDUAL">{t("admin.providerform.pessoaFsicaAutnomo", "Pessoa Física (Autônomo)")}</option>
                             </select>
                         </div>
 
@@ -200,10 +197,8 @@ export const AdminProviderForm: React.FC = () => {
                 {/* Serviços */}
                 <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
                     <div>
-                        <h2 className="text-lg font-bold text-white mb-1 flex items-center gap-2">♿ Serviços Oferecidos</h2>
-                        <p className="text-sm text-zinc-400">
-                            Selecione todos os serviços de acessibilidade que este prestador oferece:
-                        </p>
+                        <h2 className="text-lg font-bold text-white mb-1 flex items-center gap-2">{t("admin.providerform.ServiosOferecidos", "♿ Serviços Oferecidos")}</h2>
+                        <p className="text-sm text-zinc-400">{t("admin.providerform.selecioneTodosOsServiosDeAcess", "Selecione todos os serviços de acessibilidade que este prestador oferece:")}</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -237,12 +232,11 @@ export const AdminProviderForm: React.FC = () => {
                 {/* Avaliação e Histórico */}
                 <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
                     <h2 className="text-lg font-bold text-white flex items-center gap-2 border-b border-white/5 pb-4">
-                        <Briefcase size={20} className="text-gold" /> Avaliação e Histórico
-                    </h2>
+                        <Briefcase size={20} className="text-gold" />{t("admin.providerform.avaliaoEHistrico", "Avaliação e Histórico")}</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Input
-                            label="Avaliação (0-5)"
+                            label={t("admin.providerform.avaliao05", "Avaliação (0-5)")}
                             type="number"
                             name="rating"
                             step="0.1"
@@ -256,7 +250,7 @@ export const AdminProviderForm: React.FC = () => {
                         />
 
                         <Input
-                            label="Trabalhos Concluídos"
+                            label={t("admin.providerform.trabalhosConcludos", "Trabalhos Concluídos")}
                             type="number"
                             name="completedJobs"
                             min="0"
@@ -280,9 +274,7 @@ export const AdminProviderForm: React.FC = () => {
                                 onChange={e => setFormData({ ...formData, active: e.target.checked })}
                                 className="hidden"
                             />
-                            <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">
-                                Prestador ativo (disponível para novos trabalhos)
-                            </span>
+                            <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">{t("admin.providerform.prestadorAtivoDisponvelParaNov", "Prestador ativo (disponível para novos trabalhos)")}</span>
                         </label>
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useRef } from 'react';
 import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
 import { api } from '../../../api/client';
@@ -15,6 +16,7 @@ type ScanResult = {
 };
 
 export const AdminScanner: React.FC = () => {
+  const { t } = useTranslation();
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
     const [isScanning, setIsScanning] = useState(true);
     const [loading, setLoading] = useState(false);
@@ -90,7 +92,7 @@ export const AdminScanner: React.FC = () => {
                     <Smartphone className="text-gold-light" size={32} />
                     Validador de Ingressos
                 </h1>
-                <p className="text-zinc-400">Aponte a câmera para o QR Code do visitante ou digite o código manualmente.</p>
+                <p className="text-zinc-400">{t("admin.scanner.aponteACmeraParaOQrCodeDoVisit", "Aponte a câmera para o QR Code do visitante ou digite o código manualmente.")}</p>
             </div>
 
             <div className="w-full max-w-md bg-zinc-900/40 rounded-3xl shadow-xl border border-white/5 overflow-hidden">
@@ -105,7 +107,7 @@ export const AdminScanner: React.FC = () => {
                         <div className="mt-6 space-y-4">
                             <div className="relative flex items-center">
                                 <div className="flex-grow border-t border-white/10"></div>
-                                <span className="flex-shrink-0 mx-4 text-zinc-500 text-sm font-medium">OU DIGITE O CÓDIGO</span>
+                                <span className="flex-shrink-0 mx-4 text-zinc-500 text-sm font-medium">{t("admin.scanner.ouDigiteOCdigo", "OU DIGITE O CÓDIGO")}</span>
                                 <div className="flex-grow border-t border-white/10"></div>
                             </div>
 
@@ -175,10 +177,9 @@ export const AdminScanner: React.FC = () => {
                                     onClick={resetScanner}
                                     className={`mt-8 w-full py-4 text-lg rounded-xl shadow-lg ${scanResult.valid ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20' : 'bg-slate-800 hover:bg-slate-900 shadow-slate-800/20'
                                         }`}
-                                    leftIcon={<QrCode size={20} />}
+                                    leftIcon={<QrCode size={20} />{t("admin.scanner.EscanearPrximo", "}
                                 >
-                                    Escanear Próximo
-                                </Button>
+                                    Escanear Próximo")}</Button>
                             </div>
                         ) : null}
                     </div>
@@ -186,7 +187,7 @@ export const AdminScanner: React.FC = () => {
             </div>
 
             <div className="mt-8 text-center text-zinc-500 text-sm max-w-sm">
-                <p>Aponte a câmera em um ambiente iluminado para uma leitura mais rápida.</p>
+                <p>{t("admin.scanner.aponteACmeraEmUmAmbienteIlumin", "Aponte a câmera em um ambiente iluminado para uma leitura mais rápida.")}</p>
             </div>
         </div>
     );

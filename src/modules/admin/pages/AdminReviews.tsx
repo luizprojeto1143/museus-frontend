@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Star, CheckCircle, XCircle, User, Clock, Filter, MessageCircle, BookOpen, Eye, EyeOff } from 'lucide-react';
 import { api } from '../../../api/client';
@@ -31,6 +32,7 @@ interface GuestbookEntry {
 type TabMode = 'reviews' | 'guestbook';
 
 export const AdminReviews: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [mode, setMode] = useState<TabMode>('reviews');
 
@@ -132,8 +134,8 @@ export const AdminReviews: React.FC = () => {
         <div className="admin-reviews-page">
             <header className="page-header">
                 <div>
-                    <h1>🛡️ Central de Moderação</h1>
-                    <p className="subtitle">Gerencie avaliações e mensagens da comunidade</p>
+                    <h1>{t("admin.reviews.CentralDeModerao", "🛡️ Central de Moderação")}</h1>
+                    <p className="subtitle">{t("admin.reviews.gerencieAvaliaesEMensagensDaCo", "Gerencie avaliações e mensagens da comunidade")}</p>
                 </div>
             </header>
 
@@ -202,7 +204,7 @@ export const AdminReviews: React.FC = () => {
                     {/* Reviews List */}
                     <div className="reviews-list">
                         {loading ? (
-                            <div className="loading-state">Carregando avaliações...</div>
+                            <div className="loading-state">{t("admin.reviews.carregandoAvaliaes", "Carregando avaliações...")}</div>
                         ) : reviews.length === 0 ? (
                             <div className="empty-state">
                                 <MessageCircle size={48} />
@@ -314,8 +316,7 @@ export const AdminReviews: React.FC = () => {
 
                                 {!entry.isVisible && (
                                     <span style={{ fontSize: "0.8rem", color: "#ef4444", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                                        <EyeOff size={12} /> Oculto para o público
-                                    </span>
+                                        <EyeOff size={12} />{t("admin.reviews.ocultoParaOPblico", "Oculto para o público")}</span>
                                 )}
                             </div>
                         ))

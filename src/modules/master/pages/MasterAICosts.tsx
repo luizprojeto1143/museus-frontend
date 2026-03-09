@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { Loader2, Brain, DollarSign, BarChart3, Cpu, AlertTriangle, Building2 } from "lucide-react";
@@ -29,6 +30,7 @@ interface AIReport {
 }
 
 export const MasterAICosts: React.FC = () => {
+  const { t } = useTranslation();
     const [report, setReport] = useState<AIReport | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -49,7 +51,7 @@ export const MasterAICosts: React.FC = () => {
     }, [fetchReport]);
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
-    if (!report) return <div className="text-center text-gray-500 py-20">Nenhum dado disponível.</div>;
+    if (!report) return <div className="text-center text-gray-500 py-20">{t("master.aicosts.nenhumDadoDisponvel", "Nenhum dado disponível.")}</div>;
 
     const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
     const periodLabel = `${monthNames[report.period.month - 1]} ${report.period.year}`;
@@ -91,7 +93,7 @@ export const MasterAICosts: React.FC = () => {
                             <tr>
                                 <th className="px-6 py-4">#</th>
                                 <th className="px-6 py-4">Tenant</th>
-                                <th className="px-6 py-4">Análises</th>
+                                <th className="px-6 py-4">{t("master.aicosts.anlises", "Análises")}</th>
                                 <th className="px-6 py-4">Tokens</th>
                                 <th className="px-6 py-4">Custo</th>
                             </tr>
@@ -110,7 +112,7 @@ export const MasterAICosts: React.FC = () => {
                                 </tr>
                             ))}
                             {report.topConsumers.length === 0 && (
-                                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500 italic">Nenhum consumo registrado neste período.</td></tr>
+                                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500 italic">{t("master.aicosts.nenhumConsumoRegistradoNestePe", "Nenhum consumo registrado neste período.")}</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -121,8 +123,7 @@ export const MasterAICosts: React.FC = () => {
             {report.nearLimitTenants.length > 0 && (
                 <div>
                     <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <AlertTriangle size={20} className="text-amber-500" /> Tenants Próximos do Limite (80%+)
-                    </h2>
+                        <AlertTriangle size={20} className="text-amber-500" />{t("master.aicosts.tenantsPrximosDoLimite80", "Tenants Próximos do Limite (80%+)")}</h2>
                     <div style={{ display: "grid", gap: "0.75rem" }}>
                         {report.nearLimitTenants.map(t => (
                             <div key={t.tenantId} className="card" style={{ padding: "1.25rem", borderColor: "rgba(212,175,55,0.2)" }}>

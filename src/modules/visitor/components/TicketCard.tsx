@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { Calendar, Clock, MapPin, Ticket, User } from 'lucide-react';
@@ -16,6 +17,7 @@ interface TicketCardProps {
 }
 
 export const TicketCard: React.FC<TicketCardProps> = ({
+  const { t } = useTranslation();
     eventTitle,
     eventSubtitle,
     code,
@@ -44,10 +46,8 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
                 {/* Warning Banner */}
                 <div className="ticket-card-warning">
-                    <p className="ticket-card-warning-title">Atenção:</p>
-                    <p className="ticket-card-warning-text">
-                        Este é o seu ingresso que dará acesso ao evento.
-                    </p>
+                    <p className="ticket-card-warning-title">{t("visitor.ticketcard.ateno", "Atenção:")}</p>
+                    <p className="ticket-card-warning-text">{t("visitor.ticketcard.esteOSeuIngressoQueDarAcessoAo", "Este é o seu ingresso que dará acesso ao evento.")}</p>
                 </div>
 
                 {/* Event Info */}
@@ -69,8 +69,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
                     <div className="ticket-card-detail">
                         <p className="ticket-card-detail-label">
-                            <Clock /> Horário:
-                        </p>
+                            <Clock />{t("visitor.ticketcard.horrio", "Horário:")}</p>
                         <p className="ticket-card-detail-value">{time}</p>
                     </div>
 
@@ -107,7 +106,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
                 {/* Footer */}
                 <div className="ticket-card-footer">
-                    <p className="ticket-card-code-label">Código</p>
+                    <p className="ticket-card-code-label">{t("visitor.ticketcard.cdigo", "Código")}</p>
                     <p className="ticket-card-code-value">{code}</p>
                 </div>
             </div>

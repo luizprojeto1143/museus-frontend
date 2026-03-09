@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -14,6 +15,7 @@ interface HeatmapData {
 }
 
 export const AdminHeatmap: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [data, setData] = useState<HeatmapData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -54,7 +56,7 @@ export const AdminHeatmap: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Heatmap de Circulação</h1>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.heatmap.heatmapDeCirculao", "Heatmap de Circulação")}</h1>
                     <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Mapa de calor das obras e salas mais visitadas</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
@@ -137,7 +139,7 @@ export const AdminHeatmap: React.FC = () => {
             {/* Legend */}
             <div className="flex justify-center gap-6 text-xs text-zinc-400">
                 <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-blue-500" /> Baixo</div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-amber-500" /> Médio</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-amber-500" />{t("admin.heatmap.mdio", "Médio")}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-orange-500" /> Alto</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-red-500" /> Muito Alto</div>
             </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -27,6 +28,7 @@ const serviceLabels: Record<string, string> = {
 };
 
 export const AdminProviders: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const { addToast } = useToast();
     const [providers, setProviders] = useState<Provider[]>([]);
@@ -72,10 +74,10 @@ export const AdminProviders: React.FC = () => {
                         <tr>
                             <th>Nome</th>
                             <th>Contato</th>
-                            <th>Serviços</th>
+                            <th>{t("admin.providers.servios", "Serviços")}</th>
                             <th>Trabalhos</th>
                             <th>Status</th>
-                            <th style={{ textAlign: "right" }}>Ações</th>
+                            <th style={{ textAlign: "right" }}>{t("admin.providers.aes", "Ações")}</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -202,7 +202,7 @@ export const AdminTreasureHunt: React.FC = () => {
                             </div>
 
                             <div className="form-group">
-                                <label>Obra Relacionada (Onde está a pista ou a solução)</label>
+                                <label>{t("admin.treasurehunt.obraRelacionadaOndeEstAPistaOu", "Obra Relacionada (Onde está a pista ou a solução)")}</label>
                                 <select
                                     className="input"
                                     value={formData.workId}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useRef, useEffect, useState } from 'react';
 import Moveable from 'react-moveable';
 import Selecto from 'react-selecto';
@@ -59,6 +60,7 @@ const ElementRenderer: React.FC<ElementRendererProps> = ({ element, onSelect }) 
 };
 
 export const CertificateCanvas: React.FC = () => {
+  const { t } = useTranslation();
     const {
         elements, selectedIds, setSelectedIds, updateElement,
         backgroundUrl, zoom, saveSnapshot
@@ -191,7 +193,7 @@ export const CertificateCanvas: React.FC = () => {
                             <div style={styles.emptyIcon}>
                                 <span style={{ fontSize: '36px', opacity: 0.3 }}>📜</span>
                             </div>
-                            <span style={{ fontSize: '18px', fontWeight: 500, opacity: 0.4 }}>Área do Certificado</span>
+                            <span style={{ fontSize: '18px', fontWeight: 500, opacity: 0.4 }}>{t("admin.certificatecanvas.reaDoCertificado", "Área do Certificado")}</span>
                             <span style={{ fontSize: '12px', color: '#9ca3af', marginTop: '8px', opacity: 0.5 }}>842 × 595 px (A4 Paisagem)</span>
                         </div>
                     )}

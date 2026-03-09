@@ -47,9 +47,7 @@ export const MasterUsers: React.FC = () => {
       <section className="master-hero" style={{ padding: '2rem 1rem', marginBottom: '2rem' }}>
         <div className="master-hero-content">
           <span className="master-badge">
-            <Users size={14} style={{ marginRight: '0.5rem' }} />
-            Gestão Global
-          </span>
+            <Users size={14} style={{ marginRight: '0.5rem' }} />{t("master.users.gestoGlobal", "Gestão Global")}</span>
           <h1 className="master-title">
             {t("master.users.title", "Usuários do Sistema")}
           </h1>
@@ -57,11 +55,10 @@ export const MasterUsers: React.FC = () => {
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem", flexWrap: 'wrap' }}>
             <Button
               onClick={() => navigate("/master/users/novo")}
-              leftIcon={<PlusCircle size={18} />}
+              leftIcon={<PlusCircle size={18} />{t("master.users.ClassnamewautoPx8NovoUsurio", "}
               className="w-auto px-8"
             >
-              Novo Usuário
-            </Button>
+              Novo Usuário")}</Button>
           </div>
         </div>
       </section>
@@ -72,8 +69,8 @@ export const MasterUsers: React.FC = () => {
             <Users size={24} />
           </div>
           <div>
-            <h3>Todos os Usuários</h3>
-            <p>Lista geral de todos os usuários cadastrados na plataforma</p>
+            <h3>{t("master.users.todosOsUsurios", "Todos os Usuários")}</h3>
+            <p>{t("master.users.listaGeralDeTodosOsUsuriosCada", "Lista geral de todos os usuários cadastrados na plataforma")}</p>
           </div>
         </div>
 

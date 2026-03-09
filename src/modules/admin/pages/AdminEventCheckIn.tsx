@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -13,6 +14,7 @@ type ScanResult = {
 };
 
 export const AdminEventCheckIn: React.FC = () => {
+  const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -83,9 +85,8 @@ export const AdminEventCheckIn: React.FC = () => {
                                 <p><strong>Participante:</strong> {scanResult.guestName || "Visitante"}</p>
                                 <p><strong>Ingresso:</strong> {scanResult.code}</p>
                             </div>
-                            <button onClick={() => setScanResult(null)} className="btn btn-primary w-full mt-4">
-                                Ler Próximo
-                            </button>
+                            <button onClick={() =>{t("admin.eventcheckin.setscanresultnullClassnamebtnB", "setScanResult(null)} className="btn btn-primary w-full mt-4">
+                                Ler Próximo")}</button>
                         </div>
                     )}
 
@@ -111,7 +112,7 @@ export const AdminEventCheckIn: React.FC = () => {
                 <div className="flex gap-2">
                     <input
                         className="input flex-1"
-                        placeholder="Código do ingresso"
+                        placeholder={t("admin.eventcheckin.cdigoDoIngresso", "Código do ingresso")}
                         onKeyDown={e => {
                             if (e.key === 'Enter') handleCheckIn((e.target as HTMLInputElement).value);
                         }}

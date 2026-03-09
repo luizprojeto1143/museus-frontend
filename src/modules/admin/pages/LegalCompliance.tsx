@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 
@@ -164,11 +165,11 @@ const LegalCompliance: React.FC = () => {
             <div style={{ marginTop: 32, padding: 24, backgroundColor: "#f9fafb", borderRadius: 12 }}>
                 <h3 style={{ fontWeight: 600, marginBottom: 12 }}>📚 Referências Legais</h3>
                 <ul style={{ color: "#6b7280", lineHeight: 1.8, paddingLeft: 20 }}>
-                    <li><strong>Lei 13.146/2015 (LBI)</strong> - Lei Brasileira de Inclusão da Pessoa com Deficiência</li>
-                    <li><strong>Lei 10.098/2000</strong> - Normas gerais e critérios básicos para acessibilidade</li>
-                    <li><strong>NBR 9050:2020</strong> - Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos</li>
+                    <li><strong>Lei 13.146/2015 (LBI)</strong>{t("admin.legalcompliance.LeiBrasileiraDeInclusoDaPessoa", "- Lei Brasileira de Inclusão da Pessoa com Deficiência")}</li>
+                    <li><strong>Lei 10.098/2000</strong>{t("admin.legalcompliance.NormasGeraisECritriosBsicosPar", "- Normas gerais e critérios básicos para acessibilidade")}</li>
+                    <li><strong>NBR 9050:2020</strong>{t("admin.legalcompliance.AcessibilidadeAEdificaesMobili", "- Acessibilidade a edificações, mobiliário, espaços e equipamentos urbanos")}</li>
                     <li><strong>Decreto 5.296/2004</strong> - Regulamenta lei de acessibilidade</li>
-                    <li><strong>Lei 12.527/2011 (LAI)</strong> - Lei de Acesso à Informação</li>
+                    <li><strong>Lei 12.527/2011 (LAI)</strong>{t("admin.legalcompliance.LeiDeAcessoInformao", "- Lei de Acesso à Informação")}</li>
                 </ul>
             </div>
         </div>

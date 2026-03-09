@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Mail, Send, Paperclip, DollarSign, Search, MoreVertical, ArrowLeft } from 'lucide-react';
 import { Button, Input } from '../../components/ui';
@@ -6,6 +7,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useLocation } from 'react-router-dom';
 
 export const ProviderInbox: React.FC = () => {
+  const { t } = useTranslation();
     const { name: myName } = useAuth();
     const location = useLocation();
     const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -173,9 +175,7 @@ export const ProviderInbox: React.FC = () => {
                                             {msg.type === "PAYMENT_REQUEST" ? (
                                                 <div className="flex flex-col gap-3">
                                                     <div className="flex items-center gap-2 font-black uppercase text-[0.7rem] tracking-widest opacity-80">
-                                                        <DollarSign size={16} />
-                                                        Solicitação de Pagamento
-                                                    </div>
+                                                        <DollarSign size={16} />{t("provider.providerinbox.solicitaoDePagamento", "Solicitação de Pagamento")}</div>
                                                     <p className="font-bold text-lg">{msg.content}</p>
                                                     <div className={`text-xs p-3 rounded-lg ${isMe ? 'bg-white/10' : 'bg-black/20 text-orange-300'}`}>
                                                         {isMe ? "Você solicitou este pagamento." : "Aguardando pagamento do produtor."}
@@ -223,8 +223,8 @@ export const ProviderInbox: React.FC = () => {
                         <div className="w-24 h-24 bg-[#9f7aea]/5 rounded-full flex items-center justify-center mb-6">
                             <Mail size={48} className="opacity-30" />
                         </div>
-                        <h3 className="text-xl font-bold text-white/50 mb-2">Central de Negociações</h3>
-                        <p className="max-w-xs text-sm">Selecione uma conversa ao lado para responder aos produtores e negociar seus serviços.</p>
+                        <h3 className="text-xl font-bold text-white/50 mb-2">{t("provider.providerinbox.centralDeNegociaes", "Central de Negociações")}</h3>
+                        <p className="max-w-xs text-sm">{t("provider.providerinbox.selecioneUmaConversaAoLadoPara", "Selecione uma conversa ao lado para responder aos produtores e negociar seus serviços.")}</p>
                     </div>
                 )}
             </div>

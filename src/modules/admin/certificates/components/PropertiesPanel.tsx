@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from 'react';
 import { useCertificate } from '../context/CertificateContext';
 import {
@@ -6,6 +7,7 @@ import {
 } from 'lucide-react';
 
 export const PropertiesPanel: React.FC = () => {
+  const { t } = useTranslation();
     const {
         selectedIds, elements, updateElement, deleteSelected, duplicateSelected,
         bringToFront, sendToBack
@@ -306,7 +308,7 @@ export const PropertiesPanel: React.FC = () => {
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a7a5a'; }}
                     >
                         <ArrowDown size={18} />
-                        <span style={styles.actionLabel}>Trás</span>
+                        <span style={styles.actionLabel}>{t("admin.propertiespanel.trs", "Trás")}</span>
                     </button>
                     <button
                         onClick={deleteSelected}
@@ -324,9 +326,7 @@ export const PropertiesPanel: React.FC = () => {
                     <div>
                         <div style={{ marginBottom: '20px' }}>
                             <div style={styles.sectionTitle}>
-                                <div style={styles.sectionLine} />
-                                Conteúdo
-                            </div>
+                                <div style={styles.sectionLine} />{t("admin.propertiespanel.contedo", "Conteúdo")}</div>
                             <textarea
                                 value={selectedElement.text}
                                 onChange={e => handleUpdate({ text: e.target.value })}
@@ -400,9 +400,7 @@ export const PropertiesPanel: React.FC = () => {
                 {!isMulti && selectedElement && (
                     <div>
                         <div style={styles.sectionTitle}>
-                            <div style={styles.sectionLine} />
-                            Transformação
-                        </div>
+                            <div style={styles.sectionLine} />{t("admin.propertiespanel.transformao", "Transformação")}</div>
                         <div style={styles.transformGrid}>
                             <div style={styles.transformItem}>
                                 <span style={styles.transformLabel}>X</span>
@@ -422,7 +420,7 @@ export const PropertiesPanel: React.FC = () => {
                             </div>
                             <div style={{ ...styles.transformItem, gridColumn: '1 / -1' }}>
                                 <RotateCw size={14} color="#6a5a3a" />
-                                <span style={{ ...styles.transformLabel, width: 'auto' }}>Rotação</span>
+                                <span style={{ ...styles.transformLabel, width: 'auto' }}>{t("admin.propertiespanel.rotao", "Rotação")}</span>
                                 <span style={styles.transformValue}>{Math.round(selectedElement.rotate || 0)}°</span>
                             </div>
                         </div>

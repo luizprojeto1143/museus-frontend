@@ -55,8 +55,8 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                             M
                         </div>
                         <div>
-                            <div className="text-white font-bold text-sm tracking-tight uppercase">Módulo Municipal</div>
-                            <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">Gestão Pública</div>
+                            <div className="text-white font-bold text-sm tracking-tight uppercase">{t("municipal.municipallayout.mduloMunicipal", "Módulo Municipal")}</div>
+                            <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{t("municipal.municipallayout.gestoPblica", "Gestão Pública")}</div>
                         </div>
                     </div>
                 </div>
@@ -91,17 +91,16 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="text-xs font-bold text-white truncate">{name}</div>
-                            <div className="text-[9px] text-slate-500 uppercase font-black">Secretário(a)</div>
+                            <div className="text-[9px] text-slate-500 uppercase font-black">{t("municipal.municipallayout.secretrioa", "Secretário(a)")}</div>
                         </div>
                     </div>
 
                     <button
                         onClick={logout}
                         className="flex items-center justify-center w-full px-4 py-3 text-sm text-slate-400 border border-slate-700 rounded-xl hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/5 transition-all gap-2 font-bold"
-                        aria-label="Encerrar sessão"
+                        aria-label={t("municipal.municipallayout.encerrarSesso", "Encerrar sessão")}
                     >
-                        <LogOut size={16} /> Encerrar Sessão
-                    </button>
+                        <LogOut size={16} />{t("municipal.municipallayout.encerrarSesso", "Encerrar Sessão")}</button>
                 </div>
             </aside>
 
@@ -109,7 +108,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
             <main className="flex-1 md:ml-[280px] min-h-screen flex flex-col w-full">
                 <header className="h-20 px-4 md:px-10 flex items-center justify-between bg-[var(--bg-surface)] border-b border-[var(--border-default)] sticky top-0 z-40">
                     <div className="flex items-center gap-4">
-                        <button className="md:hidden text-[var(--fg-secondary)] p-2 hover:bg-[var(--bg-surface-hover)] rounded-lg" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu de navegação">
+                        <button className="md:hidden text-[var(--fg-secondary)] p-2 hover:bg-[var(--bg-surface-hover)] rounded-lg" onClick={() => setSidebarOpen(true)} aria-label={t("municipal.municipallayout.abrirMenuDeNavegao", "Abrir menu de navegação")}>
                             <Menu size={24} />
                         </button>
                         <div className="hidden lg:flex items-center gap-3 bg-[var(--bg-surface-hover)] px-4 py-2 rounded-xl w-80">
@@ -138,9 +137,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                     {children}
                 </div>
 
-                <footer className="p-8 text-center text-[10px] text-[var(--fg-tertiary)] uppercase tracking-[0.2em] font-medium">
-                    © 2024 Plataforma Cultura Viva • Gestão de Impacto Municipal
-                </footer>
+                <footer className="p-8 text-center text-[10px] text-[var(--fg-tertiary)] uppercase tracking-[0.2em] font-medium">{t("municipal.municipallayout.2024PlataformaCulturaVivaGesto", "© 2024 Plataforma Cultura Viva • Gestão de Impacto Municipal")}</footer>
             </main>
         </div>
     );

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
@@ -11,6 +12,7 @@ interface CertificateTemplate {
 }
 
 export const CertificateTemplates: React.FC = () => {
+  const { t } = useTranslation();
     const navigate = useNavigate();
     const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
 
@@ -43,9 +45,8 @@ export const CertificateTemplates: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="section-title text-2xl">Modelos de Certificado</h1>
                 <div className="space-x-2">
-                    <button className="btn btn-secondary" onClick={() => navigate('/admin/certificates/rules')}>
-                        🤖 Regras e Automação
-                    </button>
+                    <button className="btn btn-secondary" onClick={() =>{t("admin.certificatetemplates.navigateadmincertificatesrules", "navigate('/admin/certificates/rules')}>
+                        🤖 Regras e Automação")}</button>
                     <button className="btn btn-primary" onClick={() => navigate('/admin/certificates/new')}>
                         <Plus size={20} className="mr-2" /> Novo Modelo
                     </button>

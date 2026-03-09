@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Sparkles } from 'lucide-react';
@@ -36,8 +37,7 @@ export const ShopPage: React.FC = () => {
                             transition={{ delay: 0.2 }}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-[0.3em] mb-6"
                         >
-                            <Sparkles size={14} /> Coleção Exclusiva
-                        </motion.div>
+                            <Sparkles size={14} />{t("visitor.shoppage.coleoExclusiva", "Coleção Exclusiva")}</motion.div>
 
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
@@ -85,7 +85,7 @@ export const ShopPage: React.FC = () => {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent p-6 flex flex-col justify-end">
                                 <p className="text-amber-500 font-bold text-xs uppercase mb-1">Destaque do Mês</p>
-                                <h3 className="text-white font-bold text-xl">Réplica Arqueológica</h3>
+                                <h3 className="text-white font-bold text-xl">{t("visitor.shoppage.rplicaArqueolgica", "Réplica Arqueológica")}</h3>
                             </div>
                         </div>
                         {/* Decorative elements */}

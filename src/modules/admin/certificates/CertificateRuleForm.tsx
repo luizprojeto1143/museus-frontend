@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { Button } from '../../../components/ui/Button';
 
 export const CertificateRuleForm: React.FC = () => {
+  const { t } = useTranslation();
     const navigate = useNavigate();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [templates, setTemplates] = useState<any[]>([]);
@@ -53,7 +55,7 @@ export const CertificateRuleForm: React.FC = () => {
 
     return (
         <div className="p-6 max-w-2xl bg-white rounded-lg shadow m-6">
-            <h1 className="text-2xl font-bold mb-6">Nova Regra de Automação</h1>
+            <h1 className="text-2xl font-bold mb-6">{t("admin.certificateruleform.novaRegraDeAutomao", "Nova Regra de Automação")}</h1>
 
             <div className="space-y-4">
                 <div>
@@ -61,10 +63,9 @@ export const CertificateRuleForm: React.FC = () => {
                     <input
                         className="w-full p-2 border rounded"
                         value={name}
-                        onChange={e => setName(e.target.value)}
-                        placeholder="Ex: Certificado Trilha Histórica"
-                    />
-                </div>
+                        onChange={e =>{t("admin.certificateruleform.setnameetargetvaluePlaceholder", "setName(e.target.value)}
+                        placeholder={t("admin.certificateruleform.exCertificadoTrilhaHistrica", "Ex: Certificado Trilha Histórica")}
+                    />")}</div>
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Gatilho (Quando emitir?)</label>
@@ -97,7 +98,7 @@ export const CertificateRuleForm: React.FC = () => {
 
                 {triggerType === 'XP_THRESHOLD' && (
                     <div className="p-4 bg-gray-50 rounded border">
-                        <label className="block text-sm font-medium mb-1">Mínimo de XP</label>
+                        <label className="block text-sm font-medium mb-1">{t("admin.certificateruleform.mnimoDeXp", "Mínimo de XP")}</label>
                         <input
                             type="number"
                             className="w-full p-2 border rounded"
@@ -122,9 +123,7 @@ export const CertificateRuleForm: React.FC = () => {
                 </div>
 
                 <div className="pt-4">
-                    <Button onClick={handleSave} disabled={!name || !templateId}>
-                        Salvar Regra Automática
-                    </Button>
+                    <Button onClick={handleSave} disabled={!name || !templateId}>{t("admin.certificateruleform.salvarRegraAutomtica", "Salvar Regra Automática")}</Button>
                 </div>
             </div>
         </div>

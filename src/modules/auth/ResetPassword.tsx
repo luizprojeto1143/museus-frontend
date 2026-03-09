@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -5,6 +6,7 @@ import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { api } from "../../api/client";
 
 export const ResetPasswordPage: React.FC = () => {
+  const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const query = new URLSearchParams(location.search);
@@ -75,9 +77,7 @@ export const ResetPasswordPage: React.FC = () => {
                             <CheckCircle size={32} />
                         </div>
                         <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>Senha Alterada!</h2>
-                        <p style={{ opacity: 0.7, marginBottom: "2rem", lineHeight: "1.6" }}>
-                            Sua senha foi atualizada com sucesso. Você já pode fazer login.
-                        </p>
+                        <p style={{ opacity: 0.7, marginBottom: "2rem", lineHeight: "1.6" }}>{t("auth.resetpassword.suaSenhaFoiAtualizadaComSucess", "Sua senha foi atualizada com sucesso. Você já pode fazer login.")}</p>
                         <Link to="/login" className="btn-primary" style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", display: "inline-block", textAlign: "center", textDecoration: "none", color: "black", fontWeight: "bold", background: "#d4af37" }}>
                             Ir para Login
                         </Link>
@@ -110,7 +110,7 @@ export const ResetPasswordPage: React.FC = () => {
                                         required
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
-                                        placeholder="No mínimo 6 caracteres"
+                                        placeholder={t("auth.resetpassword.noMnimo6Caracteres", "No mínimo 6 caracteres")}
                                         style={{
                                             width: "100%",
                                             padding: "0.8rem 2.5rem 0.8rem 2.5rem",

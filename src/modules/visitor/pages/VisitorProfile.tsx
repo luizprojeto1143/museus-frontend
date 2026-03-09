@@ -190,7 +190,7 @@ export const VisitorProfile: React.FC = () => {
                                     </div>
                                     <div className="text-left">
                                         <h4 className="text-base font-bold text-red-500">Sair da Conta</h4>
-                                        <span className="text-sm text-red-400/70 block font-normal">Encerrar sessão neste dispositivo</span>
+                                        <span className="text-sm text-red-400/70 block font-normal">{t("visitor.profile.encerrarSessoNesteDispositivo", "Encerrar sessão neste dispositivo")}</span>
                                     </div>
                                 </div>
                                 <ChevronRight size={20} className="text-red-500/50" />
@@ -205,7 +205,7 @@ export const VisitorProfile: React.FC = () => {
                         {registrations.length === 0 ? (
                             <div className="empty-state">
                                 <Ticket size={48} style={{ margin: "0 auto", opacity: 0.5 }} />
-                                <p>Você ainda não tem ingressos.</p>
+                                <p>{t("visitor.profile.vocAindaNoTemIngressos", "Você ainda não tem ingressos.")}</p>
                                 <Button
                                     onClick={() => navigate('/eventos')}
                                     className="bg-gold hover:bg-gold/90 text-black font-bold rounded-full px-6"
@@ -292,7 +292,7 @@ export const VisitorProfile: React.FC = () => {
                         {orders.length === 0 ? (
                             <div className="empty-state">
                                 <ShoppingBag size={48} style={{ margin: "0 auto", opacity: 0.5 }} />
-                                <p>Você ainda não fez nenhum pedido.</p>
+                                <p>{t("visitor.profile.vocAindaNoFezNenhumPedido", "Você ainda não fez nenhum pedido.")}</p>
                                 <Button
                                     onClick={() => navigate('/loja')}
                                     className="bg-gold hover:bg-gold/90 text-black font-bold rounded-full px-6"
@@ -344,9 +344,9 @@ export const VisitorProfile: React.FC = () => {
                         </div>
 
                         <div className="space-y-4">
-                            <h4 className="text-lg font-bold text-white border-b border-white/10 pb-2">Cupons Disponíveis</h4>
+                            <h4 className="text-lg font-bold text-white border-b border-white/10 pb-2">{t("visitor.profile.cuponsDisponveis", "Cupons Disponíveis")}</h4>
                             {availableCoupons.length === 0 ? (
-                                <p className="text-gray-500 text-sm italic">Nenhum cupom disponível no momento.</p>
+                                <p className="text-gray-500 text-sm italic">{t("visitor.profile.nenhumCupomDisponvelNoMomento", "Nenhum cupom disponível no momento.")}</p>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {availableCoupons.map(coupon => (
@@ -452,9 +452,7 @@ export const VisitorProfile: React.FC = () => {
                         <button
                             onClick={() => handleTabChange('info')}
                             className={`profile-tab-btn ${activeTab === 'info' ? 'active' : ''}`}
-                        >
-                            Informações
-                        </button>
+                        >{t("visitor.profile.informaes", "Informações")}</button>
                         <button
                             onClick={() => handleTabChange('tickets')}
                             className={`profile-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`}

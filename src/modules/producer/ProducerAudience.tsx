@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
@@ -15,6 +16,7 @@ type Participant = {
 };
 
 export const ProducerAudience: React.FC = () => {
+  const { t } = useTranslation();
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -71,8 +73,8 @@ export const ProducerAudience: React.FC = () => {
         <div className="pb-16 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meu Público (CRM)</h1>
-                    <p className="text-[#B0A090]">Visualize quem são seus visitantes e exporte dados para marketing.</p>
+                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.produceraudience.meuPblicoCrm", "Meu Público (CRM)")}</h1>
+                    <p className="text-[#B0A090]">{t("producer.produceraudience.visualizeQuemSoSeusVisitantesE", "Visualize quem são seus visitantes e exporte dados para marketing.")}</p>
                 </div>
                 <Button
                     onClick={handleExport}
@@ -104,7 +106,7 @@ export const ProducerAudience: React.FC = () => {
                     <div className="col-span-3">Evento</div>
                     <div className="col-span-2">Ingresso</div>
                     <div className="col-span-2">Status</div>
-                    <div className="col-span-1 text-right">Ações</div>
+                    <div className="col-span-1 text-right">{t("producer.produceraudience.aes", "Ações")}</div>
                 </div>
 
                 {/* Rows */}

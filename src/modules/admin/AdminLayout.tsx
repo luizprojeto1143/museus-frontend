@@ -284,9 +284,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Main Content */}
       <main className="layout-main">
         <header className="layout-header">
-          <button className="menu-toggle" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu de navegação">
-            ☰
-          </button>
+          <button className="menu-toggle" onClick={() =>{t("admin.layout.setsidebaropentrueArialabelabr", "setSidebarOpen(true)} aria-label={t("admin.layout.abrirMenuDeNavegao", "Abrir menu de navegação")}>
+            ☰")}</button>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
             <span className="welcome-text" style={{ fontSize: "0.9rem", color: "var(--fg-muted)" }}>
               {t("welcome.returning", { name: name || "Admin" })}

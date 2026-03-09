@@ -266,11 +266,10 @@ export const AdminAchievementForm: React.FC = () => {
               <div className="flex-col gap-6">
                 <div className="admin-section">
                   <h3 className="admin-section-title">
-                    <FileText className="text-gold" /> Informações Básicas
-                  </h3>
+                    <FileText className="text-gold" />{t("admin.achievementform.informaesBsicas", "Informações Básicas")}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Input
-                      label="Código Único"
+                      label={t("admin.achievementform.cdigoNico", "Código Único")}
                       value={form.code}
                       onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
                       placeholder="EX: VISITANTE_EXPLORADOR"
@@ -359,13 +358,9 @@ export const AdminAchievementForm: React.FC = () => {
                         onChange={(e) => setForm({ ...form, autoTrigger: e.target.checked })}
                         className="hidden"
                       />
-                      <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">
-                        Desbloqueio Automático
-                      </span>
+                      <span className="font-medium text-zinc-200 group-hover:text-white transition-colors">{t("admin.achievementform.desbloqueioAutomtico", "Desbloqueio Automático")}</span>
                     </label>
-                    <p className="text-xs text-zinc-500 ml-8">
-                      Se marcado, o sistema a concederá automaticamente assim que a condição for atendida.
-                    </p>
+                    <p className="text-xs text-zinc-500 ml-8">{t("admin.achievementform.seMarcadoOSistemaAConcederAuto", "Se marcado, o sistema a concederá automaticamente assim que a condição for atendida.")}</p>
                   </div>
                 </div>
               </div>
@@ -386,15 +381,12 @@ export const AdminAchievementForm: React.FC = () => {
                       onChange={(e) => setForm({ ...form, xpReward: parseInt(e.target.value) || 0 })}
                       leftIcon={<Star size={16} className="text-gold" />}
                     />
-                    <p className="text-xs text-zinc-500 mt-2">
-                      XP concedido ao visitante quando a conquista é desbloqueada.
-                    </p>
+                    <p className="text-xs text-zinc-500 mt-2">{t("admin.achievementform.xpConcedidoAoVisitanteQuandoAC", "XP concedido ao visitante quando a conquista é desbloqueada.")}</p>
                   </div>
 
                   <div className="admin-section">
                     <h3 className="admin-section-title">
-                      <Image className="text-gold" /> Ícone
-                    </h3>
+                      <Image className="text-gold" />{t("admin.achievementform.cone", "Ícone")}</h3>
                     <div className="flex gap-4 items-start">
                       <div className="w-24 h-24 rounded-2xl bg-zinc-800 border border-white/10 flex items-center justify-center overflow-hidden relative group shrink-0">
                         {form.iconUrl ? (
@@ -432,11 +424,11 @@ export const AdminAchievementForm: React.FC = () => {
                     <h3 className="admin-section-title">Resumo</h3>
                     <div className="summary-card">
                       <div className="summary-row">
-                        <span className="summary-label">Título:</span>
+                        <span className="summary-label">{t("admin.achievementform.ttulo", "Título:")}</span>
                         <span className="summary-value">{form.title}</span>
                       </div>
                       <div className="summary-row">
-                        <span className="summary-label">Código:</span>
+                        <span className="summary-label">{t("admin.achievementform.cdigo", "Código:")}</span>
                         <span className="summary-value font-mono">{form.code}</span>
                       </div>
                       <div className="summary-row">
@@ -459,7 +451,7 @@ export const AdminAchievementForm: React.FC = () => {
                   </div>
 
                   <div className="admin-section flex flex-col items-center justify-center text-center">
-                    <h3 className="admin-section-title w-full">Pré-visualização</h3>
+                    <h3 className="admin-section-title w-full">{t("admin.achievementform.prvisualizao", "Pré-visualização")}</h3>
                     <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gold to-yellow-600 p-1 mb-4 shadow-lg shadow-gold/20">
                       <div className="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden">
                         {form.iconUrl ? (
@@ -506,10 +498,9 @@ export const AdminAchievementForm: React.FC = () => {
               <Button
                 onClick={nextStep}
                 className="btn-primary"
-                rightIcon={<ChevronRight size={18} />}
+                rightIcon={<ChevronRight size={18} />{t("admin.achievementform.Prximo", "}
               >
-                Próximo
-              </Button>
+                Próximo")}</Button>
             )}
           </div>
         </div>

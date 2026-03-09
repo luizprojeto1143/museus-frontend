@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -6,6 +7,7 @@ import "./AdminShared.css";
 
 
 export const AdminMuseumBattle: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [ranking, setRanking] = useState<any[]>([]);
     const [month, setMonth] = useState(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`);
@@ -40,7 +42,7 @@ export const AdminMuseumBattle: React.FC = () => {
             {/* My Position */}
             {myRank && (
                 <div className="bg-gradient-to-r from-amber-500/10 to-amber-500/5 border border-amber-500/20 rounded-3xl p-8 text-center">
-                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">Sua Posição</p>
+                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">{t("admin.museumbattle.suaPosio", "Sua Posição")}</p>
                     <p className="text-6xl font-black text-amber-400">#{myRank.rank}</p>
                     <p className="text-white font-bold mt-1">{myRank.name}</p>
                     <p className="text-2xl font-black text-white mt-2">{myRank.score} <span className="text-zinc-400 text-sm">pts</span></p>

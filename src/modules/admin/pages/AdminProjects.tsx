@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -37,6 +38,7 @@ const statusLabels: Record<string, { label: string; color: string; bg: string; b
 };
 
 export const AdminProjects: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const { addToast } = useToast();
     const navigate = useNavigate();
@@ -164,7 +166,7 @@ export const AdminProjects: React.FC = () => {
                         <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-white/5 text-xs font-bold text-zinc-500 uppercase tracking-wider">
                             <div className="col-span-4">Projeto</div>
                             <div className="col-span-3">Edital/Categoria</div>
-                            <div className="col-span-2">Orçamento</div>
+                            <div className="col-span-2">{t("admin.projects.oramento", "Orçamento")}</div>
                             <div className="col-span-2">Status</div>
                             <div className="col-span-1 text-right"></div>
                         </div>

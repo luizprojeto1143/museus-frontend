@@ -82,15 +82,15 @@ export const EventsList: React.FC = () => {
     <div className="events-container">
       <header className="events-header">
         <h1 className="events-title">Agenda Cultural</h1>
-        <p className="events-subtitle">Explore a programação e planeje sua visita.</p>
+        <p className="events-subtitle">{t("visitor.eventslist.exploreAProgramaoEPlanejeSuaVi", "Explore a programação e planeje sua visita.")}</p>
       </header>
 
       <div className="agenda-filters">
         <div className="filter-group">
           <button
             className={`filter-btn ${filter === 'UPCOMING' ? 'active' : ''}`}
-            onClick={() => setFilter('UPCOMING')}
-          >Próximos</button>
+            onClick={() =>{t("visitor.eventslist.setfilterupcomingPrximos", "setFilter('UPCOMING')}
+          >Próximos")}</button>
           <button
             className={`filter-btn ${filter === 'WEEK' ? 'active' : ''}`}
             onClick={() => setFilter('WEEK')}
@@ -117,13 +117,13 @@ export const EventsList: React.FC = () => {
       {loading ? (
         <div className="p-12 text-center">
           <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-zinc-500">Organizando programação...</p>
+          <p className="text-zinc-500">{t("visitor.eventslist.organizandoProgramao", "Organizando programação...")}</p>
         </div>
       ) : Object.keys(groupedEvents).length === 0 ? (
         <div className="events-empty">
           <span className="empty-icon">📅</span>
           <h3 className="text-xl font-bold text-white mb-2">Agenda Vazia</h3>
-          <p className="text-zinc-500">Não encontramos eventos para este período ou categoria.</p>
+          <p className="text-zinc-500">{t("visitor.eventslist.noEncontramosEventosParaEstePe", "Não encontramos eventos para este período ou categoria.")}</p>
           <button
             className="mt-6 text-gold underline font-bold"
             onClick={() => { setFilter('UPCOMING'); setSelectedCategory('ALL'); }}
@@ -156,7 +156,7 @@ export const EventsList: React.FC = () => {
                         <span className="strip-hour">
                           {new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
-                        <span className="strip-label">Início</span>
+                        <span className="strip-label">{t("visitor.eventslist.incio", "Início")}</span>
                       </div>
 
                       <div className="card-main">
@@ -173,7 +173,7 @@ export const EventsList: React.FC = () => {
                           )}
                           <div className="meta-item">
                             <Ticket size={14} />
-                            <span>Grátis</span>
+                            <span>{t("visitor.eventslist.grtis", "Grátis")}</span>
                           </div>
                         </div>
                       </div>

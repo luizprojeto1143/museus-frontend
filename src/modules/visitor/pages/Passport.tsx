@@ -213,16 +213,12 @@ export const Passport: React.FC = () => {
           <h2 style={{ fontSize: "1.5rem", color: "#d4af37", marginBottom: "1rem", fontFamily: "Georgia, serif" }}>
             Seu Passaporte Digital
           </h2>
-          <p style={{ color: "#EAE0D5", marginBottom: "2rem", opacity: 0.8, maxWidth: "400px", margin: "0 auto 2rem" }}>
-            Registre-se para começar a colecionar carimbos, ganhar XP e desbloquear conquistas exclusivas durante sua visita.
-          </p>
+          <p style={{ color: "#EAE0D5", marginBottom: "2rem", opacity: 0.8, maxWidth: "400px", margin: "0 auto 2rem" }}>{t("visitor.passport.registreseParaComearAColeciona", "Registre-se para começar a colecionar carimbos, ganhar XP e desbloquear conquistas exclusivas durante sua visita.")}</p>
           <button
             onClick={() => navigate("/register")}
             className="passport-tab-btn active"
             style={{ width: "auto", padding: "1rem 2.5rem", borderRadius: "2rem", fontSize: "1rem" }}
-          >
-            Começar Agora
-          </button>
+          >{t("visitor.passport.comearAgora", "Começar Agora")}</button>
         </div>
       ) : (
         <>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../api/client';
@@ -108,12 +109,8 @@ export const MasterSeeder: React.FC = () => {
                     <span className="master-badge">
                         ✨ Traffic Generator
                     </span>
-                    <h1 className="master-title">
-                        Simulador de Tráfego
-                    </h1>
-                    <p className="master-subtitle">
-                        Crie vida no seu museu. Gere visitantes virtuais e simule interações reais para testar dashboards e recursos.
-                    </p>
+                    <h1 className="master-title">{t("master.seeder.simuladorDeTrfego", "Simulador de Tráfego")}</h1>
+                    <p className="master-subtitle">{t("master.seeder.crieVidaNoSeuMuseuGereVisitant", "Crie vida no seu museu. Gere visitantes virtuais e simule interações reais para testar dashboards e recursos.")}</p>
                 </div>
             </section>
 
@@ -234,14 +231,13 @@ export const MasterSeeder: React.FC = () => {
                             disabled={loading}
                             className="w-full"
                             style={{ background: '#7c3aed' }}
-                            leftIcon={loading ? <Activity className="animate-spin" size={18} /> : <PlayCircle size={18} />}
+                            leftIcon={loading ? <Activity className="animate-spin" size={18} /> : <PlayCircle size={18} />{t("master.seeder.RodarSimulaoCompleta", "}
                         >
-                            Rodar Simulação Completa
-                        </Button>
+                            Rodar Simulação Completa")}</Button>
 
                         {lastResult && (
                             <div style={{ marginTop: '1rem', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.3)', borderRadius: '8px', padding: '1rem' }}>
-                                <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#a78bfa', fontSize: '0.9rem' }}>✅ Última Simulação</div>
+                                <div style={{ fontWeight: 700, marginBottom: '0.5rem', color: '#a78bfa', fontSize: '0.9rem' }}>{t("master.seeder.LtimaSimulao", "✅ Última Simulação")}</div>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
                                     <span>🎨 {lastResult.visits} visitas</span>
                                     <span>🔖 {lastResult.stamps} selos</span>
@@ -262,7 +258,7 @@ export const MasterSeeder: React.FC = () => {
                         </div>
                         <h3>Zona de Perigo</h3>
                     </div>
-                    <p className="master-card-desc">Limpeza de dados. remove apenas usuários marcados como `isFake`.</p>
+                    <p className="master-card-desc">{t("master.seeder.limpezaDeDadosRemoveApenasUsur", "Limpeza de dados. remove apenas usuários marcados como `isFake`.")}</p>
 
                     <Button
                         onClick={handleBulkDelete}

@@ -163,7 +163,7 @@ export const MasterInPersonServices: React.FC = () => {
                     </div>
 
                     {services.length === 0 ? (
-                        <p style={{ color: "#94a3b8", padding: "1rem" }}>Nenhum serviço configurado.</p>
+                        <p style={{ color: "#94a3b8", padding: "1rem" }}>{t("master.inpersonservices.nenhumServioConfigurado", "Nenhum serviço configurado.")}</p>
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem' }}>
                             {services.map(srv => (
@@ -199,17 +199,17 @@ export const MasterInPersonServices: React.FC = () => {
                     </div>
 
                     {requests.length === 0 ? (
-                        <p style={{ color: "#94a3b8", padding: "1rem" }}>Nenhuma solicitação recebida.</p>
+                        <p style={{ color: "#94a3b8", padding: "1rem" }}>{t("master.inpersonservices.nenhumaSolicitaoRecebida", "Nenhuma solicitação recebida.")}</p>
                     ) : (
                         <div className="master-table-container">
                             <table className="master-table">
                                 <thead>
                                     <tr>
-                                        <th>Instituição</th>
-                                        <th>Serviço Solicitado</th>
+                                        <th>{t("master.inpersonservices.instituio", "Instituição")}</th>
+                                        <th>{t("master.inpersonservices.servioSolicitado", "Serviço Solicitado")}</th>
                                         <th>Detalhes (Data/Local)</th>
                                         <th>Status</th>
-                                        <th>Ações</th>
+                                        <th>{t("master.inpersonservices.aes", "Ações")}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -281,24 +281,24 @@ export const MasterInPersonServices: React.FC = () => {
                         <h3 style={{ marginBottom: "1.5rem" }}>{editService ? "Editar Serviço" : "Novo Serviço"}</h3>
 
                         <div className="master-input-group">
-                            <label>Nome do Serviço</label>
+                            <label>{t("master.inpersonservices.nomeDoServio", "Nome do Serviço")}</label>
                             <input
                                 type="text"
                                 className="master-input"
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="Ex: Intérprete de Libras"
+                                placeholder={t("master.inpersonservices.exIntrpreteDeLibras", "Ex: Intérprete de Libras")}
                             />
                         </div>
 
                         <div className="master-input-group mt-4">
-                            <label>Descrição</label>
+                            <label>{t("master.inpersonservices.descrio", "Descrição")}</label>
                             <textarea
                                 className="master-input"
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
-                                placeholder="Descreva os detalhes deste serviço..."
+                                placeholder={t("master.inpersonservices.descrevaOsDetalhesDesteServio", "Descreva os detalhes deste serviço...")}
                             />
                         </div>
 
@@ -310,7 +310,7 @@ export const MasterInPersonServices: React.FC = () => {
                                 onChange={e => setFormData({ ...formData, active: e.target.checked })}
                                 style={{ width: '1.2rem', height: '1.2rem', accentColor: '#3b82f6', cursor: 'pointer' }}
                             />
-                            <label htmlFor="active_toggle" style={{ cursor: 'pointer', color: '#e2e8f0', fontSize: '0.9rem' }}>Ativo (Disponível para agendamento)</label>
+                            <label htmlFor="active_toggle" style={{ cursor: 'pointer', color: '#e2e8f0', fontSize: '0.9rem' }}>{t("master.inpersonservices.ativoDisponvelParaAgendamento", "Ativo (Disponível para agendamento)")}</label>
                         </div>
 
                         <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", justifyContent: "flex-end" }}>
@@ -325,9 +325,7 @@ export const MasterInPersonServices: React.FC = () => {
                                 className="master-btn btn-primary"
                                 onClick={handleSaveService}
                                 style={{ width: 'auto' }}
-                            >
-                                Salvar Serviço
-                            </button>
+                            >{t("master.inpersonservices.salvarServio", "Salvar Serviço")}</button>
                         </div>
                     </div>
                 </div>

@@ -248,12 +248,10 @@ export const SelectMuseum: React.FC = () => {
           </h2>
           {userLocation ? (
             <span className="location-badge success">
-              <MapPin size={14} /> Localização Ativa
-            </span>
+              <MapPin size={14} />{t("visitor.selectmuseum.localizaoAtiva", "Localização Ativa")}</span>
           ) : (
             <span className="location-badge warning">
-              <MapPin size={14} /> Ative a localização
-            </span>
+              <MapPin size={14} />{t("visitor.selectmuseum.ativeALocalizao", "Ative a localização")}</span>
           )}
         </div>
 

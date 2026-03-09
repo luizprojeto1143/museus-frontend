@@ -118,9 +118,7 @@ export const AdminMapEditor: React.FC = () => {
                         <MapIcon className="text-gold-500" />
                         Editor de Mapa da Cidade
                     </h1>
-                    <p className="text-zinc-500 text-sm">
-                        Selecione uma obra na lista e clique no mapa para definir sua localização real.
-                    </p>
+                    <p className="text-zinc-500 text-sm">{t("admin.mapeditor.selecioneUmaObraNaListaEClique", "Selecione uma obra na lista e clique no mapa para definir sua localização real.")}</p>
                 </div>
                 <button
                     onClick={handleSave}
@@ -232,9 +230,7 @@ export const AdminMapEditor: React.FC = () => {
 
                     {/* Instruction Overlay */}
                     {!selectedWorkId && (
-                        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm border border-white/10 z-[1000] pointer-events-none">
-                            Selecione uma obra na lista lateral para começar
-                        </div>
+                        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-sm border border-white/10 z-[1000] pointer-events-none">{t("admin.mapeditor.selecioneUmaObraNaListaLateral", "Selecione uma obra na lista lateral para começar")}</div>
                     )}
                 </div>
             </div>

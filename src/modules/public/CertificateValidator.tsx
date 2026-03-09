@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../api/client';
@@ -16,6 +17,7 @@ interface CertificateData {
 }
 
 export const CertificateValidator: React.FC = () => {
+  const { t } = useTranslation();
     const { code } = useParams();
     const [status, setStatus] = useState<'loading' | 'valid' | 'invalid' | 'error'>('loading');
     const [data, setData] = useState<CertificateData | null>(null);
@@ -93,7 +95,7 @@ export const CertificateValidator: React.FC = () => {
                                     <CheckCircle size={32} />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-green-400">Certificado Válido</h2>
+                                    <h2 className="text-xl font-bold text-green-400">{t("public.certificatevalidator.certificadoVlido", "Certificado Válido")}</h2>
                                     <p className="text-green-300/60 text-sm">A autenticidade deste documento foi confirmada.</p>
                                 </div>
                             </div>
@@ -105,8 +107,8 @@ export const CertificateValidator: React.FC = () => {
                                     <XCircle size={32} />
                                 </div>
                                 <div>
-                                    <h2 className="text-xl font-bold text-red-400">Certificado Inválido</h2>
-                                    <p className="text-red-300/60 text-sm">O código fornecido não foi encontrado ou foi revogado.</p>
+                                    <h2 className="text-xl font-bold text-red-400">{t("public.certificatevalidator.certificadoInvlido", "Certificado Inválido")}</h2>
+                                    <p className="text-red-300/60 text-sm">{t("public.certificatevalidator.oCdigoFornecidoNoFoiEncontrado", "O código fornecido não foi encontrado ou foi revogado.")}</p>
                                 </div>
                             </div>
                         )}
@@ -116,7 +118,7 @@ export const CertificateValidator: React.FC = () => {
                                 <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center border-2 border-yellow-500 text-yellow-500">
                                     <AlertTriangle size={32} />
                                 </div>
-                                <h2 className="text-xl font-bold text-yellow-400">Erro na Verificação</h2>
+                                <h2 className="text-xl font-bold text-yellow-400">{t("public.certificatevalidator.erroNaVerificao", "Erro na Verificação")}</h2>
                             </div>
                         )}
                     </div>
@@ -152,7 +154,7 @@ export const CertificateValidator: React.FC = () => {
                                 <div className="flex items-start gap-3 p-3 rounded bg-[var(--bg-base)]/50">
                                     <Calendar className="text-[var(--primary-color)] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">Data de Emissão</div>
+                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">{t("public.certificatevalidator.dataDeEmisso", "Data de Emissão")}</div>
                                         <div className="text-[var(--fg-primary)] font-medium">{new Date(data.issuedAt).toLocaleDateString('pt-BR')}</div>
                                     </div>
                                 </div>
@@ -171,7 +173,7 @@ export const CertificateValidator: React.FC = () => {
 
                             {/* Footer Hash */}
                             <div className="text-center mt-4">
-                                <div className="text-[10px] text-[var(--fg-muted)]">Código de Autenticidade</div>
+                                <div className="text-[10px] text-[var(--fg-muted)]">{t("public.certificatevalidator.cdigoDeAutenticidade", "Código de Autenticidade")}</div>
                                 <div className="font-mono text-xs text-[var(--primary-color)] tracking-widest mt-0.5 opacity-80">{data.code}</div>
                             </div>
                         </div>

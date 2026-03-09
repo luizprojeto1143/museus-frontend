@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../../modules/auth/AuthContext";
@@ -92,11 +93,10 @@ const SecretaryDashboard: React.FC = () => {
             <div className="sec-header">
                 <div className="sec-title">
                     <h1>Painel da Secretaria</h1>
-                    <p>Visão executiva da gestão cultural municipal</p>
+                    <p>{t("admin.secretarydashboard.visoExecutivaDaGestoCulturalMu", "Visão executiva da gestão cultural municipal")}</p>
                 </div>
                 <button onClick={downloadPdf} className="sec-btn-export">
-                    <span>📄</span> Exportar Relatório PDF
-                </button>
+                    <span>📄</span>{t("admin.secretarydashboard.exportarRelatrioPdf", "Exportar Relatório PDF")}</button>
             </div>
 
             {/* KPI Cards */}
@@ -130,7 +130,7 @@ const SecretaryDashboard: React.FC = () => {
             {/* Alerts */}
             {data.alerts.length > 0 && (
                 <div className="sec-alerts">
-                    <h2 className="sec-section-title">⚠️ Alertas de Atenção</h2>
+                    <h2 className="sec-section-title">{t("admin.secretarydashboard.AlertasDeAteno", "⚠️ Alertas de Atenção")}</h2>
                     <div className="sec-alert-list">
                         {data.alerts.map((alert, idx) => (
                             <div

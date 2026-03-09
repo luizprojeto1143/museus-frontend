@@ -132,15 +132,15 @@ export const AdminSpaceForm: React.FC = () => {
                         <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
                             <Layers className="text-[#d4af37]" size={24} />
                         </div>
-                        <h3 className="card-title mb-0">Informações Básicas</h3>
+                        <h3 className="card-title mb-0">{t("admin.spaceform.informaesBsicas", "Informações Básicas")}</h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="md:col-span-2 form-group">
-                            <label className="form-label">Nome do Espaço</label>
+                            <label className="form-label">{t("admin.spaceform.nomeDoEspao", "Nome do Espaço")}</label>
                             <input
                                 type="text"
-                                placeholder="Ex: Sala de Ensaio 1, Auditório Principal..."
+                                placeholder={t("admin.spaceform.exSalaDeEnsaio1AuditrioPrincip", "Ex: Sala de Ensaio 1, Auditório Principal...")}
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                                 required
@@ -156,10 +156,10 @@ export const AdminSpaceForm: React.FC = () => {
                                 className="input w-full"
                             >
                                 <option value="ROOM">Sala Multiuso</option>
-                                <option value="AUDITORIUM">Auditório</option>
-                                <option value="LAB">Laboratório</option>
-                                <option value="STUDIO">Estúdio</option>
-                                <option value="OPEN_AIR">Área Externa</option>
+                                <option value="AUDITORIUM">{t("admin.spaceform.auditrio", "Auditório")}</option>
+                                <option value="LAB">{t("admin.spaceform.laboratrio", "Laboratório")}</option>
+                                <option value="STUDIO">{t("admin.spaceform.estdio", "Estúdio")}</option>
+                                <option value="OPEN_AIR">{t("admin.spaceform.reaExterna", "Área Externa")}</option>
                             </select>
                         </div>
 
@@ -174,9 +174,9 @@ export const AdminSpaceForm: React.FC = () => {
                         </div>
 
                         <div className="md:col-span-2 form-group">
-                            <label className="form-label">Descrição</label>
+                            <label className="form-label">{t("admin.spaceform.descrio", "Descrição")}</label>
                             <textarea
-                                placeholder="Descreva o espaço, dimensões, finalidade..."
+                                placeholder={t("admin.spaceform.descrevaOEspaoDimensesFinalida", "Descreva o espaço, dimensões, finalidade...")}
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 rows={3}
@@ -226,13 +226,13 @@ export const AdminSpaceForm: React.FC = () => {
                         <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
                             <Monitor className="text-[#d4af37]" size={24} />
                         </div>
-                        <h3 className="card-title mb-0">Configurações</h3>
+                        <h3 className="card-title mb-0">{t("admin.spaceform.configuraes", "Configurações")}</h3>
                     </div>
 
                     <div className="flex items-center gap-4 p-6 bg-[rgba(255,255,255,0.03)] rounded-2xl border border-[rgba(255,255,255,0.05)]">
                         <div className="flex-1">
-                            <h4 className="text-[#f5e6d3] font-bold mb-1">Disponível para Reserva</h4>
-                            <p className="text-sm text-gray-400">Permitir que este espaço seja reservado no calendário.</p>
+                            <h4 className="text-[#f5e6d3] font-bold mb-1">{t("admin.spaceform.disponvelParaReserva", "Disponível para Reserva")}</h4>
+                            <p className="text-sm text-gray-400">{t("admin.spaceform.permitirQueEsteEspaoSejaReserv", "Permitir que este espaço seja reservado no calendário.")}</p>
                         </div>
                         <div className="relative inline-block w-12 h-6 transition duration-200 ease-in-out rounded-full cursor-pointer">
                             <input

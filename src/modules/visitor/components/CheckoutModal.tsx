@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from 'react';
 import { X, Minus, Plus, Calendar } from 'lucide-react';
 import { api } from '../../../api/client';
@@ -28,6 +29,7 @@ interface CheckoutModalProps {
 }
 
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, onClose, onSuccess }) => {
+  const { t } = useTranslation();
     const { name, email, isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -114,7 +116,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                                         <span className="free">Gratuito</span>
                                     )}
                                     {ticket.quantity - ticket.sold < 10 && (
-                                        <span className="checkout-ticket-warning">(Últimos!)</span>
+                                        <span className="checkout-ticket-warning">{t("visitor.checkoutmodal.ltimos", "(Últimos!)")}</span>
                                     )}
                                 </p>
                             </div>
@@ -152,9 +154,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                         {loading ? 'Processando...' : `Confirmar Inscrição (${totalItems})`}
                     </button>
                     {!isAuthenticated && (
-                        <p className="checkout-login-note">
-                            Você precisará fazer login para concluir.
-                        </p>
+                        <p className="checkout-login-note">{t("visitor.checkoutmodal.vocPrecisarFazerLoginParaConcl", "Você precisará fazer login para concluir.")}</p>
                     )}
                 </div>
             </div>

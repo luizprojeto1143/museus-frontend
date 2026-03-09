@@ -128,12 +128,8 @@ export const MasterAccessibilityRequests: React.FC = () => {
                     <span className="master-badge">
                         ♿ Acessibilidade
                     </span>
-                    <h1 className="master-title">
-                        Solicitações de Acessibilidade
-                    </h1>
-                    <p className="master-subtitle">
-                        Gerencie pedidos de Libras e Audiodescrição dos museus e envie os arquivos processados.
-                    </p>
+                    <h1 className="master-title">{t("master.accessibilityrequests.solicitaesDeAcessibilidade", "Solicitações de Acessibilidade")}</h1>
+                    <p className="master-subtitle">{t("master.accessibilityrequests.gerenciePedidosDeLibrasEAudiod", "Gerencie pedidos de Libras e Audiodescrição dos museus e envie os arquivos processados.")}</p>
                 </div>
 
                 <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -163,7 +159,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                         {pendingRequests.length === 0 ? (
                             <div style={{ padding: "2rem", textAlign: "center", color: "#94a3b8" }}>
                                 <CheckCircle size={48} style={{ margin: "0 auto 1rem auto", color: "#22c55e", opacity: 0.5 }} />
-                                <p>Nenhuma solicitação pendente.</p>
+                                <p>{t("master.accessibilityrequests.nenhumaSolicitaoPendente", "Nenhuma solicitação pendente.")}</p>
                             </div>
                         ) : (
                             <div className="master-table-container">
@@ -175,7 +171,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                                             <th>Tipo</th>
                                             <th>Obs</th>
                                             <th>Data</th>
-                                            <th>Ação</th>
+                                            <th>{t("master.accessibilityrequests.ao", "Ação")}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -223,7 +219,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                             <div className="master-icon-wrapper master-icon-blue">
                                 <CheckCircle size={24} />
                             </div>
-                            <h3>Histórico de Atendimentos</h3>
+                            <h3>{t("master.accessibilityrequests.histricoDeAtendimentos", "Histórico de Atendimentos")}</h3>
                         </div>
                         <div style={{ padding: "1rem", color: "#94a3b8" }}>
                             <p>{completedRequests.length} solicitações já foram atendidas.</p>
@@ -246,9 +242,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                     <div className="master-card" style={{ width: "100%", maxWidth: "900px", margin: 0, padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
                         <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
-                                <h3 style={{ fontSize: "1.25rem", color: '#fff', marginBottom: '0.5rem' }}>
-                                    Atender Solicitação
-                                </h3>
+                                <h3 style={{ fontSize: "1.25rem", color: '#fff', marginBottom: '0.5rem' }}>{t("master.accessibilityrequests.atenderSolicitao", "Atender Solicitação")}</h3>
                                 <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: 0 }}>
                                     {selectedRequest.tenant.name} • {selectedRequest.work.title}
                                 </p>
@@ -275,13 +269,13 @@ export const MasterAccessibilityRequests: React.FC = () => {
 
                                 {selectedRequest.work.audioUrl && (
                                     <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '8px' }}>
-                                        <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.5rem' }}>Áudio Guia Original:</p>
+                                        <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.5rem' }}>{t("master.accessibilityrequests.udioGuiaOriginal", "Áudio Guia Original:")}</p>
                                         <audio controls src={selectedRequest.work.audioUrl} style={{ width: '100%', height: '32px' }} />
                                     </div>
                                 )}
 
                                 <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Descrição:</p>
+                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>{t("master.accessibilityrequests.descrio", "Descrição:")}</p>
                                     <p style={{ fontSize: '0.9rem', color: '#e2e8f0', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
                                         {selectedRequest.work.description || "Sem descrição disponível."}
                                     </p>
@@ -325,7 +319,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                                                 {librasFile ? (
                                                     <span style={{ color: '#4ade80', fontWeight: 600 }}>{librasFile.name}</span>
                                                 ) : (
-                                                    <span style={{ color: '#94a3b8' }}>Clique para selecionar vídeo</span>
+                                                    <span style={{ color: '#94a3b8' }}>{t("master.accessibilityrequests.cliqueParaSelecionarVdeo", "Clique para selecionar vídeo")}</span>
                                                 )}
                                             </label>
                                         </div>
@@ -334,7 +328,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
 
                                 {(selectedRequest.type === "AUDIO_DESC" || selectedRequest.type === "BOTH") && (
                                     <div className="master-input-group">
-                                        <label>Arquivo de Áudio (.mp3)</label>
+                                        <label>{t("master.accessibilityrequests.arquivoDeUdioMp3", "Arquivo de Áudio (.mp3)")}</label>
                                         <div style={{
                                             border: '2px dashed #334155',
                                             borderRadius: '12px',
@@ -356,7 +350,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                                                 {audioFile ? (
                                                     <span style={{ color: '#4ade80', fontWeight: 600 }}>{audioFile.name}</span>
                                                 ) : (
-                                                    <span style={{ color: '#94a3b8' }}>Clique para selecionar áudio</span>
+                                                    <span style={{ color: '#94a3b8' }}>{t("master.accessibilityrequests.cliqueParaSelecionarUdio", "Clique para selecionar áudio")}</span>
                                                 )}
                                             </label>
                                         </div>

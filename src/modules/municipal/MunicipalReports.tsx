@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -17,6 +18,7 @@ import { useAuth } from "../auth/AuthContext";
 import { Button } from "../../components/ui";
 
 export const MunicipalReports: React.FC = () => {
+  const { t } = useTranslation();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
@@ -61,8 +63,8 @@ export const MunicipalReports: React.FC = () => {
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Central de Relatórios Executivos</h1>
-                <p className="text-slate-500 mt-1 font-medium">Documentos oficiais e indicadores estratégicos para tomada de decisão.</p>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t("municipal.municipalreports.centralDeRelatriosExecutivos", "Central de Relatórios Executivos")}</h1>
+                <p className="text-slate-500 mt-1 font-medium">{t("municipal.municipalreports.documentosOficiaisEIndicadores", "Documentos oficiais e indicadores estratégicos para tomada de decisão.")}</p>
             </div>
 
             {/* Main Content Area */}
@@ -71,7 +73,7 @@ export const MunicipalReports: React.FC = () => {
                 <div className="lg:col-span-1 space-y-6">
                     <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
                         <div className="relative z-10">
-                            <h3 className="text-sm font-black uppercase tracking-widest opacity-60 mb-6">Taxa de Adesão</h3>
+                            <h3 className="text-sm font-black uppercase tracking-widest opacity-60 mb-6">{t("municipal.municipalreports.taxaDeAdeso", "Taxa de Adesão")}</h3>
                             <div className="text-5xl font-black mb-2">{summary?.summary?.accessibilityPlanRate || 0}%</div>
                             <p className="text-xs text-blue-100 font-medium">dos projetos culturais possuem planos de acessibilidade ativos.</p>
                             <div className="mt-8 pt-8 border-t border-white/10 flex justify-between">
@@ -90,8 +92,7 @@ export const MunicipalReports: React.FC = () => {
 
                     <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
                         <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
-                            <PieChart size={18} className="text-blue-600" /> Ações por Tipo
-                        </h4>
+                            <PieChart size={18} className="text-blue-600" />{t("municipal.municipalreports.aesPorTipo", "Ações por Tipo")}</h4>
                         <div className="space-y-4">
                             {Object.entries(summary?.summary?.accessibilityByType || {}).map(([type, count]: [string, any]) => (
                                 <div key={type} className="flex justify-between items-center text-sm">
@@ -131,7 +132,7 @@ export const MunicipalReports: React.FC = () => {
 
                         <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-2xl flex flex-col justify-center items-center text-center space-y-4">
                             <BarChart3 size={48} className="text-blue-500 opacity-50 mb-2" />
-                            <h3 className="text-xl font-bold">Relatório de Transparência</h3>
+                            <h3 className="text-xl font-bold">{t("municipal.municipalreports.relatrioDeTransparncia", "Relatório de Transparência")}</h3>
                             <p className="text-sm text-slate-400">Exporte os dados brutos para o Portal da Transparência Municipal.</p>
                             <Button variant="outline" onClick={() => toast("Exportação CSV será disponibilizada na próxima versão da API.", { icon: "ℹ️" })} className="border-slate-700 text-white hover:bg-white/5 font-bold rounded-2xl">
                                 Preparar Dados (CSV)

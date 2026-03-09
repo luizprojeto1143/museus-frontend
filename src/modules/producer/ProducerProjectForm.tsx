@@ -295,7 +295,7 @@ export const ProducerProjectForm: React.FC = () => {
                             <FileText size={24} />
                         </div>
                         <div>
-                            <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-1">Inscrição Vinculada</div>
+                            <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-1">{t("producer.producerprojectform.inscrioVinculada", "Inscrição Vinculada")}</div>
                             <h2 className="text-xl font-bold text-[#EAE0D5]">{notice.title}</h2>
                             <div className="flex flex-wrap gap-4 mt-1 text-sm text-[#B0A090]">
                                 <span className="flex items-center gap-1"><Calendar size={14} /> Fim: {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
@@ -320,8 +320,7 @@ export const ProducerProjectForm: React.FC = () => {
             {isEdit && formData.reviewNotes && formData.status !== 'DRAFT' && (
                 <div className="max-w-5xl mx-auto mb-8 bg-blue-500/10 border border-blue-500/20 rounded-3xl p-6 flex flex-col gap-3">
                     <div className="flex items-center gap-2 text-blue-400 font-bold">
-                        <Info size={18} /> Parecer da Avaliação
-                    </div>
+                        <Info size={18} />{t("producer.producerprojectform.parecerDaAvaliao", "Parecer da Avaliação")}</div>
                     <p className="text-blue-200 text-sm italic leading-relaxed">
                         "{formData.reviewNotes}"
                     </p>
@@ -354,8 +353,7 @@ export const ProducerProjectForm: React.FC = () => {
                             onClick={() => setActiveTab("ACCOUNTABILITY")}
                             className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm ${activeTab === "ACCOUNTABILITY" ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
                         >
-                            <Banknote size={18} /> Prestação de Contas
-                        </button>
+                            <Banknote size={18} />{t("producer.producerprojectform.prestaoDeContas", "Prestação de Contas")}</button>
                     </div>
 
                     {/* TIPS CARD */}
@@ -363,9 +361,7 @@ export const ProducerProjectForm: React.FC = () => {
                         <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-sm mb-3">
                             <Rocket size={16} /> Dica do Mentor
                         </div>
-                        <p className="text-xs text-[#B0A090] leading-relaxed">
-                            Projetos com descrições detalhadas e orçamentos realistas têm 40% mais chance de aprovação rápida.
-                        </p>
+                        <p className="text-xs text-[#B0A090] leading-relaxed">{t("producer.producerprojectform.projetosComDescriesDetalhadasE", "Projetos com descrições detalhadas e orçamentos realistas têm 40% mais chance de aprovação rápida.")}</p>
                     </div>
                 </div>
 
@@ -385,7 +381,7 @@ export const ProducerProjectForm: React.FC = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     <div className="md:col-span-2">
                                         <Input
-                                            label="Título do Projeto"
+                                            label={t("producer.producerprojectform.ttuloDoProjeto", "Título do Projeto")}
                                             name="title"
                                             value={formData.title}
                                             onChange={handleChange}
@@ -411,7 +407,7 @@ export const ProducerProjectForm: React.FC = () => {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <Input
-                                        label="Orçamento (R$)"
+                                        label={t("producer.producerprojectform.oramentoR", "Orçamento (R$)")}
                                         type="number"
                                         name="requestedBudget"
                                         value={formData.requestedBudget}
@@ -421,7 +417,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] font-mono"
                                     />
                                     <Input
-                                        label="Público Estimado"
+                                        label={t("producer.producerprojectform.pblicoEstimado", "Público Estimado")}
                                         type="number"
                                         name="expectedAudience"
                                         value={formData.expectedAudience}
@@ -440,11 +436,11 @@ export const ProducerProjectForm: React.FC = () => {
                                     maxLength={200}
                                     disabled={readOnly}
                                     className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[#D4AF37]"
-                                    placeholder="Venda seu peixe em até 200 caracteres..."
+                                    placeholder={t("producer.producerprojectform.vendaSeuPeixeEmAt200Caracteres", "Venda seu peixe em até 200 caracteres...")}
                                 />
 
                                 <Textarea
-                                    label="Descrição Completa"
+                                    label={t("producer.producerprojectform.descrioCompleta", "Descrição Completa")}
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
@@ -466,7 +462,7 @@ export const ProducerProjectForm: React.FC = () => {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <Input
-                                        label="Data de Início"
+                                        label={t("producer.producerprojectform.dataDeIncio", "Data de Início")}
                                         type="date"
                                         name="startDate"
                                         value={formData.startDate}
@@ -475,7 +471,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                                     />
                                     <Input
-                                        label="Data de Término"
+                                        label={t("producer.producerprojectform.dataDeTrmino", "Data de Término")}
                                         type="date"
                                         name="endDate"
                                         value={formData.endDate}
@@ -528,7 +524,7 @@ export const ProducerProjectForm: React.FC = () => {
                                 </div>
                                 <div>
                                     <p className="text-[#EAE0D5] font-bold">Acessibilidade</p>
-                                    <p className="text-[#B0A090] text-sm">Recursos para garantir a inclusão de todos os públicos</p>
+                                    <p className="text-[#B0A090] text-sm">{t("producer.producerprojectform.recursosParaGarantirAInclusoDe", "Recursos para garantir a inclusão de todos os públicos")}</p>
                                 </div>
                             </div>
 
@@ -536,9 +532,7 @@ export const ProducerProjectForm: React.FC = () => {
                                 <div className="mb-8 p-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl flex gap-4 text-orange-200 text-sm">
                                     <AlertCircle size={20} className="shrink-0" />
                                     <div>
-                                        <span className="font-bold block mb-1">Obrigatoriedade do Edital</span>
-                                        Este edital exige a apresentação de um plano de acessibilidade para submissão.
-                                    </div>
+                                        <span className="font-bold block mb-1">Obrigatoriedade do Edital</span>{t("producer.producerprojectform.esteEditalExigeAApresentaoDeUm", "Este edital exige a apresentação de um plano de acessibilidade para submissão.")}</div>
                                 </div>
                             )}
 
@@ -549,7 +543,7 @@ export const ProducerProjectForm: React.FC = () => {
                                             <CheckCircle2 size={24} />
                                         </div>
                                         <div>
-                                            <div className="font-bold text-[#EAE0D5]">Ações de Acessibilidade</div>
+                                            <div className="font-bold text-[#EAE0D5]">{t("producer.producerprojectform.aesDeAcessibilidade", "Ações de Acessibilidade")}</div>
                                             <div className="text-xs text-[#B0A090]">O projeto contempla recursos para PcD?</div>
                                         </div>
                                     </div>
@@ -577,7 +571,7 @@ export const ProducerProjectForm: React.FC = () => {
                                 {formData.accessibilityPlan.hasPlan && (
                                     <div className="space-y-6 animate-in slide-in-from-top-4 duration-300">
                                         <div>
-                                            <label className="text-sm font-bold text-[#B0A090] mb-4 block">Serviços Oferecidos</label>
+                                            <label className="text-sm font-bold text-[#B0A090] mb-4 block">{t("producer.producerprojectform.serviosOferecidos", "Serviços Oferecidos")}</label>
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                 {[
                                                     { id: "LIBRAS", label: "Intérprete de Libras" },
@@ -616,8 +610,8 @@ export const ProducerProjectForm: React.FC = () => {
                                         </div>
 
                                         <Textarea
-                                            label="Descrição da Implementação"
-                                            placeholder="Descreva detalhadamente como os recursos de acessibilidade serão garantidos..."
+                                            label={t("producer.producerprojectform.descrioDaImplementao", "Descrição da Implementação")}
+                                            placeholder={t("producer.producerprojectform.descrevaDetalhadamenteComoOsRe", "Descreva detalhadamente como os recursos de acessibilidade serão garantidos...")}
                                             value={formData.accessibilityPlan.description}
                                             disabled={readOnly}
                                             onChange={(e) => setFormData({
@@ -663,10 +657,8 @@ export const ProducerProjectForm: React.FC = () => {
                                         <div className="w-12 h-12 bg-[#D4AF37]/20 text-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-3">
                                             <AlertCircle size={24} />
                                         </div>
-                                        <h3 className="text-[#D4AF37] font-bold mb-1">Aguardando Aprovação</h3>
-                                        <p className="text-[#D4AF37]/70 text-sm">
-                                            A prestação de contas será liberada assim que o projeto for aprovado ou entrar em execução.
-                                        </p>
+                                        <h3 className="text-[#D4AF37] font-bold mb-1">{t("producer.producerprojectform.aguardandoAprovao", "Aguardando Aprovação")}</h3>
+                                        <p className="text-[#D4AF37]/70 text-sm">{t("producer.producerprojectform.aPrestaoDeContasSerLiberadaAss", "A prestação de contas será liberada assim que o projeto for aprovado ou entrar em execução.")}</p>
                                     </div>
                                 ) : (
                                     <div

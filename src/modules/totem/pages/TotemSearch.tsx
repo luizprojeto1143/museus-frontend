@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -6,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export const TotemSearch: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
@@ -77,7 +79,7 @@ export const TotemSearch: React.FC = () => {
                         type="text"
                         value={query}
                         onChange={e => setQuery(e.target.value)}
-                        placeholder="Nome, CPF ou Código do Ingresso"
+                        placeholder={t("totem.totemsearch.nomeCpfOuCdigoDoIngresso", "Nome, CPF ou Código do Ingresso")}
                         style={{
                             width: "100%",
                             padding: "1.5rem 1.5rem 1.5rem 3.5rem",
@@ -147,9 +149,7 @@ export const TotemSearch: React.FC = () => {
 
                         {ticket.status === 'CHECKED_IN' ? (
                             <span style={{ color: "#22c55e", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                <CheckCircle size={18} />
-                                Já entrou
-                            </span>
+                                <CheckCircle size={18} />{t("totem.totemsearch.jEntrou", "Já entrou")}</span>
                         ) : ticket.status === 'CANCELED' ? (
                             <span style={{ color: "#ef4444", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                 <XCircle size={18} />

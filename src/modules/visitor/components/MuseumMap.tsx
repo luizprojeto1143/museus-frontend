@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, ImageOverlay, Circle, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -37,6 +38,7 @@ interface MuseumMapProps {
 }
 
 function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
+  const { t } = useTranslation();
     const map = useMap();
     map.setView(center, zoom);
     return null;
@@ -177,7 +179,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                             <Popup>
                                 <div className="museum-map-popup">
                                     <p className="museum-map-popup-title">Museu Principal</p>
-                                    <p className="museum-map-popup-desc">Você está aqui.</p>
+                                    <p className="museum-map-popup-desc">{t("visitor.museummap.vocEstAqui", "Você está aqui.")}</p>
                                 </div>
                             </Popup>
                         </Marker>
@@ -194,7 +196,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                                 })}>
                                     <Popup>
                                         <div className="museum-map-popup">
-                                            <p className="museum-map-popup-title">Sua Localização</p>
+                                            <p className="museum-map-popup-title">{t("visitor.museummap.suaLocalizao", "Sua Localização")}</p>
                                             <p className="museum-map-popup-desc">
                                                 Precisão: {Math.round(userLocation.accuracy)}m<br />
                                                 Distância: {calculateDistance(userLocation.lat, userLocation.lng, outdoorCenter[0], outdoorCenter[1]).toFixed(2)} km
@@ -219,7 +221,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                             />
                         ) : (
                             <div className="museum-map-no-image">
-                                <p>Imagem da planta não configurada.</p>
+                                <p>{t("visitor.museummap.imagemDaPlantaNoConfigurada", "Imagem da planta não configurada.")}</p>
                             </div>
                         )}
                         {pois.filter(p => p.lat != null && p.lng != null).map(poi => (
@@ -230,10 +232,9 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                                         {poi.description && <p className="museum-map-popup-desc">{poi.description}</p>}
                                         <button
                                             className="museum-map-popup-btn"
-                                            onClick={() => setDestinationId(poi.id)}
+                                            onClick={() =>{t("visitor.museummap.setdestinationidpoiidIrParaC", "setDestinationId(poi.id)}
                                         >
-                                            Ir para cá 🏃
-                                        </button>
+                                            Ir para cá 🏃")}</button>
                                     </div>
                                 </Popup>
                             </Marker>

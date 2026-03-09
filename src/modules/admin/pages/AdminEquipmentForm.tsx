@@ -147,8 +147,7 @@ export const AdminEquipmentForm: React.FC = () => {
                 {/* Basic Info */}
                 <div className="admin-section">
                     <h3 className="admin-section-title">
-                        <Building2 className="text-[var(--accent-gold)]" size={20} /> Identificação
-                    </h3>
+                        <Building2 className="text-[var(--accent-gold)]" size={20} />{t("admin.equipmentform.identificao", "Identificação")}</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="form-group">
@@ -183,9 +182,7 @@ export const AdminEquipmentForm: React.FC = () => {
                                 leftIcon={<Globe size={16} />}
                                 style={{ fontFamily: 'monospace' }}
                             />
-                            <p className="text-xs text-[var(--fg-muted)] mt-2">
-                                Identificador único usado na URL do museu.
-                            </p>
+                            <p className="text-xs text-[var(--fg-muted)] mt-2">{t("admin.equipmentform.identificadorNicoUsadoNaUrlDoM", "Identificador único usado na URL do museu.")}</p>
                         </div>
                     </div>
                 </div>
@@ -234,9 +231,7 @@ export const AdminEquipmentForm: React.FC = () => {
                                     required
                                     leftIcon={<Lock size={16} />}
                                 />
-                                <p className="text-xs text-[var(--fg-muted)] mt-2">
-                                    O gestor poderá alterar esta senha no primeiro acesso.
-                                </p>
+                                <p className="text-xs text-[var(--fg-muted)] mt-2">{t("admin.equipmentform.oGestorPoderAlterarEstaSenhaNo", "O gestor poderá alterar esta senha no primeiro acesso.")}</p>
                             </div>
                         </div>
                     </div>
@@ -245,8 +240,7 @@ export const AdminEquipmentForm: React.FC = () => {
                 {/* Modules */}
                 <div className="admin-section">
                     <h3 className="admin-section-title">
-                        <CheckCircle2 className="text-[var(--accent-gold)]" size={20} /> Módulos Habilitados
-                    </h3>
+                        <CheckCircle2 className="text-[var(--accent-gold)]" size={20} />{t("admin.equipmentform.mdulosHabilitados", "Módulos Habilitados")}</h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Checkbox
@@ -264,7 +258,7 @@ export const AdminEquipmentForm: React.FC = () => {
                         />
 
                         <Checkbox
-                            label="Gamificação"
+                            label={t("admin.equipmentform.gamificao", "Gamificação")}
                             description="Ranking, visitas premiadas e caça ao tesouro."
                             checked={featureGamification}
                             onChange={e => setFeatureGamification(e.target.checked)}

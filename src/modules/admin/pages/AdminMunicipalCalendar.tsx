@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -7,6 +8,7 @@ import "./AdminShared.css";
 
 
 export const AdminMunicipalCalendar: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [events, setEvents] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -45,8 +47,8 @@ export const AdminMunicipalCalendar: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Calendário Cultural</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Visão unificada da programação municipal</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.municipalcalendar.calendrioCultural", "Calendário Cultural")}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.municipalcalendar.visoUnificadaDaProgramaoMunici", "Visão unificada da programação municipal")}</p>
                 </div>
                 <input type="month" value={month} onChange={e => setMonth(e.target.value)} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} />
             </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -5,6 +6,7 @@ import { Loader2, GraduationCap, BookOpen, Calendar, Users, FileText, Plus } fro
 import { toast } from "react-hot-toast";
 
 export const TeacherPortal: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId, email } = useAuth();
     const [tab, setTab] = useState<'visits' | 'resources'>('visits');
     const [visits, setVisits] = useState<any[]>([]);
@@ -70,7 +72,7 @@ export const TeacherPortal: React.FC = () => {
                         <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.25rem', padding: '1.5rem', display: 'grid', gap: '0.75rem', marginBottom: '1rem' }}>
                             <input value={form.schoolName} onChange={e => setForm({ ...form, schoolName: e.target.value })} placeholder="Nome da Escola *" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.85rem', outline: 'none' }} />
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-                                <input value={form.grade} onChange={e => setForm({ ...form, grade: e.target.value })} placeholder="Série / Turma" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.85rem', outline: 'none' }} />
+                                <input value={form.grade} onChange={e => setForm({ ...form, grade: e.target.value })} placeholder={t("visitor.teacherportal.srieTurma", "Série / Turma")} style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.85rem', outline: 'none' }} />
                                 <input type="number" value={form.studentCount} onChange={e => setForm({ ...form, studentCount: e.target.value })} placeholder="Nº de Alunos *" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.85rem', outline: 'none' }} />
                             </div>
                             <input type="date" value={form.preferredDate} onChange={e => setForm({ ...form, preferredDate: e.target.value })} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.85rem', outline: 'none' }} />

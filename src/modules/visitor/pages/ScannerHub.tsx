@@ -23,7 +23,7 @@ export const ScannerHub: React.FC = () => {
                     </div>
                     <div className="scanner-hub-option-info">
                         <h2>QR Code</h2>
-                        <p>Escaneie o código quadrado ao lado da obra.</p>
+                        <p>{t("visitor.scannerhub.escaneieOCdigoQuadradoAoLadoDa", "Escaneie o código quadrado ao lado da obra.")}</p>
                     </div>
                     <div className="scanner-hub-cta qr">
                         Iniciar Câmera <ChevronRight size={16} />

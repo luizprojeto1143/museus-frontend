@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -6,6 +7,7 @@ import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 
 export const AdminKidsMode: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [enabled, setEnabled] = useState(false);
     const [config, setConfig] = useState({
@@ -36,7 +38,7 @@ export const AdminKidsMode: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Modo Criança</h1>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.kidsmode.modoCriana", "Modo Criança")}</h1>
                     <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Interface simplificada para visitantes jovens</p>
                 </div>
                 <button onClick={() => setEnabled(!enabled)} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -48,18 +50,18 @@ export const AdminKidsMode: React.FC = () => {
             {/* Preview */}
             <div className="grid grid-cols-2 gap-6">
                 <div className="card">
-                    <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Smile size={20} className="text-amber-500" /> Prévia — Modo Normal</h2>
+                    <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Smile size={20} className="text-amber-500" />{t("admin.kidsmode.prviaModoNormal", "Prévia — Modo Normal")}</h2>
                     <div className="bg-black/30 rounded-xl p-4 space-y-2">
-                        <p className="text-white text-sm font-medium">Título da Obra</p>
-                        <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>Esta pintura à óleo sobre tela, datada do período barroco brasileiro, apresenta características chiaroscuro típicas da escola...</p>
+                        <p className="text-white text-sm font-medium">{t("admin.kidsmode.ttuloDaObra", "Título da Obra")}</p>
+                        <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.kidsmode.estaPinturaLeoSobreTelaDatadaD", "Esta pintura à óleo sobre tela, datada do período barroco brasileiro, apresenta características chiaroscuro típicas da escola...")}</p>
                         <span className="text-[10px] text-zinc-300">★ 4.5 • Sala 3 • 1750</span>
                     </div>
                 </div>
                 <div className="card" style={{ border: "1px solid rgba(34,197,94,0.2)" }}>
-                    <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Baby size={20} style={{ color: "#34d399" }} /> Prévia — Modo Criança</h2>
+                    <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Baby size={20} style={{ color: "#34d399" }} />{t("admin.kidsmode.prviaModoCriana", "Prévia — Modo Criança")}</h2>
                     <div className="bg-black/30 rounded-xl p-4 space-y-2" style={{ fontSize: '18px' }}>
-                        <p style={{ color: "white", fontWeight: 700, fontSize: '1.2em' }}>🎨 Título da Obra</p>
-                        <p className="text-gray-300" style={{ fontSize: '0.9em', lineHeight: '1.8' }}>Uma pintura bem antiga e bonita! O artista usou tintas especiais para fazer parecer que tem uma luz brilhando. Legal, né? ✨</p>
+                        <p style={{ color: "white", fontWeight: 700, fontSize: '1.2em' }}>{t("admin.kidsmode.TtuloDaObra", "🎨 Título da Obra")}</p>
+                        <p className="text-gray-300" style={{ fontSize: '0.9em', lineHeight: '1.8' }}>{t("admin.kidsmode.umaPinturaBemAntigaEBonitaOArt", "Uma pintura bem antiga e bonita! O artista usou tintas especiais para fazer parecer que tem uma luz brilhando. Legal, né? ✨")}</p>
                         <span className="text-amber-400 font-bold" style={{ fontSize: '0.85em' }}>⭐⭐⭐⭐⭐ • 📍 Sala 3</span>
                     </div>
                 </div>
@@ -67,11 +69,11 @@ export const AdminKidsMode: React.FC = () => {
 
             {/* Configuration */}
             <div className="card" style={{ display: "grid", gap: "1.5rem" }}>
-                <h2 className="card-title" style={{ margin: 0 }}>Configurações</h2>
+                <h2 className="card-title" style={{ margin: 0 }}>{t("admin.kidsmode.configuraes", "Configurações")}</h2>
 
                 <div className="grid grid-cols-2 gap-6">
                     <div>
-                        <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Faixa Etária</label>
+                        <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.kidsmode.faixaEtria", "Faixa Etária")}</label>
                         <div className="flex gap-2 items-center">
                             <input type="number" value={config.minAge} onChange={e => setConfig({ ...config, minAge: e.target.value })} className="w-20 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-sm outline-none text-center" />
                             <span style={{ color: "#64748b" }}>a</span>

@@ -125,8 +125,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                     </button>
                     <div className="mt-4 flex justify-center">
                         <Link to="/visitor" className="text-xs text-[#B0A090] hover:text-[#D4AF37] flex items-center gap-1">
-                            <ExternalLink size={12} /> Ir para Visão do Visitante
-                        </Link>
+                            <ExternalLink size={12} />{t("producer.producerlayout.irParaVisoDoVisitante", "Ir para Visão do Visitante")}</Link>
                     </div>
                 </div>
             </aside>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -5,6 +6,7 @@ import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import { api } from "../../api/client";
 
 export const ForgotPassword: React.FC = () => {
+  const { t } = useTranslation();
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [sent, setSent] = useState(false);
@@ -51,8 +53,7 @@ export const ForgotPassword: React.FC = () => {
                         </div>
                         <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>E-mail enviado!</h2>
                         <p style={{ opacity: 0.7, marginBottom: "2rem", lineHeight: "1.6" }}>
-                            Se houver uma conta associada a <strong>{email}</strong>, você receberá as instruções de recuperação em instantes.
-                        </p>
+                            Se houver uma conta associada a <strong>{email}</strong>{t("auth.forgotpassword.VocReceberAsInstruesDeRecupera", ", você receberá as instruções de recuperação em instantes.")}</p>
                         <Link to="/login" className="btn-primary" style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", display: "inline-block", textAlign: "center", textDecoration: "none", color: "black", fontWeight: "bold" }}>
                             Voltar ao Login
                         </Link>
@@ -64,9 +65,7 @@ export const ForgotPassword: React.FC = () => {
                                 <ArrowLeft size={16} /> Voltar ao login
                             </Link>
                             <h1 style={{ fontSize: "1.75rem", fontWeight: "bold", marginBottom: "0.5rem" }}>Esqueceu a senha?</h1>
-                            <p style={{ opacity: 0.7 }}>
-                                Digite seu e-mail para receber as instruções de redefinição.
-                            </p>
+                            <p style={{ opacity: 0.7 }}>{t("auth.forgotpassword.digiteSeuEmailParaReceberAsIns", "Digite seu e-mail para receber as instruções de redefinição.")}</p>
                         </div>
 
                         {error && (

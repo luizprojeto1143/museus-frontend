@@ -121,10 +121,9 @@ export const AdminWorks: React.FC = () => {
               <button
                 className="btn btn-secondary"
                 disabled={page >= totalPages}
-                onClick={() => setPage(p => p + 1)}
+                onClick={() =>{t("admin.works.setpagepP1Prxima", "setPage(p => p + 1)}
               >
-                Próxima ▶
-              </button>
+                Próxima ▶")}</button>
             </div>
           )}
         </>

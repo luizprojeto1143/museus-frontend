@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -21,6 +22,7 @@ interface AnalyticsData {
 }
 
 export const AdminAnalytics: React.FC = () => {
+  const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,7 @@ export const AdminAnalytics: React.FC = () => {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
-          <h1 className="section-title">📊 Analytics Avançado</h1>
+          <h1 className="section-title">{t("admin.analytics.AnalyticsAvanado", "📊 Analytics Avançado")}</h1>
 
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -107,9 +109,9 @@ export const AdminAnalytics: React.FC = () => {
             onChange={(e) => setDateRange(e.target.value as "7d" | "30d" | "90d")}
             style={{ padding: "0.5rem 1rem" }}
           >
-            <option value="7d">Últimos 7 dias</option>
-            <option value="30d">Últimos 30 dias</option>
-            <option value="90d">Últimos 90 dias</option>
+            <option value="7d">{t("admin.analytics.ltimos7Dias", "Últimos 7 dias")}</option>
+            <option value="30d">{t("admin.analytics.ltimos30Dias", "Últimos 30 dias")}</option>
+            <option value="90d">{t("admin.analytics.ltimos90Dias", "Últimos 90 dias")}</option>
           </select>
           <button onClick={handleExportCSV} className="btn btn-secondary">
             📥 CSV
@@ -135,7 +137,7 @@ export const AdminAnalytics: React.FC = () => {
         </div>
         <div className="stat-card">
           <div className="stat-value">{data.averageAge} anos</div>
-          <div className="stat-label">Idade Média</div>
+          <div className="stat-label">{t("admin.analytics.idadeMdia", "Idade Média")}</div>
         </div>
       </div>
 
@@ -154,7 +156,7 @@ export const AdminAnalytics: React.FC = () => {
 
       {/* Horários de Pico */}
       <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">⏰ Horários de Pico</h2>
+        <h2 className="card-title">{t("admin.analytics.HorriosDePico", "⏰ Horários de Pico")}</h2>
         <div style={{ marginTop: "1rem" }}>
           {data.peakHours.map((hour) => (
             <div key={hour.hour} style={{ marginBottom: "0.75rem" }}>
@@ -187,7 +189,7 @@ export const AdminAnalytics: React.FC = () => {
       {/* Heatmap */}
       <div className="card" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">🔥 Heatmap - Obras Mais Quentes</h2>
-        <p className="card-subtitle">Intensidade de visitação das obras</p>
+        <p className="card-subtitle">{t("admin.analytics.intensidadeDeVisitaoDasObras", "Intensidade de visitação das obras")}</p>
         <div style={{ marginTop: "1rem" }}>
           {data.hotWorks.map((work) => (
             <div key={work.id} style={{ marginBottom: "0.75rem" }}>
@@ -225,7 +227,7 @@ export const AdminAnalytics: React.FC = () => {
 
       {/* Visitantes por Idade */}
       <div className="card" style={{ marginBottom: "2rem" }}>
-        <h2 className="card-title">👥 Distribuição por Idade</h2>
+        <h2 className="card-title">{t("admin.analytics.DistribuioPorIdade", "👥 Distribuição por Idade")}</h2>
         <div style={{ marginTop: "1rem" }}>
           {data.visitorsByAge.map((age) => (
             <div key={age.range} style={{ marginBottom: "0.75rem" }}>

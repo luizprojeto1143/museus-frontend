@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -13,6 +14,7 @@ const classConfig: Record<string, { label: string; color: string; bg: string; ic
 };
 
 export const VisitorRPG: React.FC = () => {
+  const { t } = useTranslation();
     const { isGuest } = useAuth();
     const navigate = useNavigate();
     const [rpg, setRpg] = useState<any>(null);
@@ -47,7 +49,7 @@ export const VisitorRPG: React.FC = () => {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
-                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para evoluir seu avatar, ganhar níveis e desbloquear novos títulos do museu!</p>
+                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>{t("visitor.rpg.crieUmaContaGratuitaParaEvolui", "Crie uma conta gratuita para evoluir seu avatar, ganhar níveis e desbloquear novos títulos do museu!")}</p>
                 <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
             </div>
         );
@@ -109,7 +111,7 @@ export const VisitorRPG: React.FC = () => {
 
             {/* Evolution Path */}
             <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.25rem', padding: '1.25rem' }}>
-                <h3 style={{ color: '#aaa', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>Caminho de Evolução</h3>
+                <h3 style={{ color: '#aaa', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>{t("visitor.rpg.caminhoDeEvoluo", "Caminho de Evolução")}</h3>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     {Object.entries(classConfig).map(([key, cfg], idx) => {
                         const reached = Object.keys(classConfig).indexOf(rpg.characterClass) >= idx;

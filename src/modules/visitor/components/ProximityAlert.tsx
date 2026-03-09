@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, X, Navigation, Clock } from 'lucide-react';
@@ -20,6 +21,7 @@ interface ProximityAlertProps {
 }
 
 export const ProximityAlert: React.FC<ProximityAlertProps> = ({
+  const { t } = useTranslation();
     alerts,
     onDismiss,
     onDismissAll
@@ -81,7 +83,7 @@ export const ProximityAlert: React.FC<ProximityAlertProps> = ({
                 <div className="proximity-alert-content">
                     <div className="proximity-alert-badge">
                         <MapPin size={12} />
-                        <span>Você está próximo!</span>
+                        <span>{t("visitor.proximityalert.vocEstPrximo", "Você está próximo!")}</span>
                     </div>
 
                     <h4 className="proximity-alert-title">{currentAlert.title}</h4>

@@ -124,9 +124,7 @@ export const AdminDashboard: React.FC = () => {
           <h2 style={{ color: "#ef4444", marginBottom: "0.5rem", fontSize: "1.2rem" }}>
             {t("common.error")}
           </h2>
-          <p style={{ color: "var(--fg-secondary)", marginBottom: "1.5rem", fontSize: "0.9rem" }}>
-            Não foi possível carregar os dados do dashboard. Verifique sua conexão e tente novamente.
-          </p>
+          <p style={{ color: "var(--fg-secondary)", marginBottom: "1.5rem", fontSize: "0.9rem" }}>{t("admin.dashboard.noFoiPossvelCarregarOsDadosDoD", "Não foi possível carregar os dados do dashboard. Verifique sua conexão e tente novamente.")}</p>
           <button
             className="btn btn-primary"
             onClick={() => { setLoading(true); loadDashboard(); }}
@@ -274,9 +272,7 @@ export const AdminDashboard: React.FC = () => {
             })}
           </div>
         ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>
-            Não há eventos publicados para os próximos dias.
-          </div>
+          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>{t("admin.dashboard.noHEventosPublicadosParaOsPrxi", "Não há eventos publicados para os próximos dias.")}</div>
         )}
       </div>
 
@@ -318,9 +314,7 @@ export const AdminDashboard: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>
-            Não há reservas agendadas.
-          </div>
+          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>{t("admin.dashboard.noHReservasAgendadas", "Não há reservas agendadas.")}</div>
         )}
       </div>
 

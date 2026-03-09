@@ -18,18 +18,18 @@
     "next": "Siguiente",
     "noData": "No se encontraron datos.",
     "menu": "Menú",
-    "all": "Todos",
+    "all": "Todo",
     "images": "Imágenes",
     "audios": "Audios",
     "videos": "Videos",
     "noResults": "No se encontraron resultados.",
     "modes": {
       "museum": {
-        "work": "Obra",
+        "work": "Trabajar",
         "works": "Obras",
         "trail": "Ruta",
         "trails": "Rutas",
-        "room": "Sala",
+        "room": "Habitación",
         "floor": "Planta",
         "rooms": "Alojamiento",
         "floors": "Pisos"
@@ -118,7 +118,7 @@
       "title": "Accede a tu cuenta",
       "email": "Correo",
       "password": "Contraseña",
-      "submit": "Entrar",
+      "submit": "para entrar",
       "forgotPassword": "Olvidé mi contraseña",
       "noAccount": "¿No tienes cuenta? Regístrate"
     },
@@ -129,13 +129,35 @@
       "password": "Contraseña",
       "confirmPassword": "Confirmar contraseña",
       "submit": "Registrarse",
-      "hasAccount": "¿Ya tienes cuenta? Entra"
+      "hasAccount": "¿Ya tienes cuenta? Entra",
+      "polticaDePrivacidade": "política de privacidad",
+      "mnimo6Caracteres": "Mínimo 6 caracteres"
     },
     "errors": {
       "generic": "Error interno al registrarse. Inténtelo de nuevo más tarde.",
       "termsRequired": "Debes aceptar los términos.",
       "passwordMismatch": "Las contraseñas no coinciden.",
       "registerFailed": "El registro falló. Comprueba los datos."
+    },
+    "forgotpassword": {
+      "VocReceberAsInstruesDeRecupera": ", recibirá instrucciones de recuperación en poco tiempo.",
+      "digiteSeuEmailParaReceberAsIns": "Ingrese su correo electrónico para recibir instrucciones de reinicio."
+    },
+    "registerproducer": {
+      "cadastreseParaSubmeterProjetos": "Regístrate para presentar proyectos y gestionar tu producción cultural",
+      "DadosBsicos": "📋 Datos Básicos",
+      "PerfilEVnculo": "🎭 Perfil y enlace",
+      "aoVincularSeusProjetosAparecer": "Al vincularse, sus proyectos aparecerán en los informes del Departamento de Cultura.",
+      "cadastroIndependenteSemVnculo": "Registro independiente (sin enlace)",
+      "Segurana": "🔐 Seguridad",
+      "vnculo": "Vínculo:",
+      "nomeCompletoRazoSocial": "Nombre completo / Nombre de la empresa *",
+      "sitePortflioOpcional": "Sitio web/portafolio (opcional)",
+      "breveBiografiaOuDescrioDaAtuao": "Breve biografía o descripción de actividades culturales..."
+    },
+    "resetpassword": {
+      "suaSenhaFoiAtualizadaComSucess": "Su contraseña se ha actualizado correctamente. Ahora puedes iniciar sesión.",
+      "noMnimo6Caracteres": "Al menos 6 caracteres"
     }
   },
   "visitor": {
@@ -146,20 +168,20 @@
       "map": "Mapa",
       "events": "Eventos",
       "favorites": "Favoritos",
-      "aiChat": "Chat IA",
-      "souvenir": "Souvenir",
+      "aiChat": "Chatear con IA",
+      "souvenir": "Recuerdo",
       "passport": "Pasaporte",
       "profile": "Mi Perfil",
       "achievements": "Logros",
       "visualScanner": "Escáner Visual",
-      "leaderboard": "Ranking",
+      "leaderboard": "Categoría",
       "changeMuseum": "Cambiar Museo",
       "logout": "Cerrar Sesión",
       "scheduling": "Programación",
       "smartItinerary": "Itinerario Inteligente",
       "treasureHunt": "Búsqueda del Tesoro",
       "guestbook": "Libro de Visitas",
-      "installApp": "Instalar App",
+      "installApp": "Instalar aplicación",
       "scanner": "Escáner QR"
     },
     "noResults": "No se encontraron resultados.",
@@ -169,7 +191,7 @@
     "chat": {
       "title": "Guía Virtual",
       "placeholder": "Escribe tu pregunta...",
-      "send": "Enviar",
+      "send": "para enviar",
       "you": "Tú",
       "guide": "Guía",
       "welcome": "¡Hola! Soy tu guía virtual. ¡Pregúntame sobre las obras o el museo!",
@@ -183,12 +205,12 @@
       "title": "Hola, {{name}}",
       "subtitle": "Explora la historia y la cultura de nuestros museos.",
       "startTrail": "Comenzar Ruta",
-      "viewMap": "Ver Mapa",
+      "viewMap": "Ver mapa",
       "featuredArtworks": "Obras Destacadas",
       "featuredSubtitle": "Descubre algunas de las piezas más icónicas de nuestra colección.",
       "exampleArtwork": "Obra de Ejemplo",
       "guestArtist": "Artista Invitado",
-      "painting": "Pintura",
+      "painting": "Cuadro",
       "accessible": "Accesible",
       "exampleDisclaimer": "* Imagen meramente ilustrativa.",
       "viewDetails": "Ver Detalles",
@@ -203,7 +225,7 @@
       "chooseTrail": "Elegir Ruta"
     },
     "scan": {
-      "title": "Escanear QR Code",
+      "title": "Escanear código QR",
       "instruction": "Apunta la cámara al QR Code de la obra",
       "permission": "Necesitamos permiso para acceder a la cámara"
     },
@@ -211,8 +233,8 @@
       "details": "Detalles de la Obra",
       "audioGuide": "Audioguía",
       "play": "Reproducir",
-      "pause": "Pausar",
-      "badge": "Obra",
+      "pause": "Pausa",
+      "badge": "Trabajar",
       "location": "Ubicación",
       "unknownRoom": "Sala desconocida",
       "unknownFloor": "Piso desconocido",
@@ -231,9 +253,9 @@
       "aiInteractionText": "Chatea con nuestra Inteligencia Artificial para descubrir más detalles fascinantes sobre esta obra.",
       "logout": "Salir",
       "notFound": "Obra no encontrada",
-      "relatedWorks": "Obras Relacionadas",
-      "relatedWork": "Obra Relacionada",
-      "relatedArtist": "Artista Relacionado",
+      "relatedWorks": "Trabajos relacionados",
+      "relatedWork": "Trabajo relacionado",
+      "relatedArtist": "Artista relacionado",
       "viewDetails": "Ver Detalles"
     },
     "selectMuseum": {
@@ -248,7 +270,9 @@
       "title": "Tus Favoritos",
       "subtitle": "Obras y rutas que te encantaron",
       "empty": "Aún no tienes favoritos.",
-      "explore": "Explorar Obras"
+      "explore": "Explorar obras",
+      "crieSuaContaNoMuseuParaSalvarS": "Crea tu cuenta de museo para guardar tus obras, rutas y eventos favoritos en la nube y acceder a ellos desde cualquier dispositivo.",
+      "carregandoSuaColeo": "Cargando tu colección..."
     },
     "museums": {
       "title": "Gestionar Museus",
@@ -268,7 +292,7 @@
       "subtitle": "Explora la colección completa del museo"
     },
     "map": {
-      "title": "Mapa Interativo",
+      "title": "Mapa interactivo",
       "subtitle": "Navegue por el museo y encuentre las obras",
       "legend": "Leyenda",
       "generate": "Generar Souvenir",
@@ -298,18 +322,23 @@
       "backToEvents": "Volver a Eventos",
       "about": "Sobre el evento",
       "participateAlert": "Para participar, dirígete al lugar del evento a la hora programada.",
-      "participate": "Participar"
+      "participate": "Para participar"
     },
     "passport": {
       "title": "Mi Pasaporte",
       "subtitle": "Tu registro de visitas y experiencias",
-      "totalXp": "XP Total",
-      "work": "Obra",
-      "visitedAt": "Visitado el"
+      "totalXp": "XP total",
+      "work": "Trabajar",
+      "visitedAt": "Visitado el",
+      "registreseParaComearAColeciona": "Regístrese para comenzar a coleccionar estampillas, ganar XP y desbloquear logros exclusivos durante su visita.",
+      "comearAgora": "Empezar ahora"
     },
     "achievements": {
       "title": "Logros",
-      "subtitle": "Tus medallas y premios"
+      "subtitle": "Tus medallas y premios",
+      "galeriaDeTrofus": "Galería de trofeos",
+      "cadaObraVisitadaECadaDesafioCo": "Cada obra visitada y cada desafío completado otorga una medalla exclusiva. ¡Crea tu cuenta para comenzar tu colección!",
+      "comearMinhaColeo": "Iniciar mi colección"
     },
     "visualScanner": {
       "title": "Reconocimiento Visual",
@@ -324,11 +353,11 @@
       "viewDetails": "Ver Detalles"
     },
     "leaderboard": {
-      "title": "Ranking Global",
+      "title": "Clasificación mundial",
       "subtitle": "Los mejores exploradores de la cultura",
       "rank": "Posición",
       "visitor": "Visitante",
-      "xp": "XP",
+      "xp": "experiencia",
       "loading": "Cargando ranking...",
       "empty": "Ningún visitante ha puntuado aún."
     },
@@ -380,6 +409,144 @@
       "inPersonService": "Servicio Presencial (Opcional)",
       "noSpecialService": "Sin servicios especiales",
       "participants": "Participantes"
+    },
+    "checkoutmodal": {
+      "ltimos": "(¡Último!)",
+      "vocPrecisarFazerLoginParaConcl": "Deberá iniciar sesión para completar."
+    },
+    "installguidemodal": {
+      "adicionarTelaDeIncio": "\"Agregar a la pantalla de inicio\""
+    },
+    "museummap": {
+      "vocEstAqui": "Usted está aquí.",
+      "suaLocalizao": "Tu ubicación",
+      "imagemDaPlantaNoConfigurada": "Imagen de planta no configurada.",
+      "setdestinationidpoiidIrParaC": "setDestinationId(poi.id)}\r\n                                        >\r\n                                            Ve aquí 🏃"
+    },
+    "narrativeaudioguide": {
+      "udioDescritivo": "Audio descriptivo",
+      "experinciaNarrativaAcessvel": "Experiencia narrativa accesible",
+      "useFonesDeOuvidoParaImersoTota": "Utilice auriculares para una inmersión total",
+      "avanar10s": "Avanzar 10s"
+    },
+    "proximityalert": {
+      "vocEstPrximo": "¡Estás cerca!"
+    },
+    "smartroutegenerator": {
+      "tempoDisponvel": "Tiempo disponible:"
+    },
+    "ticketcard": {
+      "ateno": "Atención:",
+      "esteOSeuIngressoQueDarAcessoAo": "Esta es tu entrada que te dará acceso al evento.",
+      "horrio": "Tiempo:",
+      "cdigo": "Código"
+    },
+    "challengespage": {
+      "desafiosECaasAoTesouro": "Desafíos y búsqueda del tesoro",
+      "completeMissesInterativasECaas": "Completa misiones interactivas y búsquedas del tesoro en el museo para ganar XP y ascender en la clasificación. ¡Crea tu cuenta para registrar tu progreso!",
+      "nenhumaCaaAtiva": "Sin caza activa"
+    },
+    "eventdetail": {
+      "eventoNoEncontrado": "Evento no encontrado",
+      "materiaisNecessrios": "Materiales requeridos",
+      "windowopeneventmeetinglinkBlan": "window.open(event.meetingLink, '_blank')} className=\"w-full py-6 text-lg redondeado-2xl\">\n                        Acceder a la transmisión",
+      "linkDeAcessoSerLiberadoApsAIns": "El enlace de acceso se publicará después del registro.",
+      "mapaIndisponvelModoDemo": "Mapa no disponible (modo de demostración)",
+      "numbertpriceIndisponvel": "Número (precio t.)))}`): 'No disponible'}",
+      "selecioneSuaModalidadeDePartic": "Selecciona tu modalidad de participación",
+      "ateno": "Atención:",
+      "apsOPagamentoSuaInscrioSerConf": "Después del pago, su registro será confirmado automáticamente. Recibirás un correo electrónico con tu boleto una vez que el sistema procese la transacción.",
+      "opesDisponveis": "Opciones disponibles",
+      "informaesAdicionais": "información adicional"
+    },
+    "eventslist": {
+      "exploreAProgramaoEPlanejeSuaVi": "Explora el horario y planifica tu visita.",
+      "setfilterupcomingPrximos": "setFilter('PRÓXIMO')}\n          >Próximo",
+      "organizandoProgramao": "Organizando la programación...",
+      "noEncontramosEventosParaEstePe": "No encontramos eventos para este período o categoría.",
+      "incio": "Comenzar",
+      "grtis": "Gratis"
+    },
+    "eventsurveypage": {
+      "suasRespostasForamEnviadasComS": "Tus respuestas se han enviado correctamente y nos ayudarán a mejorar aún más.",
+      "navigateClassnamewfullPy4Textl": "navegar('/')} className=\"w-full py-4 text-lg\">\r\n                        Volver al principio",
+      "esteEventoNoPossuiUmaPesquisaA": "Este evento no tiene actualmente una búsqueda activa.",
+      "pesquisaDeSatisfao": "Encuesta de Satisfacción",
+      "paraValidarSuaParticipaoInform": "Para validar tu participación ingresa tu correo electrónico.",
+      "suaOpinioImportanteParaNs": "Tu opinión es importante para nosotros..."
+    },
+    "groupcheckout": {
+      "solicitaoEnviada": "¡Solicitud enviada!",
+      "novaSolicitao": "Nueva Solicitud",
+      "responsvel": "Responsable *",
+      "exEscolaMunicipalSoPaulo": "Ej: Escuela Municipal de São Paulo"
+    },
+    "leaderboardpage": {
+      "vocAindaNoEstNoRanking": "Aún no estás en el ranking",
+      "crieSuaContaParaComearAPontuar": "¡Crea tu cuenta para comenzar a anotar!"
+    },
+    "scannerhub": {
+      "escaneieOCdigoQuadradoAoLadoDa": "Escanee el código cuadrado al lado de la obra."
+    },
+    "scannerpage": {
+      "procurandoCdigo": "Buscando código..."
+    },
+    "selectmuseum": {
+      "localizaoAtiva": "Ubicación activa",
+      "ativeALocalizao": "Activar ubicación"
+    },
+    "shoppage": {
+      "coleoExclusiva": "Colección exclusiva",
+      "rplicaArqueolgica": "Réplica arqueológica"
+    },
+    "socialcheckinpage": {
+      "marquePresenaECompartilheSuaVi": "¡Regístrate y comparte tu visita!",
+      "ningumFezCheckinAindaSejaOPrim": "Nadie se ha registrado todavía. ¡Sé el primero!"
+    },
+    "teacherportal": {
+      "srieTurma": "Serie / Clase"
+    },
+    "tickettransfer": {
+      "transfernciaConcluda": "¡Transferencia completa!",
+      "novoCdigoDoIngresso": "Nuevo código de billete:",
+      "cdigoDaInscrio": "Código de registro",
+      "nomeDoDestinatrio": "Nombre del destinatario",
+      "emailDoDestinatrio": "Correo electrónico del destinatario",
+      "coleOIdDaInscrio": "Pegue el ID de registro"
+    },
+    "collectibles": {
+      "minhaColeo": "Mi colección",
+      "vocAindaNoColetouNenhumCard": "Aún no has coleccionado ninguna tarjeta."
+    },
+    "membership": {
+      "crieUmaContaGratuitaParaSeTorn": "¡Crea una cuenta gratuita para convertirte en miembro del museo y garantizar beneficios exclusivos!",
+      "apoieACulturaEGanheBenefciosEx": "Apoye la cultura y obtenga beneficios exclusivos",
+      "nenhumPlanoDisponvelNoMomento": "No hay planes disponibles en este momento"
+    },
+    "profile": {
+      "encerrarSessoNesteDispositivo": "Cerrar sesión en este dispositivo",
+      "vocAindaNoTemIngressos": "Aún no tienes entradas.",
+      "vocAindaNoFezNenhumPedido": "Aún no has realizado ningún pedido.",
+      "cuponsDisponveis": "Cupones disponibles",
+      "nenhumCupomDisponvelNoMomento": "No hay cupones disponibles en este momento.",
+      "informaes": "Información"
+    },
+    "rpg": {
+      "crieUmaContaGratuitaParaEvolui": "¡Crea una cuenta gratuita para evolucionar tu avatar, ganar niveles y desbloquear nuevos títulos de museos!",
+      "caminhoDeEvoluo": "Camino de la evolución"
+    },
+    "workcomparator": {
+      "descrio": "Descripción",
+      "estiloPerodoETcnica": "Estilo, época y técnica.",
+      "perodo": "Período",
+      "tcnica": "Técnica",
+      "dimenses": "Dimensiones"
+    },
+    "layout": {
+      "VocEstExplorandoComoVisitanteC": "✨Estás explorando como visitante. ¡Crea una cuenta para guardar favoritos y ganar sellos!",
+      "criarContaGrtis": "Crear cuenta gratuita",
+      "setisdialeropentrueArialabelab": "setIsDialerOpen(verdadero)}\r\n              aria-label=\"Abrir teclado numérico\"\r\n            >\r\n              🔢",
+      "abrirTecladoNumrico": "Abrir teclado numérico"
     }
   },
   "admin": {
@@ -490,7 +657,7 @@
         "logo": "Logo del Museo",
         "cover": "Imagen de Portada (App)",
         "appIcon": "Icono de la App",
-        "banner": "Banner Promocional",
+        "banner": "pancarta promocional",
         "clickToUpload": "Clic para subir imagen"
       },
       "map": {
@@ -503,7 +670,7 @@
         "primary": "Color Primario",
         "secondary": "Color Secundario",
         "theme": "Tema Predeterminado",
-        "light": "Claro",
+        "light": "Por supuesto",
         "dark": "Oscuro",
         "historicalFont": "Usar fuente histórica (Serif)"
       },
@@ -550,7 +717,7 @@
       "stats": {
         "visitors": "Visitantes este mes",
         "qrScans": "Escaneos de QR",
-        "xpDistributed": "XP Distribuido",
+        "xpDistributed": "XP distribuida",
         "monthlyGrowth": "Crecimiento Mensual"
       },
       "charts": {
@@ -560,14 +727,14 @@
       },
       "growth": {
         "summary": "Resumen de Crecimiento",
-        "weekly": "Semanal",
+        "weekly": "Semanalmente",
         "monthly": "Mensual"
       },
-      "topWorks": "Top Obras",
+      "topWorks": "Mejores obras",
       "topTrails": "Top Rutas",
       "topEvents": "Top Eventos",
       "visits": "visitas",
-      "completions": "completados",
+      "completions": "terminado",
       "views": "vistas",
       "days": {
         "mon": "Lun",
@@ -575,14 +742,21 @@
         "wed": "Mié",
         "thu": "Jue",
         "fri": "Vie",
-        "sat": "Sáb",
-        "sun": "Dom"
+        "sat": "Se sentó",
+        "sun": "Sol"
       },
-      "upcomingBookings": "Próximas reservas de espacio"
+      "upcomingBookings": "Próximas reservas de espacio",
+      "noFoiPossvelCarregarOsDadosDoD": "No se pueden cargar los datos del panel. Comprueba tu conexión y vuelve a intentarlo.",
+      "noHEventosPublicadosParaOsPrxi": "No hay eventos publicados para los próximos días.",
+      "noHReservasAgendadas": "No hay reservas programadas."
     },
     "scanner": {
       "title": "Entrenamiento de escáner de IA",
-      "subtitle": "Gestiona clases y entrena el modelo para reconocer obras."
+      "subtitle": "Gestiona clases y entrena el modelo para reconocer obras.",
+      "aponteACmeraParaOQrCodeDoVisit": "Apunte la cámara al código QR del visitante o ingrese el código manualmente.",
+      "ouDigiteOCdigo": "O INTRODUCIR EL CÓDIGO",
+      "EscanearPrximo": "}\r\n                                >\r\n                                    Escanear siguiente",
+      "aponteACmeraEmUmAmbienteIlumin": "Apunte la cámara a un entorno brillante para una lectura más rápida."
     },
     "errors": {
       "delete": "Error al eliminar el artículo",
@@ -608,7 +782,8 @@
       "status": {
         "published": "Publicado",
         "draft": "Bosquejo"
-      }
+      },
+      "setpagepP1Prxima": "setPágina(p => p + 1)}\n              >\n                Siguiente ▶"
     },
     "workForm": {
       "editTitle": "Editar trabajo",
@@ -666,7 +841,10 @@
       "status": {
         "active": "Activo",
         "inactive": "Inactivo"
-      }
+      },
+      "gerencieTodaAProgramaoCultural": "Gestionar toda la programación cultural.",
+      "relatrio": "Informe",
+      "setpagepP1Classnameborderwhite": "setPágina(p => p + 1)}\n            className=\"borde-blanco/10 texto-zinc-400 hover:texto-blanco\"\n          >\n            Siguiente ▶"
     },
     "eventForm": {
       "editTitle": "Editar evento",
@@ -976,6 +1154,555 @@
     "bookingForm": {
       "title": "Solicitar servicio en persona",
       "subtitle": "Solicite un intérprete Libras, guías u otros servicios para su equipo."
+    },
+    "layout": {
+      "setsidebaropentrueArialabelabr": "setSidebarOpen(true)} aria-label=\"Abrir menú de navegación\">\n            ☰",
+      "abrirMenuDeNavegao": "Abrir menú de navegación"
+    },
+    "certificateruleform": {
+      "novaRegraDeAutomao": "Nueva regla de automatización",
+      "setnameetargetvaluePlaceholder": "setName(e.objetivo.valor)}\r\n                        placeholder=\"Ej: Certificado de sendero histórico\"\r\n                    />",
+      "mnimoDeXp": "XP mínima",
+      "salvarRegraAutomtica": "Guardar regla automática",
+      "exCertificadoTrilhaHistrica": "Ej: Certificado de Sendero Histórico"
+    },
+    "certificaterules": {
+      "automaoDeCertificados": "Automatización de certificados",
+      "aes": "Comportamiento",
+      "nenhumaRegraDeAutomaoCriada": "No se crearon reglas de automatización."
+    },
+    "certificatetemplates": {
+      "navigateadmincertificatesrules": "navegar('/admin/certificados/reglas')}>\r\n                        🤖 Reglas y automatización"
+    },
+    "certificatecanvas": {
+      "reaDoCertificado": "Área de certificado"
+    },
+    "propertiespanel": {
+      "trs": "Atrás",
+      "contedo": "Contenido",
+      "transformao": "Transformación",
+      "rotao": "Rotación"
+    },
+    "toolbar": {
+      "validao": "Validación",
+      "variveisDinmicas": "Variables dinámicas",
+      "pngJpgAt5mb": "PNG, JPG hasta 5MB"
+    },
+    "dashboardsaleswidget": {
+      "taxaDePresena": "Cuota de asistencia"
+    },
+    "accessibilitytimeline": {
+      "histricoInstitucionalDeAesDeAc": "Historia institucional de las acciones de accesibilidad: blindaje político y prueba de política pública continua",
+      "nenhumaAoDeAcessibilidadeRegis": "No se registraron acciones de accesibilidad",
+      "tempoDeExecuo": "Tiempo de ejecución"
+    },
+    "accessibilityform": {
+      "tipoDeServio": "Tipo de Servicio",
+      "detalhesDaSolicitao": "Detalles de la solicitud",
+      "statusEOramento": "Estado y presupuesto",
+      "situaoAtual": "Situación actual",
+      "SalvarSolicitao": "}\r\n                    >\r\n                        Guardar solicitud",
+      "descrioDosEntregveis": "Descripción de los entregables",
+      "oramentoAprovadoR": "Presupuesto aprobado (R$)",
+      "statusDaValidao": "Estado de validación"
+    },
+    "accessibilitymanagement": {
+      "GestoDeAcessibilidade": "♿ Gestión de accesibilidad",
+      "serviosProjetos": "Servicios y Proyectos",
+      "fbricaDeContedoMasterobras": "Fábrica de contenidos (Master/Obras)",
+      "porTipoDeServio": "Por tipo de servicio",
+      "solicitaesRecentesServios": "Solicitudes recientes (servicios)",
+      "windowlocationhrefAdminacessib": "ventana.ubicación.href = '/admin/accesibilidad/nuevo'}\r\n                                className=\"text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg colores de transición\"\r\n                            >\r\n                                + Nueva Solicitud",
+      "servio": "Servicio",
+      "nenhumaExecuoEncontrada": "No se encontraron ejecuciones.",
+      "solicitaesDeContedoParaObrasMa": "Solicitudes de Contenidos para Obras (Master)",
+      "acompanheAquiOsPedidosDeLibras": "Siga aquí las solicitudes de Libras y Audiodescripción realizadas directamente en el registro de obras para el equipo Master."
+    },
+    "achievementform": {
+      "informaesBsicas": "Información básica",
+      "desbloqueioAutomtico": "Desbloqueo automático",
+      "seMarcadoOSistemaAConcederAuto": "Si se marca, el sistema lo otorgará automáticamente una vez que se cumpla la condición.",
+      "xpConcedidoAoVisitanteQuandoAC": "XP otorgado al visitante cuando se desbloquea el logro.",
+      "cone": "Icono",
+      "ttulo": "Título:",
+      "cdigo": "Código:",
+      "prvisualizao": "Avance",
+      "Prximo": "}\n              >\n                Siguiente",
+      "cdigoNico": "Código único"
+    },
+    "aidescriptions": {
+      "geradorDeDescriesIa": "Generador de descripciones de IA",
+      "crieDescriesRicasParaSuasObras": "Crea descripciones ricas para tus obras con inteligencia artificial.",
+      "semDescrio": "Sin descripción",
+      "comDescrio": "Con descripción",
+      "gerarDescrio": "Generar descripción",
+      "obrasSemDescrio": "Funciona sin descripción"
+    },
+    "analytics": {
+      "AnalyticsAvanado": "📊 Análisis avanzado",
+      "ltimos7Dias": "últimos 7 días",
+      "ltimos30Dias": "últimos 30 días",
+      "ltimos90Dias": "últimos 90 días",
+      "idadeMdia": "Edad media",
+      "HorriosDePico": "⏰ Horas pico",
+      "intensidadeDeVisitaoDasObras": "Intensidad de visitas a obras",
+      "DistribuioPorIdade": "👥 Distribución de edad"
+    },
+    "bookingform": {
+      "EnviarSolicitao": "}\r\n                    >\r\n                        Enviar solicitud"
+    },
+    "calendar": {
+      "espaos": "Espacios",
+      "gestoCentralizadaDaOcupaoEHorr": "Gestión centralizada de la ocupación y horarios de los entornos museísticos.",
+      "horrioDeIncio": "Hora de inicio",
+      "horrioDeTrmino": "Hora de finalización",
+      "finalidadeDaOcupao": "Propósito de la ocupación",
+      "exTreinamentoDeEquipeManutenoP": "Ej: Formación de equipos, Mantenimiento preventivo, Grabación de vídeo..."
+    },
+    "categoryform": {
+      "gerencieAsCategoriasParaOrgani": "Administre categorías para organizar su contenido.",
+      "informaes": "Información",
+      "descrevaOPropsitoDestaCategori": "Describe el propósito de esta categoría...",
+      "tipoDeContedo": "Tipo de contenido"
+    },
+    "collectibles": {
+      "cardsColecionveis": "Tarjetas coleccionables",
+      "novoCardColecionvel": "Nueva tarjeta coleccionable",
+      "pico": "Épico",
+      "lendrio": "Legendario",
+      "descrio": "Descripción"
+    },
+    "conservation": {
+      "conservaoDoAcervo": "Conservación de la colección",
+      "manutenoRestauroEmprstimosDeOb": "Mantenimiento, restauración, préstamo de obras.",
+      "novoRegistroDeConservao": "Nuevo Registro de Conservación",
+      "fumigao": "Fumigación",
+      "responsvel": "Responsable",
+      "condio": "Condición",
+      "crtico": "Crítico",
+      "prxima": "Próximo",
+      "nenhumEmprstimoRegistrado": "No hay préstamos registrados"
+    },
+    "coupons": {
+      "gerencieCdigosDeDescontoEDefin": "Administre códigos de descuento y establezca el costo de XP para que los visitantes lo canjeen.",
+      "grtisMarketing": "Gratis (Mercadotecnia)",
+      "cdigo": "Código",
+      "sePreenchidoOVisitantePoderCom": "Si lo completa, el visitante podrá comprar este cupón utilizando su saldo de XP obtenido de las interacciones (por ejemplo, Búsqueda del tesoro).",
+      "descrioOpcional": "Descripción (opcional)",
+      "buscarPorCdigoOuDescrio": "Buscar por código o descripción...",
+      "ex500VazioGrtis": "Ej: 500 (Vacío = Gratis)"
+    },
+    "curatornotes": {
+      "comentriosContextuaisSobreObra": "Comentarios contextuales sobre obras de la colección.",
+      "exEstaObraRetrataOCotidianoDaM": "Ej: Esta obra retrata la vida cotidiana de la minería en Minas Gerais en el siglo XVIII..."
+    },
+    "donations": {
+      "doaes": "Donaciones",
+      "painelDeArrecadaoEMuralDeDoado": "Panel de recaudación de fondos y muro de donantes",
+      "nenhumaDoaoRegistradaAinda": "Aún no se han registrado donaciones."
+    },
+    "equipmentform": {
+      "identificao": "Identificación",
+      "identificadorNicoUsadoNaUrlDoM": "Identificador único utilizado en la URL del museo.",
+      "oGestorPoderAlterarEstaSenhaNo": "El administrador podrá cambiar esta contraseña en el primer acceso.",
+      "mdulosHabilitados": "Módulos habilitados",
+      "gamificao": "Gamificación"
+    },
+    "eventcheckin": {
+      "setscanresultnullClassnamebtnB": "setScanResult(null)} className=\"btn btn-primary w-full mt-4\">\r\n                                Leer siguiente",
+      "cdigoDoIngresso": "Código de entrada"
+    },
+    "eventdashboard": {
+      "relatrio": "Informe",
+      "visualizaes": "Vistas",
+      "inscriesRecentes": "Registros Recientes",
+      "nenhumaInscrioRecente": "No hay registros recientes.",
+      "checkinRpido": "Registro rápido"
+    },
+    "eventreport": {
+      "carregandoRelatrio": "Cargando informe...",
+      "erroAoCarregarRelatrio": "Error al cargar el informe.",
+      "relatrioDoEvento": "Informe de evento",
+      "organizao": "Organización",
+      "satisfaoGeral": "Satisfacción general"
+    },
+    "eventsurvey": {
+      "pesquisaDeSatisfao": "Encuesta de Satisfacción",
+      "crieUmFormulrioParaColetarFeed": "Cree un formulario para recopilar comentarios de los participantes.",
+      "AvaliaoEstrelas": "⭐ Calificación (Estrellas)",
+      "MltiplaEscolha": "🔘 Opción múltiple",
+      "opesSeparadasPorVrgula": "Opciones (separadas por coma)",
+      "updatequestionindexRequiredEta": "updateQuestion(índice, 'obligatorio', e.target.checked)}\r\n                                                    className=\"w-4 h-4 texto-azul-600 redondeado\"\r\n                                                />\r\n                                                Obligatorio"
+    },
+    "finance": {
+      "visoConsolidadaDasReceitasProc": "Vista consolidada de recetas procesadas localmente y vía Asaas.",
+      "liquidaoD1": "Liquidación T+1",
+      "somaDeTodasAsVendasEDoaes": "Suma de todas las ventas y donaciones.",
+      "receitaLquidaEstimadaMuseu": "Ingresos netos estimados (museo)",
+      "distribuio": "Distribución",
+      "doaes": "Donaciones",
+      "receitaDiriaLtimos7Dias": "Ingresos diarios (últimos 7 días)"
+    },
+    "funnel": {
+      "funilDeConverso": "Embudo de conversión",
+      "daPrimeiraVisitaAtAFidelizao": "De la primera visita a la fidelización",
+      "anlise": "Análisis",
+      "taxaDeAtivao": "Tasa de activación",
+      "taxaDeReteno": "Tasa de retención"
+    },
+    "grouptickets": {
+      "gerencieSolicitaesDeIngressosP": "Gestionar solicitudes de entradas para grupos y escuelas.",
+      "totalSolicitaes": "Solicitudes totales",
+      "nenhumaSolicitaoDeGrupo": "No hay solicitudes de grupo",
+      "solicitaesDeIngressosEmGrupoAp": "Las solicitudes de entradas para grupos aparecerán aquí"
+    },
+    "heatmap": {
+      "heatmapDeCirculao": "Mapa de calor de circulación",
+      "mdio": "Promedio"
+    },
+    "heritage": {
+      "registroDeSaberesCelebraesEExp": "Registro de conocimientos, celebraciones y expresiones culturales",
+      "ttulo": "Título *",
+      "regio": "Región",
+      "descrio": "Descripción",
+      "cliqueEmNovoRegistroParaComear": "Haga clic en \"Nuevo registro\" para comenzar"
+    },
+    "instagramcard": {
+      "prvia10801080": "Vista previa 1080×1080",
+      "deixeEmBrancoParaUsarADescrioD": "Déjelo en blanco para usar la descripción del trabajo."
+    },
+    "internalusers": {
+      "UsuriosInternos": "👤 Usuarios internos",
+      "NovoUsurio": "+ Nuevo usuario",
+      "totalDeUsurios": "Usuarios totales",
+      "carregandoUsurios": "Cargando usuarios...",
+      "nenhumUsurioCadastradoAinda": "Aún no hay usuarios registrados.",
+      "ltimoLogin": "Último inicio de sesión",
+      "aes": "Comportamiento",
+      "MatrizDePermisses": "🔐 Matriz de permisos",
+      "funo": "Función",
+      "gerenciarUsuriosInternos": "Administrar usuarios internos"
+    },
+    "kidsmode": {
+      "modoCriana": "Modo infantil",
+      "prviaModoNormal": "Vista previa: modo normal",
+      "ttuloDaObra": "Título de la obra",
+      "estaPinturaLeoSobreTelaDatadaD": "Este óleo sobre lienzo, que data del período barroco brasileño, presenta características de claroscuro propias de la escuela barroca...",
+      "prviaModoCriana": "Vista previa: modo niños",
+      "TtuloDaObra": "🎨 Título de la Obra",
+      "umaPinturaBemAntigaEBonitaOArt": "¡Un cuadro muy antiguo y hermoso! El artista utilizó pinturas especiales para que pareciera que había una luz brillando. Genial, ¿verdad? ✨",
+      "configuraes": "Ajustes",
+      "faixaEtria": "Rango de edad"
+    },
+    "mapeditor": {
+      "selecioneUmaObraNaListaEClique": "Seleccione una obra de la lista y haga clic en el mapa para definir su ubicación real.",
+      "selecioneUmaObraNaListaLateral": "Seleccione un trabajo de la lista lateral para comenzar"
+    },
+    "memberships": {
+      "preoMensalR": "Precio Mensual (R$)",
+      "preoAnualR": "Precio Anual (R$)",
+      "descrio": "Descripción"
+    },
+    "moderation": {
+      "moderaoDeAvaliaes": "Moderación de revisión",
+      "reviseEModereAvaliaesDosVisita": "Revisar y moderar las reseñas de los visitantes."
+    },
+    "municipalcalendar": {
+      "calendrioCultural": "Calendario Cultural",
+      "visoUnificadaDaProgramaoMunici": "Visión unificada de la programación municipal"
+    },
+    "municipalgaps": {
+      "mapeamentoDeReasECategoriasCul": "Mapeo de áreas y categorías culturales sin cobertura.",
+      "vaziosIdentificadosAoRecomenda": "Huecos identificados: acción recomendada",
+      "asSeguintesCategoriasNoPossuem": "Las siguientes categorías no tienen eventos o actividades registrados. Considere la posibilidad de crear iniciativas para cubrir estas brechas."
+    },
+    "museumbattle": {
+      "suaPosio": "Tu posición"
+    },
+    "museumsettings": {
+      "configuraesDoMuseu": "Configuración del museo",
+      "missoDescrio": "Misión / Descripción",
+      "endereo": "DIRECCIÓN",
+      "horrio": "Tiempo",
+      "boasvindasMultimdia": "Bienvenida multimedia",
+      "udioDeNarrao": "Audio de narración",
+      "enviarUdioMp3": "Enviar audio (MP3)",
+      "udioConfigurado": "Audio configurado",
+      "vdeoDeApresentaoUrl": "Vídeo de presentación (URL)",
+      "plantasELocalizao": "Plantas y Ubicación",
+      "corPrimriaDestaquesEBotes": "Color primario (destacados y botones)",
+      "corSecundriaBordasEDetalhes": "Color secundario (bordes y detalles)",
+      "fonteHistrica": "Fuente histórica",
+      "visualizaoEmTempoReal": "Vista en tiempo real",
+      "configuraesFinanceiras": "Configuración financiera",
+      "vocEncontraEsteIdNoMenuConfigu": "Puede encontrar esta ID en el menú \"Configuración > Webhooks > Token de autenticación\" o comunicándose con el soporte de Asaas.",
+      "comissoPlataforma": "Comisión de Plataforma",
+      "retidosNaTransao": "Retenido de la transacción",
+      "ateno": "Atención:",
+      "certifiqueseDeQueOWalletIdEstC": "Asegúrese de que la ID de Wallet sea correcta. Las transferencias a identificaciones incorrectas no se pueden revertir automáticamente.",
+      "simulaoCompleta": "Simulación completa",
+      "alteraesNoSalvas": "Cambios no guardados",
+      "SalvarConfiguraes": "}\n            >\n              Guardar configuración",
+      "exMuseuHistrico": "Ej: Museo Histórico",
+      "nomeExTrreo": "Nombre (Ej: Planta Baja)",
+      "fazerUploadDeUdioDeBoasvindas": "Subir audio de bienvenida",
+      "playerDeUdioDeBoasvindas": "Reproductor de audio de bienvenida",
+      "alternarFonteHistrica": "Alternar fuente histórica"
+    },
+    "newsletter": {
+      "osInscritosNaNewsletterAparece": "Los suscriptores del boletín aparecerán aquí.",
+      "dataDeInscrio": "Fecha de registro"
+    },
+    "noticeform": {
+      "perodoDeInscrio": "Período de registro",
+      "execuoEResultados": "Ejecución y Resultados",
+      "oramentoGeral": "Presupuesto General",
+      "regiesAlvo": "Regiones objetivo",
+      "nenhumaRegioRestritaAbrangncia": "Sin región restringida (cobertura global)",
+      "quaseL": "¡Casi llegamos!",
+      "ttulo": "Título:",
+      "oramento": "Presupuesto:",
+      "inscries": "Registro:",
+      "configuraesFinais": "Configuraciones finales",
+      "mostrarPontuaoFinalParaOPblico": "Mostrar la puntuación final al público.",
+      "Prximo": "}\r\n                            >\r\n                                Siguiente",
+      "breveApresentaoDoEdital": "Breve presentación del aviso...",
+      "descrevaOQueEsteEditalBuscaFom": "Describe qué busca promover este aviso... (Será utilizado por la IA para valorar méritos)",
+      "listeOsCritriosDeEliminaoOuPon": "Enumere los criterios de eliminación o puntuación... (Será utilizado por la IA para la lista de verificación)",
+      "ttuloDoEdital": "Título del aviso *",
+      "descrioObjetivoDoEdital": "Descripción/Propósito del Aviso *",
+      "objetivosEstratgicosParaAnlise": "Objetivos estratégicos (para análisis de IA) *",
+      "requisitosTcnicosCritriosParaA": "Requisitos/criterios técnicos (para análisis de IA) *",
+      "aberturaDasInscries": "Apertura de Inscripciones*",
+      "encerramentoDasInscries": "Cierre de Inscripciones*",
+      "divulgaoDosResultados": "Divulgación de resultados",
+      "prazoFinalDeExecuo": "Plazo de ejecución final",
+      "mnimoR": "Mínimo (R$)",
+      "mximoR": "Máximo (R$)"
+    },
+    "noticeprojects": {
+      "emAnlise": "En análisis",
+      "paraReviso": "Para revisión",
+      "reprovaoIa": "Rechazo de IA",
+      "semAnlise": "Sin análisis"
+    },
+    "notices": {
+      "inscriesAbertas": "Inscripciones abiertas",
+      "emAvaliao": "En evaluación",
+      "comeceCriandoSeuPrimeiroEdital": "Comienza creando tu primer aviso de promoción cultural para recibir solicitudes.",
+      "buscarPorTtuloOuStatus": "Buscar por título o estado..."
+    },
+    "notifications": {
+      "notificaesPush": "Notificaciones push",
+      "envieMensagensEmTempoRealParaT": "Envía mensajes en tiempo real a todos los usuarios de tu museo/institución.",
+      "ttuloDaNotificao": "Título de la notificación",
+      "settitleetargetvalueClassnamew": "setTitle(e.objetivo.valor)}\r\n                                className=\"w-borde completo borde-blanco/10 redondeado-xl px-4 py-2 enfoque: borde-ámbar-500 colores de transición contorno-ninguno\"\r\n                                placeholder=\"Ejemplo: ¡Nueva exposición mañana!\"\r\n                                requerido\r\n                            />",
+      "boasPrticas": "Buenas prácticas",
+      "sejaBreveEDiretoNotificaesCurt": "Sea breve y directo: las notificaciones breves tienen una mayor tasa de clics.",
+      "useEmojisParaChamarAAtenoMasSe": "Utiliza emojis para llamar la atención, pero sin exagerar.",
+      "aMensagemSerEnviadaParaTodosOs": "El mensaje se enviará a todos los dispositivos registrados (Android, iOS y Web).",
+      "prviaWebandroid": "Vista previa (Web/Android)",
+      "exExposioNovaAmanh": "Ej: ¡Nueva exposición mañana!"
+    },
+    "nps": {
+      "ltimos3Meses": "últimos 3 meses",
+      "ltimos6Meses": "últimos 6 meses",
+      "ltimoAno": "El año pasado",
+      "distribuioDeNotas": "Distribución de calificaciones",
+      "comentriosRecentes": "Comentarios recientes"
+    },
+    "ppa": {
+      "ttulo": "Título",
+      "mtrica": "Métrico"
+    },
+    "projectform": {
+      "gestoDePropostasCulturaisEEdit": "Gestión de propuestas y avisos culturales.",
+      "informaesDoProjeto": "Información del proyecto",
+      "painelDeAnlisePorIa": "Panel de análisis de IA",
+      "resumoDaAnlise": "Resumen del análisis",
+      "recomendaoIa": "Recomendación de IA",
+      "pontuaoTcnica": "Puntuación técnica",
+      "pontosCrticos": "Puntos críticos",
+      "nenhumaAnliseAutomticaGeradaAi": "Aún no se ha generado ningún análisis automático ni hay proyecto pendiente de presentación.",
+      "avaliaoHumanaParecer": "Evaluación Humana (Opinión)",
+      "mdiaIaHumana": "(IA promedio + humano)",
+      "PedirReviso": "}\r\n                                        >\r\n                                            Solicitar revisión",
+      "mtricasEdital": "Métricas y aviso",
+      "breveResumoParaListagemPblica": "Breve resumen para cotización pública...",
+      "descrevaComoOsRecursosSeroImpl": "Describa cómo se implementarán las funciones...",
+      "descrevaOsMotivosDaDecisoOuAes": "Describa los motivos de la decisión o acciones necesarias...",
+      "ttuloDoProjeto": "Título del proyecto *",
+      "regioDeAtuao": "Región de operación",
+      "descrioDetalhada": "Descripción detallada",
+      "observaesDaReviso": "Notas de revisión",
+      "pblicoPrevisto": "Audiencia esperada",
+      "pblicoReal": "Audiencia real"
+    },
+    "projects": {
+      "oramento": "Presupuesto"
+    },
+    "providerform": {
+      "gestoDePrestadores": "Gestión de proveedores",
+      "cadastreProfissionaisOuEmpresa": "Dar de alta a profesionales o empresas especializadas en servicios de accesibilidad (LIBRAS, Audiodescripción, etc.).",
+      "informaesBsicas": "Información básica",
+      "pessoaJurdicaEmpresa": "Persona Jurídica (Empresa)",
+      "pessoaFsicaAutnomo": "Individuo (autónomo)",
+      "ServiosOferecidos": "♿ Servicios ofrecidos",
+      "selecioneTodosOsServiosDeAcess": "Selecciona todos los servicios de accesibilidad que ofrece este proveedor:",
+      "avaliaoEHistrico": "Evaluación e Historia",
+      "prestadorAtivoDisponvelParaNov": "Proveedor activo (disponible para nuevo trabajo)",
+      "nomeOuRazoSocial": "Nombre o Razón Social",
+      "avaliao05": "Calificación (0-5)",
+      "trabalhosConcludos": "Trabajo completado"
+    },
+    "providers": {
+      "servios": "Servicios",
+      "aes": "Comportamiento"
+    },
+    "reports": {
+      "carregandoRelatrio": "Cargando informe...",
+      "erroAoCarregarDadosDoRelatrio": "Error al cargar los datos del informe",
+      "relatriosInstitucionais": "Informes institucionales",
+      "at": "hasta",
+      "pblicoImpactado": "Audiencia impactada",
+      "AcessibilidadePorServio": "♿ Accesibilidad por Servicio",
+      "nenhumServioRegistrado": "No hay servicios registrados"
+    },
+    "reviews": {
+      "CentralDeModerao": "🛡️ Centro de moderación",
+      "gerencieAvaliaesEMensagensDaCo": "Administrar reseñas y mensajes de la comunidad",
+      "carregandoAvaliaes": "Cargando reseñas...",
+      "ocultoParaOPblico": "Oculto del público"
+    },
+    "sentimentanalysis": {
+      "anliseDeSentimento": "Análisis de sentimiento",
+      "intelignciaSobreAsAvaliaesDosV": "Inteligencia sobre las opiniones de los visitantes",
+      "mdiaGeral": "Promedio general",
+      "totalAvaliaes": "Reseñas totales",
+      "insightsAutomticos": "Información automática",
+      "mdia": "Promedio",
+      "avaliaes": "Reseñas",
+      "avaliaesNegativasRecentes": "Reseñas negativas recientes"
+    },
+    "shop": {
+      "ecossistemaDeGestoDeAcervoEVen": "Ecosistema de gestión de cobros y ventas",
+      "osPedidosDosClientesApareceroA": "Los pedidos de los clientes aparecerán aquí.",
+      "endereoDeEntrega": "Dirección de entrega",
+      "ao": "Acción",
+      "preo": "Precio",
+      "descrio": "Descripción",
+      "publicadoEVisvelNaLoja": "Publicado y visible en la tienda.",
+      "nomeDaPea": "Nombre de la pieza"
+    },
+    "spaceform": {
+      "informaesBsicas": "Información básica",
+      "nomeDoEspao": "Nombre del espacio",
+      "auditrio": "Sala",
+      "laboratrio": "Laboratorio",
+      "estdio": "Estudio",
+      "reaExterna": "Área Externa",
+      "descrio": "Descripción",
+      "configuraes": "Ajustes",
+      "disponvelParaReserva": "Disponible para reserva",
+      "permitirQueEsteEspaoSejaReserv": "Permita que se reserve este espacio en el calendario.",
+      "exSalaDeEnsaio1AuditrioPrincip": "Ej: Sala de Ensayo 1, Auditorio Principal...",
+      "descrevaOEspaoDimensesFinalida": "Describe el espacio, dimensiones, finalidad..."
+    },
+    "spaces": {
+      "navigateadminespacosnovoVarian": "navegar(\"/admin/espacos/novo\")} variante=\"esquema\">\r\n                        Agregar espacio",
+      "aes": "Comportamiento"
+    },
+    "sponsorships": {
+      "patrocnios": "Patrocinios",
+      "gestoDePatrocniosEApoiosAObras": "Gestión de patrocinios y apoyo a obras específicas.",
+      "novoPatrocnio": "Nuevo patrocinio",
+      "disponvel": "DISPONIBLE"
+    },
+    "tceexport": {
+      "exportaoTcemg": "Exportación TCE-MG",
+      "relatrioFormatadoParaOTribunal": "Informe formateado para el Tribunal de Cuentas",
+      "esteUmRelatrioSimplificadoPara": "Este es un informe simplificado. Para cumplir con el formato exacto del TCE-MG, ajuste los campos según el modelo oficial de su municipio."
+    },
+    "teachers": {
+      "portalEducao": "Portal educativo",
+      "professoresVisitasEscolaresEAt": "Profesores, visitas escolares y actividades educativas."
+    },
+    "ticketverifier": {
+      "cdigo": "Código:",
+      "horrio": "Tiempo:",
+      "prximoIngresso": "Siguiente billete",
+      "ErroNaVerificao": "✗ Error de verificación",
+      "eventosComInscries": "Eventos con Registro",
+      "nenhumEventoComInscries": "No hay eventos de registro",
+      "digiteOCdigoDoIngresso": "Introduce el código del billete"
+    },
+    "trailform": {
+      "udioguia": "Audioguía",
+      "vdeo": "Video",
+      "mdias": "Medios de comunicación:",
+      "Prximo": "}\n              >\n                Siguiente"
+    },
+    "translations": {
+      "internacionalizao": "Internacionalización",
+      "traduesDasFichasDasObras": "Traducciones de hojas de trabajo.",
+      "novaTraduo": "Nueva traducción",
+      "totalTradues": "Traducciones totales",
+      "ttuloTraduzido": "Título traducido",
+      "descrioTraduzida": "Descripción traducida"
+    },
+    "treasurehunt": {
+      "obraRelacionadaOndeEstAPistaOu": "Trabajo relacionado (Dónde está la pista o solución)"
+    },
+    "volunteers": {
+      "voluntrios": "Voluntarios",
+      "novoVoluntrio": "}>Nuevo voluntario",
+      "cadastrarVoluntrio": "Regístrate como voluntario",
+      "manh": "Mañana",
+      "habilidadesSepararPorVrgula": "Habilidades (separadas por coma)",
+      "voluntrio": "Voluntario",
+      "recepoGuiaLibrasFotografia": "Recepción, Guía, Libras, Fotografía"
+    },
+    "workform": {
+      "vdeoEmLibras": "Vídeo en Libras",
+      "nomettulo": "Nombre/Título:",
+      "cdigo": "Código:",
+      "mdias": "Medios de comunicación:",
+      "aesAdicionais": "Acciones adicionales",
+      "solicitarProduoDeLibrasudio": "Solicitar Libras/Producción de audio",
+      "Prximo": "}\n              >\n                Siguiente",
+      "apenasVdeoEmLibras": "Sólo vídeo en Libras",
+      "apenasAudiodescrio": "Solo audiodescripción",
+      "comboLibrasUdio": "Combo (Libras + Audio)",
+      "exLeoSobreTelaEsculturaEmBronz": "Ej: Óleo sobre lienzo, Escultura en bronce.",
+      "exTelaMadeiraMrmore": "Ej: lienzo, madera, mármol",
+      "exPrioridadeAltaDetalhesEspecf": "Ej: alta prioridad, detalles específicos...",
+      "tcnica": "Técnica",
+      "perodoEstilo": "Período/Estilo",
+      "dimenses": "Dimensiones",
+      "descrioCompleta": "Descripción completa",
+      "CdigoDoDiscadorApenasNmeros": "🔢 Código de marcador (solo números)",
+      "raioDeDetecoM": "Radio de detección (m)",
+      "tipoDeServio": "Tipo de Servicio",
+      "observaes": "Observaciones"
+    },
+    "aiusagedashboard": {
+      "90LimiteQuaseAtingidoAteno": "= 90? \"¡Límite casi alcanzado!\" : \"Atención\"}",
+      "90ConsidereFazerUpgradeDoPlano": "= 90\r\n                            ? \"Considere actualizar su plan para evitar interrupciones\".\r\n                            : \"Supervise su uso para no exceder el límite\".\r\n                        }",
+      "histricoDeUso": "Historial de uso",
+      "nenhumHistricoDisponvel": "No hay historial disponible",
+      "perodo": "Período",
+      "anlises": "Analítica"
+    },
+    "legalcompliance": {
+      "LeiBrasileiraDeInclusoDaPessoa": "- Ley Brasileña de Inclusión de Personas con Discapacidad",
+      "NormasGeraisECritriosBsicosPar": "- Normas generales y criterios básicos de accesibilidad",
+      "AcessibilidadeAEdificaesMobili": "- Accesibilidad a edificios, mobiliario, espacios y equipamiento urbano.",
+      "LeiDeAcessoInformao": "- Ley de Acceso a la Información"
+    },
+    "secretarydashboard": {
+      "visoExecutivaDaGestoCulturalMu": "Visión ejecutiva de la gestión cultural municipal",
+      "exportarRelatrioPdf": "Exportar informe PDF",
+      "AlertasDeAteno": "⚠️ Alertas de atención"
     }
   },
   "museum": {
@@ -998,7 +1725,8 @@
         "events": "Eventos",
         "visitors": "Visitantes",
         "visits": "Visitas"
-      }
+      },
+      "visoGeralDoSistema": "Descripción general del sistema"
     },
     "tenants": {
       "title": "Instituciones/Cuentas",
@@ -1075,7 +1803,8 @@
         "upload": "Subir",
         "errorUpload": "Error al subir",
         "saving": "Ahorro..."
-      }
+      },
+      "Gamificao": "🏆 Gamificación"
     },
     "accessibility": {
       "errorLoad": "Error al cargar solicitudes",
@@ -1091,7 +1820,11 @@
         "role": "Perfil",
         "tenant": "Institución",
         "action": "Comportamiento"
-      }
+      },
+      "gestoGlobal": "Gestión Global",
+      "ClassnamewautoPx8NovoUsurio": "}\n              nombre de clase=\"w-auto px-8\"\n            >\n              Nuevo usuario",
+      "todosOsUsurios": "Todos los usuarios",
+      "listaGeralDeTodosOsUsuriosCada": "Lista general de todos los usuarios registrados en la plataforma"
     },
     "inPersonServices": {
       "heroBadge": "Servicios en persona",
@@ -1117,6 +1850,105 @@
       "panel": "Panel maestro",
       "management": "Gestión Global",
       "logout": "para salir"
+    },
+    "accessibilityrequests": {
+      "solicitaesDeAcessibilidade": "Solicitudes de accesibilidad",
+      "gerenciePedidosDeLibrasEAudiod": "Gestionar solicitudes de Libras y Audiodescripciones de museos y enviar los archivos tramitados.",
+      "nenhumaSolicitaoPendente": "No hay solicitudes pendientes.",
+      "ao": "Acción",
+      "histricoDeAtendimentos": "Historial de servicio",
+      "atenderSolicitao": "Responder a la solicitud",
+      "udioGuiaOriginal": "Audioguía original:",
+      "descrio": "Descripción:",
+      "cliqueParaSelecionarVdeo": "Haga clic para seleccionar vídeo",
+      "arquivoDeUdioMp3": "Archivo de audio (.mp3)",
+      "cliqueParaSelecionarUdio": "Haga clic para seleccionar audio"
+    },
+    "aicosts": {
+      "nenhumDadoDisponvel": "No hay datos disponibles.",
+      "anlises": "Analítica",
+      "nenhumConsumoRegistradoNestePe": "No se registró consumo en este período.",
+      "tenantsPrximosDoLimite80": "Inquilinos cerca del límite (80%+)"
+    },
+    "auditlogs": {
+      "SeguranaAuditoria": "🔍 Seguridad y auditoría",
+      "monitoreTodasAsAesRealizadasNo": "Supervise todas las acciones tomadas en el panel de administración para garantizar la seguridad y el cumplimiento.",
+      "usurios": "Usuarios",
+      "ao": "Acción",
+      "todasAes": "Todas las acciones",
+      "histricoDeAes": "Historial de acciones"
+    },
+    "inpersonservices": {
+      "nenhumServioConfigurado": "No hay servicios configurados.",
+      "nenhumaSolicitaoRecebida": "No se recibieron solicitudes.",
+      "instituio": "Institución",
+      "servioSolicitado": "Servicio solicitado",
+      "aes": "Comportamiento",
+      "nomeDoServio": "Nombre del servicio",
+      "descrio": "Descripción",
+      "ativoDisponvelParaAgendamento": "Activo (Disponible para programación)",
+      "salvarServio": "Guardar servicio",
+      "exIntrpreteDeLibras": "Ej: intérprete de Libra",
+      "descrevaOsDetalhesDesteServio": "Describe los detalles de este servicio..."
+    },
+    "messages": {
+      "solicitaesDeContatoELeadsDaLan": "Solicitudes de contacto y clientes potenciales de la página de destino."
+    },
+    "plans": {
+      "gerencieCamadasDeServioELimite": "Administrar niveles de servicio y límites para instituciones",
+      "bsico": "Básico",
+      "contnuo": "Continuo",
+      "avanado": "Avanzado",
+      "padro48h": "Estándar (48h)",
+      "usurios": "Usuarios",
+      "nvelIa": "Nivel IA",
+      "jurdico": "Legal",
+      "descrio": "Descripción",
+      "preoMensalR": "Precio Mensual (R$)",
+      "maxUsurios": "Usuarios máximos",
+      "relatriosExecutivos": "Informes Ejecutivos",
+      "conformidadeJurdica": "Cumplimiento legal"
+    },
+    "providers": {
+      "gerencieOsParceirosHomologados": "Gestionar socios aprobados para servicios de accesibilidad",
+      "serviosOferecidos": "Servicios ofrecidos",
+      "breveResumoDosServios": "Breve resumen de servicios...",
+      "descrio": "Descripción"
+    },
+    "seeder": {
+      "simuladorDeTrfego": "Simulador de tráfico",
+      "crieVidaNoSeuMuseuGereVisitant": "Crea vida en tu museo. Genere visitantes virtuales y simule interacciones reales para probar paneles y funciones.",
+      "RodarSimulaoCompleta": "}\r\n                        >\r\n                            Ejecutar simulación completa",
+      "LtimaSimulao": "✅ Última simulación",
+      "limpezaDeDadosRemoveApenasUsur": "Limpieza de datos. solo elimina los usuarios marcados como \"isFake\"."
+    },
+    "systemhealth": {
+      "sadeDoSistema": "Estado del sistema",
+      "acompanheOStatusDosServiosUsoD": "Realice un seguimiento del estado de los servicios, el uso de recursos y la conectividad en tiempo real.",
+      "memria": "Memoria"
+    },
+    "userform": {
+      "dadosDoUsurio": "Datos de usuario"
+    },
+    "tenantform": {
+      "carregandoInstituio": "Cargando institución...",
+      "semVnculoIndependente": "No adjunto (Independiente)",
+      "vinculeAUmaCidadesecretariaPar": "Enlace a una Ciudad/Departamento para aparecer en informes agregados de gestión pública.",
+      "mdulosDoSistema": "Módulos del sistema",
+      "configuraoDoPlano": "Configuración del plan",
+      "startBsico": "Inicio (Básico)",
+      "setprivacypolicyetargetvaluePl": "setPrivacyPolicy(e.target.value)}\n                        placeholder=\"Pegue la política aquí...\"\n                      />",
+      "esteUsurioTerPermissoTotalAdmi": "Este usuario tendrá permiso completo (ADMIN) en la nueva institución.",
+      "aEdioDeAdministradoresFeitaNaA": "Los administradores se pueden editar en la pestaña \"Usuarios\".",
+      "reviseOsDadosAbaixoAntesDeCria": "Revise los datos a continuación antes de crear el entorno institucional.",
+      "Prximo": "}\n              >\n                Siguiente",
+      "coleAPolticaAqui": "Pegue la política aquí...",
+      "vnculoHierrquicoOpcional": "Enlace jerárquico (opcional)",
+      "nvelDeServio": "Nivel de servicio",
+      "polticaDePrivacidade": "política de privacidad"
+    },
+    "tenantslist": {
+      "crieNovasInstituiesGerencieAss": "Cree nuevas instituciones, administre suscripciones y controle el acceso de cada cuenta."
     }
   },
   "producer": {
@@ -1291,6 +2123,103 @@
         "errorSave": "Error al guardar usuario. Por favor inténtalo de nuevo."
       },
       "demoAlert": "Esta es una versión de demostración. Se simula la creación de usuarios."
+    },
+    "produceraudience": {
+      "meuPblicoCrm": "Mi audiencia (CRM)",
+      "visualizeQuemSoSeusVisitantesE": "Visualice quiénes son sus visitantes y exporte datos para marketing.",
+      "aes": "Comportamiento"
+    },
+    "producerdashboard": {
+      "comeceCriandoSeuPrimeiroEvento": "Comience creando su primer evento para atraer visitantes y vender entradas. ¡En tan solo unos pasos, tu espacio cultural estará en el mapa!",
+      "incio": "Comenzar"
+    },
+    "producereventform": {
+      "preenchaAsInformaesParaDivulga": "Rellena los datos para publicar en la agenda cultural.",
+      "informaesBsicas": "Información básica",
+      "localizaoEMdia": "Ubicación y medios",
+      "descrevaOEventoAtraesEDetalhes": "Describe el evento, atracciones y detalles importantes...",
+      "ttuloDoEvento": "Título del evento",
+      "descrio": "Descripción",
+      "dataIncio": "Fecha de inicio",
+      "horrioIncio": "Hora de inicio",
+      "horrioFim": "Hora de finalización",
+      "localizao": "Ubicación"
+    },
+    "producerevents": {
+      "gerencieSeusEventosExposiesEWo": "Gestiona tus eventos, exposiciones y talleres.",
+      "comeceCriandoSeuPrimeiroEvento": "Comience creando su primer evento o exposición que aparezca en la programación de la ciudad."
+    },
+    "producerinbox": {
+      "solicitaoDePagamento": "Solicitud de pago",
+      "selecioneUmaConversaParaComear": "Seleccione una conversación para iniciar"
+    },
+    "producerlayout": {
+      "irParaVisoDoVisitante": "Ir a la vista de visitantes"
+    },
+    "producernoticeresults": {
+      "carregandoClassificao": "Cargando calificación...",
+      "classificaoIndisponvel": "Calificación no disponible",
+      "osResultadosOficiaisAindaNoFor": "Los resultados oficiales aún no han sido publicados para este aviso.",
+      "aClassificaoFinalCompostaPelaM": "La clasificación final se compone de la media ponderada entre el análisis técnico de la Inteligencia Artificial (criterios objetivos y adherencia al aviso) y la evaluación de la Comisión de Cultura (criterios subjetivos y mérito cultural)."
+    },
+    "producernotices": {
+      "noMomentoNoHEditaisComInscries": "Actualmente no hay avisos con inscripciones abiertas. Estén atentos a las novedades.",
+      "inscriesAbertas": "Inscripciones abiertas",
+      "recursoDisponvel": "recurso disponible",
+      "mximoPorProjeto": "Máximo por proyecto",
+      "incio": "Comenzar"
+    },
+    "producerplaceholder": {
+      "estaFuncionalidadeEstEmDesenvo": "Esta funcionalidad está en desarrollo y estará disponible en la próxima actualización del Portal del Productor."
+    },
+    "producerprofile": {
+      "gerencieSuasInformaesPessoaisE": "Gestiona tu información personal y de contacto.",
+      "informaesVisveisParaAdministra": "Información visible para los administradores y en sus proyectos.",
+      "Classnamebgd4af37Text1a1108Hov": "}\r\n                            className=\"bg-[#D4AF37] texto-[#1a1108] hover:bg-[#c5a028] px-8 fuente-bold h-12 sombra-lg sombra-[#D4AF37]/20 borde-ninguno\"\r\n                        >\r\n                            Guardar cambios",
+      "conteUmPoucoSobreSuaTrajetriaC": "Cuéntanos un poco sobre tu origen cultural...",
+      "sitePortflioRedesSociais": "Sitio web / Portafolio / Redes Sociales",
+      "biografiaApresentao": "Biografía / Introducción"
+    },
+    "producerprojectform": {
+      "inscrioVinculada": "Registro vinculado",
+      "parecerDaAvaliao": "Opinión de evaluación",
+      "prestaoDeContas": "Responsabilidad",
+      "projetosComDescriesDetalhadasE": "Los proyectos con descripciones detalladas y presupuestos realistas tienen un 40% más de probabilidades de ser aprobados rápidamente.",
+      "recursosParaGarantirAInclusoDe": "Recursos para asegurar la inclusión de todos los públicos",
+      "esteEditalExigeAApresentaoDeUm": "Este aviso requiere la presentación de un plan de accesibilidad para su presentación.",
+      "aesDeAcessibilidade": "Acciones de accesibilidad",
+      "serviosOferecidos": "Servicios ofrecidos",
+      "aguardandoAprovao": "En espera de aprobación",
+      "aPrestaoDeContasSerLiberadaAss": "Las cuentas se liberarán tan pronto como se apruebe el proyecto o comience su ejecución.",
+      "vendaSeuPeixeEmAt200Caracteres": "Vende tu pescado en hasta 200 caracteres...",
+      "descrevaDetalhadamenteComoOsRe": "Describa en detalle cómo se garantizarán las funciones de accesibilidad...",
+      "ttuloDoProjeto": "Título del proyecto",
+      "oramentoR": "Presupuesto (R$)",
+      "pblicoEstimado": "Audiencia estimada",
+      "descrioCompleta": "Descripción completa",
+      "dataDeIncio": "Fecha de inicio",
+      "dataDeTrmino": "Fecha de finalización",
+      "descrioDaImplementao": "Descripción de la implementación"
+    },
+    "producerprojects": {
+      "vocAindaNoTemProjetos": "Aún no tienes proyectos"
+    },
+    "producerservices": {
+      "encontrePrestadoresHomologados": "Encuentre proveedores aprobados para hacer accesible su proyecto y cumplir con los requisitos legales.\r\n                    Contrata directamente a través de la plataforma a través de canales seguros.",
+      "SolicitarOramento": "}\r\n                                >\r\n                                    Solicitar una cotización",
+      "nenhumPrestadorDisponvel": "Ningún proveedor disponible"
+    },
+    "producersettings": {
+      "configuraes": "Ajustes",
+      "notificaes": "Notificaciones",
+      "receberAtualizaesDeProjetosPor": "Reciba actualizaciones del proyecto por correo electrónico",
+      "perfilPblicoVisvelNaPlataforma": "Perfil público visible en la plataforma",
+      "segurana": "Seguridad",
+      "ativarAutenticaoDeDoisFatores2": "Habilite la autenticación de dos factores (2FA)",
+      "Classnamebgd4af37Text1a1108Hov": "}\r\n                        className=\"bg-[#D4AF37] texto-[#1a1108] hover:bg-[#c5a028] px-8 py-6 fuente-bold texto-lg sombra-lg sombra-[#D4AF37]/20 borde-ninguno redondeado-xl\"\r\n                    >\r\n                        Guardar cambios"
+    },
+    "producertickets": {
+      "preoR": "Precio (R$)"
     }
   },
   "pwa": {
@@ -1306,6 +2235,160 @@
         "step1": "Toque el menú (tres puntos)",
         "step2": "Seleccione 'Instalar aplicación'"
       }
+    }
+  },
+  "municipal": {
+    "municipaldashboard": {
+      "painelDeGestoMunicipal": "Panel de Gestión Municipal",
+      "exportarRelatrioPdf": "Exportar informe PDF",
+      "distribuioEspacialDasUnidadesC": "Distribución espacial de unidades culturales y puntos de interés.",
+      "alertasDeGesto": "Alertas de gestión",
+      "nenhumAlertaCrticoPendente": "No hay alertas críticas pendientes."
+    },
+    "municipallayout": {
+      "mduloMunicipal": "Módulo Municipal",
+      "gestoPblica": "Gestión Pública",
+      "secretrioa": "Secretario",
+      "encerrarSesso": "Finalizar la sesión",
+      "2024PlataformaCulturaVivaGesto": "© 2024 Plataforma Cultura Viva • Gestión de Impacto Municipal",
+      "abrirMenuDeNavegao": "Abrir menú de navegación"
+    },
+    "municipalplaceholders": {
+      "gestoDeMuseusBibliotecasECentr": "Gestión de museos, bibliotecas y centros culturales vinculados",
+      "equipamentosCulturaisFilhosApa": "Aquí aparecerán instalaciones culturales para niños.",
+      "monitoramentoDeExecuoFsicaEFin": "Seguimiento de la ejecución física y financiera.",
+      "navigateadminprojetosnovoLanar": "navegar(\"/admin/projetos/novo\")}\r\n                    >\r\n                        Lanzar proyecto especial",
+      "projetosEmExecuo": "Ejecutando proyectos",
+      "ao": "Acción",
+      "acompanhamentoAutomticoDeNorma": "Monitoreo automático de normas federales (LBI, NBR 9050)",
+      "configuraesDaSecretaria": "Configuración de la Secretaría",
+      "identidadeVisualContatoLocaliz": "Identidad visual, contacto, ubicación y parámetros globales del municipio.",
+      "identificao": "Identificación",
+      "horrioDeFuncionamento": "Horario de apertura",
+      "geolocalizao": "Geolocalización",
+      "mdiaEIdentidadeVisual": "Medios e identidad visual",
+      "corPrimria": "Color primario",
+      "corSecundria": "Color secundario",
+      "exPraaTiradentes123": "Ej: Plaza Tiradentes, 123",
+      "missoInstitucionalDaSecretaria": "Misión institucional de la secretaría...",
+      "pblicoMunicipal": "Público Municipal",
+      "nomeCompletoDoResponsvel": "Nombre completo del responsable",
+      "segsex8h17h10sb9h13h": "Lunes a viernes: 8 a. m. a 5 p. m.\nSábado: 9:00-13:00 horas",
+      "textoDaPolticaDePrivacidade": "Texto de la política de privacidad...",
+      "nomeDaSecretariaInstituio": "Nombre de la Secretaría/Institución",
+      "endereoSede": "Dirección de la sede",
+      "misso": "Misión",
+      "naturezaJurdica": "Naturaleza Jurídica",
+      "anoDeFundao": "Año de fundación",
+      "horrios": "Horarios",
+      "polticaDePrivacidade": "política de privacidad"
+    },
+    "municipalreports": {
+      "centralDeRelatriosExecutivos": "Centro de informes ejecutivos",
+      "documentosOficiaisEIndicadores": "Documentos oficiales e indicadores estratégicos para la toma de decisiones.",
+      "taxaDeAdeso": "Cuota de membresía",
+      "aesPorTipo": "Acciones por tipo",
+      "relatrioDeTransparncia": "Informe de Transparencia"
+    }
+  },
+  "provider": {
+    "providerdashboard": {
+      "SuaAgendaEstEmDiaPorEnquanto": "): (\r\n                            \"Tu agenda está actualizada por ahora\".\r\n                        )}",
+      "mantenhaSeuPerfilAtualizadoPar": "Mantén tu perfil actualizado para atraer más productores culturales. El tiempo medio de respuesta influye en su clasificación en la plataforma."
+    },
+    "providerinbox": {
+      "solicitaoDePagamento": "Solicitud de pago",
+      "centralDeNegociaes": "Centro de comercio",
+      "selecioneUmaConversaAoLadoPara": "Seleccione una conversación lateral para responder a los productores y negociar sus servicios."
+    },
+    "providerlayout": {
+      "irParaVisoDoVisitante": "Ir a la vista de visitantes",
+      "avaliao49": "Calificación: 4.9"
+    },
+    "providerprofile": {
+      "gerencieComoOsProdutoresVisual": "Administre cómo los productores ven sus servicios.",
+      "estatsticas": "Estadística",
+      "avaliaoMdia": "Calificación promedio",
+      "projetosConcludos": "Proyectos completados",
+      "emailParaOramentos": "Correo electrónico para estimaciones",
+      "descrioBio": "Descripción / Biografía",
+      "serviosOferecidos": "Servicios ofrecidos",
+      "conteUmPoucoSobreSuaExperincia": "Cuéntanos un poco de tu experiencia y los servicios que ofreces..."
+    },
+    "providerservices": {
+      "meusServios": "Mis servicios"
+    },
+    "providersettings": {
+      "configuraesDoPerfil": "Configuración de perfil",
+      "personalizeComoOsProdutoresCul": "Personalice cómo los productores culturales verán su servicio.",
+      "nomePblicoInstitucional": "Nombre público/institucional",
+      "emailPblico": "Correo electrónico público",
+      "descrioProfissionalCurrculoRes": "Descripción Profesional / Resumen CV",
+      "SalvarAlteraes": "}\r\n                        Guardar cambios"
+    }
+  },
+  "public": {
+    "certificatevalidator": {
+      "certificadoVlido": "Certificado válido",
+      "certificadoInvlido": "Certificado no válido",
+      "oCdigoFornecidoNoFoiEncontrado": "El código proporcionado no se encontró o ha sido revocado.",
+      "erroNaVerificao": "Error de verificación",
+      "dataDeEmisso": "Fecha de asunto",
+      "cdigoDeAutenticidade": "Código de autenticidad"
+    },
+    "contactform": {
+      "nossaEquipeEntrarEmContatoEmBr": "Nuestro equipo se pondrá en contacto en breve.",
+      "adequaoLeiRouanetLbi": "Adecuación de la Ley Rouanet (LBI)",
+      "planosEPreos": "Planes y Precios",
+      "suporteTcnico": "Apoyo técnico"
+    },
+    "globalevents": {
+      "exploreEventosExposiesEOficina": "Explore eventos, exposiciones y talleres en todos nuestros museos asociados."
+    },
+    "landingpage": {
+      "solues": "Soluciones",
+      "benefcios": "Beneficios",
+      "plataformaDeGestoCultural40": "PLATAFORMA DE GESTIÓN CULTURAL 4.0",
+      "aSoluoCompletaParaDigitalizarM": "La solución completa para digitalizar museos y ciudades históricas.\r\n                    Atrae a los visitantes con la gamificación, cumple con excelencia la Ley Rouanet y ten el control total de tu colección.",
+      "conhecerSolues": "Descubra soluciones",
+      "tecnologiaAServioDaCultura": "La tecnología al servicio de la cultura",
+      "tudoOQueVocPrecisaParaModerniz": "Todo lo que necesitas para modernizar tu institución.",
+      "gamificaoReal": "Gamificación real",
+      "sistemaDeXpConquistasENveisQue": "Sistema de XP, logros y niveles que convierte la visita en un viaje apasionante.\r\n                            Aumente la retención y el interés entre el público joven con desafíos interactivos.",
+      "semNecessidadeDeDownloadNasLoj": "No es necesario descargarlo de las tiendas. Tus visitantes acceden instantáneamente a la guía multimedia\r\n                            a través de Códigos QR inteligentes repartidos por toda la colección.",
+      "mapasInterativosRoteirosSugeri": "Mapas interactivos, rutas sugeridas por IA e integración con la economía local.\r\n                            Conecta tu museo con el ecosistema de la ciudad.",
+      "garantaAAprovaoDaSuaPrestaoDeC": "Asegurar la aprobación de sus estados financieros. Nuestra plataforma ya viene con el paquete técnico necesario y ofrecemos producción de contenido como servicio.",
+      "librasLnguaDeSinais": "Libras (lenguaje de señas)",
+      "janelaDeVdeoIntegradaAoPlayer": "Ventana de vídeo integrada en el reproductor.",
+      "audiodescrio": "Audiodescripción",
+      "narraoDescritivaParaDeficiente": "Narración descriptiva para personas con discapacidad visual.",
+      "relatriosAutomticos": "Informes automáticos",
+      "nossaEquipeDeEspecialistasProd": "Nuestro equipo de expertos produce videos y descripciones de audio de Libras para su colección.",
+      "aprovaoNasContasDaRouanet": "Aprobación de cuentas Rouanet",
+      "museuDisponvelNoDigital": "Museo disponible digitalmente",
+      "tireSuasDvidasSobreALeiRouanet": "Haga sus preguntas sobre la Ley Rouanet, Planes e Implementación.",
+      "comeceSuaTransformaoDigital": "Comienza tu Transformación Digital",
+      "junteseAosMuseusEProjetosCultu": "Súmate a los museos y proyectos culturales que ya están en el futuro.\r\n                    Crea tu espacio ahora mismo.",
+      "reaDoCliente": "Área de Clientes",
+      "navegaoPrincipal": "Navegación principal"
+    }
+  },
+  "totem": {
+    "totemdashboard": {
+      "escanearQrCodeParaEntradaRpida": "Escanee el código QR para ingresar rápidamente",
+      "buscarPorNomeCpfOuCdigo": "Buscar por nombre, CPF o código"
+    },
+    "totemevents": {
+      "listaDePresena": "Lista de asistencia"
+    },
+    "totemsearch": {
+      "jEntrou": "Ya entré",
+      "nomeCpfOuCdigoDoIngresso": "Nombre, CPF o código de billete"
+    },
+    "totemvalidator": {
+      "prximo3s": "Siguiente (3s)",
+      "aponteOCdigoQrParaACmera": "Apunta el código QR a la cámara",
+      "noPrecisaTocarEmNadaLeituraAut": "No es necesario tocar nada, lectura automática."
     }
   }
 }

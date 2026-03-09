@@ -89,9 +89,7 @@ export const AdminEvents: React.FC = () => {
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
             {term.events}
           </h1>
-          <p className="text-zinc-400 text-sm font-medium mt-1">
-            Gerencie toda a programação cultural.
-          </p>
+          <p className="text-zinc-400 text-sm font-medium mt-1">{t("admin.events.gerencieTodaAProgramaoCultural", "Gerencie toda a programação cultural.")}</p>
         </div>
         <Link to="/admin/eventos/novo">
           <Button className="bg-gold text-black hover:bg-gold/90 font-bold shadow-lg shadow-gold/10 border-none">
@@ -186,7 +184,7 @@ export const AdminEvents: React.FC = () => {
                         className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-zinc-400 hover:text-gold hover:bg-gold/10 rounded-2xl transition-all"
                       >
                         <BarChart2 size={18} />
-                        <span className="hidden lg:inline">Relatório</span>
+                        <span className="hidden lg:inline">{t("admin.events.relatrio", "Relatório")}</span>
                       </button>
                       <button
                         onClick={() => navigate(`/admin/eventos/${ev.id}`)}
@@ -219,11 +217,10 @@ export const AdminEvents: React.FC = () => {
           <Button
             variant="outline"
             disabled={page >= totalPages}
-            onClick={() => setPage(p => p + 1)}
+            onClick={() =>{t("admin.events.setpagepP1Classnameborderwhite", "setPage(p => p + 1)}
             className="border-white/10 text-zinc-400 hover:text-white"
           >
-            Próxima ▶
-          </Button>
+            Próxima ▶")}</Button>
         </div>
       )}
     </div>

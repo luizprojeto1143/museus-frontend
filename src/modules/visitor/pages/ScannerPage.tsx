@@ -148,9 +148,7 @@ export const ScannerPage: React.FC = () => {
                             <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-gold -mb-1 -ml-1"></div>
                             <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-gold -mb-1 -mr-1"></div>
                         </div>
-                        <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm animate-pulse">
-                            Procurando código...
-                        </div>
+                        <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm animate-pulse">{t("visitor.scannerpage.procurandoCdigo", "Procurando código...")}</div>
                     </div>
                 )}
             </div>

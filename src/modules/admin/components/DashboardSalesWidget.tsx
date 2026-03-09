@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from 'react';
 import { DollarSign, Ticket, Users, TrendingUp } from 'lucide-react';
 import { api } from '../../../api/client';
 
 export const DashboardSalesWidget: React.FC = () => {
+  const { t } = useTranslation();
     const [stats, setStats] = useState({
         totalRevenue: 0,
         ticketsSold: 0,
@@ -63,7 +65,7 @@ export const DashboardSalesWidget: React.FC = () => {
                     <div className="p-2 bg-orange-100 text-orange-600 rounded-lg">
                         <TrendingUp className="w-5 h-5" />
                     </div>
-                    <span className="text-sm font-medium text-gray-500">Taxa de Presença</span>
+                    <span className="text-sm font-medium text-gray-500">{t("admin.dashboardsaleswidget.taxaDePresena", "Taxa de Presença")}</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {stats.ticketsSold > 0 ? Math.round((stats.checkInCount / stats.ticketsSold) * 100) : 0}%

@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import React from "react";
 import { Link } from "react-router-dom";
 import { QrCode, Ticket, Calendar, Search } from "lucide-react";
 
 export const TotemDashboard: React.FC = () => {
+  const { t } = useTranslation();
     return (
         <div style={{
             height: "100%",
@@ -49,7 +51,7 @@ export const TotemDashboard: React.FC = () => {
                         </div>
                         <div>
                             <h2 style={{ color: "#fff", fontSize: "1.8rem", marginBottom: "0.5rem" }}>Validar Ingresso</h2>
-                            <p style={{ color: "rgba(255,255,255,0.6)" }}>Escanear QR Code para entrada rápida</p>
+                            <p style={{ color: "rgba(255,255,255,0.6)" }}>{t("totem.totemdashboard.escanearQrCodeParaEntradaRpida", "Escanear QR Code para entrada rápida")}</p>
                         </div>
                     </div>
                 </Link>
@@ -121,7 +123,7 @@ export const TotemDashboard: React.FC = () => {
                         </div>
                         <div>
                             <h2 style={{ color: "#fff", fontSize: "1.8rem", marginBottom: "0.5rem" }}>Busca Manual</h2>
-                            <p style={{ color: "rgba(255,255,255,0.6)" }}>Buscar por nome, CPF ou código</p>
+                            <p style={{ color: "rgba(255,255,255,0.6)" }}>{t("totem.totemdashboard.buscarPorNomeCpfOuCdigo", "Buscar por nome, CPF ou código")}</p>
                         </div>
                     </div>
                 </Link>

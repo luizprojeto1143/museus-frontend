@@ -264,10 +264,9 @@ export const AdminBookingForm: React.FC = () => {
                         onClick={handleSubmit}
                         isLoading={saving}
                         className="btn-primary"
-                        leftIcon={<Save size={18} />}
+                        leftIcon={<Save size={18} />{t("admin.bookingform.EnviarSolicitao", "}
                     >
-                        Enviar Solicitação
-                    </Button>
+                        Enviar Solicitação")}</Button>
                 </div>
             </div>
         </div>

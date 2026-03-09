@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -19,6 +20,7 @@ interface NPSReport {
 }
 
 export const AdminNPS: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [report, setReport] = useState<NPSReport | null>(null);
     const [loading, setLoading] = useState(true);
@@ -59,9 +61,9 @@ export const AdminNPS: React.FC = () => {
                     onChange={e => setMonths(Number(e.target.value))}
                     style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}
                 >
-                    <option value={3}>Últimos 3 meses</option>
-                    <option value={6}>Últimos 6 meses</option>
-                    <option value={12}>Último ano</option>
+                    <option value={3}>{t("admin.nps.ltimos3Meses", "Últimos 3 meses")}</option>
+                    <option value={6}>{t("admin.nps.ltimos6Meses", "Últimos 6 meses")}</option>
+                    <option value={12}>{t("admin.nps.ltimoAno", "Último ano")}</option>
                 </select>
             </div>
 
@@ -97,7 +99,7 @@ export const AdminNPS: React.FC = () => {
 
             {/* Distribution */}
             <div className="card">
-                <h2 className="card-title">Distribuição de Notas</h2>
+                <h2 className="card-title">{t("admin.nps.distribuioDeNotas", "Distribuição de Notas")}</h2>
                 <div className="flex items-end gap-2 h-40">
                     {report.distribution.map((count, score) => {
                         const maxCount = Math.max(...report.distribution, 1);
@@ -141,8 +143,7 @@ export const AdminNPS: React.FC = () => {
             {report.recentComments.length > 0 && (
                 <div className="card">
                     <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <MessageCircle size={20} style={{ color: "#60a5fa" }} /> Comentários Recentes
-                    </h2>
+                        <MessageCircle size={20} style={{ color: "#60a5fa" }} />{t("admin.nps.comentriosRecentes", "Comentários Recentes")}</h2>
                     <div style={{ display: "grid", gap: "0.75rem" }}>
                         {report.recentComments.map((c, i) => (
                             <div key={i} className="flex items-start gap-3 py-3 border-b border-white/5 last:border-0">

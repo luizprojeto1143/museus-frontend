@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -23,6 +24,7 @@ interface Donation {
 }
 
 export const AdminDonations: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [stats, setStats] = useState<DonationStats | null>(null);
     const [donations, setDonations] = useState<Donation[]>([]);
@@ -60,8 +62,8 @@ export const AdminDonations: React.FC = () => {
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
             <div>
-                <h1 className="section-title" style={{ margin: 0 }}>Doações</h1>
-                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Painel de arrecadação e mural de doadores</p>
+                <h1 className="section-title" style={{ margin: 0 }}>{t("admin.donations.doaes", "Doações")}</h1>
+                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.donations.painelDeArrecadaoEMuralDeDoado", "Painel de arrecadação e mural de doadores")}</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -81,7 +83,7 @@ export const AdminDonations: React.FC = () => {
                 {donations.length === 0 ? (
                     <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                         <Heart size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
-                        <p style={{ color: "#64748b" }}>Nenhuma doação registrada ainda.</p>
+                        <p style={{ color: "#64748b" }}>{t("admin.donations.nenhumaDoaoRegistradaAinda", "Nenhuma doação registrada ainda.")}</p>
                     </div>
                 ) : (
                     <div className="card" style={{ overflow: "hidden", padding: 0 }}>

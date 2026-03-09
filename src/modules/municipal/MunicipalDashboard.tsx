@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,6 +20,7 @@ import { useAuth } from "../auth/AuthContext";
 import { Button } from "../../components/ui";
 
 export const MunicipalDashboard: React.FC = () => {
+  const { t } = useTranslation();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
@@ -61,7 +63,7 @@ export const MunicipalDashboard: React.FC = () => {
             {/* Page Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Painel de Gestão Municipal</h1>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">{t("municipal.municipaldashboard.painelDeGestoMunicipal", "Painel de Gestão Municipal")}</h1>
                     <p className="text-slate-500 mt-1 font-medium">Panorama geral de equipamentos, projetos e conformidade legal.</p>
                 </div>
                 <div className="flex gap-3">
@@ -84,9 +86,7 @@ export const MunicipalDashboard: React.FC = () => {
                     <Button
                         onClick={() => window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank')}
                         className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20"
-                    >
-                        Exportar Relatório PDF
-                    </Button>
+                    >{t("municipal.municipaldashboard.exportarRelatrioPdf", "Exportar Relatório PDF")}</Button>
                 </div>
             </div>
 
@@ -174,7 +174,7 @@ export const MunicipalDashboard: React.FC = () => {
                         <div className="p-8 border-b border-slate-100 flex justify-between items-center">
                             <div>
                                 <h3 className="text-xl font-bold text-slate-900">Mapa Georeferenciado de Equipamentos</h3>
-                                <p className="text-sm text-slate-500">Distribuição espacial das unidades culturais e pontos de interesse.</p>
+                                <p className="text-sm text-slate-500">{t("municipal.municipaldashboard.distribuioEspacialDasUnidadesC", "Distribuição espacial das unidades culturais e pontos de interesse.")}</p>
                             </div>
                             <div className="flex gap-2">
                                 <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1.5 rounded-full">
@@ -231,8 +231,7 @@ export const MunicipalDashboard: React.FC = () => {
                     <div className="bg-[#0f172a] rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
                         <div className="relative z-10">
                             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-                                <AlertCircle size={20} className="text-orange-400" /> Alertas de Gestão
-                            </h3>
+                                <AlertCircle size={20} className="text-orange-400" />{t("municipal.municipaldashboard.alertasDeGesto", "Alertas de Gestão")}</h3>
                             <div className="space-y-4">
                                 {(data?.alerts || []).map((alert: any, idx: number) => (
                                     <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
@@ -246,7 +245,7 @@ export const MunicipalDashboard: React.FC = () => {
                                     </div>
                                 ))}
                                 {(!data?.alerts || data.alerts.length === 0) && (
-                                    <p className="text-sm text-slate-500 italic">Nenhum alerta crítico pendente.</p>
+                                    <p className="text-sm text-slate-500 italic">{t("municipal.municipaldashboard.nenhumAlertaCrticoPendente", "Nenhum alerta crítico pendente.")}</p>
                                 )}
                             </div>
                         </div>

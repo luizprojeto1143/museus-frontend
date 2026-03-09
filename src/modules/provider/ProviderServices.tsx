@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { Briefcase, Loader2, Check, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
@@ -16,6 +17,7 @@ const SERVICE_LABELS: Record<string, string> = {
 };
 
 export const ProviderServices: React.FC = () => {
+  const { t } = useTranslation();
     const [provider, setProvider] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -63,7 +65,7 @@ export const ProviderServices: React.FC = () => {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">Meus Serviços</h1>
+                <h1 className="text-3xl font-black text-white tracking-tight">{t("provider.providerservices.meusServios", "Meus Serviços")}</h1>
                 <p className="text-[#b794f4] mt-2">Escolha as especialidades que você oferece para aparecer nas buscas dos produtores.</p>
             </div>
 

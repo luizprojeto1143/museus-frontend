@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../api/client";
@@ -14,6 +15,7 @@ type Event = {
 };
 
 export const GlobalEvents: React.FC = () => {
+  const { t } = useTranslation();
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -43,9 +45,7 @@ export const GlobalEvents: React.FC = () => {
                 <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(90deg, #d4af37, #f3e5b5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
                     Agenda Cultural Unificada
                 </h1>
-                <p style={{ opacity: 0.7, fontSize: "1.1rem" }}>
-                    Explore eventos, exposições e oficinas em todos os nossos museus parceiros.
-                </p>
+                <p style={{ opacity: 0.7, fontSize: "1.1rem" }}>{t("public.globalevents.exploreEventosExposiesEOficina", "Explore eventos, exposições e oficinas em todos os nossos museus parceiros.")}</p>
             </header>
 
             {/* Search */}

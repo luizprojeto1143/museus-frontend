@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -6,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export const TotemEvents: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
     const [events, setEvents] = useState<any[]>([]);
@@ -110,9 +112,7 @@ export const TotemEvents: React.FC = () => {
                                     gap: "0.5rem"
                                 }}
                             >
-                                <Users size={20} />
-                                Lista de Presença
-                            </button>
+                                <Users size={20} />{t("totem.totemevents.listaDePresena", "Lista de Presença")}</button>
                         </div>
                     ))}
                 </div>

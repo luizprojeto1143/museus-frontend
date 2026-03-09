@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -18,6 +19,7 @@ interface CuratorNote {
 }
 
 export const AdminCuratorNotes: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [notes, setNotes] = useState<CuratorNote[]>([]);
     const [loading, setLoading] = useState(true);
@@ -106,7 +108,7 @@ export const AdminCuratorNotes: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                     <h1 className="section-title" style={{ margin: 0 }}>Notas do Curador</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Comentários contextuais sobre obras do acervo</p>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.curatornotes.comentriosContextuaisSobreObra", "Comentários contextuais sobre obras do acervo")}</p>
                 </div>
                 <Button onClick={() => { resetForm(); setShowForm(true); }} leftIcon={<Plus size={16} />}>
                     Nova Nota
@@ -136,7 +138,7 @@ export const AdminCuratorNotes: React.FC = () => {
                             value={content}
                             onChange={e => setContent(e.target.value)}
                             rows={4}
-                            placeholder="Ex: Esta obra retrata o cotidiano da mineração em Minas Gerais no século XVIII..."
+                            placeholder={t("admin.curatornotes.exEstaObraRetrataOCotidianoDaM", "Ex: Esta obra retrata o cotidiano da mineração em Minas Gerais no século XVIII...")}
                             style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }}
                         />
                     </div>

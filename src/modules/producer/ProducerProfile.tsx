@@ -65,7 +65,7 @@ export const ProducerProfile: React.FC = () => {
         <div className="max-w-4xl mx-auto pb-16 animate-in fade-in duration-500">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meu Perfil</h1>
-                <p className="text-[#B0A090]">Gerencie suas informações pessoais e de contato.</p>
+                <p className="text-[#B0A090]">{t("producer.producerprofile.gerencieSuasInformaesPessoaisE", "Gerencie suas informações pessoais e de contato.")}</p>
             </div>
 
             <div className="bg-[#2c1e10] rounded-2xl p-8 border border-[#463420] shadow-lg shadow-black/20">
@@ -75,7 +75,7 @@ export const ProducerProfile: React.FC = () => {
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-[#EAE0D5] font-serif">Dados do Produtor</h2>
-                        <p className="text-sm text-[#B0A090]">Informações visíveis para administradores e em seus projetos</p>
+                        <p className="text-sm text-[#B0A090]">{t("producer.producerprofile.informaesVisveisParaAdministra", "Informações visíveis para administradores e em seus projetos")}</p>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@ export const ProducerProfile: React.FC = () => {
                     </div>
 
                     <Input
-                        label="Site / Portfólio / Redes Sociais"
+                        label={t("producer.producerprofile.sitePortflioRedesSociais", "Site / Portfólio / Redes Sociais")}
                         name="website"
                         value={formData.website}
                         onChange={handleChange}
@@ -135,12 +135,12 @@ export const ProducerProfile: React.FC = () => {
                     />
 
                     <Textarea
-                        label="Biografia / Apresentação"
+                        label={t("producer.producerprofile.biografiaApresentao", "Biografia / Apresentação")}
                         name="bio"
                         rows={5}
                         value={formData.bio}
                         onChange={handleChange}
-                        placeholder="Conte um pouco sobre sua trajetória cultural..."
+                        placeholder={t("producer.producerprofile.conteUmPoucoSobreSuaTrajetriaC", "Conte um pouco sobre sua trajetória cultural...")}
                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
                     />
 
@@ -148,11 +148,10 @@ export const ProducerProfile: React.FC = () => {
                         <Button
                             type="submit"
                             isLoading={loading}
-                            leftIcon={<Save size={18} />}
+                            leftIcon={<Save size={18} />{t("producer.producerprofile.Classnamebgd4af37Text1a1108Hov", "}
                             className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold h-12 shadow-lg shadow-[#D4AF37]/20 border-none"
                         >
-                            Salvar Alterações
-                        </Button>
+                            Salvar Alterações")}</Button>
                     </div>
                 </form>
             </div>

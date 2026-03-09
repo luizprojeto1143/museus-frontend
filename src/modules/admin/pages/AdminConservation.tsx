@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -8,6 +9,7 @@ import "./AdminShared.css";
 
 
 export const AdminConservation: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [records, setRecords] = useState<any[]>([]);
     const [loans, setLoans] = useState<any[]>([]);
@@ -52,8 +54,8 @@ export const AdminConservation: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Conservação do Acervo</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Manutenção, restauro, empréstimos de obras</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.conservation.conservaoDoAcervo", "Conservação do Acervo")}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.conservation.manutenoRestauroEmprstimosDeOb", "Manutenção, restauro, empréstimos de obras")}</p>
                 </div>
                 <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Novo Registro</Button>
             </div>
@@ -69,7 +71,7 @@ export const AdminConservation: React.FC = () => {
 
             {showForm && (
                 <div className="card" style={{ display: "grid", gap: "1rem" }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>Novo Registro de Conservação</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.conservation.novoRegistroDeConservao", "Novo Registro de Conservação")}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div>
                             <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
@@ -81,14 +83,14 @@ export const AdminConservation: React.FC = () => {
                         <div>
                             <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Tipo</label>
                             <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
-                                <option value="VISTORIA">Vistoria</option><option value="LIMPEZA">Limpeza</option><option value="RESTAURO">Restauro</option><option value="FUMIGACAO">Fumigação</option>
+                                <option value="VISTORIA">Vistoria</option><option value="LIMPEZA">Limpeza</option><option value="RESTAURO">Restauro</option><option value="FUMIGACAO">{t("admin.conservation.fumigao", "Fumigação")}</option>
                             </select>
                         </div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Responsável</label><input value={form.responsibleName} onChange={e => setForm({ ...form, responsibleName: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.conservation.responsvel", "Responsável")}</label><input value={form.responsibleName} onChange={e => setForm({ ...form, responsibleName: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                         <div>
-                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Condição</label>
+                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.conservation.condio", "Condição")}</label>
                             <select value={form.condition} onChange={e => setForm({ ...form, condition: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
-                                <option value="BOM">Bom</option><option value="REGULAR">Regular</option><option value="RUIM">Ruim</option><option value="CRITICO">Crítico</option>
+                                <option value="BOM">Bom</option><option value="REGULAR">Regular</option><option value="RUIM">Ruim</option><option value="CRITICO">{t("admin.conservation.crtico", "Crítico")}</option>
                             </select>
                         </div>
                     </div>
@@ -117,7 +119,7 @@ export const AdminConservation: React.FC = () => {
                                 </div>
                                 {r.nextScheduled && (
                                     <div style={{ flexShrink: 0, textAlign: "right" }}>
-                                        <p style={{ fontSize: "0.65rem", color: "#475569", textTransform: "uppercase" }}>Próxima</p>
+                                        <p style={{ fontSize: "0.65rem", color: "#475569", textTransform: "uppercase" }}>{t("admin.conservation.prxima", "Próxima")}</p>
                                         <p style={{ color: "#d4af37", fontSize: "0.75rem", fontWeight: 700 }}>{new Date(r.nextScheduled).toLocaleDateString("pt-BR")}</p>
                                     </div>
                                 )}
@@ -132,7 +134,7 @@ export const AdminConservation: React.FC = () => {
                     {loans.length === 0 ? (
                         <div className="card" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                             <ArrowLeftRight size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
-                            <p style={{ color: "#64748b" }}>Nenhum empréstimo registrado</p>
+                            <p style={{ color: "#64748b" }}>{t("admin.conservation.nenhumEmprstimoRegistrado", "Nenhum empréstimo registrado")}</p>
                         </div>
                     ) : loans.map((l: any) => {
                         const work = works.find(w => w.id === l.workId);

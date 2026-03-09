@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -15,6 +16,7 @@ const rarityConfig: Record<string, { label: string; color: string; bg: string; i
 };
 
 export const AdminCollectibles: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [cards, setCards] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
@@ -56,7 +58,7 @@ export const AdminCollectibles: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Cards Colecionáveis</h1>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.collectibles.cardsColecionveis", "Cards Colecionáveis")}</h1>
                     <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Crie cards digitais para visitantes colecionarem</p>
                 </div>
                 <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Novo Card</Button>
@@ -88,12 +90,12 @@ export const AdminCollectibles: React.FC = () => {
 
             {showForm && (
                 <div className="card" style={{ display: "grid", gap: "1rem" }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>Novo Card Colecionável</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.collectibles.novoCardColecionvel", "Novo Card Colecionável")}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                         <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Raridade</label>
                             <select value={form.rarity} onChange={e => setForm({ ...form, rarity: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
-                                <option value="COMMON">Comum</option><option value="RARE">Raro</option><option value="EPIC">Épico</option><option value="LEGENDARY">Lendário</option>
+                                <option value="COMMON">Comum</option><option value="RARE">Raro</option><option value="EPIC">{t("admin.collectibles.pico", "Épico")}</option><option value="LEGENDARY">{t("admin.collectibles.lendrio", "Lendário")}</option>
                             </select>
                         </div>
                         <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra Vinculada</label>
@@ -107,7 +109,7 @@ export const AdminCollectibles: React.FC = () => {
                             <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>XP Reward</label><input type="number" value={form.xpReward} onChange={e => setForm({ ...form, xpReward: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                         </div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Descrição</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.collectibles.descrio", "Descrição")}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                         <Button onClick={onSave}>Criar Card</Button>

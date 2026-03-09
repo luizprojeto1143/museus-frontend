@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 
@@ -131,7 +132,7 @@ const AIUsageDashboard: React.FC = () => {
                 {/* Stats Grid */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
                     <StatCard
-                        label="Análises"
+                        label={t("admin.aiusagedashboard.anlises", "Análises")}
                         value={usage.current.analysesCount.toString()}
                         icon="🤖"
                     />
@@ -157,14 +158,13 @@ const AIUsageDashboard: React.FC = () => {
                     borderLeft: `4px solid ${limits.percentUsed >= 90 ? "#ef4444" : "#f59e0b"}`,
                     marginBottom: 24
                 }}>
-                    <strong>⚠️ {limits.percentUsed >= 90 ? "Limite quase atingido!" : "Atenção"}</strong>
+                    <strong>⚠️ {limits.percentUsed >{t("admin.aiusagedashboard.90LimiteQuaseAtingidoAteno", "= 90 ? "Limite quase atingido!" : "Atenção"}")}</strong>
                     <p style={{ margin: "8px 0 0", fontSize: 14 }}>
                         Você já utilizou {limits.percentUsed}% do seu limite mensal.
-                        {limits.percentUsed >= 90
+                        {limits.percentUsed >{t("admin.aiusagedashboard.90ConsidereFazerUpgradeDoPlano", "= 90
                             ? " Considere fazer upgrade do plano para evitar interrupções."
                             : " Monitore seu uso para não exceder o limite."
-                        }
-                    </p>
+                        }")}</p>
                 </div>
             )}
 
@@ -175,18 +175,16 @@ const AIUsageDashboard: React.FC = () => {
                 padding: 24,
                 boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
             }}>
-                <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Histórico de Uso</h2>
+                <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>{t("admin.aiusagedashboard.histricoDeUso", "Histórico de Uso")}</h2>
 
                 {usage.history.length === 0 ? (
-                    <p style={{ color: "#9ca3af", textAlign: "center", padding: 24 }}>
-                        Nenhum histórico disponível
-                    </p>
+                    <p style={{ color: "#9ca3af", textAlign: "center", padding: 24 }}>{t("admin.aiusagedashboard.nenhumHistricoDisponvel", "Nenhum histórico disponível")}</p>
                 ) : (
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
                         <thead>
                             <tr style={{ borderBottom: "2px solid #e5e7eb" }}>
-                                <th style={{ padding: 12, textAlign: "left", fontWeight: 600 }}>Período</th>
-                                <th style={{ padding: 12, textAlign: "right", fontWeight: 600 }}>Análises</th>
+                                <th style={{ padding: 12, textAlign: "left", fontWeight: 600 }}>{t("admin.aiusagedashboard.perodo", "Período")}</th>
+                                <th style={{ padding: 12, textAlign: "right", fontWeight: 600 }}>{t("admin.aiusagedashboard.anlises", "Análises")}</th>
                                 <th style={{ padding: 12, textAlign: "right", fontWeight: 600 }}>Tokens</th>
                                 <th style={{ padding: 12, textAlign: "right", fontWeight: 600 }}>Custo</th>
                             </tr>

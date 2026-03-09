@@ -260,7 +260,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <main className="layout-main">
         {isGuest && (
           <div className="guest-banner">
-            <span>✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!</span>
+            <span>{t("visitor.layout.VocEstExplorandoComoVisitanteC", "✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!")}</span>
             <button
               className="guest-banner-btn"
               onClick={() => navigate("/register", {
@@ -269,9 +269,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
                   tenantName: settings?.name || "Museu"
                 }
               })}
-            >
-              Criar Conta Grátis
-            </button>
+            >{t("visitor.layout.criarContaGrtis", "Criar Conta Grátis")}</button>
           </div>
         )}
         <header className="layout-header">
@@ -312,11 +310,10 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             <button
               className="btn btn-secondary icon-btn mobile-only"
               style={{ display: 'flex' }}
-              onClick={() => setIsDialerOpen(true)}
-              aria-label="Abrir teclado numérico"
+              onClick={() =>{t("visitor.layout.setisdialeropentrueArialabelab", "setIsDialerOpen(true)}
+              aria-label={t("visitor.layout.abrirTecladoNumrico", "Abrir teclado numérico")}
             >
-              🔢
-            </button>
+              🔢")}</button>
           </div>
         </header>
 

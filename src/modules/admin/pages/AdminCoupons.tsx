@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Tag, Check, X, Search } from 'lucide-react';
 import { api } from '../../../api/client';
@@ -17,6 +18,7 @@ interface Coupon {
 }
 
 export function AdminCoupons() {
+  const { t } = useTranslation();
     const [coupons, setCoupons] = useState<Coupon[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -115,9 +117,7 @@ export function AdminCoupons() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-white">Cupons e Recompensas</h1>
-                    <p className="text-zinc-300 mt-1">
-                        Gerencie códigos de desconto e defina o custo em XP para visitantes resgatarem.
-                    </p>
+                    <p className="text-zinc-300 mt-1">{t("admin.coupons.gerencieCdigosDeDescontoEDefin", "Gerencie códigos de desconto e defina o custo em XP para visitantes resgatarem.")}</p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -133,7 +133,7 @@ export function AdminCoupons() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                     type="text"
-                    placeholder="Buscar por código ou descrição..."
+                    placeholder={t("admin.coupons.buscarPorCdigoOuDescrio", "Buscar por código ou descrição...")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
@@ -188,7 +188,7 @@ export function AdminCoupons() {
                                                 <span>⭐ Custa {coupon.xpCost} XP</span>
                                             </span>
                                         ) : (
-                                            <span className="text-zinc-400">Grátis (Marketing)</span>
+                                            <span className="text-zinc-400">{t("admin.coupons.grtisMarketing", "Grátis (Marketing)")}</span>
                                         )}
                                     </div>
                                 </div>
@@ -235,7 +235,7 @@ export function AdminCoupons() {
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-zinc-200 mb-1">Código</label>
+                                <label className="block text-sm font-medium text-zinc-200 mb-1">{t("admin.coupons.cdigo", "Código")}</label>
                                 <input
                                     type="text"
                                     value={code}
@@ -281,16 +281,14 @@ export function AdminCoupons() {
                                     value={xpCost}
                                     step="1"
                                     onChange={(e) => setXpCost(e.target.value)}
-                                    placeholder="Ex: 500 (Vazio = Grátis)"
+                                    placeholder={t("admin.coupons.ex500VazioGrtis", "Ex: 500 (Vazio = Grátis)")}
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 />
-                                <p className="text-xs text-zinc-400 mt-1">
-                                    Se preenchido, o visitante poderá comprar este cupom usando seu saldo de XP ganho nas interações (ex: Caça ao Tesouro).
-                                </p>
+                                <p className="text-xs text-zinc-400 mt-1">{t("admin.coupons.sePreenchidoOVisitantePoderCom", "Se preenchido, o visitante poderá comprar este cupom usando seu saldo de XP ganho nas interações (ex: Caça ao Tesouro).")}</p>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-zinc-200 mb-1">Descrição (Opcional)</label>
+                                <label className="block text-sm font-medium text-zinc-200 mb-1">{t("admin.coupons.descrioOpcional", "Descrição (Opcional)")}</label>
                                 <input
                                     type="text"
                                     value={description}

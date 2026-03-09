@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import {
     MessageSquare,
@@ -12,6 +13,7 @@ import { api } from "../../api/client";
 import { useNavigate } from "react-router-dom";
 
 export const ProviderDashboard: React.FC = () => {
+  const { t } = useTranslation();
     const { name } = useAuth();
     const navigate = useNavigate();
     const [stats, setStats] = useState<any>(null);
@@ -58,11 +60,9 @@ export const ProviderDashboard: React.FC = () => {
                     </h1>
                     <p className="text-[#b794f4] mt-2 text-lg">
                         {stats?.pendingQuotes > 0 ? (
-                            <>Você tem <span className="text-white font-bold">{stats.pendingQuotes} novas solicitações</span> aguardando resposta.</>
-                        ) : (
+                            <>Você tem <span className="text-white font-bold">{stats.pendingQuotes} novas solicitações</span> aguardando resposta.</>{t("provider.providerdashboard.SuaAgendaEstEmDiaPorEnquanto", ") : (
                             "Sua agenda está em dia por enquanto."
-                        )}
-                    </p>
+                        )}")}</p>
                 </div>
                 <div className="flex gap-3">
                     <button
@@ -140,9 +140,7 @@ export const ProviderDashboard: React.FC = () => {
                         <Calendar size={20} className="text-[#9f7aea]" /> Lembretes
                     </h2>
                     <div className="bg-[#1a0f2c] p-6 rounded-2xl border border-[#3b2164] border-dashed">
-                        <p className="text-[#b794f4] text-sm leading-relaxed">
-                            Mantenha seu perfil atualizado para atrair mais produtores culturais. O tempo médio de resposta influencia seu ranking na plataforma.
-                        </p>
+                        <p className="text-[#b794f4] text-sm leading-relaxed">{t("provider.providerdashboard.mantenhaSeuPerfilAtualizadoPar", "Mantenha seu perfil atualizado para atrair mais produtores culturais. O tempo médio de resposta influencia seu ranking na plataforma.")}</p>
                         <button
                             onClick={() => navigate("/provider/profile")}
                             className="w-full mt-4 bg-white/5 border border-white/10 text-white font-bold py-2 rounded-lg hover:bg-white/10 transition-all text-xs"

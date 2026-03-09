@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -8,6 +9,7 @@ import "./AdminShared.css";
 
 
 export const AdminSponsorships: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,10 +35,10 @@ export const AdminSponsorships: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>Patrocínios</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Gestão de patrocínios e apoios a obras específicas</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.sponsorships.patrocnios", "Patrocínios")}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.sponsorships.gestoDePatrocniosEApoiosAObras", "Gestão de patrocínios e apoios a obras específicas")}</p>
                 </div>
-                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Novo Patrocínio</Button>
+                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />{t("admin.sponsorships.novoPatrocnio", "}>Novo Patrocínio")}</Button>
             </div>
 
             {/* Stats */}
@@ -58,7 +60,7 @@ export const AdminSponsorships: React.FC = () => {
 
             {showForm && (
                 <div className="card" style={{ display: "grid", gap: "1rem" }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>Novo Patrocínio</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.sponsorships.novoPatrocnio", "Novo Patrocínio")}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div>
                             <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
@@ -98,7 +100,7 @@ export const AdminSponsorships: React.FC = () => {
                             {w.sponsorships?.length > 0 ? (
                                 <span className="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded-md font-bold">PATROCINADO</span>
                             ) : (
-                                <span className="text-[10px] bg-zinc-900/40 border border-gold/20/5 text-zinc-400 px-2 py-0.5 rounded-md font-bold">DISPONÍVEL</span>
+                                <span className="text-[10px] bg-zinc-900/40 border border-gold/20/5 text-zinc-400 px-2 py-0.5 rounded-md font-bold">{t("admin.sponsorships.disponvel", "DISPONÍVEL")}</span>
                             )}
                         </div>
                     </div>

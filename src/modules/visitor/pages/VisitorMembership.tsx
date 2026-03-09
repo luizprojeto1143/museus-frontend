@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -6,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export const VisitorMembership: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId, email, name, isGuest } = useAuth();
     const navigate = useNavigate();
     const [plans, setPlans] = useState<any[]>([]);
@@ -39,7 +41,7 @@ export const VisitorMembership: React.FC = () => {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
-                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para se tornar membro do museu e garantir benefícios exclusivos!</p>
+                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>{t("visitor.membership.crieUmaContaGratuitaParaSeTorn", "Crie uma conta gratuita para se tornar membro do museu e garantir benefícios exclusivos!")}</p>
                 <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
             </div>
         );
@@ -50,7 +52,7 @@ export const VisitorMembership: React.FC = () => {
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 <Crown size={48} style={{ color: '#d4af37', margin: '0 auto 1rem' }} />
                 <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'white', letterSpacing: '-0.02em' }}>Amigo do Museu</h1>
-                <p style={{ color: '#999', fontSize: '0.9rem', marginTop: '0.5rem' }}>Apoie a cultura e ganhe benefícios exclusivos</p>
+                <p style={{ color: '#999', fontSize: '0.9rem', marginTop: '0.5rem' }}>{t("visitor.membership.apoieACulturaEGanheBenefciosEx", "Apoie a cultura e ganhe benefícios exclusivos")}</p>
             </div>
 
             <div style={{ display: 'grid', gap: '1.5rem' }}>
@@ -125,7 +127,7 @@ export const VisitorMembership: React.FC = () => {
             {plans.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '3rem', color: '#666' }}>
                     <Crown size={48} style={{ opacity: 0.2, margin: '0 auto 1rem' }} />
-                    <p>Nenhum plano disponível no momento</p>
+                    <p>{t("visitor.membership.nenhumPlanoDisponvelNoMomento", "Nenhum plano disponível no momento")}</p>
                 </div>
             )}
         </div>

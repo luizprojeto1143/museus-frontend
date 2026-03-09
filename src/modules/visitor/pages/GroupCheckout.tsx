@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -5,6 +6,7 @@ import { Loader2, Users, ShoppingBag, Check } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export const GroupCheckout: React.FC = () => {
+  const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [form, setForm] = useState({ groupName: '', totalTickets: '5', contactName: '', contactEmail: '', contactPhone: '' });
     const [loading, setLoading] = useState(false);
@@ -27,9 +29,9 @@ export const GroupCheckout: React.FC = () => {
                 <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(34,197,94,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                     <Check size={40} style={{ color: '#22c55e' }} />
                 </div>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>Solicitação Enviada!</h1>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>{t("visitor.groupcheckout.solicitaoEnviada", "Solicitação Enviada!")}</h1>
                 <p style={{ color: '#888', fontSize: '0.9rem', marginTop: '0.5rem' }}>Entraremos em contato pelo email informado para confirmar os ingressos do grupo.</p>
-                <button onClick={() => { setSuccess(false); setForm({ groupName: '', totalTickets: '5', contactName: '', contactEmail: '', contactPhone: '' }); }} style={{ marginTop: '1.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem 2rem', borderRadius: '1rem', fontWeight: 700, cursor: 'pointer' }}>Nova Solicitação</button>
+                <button onClick={() => { setSuccess(false); setForm({ groupName: '', totalTickets: '5', contactName: '', contactEmail: '', contactPhone: '' }); }} style={{ marginTop: '1.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem 2rem', borderRadius: '1rem', fontWeight: 700, cursor: 'pointer' }}>{t("visitor.groupcheckout.novaSolicitao", "Nova Solicitação")}</button>
             </div>
         );
     }
@@ -44,14 +46,14 @@ export const GroupCheckout: React.FC = () => {
             <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.25rem', padding: '1.5rem', display: 'grid', gap: '1rem' }}>
                 <div>
                     <label style={{ display: 'block', color: '#aaa', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>Nome do Grupo / Escola *</label>
-                    <input value={form.groupName} onChange={e => setForm({ ...form, groupName: e.target.value })} placeholder="Ex: Escola Municipal São Paulo" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none' }} />
+                    <input value={form.groupName} onChange={e => setForm({ ...form, groupName: e.target.value })} placeholder={t("visitor.groupcheckout.exEscolaMunicipalSoPaulo", "Ex: Escola Municipal São Paulo")} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none' }} />
                 </div>
                 <div>
                     <label style={{ display: 'block', color: '#aaa', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>Quantidade de Ingressos</label>
                     <input type="number" min="2" value={form.totalTickets} onChange={e => setForm({ ...form, totalTickets: e.target.value })} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none' }} />
                 </div>
                 <div>
-                    <label style={{ display: 'block', color: '#aaa', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>Responsável *</label>
+                    <label style={{ display: 'block', color: '#aaa', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>{t("visitor.groupcheckout.responsvel", "Responsável *")}</label>
                     <input value={form.contactName} onChange={e => setForm({ ...form, contactName: e.target.value })} placeholder="Nome completo" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none' }} />
                 </div>
                 <div>
