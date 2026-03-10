@@ -11,9 +11,10 @@ export const WorkTimeline: React.FC = () => {
 
     const fetchWorks = useCallback(async () => {
         try {
-            const res = await api.get(`/works?tenantId=${tenantId}`);
+            const { data } = await api.get(`/works?tenantId=${tenantId}`);
             // Sort by yearNumeric or year field
-            const sorted = (res.data || [])
+            const rawData = Array.isArray(data) ? data : (data.data || []);
+            const sorted = rawData
                 .filter((w: any) => w.year || w.yearNumeric)
                 .sort((a: any, b: any) => {
                     const yearA = a.yearNumeric || parseInt(a.year) || 0;
