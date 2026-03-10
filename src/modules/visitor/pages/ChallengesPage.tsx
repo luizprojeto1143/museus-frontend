@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Target, Trophy, Map, ChevronRight, Star, Clock } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';

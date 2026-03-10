@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Sparkles } from 'lucide-react';
 import { ProductGrid } from '../../../components/shop/ShopComponents';
 import { motion } from 'framer-motion';
@@ -8,7 +7,7 @@ import { motion } from 'framer-motion';
 /**
  * Visitor Shop Page
  * Displays museum shop products for purchasing
- */
+    */
 export const ShopPage: React.FC = () => {
     const { t } = useTranslation();
 

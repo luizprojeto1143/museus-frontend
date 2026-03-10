@@ -8,6 +8,10 @@ import { useTerminology } from "../../hooks/useTerminology";
 import { useIsCityMode } from "../auth/TenantContext";
 
 interface TenantFeatures {
+  name: string;
+  logoUrl: string;
+  primaryColor: string;
+  secondaryColor: string;
   featureWorks: boolean;
   featureTrails: boolean;
   featureEvents: boolean;
@@ -31,7 +35,7 @@ interface TenantFeatures {
 }
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { logout, name, tenantId } = useAuth();
+  const { logout, name: userName, tenantId } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
   const [isCollapsed, setCollapsed] = useState(false);
@@ -49,6 +53,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         .catch(err => console.error("Error loading tenant features", err));
     }
   }, [tenantId]);
+
+  const themeStyles = features ? {
+    "--accent-primary": features.primaryColor || (isCityMode ? "#2563eb" : "#d4af37"),
+    "--accent-secondary": features.secondaryColor || (isCityMode ? "#0ea5e9" : "#cd7f32"),
+  } as React.CSSProperties : {};
 
   type SidebarLink = { to: string; label: string; icon: string; show: boolean };
   type SidebarGroup = { label: string; links: SidebarLink[] };
@@ -197,7 +206,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`}>
+    <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`} style={themeStyles}>
       {/* Mobile Overlay */}
       <div
         className={`mobile-overlay ${isSidebarOpen ? "open" : ""}`}
@@ -217,9 +226,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         </button>
         <div className="sidebar-header">
           <div className="app-brand">
-            <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
+            <img src={features?.logoUrl || "/logo-culturaviva.jpg"} alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
             <div>
-              <div className="app-title">{isCityMode ? "Secretaria de Cultura" : t("dashboard.title")}</div>
+              <div className="app-title">{features?.name || (isCityMode ? "Secretaria de Cultura" : t("dashboard.title"))}</div>
               <div className="app-subtitle">{isCityMode ? "Gestão Municipal" : t("admin.museums.title")}</div>
             </div>
           </div>
@@ -299,7 +308,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           </button>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
             <span className="welcome-text" style={{ fontSize: "0.9rem", color: "var(--fg-muted)" }}>
-              {t("welcome.returning", { name: name || "Admin" })}
+              {t("welcome.returning", { name: userName || "Admin" })}
             </span>
             <span className="badge">ADMIN</span>
           </div>

@@ -889,13 +889,13 @@ textarea {
 }
 
 /* City Mode Layout Fixes */
-.city-mode .layout-wrapper {
+.city-mode.layout-wrapper {
   background-color: #f8fafc !important;
   /* Force light background on wrapper */
   background: #f8fafc !important;
 }
 
-.city-mode .layout-main {
+.city-mode.layout-wrapper .layout-main {
   background-color: #f8fafc !important;
   /* Force light background on main area */
   background: #f8fafc !important;

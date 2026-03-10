@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Mail, Send, Paperclip, DollarSign, Search, MoreVertical } from 'lucide-react';
 import { Button, Input, Textarea } from '../../components/ui';
 import { inboxService, Conversation, Message } from '../../services/inboxService';

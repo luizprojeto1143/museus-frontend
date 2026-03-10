@@ -5,7 +5,7 @@ import { Shield, Smartphone, Globe, Ear, Eye, Award, ArrowRight, Layout, Menu, X
 import { ContactForm } from "./ContactForm";
 
 export const LandingPage: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -161,8 +161,8 @@ export const LandingPage: React.FC = () => {
                 </h1>
 
                 <p style={{ maxWidth: "700px", margin: "0 auto 3rem", fontSize: "1.2rem", opacity: 0.8, lineHeight: "1.6", fontFamily: "var(--font-body)" }}>{t("public.landingpage.aSoluoCompletaParaDigitalizarMuseusECida", `
-                    A solução completa para digitalizar museus e cidades históricas.
-                    Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo.
+                    A solução completa para digitalizar museus, centros culturais e monumentos históricos.
+                    Sinta o pulso da cultura em tempo real com o novo Pulse Hub e engaje visitantes com gamificação avançada.
                 `)}</p>
 
                 <div style={{ display: "flex", gap: "1rem", flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
@@ -212,10 +212,18 @@ export const LandingPage: React.FC = () => {
             <section id="solucoes" style={{ padding: "6rem 2rem", maxWidth: "1200px", margin: "0 auto" }} aria-labelledby="features-title">
                 <div style={{ textAlign: "center", marginBottom: "4rem" }}>
                     <h2 id="features-title" style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>{t("public.landingpage.tecnologiaAServioDaCultura", `Tecnologia a Serviço da Cultura`)}</h2>
-                    <p style={{ opacity: 0.7, fontFamily: "var(--font-body)" }}>{t("public.landingpage.tudoOQueVocPrecisaParaModernizarSuaInsti", `Tudo o que você precisa para modernizar sua instituição.`)}</p>
+                    <p style={{ opacity: 0.7, fontFamily: "var(--font-body)" }}>{t("public.landingpage.tudoOQueVocPrecisaParaModernizarSuaInsti", `Tudo o que você precisa para modernizar sua institution.`)}</p>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>
+                    <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
+                        <Award size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
+                        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{t("public.landingpage.gamificaoReal", `Gamificação Real`)}</h3>
+                        <p style={{ opacity: 0.7, fontFamily: "var(--font-body)", lineHeight: "1.6" }}>{t("public.landingpage.sistemaDeXpConquistasENveisQueTransforma", `
+                            Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora.
+                            Aumente a retenção e o interesse do público jovem com desafios interativos.
+                        `)}</p>
+                    </div>
                     <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
                         <Award size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
                         <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{t("public.landingpage.gamificaoReal", `Gamificação Real`)}</h3>
@@ -236,8 +244,8 @@ export const LandingPage: React.FC = () => {
                         <Globe size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
                         <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Turismo Inteligente</h3>
                         <p style={{ opacity: 0.7, fontFamily: "var(--font-body)", lineHeight: "1.6" }}>{t("public.landingpage.mapasInterativosRoteirosSugeridosPorIaEI", `
-                            Mapas interativos, roteiros sugeridos por IA e integração com a economia local.
-                            Conecte seu museu ao ecossistema da cidade.
+                            Pulse Hub: Mapas interativos, roteiros inteligentes e descoberta de monumentos via QR Code.
+                            Conecte seu patrimônio ao pulso digital da cidade.
                         `)}</p>
                     </div>
                 </div>

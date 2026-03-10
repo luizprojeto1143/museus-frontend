@@ -9,7 +9,7 @@ import "./QrVisit.css";
 type QRCodeData = {
   id: string;
   code: string;
-  type: "WORK" | "TRAIL" | "EVENT" | "SPACE" | "CUSTOM";
+  type: "WORK" | "TRAIL" | "EVENT" | "SPACE" | "TENANT" | "CUSTOM";
   referenceId?: string | null;
   title: string;
   xpReward: number;
@@ -69,6 +69,8 @@ export const QrVisit: React.FC = () => {
       navigate(`/trilhas/${data.referenceId}`);
     } else if (data.type === "EVENT" && data.referenceId) {
       navigate(`/eventos/${data.referenceId}`);
+    } else if (data.type === "TENANT" && data.referenceId) {
+      navigate(`/?select=${data.referenceId}`);
     }
   }
 
@@ -101,7 +103,7 @@ export const QrVisit: React.FC = () => {
       case "WORK": return t("visitor.favorites.typeWork");
       case "TRAIL": return t("visitor.favorites.typeTrail");
       case "EVENT": return t("visitor.favorites.typeEvent");
-      case "SPACE": return t("visitor.qr.typeSpace");
+      case "TENANT": return "Instituição/Monumento";
       default: return t("visitor.qr.typeCustom");
     }
   };

@@ -1,6 +1,6 @@
 ﻿import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { api } from "../../../api/client";
+import { api, baseURL } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Instagram, Download, RefreshCw, Image as ImageIcon, Palette, Type } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
@@ -16,7 +16,7 @@ const templates = [
 ];
 
 export const AdminInstagramCard: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [works, setWorks] = useState<any[]>([]);
     const [selectedWork, setSelectedWork] = useState<any>(null);
@@ -49,7 +49,8 @@ export const AdminInstagramCard: React.FC = () => {
                     console.error("Image load failed for URL:", url, e);
                     reject(e);
                 };
-                img.src = url;
+                const encodedUrl = encodeURIComponent(url);
+                img.src = `${baseURL}/upload/proxy?url=${encodedUrl}`;
             });
         };
 

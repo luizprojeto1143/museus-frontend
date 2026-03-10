@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Activity, Server, Database, Cpu, HardDrive, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import { api } from '../../../api/client';
-import { useTranslation } from 'react-i18next';
 import "./MasterShared.css";
 
 interface HealthData {

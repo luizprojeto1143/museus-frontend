@@ -10,7 +10,7 @@ import {
   Save, ArrowLeft, Trash2, Upload, Volume2, Video,
   Image as ImageIcon, Accessibility, CheckCircle,
   ChevronRight, ChevronLeft, MapPin, FileText,
-  MonitorPlay, Share2
+  MonitorPlay, Share2, Languages, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./AdminShared.css";
@@ -61,10 +61,14 @@ export const AdminWorkForm: React.FC = () => {
   // Form Fields
   const [code, setCode] = useState("");
   const [title, setTitle] = useState("");
+  const [titleEn, setTitleEn] = useState("");
+  const [titleEs, setTitleEs] = useState("");
   const [artist, setArtist] = useState("");
   const [year, setYear] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState(t("admin.workForm.defaultDescription"));
+  const [descriptionEn, setDescriptionEn] = useState("");
+  const [descriptionEs, setDescriptionEs] = useState("");
   const [room, setRoom] = useState("Sala 2");
   const [floor, setFloor] = useState("1º andar");
   const [imageUrl, setImageUrl] = useState("");
@@ -99,6 +103,17 @@ export const AdminWorkForm: React.FC = () => {
         setAudioUrl(data.audioUrl || "");
         setLibrasUrl(data.librasUrl || "");
         setPublished(data.published ?? true);
+
+        // Load translations if available in backend
+        if (data.metadata?.translations?.en) {
+          setTitleEn(data.metadata.translations.en.title || "");
+          setDescriptionEn(data.metadata.translations.en.description || "");
+        }
+        if (data.metadata?.translations?.es) {
+          setTitleEs(data.metadata.translations.es.title || "");
+          setDescriptionEs(data.metadata.translations.es.description || "");
+        }
+
         setRadius(data.radius || 5);
         setTechnique(data.technique || "");
         setPeriod(data.period || "");
@@ -132,6 +147,42 @@ export const AdminWorkForm: React.FC = () => {
       } finally {
         setIsUploading(false);
       }
+    }
+  };
+
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  const handleAutoTranslate = async () => {
+    if (!title && !description) {
+      addToast("Preencha o título ou a descrição em português primeiro.", "info");
+      return;
+    }
+
+    try {
+      setIsTranslating(true);
+      const res = await api.post("/ai/translate", {
+        title,
+        description
+      });
+
+      const { en, es } = res.data;
+
+      if (en) {
+        if (en.title) setTitleEn(en.title);
+        if (en.description) setDescriptionEn(en.description);
+      }
+
+      if (es) {
+        if (es.title) setTitleEs(es.title);
+        if (es.description) setDescriptionEs(es.description);
+      }
+
+      addToast("Tradução concluída com sucesso!", "success");
+    } catch (err) {
+      console.error("Erro na tradução:", err);
+      addToast("Houve um erro ao gerar a tradução automática.", "error");
+    } finally {
+      setIsTranslating(false);
     }
   };
 
@@ -185,7 +236,13 @@ export const AdminWorkForm: React.FC = () => {
       tenantId,
       code: code || undefined,
       published,
-      radius: Number(radius) || 5
+      radius: Number(radius) || 5,
+      metadata: {
+        translations: {
+          en: { title: titleEn, description: descriptionEn },
+          es: { title: titleEs, description: descriptionEs }
+        }
+      }
     };
 
     if (category) payload.categoryId = category;
@@ -303,7 +360,7 @@ export const AdminWorkForm: React.FC = () => {
               <div className="flex-col gap-6">
                 <div className="admin-grid-2">
                   <Input
-                    label={isCity ? "Nome do Ponto/Monumento" : isCultural ? "Título da Atividade" : "Título da Obra"}
+                    label={isCity ? "Nome do Ponto/Monumento (PT-BR)" : isCultural ? "Título da Atividade (PT-BR)" : "Título da Obra (PT-BR)"}
                     value={title}
                     onChange={e => setTitle(e.target.value)}
                     placeholder={isCity ? "Ex: Cristo Redentor" : isCultural ? "Ex: Oficina de Cerâmica" : "Ex: Abaporu"}
@@ -367,12 +424,66 @@ export const AdminWorkForm: React.FC = () => {
                 </div>
 
                 <Textarea
-                  label={t("admin.work.descrioCompleta", `Descrição Completa`)}
+                  label={t("admin.work.descrioCompleta", `Descrição Completa (PT-BR)`)}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   rows={6}
                   placeholder={`Conte a história desta ${term.work.toLowerCase()}...`}
                 />
+
+                <div className="admin-section" style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h3 className="admin-section-title" style={{ margin: 0 }}>
+                      <Languages color="#60a5fa" /> Traduções (Opcional)
+                    </h3>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleAutoTranslate}
+                      isLoading={isTranslating}
+                      leftIcon={<Sparkles size={16} color="#fbbf24" />}
+                      style={{ borderColor: 'rgba(251, 191, 36, 0.3)', color: '#fbbf24', fontSize: '0.8rem' }}
+                    >
+                      Traduzir com IA
+                    </Button>
+                  </div>
+
+                  <div style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className="space-y-3">
+                        <Input
+                          label="Título em Inglês"
+                          value={titleEn}
+                          onChange={e => setTitleEn(e.target.value)}
+                          placeholder="Ex: The Last Supper"
+                        />
+                        <Textarea
+                          label="Descrição em Inglês"
+                          value={descriptionEn}
+                          onChange={e => setDescriptionEn(e.target.value)}
+                          rows={4}
+                          placeholder="English description..."
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <Input
+                          label="Título em Espanhol"
+                          value={titleEs}
+                          onChange={e => setTitleEs(e.target.value)}
+                          placeholder="Ex: La Última Cena"
+                        />
+                        <Textarea
+                          label="Descrição em Espanhol"
+                          value={descriptionEs}
+                          onChange={e => setDescriptionEs(e.target.value)}
+                          rows={4}
+                          placeholder="Descripción en español..."
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 

@@ -8,7 +8,7 @@
 
 .visitor-theme-title {
     font-size: 2rem;
-    color: #d4af37;
+    color: var(--accent-primary);
     margin: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -41,7 +41,7 @@
 
 .visitor-card-title {
     font-size: 1.25rem;
-    color: #d4af37;
+    color: var(--accent-primary);
     margin: 0;
 }
 
@@ -66,7 +66,7 @@
 
 .visitor-input:focus {
     outline: none;
-    border-color: #d4af37;
+    border-color: var(--accent-primary);
     box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
 }
 
@@ -77,7 +77,7 @@
 }
 
 .btn-primary-gold {
-    background: #d4af37;
+    background: var(--accent-primary);
     color: #0f0a05;
     font-weight: bold;
     border: none;
@@ -91,7 +91,7 @@
 
 .btn-ghost-gold {
     background: transparent;
-    color: #d4af37;
+    color: var(--accent-primary);
     border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
@@ -172,7 +172,7 @@
 }
 
 .settings-tab.active {
-    color: #d4af37;
-    border-bottom-color: #d4af37;
+    color: var(--accent-primary);
+    border-bottom-color: var(--accent-primary);
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }

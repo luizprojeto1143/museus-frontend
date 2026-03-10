@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Clock, User, Database, Filter, ChevronDown, ChevronRight, Activity, Search } from 'lucide-react';
 import { api } from '../../../api/client';
-import { useTranslation } from 'react-i18next';
 import "./MasterShared.css";
 
 interface AuditLogEntry {
