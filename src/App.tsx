@@ -9,6 +9,7 @@ import { GamificationProvider } from "./modules/gamification/context/Gamificatio
 import { GeoFencingProvider } from "./modules/visitor/context/GeoFencingProvider";
 import { AudioProvider } from "./modules/visitor/context/AudioContext";
 import { ToastProvider } from "./contexts/ToastContext";
+import { VisitorThemeProvider } from "./modules/visitor/context/VisitorThemeProvider";
 
 // Auth pages
 import { Login } from "./modules/auth/Login";
@@ -104,9 +105,10 @@ const App: React.FC = () => {
         }}
       />
       <GamificationProvider>
-        <GeoFencingProvider>
-          <AudioProvider>
-            <ToastProvider>
+        <VisitorThemeProvider>
+          <GeoFencingProvider>
+            <AudioProvider>
+              <ToastProvider>
               <React.Suspense fallback={
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#1a1a1a', color: '#d4af37' }}>
                   Loading...
@@ -161,7 +163,8 @@ const App: React.FC = () => {
             </ToastProvider>
           </AudioProvider>
         </GeoFencingProvider>
-      </GamificationProvider>
+      </VisitorThemeProvider>
+    </GamificationProvider>
     </QueryClientProvider >
   );
 };
