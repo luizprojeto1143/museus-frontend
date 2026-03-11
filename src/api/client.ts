@@ -1,7 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
+export const baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend-1.onrender.com";
 
 export const api = axios.create({
   baseURL,
