@@ -83,7 +83,7 @@ export const MasterDashboard: React.FC = () => {
                 <h3 className="text-slate-500 font-black text-xs uppercase tracking-widest mb-2">{t("master.dashboard.totalVisitors")}</h3>
                 <div className="flex items-baseline gap-4">
                   <p className="text-6xl font-black text-white tracking-tighter leading-none">
-                    {totalVisitors.toLocaleString()}
+                    {(totalVisitors || 0).toLocaleString()}
                   </p>
                   <span className="text-blue-400 font-bold text-sm">+12%</span>
                 </div>
@@ -109,7 +109,7 @@ export const MasterDashboard: React.FC = () => {
                 <h3 className="text-slate-500 font-black text-xs uppercase tracking-widest mb-2">{t("master.dashboard.totalVisits")}</h3>
                 <div className="flex items-baseline gap-4">
                   <p className="text-6xl font-black text-white tracking-tighter leading-none">
-                    {totalVisits.toLocaleString()}
+                    {(totalVisits || 0).toLocaleString()}
                   </p>
                   <span className="text-purple-400 font-bold text-sm">+8%</span>
                 </div>
@@ -168,7 +168,7 @@ export const MasterDashboard: React.FC = () => {
                          </div>
                       </td>
                       <td className="px-10 py-8">
-                        <span className="text-white font-black text-lg tracking-tighter">{s.visitorsCount.toLocaleString()}</span>
+                        <span className="text-white font-black text-lg tracking-tighter">{(s.visitorsCount || 0).toLocaleString()}</span>
                       </td>
                       <td className="px-10 py-8">
                          <span className="bg-green-500/10 text-green-400 text-[10px] font-black px-3 py-1 rounded-full border border-green-500/20">
