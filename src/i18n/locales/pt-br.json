@@ -55,6 +55,7 @@
     "events": "Eventos",
     "visitors": "Visitantes",
     "featuredWorks": "Obras em Destaque",
+    "close": "Fechar",
     "modes": {
       "museum": {
         "work": "Obra",
@@ -176,29 +177,31 @@
       "askAnything": "Pergunte qualquer coisa...",
       "placeholder": "Digite sua pergunta aqui..."
     },
-    "sidebar": {
-      "home": "Início",
-      "artworks": "Obras",
-      "trails": "Trilhas",
-      "map": "Mapa",
-      "events": "Eventos",
-      "favorites": "Favoritos",
-      "aiChat": "Chat IA",
-      "souvenir": "Souvenir",
-      "passport": "Passaporte",
-      "profile": "Meu Perfil",
-      "achievements": "Conquistas",
-      "visualScanner": "Scanner Visual",
-      "leaderboard": "Ranking",
-      "changeMuseum": "Trocar Museu",
-      "logout": "Sair",
-      "scheduling": "Agendamento",
-      "smartItinerary": "Roteiro Inteligente",
-      "treasureHunt": "Caça ao Tesouro",
-      "guestbook": "Livro de Visitas",
-      "installApp": "Instalar App",
-      "scanner": "Leitor QR"
-    },
+      "sidebar": {
+        "home": "Início",
+        "artworks": "Obras",
+        "trails": "Trilhas",
+        "map": "Mapa",
+        "events": "Eventos",
+        "favorites": "Favoritos",
+        "aiChat": "Chat IA",
+        "souvenir": "Souvenir",
+        "passport": "Passaporte",
+        "profile": "Meu Perfil",
+        "achievements": "Conquistas",
+        "visualScanner": "Scanner Visual",
+        "leaderboard": "Ranking",
+        "changeMuseum": "Trocar Museu",
+        "logout": "Sair",
+        "scheduling": "Agendamento",
+        "smartItinerary": "Roteiro Inteligente",
+        "treasureHunt": "Caça ao Tesouro",
+        "challenges": "Desafios",
+        "shop": "Loja",
+        "guestbook": "Livro de Visitas",
+        "installApp": "Instalar App",
+        "scanner": "Leitor QR"
+      },
     "smartRoute": {
       "title": "Roteiro Inteligente",
       "subtitle": "Diga quanto tempo você tem, e nós criamos o trajeto.",
@@ -209,6 +212,7 @@
     },
     "noResults": "Nenhum resultado encontrado.",
     "dialer": {
+      "title": "Digite o código",
       "button": "Digitar Código"
     },
     "chat": {
@@ -279,7 +283,17 @@
       "relatedWorks": "Obras Relacionadas",
       "relatedWork": "Obra Relacionada",
       "relatedArtist": "Artista Relacionado",
-      "viewDetails": "Ver Detalhes"
+      "viewDetails": "Ver Detalhes",
+      "myNotes": "Minhas Anotações",
+      "notesPlaceholder": "Escreva o que achou desta obra..."
+    },
+    "audioGuide": {
+      "title": "Acessibilidade",
+      "subtitle": "Ouça a narração sobre esta obra",
+      "notAvailable": "Áudio-guia oficial ainda não disponível."
+    },
+    "share": {
+      "download": "Baixar Imagem"
     },
     "selectMuseum": {
       "title": "Selecione o Museu",
@@ -294,6 +308,8 @@
       "subtitle": "Obras e trilhas que você amou",
       "empty": "Você ainda não tem favoritos.",
       "explore": "Explorar Obras",
+      "typeWork": "Obra",
+      "viewDetails": "Ver Detalhes",
       "crieSuaContaNoMuseuParaSalvarS": "Crie sua conta no museu para salvar suas obras, trilhas e eventos favoritos na nuvem e acessá-los de qualquer dispositivo.",
       "carregandoSuaColeo": "Carregando sua coleção...",
       "crieSuaContaNoMuseuParaSalvarSuasObrasTr": "Crie sua conta no museu para salvar suas obras, trilhas e eventos favoritos na nuvem e acessá-los de qualquer dispositivo."
@@ -352,6 +368,7 @@
       "title": "Meu Passaporte",
       "subtitle": "Seu registro de visitas e experiências",
       "totalXp": "XP Total",
+      "level": "Nível",
       "work": "Obra",
       "visitedAt": "Visitado em",
       "registreseParaComearAColeciona": "Registre-se para começar a colecionar carimbos, ganhar XP e desbloquear conquistas exclusivas durante sua visita.",
@@ -384,6 +401,8 @@
       "rank": "Posição",
       "visitor": "Visitante",
       "xp": "XP",
+      "myRank": "Sua Posição",
+      "xpTotal": "XP TOTAL",
       "loading": "Carregando ranking...",
       "empty": "Nenhum visitante pontuou ainda."
     },
@@ -393,6 +412,17 @@
       "noClues": "Nenhuma pista disponível no momento.",
       "clue": "Pista",
       "completed": "Você encontrou o tesouro!"
+    },
+    "challenges": {
+      "title": "Desafios",
+      "subtitle": "Complete missões e ganhe XP!",
+      "daily": "Desafio do Dia",
+      "hunts": "Caças ao Tesouro",
+      "myProgress": "Meu Progresso"
+    },
+    "shop": {
+      "title": "Tesouros do Museu",
+      "subtitle": "Explore nossa curadoria de itens exclusivos, livros raros e lembranças que eternizam sua jornada cultural."
     },
     "itinerary": {
       "title": "Planeje sua Visita",
@@ -498,6 +528,7 @@
       "crieSuaContaParaComearAPontuar": "Crie sua conta para começar a pontuar!"
     },
     "scannerhub": {
+      "hubTitle": "Central de Scanner",
       "escaneieOCdigoQuadradoAoLadoDa": "Escaneie o código quadrado ao lado da obra.",
       "escaneieOCdigoQuadradoAoLadoDaObra": "Escaneie o código quadrado ao lado da obra.",
       "aponteACmeraParaAObraEDeixeAIaIdentifica": "Aponte a câmera para a obra e deixe a IA identificar."
