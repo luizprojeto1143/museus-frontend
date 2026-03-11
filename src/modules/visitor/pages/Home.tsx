@@ -59,6 +59,8 @@ export const Home: React.FC = () => {
           setWelcomeAudioUrl(getFullUrl(settingsRes.data.welcomeAudioUrl));
           setMuseumName(settingsRes.data.name || "");
         }
+        
+        console.log(`[Home] Tenant: ${tenantId}, Works found: ${Array.isArray(worksRes.data) ? worksRes.data.length : (worksRes.data.data?.length || 0)}`);
       } catch (err) {
         console.error("Error fetching home data", err);
       } finally {

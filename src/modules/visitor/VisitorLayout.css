@@ -130,10 +130,20 @@
     flex-direction: column;
     gap: 4px;
     overflow-y: auto;
-    scrollbar-width: none;
 }
 
-.sidebar-content::-webkit-scrollbar { display: none; }
+/* Scrollbar styling for visibility */
+.sidebar-content::-webkit-scrollbar { 
+    display: block; 
+    width: 6px;
+}
+.sidebar-content::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
+}
+.sidebar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
 
 .nav-item {
     display: flex;
