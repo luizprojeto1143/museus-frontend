@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2 } from "lucide-react";
+import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2, Users, Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { useIsCityMode } from "../../auth/TenantContext";
 
 type DashboardData = {
   // ... (previous fields remain the same)
@@ -45,6 +47,7 @@ type UpcomingEvent = {
 export const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
+  const isCityMode = useIsCityMode();
   const [data, setData] = useState<DashboardData | null>(null);
   const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,399 +143,192 @@ export const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div>
-      <h1 className="section-title">🏛 {t("admin.dashboard.title")}</h1>
-
-      {/* ROADMAP 2026 ANNOUNCEMENT */}
-      <div className="card" style={{
-        background: "linear-gradient(135deg, rgba(212,175,55,0.15), rgba(205,127,50,0.05))",
-        border: "1px solid rgba(212,175,55,0.3)",
-        borderRadius: "1.5rem",
-        padding: "1.5rem",
-        marginBottom: "2rem",
-        display: "flex",
-        alignItems: "center",
-        gap: "1.5rem",
-        position: "relative",
-        overflow: "hidden"
-      }}>
-        <div style={{ fontSize: "3rem" }}>🚀</div>
-        <div style={{ flex: 1 }}>
-          <span className="badge" style={{ background: "#d4af37", color: "#1a1a1a", fontWeight: "bold", marginBottom: "0.5rem", display: "inline-block" }}>
-            NOVIDADES: ROADMAP MARÇO 2026
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* HEADER SECTION */}
+      <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+        <div>
+          <span className={`${isCityMode ? 'text-blue-400' : 'text-gold-400'} font-black text-[10px] uppercase tracking-[0.3em] mb-4 block`}>
+            Command Center
           </span>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: "800", marginBottom: "0.25rem" }}>Cultura Viva Betim: Sistema Atualizado</h2>
-          <p style={{ color: "var(--fg-muted)", fontSize: "0.95rem" }}>
-            Implementamos 10 novas funcionalidades: Comunidade, Quizzes, Rotas Guiadas, Timelines, Certificados Automáticos e muito mais.
-            Confira o menu <b>Roadmap 2026</b> na barra lateral para gerenciar!
+          <h1 className="premium-title">{t("admin.dashboard.title")}</h1>
+          <p className="text-slate-400 font-medium mt-4 max-w-lg leading-relaxed">
+            Gestão estratégica de conteúdo, engajamento e logística institucional.
           </p>
         </div>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button className="btn btn-primary" onClick={() => window.location.href = "/admin/comunidade"}>
-            Ver Moderação
-          </button>
+        <div className="flex gap-3">
+           <button className="h-14 px-8 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/5 active:scale-95">
+              Configurar Espaço
+           </button>
         </div>
-      </div>
+      </header>
 
-
-      {/* 1.3 ALERTAS E NOTIFICAÇÕES */}
-      {data.alerts.length > 0 && (
-        <div style={{ marginBottom: "2rem" }}>
-          {data.alerts.map((alert, idx) => (
-            <div
-              key={idx}
-              className="card"
-              style={{
-                marginBottom: "0.75rem",
-                padding: "1rem",
-                borderLeft: `4px solid ${alert.type === "error"
-                  ? "#ef4444"
-                  : alert.type === "warning"
-                    ? "#f59e0b"
-                    : "#3b82f6"
-                  }`,
-                background:
-                  alert.type === "error"
-                    ? "rgba(239, 68, 68, 0.05)"
-                    : alert.type === "warning"
-                      ? "rgba(245, 158, 11, 0.05)"
-                      : "rgba(59, 130, 246, 0.05)"
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>
-                  {alert.type === "error" && "⛔"} {alert.type === "warning" && "⚠️"}{" "}
-                  {alert.type === "info" && "ℹ️"} {alert.message}
-                </span>
-                {alert.link && (
-                  <a href={alert.link} className="btn btn-secondary" style={{ fontSize: "0.8rem" }}>
-                    {t("common.view")}
-                  </a>
-                )}
-              </div>
-            </div>
-          ))}
+      {/* ROADMAP ANNOUNCEMENT - PREMIUM TREATMENT */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative group p-1 w-full rounded-[40px] bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 overflow-hidden shadow-2xl shadow-blue-500/10"
+      >
+        <div className="relative z-10 p-10 rounded-[39px] bg-black/40 backdrop-blur-3xl border border-white/5 flex flex-col md:flex-row items-center gap-10">
+           <div className="w-24 h-24 rounded-3xl bg-blue-500/20 flex items-center justify-center text-5xl shadow-inner border border-blue-500/30">
+              🚀
+           </div>
+           <div className="flex-1 text-center md:text-left">
+              <span className="bg-blue-500 text-white font-black text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
+                ROADMAP MARÇO 2026
+              </span>
+              <h2 className="text-2xl font-black text-white tracking-tight">Cultura Viva Betim: Sistema Atualizado</h2>
+              <p className="text-slate-400 font-medium text-sm mt-2 max-w-2xl leading-relaxed">
+                Implementamos quizes, rotas dinâmicas e certificados automáticos para elevar o engajamento do seu público.
+              </p>
+           </div>
+           <button 
+             className="px-10 h-14 rounded-2xl bg-blue-600 text-white font-black text-xs uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 active:scale-95 flex-shrink-0"
+             onClick={() => window.location.href = "/admin/comunidade"}
+           >
+              Ver Roadmap
+           </button>
         </div>
-      )}
+      </motion.div>
 
-      {/* 1.1 INDICADORES PRINCIPAIS */}
-      <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        {/* ... stats cards ... */}
-        <div className="stat-card">
-          <div className="stat-value">{data.visitorsThisMonth}</div>
-          <div className="stat-label">{t("admin.dashboard.stats.visitors")}</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-value">{data.totalQRScans}</div>
-          <div className="stat-label">{t("admin.dashboard.stats.qrScans")}</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-value">{data.totalXPDistributed.toLocaleString()}</div>
-          <div className="stat-label">{t("admin.dashboard.stats.xpDistributed")}</div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-value" style={{ color: "#22c55e" }}>
-            +{data.monthlyGrowth}%
-          </div>
-          <div className="stat-label">{t("admin.dashboard.stats.monthlyGrowth")}</div>
-        </div>
-      </div>
-
-      {/* 1.4 AGENDA DO MUSEU - New Mini Agenda Widget */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-          <h2 className="card-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            🎨 Agenda do Museu
-          </h2>
-          <button
-            className="btn btn-ghost"
-            style={{ fontSize: "0.85rem" }}
-            onClick={() => window.location.href = "/admin/eventos"}
+      {/* INDICADORES PRINCIPAIS - DENSE GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: t("admin.dashboard.stats.visitors"), value: data.visitorsThisMonth, icon: Users, color: 'blue' },
+          { label: t("admin.dashboard.stats.qrScans"), value: data.totalQRScans, icon: Ticket, color: 'purple' },
+          { label: t("admin.dashboard.stats.xpDistributed"), value: data.totalXPDistributed.toLocaleString(), icon: Star, color: 'gold' },
+          { label: t("admin.dashboard.stats.monthlyGrowth"), value: `+${data.monthlyGrowth}%`, icon: BarChart2, color: 'green' },
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.1 }}
+            className="stat-card group hover:border-white/20"
           >
-            Ver tudo <ChevronRight size={14} />
-          </button>
-        </div>
+            <div className="flex justify-between items-start mb-6">
+               <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 group-hover:border-white/20 transition-all`}>
+                  <stat.icon size={18} className="text-slate-400 group-hover:text-white" />
+               </div>
+            </div>
+            <div className="flex flex-col">
+               <span className="text-slate-500 font-black text-[10px] uppercase tracking-widest mb-1">{stat.label}</span>
+               <span className="text-2xl font-black text-white tracking-tighter leading-none">{stat.value}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-        {upcomingEvents.length > 0 ? (
-          <div className="mini-timeline">
-            {upcomingEvents.map((ev, idx) => {
-              const d = new Date(ev.startDate);
-              const day = d.getDate();
-              const month = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
-              const hour = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        {/* AGENDA & BOOKINGS COL */}
+        <div className="xl:col-span-1 space-y-8">
+           <section className="card border-white/5 bg-black/20 p-8 rounded-[40px]">
+              <div className="flex justify-between items-center mb-8">
+                 <h2 className="text-lg font-black text-white tracking-tight">🎨 Agenda Cultural</h2>
+                 <button className="p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10" onClick={() => window.location.href = "/admin/eventos"}>
+                    <ChevronRight size={16} className="text-slate-400" />
+                 </button>
+              </div>
 
-              return (
-                <div key={ev.id} className="mini-timeline-item" style={{ display: "flex", gap: "1rem", marginBottom: idx === upcomingEvents.length - 1 ? 0 : "1.5rem" }}>
-                  <div className="mini-date-badge" style={{
-                    width: "48px", height: "48px", background: "rgba(212,175,55,0.1)",
-                    border: "1px solid rgba(212,175,55,0.2)", borderRadius: "12px",
-                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0
-                  }}>
-                    <span style={{ fontSize: "1rem", fontWeight: 800, color: "#d4af37", lineHeight: 1 }}>{day}</span>
-                    <span style={{ fontSize: "0.6rem", textTransform: "uppercase", fontWeight: "bold", color: "#8b7355" }}>{month}</span>
-                  </div>
-
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <h4 style={{ margin: 0, color: "white", fontSize: "0.95rem" }}>{ev.title}</h4>
-                      <span style={{ fontSize: "0.75rem", color: "#d4af37", fontWeight: 600 }}>{hour}</span>
-                    </div>
-                    <div style={{ display: "flex", gap: "1rem", marginTop: "0.25rem" }}>
-                      {ev.location && (
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", color: "#52525b" }}>
-                          <MapPin size={12} /> {ev.location}
+              {upcomingEvents.length > 0 ? (
+                <div className="space-y-6">
+                   {upcomingEvents.map((ev) => (
+                     <div key={ev.id} className="flex gap-5 group">
+                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center justify-center flex-shrink-0 group-hover:border-blue-500/30 transition-colors">
+                           <span className="text-lg font-black text-white leading-none">{new Date(ev.startDate).getDate()}</span>
+                           <span className="text-[8px] font-black text-blue-400 uppercase tracking-widest mt-1">{new Date(ev.startDate).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</span>
                         </div>
-                      )}
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.75rem", color: "#52525b" }}>
-                        <Ticket size={12} /> {ev.type || 'Evento'}
+                        <div className="flex-1 min-w-0">
+                           <h4 className="text-white font-bold text-sm truncate">{ev.title}</h4>
+                           <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                              <span className="flex items-center gap-1"><Clock size={10} /> {new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                              <span className="flex items-center gap-1"><MapPin size={10} /> {ev.location || 'Online'}</span>
+                           </div>
+                        </div>
+                     </div>
+                   ))}
+                </div>
+              ) : (
+                <p className="text-slate-500 text-xs font-medium italic">Sem eventos próximos.</p>
+              )}
+           </section>
+
+           <section className="card border-blue-500/10 bg-blue-500/[0.03] p-8 rounded-[40px]">
+              <h2 className="text-lg font-black text-blue-400 tracking-tight mb-6">📅 Próximas Reservas</h2>
+              <div className="space-y-4">
+                 {data.upcomingBookings?.slice(0, 3).map((booking) => (
+                   <div key={booking.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-blue-400/70 mb-2">
+                         <span>{new Date(booking.startTime).toLocaleDateString()}</span>
+                         <span>{new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
+                      <h4 className="text-white font-bold text-xs">{booking.purpose}</h4>
+                      <p className="text-slate-500 text-[10px] mt-1">{booking.space.name}</p>
+                   </div>
+                 ))}
+                 {!data.upcomingBookings?.length && <p className="text-slate-600 text-xs italic">Sem reservas agendadas.</p>}
+              </div>
+           </section>
+        </div>
+
+        {/* ANALYTICS & CHARTS COL */}
+        <div className="xl:col-span-2 space-y-8">
+           <div className="card p-0 overflow-hidden border-white/5 bg-black/20 rounded-[40px]">
+              <div className="p-10 border-b border-white/5 flex items-center justify-between">
+                 <h2 className="text-xl font-black text-white tracking-tight">🖼 Top Obras & Engajamento</h2>
+                 <BarChart2 className="text-slate-600" size={20} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2">
+                 <div className="p-10 space-y-6">
+                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Acervo Mais Visitado</h3>
+                    {data.topWorks.map((work, idx) => (
+                      <div key={work.id} className="flex items-center justify-between group">
+                         <div className="flex items-center gap-4">
+                            <span className="text-xs font-black text-slate-700">{idx + 1}</span>
+                            <span className="text-slate-300 font-bold text-sm hover:text-white transition-colors cursor-pointer">{work.title}</span>
+                         </div>
+                         <span className="text-[10px] font-black text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full">{work.visits} v</span>
+                      </div>
+                    ))}
+                 </div>
+                 <div className="p-10 bg-white/[0.01] space-y-6 border-l border-white/5">
+                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Acesso por Origem</h3>
+                    <div className="space-y-6">
+                       {Object.entries(data.accessBySource).map(([source, count]) => (
+                         <div key={source} className="space-y-2">
+                            <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                               <span>{source}</span>
+                               <span className="text-white">{count}</span>
+                            </div>
+                            <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                               <div className="h-full bg-blue-500" style={{ width: `${(count / Math.max(...Object.values(data.accessBySource))) * 100}%` }} />
+                            </div>
+                         </div>
+                       ))}
                     </div>
-                  </div>
-
-                  <button
-                    onClick={() => window.location.href = `/admin/eventos/${ev.id}/dashboard`}
-                    title="Ver Dashboard do Evento"
-                    style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "8px", padding: "6px", cursor: "pointer", display: "flex", alignItems: "center" }}
-                  >
-                    <BarChart2 size={16} className="text-zinc-500 hover:text-gold" />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>{t("admin.dashboard.noHEventosPublicadosParaOsPrximosDias", `
-            Não há eventos publicados para os próximos dias.
-          `)}</div>
-        )}
-      </div>
-
-      {/* 1.5 PRÓXIMAS RESERVAS - Moved down */}
-      <div className="card" style={{ marginBottom: "2rem", border: "1px solid rgba(59, 130, 246, 0.2)", background: "rgba(59, 130, 246, 0.02)" }}>
-        <h2 className="card-title" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#60a5fa" }}>
-          📅 {t("admin.dashboard.upcomingBookings", "Próximas Reservas de Espaço")}
-        </h2>
-        {data.upcomingBookings && data.upcomingBookings.length > 0 ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
-            {data.upcomingBookings.map((booking) => (
-              <div
-                key={booking.id}
-                className="card"
-                style={{
-                  background: "rgba(0,0,0,0.2)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  padding: "1rem",
-                  transition: "all 0.3s ease",
-                  cursor: "default"
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "0.5rem" }}>
-                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#94a3b8" }}>
-                    {new Date(booking.startTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                  </div>
-                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#60a5fa" }}>
-                    {new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-                <h4 style={{ color: "white", fontWeight: 700, fontSize: "1rem", marginBottom: "0.25rem" }}>{booking.purpose}</h4>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem", color: "#64748b", marginBottom: "0.5rem" }}>
-                  📍 {booking.space.name}
-                </div>
-                <div style={{ fontSize: "0.75rem", color: "#475569", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "0.5rem", marginTop: "0.5rem" }}>
-                  Por {booking.user.name}
-                </div>
+                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#64748b", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>{t("admin.dashboard.noHReservasAgendadas", `
-            Não há reservas agendadas.
-          `)}</div>
-        )}
-      </div>
+           </div>
 
-      {/* TOP OBRAS, TRILHAS E EVENTOS */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
-        {/* Top Obras */}
-        <div className="card">
-          <h2 className="card-title">🖼 {t("admin.dashboard.topWorks")}</h2>
-          {data.topWorks.map((work, idx) => (
-            <div
-              key={work.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "0.75rem 0",
-                borderBottom: idx < data.topWorks.length - 1 ? "1px solid var(--border-subtle)" : "none"
-              }}
-            >
-              <span>
-                {idx + 1}. {work.title}
-              </span>
-              <span className="badge">{work.visits} {t("admin.dashboard.visits")}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Top Trilhas */}
-        <div className="card">
-          <h2 className="card-title">🧭 {t("admin.dashboard.topTrails")}</h2>
-          {data.topTrails.map((trail, idx) => (
-            <div
-              key={trail.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "0.75rem 0",
-                borderBottom: idx < data.topTrails.length - 1 ? "1px solid var(--border-subtle)" : "none"
-              }}
-            >
-              <span>
-                {idx + 1}. {trail.title}
-              </span>
-              <span className="badge">{trail.completions} {t("admin.dashboard.completions")}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Top Eventos */}
-        <div className="card">
-          <h2 className="card-title">🎭 {t("admin.dashboard.topEvents")}</h2>
-          {data.topEvents.map((event, idx) => (
-            <div
-              key={event.id}
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "0.75rem 0",
-                borderBottom: idx < data.topEvents.length - 1 ? "1px solid var(--border-subtle)" : "none"
-              }}
-            >
-              <span>
-                {idx + 1}. {event.title}
-              </span>
-              <span className="badge">{event.views} {t("admin.dashboard.views")}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 1.2 GRÁFICOS */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
-        {/* Gráfico: Visitantes por Dia */}
-        <div className="card">
-          <h2 className="card-title">📊 {t("admin.dashboard.charts.visitsByDay")}</h2>
-          <div style={{ marginTop: "1rem" }}>
-            {data.visitsByDay.map((day) => (
-              <div key={day.date} style={{ marginBottom: "0.75rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-                  <span style={{ fontSize: "0.85rem" }}>{day.date}</span>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>{day.count}</span>
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "8px",
-                    background: "rgba(212, 175, 55, 0.2)",
-                    borderRadius: "4px",
-                    overflow: "hidden"
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${(day.count / Math.max(...data.visitsByDay.map((d) => d.count))) * 100}%`,
-                      height: "100%",
-                      background: "linear-gradient(90deg, var(--accent-gold), var(--accent-bronze))",
-                      transition: "width 0.3s"
-                    }}
-                  />
-                </div>
+           <div className="card p-10 border-white/5 bg-black/20 rounded-[40px]">
+              <h2 className="text-lg font-black text-white tracking-tight mb-8">📈 Crescimento Mensal</h2>
+              <div className="flex items-end gap-2 h-48">
+                 {data.visitsByDay.slice(-14).map((day, idx) => (
+                   <div key={idx} className="flex-1 group relative flex flex-col items-center">
+                      <div 
+                        className="w-full bg-white/10 group-hover:bg-blue-500 transition-all rounded-t-lg shadow-lg group-hover:shadow-blue-500/20" 
+                        style={{ height: `${(day.count / Math.max(...data.visitsByDay.map(d => d.count))) * 100}%` }} 
+                      />
+                      <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black text-[8px] font-black px-2 py-1 rounded whitespace-nowrap">
+                         {day.count} visits
+                      </div>
+                   </div>
+                 ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Gráfico: Acesso por Origem */}
-        <div className="card">
-          <h2 className="card-title">📍 {t("admin.dashboard.charts.accessBySource")}</h2>
-          <div style={{ marginTop: "1.5rem" }}>
-            {Object.entries(data.accessBySource).map(([source, count]) => (
-              <div key={source} style={{ marginBottom: "0.75rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-                  <span style={{ fontSize: "0.85rem", textTransform: "uppercase" }}>{source}</span>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>{count}</span>
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "8px",
-                    background: "rgba(212, 175, 55, 0.2)",
-                    borderRadius: "4px",
-                    overflow: "hidden"
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${(count / Math.max(...Object.values(data.accessBySource))) * 100}%`,
-                      height: "100%",
-                      background: "linear-gradient(90deg, var(--accent-gold), var(--accent-bronze))"
-                    }}
-                  />
-                </div>
+              <div className="flex justify-between mt-4 text-[8px] font-black text-slate-600 uppercase tracking-widest">
+                 <span>{data.visitsByDay[0]?.date}</span>
+                 <span>Últimos 14 dias</span>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* XP por Categoria */}
-        <div className="card">
-          <h2 className="card-title">⭐ {t("admin.dashboard.charts.xpByCategory")}</h2>
-          <div style={{ marginTop: "1rem" }}>
-            {data.xpByCategory.map((cat) => (
-              <div key={cat.category} style={{ marginBottom: "0.75rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-                  <span style={{ fontSize: "0.85rem" }}>{cat.category}</span>
-                  <span style={{ fontSize: "0.85rem", fontWeight: 600 }}>{cat.xp} XP</span>
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    height: "8px",
-                    background: "rgba(212, 175, 55, 0.2)",
-                    borderRadius: "4px",
-                    overflow: "hidden"
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${(cat.xp / Math.max(...data.xpByCategory.map((c) => c.xp))) * 100}%`,
-                      height: "100%",
-                      background: "linear-gradient(90deg, var(--accent-gold), var(--accent-bronze))"
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Resumo Final */}
-      <div className="card">
-        <h2 className="card-title">📈 {t("admin.dashboard.growth.summary")}</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginTop: "1rem" }}>
-          <div>
-            <div style={{ fontSize: "0.8rem", color: "var(--fg-soft)" }}>{t("admin.dashboard.growth.weekly")}</div>
-            <div style={{ fontSize: "1.5rem", fontWeight: 600, color: "#22c55e" }}>+{data.weeklyGrowth}%</div>
-          </div>
-          <div>
-            <div style={{ fontSize: "0.8rem", color: "var(--fg-soft)" }}>{t("admin.dashboard.growth.monthly")}</div>
-            <div style={{ fontSize: "1.5rem", fontWeight: 600, color: "#22c55e" }}>+{data.monthlyGrowth}%</div>
-          </div>
+           </div>
         </div>
       </div>
     </div>

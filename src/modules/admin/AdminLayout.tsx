@@ -207,6 +207,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`} style={themeStyles}>
+      {/* AMBIENT BACKGROUND - ADAPTIVE */}
+      <div className="ambient-bg">
+        <div className={`ambient-orb w-[600px] h-[600px] ${isCityMode ? 'bg-blue-600/10' : 'bg-gold-500/10'} top-[-5%] left-[-5%]`} />
+        <div className={`ambient-orb w-[500px] h-[500px] ${isCityMode ? 'bg-indigo-600/10' : 'bg-bronze-500/10'} bottom-[-5%] right-[-5%]`} />
+      </div>
+
       {/* Mobile Overlay */}
       <div
         className={`mobile-overlay ${isSidebarOpen ? "open" : ""}`}
@@ -214,67 +220,96 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         aria-hidden="true"
       />
 
-      {/* Sidebar */}
-      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+      {/* Sidebar - PREMIUM INSTITUTIONAL */}
+      <aside className={`layout-sidebar premium-glass ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <button
-          className="sidebar-collapse-toggle"
+          className="sidebar-collapse-toggle bg-white/5 border-white/10 hover:bg-white/10 transition-colors"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? "Expandir" : "Recolher"}
           aria-label={isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
         >
           {isCollapsed ? "»" : "«"}
         </button>
-        <div className="sidebar-header">
-          <div className="app-brand">
-            <img src={features?.logoUrl || "/logo-culturaviva.jpg"} alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", marginRight: "0.5rem" }} />
-            <div>
-              <div className="app-title">{features?.name || (isCityMode ? "Secretaria de Cultura" : t("dashboard.title"))}</div>
-              <div className="app-subtitle">{isCityMode ? "Gestão Municipal" : t("admin.museums.title")}</div>
-            </div>
+        
+        <div className="p-6 border-b border-white/5">
+          <div className="flex items-center gap-3">
+             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 shadow-xl ${isCityMode ? 'bg-blue-600 shadow-blue-500/20' : 'bg-gradient-to-br from-gold-500 to-bronze-600 shadow-gold-500/20'}`}>
+                <img 
+                  src={features?.logoUrl || "/logo-culturaviva.jpg"} 
+                  alt="" 
+                  className="w-full h-full object-cover"
+                />
+             </div>
+             {!isCollapsed && (
+               <div className="flex flex-col min-w-0">
+                  <span className="text-white font-black tracking-tight text-sm truncate uppercase">
+                    {features?.name || (isCityMode ? "Secretaria" : "Gestão")}
+                  </span>
+                  <span className={`${isCityMode ? 'text-blue-400' : 'text-gold-400'} font-bold text-[9px] uppercase tracking-widest mt-0.5 truncate`}>
+                    {isCityMode ? "Portal Municipal" : "Portal Administrativo"}
+                  </span>
+               </div>
+             )}
           </div>
         </div>
 
-        <nav className="sidebar-content">
+        <nav className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar mt-2">
           {visibleGroups.map((group) => {
             const open = isGroupOpen(group);
-            // Single-item groups (like "Painel") render without collapsible header
+            
             if (group.links.length === 1 && group.label === "Painel") {
               const link = group.links[0];
               return (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className={`nav-item ${location.pathname === link.to ? "active" : ""}`}
+                  className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-xs transition-all duration-300 group ${
+                    location.pathname === link.to 
+                    ? `bg-white/10 text-white border border-white/10 shadow-lg` 
+                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                  }`}
                   onClick={() => setSidebarOpen(false)}
                   title={isCollapsed ? link.label : ""}
                 >
-                  <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>
-                  <span>{link.label}</span>
+                  <span className={`text-lg transition-transform duration-300 group-hover:scale-110 ${location.pathname === link.to ? "" : "opacity-50"}`}>
+                    {link.icon}
+                  </span>
+                  {!isCollapsed && <span className="uppercase tracking-widest">{link.label}</span>}
                 </Link>
               );
             }
+
             return (
-              <div key={group.label} className="sidebar-group">
-                <button
-                  className={`sidebar-group-header ${open ? "open" : ""}`}
-                  onClick={() => toggleGroup(group.label)}
-                  aria-expanded={open}
-                >
-                  <span>{group.label}</span>
-                  <span className="sidebar-group-chevron">{open ? "▾" : "▸"}</span>
-                </button>
-                {open && (
-                  <div className="sidebar-group-items">
+              <div key={group.label} className="space-y-1">
+                {!isCollapsed && (
+                  <button
+                    className={`w-full flex items-center justify-between px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${open ? 'text-white' : 'text-slate-600 hover:text-slate-400'}`}
+                    onClick={() => toggleGroup(group.label)}
+                    aria-expanded={open}
+                  >
+                    <span>{group.label}</span>
+                    <span className={`text-[8px] transition-transform duration-300 ${open ? 'rotate-180' : ''}`}>▼</span>
+                  </button>
+                )}
+                
+                {(open || isCollapsed) && (
+                  <div className="space-y-1">
                     {group.links.map(link => (
                       <Link
                         key={link.to}
                         to={link.to}
-                        className={`nav-item ${location.pathname === link.to ? "active" : ""}`}
+                        className={`flex items-center gap-4 p-3 rounded-xl font-bold text-[11px] transition-all duration-300 group ${
+                          location.pathname === link.to 
+                          ? `bg-white/10 text-white border border-white/10` 
+                          : "text-slate-500 hover:text-white hover:bg-white/5"
+                        }`}
                         onClick={() => setSidebarOpen(false)}
                         title={isCollapsed ? link.label : ""}
                       >
-                        <span style={{ fontSize: "1.2rem" }}>{link.icon}</span>
-                        <span>{link.label}</span>
+                        <span className={`text-base transition-transform duration-300 group-hover:scale-110 ${location.pathname === link.to ? "" : "opacity-50 grayscale"}`}>
+                          {link.icon}
+                        </span>
+                        {!isCollapsed && <span>{link.label}</span>}
                       </Link>
                     ))}
                   </div>
@@ -284,40 +319,41 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           })}
         </nav>
 
-        <div className="sidebar-footer">
-          <div style={{ marginBottom: "1rem", display: "flex", justifyContent: "center" }}>
+        <div className="p-4 border-t border-white/5 bg-black/20">
+          <div className="mb-4 flex justify-center">
             <LanguageSwitcher style={{ position: "static" }} className="sidebar-lang-switcher" />
           </div>
           <button
             onClick={logout}
-            className="btn btn-secondary"
-            style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444" }}
+            className="w-full h-11 rounded-xl bg-red-500/5 border border-red-500/10 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-all duration-300 flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest group"
             aria-label={t("admin.sidebar.logout")}
           >
-            <span style={{ fontSize: "1.2rem" }}>🚪</span>
-            <span>{t("admin.sidebar.logout")}</span>
+            <span className="text-base group-hover:rotate-12 transition-transform">🚪</span>
+            {!isCollapsed && <span>{t("admin.sidebar.logout")}</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="layout-main">
-        <header className="layout-header">
-          <button className="menu-toggle" onClick={() => setSidebarOpen(true)} aria-label={t("admin.layout.abrirMenuDeNavegao", `Abrir menu de navegação`)}>
-            ☰
+      <main className="flex-1 min-h-screen relative overflow-y-auto">
+        <header className="h-20 flex items-center px-8 border-b border-white/5 sticky top-0 bg-black/40 backdrop-blur-xl z-40">
+          <button className="lg:hidden text-white mr-4 p-2 bg-white/5 rounded-xl border border-white/10" onClick={() => setSidebarOpen(true)}>
+             <span className="text-xl">☰</span>
           </button>
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span className="welcome-text" style={{ fontSize: "0.9rem", color: "var(--fg-muted)" }}>
-              {t("welcome.returning", { name: userName || "Admin" })}
-            </span>
-            <span className="badge">ADMIN</span>
+          
+          <div className="ml-auto flex items-center gap-6">
+             <div className="hidden sm:flex flex-col text-right">
+                <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Autenticado como</span>
+                <span className="text-white font-black text-xs">{userName || "Administrador"}</span>
+             </div>
+             <div className={`px-4 py-1.5 rounded-full border border-white/10 font-black text-[10px] uppercase tracking-widest ${isCityMode ? 'bg-blue-500/10 text-blue-400' : 'bg-gold-500/10 text-gold-400'}`}>
+                {isCityMode ? "Gestão Municipal" : "Gestor Cultural"}
+             </div>
           </div>
         </header>
 
-        <div className="layout-content">
-          <div className="layout-content-inner">
-            {children}
-          </div>
+        <div className="p-8 lg:p-12 max-w-[1600px] mx-auto">
+             {children}
         </div>
       </main>
     </div>

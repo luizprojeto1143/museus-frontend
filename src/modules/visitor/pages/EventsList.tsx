@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Calendar as CalendarIcon, MapPin, Ticket, Clock, Filter, Grid, List as ListIcon } from "lucide-react";
+import { MapPin, Ticket, Clock, Filter, Calendar, Search } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import "./Events.css";
 
 type EventItem = {
@@ -25,39 +26,27 @@ export const EventsList: React.FC = () => {
 
   const fetchEvents = useCallback(async () => {
     if (!tenantId) return;
-
     setLoading(true);
     try {
       const res = await api.get("/events", { params: { tenantId, status: 'PUBLISHED' } });
-      const eventsData = res.data.data || [];
-      setEvents(eventsData);
-    } catch {
-      console.error("Failed to fetch events");
-    } finally {
-      setLoading(false);
-    }
+      setEvents(res.data.data || []);
+    } catch { console.error("Failed to fetch events"); }
+    finally { setLoading(false); }
   }, [tenantId]);
 
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+  useEffect(() => { fetchEvents(); }, [fetchEvents]);
 
-  // Group events by Day
   const groupedEvents = useMemo(() => {
     const filtered = events.filter(e => {
       if (selectedCategory !== 'ALL' && e.type !== selectedCategory) return false;
-
       const eventDate = new Date(e.startDate);
       const now = new Date();
-
       if (filter === 'WEEK') {
         const nextWeek = new Date();
         nextWeek.setDate(now.getDate() + 7);
         return eventDate >= now && eventDate <= nextWeek;
       }
-      if (filter === 'MONTH') {
-        return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear();
-      }
+      if (filter === 'MONTH') return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear();
       return eventDate >= now;
     });
 
@@ -78,27 +67,51 @@ export const EventsList: React.FC = () => {
     { id: 'LECTURE', label: 'Palestras' },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  const itemVariants = {
+    hidden: { x: -20, opacity: 0 },
+    visible: { x: 0, opacity: 1 }
+  };
+
   return (
-    <div className="events-container">
-      <header className="events-header">
-        <h1 className="events-title">Agenda Cultural</h1>
-        <p className="events-subtitle">{t("visitor.eventslist.exploreAProgramaoEPlanejeSuaVisita", `Explore a programação e planeje sua visita.`)}</p>
+    <motion.div 
+      className="events-container"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <header className="events-header flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+           <h1 className="events-title italic">Pulso Cultural</h1>
+           <p className="events-subtitle">Uma seleção viva de intervenções, diálogos e descobertas em nosso espaço.</p>
+        </div>
+        
+        <div className="flex gap-2">
+            <button className="h-12 w-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-all">
+               <Search size={20} />
+            </button>
+            <button className="h-12 px-6 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3 text-sm font-bold text-slate-400 hover:text-white transition-all">
+               <Filter size={18} />
+               Filtros
+            </button>
+        </div>
       </header>
 
       <div className="agenda-filters">
         <div className="filter-group">
-          <button
-            className={`filter-btn ${filter === 'UPCOMING' ? 'active' : ''}`}
-            onClick={() => setFilter('UPCOMING')}
-          >Próximos</button>
-          <button
-            className={`filter-btn ${filter === 'WEEK' ? 'active' : ''}`}
-            onClick={() => setFilter('WEEK')}
-          >Esta Semana</button>
-          <button
-            className={`filter-btn ${filter === 'MONTH' ? 'active' : ''}`}
-            onClick={() => setFilter('MONTH')}
-          >Este Mês</button>
+          {['UPCOMING', 'WEEK', 'MONTH'].map(f => (
+            <button
+              key={f}
+              className={`filter-btn ${filter === f ? 'active' : ''}`}
+              onClick={() => setFilter(f as any)}
+            >
+              {f === 'UPCOMING' ? 'Em Breve' : f === 'WEEK' ? 'Esta Semana' : 'Este Mês'}
+            </button>
+          ))}
         </div>
 
         <div className="category-chips">
@@ -115,80 +128,65 @@ export const EventsList: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center">
-          <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-zinc-500">{t("visitor.eventslist.organizandoProgramao", `Organizando programação...`)}</p>
+        <div className="p-24 text-center">
+           <div className="w-12 h-12 border-2 border-gold-400 border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+           <span className="text-xs font-black uppercase tracking-widest text-slate-400">Sincronizando Cronogramas...</span>
         </div>
       ) : Object.keys(groupedEvents).length === 0 ? (
-        <div className="events-empty">
-          <span className="empty-icon">📅</span>
-          <h3 className="text-xl font-bold text-white mb-2">Agenda Vazia</h3>
-          <p className="text-zinc-500">{t("visitor.eventslist.noEncontramosEventosParaEstePerodoOuCate", `Não encontramos eventos para este período ou categoria.`)}</p>
-          <button
-            className="mt-6 text-gold underline font-bold"
-            onClick={() => { setFilter('UPCOMING'); setSelectedCategory('ALL'); }}
-          >
-            Limpar filtros
-          </button>
+        <div className="bg-white/2 border border-dashed border-white/10 rounded-[40px] p-24 text-center">
+           <Calendar className="mx-auto mb-8 opacity-20" size={64} />
+           <h3 className="text-xl font-bold mb-2">Pausa na Programação</h3>
+           <p className="text-slate-400 max-w-sm mx-auto mb-8">Estamos preparando novas experiências para você. Volte em breve ou limpe os filtros.</p>
+           <button onClick={() => { setFilter('UPCOMING'); setSelectedCategory('ALL'); }} className="text-gold-400 font-black text-xs uppercase tracking-widest h-12 px-8 border border-gold-400/20 rounded-xl hover:bg-gold-400/5 transition-all">
+              Limpar Filtros
+           </button>
         </div>
       ) : (
         <div className="agenda-timeline">
-          {Object.entries(groupedEvents).map(([date, dayEvents]) => {
-            const d = new Date(dayEvents[0].startDate);
-            const dayNum = d.getDate();
-            const monthName = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '');
-            const dayLabel = d.toLocaleDateString('pt-BR', { weekday: 'long' });
+           <AnimatePresence>
+             {Object.entries(groupedEvents).map(([date, dayEvents]) => {
+               const d = new Date(dayEvents[0].startDate);
+               return (
+                 <motion.div key={date} className="timeline-day-group" variants={itemVariants}>
+                    <div className="timeline-date-header">
+                       <div className="date-circle">
+                          <span className="day-num">{d.getDate()}</span>
+                          <span className="month-name">{d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}</span>
+                       </div>
+                       <span className="day-label">{d.toLocaleDateString('pt-BR', { weekday: 'short' })}</span>
+                    </div>
 
-            return (
-              <div key={date} className="timeline-day-group">
-                <div className="timeline-date-header">
-                  <div className="date-circle">
-                    <span className="day-num">{dayNum}</span>
-                    <span className="month-name">{monthName}</span>
-                  </div>
-                  <span className="day-label capitalize">{dayLabel}</span>
-                </div>
-
-                <div className="timeline-events">
-                  {dayEvents.map(ev => (
-                    <Link key={ev.id} to={`/eventos/${ev.id}`} className="agenda-card">
-                      <div className="card-time-strip">
-                        <span className="strip-hour">
-                          {new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                        <span className="strip-label">{t("visitor.eventslist.incio", `Início`)}</span>
-                      </div>
-
-                      <div className="card-main">
-                        <span className="card-tag">
-                          {categories.find(c => c.id === ev.type)?.label || 'Evento'}
-                        </span>
-                        <h2 className="card-title">{ev.title}</h2>
-                        <div className="card-meta">
-                          {ev.location && (
-                            <div className="meta-item">
-                              <MapPin size={14} />
-                              <span>{ev.location}</span>
+                    <div className="timeline-events">
+                       {dayEvents.map(ev => (
+                         <Link key={ev.id} to={`/eventos/${ev.id}`} className="agenda-card group">
+                            <div className="card-time-strip">
+                               <span className="strip-hour">{new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                               <span className="strip-label">Início</span>
                             </div>
-                          )}
-                          <div className="meta-item">
-                            <Ticket size={14} />
-                            <span>{t("visitor.eventslist.grtis", `Grátis`)}</span>
-                          </div>
-                        </div>
-                      </div>
 
-                      {ev.coverImageUrl && (
-                        <img src={ev.coverImageUrl} alt={ev.title} className="card-img-side" />
-                      )}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+                            <div className="card-main">
+                               <span className="card-tag">{categories.find(c => c.id === ev.type)?.label || 'Intervenção'}</span>
+                               <h2 className="card-title text-white group-hover:text-gold-400 transition-colors">{ev.title}</h2>
+                               <div className="card-meta">
+                                  <div className="meta-item"><MapPin size={14} /> {ev.location || 'Auditório Principal'}</div>
+                                  <div className="meta-item"><Ticket size={14} /> Gratuito</div>
+                               </div>
+                            </div>
+                            
+                            {ev.coverImageUrl && (
+                              <div className="overflow-hidden rounded-2xl">
+                                <img src={ev.coverImageUrl} alt={ev.title} className="card-img-side group-hover:scale-105 transition-transform duration-500" />
+                              </div>
+                            )}
+                         </Link>
+                       ))}
+                    </div>
+                 </motion.div>
+               );
+             })}
+           </AnimatePresence>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };

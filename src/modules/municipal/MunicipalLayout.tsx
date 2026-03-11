@@ -13,7 +13,8 @@ import {
     Menu,
     ExternalLink,
     ChevronRight,
-    Search
+    Search,
+    TrendingUp
 } from "lucide-react";
 
 export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -28,6 +29,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
         { to: "/municipal/projects", label: "Gestão de Projetos", icon: <FileText size={20} /> },
         { to: "/municipal/reports", label: "Relatórios de Impacto", icon: <BarChart3 size={20} /> },
         { to: "/municipal/compliance", label: "Conformidade Legal", icon: <ShieldCheck size={20} /> },
+        { to: "/municipal/ppa", label: "Metas PPA", icon: <TrendingUp size={20} /> },
         { to: "/municipal/settings", label: "Configurações da Cidade", icon: <Settings size={20} /> },
     ];
 

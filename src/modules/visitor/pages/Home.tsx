@@ -8,6 +8,7 @@ import { useTerminology } from "../../../hooks/useTerminology";
 import { useIsCityMode } from "../../auth/TenantContext";
 import { Camera, Map, Compass, ArrowRight } from "lucide-react";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
+import { motion } from "framer-motion";
 import "./Home.css";
 
 interface FeaturedWork {
@@ -38,14 +39,8 @@ export const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (role === "master") {
-      navigate("/master", { replace: true });
-      return;
-    }
-    if (role === "admin") {
-      navigate("/admin", { replace: true });
-      return;
-    }
+    if (role === "master") { navigate("/master", { replace: true }); return; }
+    if (role === "admin") { navigate("/admin", { replace: true }); return; }
   }, [role, navigate]);
 
   useEffect(() => {
@@ -60,7 +55,6 @@ export const Home: React.FC = () => {
         setFeaturedWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         setFeaturedTrails(Array.isArray(trailsRes.data) ? trailsRes.data : (trailsRes.data.data || trailsRes.data || []));
 
-        // Welcome audio from tenant settings
         if (settingsRes.data?.welcomeAudioUrl) {
           setWelcomeAudioUrl(getFullUrl(settingsRes.data.welcomeAudioUrl));
           setMuseumName(settingsRes.data.name || "");
@@ -72,131 +66,119 @@ export const Home: React.FC = () => {
       }
     };
 
-    if (tenantId) {
-      fetchData();
-    }
+    if (tenantId) fetchData();
   }, [tenantId]);
 
-  return (
-    <div className="home-container">
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
 
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
+  return (
+    <motion.div 
+      className="home-container"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* HERO SECTION */}
-      <section className="home-hero">
+      <motion.section variants={itemVariants} className="home-hero">
         <div className="hero-content">
           <span className="hero-badge">
-            ✨ {t("visitor.home.badge", "Modo Visitante")}
+            ✨ {t("visitor.home.badge", "Premium Experience")}
           </span>
 
           <h1 className="hero-title">
-            {t("visitor.home.title", { name: name || t("common.visitor", "Visitante") })}
+            Olá, {name || t("common.visitor", "Viajante")}
           </h1>
 
           <p className="hero-subtitle">
             {isCityMode
-              ? t("visitor.home.subtitleCity", "Explore os pontos turísticos e a história da cidade com guias inteligentes.")
-              : t("visitor.home.subtitle", "Explore a história e a cultura dos nossos museus com suporte a acessibilidade e guias inteligentes.")}
+              ? "Descubra os tesouros escondidos e a rica história da nossa cidade através de uma jornada digital imersiva."
+              : "Explore séculos de arte e cultura em uma experiência desenhada para encantar seus sentidos."}
           </p>
 
           <div className="hero-actions">
             <Link to="/scanner" className="hero-btn hero-btn-primary">
-              <Camera size={18} />
-              Scanner
+              <Camera size={20} />
+              Abrir Scanner
             </Link>
-            {isCityMode ? (
-              <Link to="/mapa" className="hero-btn hero-btn-primary">
-                <Map size={18} />
-                {t("visitor.home.exploreMap", "Explorar Mapa")}
-              </Link>
-            ) : (
-              <Link to="/trilhas" className="hero-btn hero-btn-primary">
-                <Compass size={18} />
-                {t("visitor.home.startTrail")}
-              </Link>
-            )}
-            <Link to={isCityMode ? "/trilhas" : "/mapa"} className="hero-btn hero-btn-secondary">
-              {isCityMode ? term.trails : t("visitor.home.viewMap")}
+            <Link to="/mapa" className="hero-btn hero-btn-secondary">
+              <Map size={20} />
+              {t("visitor.home.viewMap")}
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* ROADMAP 2026 SHOWCASE */}
-      <section className="roadmap-showcase" style={{ padding: "0 1.5rem", marginBottom: "3rem" }}>
-        <div className="section-header" style={{ marginBottom: "1.5rem" }}>
-          <span className="badge" style={{ background: "rgba(255, 215, 0, 0.2)", color: "#ffd700", marginBottom: "0.5rem", display: "inline-block" }}>
-            Novidades Março 2026
-          </span>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: "800" }}>Cultura Viva Betim: Nova Fase</h2>
+      {/* ROADMAP 2026 SHOWCASE - PREMIUM GLASS */}
+      <motion.section variants={itemVariants} className="roadmap-showcase space-y-8 mb-16">
+        <div className="section-header">
+          <span className="badge bg-gold-400/20 text-gold-400 self-start">Roadmap 2026</span>
+          <h2 className="text-3xl font-black">Uma Nova Era na QS Cultura</h2>
         </div>
-        <div className="roadmap-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1rem" }}>
-          <Link to="/comunidade" className="roadmap-card glass" style={{ padding: "1.5rem", borderRadius: "20px", textDecoration: "none", color: "inherit", transition: "transform 0.3s" }}>
-            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem" }}>🏘️</span>
-            <h3 style={{ marginBottom: "0.5rem" }}>Comunidade com Curadoria</h3>
-            <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>Compartilhe suas memórias e histórias sobre Betim e nossos espaços culturais.</p>
-          </Link>
-          <Link to="/trilhas" className="roadmap-card glass" style={{ padding: "1.5rem", borderRadius: "20px", textDecoration: "none", color: "inherit", transition: "transform 0.3s" }}>
-            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem" }}>🧭</span>
-            <h3 style={{ marginBottom: "0.5rem" }}>Rotas Guiadas & Selos</h3>
-            <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>Complete trilhas, ganhe selos exclusivos e escaneie QR codes em pontos de interesse.</p>
-          </Link>
-          <Link to="/perfil" className="roadmap-card glass" style={{ padding: "1.5rem", borderRadius: "20px", textDecoration: "none", color: "inherit", transition: "transform 0.3s" }}>
-            <span style={{ fontSize: "2rem", display: "block", marginBottom: "1rem" }}>🏅</span>
-            <h3 style={{ marginBottom: "0.5rem" }}>Meus Certificados</h3>
-            <p style={{ opacity: 0.8, fontSize: "0.9rem" }}>Receba certificados automáticos ao concluir visitas e participar da nossa história.</p>
-          </Link>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+           <Link to="/rpg" className="roadmap-card group">
+              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">🗡️</div>
+              <h3 className="text-xl font-bold mb-2">Seu Avatar Digital</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">Personalize seu herói cultural, evolua níveis e conquiste itens raros no museu.</p>
+           </Link>
+           <Link to="/comunidade" className="roadmap-card group">
+              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">🏘️</div>
+              <h3 className="text-xl font-bold mb-2">Comunidade Viva</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">Conecte-se com outros entusiastas, compartilhe fotos e histórias das suas visitas.</p>
+           </Link>
+           <Link to="/loja" className="roadmap-card group">
+              <div className="text-4xl mb-6 group-hover:scale-110 transition-transform">🛒</div>
+              <h3 className="text-xl font-bold mb-2">Marketplace Cultural</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">Troque seus pontos de experiência por moedas reais do museu e itens exclusivos.</p>
+           </Link>
         </div>
-      </section>
+      </motion.section>
 
-      {/* WELCOME AUDIO GUIDE */}
+      {/* WELCOME AUDIO */}
       {welcomeAudioUrl && (
-        <section style={{ padding: "0 1.5rem", marginTop: "-1rem", marginBottom: "1.5rem" }}>
+        <motion.section variants={itemVariants} className="mb-16">
           <NarrativeAudioGuide
             audioUrl={welcomeAudioUrl}
-            title={museumName || t("visitor.home.welcomeAudio", "Boas-vindas ao Museu")}
+            title={museumName || t("visitor.home.welcomeAudio", "Guia de Boas-vindas")}
           />
-        </section>
+        </motion.section>
       )}
 
       {/* FEATURED WORKS */}
-      <section className="works-section">
+      <motion.section variants={itemVariants} className="works-section mb-16">
         <div className="section-header">
           <h2>{term.featuredWorks}</h2>
-          <p>{t("visitor.home.featuredSubtitle")}</p>
+          <p>Destaques selecionados da nossa curadoria para você.</p>
         </div>
 
         {loading ? (
-          <div className="skeleton-grid">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="skeleton-card"></div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map(i => <div key={i} className="skeleton-card" />)}
           </div>
         ) : featuredWorks.length > 0 ? (
           <div className="works-grid">
             {featuredWorks.map(work => (
               <article key={work.id} className="work-card">
-                {work.imageUrl && (
-                  <div
-                    className="work-image"
-                    style={{ backgroundImage: `url(${getFullUrl(work.imageUrl)})` }}
-                  />
-                )}
+                <div 
+                  className="work-image"
+                  style={{ backgroundImage: `url(${getFullUrl(work.imageUrl || '')})` }}
+                />
                 <div className="work-content">
                   <h3 className="work-title">{work.title}</h3>
-                  <p className="work-artist">
-                    {work.artist} {work.year ? `• ${work.year}` : ''}
-                  </p>
+                  <p className="work-artist">{work.artist || 'Artista Desconhecido'}</p>
                   <div className="work-chips">
-                    {work.category && (
-                      <span className="work-chip">
-                        {typeof work.category === 'string' ? work.category : work.category?.name}
-                      </span>
-                    )}
-                    <span className="work-chip">
-                      {t("visitor.home.accessible", "Acessível")}
-                    </span>
+                    <span className="work-chip">{typeof work.category === 'string' ? work.category : work.category?.name || 'Geral'}</span>
+                    <span className="work-chip">Acessível</span>
                   </div>
                   <Link to={`/obras/${work.id}`} className="work-btn">
-                    {t("visitor.home.viewDetails")} <ArrowRight size={14} />
+                    Explorar Obra <ArrowRight size={16} />
                   </Link>
                 </div>
               </article>
@@ -205,42 +187,42 @@ export const Home: React.FC = () => {
         ) : (
           <div className="empty-state">
             <span className="empty-icon">🎨</span>
-            <p>{t("common.noResults", "Nenhuma obra em destaque no momento.")}</p>
+            <p>Nenhuma obra selecionada no momento.</p>
           </div>
         )}
-      </section>
+      </motion.section>
 
-      {/* RECOMMENDED TRAILS */}
-      <section className="trails-section">
+      {/* RECOMMENDATIONS */}
+      <motion.section variants={itemVariants} className="trails-section">
         <div className="section-header">
           <h2>{t("visitor.home.recommendedTrails")}</h2>
         </div>
 
         {loading ? (
-          <div className="skeleton-grid">
-            {[1, 2].map(i => (
-              <div key={i} className="skeleton-card skeleton-card-small"></div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[1, 2].map(i => <div key={i} className="skeleton-card" style={{ height: 200 }} />)}
           </div>
         ) : featuredTrails.length > 0 ? (
-          <div className="trails-grid">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {featuredTrails.map(trail => (
-              <article key={trail.id} className="trail-card">
-                <h3 className="trail-title">{trail.title}</h3>
-                <p className="trail-description">{trail.description}</p>
-                <Link to={`/trilhas/${trail.id}`} className="trail-btn">
-                  {t("visitor.home.viewTrails")} <ArrowRight size={14} />
+              <article key={trail.id} className="roadmap-card flex flex-col justify-between group">
+                <div>
+                   <h3 className="text-xl font-bold text-white mb-2">{trail.title}</h3>
+                   <p className="text-slate-400 text-sm mb-8 leading-relaxed line-clamp-2">{trail.description}</p>
+                </div>
+                <Link to={`/trilhas/${trail.id}`} className="work-btn !w-fit px-8 !bg-white/5 hover:!bg-white/10">
+                   Iniciar Jornada <Compass size={16} />
                 </Link>
               </article>
             ))}
           </div>
         ) : (
           <div className="empty-state">
-            <span className="empty-icon">🛤️</span>
-            <p>{t("common.noResults", "Nenhuma trilha encontrada.")}</p>
+            <span className="empty-icon">🧭</span>
+            <p>Descubra novas rotas em breve.</p>
           </div>
         )}
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 };

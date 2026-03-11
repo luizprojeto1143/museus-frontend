@@ -16,10 +16,11 @@ import { MunicipalDashboard } from "../modules/municipal/MunicipalDashboard";
 import { MunicipalReports } from "../modules/municipal/MunicipalReports";
 import {
     MunicipalEquipments,
-    MunicipalProjects,
-    MunicipalCompliance,
     MunicipalSettings
 } from "../modules/municipal/MunicipalPlaceholders";
+import { MunicipalNoticeProjects } from "../modules/municipal/MunicipalNoticeProjects";
+import { MunicipalAccessibilityGaps } from "../modules/municipal/MunicipalAccessibilityGaps";
+import { MunicipalPPA } from "../modules/municipal/MunicipalPPA";
 
 // Totem
 import { TotemLayout } from "../modules/totem/TotemLayout";
@@ -65,9 +66,10 @@ export function municipalRoutes(RequireRole: React.FC<RequireRoleProps>) {
         <>
             <Route path="/municipal" element={mun(MunicipalDashboard)} />
             <Route path="/municipal/equipments" element={mun(MunicipalEquipments)} />
-            <Route path="/municipal/projects" element={mun(MunicipalProjects)} />
+            <Route path="/municipal/projects" element={mun(MunicipalNoticeProjects)} />
             <Route path="/municipal/reports" element={mun(MunicipalReports)} />
-            <Route path="/municipal/compliance" element={mun(MunicipalCompliance)} />
+            <Route path="/municipal/compliance" element={mun(MunicipalAccessibilityGaps)} />
+            <Route path="/municipal/ppa" element={mun(MunicipalPPA)} />
             <Route path="/municipal/settings" element={mun(MunicipalSettings)} />
         </>
     );

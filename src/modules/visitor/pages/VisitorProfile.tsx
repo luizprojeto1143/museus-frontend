@@ -175,6 +175,42 @@ export const VisitorProfile: React.FC = () => {
                                 <span className="action-card-title">{t("visitor.passport.title", "Passaporte")}</span>
                                 <span className="action-card-subtitle">Carimbos de visita</span>
                             </div>
+
+                            <div
+                                className="action-card rainbow"
+                                onClick={() => navigate("/guarda-roupa")}
+                            >
+                                <User className="bg-icon" size={80} />
+                                <div className="action-icon-box">
+                                    <User size={24} />
+                                </div>
+                                <span className="action-card-title">Guarda-Roupa</span>
+                                <span className="action-card-subtitle">Troque seu visual</span>
+                            </div>
+
+                            <div
+                                className="action-card gold"
+                                onClick={() => navigate("/marketplace")}
+                            >
+                                <ShoppingBag className="bg-icon" size={80} />
+                                <div className="action-icon-box">
+                                    <ShoppingBag size={24} />
+                                </div>
+                                <span className="action-card-title">Marketplace XP</span>
+                                <span className="action-card-subtitle">Gaste seus pontos</span>
+                            </div>
+
+                            <div
+                                className="action-card purple"
+                                onClick={() => navigate("/cracha")}
+                            >
+                                <Package className="bg-icon" size={80} />
+                                <div className="action-icon-box">
+                                    <Package size={24} />
+                                </div>
+                                <span className="action-card-title">Solicitar Crachá</span>
+                                <span className="action-card-subtitle">Item físico exclusivo</span>
+                            </div>
                         </div>
 
                         {/* Logout Section */}

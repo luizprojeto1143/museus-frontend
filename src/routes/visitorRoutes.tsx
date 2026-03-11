@@ -46,6 +46,9 @@ const ArchitecturalTimeline = React.lazy(() => import("../modules/visitor/pages/
 const RouteMap = React.lazy(() => import("../modules/visitor/pages/RouteMap").then(m => ({ default: m.RouteMap })));
 const FamilyTimeline = React.lazy(() => import("../modules/visitor/pages/FamilyTimeline").then(m => ({ default: m.FamilyTimeline })));
 const CertificateList = React.lazy(() => import("../modules/visitor/pages/CertificateList").then(m => ({ default: m.CertificateList })));
+const VisitorWardrobe = React.lazy(() => import("../modules/visitor/pages/VisitorWardrobe").then(m => ({ default: m.VisitorWardrobe })));
+const SkinMarketplace = React.lazy(() => import("../modules/visitor/pages/SkinMarketplace").then(m => ({ default: m.SkinMarketplace })));
+const BadgeRequestPage = React.lazy(() => import("../modules/visitor/pages/BadgeRequestPage").then(m => ({ default: m.BadgeRequestPage })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -109,6 +112,9 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/rota/:routeId" element={vr(RouteMap, RequireRole)} />
             <Route path="/familia/:profileId" element={vr(FamilyTimeline, RequireRole)} />
             <Route path="/meus-certificados" element={vr(CertificateList, RequireRole)} />
+            <Route path="/guarda-roupa" element={vr(VisitorWardrobe, RequireRole)} />
+            <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
+            <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
         </>
     );
 }

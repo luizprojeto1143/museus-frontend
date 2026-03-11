@@ -25,6 +25,7 @@ import { CertificateValidator } from "./modules/public/CertificateValidator";
 import { GlobalEvents } from "./modules/public/GlobalEvents";
 import { NotFound } from "./modules/public/NotFound";
 import { Home } from "./modules/visitor/pages/Home";
+import { PublicPassportPage } from "./modules/visitor/pages/PublicPassportPage";
 
 // Route groups
 import { visitorRoutes } from "./routes/visitorRoutes";
@@ -123,6 +124,7 @@ const App: React.FC = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/events" element={<GlobalEvents />} />
+                  <Route path="/p/:id" element={<PublicPassportPage />} />
 
                   {/* Legacy redirect */}
                   <Route path="/app" element={

@@ -1,147 +1,117 @@
-/* Premium MapView Theme - Navigator Dark & Gold */
-
+/* Visitor MapView - Premium Experience */
 .map-view-container {
-    font-family: 'Georgia', serif;
-    color: #EAE0D5;
-    padding: 1rem;
-    padding-bottom: 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 8rem;
+    animation: fade-in 0.8s ease-out;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
 .map-view-header {
-    text-align: center;
-    padding: 1.5rem 1rem;
-    margin-bottom: 1.5rem;
-    background: linear-gradient(180deg, rgba(26, 17, 8, 0) 0%, rgba(212, 175, 55, 0.05) 100%);
-    border-bottom: 1px solid rgba(70, 52, 32, 0.3);
+    margin-bottom: 3rem;
 }
 
 .map-view-title {
-    font-size: 2rem;
-    color: #d4af37;
-    margin: 0 0 0.5rem 0;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.map-view-title::before {
-    content: '🗺️';
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #fff;
+    margin-bottom: 1rem;
 }
 
 .map-view-subtitle {
-    color: #c9b58c;
-    font-size: 1rem;
-    margin: 0;
-    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
 }
 
-/* ============================================
-   MAP CONTAINER
-   ============================================ */
+/* MAP WRAPPER */
 .map-view-map-wrapper {
-    margin-top: 1rem;
-    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 40px;
     overflow: hidden;
-    border: 2px solid #463420;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    height: 70vh;
+    min-height: 500px;
+    backdrop-filter: blur(10px);
+    position: relative;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
 }
 
-/* ============================================
-   LEGEND CARD
-   ============================================ */
+/* LEGEND & CONTROLS */
 .map-view-legend {
-    margin-top: 1.5rem;
-    padding: 1.5rem;
-    background: linear-gradient(145deg, #2c1e10 0%, #1a1108 100%);
-    border: 1px solid #463420;
-    border-radius: 1rem;
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
 }
 
-.map-view-legend h3 {
-    font-size: 1.15rem;
-    color: #d4af37;
-    margin: 0 0 1rem 0;
+.legend-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 2rem;
+}
+
+.legend-card h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 12px;
 }
 
-.map-view-legend-list {
+.legend-list {
     list-style: none;
     padding: 0;
     margin: 0;
-}
-
-.map-view-legend-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.95rem;
-    color: #c9b58c;
-    line-height: 1.5;
-}
-
-.map-view-legend-item:last-child {
-    margin-bottom: 0;
-}
-
-.map-view-legend-item strong {
-    color: #EAE0D5;
-}
-
-/* ============================================
-   LOADING
-   ============================================ */
-.map-view-loading {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 50vh;
     gap: 1rem;
 }
 
-.map-view-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #463420;
-    border-top-color: #d4af37;
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.legend-icon {
+    height: 12px;
+    width: 12px;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    background: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
 }
 
-.map-view-loading p {
-    color: #c9b58c;
+/* LOADING */
+.map-view-loading {
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+.map-view-spinner {
+    width: 64px;
+    height: 64px;
+    border: 3px solid rgba(255,255,255,0.05);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: map-spin 1s linear infinite;
 }
 
-/* ============================================
-   MESSAGES
-   ============================================ */
-.map-view-message {
-    padding: 4rem 2rem;
-    text-align: center;
-    color: #8b7355;
+@keyframes map-spin {
+    to { transform: rotate(360deg); }
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-    .map-view-title {
-        font-size: 1.5rem;
+@media (max-width: 768px) {
+    .map-view-map-wrapper {
+        height: 60vh;
+        border-radius: 32px;
     }
 }

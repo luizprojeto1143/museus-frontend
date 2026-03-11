@@ -135,11 +135,12 @@
     color: var(--accent-primary);
 }
 
-.stamp-bg-image {
+.stamp-bg-image-img {
     position: absolute;
     inset: 0;
-    background-size: cover;
-    background-position: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     opacity: 0.3;
     filter: grayscale(1);
 }
@@ -148,6 +149,13 @@
     position: absolute;
     inset: 0;
     background: radial-gradient(circle at center, transparent, #111 80%);
+    z-index: 1;
+}
+
+.user-location-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .stamp-actions {

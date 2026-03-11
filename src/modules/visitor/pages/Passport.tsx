@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { SettingsModal } from "../components/SettingsModal";
-import { Settings, Edit2, MapPin, Calendar } from "lucide-react";
+import { 
+  Settings, Edit2, MapPin, Calendar, Award, 
+  BookOpen, Star as StarIcon, Heart, History, CheckCircle2 
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import "./Passport.css";
 
-// Helper to get full image URL
 const getFullUrl = (url: string | null | undefined): string | undefined => {
   if (!url) return undefined;
   if (url.startsWith("http")) return url;
@@ -31,118 +34,38 @@ export const Passport: React.FC = () => {
   const { name, email, tenantId, isGuest } = useAuth();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"progress" | "collection" | "journal" | "stamps">("progress");
+  const [activeTab, setActiveTab] = useState<"progress" | "stamps" | "collection" | "journal">("progress");
 
-  // Works data with full info
   const [visitedWorks, setVisitedWorks] = useState<VisitedWork[]>([]);
   const [loadingWorks, setLoadingWorks] = useState(false);
-
-  type FavoriteItem = {
-    id: string;
-    title: string;
-    type: "work" | "artist" | "event";
-    [key: string]: unknown;
-  };
-
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
-
-  // Stamp Logic - now using work images
   const [stamped, setStamped] = useState<Set<string>>(new Set());
 
-  // Fetch works data with titles and images
   const fetchVisitedWorks = useCallback(async () => {
     if (!email || !tenantId) return;
-
     setLoadingWorks(true);
     try {
       const res = await api.get(`/visitors/me/summary?email=${email}&tenantId=${tenantId}`);
       const data = res.data;
-
-      // Extract visited works from the response
-      if (data.stamps && Array.isArray(data.stamps)) {
-        // Backend returns stamps with workTitle
-        const works: VisitedWork[] = data.stamps.map((s: { workId?: string; workTitle: string; workImageUrl?: string; date: string }, i: number) => ({
-          id: s.workId || `stamp-${i}`,
-          title: s.workTitle || "Obra",
-          imageUrl: s.workImageUrl,
-          visitedAt: s.date
-        }));
-        setVisitedWorks(works);
-      }
-
-      // If backend returns visits with work details
       if (data.visits && Array.isArray(data.visits)) {
-        const works: VisitedWork[] = data.visits
-          .filter((v: { work?: { id: string; title: string; imageUrl?: string } }) => v.work)
-          .map((v: { work: { id: string; title: string; imageUrl?: string }; createdAt?: string }) => ({
+        const works = data.visits
+          .filter((v: any) => v.work)
+          .map((v: any) => ({
             id: v.work.id,
             title: v.work.title,
             imageUrl: v.work.imageUrl,
             visitedAt: v.createdAt
           }));
-
-        // Deduplicate by id
-        const uniqueWorks = Array.from(new Map(works.map(w => [w.id, w])).values());
-        setVisitedWorks(uniqueWorks);
+        setVisitedWorks(Array.from(new Map(works.map((w: any) => [w.id, w])).values()));
       }
-    } catch (error) {
-      console.error("Failed to fetch visited works", error);
-
-      // Fallback: fetch works data from IDs
-      if (stats.visitedWorks.length > 0 && tenantId) {
-        try {
-          const worksRes = await api.get("/works", { params: { tenantId } });
-          const allWorks = worksRes.data.data || worksRes.data || [];
-
-          const worksMap = new Map(allWorks.map((w: { id: string; title: string; imageUrl?: string }) => [w.id, w]));
-          const works = stats.visitedWorks
-            .map(id => {
-              const work = worksMap.get(id);
-              if (work) {
-                return {
-                  id: (work as { id: string }).id,
-                  title: (work as { title: string }).title,
-                  imageUrl: (work as { imageUrl?: string }).imageUrl
-                } as VisitedWork;
-              }
-              return null;
-            })
-            .filter((w): w is VisitedWork => w !== null);
-
-          setVisitedWorks(works);
-        } catch (e) {
-          console.error("Fallback fetch failed", e);
-        }
-      }
-    } finally {
-      setLoadingWorks(false);
-    }
-  }, [email, tenantId, stats.visitedWorks]);
+    } catch (error) { console.error(error); }
+    finally { setLoadingWorks(false); }
+  }, [email, tenantId]);
 
   useEffect(() => {
     fetchVisitedWorks();
-
-    const storedFavs = localStorage.getItem("favorites");
-    if (storedFavs) {
-      try {
-        setFavorites(JSON.parse(storedFavs));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
     const storedStamped = localStorage.getItem("passport_stamped_ids");
-    if (storedStamped) {
-      setStamped(new Set(JSON.parse(storedStamped)));
-    }
+    if (storedStamped) setStamped(new Set(JSON.parse(storedStamped)));
   }, [fetchVisitedWorks]);
-
-  // Refresh gamification data when tab changes
-  useEffect(() => {
-    if (activeTab === "progress" && refreshGamification) {
-      refreshGamification();
-    }
-  }, [activeTab, refreshGamification]);
 
   const handleStamp = (workId: string) => {
     const newStamped = new Set(stamped);
@@ -151,309 +74,182 @@ export const Passport: React.FC = () => {
     localStorage.setItem("passport_stamped_ids", JSON.stringify([...newStamped]));
   };
 
-  const getInitials = (n: string) => {
-    return n
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
+  const getInitials = (n: string) => n.split(" ").map(p => p[0]).join("").toUpperCase().substring(0, 2);
 
-  const formatDate = (date: string | undefined) => {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "short"
-    });
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
   return (
-    <div className="passport-container">
-      {/* Profile Header */}
-      <div className="passport-header">
+    <motion.div 
+      className="passport-container"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* PROFILE HEADER */}
+      <div className="passport-header group">
+        <div className="absolute top-0 right-0 h-full w-1/3 bg-gold-400/5 blur-3xl rounded-full" />
+        
         <div className="passport-avatar">
           {name ? getInitials(name) : "V"}
         </div>
-        <div>
-          <h1 className="passport-title">{name || t("common.visitor")}</h1>
-          <p className="passport-subtitle">{email}</p>
+        
+        <div className="flex-1">
+          <h1 className="passport-title">{name || "Viajante Cultural"}</h1>
+          <p className="passport-subtitle">{email || "Visitante Anônimo"}</p>
+          <div className="flex gap-4 mt-4">
+             <div className="flex items-center gap-2 text-gold-400 text-xs font-black uppercase tracking-widest">
+                <Award size={14} /> Explorer Premium
+             </div>
+             <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase tracking-widest">
+                <MapPin size={14} /> Curitiba, PR
+             </div>
+          </div>
         </div>
+
         <div className="passport-actions">
-          <button
-            className="icon-btn"
-            onClick={() => setIsEditProfileOpen(true)}
-            title={t("visitor.profile.editTitle", "Editar Perfil")}
-          >
+          <button className="icon-btn" onClick={() => setIsEditProfileOpen(true)}>
             <Edit2 size={18} />
           </button>
-          <button
-            className="icon-btn"
-            onClick={() => setIsSettingsOpen(true)}
-            title={t("visitor.settings.title", "Configurações")}
-          >
+          <button className="icon-btn" onClick={() => setIsSettingsOpen(true)}>
             <Settings size={18} />
           </button>
         </div>
       </div>
 
-      <EditProfileModal
-        isOpen={isEditProfileOpen}
-        onClose={() => setIsEditProfileOpen(false)}
-      />
-
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-      />
-
       {isGuest ? (
-        <div style={{ marginTop: "2rem", background: "rgba(212, 175, 55, 0.05)", border: "1px dashed #d4af37", padding: "4rem 2rem", borderRadius: "1rem", textAlign: "center" }}>
-          <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🗺️</div>
-          <h2 style={{ fontSize: "1.5rem", color: "#d4af37", marginBottom: "1rem", fontFamily: "Georgia, serif" }}>
-            Seu Passaporte Digital
-          </h2>
-          <p style={{ color: "#EAE0D5", marginBottom: "2rem", opacity: 0.8, maxWidth: "400px", margin: "0 auto 2rem" }}>{t("visitor.passport.registreseParaComearAColecionarCarimbosG", `
-            Registre-se para começar a colecionar carimbos, ganhar XP e desbloquear conquistas exclusivas durante sua visita.
-          `)}</p>
-          <button
-            onClick={() => navigate("/register")}
-            className="passport-tab-btn active"
-            style={{ width: "auto", padding: "1rem 2.5rem", borderRadius: "2rem", fontSize: "1rem" }}
-          >
-            Começar Agora
-          </button>
+        <div className="bg-white/5 border border-dashed border-gold-400/40 rounded-[40px] p-24 text-center">
+            <div className="text-6xl mb-8 opacity-20">🧭</div>
+            <h2 className="text-3xl font-black text-white mb-4">Crie sua Identidade</h2>
+            <p className="text-slate-400 max-w-sm mx-auto mb-12">Salve seu progresso, colecione carimbos raros e torne-se um embaixador da nossa cultura.</p>
+            <Link to="/register" className="h-14 px-12 bg-gold-400 text-black rounded-2xl font-black text-base uppercase tracking-widest inline-flex items-center hover:scale-105 transition-transform">
+               Começar Jornada
+            </Link>
         </div>
       ) : (
         <>
-          {/* Tabs */}
           <div className="passport-tabs">
             {[
-              { id: "progress", label: t("visitor.passport.tabs.progress", "Progresso") },
-              { id: "stamps", label: t("visitor.passport.tabs.stamps", "Carimbos") },
-              { id: "collection", label: t("visitor.passport.tabs.collection", "Coleção") },
-              { id: "journal", label: t("visitor.passport.tabs.journal", "Diário") },
+              { id: "progress", label: "Meu Progresso", icon: <History size={16} /> },
+              { id: "stamps", label: "Carimbos", icon: <Award size={16} /> },
+              { id: "collection", label: "Minha Coleção", icon: <Heart size={16} /> },
+              { id: "journal", label: "Diário de Bordo", icon: <BookOpen size={16} /> },
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`passport-tab-btn ${activeTab === tab.id ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`passport-tab-btn flex items-center justify-center gap-3 ${activeTab === tab.id ? "active" : ""}`}
               >
-                {tab.label}
+                {tab.icon} {tab.label}
               </button>
             ))}
           </div>
 
-          {activeTab === "progress" && (
-            <div className="animate-fadeIn">
-              <div className="progress-card">
-                <div className="progress-header">
-                  <h2 className="level-title">{currentLevel.title}</h2>
-                  <span className="level-chip">{t("visitor.passport.level", "Nível")} {currentLevel.level}</span>
-                </div>
+          <AnimatePresence mode="wait">
+             <motion.div 
+               key={activeTab}
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+               exit={{ opacity: 0, x: -20 }}
+               transition={{ duration: 0.3 }}
+             >
+                {activeTab === "progress" && (
+                  <div>
+                    <div className="progress-card">
+                      <div className="progress-header">
+                        <div>
+                           <span className="level-chip mb-2 block">{t("visitor.passport.level", "Nível")} {currentLevel.level}</span>
+                           <h2 className="level-title italic">{currentLevel.title}</h2>
+                        </div>
+                        <div className="text-right">
+                           <span className="text-2xl font-black text-white">{stats.xp}</span>
+                           <span className="text-slate-400 text-xs font-black uppercase ml-2 tracking-widest">XP Total</span>
+                        </div>
+                      </div>
 
-                <div className="progress-bar-container">
-                  <div
-                    className="progress-bar-fill"
-                    style={{ width: `${progressToNextLevel}%` }}
-                  />
-                </div>
-
-                <div className="xp-stats">
-                  <span>{stats.xp} XP</span>
-                  {nextLevel && <span>{t("visitor.passport.next", "Próximo")}: {nextLevel.minXp} XP</span>}
-                </div>
-              </div>
-
-              <h3 className="section-title">{t("visitor.passport.historyTitle", "Histórico de Visitas")}</h3>
-
-              {loadingWorks ? (
-                <div className="empty-text" style={{ textAlign: "center", padding: "2rem" }}>
-                  <div className="spinner" style={{ margin: "0 auto 1rem" }}></div>
-                  <p>Carregando...</p>
-                </div>
-              ) : visitedWorks.length === 0 ? (
-                <p className="empty-text">{t("visitor.passport.noHistory", "Você ainda não visitou nenhuma obra.")}</p>
-              ) : (
-                <div>
-                  {visitedWorks.map((work, i) => (
-                    <div
-                      key={work.id + "-" + i}
-                      className="history-item"
-                      onClick={() => navigate(`/obras/${work.id}`)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {work.imageUrl ? (
-                        <img
-                          src={getFullUrl(work.imageUrl)}
-                          alt={work.title}
-                          className="history-img"
-                          style={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: 8,
-                            objectFit: "cover",
-                            border: "2px solid #d4af37"
-                          }}
+                      <div className="progress-bar-container">
+                        <motion.div 
+                          className="progress-bar-fill"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progressToNextLevel}%` }}
+                          transition={{ duration: 1, delay: 0.5 }}
                         />
+                      </div>
+
+                      <div className="xp-stats">
+                        <span className="font-bold">{progressToNextLevel}% concluído</span>
+                        {nextLevel && <span className="text-gold-400">Próximo Marco: {nextLevel.title}</span>}
+                      </div>
+                    </div>
+
+                    <h3 className="text-xl font-bold mb-8 flex items-center gap-3">
+                       <History className="text-gold-400" /> Histórico de Exploração
+                    </h3>
+
+                    <div className="space-y-4">
+                      {visitedWorks.length === 0 ? (
+                        <div className="bg-white/2 p-20 rounded-3xl text-center text-slate-500 border border-white/5 italic">Nenhuma obra explorada ainda.</div>
                       ) : (
-                        <span className="history-icon" role="img" aria-label="art">🖼️</span>
-                      )}
-                      <div className="history-details">
-                        <p style={{ fontWeight: "bold", color: "#d4af37", margin: 0 }}>{work.title}</p>
-                        <p style={{ fontSize: "0.8rem", color: "#8b7355", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
-                          <Calendar size={12} />
-                          {work.visitedAt ? formatDate(work.visitedAt) : t("visitor.passport.visited", "Visitada")}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === "stamps" && (
-            <div className="animate-fadeIn">
-              <h3 className="section-title">{t("visitor.passport.stampsTitle", "Meus Carimbos")}</h3>
-
-              <div className="passport-book-bg">
-                <div className="passport-book-grid">
-                  {visitedWorks.map((work) => (
-                    <div key={work.id} style={{ textAlign: "center" }}>
-                      <div className={`stamp-slot ${stamped.has(work.id) ? 'filled' : ''}`}>
-                        {stamped.has(work.id) ? (
-                          <div className="stamp-container" style={{ position: "relative" }}>
-                            {work.imageUrl ? (
-                              <img
-                                src={getFullUrl(work.imageUrl)}
-                                alt={work.title}
-                                className="stamp-img"
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  objectFit: "cover",
-                                  borderRadius: 8,
-                                  filter: "sepia(0.3) contrast(1.1)",
-                                  border: "3px solid #8b4513"
-                                }}
-                              />
-                            ) : (
-                              <div style={{
-                                width: "100%",
-                                height: "100%",
-                                background: "linear-gradient(135deg, #8b4513, #654321)",
-                                borderRadius: 8,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: "#d4af37",
-                                fontSize: "2rem"
-                              }}>
-                                🏛️
-                              </div>
-                            )}
-                            <div style={{
-                              position: "absolute",
-                              bottom: -8,
-                              right: -8,
-                              background: "#d4af37",
-                              borderRadius: "50%",
-                              width: 24,
-                              height: 24,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
-                            }}>
-                              ✓
-                            </div>
+                        visitedWorks.map((work, i) => (
+                          <div key={work.id + i} className="history-item group" onClick={() => navigate(`/obras/${work.id}`)}>
+                             <img src={getFullUrl(work.imageUrl) || ''} alt={work.title} className="history-img" />
+                             <div className="flex-1">
+                                <h4 className="font-bold text-white group-hover:text-gold-400 transition-colors uppercase text-sm tracking-wide">{work.title}</h4>
+                                <div className="flex items-center gap-2 text-slate-400 text-xs mt-1">
+                                   <Calendar size={12} /> {work.visitedAt ? new Date(work.visitedAt).toLocaleDateString() : 'Recentemente'}
+                                </div>
+                             </div>
+                             <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-slate-500 group-hover:bg-gold-400 group-hover:text-black transition-all">
+                                <CheckCircle2 size={18} />
+                             </div>
                           </div>
-                        ) : (
-                          <button
-                            onClick={() => handleStamp(work.id)}
-                            className="generate-btn"
-                          >
-                            {t("visitor.passport.generate", "Carimbar")}
-                          </button>
-                        )}
-                      </div>
-                      <div className="stamp-label" style={{
-                        marginTop: 8,
-                        fontSize: "0.75rem",
-                        color: "#463420",
-                        fontWeight: 600,
-                        maxWidth: 100,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap"
-                      }}>
-                        {work.title}
-                      </div>
+                        ))
+                      )}
                     </div>
-                  ))}
+                  </div>
+                )}
 
-                  {visitedWorks.length === 0 && (
-                    <div style={{ gridColumn: "1 / -1", textAlign: "center", color: "#666", padding: "2rem" }}>
-                      <MapPin size={48} style={{ color: "#d4af37", marginBottom: "1rem" }} />
-                      <p style={{ fontFamily: 'Georgia, serif', color: '#463420', fontWeight: 'bold' }}>
-                        {t("visitor.passport.empty", "Visite obras para colecionar carimbos!")}
-                      </p>
-                      <button
-                        className="generate-btn"
-                        onClick={() => navigate("/obras")}
-                        style={{ marginTop: "1rem" }}
-                      >
-                        Ver Obras
-                      </button>
+                {activeTab === "stamps" && (
+                  <div className="passport-book-bg">
+                    <div className="passport-book-grid">
+                      {visitedWorks.map((work) => (
+                        <div key={work.id} className="text-center group">
+                          <div className={`stamp-slot ${stamped.has(work.id) ? 'filled' : ''}`}>
+                            {stamped.has(work.id) ? (
+                              <motion.div 
+                                className="relative w-full h-full p-2"
+                                initial={{ scale: 0, rotate: -30 }}
+                                animate={{ scale: 1, rotate: -5 }}
+                              >
+                                {work.imageUrl ? (
+                                  <img src={getFullUrl(work.imageUrl)} alt={work.title} className="stamp-img" />
+                                ) : (
+                                  <div className="w-full h-full bg-gold-400/20 rounded-full flex items-center justify-center text-gold-400">🏛️</div>
+                                )}
+                                <div className="absolute -bottom-2 -right-2 bg-emerald-500 h-6 w-6 rounded-full flex items-center justify-center text-[10px] text-white">✓</div>
+                              </motion.div>
+                            ) : (
+                              <button onClick={() => handleStamp(work.id)} className="generate-btn">
+                                Validar
+                              </button>
+                            )}
+                          </div>
+                          <p className="mt-4 text-[10px] uppercase font-black tracking-widest text-slate-600 line-clamp-1 group-hover:text-gold-400 transition-colors">{work.title}</p>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "collection" && (
-            <div className="animate-fadeIn">
-              <h3 className="section-title">{t("visitor.passport.favoritesTitle", "Meus Favoritos")}</h3>
-              {favorites.length === 0 ? (
-                <p className="empty-text">{t("visitor.passport.noFavorites", "Sua coleção está vazia.")}</p>
-              ) : (
-                <div className="card-grid">
-                  {favorites.map((item) => (
-                    <div key={item.id} className="simple-card">
-                      <h4>{item.title}</h4>
-                      <p>{item.type === "work" ? t("visitor.sidebar.artworks") : "Item"}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === "journal" && (
-            <div className="animate-fadeIn">
-              <h3 className="section-title">{t("visitor.passport.journalTitle", "Meu Diário de Bordo")}</h3>
-              {Object.keys(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).length === 0 ? (
-                <p className="empty-text">{t("visitor.passport.noNotes", "Seu diário de bordo está vazio. Visite obras para adicionar anotações.")}</p>
-              ) : (
-                <div className="card-grid">
-                  {Object.entries(JSON.parse(localStorage.getItem("visitor_notes") || "{}")).map(([workId, note]) => {
-                    const work = visitedWorks.find(w => w.id === workId);
-                    return (
-                      <div key={workId} className="simple-card">
-                        <h4>{work?.title || t("visitor.artwork.badge")}</h4>
-                        <p style={{ whiteSpace: "pre-wrap", margin: 0 }}>{note as string}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+                  </div>
+                )}
+             </motion.div>
+          </AnimatePresence>
         </>
       )}
-    </div>
+
+      <EditProfileModal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)} />
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+    </motion.div>
   );
 };
 

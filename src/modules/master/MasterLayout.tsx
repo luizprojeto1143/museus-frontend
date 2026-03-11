@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const { logout } = useAuth();
   const location = useLocation();
   const [isCollapsed, setCollapsed] = useState(false);
@@ -25,75 +26,92 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <div className="layout-wrapper">
+      {/* AMBIENT BACKGROUND */}
+      <div className="ambient-bg">
+        <div className="ambient-orb w-[600px] h-[600px] bg-blue-500/10 top-[-10%] left-[-10%]" />
+        <div className="ambient-orb w-[500px] h-[500px] bg-purple-500/10 bottom-[-10%] right-[-10%]" />
+      </div>
+
       {/* Mobile Overlay */}
       <div
         className={`mobile-overlay ${isSidebarOpen ? "open" : ""}`}
         onClick={() => setSidebarOpen(false)}
       />
 
-      {/* Sidebar */}
-      <aside className={`layout-sidebar ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`} style={{ borderRight: "1px solid #463420", background: "linear-gradient(180deg, #1a1108 0%, #0f0a05 100%)" }}>
+      {/* Sidebar - PREMIUM REDESIGN */}
+      <aside className={`layout-sidebar premium-glass ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <button
-          className="sidebar-collapse-toggle"
+          className="sidebar-collapse-toggle bg-white/5 border-white/10 hover:bg-white/10 transition-colors"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? "Expandir" : "Recolher"}
-          style={{ borderColor: "#463420", color: "#d4af37", background: "#2c1e10" }}
         >
           {isCollapsed ? "»" : "«"}
         </button>
-        <div className="sidebar-header" style={{ borderBottom: "1px solid #463420" }}>
-          <div className="app-brand">
-            <span className="app-logo" style={{ borderColor: "#d4af37", color: "#d4af37" }}>MT</span>
-            <div>
-              <div className="app-title" style={{ color: "#d4af37", fontFamily: "Georgia, serif" }}>{t("master.layout.panel", "Master Panel")}</div>
-              <div className="app-subtitle" style={{ color: "#8b7355" }}>{t("master.layout.management", "Gestão Global")}</div>
-            </div>
+
+        <div className="p-8 border-b border-white/5">
+          <div className="flex items-center gap-4">
+             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-black text-white shadow-xl shadow-blue-500/20">
+                MT
+             </div>
+             {!isCollapsed && (
+               <div className="flex flex-col">
+                  <span className="text-white font-black tracking-tight text-lg leading-none">MASTER</span>
+                  <span className="text-blue-400 font-bold text-[10px] uppercase tracking-widest mt-1">Global Hub</span>
+               </div>
+             )}
           </div>
         </div>
 
-        <nav className="sidebar-content">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1 mt-4">
           {links.map(link => (
             <Link
               key={link.to}
               to={link.to}
-              className={`nav-item ${location.pathname === link.to ? "active" : ""}`}
+              className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-sm transition-all duration-300 group ${
+                location.pathname === link.to 
+                ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5" 
+                : "text-slate-500 hover:text-white hover:bg-white/5"
+              }`}
               onClick={() => setSidebarOpen(false)}
-              title={isCollapsed ? link.label : ""}
-              style={location.pathname === link.to ? { background: "linear-gradient(90deg, rgba(212, 175, 55, 0.1), transparent)", borderLeft: "3px solid #d4af37", color: "#EAE0D5" } : { color: "#8b7355" }}
             >
-              <span style={{ fontSize: "1.2rem", filter: location.pathname === link.to ? "none" : "grayscale(100%) sepia(50%)" }}>{link.icon}</span>
-              <span>{link.label}</span>
+              <span className={`text-xl transition-transform duration-300 group-hover:scale-125 ${location.pathname === link.to ? "" : "opacity-50"}`}>
+                {link.icon}
+              </span>
+              {!isCollapsed && <span>{link.label}</span>}
             </Link>
           ))}
         </nav>
 
-        <div className="sidebar-footer" style={{ borderTop: "1px solid #463420" }}>
+        <div className="p-4 border-t border-white/5 bg-black/20">
           <button
             onClick={logout}
-            className="btn btn-secondary"
-            style={{ width: "100%", justifyContent: "center", borderColor: "#ef4444", color: "#ef4444", background: "rgba(239, 68, 68, 0.05)" }}
+            className="w-full h-12 rounded-2xl bg-white/5 border border-white/5 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all duration-300 flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest group"
           >
-            <span style={{ fontSize: "1.2rem" }}>🚪</span>
-            <span>{t("master.layout.logout", "Sair")}</span>
+            <span className="text-lg group-hover:rotate-12 transition-transform">🚪</span>
+            {!isCollapsed && <span>{t("master.layout.logout", "Sair")}</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="layout-main" style={{ background: "#0f0a05" }}>
-        <header className="layout-header" style={{ borderBottom: "1px solid #463420", background: "rgba(26, 17, 8, 0.9)" }}>
-          <button className="menu-toggle" onClick={() => setSidebarOpen(true)} style={{ color: "#d4af37" }}>
-            ☰
+      <main className="flex-1 min-h-screen relative overflow-y-auto">
+        <header className="h-20 flex items-center px-8 border-b border-white/5 sticky top-0 bg-black/40 backdrop-blur-xl z-40">
+          <button className="lg:hidden text-white mr-4 p-2" onClick={() => setSidebarOpen(true)}>
+             <span className="text-2xl">☰</span>
           </button>
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "1rem" }}>
-            <span className="badge" style={{ borderColor: "#d4af37", color: "#d4af37", background: "rgba(212, 175, 55, 0.1)" }}>MASTER ADMIN</span>
+          
+          <div className="ml-auto flex items-center gap-6">
+             <div className="bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none">Master Hub</span>
+             </div>
+             <div className="w-10 h-10 rounded-full border border-white/10 bg-slate-900 flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-gradient-to-tr from-slate-800 to-slate-700" title="Profile" />
+             </div>
           </div>
         </header>
 
-        <div className="layout-content">
-          <div className="layout-content-inner">
-            {children}
-          </div>
+        <div className="p-8 lg:p-12 max-w-7xl mx-auto">
+             {children}
         </div>
       </main>
     </div>
