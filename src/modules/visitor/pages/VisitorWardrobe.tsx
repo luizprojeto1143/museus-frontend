@@ -5,6 +5,7 @@ import { User, Shield, Gem, Check, LayoutGrid } from "lucide-react";
 import { Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../auth/AuthContext";
 
 interface VisitorSkin {
     id: string;
@@ -20,17 +21,21 @@ interface VisitorSkin {
 export const VisitorWardrobe: React.FC = () => {
     const { t } = useTranslation();
     const { addToast } = useToast();
+    const { isAuthenticated } = useAuth();
     const [visitorSkins, setVisitorSkins] = useState<VisitorSkin[]>([]);
+    const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [equipping, setEquipping] = useState<string | null>(null);
-
-    // Mock visitor ID - would normally come from auth context
-    const visitorId = localStorage.getItem("visitor_id") || "";
 
     useEffect(() => {
         const loadSkins = async () => {
              try {
-                 const res = await api.get(`/visitors/${visitorId}/skins`);
+                 // Get real visitor ID
+                 const profileRes = await api.get("/visitors/me");
+                 const vid = profileRes.data.id;
+                 setVisitorId(vid);
+
+                 const res = await api.get(`/visitors/${vid}/skins`);
                  setVisitorSkins(res.data);
              } catch (err) {
                  console.error(err);
@@ -38,8 +43,8 @@ export const VisitorWardrobe: React.FC = () => {
                  setLoading(false);
              }
         };
-        if(visitorId) loadSkins();
-    }, [visitorId]);
+        if(isAuthenticated) loadSkins();
+    }, [isAuthenticated]);
 
     const handleEquip = async (skinId: string) => {
         setEquipping(skinId);

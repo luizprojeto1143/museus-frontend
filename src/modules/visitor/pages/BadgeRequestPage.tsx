@@ -4,10 +4,13 @@ import { Mail, MapPin, BadgeCheck, AlertCircle, CheckCircle, ArrowRight } from "
 import { Button, Input } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import { motion } from "framer-motion";
+import { useAuth } from "../../auth/AuthContext";
 
 export const BadgeRequestPage: React.FC = () => {
     const { addToast } = useToast();
+    const { isAuthenticated, tenantId: authTenantId } = useAuth();
     const [visitorData, setVisitorData] = useState<any>(null);
+    const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [formData, setFormData] = useState({
@@ -18,13 +21,15 @@ export const BadgeRequestPage: React.FC = () => {
         addressZip: ""
     });
 
-    const visitorId = localStorage.getItem("visitor_id") || "";
-    const tenantId = localStorage.getItem("tenant_id") || "";
-
     useEffect(() => {
         const loadVisitor = async () => {
             try {
-                const res = await api.get(`/visitors/${visitorId}`);
+                // Get real visitor ID
+                const profileRes = await api.get("/visitors/me");
+                const vid = profileRes.data.id;
+                setVisitorId(vid);
+
+                const res = await api.get(`/visitors/${vid}`);
                 setVisitorData(res.data);
                 setFormData(prev => ({ ...prev, addressName: res.data.name }));
             } catch (err) {
@@ -33,8 +38,8 @@ export const BadgeRequestPage: React.FC = () => {
                 setLoading(false);
             }
         };
-        if(visitorId) loadVisitor();
-    }, [visitorId]);
+        if(isAuthenticated) loadVisitor();
+    }, [isAuthenticated]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,7 +47,7 @@ export const BadgeRequestPage: React.FC = () => {
         try {
             await api.post("/badges", {
                 visitorId,
-                tenantId,
+                tenantId: authTenantId,
                 ...formData
             });
             addToast("Solicitação enviada!", "success");

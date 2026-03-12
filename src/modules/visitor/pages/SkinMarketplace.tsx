@@ -3,7 +3,8 @@ import { api } from "../../../api/client";
 import { Gem, Star, Lock, Info, CheckCircle2, ShoppingCart } from "lucide-react";
 import { Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "../../auth/AuthContext";
 
 interface Skin {
     id: string;
@@ -18,31 +19,37 @@ interface Skin {
 
 export const SkinMarketplace: React.FC = () => {
     const { addToast } = useToast();
+    const { tenantId, isAuthenticated } = useAuth();
     const [skins, setSkins] = useState<Skin[]>([]);
     const [visitorXp, setVisitorXp] = useState(0);
+    const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [buyingId, setBuyingId] = useState<string | null>(null);
-
-    // Mock visitor ID - would normally come from auth context
-    const visitorId = localStorage.getItem("visitor_id") || "";
+    const [showWarning, setShowWarning] = useState<Skin | null>(null);
 
     useEffect(() => {
         const loadMarketplace = async () => {
             try {
+                // 1. Obter o visitorId real através do endpoint /me
+                const profileRes = await api.get("/visitors/me");
+                const vid = profileRes.data.id;
+                setVisitorId(vid);
+
                 const [skinsRes, visitorRes] = await Promise.all([
-                    api.get(`/marketplace?visitorId=${visitorId}`),
-                    api.get(`/visitors/${visitorId}`)
+                    api.get(`/marketplace?visitorId=${vid}`),
+                    api.get(`/visitors/${vid}`)
                 ]);
                 setSkins(skinsRes.data);
                 setVisitorXp(visitorRes.data.xp);
             } catch (err) {
                 console.error(err);
+                addToast("Erro ao carregar marketplace", "error");
             } finally {
                 setLoading(false);
             }
         };
-        if(visitorId) loadMarketplace();
-    }, [visitorId]);
+        if(isAuthenticated) loadMarketplace();
+    }, [isAuthenticated, tenantId]);
 
     const handleBuy = async (skin: Skin) => {
         if (visitorXp < skin.xpCost) {
@@ -56,6 +63,7 @@ export const SkinMarketplace: React.FC = () => {
             addToast("Skin desbloqueada!", "success");
             setVisitorXp(res.data.newXpBalance);
             setSkins(prev => prev.map(s => s.id === skin.id ? { ...s, owned: true } : s));
+            setShowWarning(null);
         } catch (err) {
             addToast("Erro na compra", "error");
         } finally {
@@ -152,7 +160,7 @@ export const SkinMarketplace: React.FC = () => {
                                                 ? "bg-white text-slate-950 hover:bg-yellow-500 hover:text-white shadow-xl shadow-white/5" 
                                                 : "bg-white/5 text-slate-600 cursor-not-allowed border border-white/5"
                                             }`}
-                                            onClick={() => handleBuy(skin)}
+                                            onClick={() => setShowWarning(skin)}
                                             disabled={buyingId === skin.id || visitorXp < skin.xpCost}
                                         >
                                             {buyingId === skin.id ? (
@@ -171,6 +179,52 @@ export const SkinMarketplace: React.FC = () => {
                     );
                 })}
             </div>
+
+            {/* XP TENSION WARNING MODAL */}
+            <AnimatePresence>
+                {showWarning && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-xl">
+                        <motion.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-slate-900 border border-yellow-500/30 p-8 rounded-[40px] max-w-md w-full shadow-2xl shadow-yellow-500/20 relative overflow-hidden"
+                        >
+                            <div className="absolute top-0 right-0 p-8 opacity-5">
+                                <Star size={160} className="text-yellow-500" />
+                            </div>
+
+                            <h2 className="text-2xl font-black text-white mb-4 flex items-center gap-3">
+                                <Info className="text-yellow-500" /> Decisão Estratégica
+                            </h2>
+                            <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                                Ao comprar <span className="text-white font-bold">{showWarning.name}</span>, você gastará <span className="text-yellow-500 font-bold">{showWarning.xpCost.toLocaleString()} XP</span> de forma permanente.
+                            </p>
+                            <div className="bg-yellow-500/5 border border-yellow-500/10 p-4 rounded-2xl mb-8">
+                                <p className="text-xs text-yellow-500/80 font-medium italic">
+                                    "Lembre-se: XP gasto não conta para o Crachá Físico (100k XP)."
+                                </p>
+                            </div>
+
+                            <div className="flex gap-4">
+                                <button 
+                                    className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-white font-black rounded-2x transition-all"
+                                    onClick={() => setShowWarning(null)}
+                                >
+                                    Cancelar
+                                </button>
+                                <button 
+                                    className="flex-1 py-4 bg-yellow-500 hover:bg-yellow-600 text-slate-950 font-black rounded-2xl shadow-xl shadow-yellow-500/20 transition-all"
+                                    onClick={() => handleBuy(showWarning)}
+                                    disabled={buyingId === showWarning.id}
+                                >
+                                    {buyingId === showWarning.id ? "Processando..." : "Confirmar Compra"}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
