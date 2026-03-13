@@ -104,86 +104,110 @@ export const LeaderboardPage: React.FC = () => {
 
     return (
         <div className="leaderboard-container">
-            <header className="leaderboard-page-header">
-                <h1 className="leaderboard-page-title">{t("visitor.leaderboard.title", "Ranking Global")}</h1>
-                <p className="leaderboard-page-subtitle">{t("visitor.leaderboard.subtitle", "Os maiores exploradores da cultura")}</p>
+            <header className="leaderboard-header-premium">
+                <span className="leaderboard-badge">Panteão dos Exploradores</span>
+                <h1 className="leaderboard-title-premium">Ranking Global</h1>
+                <p className="hero-subtitle-premium">Os heróis da cultura que mais desbravaram os segredos do nosso acervo e acumularam o maior legado.</p>
             </header>
 
-            {isGuest && (
-                <div className="my-rank-card-premium" style={{ cursor: "pointer", borderStyle: "dashed", background: "rgba(212, 175, 55, 0.05)" }} onClick={() => navigate("/register")}>
-                    <div className="my-rank-left">
-                        <div className="my-rank-circle">
-                            <span className="my-rank-value">?</span>
+            {isGuest ? (
+                <div className="my-rank-hud-premium cursor-pointer" onClick={() => navigate("/register")}>
+                    <div className="my-rank-info-premium">
+                        <div className="my-rank-number-premium text-muted">?</div>
+                        <div className="my-rank-labels-premium">
+                            <span className="my-rank-top-label">Seu Legado</span>
+                            <span className="my-rank-user-name text-muted">Aguardando Iniciação</span>
                         </div>
-                        <div className="my-rank-info-text">
-                            <span className="my-rank-position-label">{t("visitor.leaderboardpage.vocAindaNoEstNoRanking", `Você ainda não está no ranking`)}</span>
-                            <span className="my-rank-name" style={{ color: "var(--primary-color)" }}>{t("visitor.leaderboardpage.crieSuaContaParaComearAPontuar", `Crie sua conta para começar a pontuar!`)}</span>
-                        </div>
+                    </div>
+                    <div className="my-rank-xp-premium">
+                        <span className="text-gold text-[10px] uppercase font-mono">Crie sua conta para participar</span>
                     </div>
                 </div>
-            )}
-
-            {/* My Rank Card */}
-            {!isGuest && myRank && (
-                <div className="my-rank-card-premium">
-                    <div className="my-rank-left">
-                        <div className="my-rank-circle">
-                            <span className="my-rank-label">RANK</span>
-                            <span className="my-rank-value">#{myRank.rank}</span>
-                        </div>
-                        <div className="my-rank-info-text">
-                            <span className="my-rank-position-label">{t("visitor.leaderboard.myRank", "Sua Posição")}</span>
-                            <span className="my-rank-name">{myRank.name}</span>
+            ) : myRank && (
+                <div className="my-rank-hud-premium">
+                    <div className="my-rank-info-premium">
+                        <div className="my-rank-number-premium">#{myRank.rank}</div>
+                        <div className="my-rank-labels-premium">
+                            <span className="my-rank-top-label">Sua Posição Heroica</span>
+                            <span className="my-rank-user-name">{myRank.name} (Você)</span>
                         </div>
                     </div>
-
-                    <div className="my-rank-right">
-                        <div className="my-rank-xp">{myRank.xp}</div>
-                        <div className="my-rank-xp-label">{t("visitor.leaderboard.xpTotal", "XP TOTAL")}</div>
+                    <div className="my-rank-xp-premium">
+                        <div className="my-rank-xp-val">{myRank.xp}</div>
+                        <span className="my-rank-top-label">XP TOTAL acumularo</span>
                     </div>
                 </div>
             )}
 
             {/* Podium */}
             {entries.length > 0 && (
-                <div className="podium-container">
-                    {entries[1] && renderPodiumItem(entries[1], 2)}
-                    {entries[0] && renderPodiumItem(entries[0], 1)}
-                    {entries[2] && renderPodiumItem(entries[2], 3)}
+                <div className="podium-container-premium">
+                    {/* 2nd Place */}
+                    {entries[1] && (
+                        <div className="podium-item-premium second">
+                            <div className="podium-rank-pill">II</div>
+                            <img 
+                                src={getFullUrl(entries[1].photoUrl) || 'https://via.placeholder.com/80'} 
+                                className="podium-avatar-premium" 
+                                alt={entries[1].name || ''} 
+                            />
+                            <div className="ranking-name-premium">{entries[1].name || 'Anônimo'}</div>
+                            <div className="ranking-xp-premium !text-center">{entries[1].xp} XP</div>
+                        </div>
+                    )}
+
+                    {/* 1st Place */}
+                    {entries[0] && (
+                        <div className="podium-item-premium first">
+                            <div className="podium-rank-pill !bg-gold !text-bg">I</div>
+                            <img 
+                                src={getFullUrl(entries[0].photoUrl) || 'https://via.placeholder.com/80'} 
+                                className="podium-avatar-premium" 
+                                alt={entries[0].name || ''} 
+                            />
+                            <div className="ranking-name-premium !text-3xl">{entries[0].name || 'Anônimo'}</div>
+                            <div className="ranking-xp-premium !text-center !text-gold-hi">{entries[0].xp} XP</div>
+                        </div>
+                    )}
+
+                    {/* 3rd Place */}
+                    {entries[2] && (
+                        <div className="podium-item-premium third">
+                            <div className="podium-rank-pill">III</div>
+                            <img 
+                                src={getFullUrl(entries[2].photoUrl) || 'https://via.placeholder.com/80'} 
+                                className="podium-avatar-premium" 
+                                alt={entries[2].name || ''} 
+                            />
+                            <div className="ranking-name-premium">{entries[2].name || 'Anônimo'}</div>
+                            <div className="ranking-xp-premium !text-center">{entries[2].xp} XP</div>
+                        </div>
+                    )}
                 </div>
             )}
 
             {/* Ranking List */}
-            <div className="ranking-list">
-                {rest.length === 0 && entries.length === 0 ? (
-                    <div className="ranking-empty">
+            <div className="ranking-list-premium mt-10">
+                {rest.length > 0 ? (
+                    rest.map((entry) => (
+                        <div key={entry.id} className={`ranking-row-premium ${entry.id === myRank?.id ? 'is-me' : ''}`}>
+                            <span className="ranking-pos-premium">#{entry.rank}</span>
+                            <img 
+                                src={getFullUrl(entry.photoUrl) || 'https://via.placeholder.com/40'} 
+                                className="ranking-avatar-premium" 
+                                alt={entry.name || ''} 
+                            />
+                            <span className="ranking-name-premium">{entry.name || 'Desbravador Anônimo'}</span>
+                            <span className="ranking-xp-premium">{entry.xp} XP</span>
+                        </div>
+                    ))
+                ) : entries.length === 0 && (
+                    <div className="workslist-empty py-40">
                         <span className="ranking-empty-icon">🏆</span>
-                        <p>{t("visitor.leaderboard.empty", "Nenhum visitante pontuou ainda.")}</p>
+                        <p>Nenhum explorador registrou seu legado ainda.</p>
                     </div>
-                ) : (
-                    rest.map((entry) => renderListItem(entry))
                 )}
             </div>
-
-            {/* Sticky User Rank Bar */}
-            {!isGuest && myRank && (
-                <div className="sticky-rank-bottom">
-                    <div className="sticky-rank-content">
-                        <div className="sticky-rank-left">
-                            <div className="sticky-rank-circle">
-                                #{myRank.rank}
-                            </div>
-                            <div className="sticky-rank-text">
-                                <span className="sticky-rank-label">{t("visitor.leaderboard.myRank", "Sua Posição")}</span>
-                                <span className="sticky-rank-name">{t("common.you", "Você")}</span>
-                            </div>
-                        </div>
-                        <div className="sticky-rank-xp">
-                            {myRank.xp} XP
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

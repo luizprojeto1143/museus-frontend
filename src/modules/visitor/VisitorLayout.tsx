@@ -5,7 +5,9 @@ import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { api } from "../../api/client";
 
 import { useAuth } from "../auth/AuthContext";
-import { WelcomeAnimation } from "./components/WelcomeAnimation";
+import { SplashScreen } from "./components/SplashScreen";
+import { NavPill } from "./components/NavPill";
+import { HUDRPG } from "./components/HUDRPG";
 
 import { GlobalSearch } from "./components/GlobalSearch";
 import { DialerModal } from "./components/DialerModal";
@@ -20,12 +22,14 @@ import { useTerminology } from "../../hooks/useTerminology";
 import { useIsCityMode } from "../auth/TenantContext";
 import { useVisitorTheme } from "./context/VisitorThemeProvider";
 import { InstallGuideModal } from "./components/InstallGuideModal";
+import { useGamification } from "../gamification/context/GamificationContext";
+import { GlobalBackground } from "./components/GlobalBackground";
 
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const location = useLocation();
-  const { logout, name, email, tenantId, isGuest } = useAuth();
+  const { logout, name, email, tenantId, equipamentoId, isGuest } = useAuth();
 
   // Integrated PWA Hook
   const { canInstall, promptInstall, isInstalled } = usePWAInstall();
@@ -48,6 +52,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
+
+  const { currentLevel, stats, progressToNextLevel } = useGamification();
 
   // Fix: Check session storage so it doesn't show on every route change
   const [showWelcome, setShowWelcome] = useState(() => {
@@ -81,9 +87,25 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const { setSpaceTheme } = useVisitorTheme();
 
   useEffect(() => {
-    if (tenantId) {
-      api.get(`/tenants/${tenantId}/settings`)
-        .then(res => {
+    const fetchSettings = async () => {
+      try {
+        if (equipamentoId) {
+          const res = await api.get(`/equipamentos/public/${equipamentoId}`);
+          const equip = res.data;
+          const mergedSettings = {
+            ...equip,
+            primaryColor: equip.corPrimaria || equip.tenant?.primaryColor || "#d4af37",
+            secondaryColor: equip.corSecundaria || equip.tenant?.secondaryColor || "#cd7f32",
+            name: equip.nome,
+          };
+          setSettings(mergedSettings);
+          setSpaceTheme({
+            primaryColor: mergedSettings.primaryColor,
+            secondaryColor: mergedSettings.secondaryColor,
+            theme: "dark"
+          });
+        } else if (tenantId) {
+          const res = await api.get(`/tenants/${tenantId}/settings`);
           setSettings(res.data);
           if (res.data?.primaryColor) {
             setSpaceTheme({
@@ -92,10 +114,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
               theme: "dark"
             });
           }
-        })
-        .catch(console.error);
-    }
-  }, [tenantId, setSpaceTheme]);
+        }
+      } catch (err) {
+        console.error("Error loading settings", err);
+      }
+    };
+
+    fetchSettings();
+  }, [tenantId, equipamentoId, setSpaceTheme]);
 
   // Check if visitor is a teacher
   const [isTeacher, setIsTeacher] = useState(false);
@@ -153,17 +179,11 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
-      {/* AMBIENT GLOWS */}
-      <div className="visitor-ambient-bg">
-        <div className="ambient-glow" style={{ background: settings?.primaryColor || '#D4AF37', top: '-10%', left: '-10%' }} />
-        <div className="ambient-glow" style={{ background: settings?.secondaryColor || '#B5952F', bottom: '-10%', right: '-10%', animationDelay: '-5s' }} />
-      </div>
+      <GlobalBackground />
 
-      {showWelcome && name && email && (
-        <WelcomeAnimation
+      {showWelcome && name && (
+        <SplashScreen
           name={name}
-          email={email}
-          videoUrl={settings?.welcomeVideoUrl}
           onComplete={() => {
             setShowWelcome(false);
             sessionStorage.setItem("hasSeenWelcome", "true");
@@ -171,73 +191,11 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         />
       )}
 
-      <div className={`mobile-overlay ${isMenuOpen ? "open" : ""}`} onClick={() => setIsMenuOpen(false)} />
+      <NavPill />
 
-      <aside className={`layout-sidebar ${isMenuOpen ? "open" : ""}`}>
-        <div className="sidebar-header">
-          <div className="app-brand">
-            <img 
-              src={settings?.logoUrl || "/logo-culturaviva.jpg"} 
-              alt="Logo" 
-              className="app-logo-img" 
-            />
-            <div>
-              <div className="app-title">{settings?.name || "Cultura Viva"}</div>
-              <div className="app-subtitle">{t("visitor.home.subtitle", "Museus & Cidades Históricas")}</div>
-            </div>
-          </div>
-        </div>
-
-        <nav className="sidebar-content">
-          <button
-            onClick={() => { setIsMenuOpen(false); setIsSearchOpen(true); }}
-            className="nav-item sidebar-action-btn"
-          >
-            <span className="nav-icon">🔍</span> {t("visitor.search.title", "Buscar")}
-          </button>
-          
-          <button
-            onClick={() => { setIsMenuOpen(false); setIsDialerOpen(true); }}
-            className="nav-item sidebar-action-btn"
-          >
-            <span className="nav-icon">🔢</span> {t("visitor.dialer.button", "Código")}
-          </button>
-
-          {links.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setIsMenuOpen(false)}
-                className={`nav-item ${isActive ? "active" : ""}`}
-              >
-                {link.icon}
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="sidebar-footer">
-          {shouldShowInstallButton && (
-            <button onClick={handleInstallClick} className="btn btn-primary w-full gap-2">
-              ⬇️ {t("visitor.sidebar.installApp", "Instalar App")}
-            </button>
-          )}
-          <LanguageSwitcher style={{ position: "static" }} />
-          <button onClick={() => navigate("/select-museum")} className="btn btn-secondary w-full text-[10px]">
-            {t("visitor.sidebar.changeMuseum")}
-          </button>
-          <button onClick={logout} className="btn btn-secondary w-full text-[10px] text-red-500 border-red-500/30">
-            {t("visitor.sidebar.logout")}
-          </button>
-        </div>
-      </aside>
-
-      <main className="layout-main">
+      <main className="layout-main-premium">
         {isGuest && (
-          <div className="guest-banner">
+          <div className="guest-banner-premium">
             <span>✨ {t("visitor.layout.VocEstExplorandoComoVisitanteCrieUmaCont", `Explore como visitante ou crie uma conta para ganhar selos!`)}</span>
             <button
               className="guest-banner-btn"
@@ -250,56 +208,18 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           </div>
         )}
 
-        <header className="layout-header">
-          <button className="menu-toggle" onClick={() => setIsMenuOpen(true)}>
-            ☰
-          </button>
-
-          <div className="flex items-center gap-2">
-            {settings?.featureAccessibility !== false && (
-              <div className="flex bg-white/5 rounded-xl p-1 border border-white/5">
-                <button className="h-8 px-3 text-xs font-black hover:bg-white/10 rounded-lg" onClick={decreaseFontSize}>A-</button>
-                <button className="h-8 px-3 text-xs font-black hover:bg-white/10 rounded-lg" onClick={increaseFontSize}>A+</button>
-              </div>
-            )}
-            <button className="menu-toggle lg:hidden" onClick={() => setIsSearchOpen(true)}>🔍</button>
-          </div>
-        </header>
-
-        <div className="layout-content">
-          <div className="layout-content-inner">
-            {children}
-          </div>
+        <div className="layout-content-premium">
+          {children}
         </div>
       </main>
+
+      <HUDRPG />
 
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <DialerModal isOpen={isDialerOpen} onClose={() => setIsDialerOpen(false)} />
       <GlobalAudioPlayer />
       {settings?.featureChatAI !== false && <AiChatWidget />}
       <InstallGuideModal isOpen={showInstallGuide} onClose={() => setShowInstallGuide(false)} />
-
-      <nav className="mobile-bottom-nav">
-        {[
-          { to: "/home", label: "Início", icon: "🏠" },
-          { to: "/scanner", label: "Scan", icon: "📷" },
-          { to: "/mapa", label: "Mapa", icon: "📍" },
-          { to: "/passaporte", label: "Selos", icon: "🎫" },
-        ].map(item => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={`bottom-nav-item ${location.pathname === item.to ? "active" : ""}`}
-          >
-            <span className="bottom-nav-icon">{item.icon}</span>
-            <span className="bottom-nav-label">{item.label}</span>
-          </Link>
-        ))}
-        <button className="bottom-nav-item" onClick={() => setIsMenuOpen(true)}>
-          <span className="bottom-nav-icon">☰</span>
-          <span className="bottom-nav-label">Menu</span>
-        </button>
-      </nav>
     </div>
   );
 };

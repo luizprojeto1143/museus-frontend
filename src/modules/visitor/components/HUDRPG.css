@@ -1,0 +1,119 @@
+.hud {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: 600px;
+  height: 64px;
+  background: var(--surface);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 24px;
+  z-index: 999;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.hud-char {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.hud-avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.hud-lvl {
+  font-family: var(--fm);
+  font-size: 10px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+
+.hud-class {
+  font-family: var(--fd);
+  font-size: 14px;
+  color: var(--cream);
+  white-space: nowrap;
+}
+
+.hud-xp {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hud-xp-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--fm);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.gold-text {
+  color: var(--gold);
+}
+
+.hud-xp-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--faint);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.hud-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-hi));
+  box-shadow: 0 0 10px var(--gold-glow);
+  transition: width 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.hud-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.hud-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--faint);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.hud-btn:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  transform: scale(1.1);
+}
+
+@media (max-width: 640px) {
+  .hud {
+    gap: 12px;
+    padding: 0 12px;
+  }
+  
+  .hud-class {
+    display: none;
+  }
+}

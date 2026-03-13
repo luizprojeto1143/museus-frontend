@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -84,6 +84,8 @@ export const AdminTrailForm: React.FC = () => {
   const [workToAdd, setWorkToAdd] = useState("");
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
+  const [equipamentoId, setEquipamentoId] = useState("");
 
   // Wizard State
   const steps = [
@@ -101,17 +103,22 @@ export const AdminTrailForm: React.FC = () => {
         const worksData = Array.isArray(res.data) ? res.data : (res.data.data || []);
         setAllWorks((worksData as { id: string; title: string }[]).map(w => ({ id: w.id, title: w.title })));
       });
+
+      api.get("/equipamentos").then(res => {
+        setEquipamentos(res.data);
+      });
     }
 
     if (isEdit) {
       api.get(`/trails/${id}`)
         .then(res => {
-          const trail = res.data as { title: string; description: string; active?: boolean; audioUrl?: string; videoUrl?: string; works?: { id: string; title: string }[] };
+          const trail = res.data as { title: string; description: string; active?: boolean; audioUrl?: string; videoUrl?: string; equipamentoId?: string; works?: { id: string; title: string }[] };
           setName(trail.title);
           setDescription(trail.description);
           setActive(trail.active !== false);
           setAudioUrl(trail.audioUrl || "");
           setVideoUrl(trail.videoUrl || "");
+          setEquipamentoId(trail.equipamentoId || "");
           if (trail.works && Array.isArray(trail.works)) {
             setSelectedWorks(trail.works.map(w => ({
               id: w.id,
@@ -190,7 +197,8 @@ export const AdminTrailForm: React.FC = () => {
       audioUrl: audioUrl || null,
       videoUrl: videoUrl || null,
       workIds: selectedWorks.map(w => w.id),
-      tenantId
+      tenantId,
+      equipamentoId: equipamentoId || undefined
     };
 
     try {
@@ -326,6 +334,18 @@ export const AdminTrailForm: React.FC = () => {
                   placeholder={t("admin.trailForm.placeholders.name")}
                   required
                 />
+
+                <Select
+                  label="Equipamento Responsável"
+                  value={equipamentoId}
+                  onChange={e => setEquipamentoId(e.target.value)}
+                  required
+                >
+                  <option value="">Selecione o equipamento...</option>
+                  {equipamentos.map(e => (
+                    <option key={e.id} value={e.id}>{e.nome}</option>
+                  ))}
+                </Select>
 
                 <Textarea
                   label={t("admin.trailForm.labels.description")}

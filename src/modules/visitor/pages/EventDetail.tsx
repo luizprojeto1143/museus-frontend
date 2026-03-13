@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Helmet } from "react-helmet-async";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import {
-  MapPin, Calendar, Share2,
-  User, CheckCircle, Video, ArrowLeft, Loader2, X, Ticket as TicketIcon, Info, Star
+  Calendar, Share2,
+  User, Video, ArrowLeft, X, MapPin, Star
 } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { getFullUrl } from "../../../utils/url";
-import { Button, Input, Select, Textarea } from "../../../components/ui";
+import { VideoPlayer } from "../../../components/common/VideoPlayer";
 import { useToast } from "../../../contexts/ToastContext";
+import { motion, AnimatePresence } from "framer-motion";
 import "./EventDetail.css";
 
 type Ticket = {
@@ -53,7 +53,6 @@ type EventDetailType = {
   galleryUrls?: string[];
   tenant?: { name: string };
   audioUrl?: string | null;
-  // Workshop
   type?: string;
   instructor?: string;
   materials?: string;
@@ -76,6 +75,7 @@ export const EventDetail: React.FC = () => {
   const [selectedTicketId, setSelectedTicketId] = useState<string>("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [paymentData, setPaymentData] = useState<{ pixQrCode?: string; pixPayload?: string; invoiceUrl?: string } | null>(null);
 
   const fetchEventData = useCallback(async () => {
     if (id) {
@@ -98,9 +98,6 @@ export const EventDetail: React.FC = () => {
         setEvent({
           ...evData,
           audioUrl: getFullUrl(evData.audioUrl),
-          type: evData.type,
-          instructor: evData.instructor,
-          materials: evData.materials
         });
         setTickets(tickRes.data);
         if (attRes.data?.attended) setAttendance(attRes.data);
@@ -119,7 +116,6 @@ export const EventDetail: React.FC = () => {
     api.get(`/favorites/check?type=event&id=${id}`)
       .then(res => setIsFavorite(res.data.isFavorite))
       .catch(err => console.error("Error checking favorite status", err));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isGuest]);
 
   const toggleFavorite = async () => {
@@ -139,8 +135,6 @@ export const EventDetail: React.FC = () => {
       console.error("Erro ao favoritar", err);
     }
   };
-
-  const [paymentData, setPaymentData] = useState<{ pixQrCode?: string; pixPayload?: string; invoiceUrl?: string } | null>(null);
 
   const handleRegister = async () => {
     if (!selectedTicketId || !id) {
@@ -171,19 +165,17 @@ export const EventDetail: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="event-loading flex flex-col items-center justify-center p-20 gap-4">
-      <Loader2 className="animate-spin text-blue-500" size={48} />
-      <p className="text-slate-500 font-medium">Carregando detalhes do evento...</p>
+    <div className="flex justify-center p-40">
+       <div className="splash-loader-fill h-1 w-40"></div>
     </div>
   );
 
   if (!event) return (
-    <div className="event-error p-20 text-center">
-      <Info className="mx-auto text-slate-300 mb-4" size={64} />
-      <h2 className="text-2xl font-bold text-slate-400">{t("visitor.eventdetail.eventoNoEncontrado", `Evento não encontrado`)}</h2>
-      <Button onClick={() => navigate('/eventos')} variant="outline" className="mt-6 mx-auto w-auto px-8">
-        Voltar para Eventos
-      </Button>
+    <div className="work-error p-20 text-center">
+      <h2 className="text-2xl font-fd text-gold-hi mb-6">Espetáculo não encontrado</h2>
+      <button onClick={() => navigate('/eventos')} className="gallery-cta">
+        Voltar para Agenda
+      </button>
     </div>
   );
 
@@ -192,390 +184,227 @@ export const EventDetail: React.FC = () => {
   });
 
   return (
-    <div className="event-detail-container bg-[#0a0a0c]">
-      <Helmet>
-        <title>{event.title} | Museus</title>
-        <meta name="description" content={event.description?.substring(0, 150)} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Evento: ${event.title}`} />
-        <meta property="og:description" content={event.description?.substring(0, 150)} />
-        <meta property="og:image" content={event.coverImageUrl} />
-        <meta property="og:url" content={window.location.href} />
-      </Helmet>
-
-      {/* Cover Image */}
-      <div className="event-cover group">
+    <motion.div 
+      className="event-detail-container"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <header className="event-hero-premium">
         <img
           src={event.coverImageUrl || "https://images.unsplash.com/photo-1540575467063-178a50c2df87"}
-          className="event-cover-image"
+          className="event-hero-img-premium"
           alt={event.title}
         />
-        <div className="event-cover-gradient"></div>
-        <button onClick={() => navigate(-1)} className="event-back-btn backdrop-blur-md bg-black/20 hover:bg-black/40 transition-colors">
-          <ArrowLeft size={16} /> {t("common.back")}
+        <div className="event-hero-overlay"></div>
+        <button onClick={() => navigate(-1)} className="action-btn-premium !absolute top-8 left-8">
+          <ArrowLeft size={16} />
         </button>
-      </div>
+      </header>
 
-      <div className="event-main-card">
-        <div className="event-card-inner">
-          {/* Header Info */}
-          <div className="event-header">
-            <div>
-              <div className="flex items-center gap-3">
-                <span className={`event-type-badge ${event.isOnline ? 'online' : 'presencial'}`}>
-                  {event.isOnline ? "Evento Online" : (
-                    event.type === 'WORKSHOP' ? "Oficina Presencial" :
-                      event.type === 'EXHIBITION' ? "Exposição" : "Presencial"
-                  )}
-                </span>
-
-                <button
-                  onClick={toggleFavorite}
-                  className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                  title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                >
-                  <Star size={18} fill={isFavorite ? "#d4af37" : "none"} color={isFavorite ? "#d4af37" : "white"} />
-                </button>
-              </div>
-              <h1 className="event-title text-4xl md:text-5xl font-black mt-4">{event.title}</h1>
-              {event.producerName && (
-                <p className="event-producer text-blue-400 mt-2 font-medium">
-                  Organizado por <strong className="text-white">{event.producerName}</strong>
-                </p>
-              )}
-            </div>
-
-            <div className="event-date-card bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-4">
-              <div className="bg-blue-500/10 p-3 rounded-xl">
-                <Calendar size={28} className="text-blue-400" />
-              </div>
-              <div className="text-center md:text-left">
-                <p className="event-date-label text-slate-500 text-xs font-bold uppercase tracking-widest">Data e Hora</p>
-                <p className="event-date-value text-white font-bold">{formatDate(event.startDate)}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="event-content-grid mt-12">
-            <div className="event-main-content space-y-12">
-              {/* Description */}
-              <div className="bg-white/5 p-8 rounded-3xl border border-white/5">
-                <h3 className="event-section-title text-xl font-bold mb-6 flex items-center gap-2">
-                  <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
-                  Sobre o Evento
-                </h3>
-                <div className="event-description text-slate-400 leading-relaxed text-lg">
-                  {event.description || "Sem descrição disponível."}
-                </div>
-              </div>
-
-              {/* AUDIO GUIDE */}
-              <NarrativeAudioGuide
-                audioUrl={event.audioUrl}
-                title={event.title}
-              />
-
-              {/* Producer */}
-              {event.producerDescription && (
-                <div className="event-producer-section bg-gradient-to-br from-indigo-500/5 to-transparent p-8 rounded-3xl border border-white/5">
-                  <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><User size={20} className="text-indigo-400" /> Sobre o Produtor</h3>
-                  <p className="text-slate-400 leading-relaxed">{event.producerDescription}</p>
-                </div>
-              )}
-
-              {/* Workshop Details */}
-              {(event.type === 'WORKSHOP' && (event.instructor || event.materials)) && (
-                <div className="bg-purple-500/5 p-8 rounded-3xl border border-purple-500/10">
-                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-purple-400">
-                    <div className="w-1.5 h-6 bg-purple-500 rounded-full" />
-                    Detalhes da Oficina
-                  </h3>
-                  <div className="space-y-6">
-                    {event.instructor && (
-                      <div>
-                        <p className="text-sm font-bold text-purple-300 uppercase tracking-widest mb-1">Instrutor / Facilitador</p>
-                        <p className="text-white text-lg">{event.instructor}</p>
-                      </div>
-                    )}
-                    {event.materials && (
-                      <div>
-                        <p className="text-sm font-bold text-purple-300 uppercase tracking-widest mb-1">{t("visitor.eventdetail.materiaisNecessrios", `Materiais Necessários`)}</p>
-                        <p className="text-slate-300">{event.materials}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Gallery */}
-              {event.galleryUrls && event.galleryUrls.length > 0 && (
-                <div className="event-gallery">
-                  <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                    <div className="w-1.5 h-6 bg-purple-500 rounded-full" />
-                    Momentos & Galeria
-                  </h3>
-                  <div className="event-gallery-grid">
-                    {event.galleryUrls.map((url, idx) => (
-                      <div key={idx} className="event-gallery-item group overflow-hidden rounded-2xl aspect-video border border-white/10">
-                        <img src={url} alt={`Galeria ${idx}`} className="group-hover:scale-105 transition-transform duration-500 object-cover w-full h-full" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="event-sidebar space-y-6">
-              {/* Location / Map */}
-              <div className="event-location-card bg-white/5 p-8 rounded-3xl border border-white/5">
-                <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-                  {event.isOnline ? <Video size={20} className="text-blue-400" /> : <MapPin size={20} className="text-red-400" />}
-                  {event.isOnline ? "Onde assistir" : "Localização"}
-                </h3>
-
-                {event.isOnline ? (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-white/5 rounded-2xl border border-white/5">
-                      <span className="text-slate-500 text-sm font-medium">Plataforma</span>
-                      <span className="text-white font-bold">{event.platform || "Zoom/Meet"}</span>
-                    </div>
-                    {attendance ? (
-                      <Button onClick={() => window.open(event.meetingLink, '_blank')} className="w-full py-6 text-lg rounded-2xl">
-                        Acessar Transmissão
-                      </Button>
-                    ) : (
-                      <div className="event-online-notice p-4 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 rounded-xl text-center text-sm font-medium">{t("visitor.eventdetail.linkDeAcessoSerLiberadoApsAInscrio", `
-                        Link de acesso será liberado após a inscrição
-                      `)}</div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-white font-bold text-lg">{event.location}</p>
-                      {event.address && <p className="text-slate-400 text-sm mt-1">{event.address}, {event.number}</p>}
-                      {event.city && <p className="text-slate-500 text-xs mt-0.5">{event.city} - {event.state}</p>}
-                    </div>
-                    <div className="event-map-placeholder aspect-video bg-black/40 rounded-2xl flex flex-col items-center justify-center border border-white/5 text-slate-500 text-xs gap-2">
-                      <MapPin size={24} className="opacity-20" />
-                      Mapa Indisponível (Modo Demo)
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Share */}
-              <Button variant="outline" className="w-full py-6 rounded-2xl border-white/10 hover:bg-white/5" leftIcon={<Share2 size={18} />}>
-                Indicar para um amigo
-              </Button>
-            </div>
-          </div>
+      <div className="event-header-premium">
+        <span className="event-badge-premium">
+           {event.isOnline ? "Transmissão Digital" : (event.type === 'WORKSHOP' ? "Oficina Cultural" : "Espetáculo Presencial")}
+        </span>
+        <h1 className="event-title-premium">{event.title}</h1>
+        
+        <div className="flex items-center gap-4 mt-6">
+           <div className="flex items-center gap-2 bg-gold-dim border border-gold-glow px-4 py-2 rounded-full">
+              <Calendar size={16} className="text-gold" />
+              <span className="font-fd text-white">{formatDate(event.startDate)}</span>
+           </div>
+           
+           <button 
+             onClick={toggleFavorite}
+             className={`action-btn-premium ${isFavorite ? 'active' : ''}`}
+           >
+             <Star size={18} fill={isFavorite ? "currentColor" : "none"} />
+           </button>
+           
+           <button className="action-btn-premium">
+              <Share2 size={18} />
+           </button>
         </div>
       </div>
 
-      {/* Sticky Bottom Bar */}
-      <div className="event-sticky-footer fixed bottom-0 left-0 right-0 z-50 p-4 animate-slideUp">
-        <div className="event-footer-inner max-w-2xl mx-auto bg-white/10 backdrop-blur-xl border border-white/10 p-4 rounded-[2rem] flex justify-between items-center shadow-2xl">
-          <div className="event-price-info px-4">
-            <p className="event-price-label text-[10px] uppercase font-black tracking-tighter text-slate-500">Valor Inicial</p>
-            <p className="event-price-value text-2xl font-black text-white">
-              {tickets.length > 0 ? (Math.min(...tickets.map(t => Number(t.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(t => Number(t.price)))}`) : 'Indisponível'}
-            </p>
+      <div className="px-10">
+        <div className="event-editorial-grid">
+          <main className="event-main-premium">
+            <section className="work-body-premium">
+               {event.description || "Informaçes em breve."}
+            </section>
+
+            <NarrativeAudioGuide audioUrl={event.audioUrl} title={event.title} />
+
+            {event.galleryUrls && event.galleryUrls.length > 0 && (
+              <div className="related-section-premium !mt-0">
+                <span className="sidebar-label-premium">Galeria do Espetáculo</span>
+                <div className="related-grid-premium">
+                  {event.galleryUrls.map((url, idx) => (
+                    <div key={idx} className="related-card-premium overflow-hidden aspect-video">
+                      <img src={url} alt={`Galeria ${idx}`} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </main>
+
+          <aside className="work-sidebar-premium">
+            <div className="sidebar-card-premium">
+               <span className="sidebar-label-premium">{event.isOnline ? "Acesso" : "Palco"}</span>
+               <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                     {event.isOnline ? <Video className="text-gold" size={20} /> : <MapPin className="text-gold" size={20} />}
+                     <span className="font-fd text-white">{event.location || (event.isOnline ? "Ambiente Digital" : "Galeria Principal")}</span>
+                  </div>
+                  {!event.isOnline && event.address && (
+                    <p className="text-muted text-sm">{event.address}, {event.number} - {event.city}</p>
+                  )}
+               </div>
+            </div>
+
+            {event.producerName && (
+               <div className="sidebar-card-premium">
+                  <span className="sidebar-label-premium">Curadoria & Produção</span>
+                  <div className="flex items-center gap-3">
+                     <div className="w-10 h-10 rounded-full bg-gold-dim border border-gold-glow flex items-center justify-center">
+                        <User size={18} className="text-gold" />
+                     </div>
+                     <span className="font-fd text-white">{event.producerName}</span>
+                  </div>
+               </div>
+            )}
+          </aside>
+        </div>
+      </div>
+
+      <div className="event-footer-premium">
+        <motion.div 
+           className="event-footer-bar"
+           initial={{ y: 100 }}
+           animate={{ y: 0 }}
+        >
+          <div className="flex flex-col">
+            <span className="font-fm text-[10px] uppercase text-gold">Ingressos a partir de</span>
+            <span className="event-footer-price">
+              {tickets.length > 0 ? (Math.min(...tickets.map(t => Number(t.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(t => Number(t.price)))}`) : '---'}
+            </span>
           </div>
 
           {attendance ? (
-            <div className="event-registered-badge bg-green-500/20 text-green-400 border border-green-500/30 px-8 py-4 rounded-2xl font-black flex items-center gap-2">
-              <CheckCircle size={20} /> INSCRITO
+            <div className="bg-gold-dim border border-gold-glow px-10 py-4 rounded-full font-fm text-[12px] uppercase text-gold">
+               Presença Confirmada
             </div>
           ) : (
-            <Button
+            <button
               onClick={() => setIsCheckoutOpen(true)}
-              className="event-cta-btn px-10 py-5 rounded-2xl text-lg font-black shadow-xl shadow-blue-600/20"
+              className="gallery-cta !w-auto !px-12"
             >
-              Garantir Vaga
-            </Button>
+              Garantir Acesso
+            </button>
           )}
-        </div>
+        </motion.div>
       </div>
 
-      {/* Checkout Modal */}
-      {isCheckoutOpen && (
-        <div className="event-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-fadeIn">
-          <div className="event-modal bg-[#0f172a] border border-white/10 w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-zoomIn flex flex-col max-h-[90vh]">
-            <div className="event-modal-header p-8 border-b border-white/10 flex justify-between items-center">
-              <div>
-                <h3 className="text-2xl font-black text-white">Ingressos</h3>
-                <p className="text-slate-500 text-sm">{t("visitor.eventdetail.selecioneSuaModalidadeDeParticipao", `Selecione sua modalidade de participação`)}</p>
-              </div>
-              <button onClick={() => setIsCheckoutOpen(false)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
-                <X size={20} />
+      <AnimatePresence>
+        {isCheckoutOpen && (
+          <div className="modal-backdrop-premium bg-bg/95 backdrop-blur-xl">
+            <motion.div 
+              className="bg-surface border border-gold-glow p-10 rounded-[40px] max-w-2xl w-full max-h-[85vh] overflow-y-auto relative"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <button 
+                 onClick={() => { setIsCheckoutOpen(false); setPaymentData(null); }} 
+                 className="absolute top-8 right-8 text-muted hover:text-white"
+              >
+                <X size={24} />
               </button>
-            </div>
 
-            <div className="event-modal-body p-8 overflow-y-auto space-y-10 custom-scrollbar">
+              <h2 className="text-3xl font-fd text-gold-hi mb-2">Reserva de Entrada</h2>
+              <p className="text-muted text-sm font-fb mb-10">Escolha sua modalidade de participação neste evento cultural.</p>
+
               {paymentData ? (
-                <div className="payment-checkout-area space-y-8 animate-fadeIn">
-                  <div className="text-center space-y-2">
-                    <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-400">
-                      <TicketIcon size={32} />
-                    </div>
-                    <h4 className="text-xl font-black text-white">Finalize seu Pagamento</h4>
-                    <p className="text-slate-500 text-sm">Escaneie o QR Code abaixo para confirmar sua vaga</p>
+                <div className="space-y-8 text-center">
+                  <div className="p-8 bg-white rounded-[40px] inline-block shadow-2xl">
+                    <img src={`data:image/png;base64,${paymentData.pixQrCode}`} alt="QR Code" className="w-48 h-48" />
                   </div>
-
-                  <div className="flex flex-col items-center gap-6">
-                    {paymentData.pixQrCode && (
-                      <div className="p-4 bg-white rounded-[2rem] shadow-2xl">
-                        <img src={`data:image/png;base64,${paymentData.pixQrCode}`} alt="Pix QR Code" className="w-48 h-48" />
-                      </div>
-                    )}
-
-                    <div className="w-full space-y-3">
-                      <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 text-center">Pix Copia e Cola</p>
-                      <div className="flex gap-2">
-                        <input
-                          readOnly
-                          value={paymentData.pixPayload || ''}
-                          className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs font-mono text-slate-400"
-                        />
-                        <Button
-                          onClick={() => {
-                            navigator.clipboard.writeText(paymentData.pixPayload || '');
-                            addToast("Código copiado!", "success");
-                          }}
-                          className="px-4"
+                  
+                  <div className="space-y-4">
+                     <p className="font-fd text-white text-xl">Confirmação via PIX</p>
+                     <p className="text-muted text-sm">Copie o código abaixo para finalizar a transação no seu banco.</p>
+                     
+                     <div className="flex gap-2 bg-bg2 p-4 rounded-2xl border border-border">
+                        <input readOnly value={paymentData.pixPayload || ''} className="bg-transparent border-none text-[10px] text-muted outline-none flex-1 font-mono" />
+                        <button 
+                           onClick={() => navigator.clipboard.writeText(paymentData.pixPayload || '')}
+                           className="text-gold font-fm text-[10px] uppercase"
                         >
-                          Copiar
-                        </Button>
-                      </div>
-                    </div>
-
-                    <a
-                      href={paymentData.invoiceUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-blue-400 text-xs font-bold hover:underline"
-                    >
-                      Ver fatura completa no Asaas
-                    </a>
+                           Copiar
+                        </button>
+                     </div>
                   </div>
-
-                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl text-[11px] text-yellow-500/80 leading-relaxed">
-                    <strong>{t("visitor.eventdetail.ateno", `Atenção:`)}</strong> Após o pagamento, sua inscrição será confirmada automaticamente. Você receberá um e-mail com o seu ingresso assim que o sistema processar a transação.
-                  </div>
+                  
+                  <button onClick={() => { setIsCheckoutOpen(false); setPaymentData(null); }} className="gallery-cta w-full">Finalizar</button>
                 </div>
               ) : (
-                <>
-                  {/* Ticket Selection */}
+                <div className="space-y-8">
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
-                      <TicketIcon size={14} />
-                      Opções Disponíveis
-                    </div>
-                    <div className="grid grid-cols-1 gap-3">
-                      {tickets.map(t => (
-                        <button
-                          key={t.id}
-                          onClick={() => setSelectedTicketId(t.id)}
-                          className={`
-                                flex items-center justify-between p-6 rounded-3xl border transition-all text-left
-                                ${selectedTicketId === t.id ? 'bg-blue-600/20 border-blue-500 ring-4 ring-blue-500/10' : 'bg-white/5 border-white/5 hover:border-white/20'}
-                            `}
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${selectedTicketId === t.id ? 'border-blue-500 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'border-white/20'}`}>
-                              {selectedTicketId === t.id && <div className="w-2 h-2 bg-white rounded-full" />}
-                            </div>
-                            <div>
-                              <p className={`font-black text-lg ${selectedTicketId === t.id ? 'text-white' : 'text-slate-300'}`}>{t.name}</p>
-                              <p className="text-xs text-slate-500 font-medium">Restam {t.quantity - t.sold} unidades</p>
-                            </div>
-                          </div>
-                          <div className={`text-xl font-black ${selectedTicketId === t.id ? 'text-white' : 'text-slate-400'}`}>
-                            {Number(t.price) === 0 ? "FREE" : `R$ ${Number(t.price)}`}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
+                    {tickets.map(t => (
+                      <div 
+                        key={t.id} 
+                        onClick={() => setSelectedTicketId(t.id)}
+                        className={`event-ticket-card-premium ${selectedTicketId === t.id ? 'selected' : ''}`}
+                      >
+                        <div className="flex flex-col">
+                           <span className="font-fd text-white text-xl">{t.name}</span>
+                           <span className="text-muted text-xs uppercase tracking-widest">{t.quantity - t.sold} disponíveis</span>
+                        </div>
+                        <span className="font-fd text-2xl text-gold-hi">
+                           {Number(t.price) === 0 ? "FREE" : `R$ ${t.price}`}
+                        </span>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* Dynamic Form Questions */}
-                  {event?.customFormSchema && event.customFormSchema.length > 0 && (
-                    <div className="event-form-questions space-y-6">
-                      <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-widest text-blue-500">
-                        <User size={14} />
-                        Informações Adicionais
-                      </div>
-                      <div className="space-y-5">
-                        {event.customFormSchema.map((field, idx) => (
-                          <div key={idx} className="event-form-group">
-                            {field.type === 'textarea' ? (
-                              <Textarea
-                                label={`${field.label}${field.required ? ' *' : ''}`}
-                                rows={3}
-                                value={answers[field.label] || ''}
+                  {event.customFormSchema && event.customFormSchema.length > 0 && (
+                    <div className="space-y-6 pt-6 border-t border-border">
+                      <span className="sidebar-label-premium">Dados Necessários</span>
+                      {event.customFormSchema.map((field, idx) => (
+                        <div key={idx} className="flex flex-col gap-2">
+                           <label className="text-xs font-fm uppercase text-muted">{field.label}</label>
+                           {field.type === 'textarea' ? (
+                             <textarea 
+                                className="bg-bg2 border border-border rounded-xl p-4 text-white font-fb focus:border-gold outline-none" 
+                                rows={3} 
                                 onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
-                                placeholder="Descreva aqui..."
-                              />
-                            ) : field.type === 'select' ? (
-                              <Select
-                                label={`${field.label}${field.required ? ' *' : ''}`}
-                                value={answers[field.label] || ''}
+                             />
+                           ) : (
+                             <input 
+                                className="bg-bg2 border border-border rounded-xl p-4 text-white font-fb focus:border-gold outline-none" 
+                                type="text" 
                                 onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
-                              >
-                                <option value="">Selecione...</option>
-                                {field.options?.map((opt, i) => <option key={i} value={opt}>{opt}</option>)}
-                              </Select>
-                            ) : (
-                              <Input
-                                label={`${field.label}${field.required ? ' *' : ''}`}
-                                type="text"
-                                value={answers[field.label] || ''}
-                                onChange={e => setAnswers({ ...answers, [field.label]: e.target.value })}
-                                placeholder="Clique para digitar"
-                              />
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                             />
+                           )}
+                        </div>
+                      ))}
                     </div>
                   )}
-                </>
-              )}
-            </div>
 
-            <div className="event-modal-footer p-8 border-t border-white/10 flex gap-4 bg-[#0f172a] sticky bottom-0">
-              {paymentData ? (
-                <Button
-                  onClick={() => {
-                    setIsCheckoutOpen(false);
-                    setPaymentData(null);
-                    fetchEventData();
-                  }}
-                  className="w-full py-4 rounded-2xl font-black text-lg bg-white/10 text-white hover:bg-white/20"
-                >
-                  Entendi, fechar
-                </Button>
-              ) : (
-                <>
-                  <Button onClick={() => setIsCheckoutOpen(false)} variant="outline" className="flex-1 py-4 border-white/10 text-slate-400 hover:bg-white/5 rounded-2xl">
-                    Cancelar
-                  </Button>
-                  <Button
+                  <button 
+                    className="gallery-cta w-full !h-16"
                     onClick={handleRegister}
                     disabled={submitting}
-                    className="flex-[2] py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-500/20"
-                    leftIcon={submitting ? <Loader2 className="animate-spin" size={18} /> : undefined}
                   >
-                    {submitting ? "Confirmando..." : "Confirmar Inscrição"}
-                    {!submitting && <CheckCircle size={18} className="ml-1" />}
-                  </Button>
-                </>
+                    {submitting ? "Processando..." : "Confirmar Inscrição"}
+                  </button>
+                </div>
               )}
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };

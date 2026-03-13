@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { ArrowRight, Search, SlidersHorizontal } from "lucide-react";
+import { getFullUrl } from "../../../utils/url";
 import { useWorks } from "../hooks/useWorks";
 import { motion, AnimatePresence } from "framer-motion";
 import "./WorksList.css";
@@ -32,6 +33,10 @@ export const WorksList: React.FC = () => {
     visible: { y: 0, opacity: 1 }
   };
 
+  const [filter, setFilter] = React.useState("all");
+  const filteredWorks = filter === "all" ? works : works.filter((w: any) => w.category?.name?.toLowerCase() === filter.toLowerCase());
+  const categories = ["all", ...new Set(works.map((w: any) => w.category?.name).filter(Boolean))];
+
   return (
     <motion.div 
       className="workslist-container"
@@ -39,82 +44,73 @@ export const WorksList: React.FC = () => {
       initial="hidden"
       animate="visible"
     >
-      <header className="workslist-header flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-           <h1 className="workslist-title">Acervo Digital</h1>
-           <p className="workslist-subtitle">
-             Explore uma curadoria exclusiva de obras que definem a nossa identidade cultural.
-           </p>
-        </div>
+      <header className="workslist-header-premium">
+        <span className="workslist-badge">Curadoria Digital</span>
+        <h1 className="workslist-title-premium">Acervo de Relíquias</h1>
+        <p className="hero-subtitle-premium">
+          Explore uma jornada visual através das décadas, onde cada obra conta uma parte da nossa história sagrada.
+        </p>
         
-        {/* GALERY ACTIONS */}
-        <div className="flex gap-2">
-           <button className="h-12 w-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-              <Search size={20} />
-           </button>
-           <button className="h-12 px-6 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3 text-sm font-bold text-slate-400 hover:text-white hover:bg-white/10 transition-all">
-              <SlidersHorizontal size={18} />
-              Filtrar
-           </button>
+        <div className="workslist-controls">
+          <div className="workslist-filter-pill">
+            {categories.map((cat: any) => (
+              <button 
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`filter-btn ${filter === cat ? 'active' : ''}`}
+              >
+                {cat === 'all' ? 'Tudo' : cat}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6].map(i => (
-            <div key={i} className="workslist-skeleton-card"></div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-20">
+           <div className="splash-loader-fill h-1 w-full max-w-md mx-auto"></div>
         </div>
-      ) : works.length === 0 ? (
-        <div className="workslist-empty">
+      ) : filteredWorks.length === 0 ? (
+        <div className="workslist-empty py-40">
           <div className="text-6xl mb-6 opacity-30">🖼️</div>
-          <h3 className="text-xl font-bold text-white mb-2">{t("visitor.works.emptyTitle", "Galeria em Curadoria")}</h3>
-          <p className="text-slate-400 max-w-sm mx-auto">Em breve novas obras estarão disponíveis para sua exploração digital.</p>
+          <h3 className="text-2xl font-fd text-white mb-2">Vazio Silencioso</h3>
+          <p className="text-muted max-w-sm mx-auto">Nenhuma obra encontrada nesta categoria no momento.</p>
         </div>
       ) : (
-        <div className="workslist-grid">
-          <AnimatePresence>
-            {works.map((work: any) => (
-              <motion.article 
-                key={work.id} 
-                className="workslist-card group"
-                variants={itemVariants}
-                whileHover={{ y: -10 }}
+        <div className="workslist-grid-premium">
+          <AnimatePresence mode="popLayout">
+            {filteredWorks.map((work: any) => (
+              <motion.div
+                key={work.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4 }}
               >
-                <div className="overflow-hidden relative">
-                   {work.imageUrl ? (
-                     <img
-                       src={work.imageUrl}
-                       alt={work.title}
-                       className="workslist-card-image"
-                     />
-                   ) : (
-                     <div className="workslist-card-placeholder">
-                       <span className="opacity-20 text-4xl">🎨</span>
-                     </div>
-                   )}
-                   <div className="absolute top-4 right-4 h-8 px-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-full flex items-center text-[10px] font-black uppercase tracking-widest text-white/80">
+                <Link to={`/obras/${work.id}`} className="work-card-premium">
+                  <div className="work-visual-premium">
+                    <img
+                      src={getFullUrl(work.imageUrl)}
+                      alt={work.title}
+                      className="work-img-premium"
+                    />
+                    <div className="work-category-tag">
                       {work.category?.name || 'Geral'}
-                   </div>
-                </div>
-
-                <div className="workslist-card-content">
-                  <h2 className="workslist-card-title">{work.title}</h2>
-                  <p className="workslist-card-artist">
-                    {work.artist || 'Artista Desconhecido'} {work.year ? `• ${work.year}` : ''}
-                  </p>
-                  
-                  <div className="workslist-card-meta">
-                    <span className="workslist-chip">Destaque</span>
-                    {work.accessible && <span className="workslist-chip">Acessível</span>}
+                    </div>
                   </div>
-                  
-                  <Link to={`/obras/${work.id}`} className="workslist-card-btn group">
-                    Explorar Obra
-                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              </motion.article>
+
+                  <div className="work-content-premium">
+                    <span className="work-artist-premium">{work.artist || 'Artista Desconhecido'}</span>
+                    <h2 className="work-title-premium">{work.title}</h2>
+                    <div className="work-footer-premium">
+                       <span className="work-explore-btn">
+                          Explorar Detalhes <ArrowRight size={14} />
+                       </span>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
             ))}
           </AnimatePresence>
         </div>

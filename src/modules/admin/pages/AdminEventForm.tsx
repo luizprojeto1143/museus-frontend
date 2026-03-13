@@ -46,6 +46,7 @@ export const AdminEventForm: React.FC = () => {
 
   const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
   const [spaces, setSpaces] = useState<{ id: string, name: string }[]>([]);
+  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
   const [tickets, setTickets] = useState<TicketData[]>([]);
 
   // Form State
@@ -80,6 +81,7 @@ export const AdminEventForm: React.FC = () => {
     minMinutesForCertificate: "",
     certificateRequiresSurvey: false,
     spaceId: "",
+    equipamentoId: "",
   });
 
   // Load Data
@@ -91,6 +93,10 @@ export const AdminEventForm: React.FC = () => {
 
       api.get("/spaces", { params: { tenantId } })
         .then(res => setSpaces(res.data))
+        .catch(console.error);
+
+      api.get("/equipamentos")
+        .then(res => setEquipamentos(res.data))
         .catch(console.error);
     }
 
@@ -128,6 +134,7 @@ export const AdminEventForm: React.FC = () => {
             minMinutesForCertificate: data.minMinutesForCertificate || "",
             certificateRequiresSurvey: data.certificateRequiresSurvey || false,
             spaceId: data.spaceId || "",
+            equipamentoId: data.equipamentoId || "",
           });
 
           // Fetch tickets
@@ -220,6 +227,7 @@ export const AdminEventForm: React.FC = () => {
         materials: formData.materials || undefined,
         certificateRequiresSurvey: formData.certificateRequiresSurvey,
         tenantId,
+        equipamentoId: formData.equipamentoId || undefined,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: formData.endDate ? new Date(formData.endDate).toISOString() : null,
         isOnline: formData.format === 'ONLINE',
@@ -437,11 +445,23 @@ export const AdminEventForm: React.FC = () => {
                   <label className="form-label">Nome do Evento</label>
                   <input
                     value={formData.title}
-                    onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Ex: Festival de Inverno 2024"
-                    required
                     className="input w-full"
                   />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Equipamento Responsável</label>
+                  <select
+                    value={formData.equipamentoId}
+                    onChange={e => setFormData({ ...formData, equipamentoId: e.target.value })}
+                    required
+                    className="input w-full"
+                  >
+                    <option value="">Selecione o equipamento...</option>
+                    {equipamentos.map(e => (
+                      <option key={e.id} value={e.id}>{e.nome}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

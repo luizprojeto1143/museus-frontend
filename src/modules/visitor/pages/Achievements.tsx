@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { useAuth } from "../../auth/AuthContext";
 import { Trophy, Lock, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
 import "./Achievements.css";
 
 export default function Achievements() {
@@ -20,124 +21,91 @@ export default function Achievements() {
 
   if (loading) {
     return (
-      <div className="achievements-loading">
-        <div className="spinner-gold"></div>
-        <p>{t("common.loading")}</p>
+      <div className="flex justify-center p-40">
+        <div className="splash-loader-fill h-1 w-40"></div>
       </div>
     );
   }
 
   if (isGuest) {
     return (
-      <div className="achievements-container" style={{ textAlign: "center", padding: "4rem 2rem" }}>
-        <div style={{ fontSize: "5rem", marginBottom: "1.5rem" }}>🏆</div>
-        <h1 className="achievements-title" style={{ marginBottom: "1rem" }}>{t("visitor.achievements.galeriaDeTrofus", `Galeria de Troféus`)}</h1>
-        <p style={{ color: "var(--text-secondary)", maxWidth: "450px", margin: "0 auto 2.5rem", lineHeight: "1.6" }}>{t("visitor.achievements.cadaObraVisitadaECadaDesafioConcludoRend", `
-          Cada obra visitada e cada desafio concluído rende uma medalha exclusiva. Crie sua conta para começar sua coleção!
-        `)}</p>
-        <button
-          onClick={() => navigate("/register")}
-          style={{
-            background: "var(--primary-color)",
-            color: "#1a1108",
-            border: "none",
-            padding: "1rem 3rem",
-            borderRadius: "2rem",
-            fontWeight: "bold",
-            fontSize: "1.1rem",
-            cursor: "pointer",
-            boxShadow: "0 4px 15px rgba(212, 175, 55, 0.3)"
-          }}
-        >
-          Começar minha Coleção
-        </button>
+      <div className="achievements-container py-20">
+        <header className="achievements-header-premium text-center items-center">
+            <span className="achievements-badge">Caminho do Explorador</span>
+            <h1 className="achievements-title-premium">Galeria de Troféus</h1>
+            <p className="hero-subtitle-premium max-w-lg mx-auto">
+                Cada obra visitada e cada desafio concluído rende uma medalha exclusiva. Crie sua conta para começar sua coleção eterna!
+            </p>
+            <button
+                onClick={() => navigate("/register")}
+                className="gallery-cta mt-10"
+            >
+                Iniciar minha Coleção
+            </button>
+        </header>
       </div>
     );
   }
 
   return (
     <div className="achievements-container">
-      {/* Header with Progress */}
-      <div className="achievements-header">
-        <h1 className="achievements-title">
-          {t("visitor.achievements.title", "Suas Conquistas")}
-        </h1>
-        <p className="achievements-subtitle">
-          {t("visitor.achievements.subtitle", "Complete desafios para subir de nível!")}
+      <header className="achievements-header-premium">
+        <span className="achievements-badge">Legado Cultural</span>
+        <h1 className="achievements-title-premium">Suas Conquistas</h1>
+        <p className="hero-subtitle-premium">
+           O registro de sua jornada através do sagrado e do histórico. Complete desafios para ascender em sua hierarquia.
         </p>
 
-        {/* Progress Bar */}
-        <div className="progress-section">
-          <div className="progress-labels">
-            <span>Iniciante</span>
-            <span>{progress}% Completo</span>
-            <span>Mestre</span>
+        <div className="progress-section-premium mt-6">
+          <div className="progress-labels-premium">
+            <span>Explorador Iniciante</span>
+            <span className="text-gold-hi">{progress}% do Legado</span>
+            <span>Mestre das Artes</span>
           </div>
-          <div className="progress-track">
-            <div
-              className="progress-fill"
-              style={{ width: `${progress}%` }}
+          <div className="progress-track-premium">
+            <motion.div
+              className="progress-fill-premium"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
             />
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Grid */}
-      <div className="achievements-grid">
+      <div className="achievements-grid-premium">
         {stats.achievements.length === 0 ? (
-          <div className="achievements-empty">
-            <Trophy className="empty-icon" />
-            <h3>
-              {t("visitor.achievements.emptyTitle", "Ainda sem conquistas")}
-            </h3>
-            <p>
-              Explore o museu e interaja com obras para desbloquear medalhas!
-            </p>
+          <div className="workslist-empty py-40 col-span-full">
+            <Trophy className="mx-auto mb-6 opacity-20" size={64} />
+            <h3 className="text-2xl font-fd text-white mb-2">Vazio Silencioso</h3>
+            <p className="text-muted max-w-sm mx-auto">Sua galeria ainda aguarda o seu primeiro feito heroico.</p>
           </div>
         ) : (
           stats.achievements.map((a, i) => {
             const isUnlocked = !!a.unlockedAt;
             return (
-              <div
+              <motion.div
                 key={i}
-                className={`achievement-card ${isUnlocked ? "unlocked" : "locked"}`}
+                className={`achievement-card-premium ${isUnlocked ? "unlocked" : "locked"}`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
               >
-                {/* Icon */}
-                <div className="achievement-icon">
+                <div className="achievement-visual-premium">
                   {a.icon}
                 </div>
 
-                {/* Content */}
-                <div className="achievement-info">
-                  <h3 className="achievement-name">
-                    {a.title}
-                  </h3>
-                  <p className="achievement-desc">
-                    {a.description}
-                  </p>
+                <div className="achievement-info-premium">
+                  <h3 className="achievement-name-premium">{a.title}</h3>
+                  <p className="achievement-desc-premium">{a.description}</p>
 
-                  {!isUnlocked && (a as any).condition && (
-                    <div className="achievement-condition">
-                      <Lock size={10} />
-                      {t("visitor.achievements.howToUnlock", "Como desbloquear:")} {(a as any).condition}
-                    </div>
-                  )}
-
-                  {isUnlocked && (
-                    <div className="status-badge unlocked">
-                      <CheckCircle2 size={12} />
-                      Desbloqueado
-                    </div>
-                  )}
-
-                  {!isUnlocked && (
-                    <div className="status-badge locked">
-                      <Lock size={12} />
-                      Bloqueado
-                    </div>
-                  )}
+                  <div className={`status-badge-premium mt-4 ${isUnlocked ? "unlocked" : "locked"}`}>
+                    {isUnlocked ? <CheckCircle2 size={10} /> : <Lock size={10} />}
+                    {isUnlocked ? 'Relíquia Conquistada' : 'Bloqueado'}
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })
         )}

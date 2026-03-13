@@ -72,7 +72,7 @@ export const TenantsList: React.FC = () => {
             🏢 Museus & Cidades
           </span>
           <h1 className="master-title">
-            Gerenciar Clientes
+            Gestão de Instâncias Municipais
           </h1>
           <p className="master-subtitle">{t("master.tenantslist.crieNovasInstituiesGerencieAssinaturasEC", `
             Crie novas instituições, gerencie assinaturas e controle o acesso de cada conta.
@@ -104,15 +104,15 @@ export const TenantsList: React.FC = () => {
           <div className="master-icon-wrapper master-icon-blue">
             <Building2 size={24} />
           </div>
-          <h3>Instituições Cadastradas ({tenants.length})</h3>
+          <h3>Cidades / Órgãos Cadastrados ({tenants.length})</h3>
         </div>
 
         <div className="master-table-container">
           <table className="master-table">
             <thead>
               <tr>
-                <th>{t("master.tenants.table.name")}</th>
-                <th>{t("master.tenants.table.slug")}</th>
+                <th>{t("master.tenants.table.name", "Cidade / Órgão")}</th>
+                <th>{t("master.tenants.table.slug", "Identificador (Slug)")}</th>
                 <th>{t("master.tenants.table.createdAt")}</th>
                 <th style={{ textAlign: "right" }}>{t("master.tenants.table.actions")}</th>
               </tr>

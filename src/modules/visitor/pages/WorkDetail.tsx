@@ -41,7 +41,7 @@ type WorkDetailData = {
 export const WorkDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tenantId, email, isGuest } = useAuth();
+  const { tenantId, equipamentoId, email, isGuest } = useAuth();
   const { t, i18n } = useTranslation();
 
   const [relatedWorks, setRelatedWorks] = useState<WorkDetailData[]>([]);
@@ -134,7 +134,7 @@ export const WorkDetail: React.FC = () => {
 
   useEffect(() => {
     if (tenantId && id) {
-      api.get(`/works/${id}/related?tenantId=${tenantId}`)
+      api.get(`/works/${id}/related?tenantId=${tenantId}&equipamentoId=${equipamentoId}`)
         .then((res) => {
           const works = Array.isArray(res.data) ? res.data : [];
           setRelatedWorks(works.map((w: any) => ({
@@ -171,153 +171,149 @@ export const WorkDetail: React.FC = () => {
   return (
     <motion.div 
       className="work-detail-container"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
     >
-      <header className="work-header">
-        <div className="flex justify-between items-start">
-           <div className="flex-1">
-              <span className="text-gold-400 font-black text-[10px] uppercase tracking-widest mb-4 block">
-                 {work.category}
-              </span>
-              <h1 className="work-main-title">{work.title}</h1>
-              <p className="work-meta">{work.artist} {work.year ? `• ${work.year}` : ''}</p>
-              <div className="work-location">
-                 <MapPin size={14} /> {work.room || 'Galeria Principal'} • {work.floor || 'Piso Térreo'}
-              </div>
+      <header className="work-header-premium">
+        <span className="work-badge-premium">{work.category || 'Obra de Arte'}</span>
+        <h1 className="work-title-premium">{work.title}</h1>
+        <div className="work-meta-premium">
+           <span className="text-gold-hi">{work.artist}</span>
+           {work.year && <span className="opacity-40">• {work.year}</span>}
+        </div>
+        
+        <div className="flex items-center gap-6 mt-4">
+           <div className="flex items-center gap-2 text-[10px] font-fm uppercase text-muted">
+              <MapPin size={12} className="text-gold" />
+              {work.room || 'Auditório'} • {work.floor || 'Térreo'}
            </div>
-
-           <div className="work-actions">
+           
+           <div className="work-actions-premium !mt-0">
               <button 
                 onClick={toggleFavorite} 
-                className={`action-btn ${isFavorite ? 'active' : ''}`}
+                className={`action-btn-premium ${isFavorite ? 'active' : ''}`}
               >
-                <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
+                <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
               </button>
-              <button onClick={() => setShowShare(true)} className="action-btn">
-                <Share2 size={20} />
+              <button onClick={() => setShowShare(true)} className="action-btn-premium">
+                <Share2 size={18} />
               </button>
-              {work.latitude && (
-                <button onClick={() => setShowNavigation(true)} className="action-btn">
-                   <Compass size={20} />
-                </button>
-              )}
            </div>
         </div>
       </header>
 
-      {/* TRAIL NAV */}
-      {trailId && trailWorks.length > 0 && (
-        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 mb-12 flex items-center justify-between">
-            <button 
-              onClick={() => prevWorkId && navigateToWork(prevWorkId)}
-              className={`flex items-center gap-2 text-sm font-bold ${prevWorkId ? 'text-white' : 'text-white/20'}`}
-              disabled={!prevWorkId}
-            >
-              <ChevronLeft size={20} /> Obra Anterior
-            </button>
-            <div className="text-center">
-               <span className="block text-[10px] uppercase tracking-widest text-gold-400/60 mb-1">{trailTitle}</span>
-               <span className="text-sm font-black">{currentIndex + 1} / {trailWorks.length}</span>
-            </div>
-            <button 
-              onClick={() => nextWorkId && navigateToWork(nextWorkId)}
-              className={`flex items-center gap-2 text-sm font-bold ${nextWorkId ? 'text-white' : 'text-white/20'}`}
-              disabled={!nextWorkId}
-            >
-              Próxima Obra <ChevronRight size={20} />
-            </button>
-        </div>
-      )}
-
-      {treasureFound && (
-        <motion.div 
-          className="treasure-notification"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-        >
-          <div className="flex items-center gap-4">
-             <span className="text-2xl">🏴‍☠️</span>
-             <div>
-                <strong className="block text-sm">Tesouro Revelado!</strong>
-                <span className="text-xs opacity-80">Você resolveu um enigma desta obra.</span>
-             </div>
-          </div>
-          <span className="bg-white text-emerald-600 px-4 py-1 rounded-full text-xs font-black">+{treasureFound.xp} XP</span>
-        </motion.div>
-      )}
-
-      {/* IMAGE */}
-      <section className="work-image-section">
-        <img src={work.imageUrl || ''} alt={work.title} className="work-main-image" />
+      {/* Hero Image */}
+      <section className="work-visual-section-premium">
+        <img src={work.imageUrl || ''} alt={work.title} className="work-hero-img-premium" />
         {work.latitude && (
-          <button className="view-on-map-btn" onClick={() => navigate(`/mapa?workId=${work.id}`)}>
-            <Map size={18} /> Ver Localização
+          <button className="gallery-cta !absolute bottom-8 right-8" onClick={() => navigate(`/mapa?workId=${work.id}`)}>
+            <Map size={16} /> Ver no Mapa
           </button>
         )}
       </section>
 
-      {/* CONTENT GRID */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-         <div className="lg:col-span-8">
-            <section className="work-description-section">
-               <div className="work-description-text">
-                  {work.description || t("visitor.artwork.defaultDescription")}
+      {treasureFound && (
+        <motion.div 
+          className="treasure-notification"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+        >
+          <div className="flex items-center gap-4">
+             <span className="text-2xl">✨</span>
+             <div className="flex flex-col">
+                <strong className="text-sm font-fd text-white">Relíquia Descoberta</strong>
+                <span className="text-[10px] font-fm uppercase text-gold">+{treasureFound.xp} XP de Legado</span>
+             </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Trail Navigation */}
+      {trailId && trailWorks.length > 0 && (
+        <div className="progress-section-premium">
+            <div className="flex justify-between items-center mb-4">
+               <button 
+                 onClick={() => prevWorkId && navigateToWork(prevWorkId)}
+                 className={`action-btn-premium !rounded-xl !w-auto !px-4 gap-2 ${prevWorkId ? '' : 'opacity-20'}`}
+                 disabled={!prevWorkId}
+               >
+                 <ChevronLeft size={16} /> <span className="text-[10px] font-fm uppercase">Anterior</span>
+               </button>
+               <div className="text-center">
+                  <span className="text-[10px] font-fm uppercase text-gold block">{trailTitle}</span>
+                  <span className="text-lg font-fd">{currentIndex + 1} <small className="opacity-40">de</small> {trailWorks.length}</span>
                </div>
                <button 
-                 onClick={() => isSpeaking ? cancel() : speak(work.description || '', i18n.language)}
-                 className={`tts-button ${isSpeaking ? 'speaking' : 'listening'}`}
+                 onClick={() => nextWorkId && navigateToWork(nextWorkId)}
+                 className={`action-btn-premium !rounded-xl !w-auto !px-4 gap-2 ${nextWorkId ? '' : 'opacity-20'}`}
+                 disabled={!nextWorkId}
                >
-                 {isSpeaking ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                 {isSpeaking ? 'Parar Leitura' : 'Ouvir Descrição'}
+                 <span className="text-[10px] font-fm uppercase">Próxima</span> <ChevronRight size={16} />
                </button>
-            </section>
-
-            {/* AI INTERACTION */}
-            <section className="premium-section mt-12">
-               <h2 className="flex items-center gap-3">
-                  <MessageCircle className="text-gold-400" />
-                  Curadoria Inteligente
-               </h2>
-               <p className="text-slate-400 text-sm mb-8">Nossa IA conhece cada detalhe desta obra. Pergunte sobre a técnica, o contexto histórico ou curiosidades ocultas.</p>
-               <AiChatWidget workContext={{ title: work.title, artist: work.artist, description: work.description || "" }} />
-            </section>
-         </div>
-
-         <div className="lg:col-span-4">
-            {/* ACCESSIBILITY & AUDIO */}
-            <div className="sticky top-24 space-y-8">
-               <NarrativeAudioGuide audioUrl={work.audioUrl} title={work.title} artist={work.artist} />
-               
-               <div className="premium-section !p-8">
-                  <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                     <span className="h-2 w-2 bg-emerald-500 rounded-full" />
-                     Acessibilidade
-                  </h3>
-                  <LibrasSection videoUrl={work.librasUrl} contentTitle={work.title} />
-               </div>
-
-               {work.videoUrl && (
-                  <VideoPlayer url={work.videoUrl} title="Aprofundamento em Vídeo" />
-               )}
             </div>
-         </div>
+        </div>
+      )}
+
+      {/* Editorial Content */}
+      <div className="work-editorial-content">
+         <main className="work-body-premium">
+            <div className="mb-12">
+               {work.description || t("visitor.artwork.defaultDescription")}
+            </div>
+
+            <button 
+              onClick={() => isSpeaking ? cancel() : speak(work.description || '', i18n.language)}
+              className="gallery-cta !w-auto !px-8"
+            >
+              {isSpeaking ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              {isSpeaking ? 'Silenciar Curadoria' : 'Ouvir Curadoria'}
+            </button>
+
+            {/* AI Widget */}
+            <div className="mt-20 border-t border-border pt-20">
+               <div className="flex items-center gap-3 mb-6">
+                  <MessageCircle className="text-gold" />
+                  <h2 className="text-2xl font-fd text-white">Diálogo com o Acervo</h2>
+               </div>
+               <p className="text-muted text-sm mb-10">Dúvidas sobre a técnica ou simbolismo? Nossa IA está pronta para aprofundar seu conhecimento sobre esta obra.</p>
+               <AiChatWidget workContext={{ title: work.title, artist: work.artist, description: work.description || "" }} />
+            </div>
+         </main>
+
+         <aside className="work-sidebar-premium">
+            <div className="sidebar-card-premium">
+               <span className="sidebar-label-premium">Audioguia Imersivo</span>
+               <NarrativeAudioGuide audioUrl={work.audioUrl} title={work.title} artist={work.artist} />
+            </div>
+
+            <div className="sidebar-card-premium">
+               <span className="sidebar-label-premium">Acessibilidade Estrita</span>
+               <LibrasSection videoUrl={work.librasUrl} contentTitle={work.title} />
+            </div>
+
+            {work.videoUrl && (
+               <div className="sidebar-card-premium">
+                  <span className="sidebar-label-premium">Multimídia</span>
+                  <VideoPlayer url={work.videoUrl} title="Documentário" />
+               </div>
+            )}
+         </aside>
       </div>
 
-      {/* RELATED */}
+      {/* Related Works */}
       {relatedWorks.length > 0 && (
-        <section className="mt-24">
-           <h2 className="text-2xl font-black mb-12">Obras Semelhantes</h2>
-           <div className="related-grid">
+        <section className="related-section-premium">
+           <span className="sidebar-label-premium">Obras de Ressonância</span>
+           <div className="related-grid-premium">
               {relatedWorks.slice(0, 4).map(rw => (
-                <Link to={`/obras/${rw.id}`} key={rw.id} className="related-card group">
-                   <div className="overflow-hidden">
-                      <img src={rw.imageUrl || ''} alt={rw.title} className="related-image group-hover:scale-105 transition-transform duration-500" />
+                <Link to={`/obras/${rw.id}`} key={rw.id} className="related-card-premium group">
+                   <div className="overflow-hidden aspect-square">
+                      <img src={rw.imageUrl || ''} alt={rw.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                    </div>
-                   <div className="related-content">
-                      <h3 className="related-title text-white">{rw.title}</h3>
-                      <p className="related-artist text-slate-400">{rw.artist}</p>
+                   <div className="p-4">
+                      <h3 className="font-fd text-white text-sm line-clamp-1">{rw.title}</h3>
+                      <p className="text-[10px] font-fm uppercase text-muted line-clamp-1">{rw.artist}</p>
                    </div>
                 </Link>
               ))}
@@ -325,12 +321,12 @@ export const WorkDetail: React.FC = () => {
         </section>
       )}
 
-      {/* NOTES */}
-      <section className="mt-24">
+      {/* Notes Section */}
+      <section className="border-t border-border pt-20">
          <WorkNote workId={work.id} />
       </section>
 
-      {/* MODALS */}
+      {/* Modals */}
       <AnimatePresence>
          {showShare && (
            <ShareCard 

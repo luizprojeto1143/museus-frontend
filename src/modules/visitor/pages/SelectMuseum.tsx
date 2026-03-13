@@ -11,35 +11,37 @@ import {
 } from "lucide-react";
 import "./SelectMuseum.css";
 
-interface Tenant {
+interface Equipamento {
   id: string;
-  name: string;
+  tenantId: string;
+  nome: string;
   slug: string;
-  type?: "MUSEUM" | "PRODUCER" | "CULTURAL_SPACE" | "ARCHITECTURAL_LANDMARK" | "CITY";
-  coverImageUrl?: string;
-  latitude?: number;
-  longitude?: number;
-  openingHours?: string;
-  address?: string;
-  mission?: string;
+  tipo: string;
+  fotoCapaUrl?: string;
+  lat?: number;
+  lng?: number;
+  horarios?: any;
+  endereco?: string;
+  cidade?: string;
+  missao?: string;
+  descricao?: string;
   // Computed client-side
   distance?: number;
-  isOpen?: boolean;
 }
 
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, token, updateSession, isGuest, enterAsGuest } = useAuth();
+  const { isAuthenticated, token, updateSession, isGuest, enterAsGuest, role, name } = useAuth();
   const [searchParams] = useSearchParams();
   const isRegisterMode = searchParams.get("mode") === "register";
 
-  const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [selectedLandmark, setSelectedLandmark] = useState<Tenant | null>(null);
+  const [selectedLandmark, setSelectedLandmark] = useState<Equipamento | null>(null);
 
   // 1. Get User Location on Mount
   useEffect(() => {
@@ -61,31 +63,27 @@ export const SelectMuseum: React.FC = () => {
   // 2. Load Tenants & Handle Auto-selection
   useEffect(() => {
     async function init() {
-      await loadTenants();
-      const selectId = searchParams.get("select");
-      if (selectId) {
-        // We'll wait until tenants are loaded
-      }
+      await loadEquipamentos();
     }
     init();
   }, []);
 
   useEffect(() => {
     const selectId = searchParams.get("select");
-    if (selectId && tenants.length > 0) {
-      const found = tenants.find(t => t.id === selectId);
+    if (selectId && equipamentos.length > 0) {
+      const found = equipamentos.find(e => e.id === selectId);
       if (found) setSelectedLandmark(found);
     }
-  }, [searchParams, tenants]);
+  }, [searchParams, equipamentos]);
 
-  const loadTenants = async () => {
+  const loadEquipamentos = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_URL as string;
-      const res = await fetch(baseUrl + "/tenants/public");
+      const res = await fetch(baseUrl + "/equipamentos/public");
       const data = await res.json();
-      setTenants(data);
+      setEquipamentos(data);
     } catch (err) {
-      console.error("Error loading tenants", err);
+      console.error("Error loading equipments", err);
     } finally {
       setLoading(false);
     }
@@ -103,26 +101,26 @@ export const SelectMuseum: React.FC = () => {
     return R * c;
   };
 
-  const filteredAndSortedTenants = useMemo(() => {
-    let result = tenants.map(t => {
+  const filteredAndSortedEquipamentos = useMemo(() => {
+    let result = equipamentos.map(e => {
       let distance = undefined;
-      if (userLocation && t.latitude && t.longitude) {
-        distance = calculateDistance(userLocation.lat, userLocation.lng, t.latitude, t.longitude);
+      if (userLocation && e.lat && e.lng) {
+        distance = calculateDistance(userLocation.lat, userLocation.lng, e.lat, e.lng);
       }
-      return { ...t, distance };
+      return { ...e, distance };
     });
 
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
-      result = result.filter(t =>
-        t.name.toLowerCase().includes(lower) ||
-        t.slug.toLowerCase().includes(lower) ||
-        t.address?.toLowerCase().includes(lower)
+      result = result.filter(e =>
+        e.nome.toLowerCase().includes(lower) ||
+        e.slug.toLowerCase().includes(lower) ||
+        e.endereco?.toLowerCase().includes(lower)
       );
     }
 
     if (activeFilter !== "ALL") {
-      result = result.filter(t => t.type === activeFilter);
+      result = result.filter(e => e.tipo === activeFilter);
     }
 
     if (userLocation) {
@@ -130,51 +128,36 @@ export const SelectMuseum: React.FC = () => {
     }
 
     return result;
-  }, [tenants, searchTerm, activeFilter, userLocation]);
+  }, [equipamentos, searchTerm, activeFilter, userLocation]);
 
-  const nearestTenants = useMemo(() => {
+  const nearestEquipamentos = useMemo(() => {
     if (!userLocation) return [];
-    return [...filteredAndSortedTenants]
-      .filter(t => t.distance !== undefined && t.distance < 5) // Within 5km
+    return [...filteredAndSortedEquipamentos]
+      .filter(e => e.distance !== undefined && e.distance < 5) // Within 5km
       .slice(0, 3);
-  }, [filteredAndSortedTenants, userLocation]);
+  }, [filteredAndSortedEquipamentos, userLocation]);
 
-  const handleSelect = async (tenant: Tenant) => {
-    // If it's a landmark, show detail instead of entering
-    if (tenant.type === "ARCHITECTURAL_LANDMARK") {
-      setSelectedLandmark(tenant);
-      return;
-    }
-
+  const handleSelect = async (equip: Equipamento) => {
+    // Se logado, atualiza sessao
     if (isAuthenticated && token && !isGuest) {
       try {
         const baseUrl = import.meta.env.VITE_API_URL as string;
-        const res = await fetch(baseUrl + "/auth/switch-tenant", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ targetTenantId: tenant.id })
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          updateSession(data.accessToken, data.refreshToken || "", data.role, data.tenantId, data.name);
-          navigate("/home");
-          return;
-        }
+        // Reutilizamos switch-tenant mas agora focando em equipamento contextualmente se necessario,
+        // ou apenas atualizamos localmente o ID
+        updateSession(token, "", role || "visitor", equip.tenantId, name, equip.id);
+        navigate("/home");
+        return;
       } catch (err) {
         console.error(err);
       }
     }
 
     if (isRegisterMode) {
-      navigate("/register", { state: { tenantId: tenant.id, tenantName: tenant.name } });
+      navigate("/register", { state: { tenantId: equip.tenantId, equipamentoId: equip.id, tenantName: equip.nome } });
       return;
     }
 
-    enterAsGuest(tenant.id);
+    enterAsGuest(equip.tenantId, equip.id);
     navigate("/home");
   };
 
@@ -230,9 +213,9 @@ export const SelectMuseum: React.FC = () => {
             <div className="pulse-filters">
               {[
                 { id: "ALL", label: "Todos", icon: <Compass size={14} /> },
-                { id: "MUSEUM", label: "Museus", icon: <Theater size={14} /> },
-                { id: "ARCHITECTURAL_LANDMARK", label: "Monumentos", icon: <Landmark size={14} /> },
-                { id: "CITY", label: "Cidades", icon: <Navigation size={14} /> }
+                { id: "museu", label: "Museus", icon: <Theater size={14} /> },
+                { id: "teatro", label: "Teatros", icon: <Landmark size={14} /> },
+                { id: "centro_cultural", label: "Centros", icon: <Navigation size={14} /> }
               ].map(f => (
                 <button
                   key={f.id}
@@ -248,18 +231,18 @@ export const SelectMuseum: React.FC = () => {
       </header>
 
       {/* PROXIMITY RADAR (If location active) */}
-      {userLocation && nearestTenants.length > 0 && !searchTerm && (
+      {userLocation && nearestEquipamentos.length > 0 && !searchTerm && (
         <section className="pulse-radar-section">
           <h2 className="pulse-section-title">
             <Navigation size={18} className="text-blue-400" /> Próximo a Você
           </h2>
           <div className="pulse-radar-grid">
-            {nearestTenants.map(t => (
-              <div key={t.id} className="pulse-radar-card" onClick={() => handleSelect(t)}>
-                <div className="radar-dist">{formatDistance(t.distance)}</div>
+            {nearestEquipamentos.map(e => (
+              <div key={e.id} className="pulse-radar-card" onClick={() => handleSelect(e)}>
+                <div className="radar-dist">{formatDistance(e.distance)}</div>
                 <div className="radar-info">
-                  <h4>{t.name}</h4>
-                  <span>{t.type === 'ARCHITECTURAL_LANDMARK' ? 'Monumento' : 'Equipamento'}</span>
+                  <h4>{e.nome}</h4>
+                  <span>{e.tipo}</span>
                 </div>
                 <Zap size={16} className="radar-icon" />
               </div>
@@ -272,7 +255,7 @@ export const SelectMuseum: React.FC = () => {
       <main className="pulse-main">
         <div className="pulse-main-header">
           <h2>{searchTerm ? `Resultados para "${searchTerm}"` : "Explorar Tudo"}</h2>
-          <p>{filteredAndSortedTenants.length} locais encontrados</p>
+          <p>{filteredAndSortedEquipamentos.length} equipamentos encontrados</p>
         </div>
 
         {loading ? (
@@ -281,39 +264,39 @@ export const SelectMuseum: React.FC = () => {
           </div>
         ) : (
           <div className="pulse-grid">
-            {filteredAndSortedTenants.map(tenant => (
+            {filteredAndSortedEquipamentos.map(equip => (
               <div
-                key={tenant.id}
-                className={`pulse-card ${tenant.type === 'ARCHITECTURAL_LANDMARK' ? 'monument-style' : ''}`}
-                onClick={() => handleSelect(tenant)}
+                key={equip.id}
+                className="pulse-card"
+                onClick={() => handleSelect(equip)}
               >
                 <div className="pulse-card-media">
                   <img
-                    src={tenant.coverImageUrl || "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=800&auto=format&fit=crop"}
-                    alt={tenant.name}
+                    src={equip.fotoCapaUrl || "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=800&auto=format&fit=crop"}
+                    alt={equip.nome}
                   />
                   <div className="pulse-card-tag">
-                    {tenant.type === 'ARCHITECTURAL_LANDMARK' ? <Landmark size={12} /> : <Theater size={12} />}
-                    {tenant.type}
+                    <Theater size={12} />
+                    {equip.tipo}
                   </div>
                 </div>
 
                 <div className="pulse-card-body">
-                  <h3 className="pulse-card-title">{tenant.name}</h3>
+                  <h3 className="pulse-card-title">{equip.nome}</h3>
                   <div className="pulse-card-meta">
                     <div className="meta-pill">
-                      <MapPin size={12} /> {tenant.distance ? formatDistance(tenant.distance) : "Explore"}
+                      <MapPin size={12} /> {equip.distance ? formatDistance(equip.distance) : "Explore"}
                     </div>
                     <div className="meta-pill">
                       <Star size={12} className="text-yellow-400 fill-yellow-400" /> 4.9
                     </div>
                   </div>
                   <p className="pulse-card-excerpt">
-                    {tenant.address || "Betim - MG"}
+                    {equip.endereco || "Betim - MG"}
                   </p>
                   <div className="pulse-card-footer">
                     <button className="pulse-btn-visit">
-                      {tenant.type === 'ARCHITECTURAL_LANDMARK' ? 'Ver História' : 'Entrar no Museu'}
+                      Entrar no Local
                       <ArrowRight size={16} />
                     </button>
                   </div>
@@ -323,10 +306,10 @@ export const SelectMuseum: React.FC = () => {
           </div>
         )}
 
-        {filteredAndSortedTenants.length === 0 && !loading && (
+        {filteredAndSortedEquipamentos.length === 0 && !loading && (
           <div className="pulse-empty">
             <Compass size={64} strokeWidth={1} className="opacity-20 mb-4" />
-            <p>Nenhuma frequência encontrada neste setor.</p>
+            <p>Nenhum equipamento encontrado neste setor.</p>
           </div>
         )}
       </main>
@@ -339,34 +322,34 @@ export const SelectMuseum: React.FC = () => {
               <X size={24} />
             </button>
             <div className="landmark-hero">
-              <img src={selectedLandmark.coverImageUrl || ""} alt={selectedLandmark.name} />
+              <img src={selectedLandmark.fotoCapaUrl || ""} alt={selectedLandmark.nome} />
               <div className="landmark-overlay-content">
-                <div className="landmark-tag">PONTO HISTÓRICO</div>
-                <h2>{selectedLandmark.name}</h2>
+                <div className="landmark-tag">{selectedLandmark.tipo.toUpperCase()}</div>
+                <h2>{selectedLandmark.nome}</h2>
               </div>
             </div>
             <div className="landmark-content">
               <div className="landmark-quick-info">
                 <div className="info-item">
                   <MapPin size={16} />
-                  <span>{selectedLandmark.address}</span>
+                  <span>{selectedLandmark.endereco}</span>
                 </div>
                 <div className="info-item">
                   <Clock size={16} />
-                  <span>{selectedLandmark.openingHours || "Visitação Livre"}</span>
+                  <span>{selectedLandmark.horarios?.seg || "Visitação Livre"}</span>
                 </div>
               </div>
 
               <div className="landmark-story">
-                <h3>Fatos e História</h3>
-                <p>{selectedLandmark.mission || "Este local é um marco da arquitetura e cultura local, preservando memórias e histórias que moldaram a identidade da região."}</p>
+                <h3>Sobre o Local</h3>
+                <p>{selectedLandmark.missao || selectedLandmark.descricao || "Este local é um marco da cultura local, preservando memórias e histórias que moldaram a identidade da região."}</p>
               </div>
 
               <div className="landmark-actions">
-                <button className="landmark-btn-entry" onClick={() => { enterAsGuest(selectedLandmark.id); navigate("/home"); }}>
-                  Explorar Digitalmente <Zap size={18} />
+                <button className="landmark-btn-entry" onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id); navigate("/home"); }}>
+                  Entrar no Espaço <Zap size={18} />
                 </button>
-                <button className="landmark-btn-secondary" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.latitude},${selectedLandmark.longitude}`, '_blank')}>
+                <button className="landmark-btn-secondary" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.lat},${selectedLandmark.lng}`, '_blank')}>
                   Como Chegar <Navigation size={18} />
                 </button>
               </div>

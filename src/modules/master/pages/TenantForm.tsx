@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
@@ -258,9 +258,9 @@ export const TenantForm: React.FC = () => {
   };
 
   const typeOptions = [
-    { value: "MUSEUM", icon: <Landmark size={24} />, label: "Museu", desc: "Tipologia clássica com acervo, salas e exposições." },
-    { value: "CITY", icon: <Map size={24} />, label: "Cidade / Prefeitura", desc: "Gestão turística municipal (Tenant Pai)." },
-    { value: "SECRETARIA", icon: <Building2 size={24} />, label: "Secretaria de Cultura", desc: "Gestão pública de múltiplos equipamentos." },
+    { value: "SECRETARIA", icon: <Building2 size={24} />, label: "Secretaria de Cultura", desc: "Gestão pública de múltiplos equipamentos culturais (Plano Municipal)." },
+    { value: "CITY", icon: <Map size={24} />, label: "Cidate / Órgão Gestor", desc: "Instância de governança turística ou cultural." },
+    { value: "MUSEUM", icon: <Landmark size={24} />, label: "Museu / UNIDADE", desc: "Tipologia clássica com acervo, salas e exposições." },
     { value: "PRODUCER", icon: <Music size={24} />, label: "Produtora Cultural", desc: "Foco em eventos, projetos itinerantes e editais." },
     { value: "CULTURAL_SPACE", icon: <Tent size={24} />, label: "Espaço Cultural", desc: "Galerias, bibliotecas e centros comunitários." }
   ];
@@ -358,8 +358,8 @@ export const TenantForm: React.FC = () => {
         </Button>
         <div>
           <h1 className="master-wizard-title">
-            {isEdit ? "Editar Instituição" : "Nova Instituição"}
-            <span className="master-wizard-badge">Master Admin</span>
+            {isEdit ? "Editar Órgão / Cidade" : "Novo Órgão Municipal"}
+            <span className="master-wizard-badge">Plataforma Municipal</span>
           </h1>
           <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '0.25rem' }}>
             Passo {currentStep + 1} de {STEPS.length}: <span style={{ color: '#fff', fontWeight: 'bold' }}>{STEPS[currentStep].title}</span>
@@ -635,7 +635,7 @@ export const TenantForm: React.FC = () => {
                         />
                       </div>
                       <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(236, 72, 153, 0.1)', border: '1px solid rgba(236, 72, 153, 0.2)', borderRadius: '12px', fontSize: '0.85rem', color: '#fbcfe8', lineHeight: '1.5' }}>{t("master.tenant.esteUsurioTerPermissoTotalAdminSobreANov", `
-                        Este usuário terá permissão total (ADMIN) sobre a nova instituição.
+                        Este usuário terá permissão TOTAL de administrador sobre esta instância e todos os seus equipamentos.
                       `)}</div>
                     </div>
                   ) : (

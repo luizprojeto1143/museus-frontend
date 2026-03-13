@@ -84,109 +84,111 @@ export const VisitorRPG: React.FC = () => {
     const xpPct = rpg.nextLevelXp > 0 ? Math.round((rpg.currentXp / rpg.nextLevelXp) * 100) : 0;
 
     return (
-        <div style={{ padding: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
-            {/* Character Card */}
-            <div style={{ background: cls.bg, border: `2px solid ${cls.color}30`, borderRadius: '1.5rem', padding: '2rem', textAlign: 'center', marginBottom: '1.5rem', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: 0, right: 0, padding: '1rem', opacity: 0.1 }}>
-                    <Crown size={64} style={{ color: cls.color }} />
-                </div>
-
-                {/* Character Preview */}
-                <div style={{ width: '160px', height: '160px', margin: '0 auto 1.5rem', position: 'relative' }}>
-                    <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle, ${cls.color}20 0%, transparent 70%)`, filter: 'blur(10px)' }} />
+        <div className="rpg-container animate-in fade-in duration-700">
+            {/* ═══ CHARACTER CARD ══════════════ */}
+            <div className={`rpg-card`}>
+                <div className="rpg-card-glow"></div>
+                <div className="rpg-avatar-wrapper">
+                    <div className="rpg-avatar-ring"></div>
                     <img 
                         src={rpg.equippedSkin?.skin?.imageUrl || rpg.selectedCharacter?.imageUrl || '/default_avatar.png'} 
-                        style={{ height: '100%', objectFit: 'contain', position: 'relative', zIndex: 1, filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))' }} 
+                        className="rpg-avatar-img"
                         alt="Character" 
                     />
                 </div>
 
                 {editing ? (
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '0.5rem', position: 'relative', zIndex: 2 }}>
-                        <input value={newName} onChange={e => setNewName(e.target.value)} style={{ background: 'rgba(0,0,0,0.5)', border: `1px solid ${cls.color}40`, borderRadius: '0.75rem', padding: '0.5rem 1rem', color: 'white', textAlign: 'center', fontSize: '1.1rem', fontWeight: 800, outline: 'none', width: '200px' }} />
-                        <button onClick={onSaveName} style={{ background: cls.color, color: '#000', border: 'none', borderRadius: '0.75rem', padding: '0.5rem 1rem', fontWeight: 800, cursor: 'pointer' }}>✓</button>
+                    <div className="flex gap-2 justify-center mb-6 relative z-10">
+                        <input 
+                            value={newName} 
+                            onChange={e => setNewName(e.target.value)} 
+                            className="bg-black/50 border border-white/10 rounded-xl px-4 py-2 text-center text-xl font-bold text-white focus:border-yellow-600 outline-none"
+                        />
+                        <button onClick={onSaveName} className="bg-yellow-600 text-black px-4 rounded-xl font-black transition-transform hover:scale-105">✓</button>
                     </div>
                 ) : (
-                    <h1 onClick={() => setEditing(true)} style={{ fontSize: '1.8rem', fontWeight: 950, color: 'white', cursor: 'pointer', marginBottom: '0.25rem' }}>{rpg.characterName}</h1>
+                    <h1 onClick={() => setEditing(true)} className="rpg-name cursor-pointer group">
+                        {rpg.characterName} 
+                        <span className="opacity-0 group-hover:opacity-100 text-xs ml-2 text-yellow-600 font-mono transition-opacity">EDIT</span>
+                    </h1>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.7rem', fontWeight: 800, color: cls.color, background: `${cls.color}20`, padding: '0.3rem 0.8rem', borderRadius: '2rem', border: `1px solid ${cls.color}30` }}>
-                        {cls.icon} {cls.label}
-                    </span>
-                    {rpg.equippedSkin && (
-                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#fff', background: 'rgba(255,255,255,0.1)', padding: '0.3rem 0.8rem', borderRadius: '2rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            Skin Ativa
-                        </span>
-                    )}
-                </div>
+                <div className="rpg-title">{cls.label}</div>
 
-                {/* Level */}
-                <div style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '1.25rem', padding: '1.25rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.75rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ color: 'white', fontWeight: 900, fontSize: '1.5rem' }}>Nível {rpg.level}</span>
-                            <span style={{ color: cls.color, fontSize: '0.65rem', fontWeight: 800, background: `${cls.color}20`, padding: '2px 8px', borderRadius: '5px' }}>{xpPct}%</span>
+                {/* XP BAR INTEGRATED */}
+                <div className="bg-black/40 rounded-3xl p-6 border border-white/5">
+                    <div className="flex justify-between items-end mb-3">
+                        <div className="flex items-center gap-3">
+                            <span className="text-3xl font-black text-white italic">Nv. {rpg.level}</span>
+                            <span className="text-[10px] bg-yellow-600/20 text-yellow-600 px-2 rounded-md font-mono">{xpPct}%</span>
                         </div>
-                        <span style={{ color: '#666', fontSize: '0.7rem', fontWeight: 800 }}>{rpg.currentXp.toLocaleString()} / {rpg.nextLevelXp.toLocaleString()} XP</span>
+                        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{rpg.currentXp.toLocaleString()} / {rpg.nextLevelXp.toLocaleString()} XP</span>
                     </div>
-                    <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden' }}>
-                        <div style={{ width: `${xpPct}%`, height: '100%', background: `linear-gradient(90deg, ${cls.color}, ${cls.color}aa)`, borderRadius: '10px', transition: 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                    <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+                        <div 
+                            className="h-full bg-gradient-to-r from-yellow-700 to-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.3)] transition-all duration-1000" 
+                            style={{ width: `${xpPct}%` }} 
+                        />
                     </div>
                 </div>
             </div>
 
-            {/* Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1rem', padding: '1rem', textAlign: 'center' }}>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>{rpg.totalVisits}</p>
-                    <p style={{ fontSize: '0.65rem', color: '#888', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Visitas</p>
+            {/* ═══ STATS GRID ══════════════════ */}
+            <div className="rpg-stats">
+                <div className="rpg-stat-box">
+                    <span className="rpg-stat-val italic">{rpg.totalVisits}</span>
+                    <span className="rpg-stat-lbl">Explorações</span>
                 </div>
-                <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1rem', padding: '1rem', textAlign: 'center' }}>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>{rpg.totalWorks}</p>
-                    <p style={{ fontSize: '0.65rem', color: '#888', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Obras</p>
+                <div className="rpg-stat-box">
+                    <span className="rpg-stat-val italic">{rpg.totalWorks}</span>
+                    <span className="rpg-stat-lbl">Relíquias</span>
                 </div>
-                <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1rem', padding: '1rem', textAlign: 'center' }}>
-                    <p style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>{rpg.totalCards}</p>
-                    <p style={{ fontSize: '0.65rem', color: '#888', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Cards</p>
+                <div className="rpg-stat-box">
+                    <span className="rpg-stat-val italic">{rpg.totalCards}</span>
+                    <span className="rpg-stat-lbl">Grimório</span>
                 </div>
             </div>
 
-            {/* Quick Actions */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                <button 
-                    onClick={() => navigate('/wardrobe')}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '1rem', color: 'white', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
-                >
-                    🎒 Guarda-Roupa
-                </button>
-                <button 
-                    onClick={() => navigate('/marketplace')}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '1rem', color: 'white', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer' }}
-                >
-                    🛒 Loja de Skins
+            {/* ═══ ACTIONS & EVOLUTION ═════════ */}
+            <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                    <button onClick={() => navigate('/wardrobe')} className="bento-card !p-6 flex-row items-center gap-4 cursor-pointer">
+                        <span className="text-2xl">🎒</span>
+                        <div className="text-left">
+                            <div className="text-[9px] uppercase tracking-tighter text-yellow-600">Skins</div>
+                            <div className="text-xs font-bold text-white">Vestiário</div>
+                        </div>
+                    </button>
+                    <button onClick={() => navigate('/marketplace')} className="bento-card !p-6 flex-row items-center gap-4 cursor-pointer">
+                        <span className="text-2xl">🛒</span>
+                        <div className="text-left">
+                            <div className="text-[9px] uppercase tracking-tighter text-yellow-600">Trading</div>
+                            <div className="text-xs font-bold text-white">Mercado</div>
+                        </div>
+                    </button>
+                </div>
+                
+                <button onClick={() => navigate('/cracha/rastreio')} className="bento-card !p-6 flex-row items-center gap-4 cursor-pointer">
+                    <span className="text-2xl">🚚</span>
+                    <div className="text-left">
+                        <div className="text-[9px] uppercase tracking-tighter text-yellow-600">Status Físico</div>
+                        <div className="text-xs font-bold text-white">Rastrear Crachá de Embaixador</div>
+                    </div>
                 </button>
             </div>
-            
-            <button 
-                onClick={() => navigate('/cracha/rastreio')}
-                style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '1rem', color: 'white', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer', marginBottom: '1.5rem' }}
-            >
-                🚚 Rastrear Crachá Real
-            </button>
 
-            {/* Evolution Path */}
-            <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.25rem', padding: '1.25rem' }}>
-                <h3 style={{ color: '#aaa', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '1rem' }}>{t("visitor.rpg.caminhoDeEvoluo", `Caminho de Evolução`)}</h3>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* ═══ EVOLUTION PATH ══════════════ */}
+            <div className="rpg-evolution">
+                <div className="rpg-evo-title">Graus de Iniciação Cultural</div>
+                <div className="rpg-evo-path">
                     {Object.entries(classConfig).map(([key, cfg], idx) => {
                         const reached = Object.keys(classConfig).indexOf(rpg.characterClass) >= idx;
                         return (
-                            <div key={key} style={{ textAlign: 'center', opacity: reached ? 1 : 0.3 }}>
-                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: reached ? `${cfg.color}20` : 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.25rem', border: reached ? `2px solid ${cfg.color}` : '2px solid transparent', color: cfg.color }}>
+                            <div key={key} className={`rpg-evo-node ${reached ? 'active' : ''}`}>
+                                <div className="rpg-evo-icon">
                                     {cfg.icon}
                                 </div>
-                                <p style={{ fontSize: '0.65rem', fontWeight: 700, color: reached ? cfg.color : '#666' }}>{cfg.label}</p>
+                                <span className="rpg-evo-lbl">{cfg.label}</span>
                             </div>
                         );
                     })}

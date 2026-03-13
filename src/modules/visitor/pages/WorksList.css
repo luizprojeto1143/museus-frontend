@@ -1,165 +1,170 @@
-/* Visitor WorksList - Premium Gallery */
 .workslist-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding-bottom: 8rem;
-    animation: fade-in 0.8s ease-out;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding-bottom: 120px;
 }
 
-.workslist-header {
-    margin-bottom: 4rem;
-    text-align: left;
+/* ═══ HEADER ══════════════════ */
+.workslist-header-premium {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.workslist-title {
-    font-size: 2.5rem;
-    font-weight: 900;
-    letter-spacing: -0.04em;
-    color: #fff;
-    margin-bottom: 1rem;
+.workslist-badge {
+  font-family: var(--fm);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
 }
 
-.workslist-subtitle {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    max-width: 600px;
-    line-height: 1.6;
+.workslist-title-premium {
+  font-family: var(--fd);
+  font-size: clamp(40px, 8vw, 84px);
+  line-height: 0.9;
+  color: var(--gold-hi);
+  font-weight: 500;
 }
 
-/* GRID */
-.workslist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
+.workslist-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 }
 
-/* CARD */
-.workslist-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 32px;
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    flex-direction: column;
-    backdrop-filter: blur(10px);
+.workslist-filter-pill {
+  display: flex;
+  gap: 10px;
+  background: var(--surface2);
+  padding: 6px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
 }
 
-.workslist-card:hover {
-    transform: translateY(-10px);
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+.filter-btn {
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-family: var(--fm);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: all 0.3s;
 }
 
-.workslist-card-image {
-    aspect-ratio: 4/5;
-    width: 100%;
-    object-fit: cover;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.6s ease;
+.filter-btn.active {
+  background: var(--gold);
+  color: var(--bg);
+  box-shadow: 0 4px 12px var(--gold-glow);
 }
 
-.workslist-card:hover .workslist-card-image {
-    transform: scale(1.05);
+/* ═══ GRID & CARDS ══════════════ */
+.workslist-grid-premium {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 30px;
 }
 
-.workslist-card-placeholder {
-    aspect-ratio: 4/5;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.02);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
+.work-card-premium {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+  position: relative;
 }
 
-.workslist-card-content {
-    padding: 2rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.work-card-premium:hover {
+  transform: translateY(-12px) scale(1.02);
+  border-color: var(--gold);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
 }
 
-.workslist-card-title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
+.work-visual-premium {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--bg2);
 }
 
-.workslist-card-artist {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
+.work-img-premium {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: sepia(0.2) contrast(1.1);
+  transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.workslist-card-meta {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+.work-card-premium:hover .work-img-premium {
+  transform: scale(1.1);
 }
 
-.workslist-chip {
-    padding: 4px 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--text-secondary);
+.work-category-tag {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-family: var(--fm);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-.workslist-card-btn {
-    margin-top: auto;
-    height: 52px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: #fff;
-    font-weight: 800;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: all 0.3s;
+.work-content-premium {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.workslist-card-btn:hover {
-    background: var(--primary-color);
-    color: #000;
+.work-artist-premium {
+  font-family: var(--fm);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--gold);
 }
 
-/* EMPTY & SKELETON */
-.workslist-empty {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 32px;
-    border: 1px dashed rgba(255, 255, 255, 0.1);
+.work-title-premium {
+  font-family: var(--fd);
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--cream);
 }
 
-.workslist-skeleton-card {
-    aspect-ratio: 4/6;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 32px;
-    animation: work-pulse 2s infinite ease-in-out;
+.work-footer-premium {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 }
 
-@keyframes work-pulse {
-    0% { opacity: 0.3; }
-    50% { opacity: 0.5; }
-    100% { opacity: 0.3; }
+.work-explore-btn {
+  font-family: var(--fm);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--gold-hi);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 @media (max-width: 640px) {
-    .workslist-header {
-        margin-bottom: 2rem;
-    }
-    .workslist-title {
-        font-size: 2rem;
-    }
+  .workslist-grid-premium {
+    grid-template-columns: 1fr;
+  }
+  .workslist-title-premium {
+    font-size: 48px;
+  }
 }

@@ -4,13 +4,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
 import {
-    Landmark, Save, ArrowLeft, Building2,
-    Tent, Music, Mail, Lock, User, Globe, CheckCircle2
+    Landmark, Save, ArrowLeft, Building2, MapPin,
+    Tent, Music, Mail, Lock, User, Globe, CheckCircle2,
+    FileText, Image as ImageIcon
 } from "lucide-react";
-import { Button, Input, Select, Checkbox } from "../../../components/ui";
+import { Button, Input, Select, Checkbox, Textarea } from "../../../components/ui";
 import "./AdminShared.css";
 
-type EquipmentType = "MUSEUM" | "CULTURAL_SPACE" | "PRODUCER";
+type EquipmentType = "MUSEUM" | "CULTURAL_SPACE" | "PRODUCER" | "THEATER" | "GALLERY";
 
 export const AdminEquipmentForm: React.FC = () => {
     const { t } = useTranslation();
@@ -24,19 +25,26 @@ export const AdminEquipmentForm: React.FC = () => {
     const [saving, setSaving] = useState(false);
 
     // Form Data
-    const [name, setName] = useState("");
+    // Basic Info
+    const [nome, setNome] = useState("");
     const [slug, setSlug] = useState("");
-    const [type, setType] = useState<EquipmentType>("MUSEUM");
+    const [tipo, setTipo] = useState<EquipmentType>("MUSEUM");
+    const [descricao, setDescricao] = useState("");
+    const [missao, setMissao] = useState("");
 
-    // Admin Credentials (only for new)
-    const [adminName, setAdminName] = useState("");
-    const [adminEmail, setAdminEmail] = useState("");
-    const [adminPassword, setAdminPassword] = useState("");
+    // Location
+    const [endereco, setEndereco] = useState("");
+    const [cidade, setCidade] = useState("");
+    const [estado, setEstado] = useState("MG");
+    const [lat, setLat] = useState<number | null>(null);
+    const [lng, setLng] = useState<number | null>(null);
 
-    // Basic Features (Simplified)
-    const [featureEvents, setFeatureEvents] = useState(true);
-    const [featureWorks, setFeatureWorks] = useState(true);
-    const [featureGamification, setFeatureGamification] = useState(false);
+    // Media
+    const [fotoCapaUrl, setFotoCapaUrl] = useState("");
+    const [logoUrl, setLogoUrl] = useState("");
+
+    // Status
+    const [ativo, setAtivo] = useState(true);
 
     useEffect(() => {
         if (!isNew && id) {
@@ -47,17 +55,22 @@ export const AdminEquipmentForm: React.FC = () => {
     const loadEquipment = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/tenants/${id}`);
+            const res = await api.get(`/equipamentos/public/${id}`);
             const data = res.data;
 
-            setName(data.name);
+            setNome(data.nome);
             setSlug(data.slug);
-            setType(data.type);
-
-            // Load features
-            setFeatureEvents(data.featureEvents ?? true);
-            setFeatureWorks(data.featureWorks ?? true);
-            setFeatureGamification(data.featureGamification ?? false);
+            setTipo(data.tipo);
+            setDescricao(data.descricao || "");
+            setMissao(data.missao || "");
+            setEndereco(data.endereco || "");
+            setCidade(data.cidade || "");
+            setEstado(data.estado || "MG");
+            setLat(data.lat);
+            setLng(data.lng);
+            setFotoCapaUrl(data.fotoCapaUrl || "");
+            setLogoUrl(data.logoUrl || "");
+            setAtivo(data.ativo ?? true);
 
         } catch (error) {
             console.error(error);
@@ -74,26 +87,26 @@ export const AdminEquipmentForm: React.FC = () => {
 
         try {
             const payload: any = {
-                name,
+                nome,
                 slug,
-                type,
-                featureEvents,
-                featureWorks,
-                featureGamification,
-                // Defaults
-                plan: "START",
-                isCityMode: false
+                tipo,
+                descricao,
+                missao,
+                endereco,
+                cidade,
+                estado,
+                lat,
+                lng,
+                fotoCapaUrl,
+                logoUrl,
+                ativo
             };
 
             if (isNew) {
-                payload.adminName = adminName;
-                payload.adminEmail = adminEmail;
-                payload.adminPassword = adminPassword;
-
-                await api.post("/tenants", payload);
+                await api.post("/equipamentos", payload);
                 addToast("Equipamento criado com sucesso!", "success");
             } else {
-                await api.put(`/tenants/${id}`, payload);
+                await api.put(`/equipamentos/${id}`, payload);
                 addToast("Equipamento atualizado com sucesso!", "success");
             }
 
@@ -110,7 +123,9 @@ export const AdminEquipmentForm: React.FC = () => {
 
     const typeOptions = [
         { value: "MUSEUM", label: "Museu / Memorial", icon: <Landmark size={20} /> },
-        { value: "CULTURAL_SPACE", label: "Espaço Cultural / Teatro", icon: <Tent size={20} /> },
+        { value: "THEATER", label: "Teatro / Cine-teatro", icon: <Music size={20} /> },
+        { value: "CULTURAL_SPACE", label: "Centro Cultural", icon: <Building2 size={20} /> },
+        { value: "GALLERY", label: "Galeria de Arte", icon: <ImageIcon size={20} /> },
         { value: "PRODUCER", label: "Produtora / Coletivo", icon: <Music size={20} /> }
     ];
 
@@ -148,15 +163,13 @@ export const AdminEquipmentForm: React.FC = () => {
                 <div className="admin-section">
                     <h3 className="admin-section-title">
                         <Building2 className="text-[var(--accent-gold)]" size={20} /> Identificação
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    </h3>                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="form-group">
                             <Input
-                                label="Nome Oficial"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
-                                placeholder="Ex: Teatro Municipal"
+                                label="Nome do Equipamento"
+                                value={nome}
+                                onChange={e => setNome(e.target.value)}
+                                placeholder="Ex: Teatro Municipal de Ouro Preto"
                                 required
                             />
                         </div>
@@ -164,8 +177,8 @@ export const AdminEquipmentForm: React.FC = () => {
                         <div className="form-group">
                             <Select
                                 label="Tipo de Equipamento"
-                                value={type}
-                                onChange={e => setType(e.target.value as any)}
+                                value={tipo}
+                                onChange={e => setTipo(e.target.value as any)}
                             >
                                 {typeOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -175,7 +188,7 @@ export const AdminEquipmentForm: React.FC = () => {
 
                         <div className="form-group md:col-span-2">
                             <Input
-                                label="Slug (URL)"
+                                label="Identificador Único (Slug)"
                                 value={slug}
                                 onChange={e => setSlug(e.target.value)}
                                 placeholder="ex: teatro-municipal"
@@ -183,93 +196,126 @@ export const AdminEquipmentForm: React.FC = () => {
                                 leftIcon={<Globe size={16} />}
                                 style={{ fontFamily: 'monospace' }}
                             />
-                            <p className="text-xs text-[var(--fg-muted)] mt-2">{t("admin.equipment.identificadorNicoUsadoNaUrlDoMuseu", `
-                                Identificador único usado na URL do museu.
-                            `)}</p>
+                            <p className="text-xs text-[var(--fg-muted)] mt-2">
+                                Usado na URL pública do equipamento.
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Credentials (Only for New) */}
-                {isNew && (
-                    <div className="admin-section">
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="admin-section-title mb-0">
-                                <User className="text-[var(--accent-gold)]" size={20} /> Acesso Administrativo
-                            </h3>
-                            <span className="text-xs text-[var(--accent-gold)] bg-[var(--accent-gold)]/10 px-2 py-1 rounded">
-                                Primeiro Administrador
-                            </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="form-group">
-                                <Input
-                                    label="Nome do Gestor"
-                                    value={adminName}
-                                    onChange={e => setAdminName(e.target.value)}
-                                    placeholder="Nome completo"
-                                    required
-                                    leftIcon={<User size={16} />}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <Input
-                                    label="E-mail de Login"
-                                    type="email"
-                                    value={adminEmail}
-                                    onChange={e => setAdminEmail(e.target.value)}
-                                    placeholder="gestor@cultura.gov.br"
-                                    required
-                                    leftIcon={<Mail size={16} />}
-                                />
-                            </div>
-                            <div className="form-group md:col-span-2">
-                                <Input
-                                    label="Senha Inicial"
-                                    type="password"
-                                    value={adminPassword}
-                                    onChange={e => setAdminPassword(e.target.value)}
-                                    placeholder="********"
-                                    required
-                                    leftIcon={<Lock size={16} />}
-                                />
-                                <p className="text-xs text-[var(--fg-muted)] mt-2">{t("admin.equipment.oGestorPoderAlterarEstaSenhaNoPrimeiroAc", `
-                                    O gestor poderá alterar esta senha no primeiro acesso.
-                                `)}</p>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {/* Modules */}
+                {/* Description and Mission */}
                 <div className="admin-section">
                     <h3 className="admin-section-title">
-                        <CheckCircle2 className="text-[var(--accent-gold)]" size={20} /> Módulos Habilitados
+                        <FileText className="text-[var(--accent-gold)]" size={20} /> Conteúdo Institucional
                     </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Checkbox
-                            label="Acervo & Obras"
-                            description="Permite cadastrar obras, peças e itens do acervo."
-                            checked={featureWorks}
-                            onChange={e => setFeatureWorks(e.target.checked)}
+                    <div className="space-y-6">
+                        <Textarea 
+                            label="Descrição"
+                            value={descricao}
+                            onChange={e => setDescricao(e.target.value)}
+                            placeholder="Breve história ou descrição do espaço..."
+                            rows={4}
                         />
-
-                        <Checkbox
-                            label="Agenda de Eventos"
-                            description="Gestão de eventos, ingressos e calendário."
-                            checked={featureEvents}
-                            onChange={e => setFeatureEvents(e.target.checked)}
-                        />
-
-                        <Checkbox
-                            label={t("admin.equipment.gamificao", `Gamificação`)}
-                            description="Ranking, visitas premiadas e caça ao tesouro."
-                            checked={featureGamification}
-                            onChange={e => setFeatureGamification(e.target.checked)}
+                        <Textarea 
+                            label="Experiência / Missão"
+                            value={missao}
+                            onChange={e => setMissao(e.target.value)}
+                            placeholder="O que o visitante encontrará aqui?"
+                            rows={3}
                         />
                     </div>
+                </div>
+
+                {/* Location */}
+                <div className="admin-section">
+                    <h3 className="admin-section-title">
+                        <MapPin className="text-[var(--accent-gold)]" size={20} /> Localização
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="form-group md:col-span-2">
+                            <Input
+                                label="Endereço Completo"
+                                value={endereco}
+                                onChange={e => setEndereco(e.target.value)}
+                                placeholder="Rua, Número, Bairro"
+                                leftIcon={<MapPin size={16} />}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <Input
+                                label="Cidade"
+                                value={cidade}
+                                onChange={e => setCidade(e.target.value)}
+                                placeholder="Ex: Ouro Preto"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <Input
+                                label="Estado"
+                                value={estado}
+                                onChange={e => setEstado(e.target.value)}
+                                placeholder="Ex: MG"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <Input
+                                label="Latitude"
+                                type="number"
+                                step="any"
+                                value={lat || ''}
+                                onChange={e => setLat(e.target.value ? parseFloat(e.target.value) : null)}
+                                placeholder="-20.38..."
+                            />
+                        </div>
+                        <div className="form-group">
+                            <Input
+                                label="Longitude"
+                                type="number"
+                                step="any"
+                                value={lng || ''}
+                                onChange={e => setLng(e.target.value ? parseFloat(e.target.value) : null)}
+                                placeholder="-43.50..."
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Appearance */}
+                <div className="admin-section">
+                    <h3 className="admin-section-title">
+                        <ImageIcon className="text-[var(--accent-gold)]" size={20} /> Identidade Visual
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="form-group">
+                            <Input
+                                label="URL do Logotipo"
+                                value={logoUrl}
+                                onChange={e => setLogoUrl(e.target.value)}
+                                placeholder="https://..."
+                            />
+                        </div>
+                        <div className="form-group">
+                            <Input
+                                label="URL da Foto de Capa"
+                                value={fotoCapaUrl}
+                                onChange={e => setFotoCapaUrl(e.target.value)}
+                                placeholder="https://..."
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Status */}
+                <div className="admin-section">
+                    <h3 className="admin-section-title">
+                        <CheckCircle2 className="text-[var(--accent-gold)]" size={20} /> Status do Equipamento
+                    </h3>
+                    <Checkbox
+                        label="Equipamento Ativo"
+                        description="Equipamentos inativos não aparecem na busca pública nem no portal do visitante."
+                        checked={ativo}
+                        onChange={e => setAtivo(e.target.checked)}
+                    />
                 </div>
 
                 <div className="admin-wizard-footer">

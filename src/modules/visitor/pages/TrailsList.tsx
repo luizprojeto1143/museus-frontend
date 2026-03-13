@@ -22,7 +22,7 @@ export const TrailsList: React.FC = () => {
 
   const [trails, setTrails] = useState<TrailItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { tenantId } = useAuth();
+  const { tenantId, equipamentoId } = useAuth();
 
   useEffect(() => {
     if (!tenantId) return;
@@ -30,7 +30,7 @@ export const TrailsList: React.FC = () => {
     let mounted = true;
     setLoading(true);
 
-    api.get("/trails", { params: { tenantId } })
+    api.get("/trails", { params: { tenantId, equipamentoId } })
       .then((res) => {
         if (!mounted) return;
         const apiTrails = (res.data as any[]).map((t) => ({
@@ -49,7 +49,7 @@ export const TrailsList: React.FC = () => {
       });
 
     return () => { mounted = false; };
-  }, [tenantId]);
+  }, [tenantId, equipamentoId]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -68,74 +68,70 @@ export const TrailsList: React.FC = () => {
       initial="hidden"
       animate="visible"
     >
-      <header className="trails-header flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-           <h1 className="trails-header-title italic">Jornadas Curadas</h1>
-           <p className="trails-header-subtitle">
-             Siga caminhos temáticos desenhados por especialistas para uma compreensão profunda do acervo.
-           </p>
-        </div>
-        
-        <div className="flex gap-2">
-           <Link to="/mapa" className="h-12 px-6 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3 text-sm font-bold text-slate-400 hover:text-white transition-all">
-              <MapIcon size={18} />
-              Ver no Mapa
-           </Link>
-        </div>
+      <header className="trails-header-premium">
+        <span className="trails-badge">Expedições Guiadas</span>
+        <h1 className="trails-title-premium">Jornadas Culturais</h1>
+        <p className="hero-subtitle-premium">
+          Siga caminhos temáticos desenhados por especialistas para uma compreensão profunda e transcendente do nosso acervo.
+        </p>
       </header>
 
       {/* SMART GENERATOR - PREMIUM INTEGRATION */}
-      <section className="mb-16">
+      <section className="mb-10">
          <SmartRouteGenerator />
       </section>
 
       <section>
-        <div className="flex items-center gap-4 mb-8">
-           <div className="h-px flex-1 bg-white/10" />
-           <span className="text-[10px] uppercase font-black tracking-widest text-gold-400/60">Trilhas Oficiais</span>
-           <div className="h-px flex-1 bg-white/10" />
+        <div className="flex items-center gap-4 mb-12">
+           <div className="h-px flex-1 bg-white/5" />
+           <span className="text-[10px] uppercase font-mono tracking-widest text-gold-hi/40">Roteiros Oficiais</span>
+           <div className="h-px flex-1 bg-white/5" />
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map(i => <div key={i} className="trails-skeleton-card" />)}
+          <div className="flex justify-center p-20">
+             <div className="splash-loader-fill h-1 w-40"></div>
           </div>
         ) : trails.length > 0 ? (
-          <div className="trails-grid">
+          <div className="trails-grid-premium">
             {trails.map(trail => (
-              <motion.article 
-                key={trail.id} 
-                className="trail-card group"
+              <motion.div
+                key={trail.id}
                 variants={itemVariants}
-                whileHover={{ y: -8 }}
               >
-                <div className="absolute -top-4 -right-4 h-24 w-24 bg-gold-400/5 rounded-full blur-2xl group-hover:bg-gold-400/10 transition-colors" />
-                
-                <h2 className="trail-card-title">{trail.name}</h2>
-                <p className="trail-card-description line-clamp-3">
-                  {trail.description || "Inicie esta jornada para descobrir as histórias ocultas por trás do nosso acervo."}
-                </p>
-                
-                <div className="trail-card-meta">
-                  <span className="trail-chip"><Clock size={12} /> {trail.duration || "Livre"}</span>
-                  <span className="trail-chip"><ImageIcon size={12} /> {trail.worksCount} Obras</span>
-                </div>
-                
-                <Link to={`/trilhas/${trail.id}`} className="trail-card-btn group">
-                  Iniciar Experiência
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <Link to={`/trilhas/${trail.id}`} className="trail-card-premium group">
+                  <div className="trail-icon-premium">🧭</div>
+                  
+                  <div className="trail-info-premium">
+                    <h2 className="trail-title-premium">{trail.name}</h2>
+                    <p className="trail-desc-premium line-clamp-3">
+                      {trail.description || "Inicie esta jornada para descobrir as histórias ocultas por trás do nosso acervo."}
+                    </p>
+                  </div>
+                  
+                  <div className="trail-meta-premium">
+                    <div className="trail-meta-item">
+                      <Clock size={12} /> {trail.duration || "Livre"}
+                    </div>
+                    <div className="trail-meta-item">
+                      <ImageIcon size={12} /> {trail.worksCount} Obras
+                    </div>
+                  </div>
+                  
+                  <div className="trail-action-premium">
+                    Iniciar Experiência <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
-              </motion.article>
+              </motion.div>
             ))}
           </div>
         ) : (
-          <div className="trails-empty">
-            <span className="trails-empty-icon">🧭</span>
-            <h3 className="text-xl font-bold text-white mb-2">Novas Trilhas em Breve</h3>
-            <p className="text-slate-400 max-w-sm mx-auto mb-8">Nossa curadoria está preparando novas experiências guiadas para você.</p>
-            <Link to="/obras" className="h-12 px-8 bg-gold-400 text-black rounded-xl font-black text-xs uppercase tracking-widest inline-flex items-center gap-3 hover:scale-105 transition-transform">
-              <Compass size={18} />
-              Explorar Obras
+          <div className="workslist-empty py-40">
+            <span className="text-6xl mb-6 opacity-30">🧭</span>
+            <h3 className="text-2xl font-fd text-white mb-4">Horizonte Vazio</h3>
+            <p className="text-muted max-w-sm mx-auto mb-10">Nossa curadoria está preparando novas experiências guiadas para você.</p>
+            <Link to="/obras" className="gallery-cta !justify-center">
+              Explorar Obras <ArrowRight size={14} />
             </Link>
           </div>
         )}

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
+import { AchievementModal } from "../components/AchievementModal";
 
 interface GamificationContextType {
     stats: UserStats;
@@ -44,6 +45,9 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     const { addToast } = useToast();
     const [authState, setAuthState] = useState(getAuthFromStorage);
     const [loading, setLoading] = useState(false);
+    const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
     const [stats, setStats] = useState<UserStats>(() => {
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -168,7 +172,10 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 unlockedAt: new Date().toISOString(),
             };
 
-            // Notify user
+            // Notify user with Modal
+            setUnlockedAchievement(updatedAchievements[achievementIndex]);
+            setIsModalOpen(true);
+
             if (addToast) {
                 addToast(`Conquista Desbloqueada: ${prev.achievements[achievementIndex].title}!`, 'success');
             }
@@ -225,6 +232,11 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     return (
         <GamificationContext.Provider value={contextValue}>
             {children}
+            <AchievementModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                achievement={unlockedAchievement} 
+            />
         </GamificationContext.Provider>
     );
 };

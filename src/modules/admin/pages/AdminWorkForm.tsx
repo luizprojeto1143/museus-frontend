@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { QRCodeCanvas } from "qrcode.react";
 import { api } from "../../../api/client";
@@ -57,6 +57,7 @@ export const AdminWorkForm: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
 
   // Form Fields
   const [code, setCode] = useState("");
@@ -80,12 +81,17 @@ export const AdminWorkForm: React.FC = () => {
   const [workMedium, setWorkMedium] = useState("");
   const [dimensions, setDimensions] = useState("");
   const [radius, setRadius] = useState(5);
+  const [equipamentoId, setEquipamentoId] = useState("");
 
   // Fetch Data
   useEffect(() => {
     if (tenantId) {
       api.get(`/categories`, { params: { tenantId } })
         .then(res => setCategories(res.data))
+        .catch(console.error);
+
+      api.get(`/equipamentos`)
+        .then(res => setEquipamentos(res.data))
         .catch(console.error);
     }
 
@@ -103,6 +109,7 @@ export const AdminWorkForm: React.FC = () => {
         setAudioUrl(data.audioUrl || "");
         setLibrasUrl(data.librasUrl || "");
         setPublished(data.published ?? true);
+        setEquipamentoId(data.equipamentoId || "");
 
         // Load translations if available in backend
         if (data.metadata?.translations?.en) {
@@ -234,6 +241,7 @@ export const AdminWorkForm: React.FC = () => {
       medium: workMedium || undefined,
       dimensions: dimensions || undefined,
       tenantId,
+      equipamentoId: equipamentoId || undefined,
       code: code || undefined,
       published,
       radius: Number(radius) || 5,
@@ -394,12 +402,26 @@ export const AdminWorkForm: React.FC = () => {
                 </div>
 
                 <div className="admin-grid-2">
+                  <Select
+                    label="Equipamento Responsável"
+                    value={equipamentoId}
+                    onChange={e => setEquipamentoId(e.target.value)}
+                    required
+                  >
+                    <option value="">Selecione o equipamento...</option>
+                    {equipamentos.map(e => (
+                      <option key={e.id} value={e.id}>{e.nome}</option>
+                    ))}
+                  </Select>
                   <Input
                     label={t("admin.work.tcnica", `Técnica`)}
                     value={technique}
                     onChange={e => setTechnique(e.target.value)}
                     placeholder={t("admin.work.exLeoSobreTelaEsculturaEmBronze", `Ex: Óleo sobre tela, Escultura em bronze`)}
                   />
+                </div>
+
+                <div className="admin-grid-2">
                   <Input
                     label={t("admin.work.perodoEstilo", `Período / Estilo`)}
                     value={period}

@@ -19,15 +19,15 @@ interface WorksResponse {
 }
 
 export function useWorks(params?: { limit?: number; page?: number; search?: string }) {
-    const { tenantId } = useAuth();
+    const { tenantId, equipamentoId } = useAuth();
 
     return useQuery({
-        queryKey: ["works", tenantId, params],
+        queryKey: ["works", tenantId, equipamentoId, params],
         queryFn: async (): Promise<Work[]> => {
             if (!tenantId) return [];
 
             const { data } = await api.get("/works", {
-                params: { ...params, tenantId }
+                params: { ...params, tenantId, equipamentoId }
             });
 
             const rawData = Array.isArray(data) ? data : (data.data || []);

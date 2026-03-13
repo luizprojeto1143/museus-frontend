@@ -13,6 +13,7 @@ interface StoredAuth {
   refreshToken: string; // [NEW]
   role: Role;
   tenantId: string | null;
+  equipamentoId: string | null; // [NEW]
   tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
@@ -27,14 +28,15 @@ interface AuthContextValue {
   token: string | null;
   refreshToken: string | null; // [NEW]
   tenantId: string | null;
+  equipamentoId: string | null; // [NEW]
   tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
   hasProviderProfile: boolean;
   login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null; hasProviderProfile: boolean }>;
-  enterAsGuest: (selectedTenantId?: string | null) => void;
+  enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => void;
   logout: () => void;
-  updateSession: (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => void;
+  updateSession: (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null, newEquipamentoId?: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -87,6 +89,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const parsed = JSON.parse(stored) as StoredAuth;
         return parsed.tenantId ?? null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
+
+  const [equipamentoId, setEquipamentoId] = useState<string | null>(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as StoredAuth;
+        return parsed.equipamentoId ?? null;
       } catch {
         return null;
       }
@@ -179,6 +194,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         refreshToken?: string;
         role?: string;
         tenantId?: string | null;
+        equipamentoId?: string | null;
         tenantType?: "MUSEUM" | "PRODUCER" | null;
         hasProviderProfile?: boolean;
         user?: { email: string; name?: string; hasProviderProfile?: boolean };
@@ -199,6 +215,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       else if (backendRole === "VISITOR") mappedRole = "visitor";
 
       const receivedTenantId = data.tenantId ?? null;
+      const receivedEquipamentoId = data.equipamentoId ?? null;
       const receivedTenantType = data.tenantType ?? "MUSEUM";
       const receivedEmail = data.user?.email ?? email;
       const receivedName = data.user?.name ?? null;
@@ -208,6 +225,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setRefreshToken(receivedRefreshToken);
       setRole(mappedRole);
       setTenantId(receivedTenantId);
+      setEquipamentoId(receivedEquipamentoId);
       setTenantType(receivedTenantType);
       setEmail(receivedEmail);
       setName(receivedName);
@@ -218,6 +236,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         refreshToken: receivedRefreshToken,
         role: mappedRole,
         tenantId: receivedTenantId,
+        equipamentoId: receivedEquipamentoId,
         tenantType: receivedTenantType,
         email: receivedEmail,
         name: receivedName,
@@ -239,6 +258,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setRefreshToken(fakeRefToken);
       setRole(simulatedRole);
       setTenantId(null);
+      setEquipamentoId(null);
       setTenantType(simulatedTenantType);
       setEmail(email);
       setName("Usuário Demo");
@@ -248,6 +268,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         refreshToken: fakeRefToken,
         role: simulatedRole,
         tenantId: null,
+        equipamentoId: null,
         tenantType: simulatedTenantType,
         email: email,
         name: "Usuário Demo",
@@ -281,6 +302,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setRefreshToken(null);
     setRole(null);
     setTenantId(null);
+    setEquipamentoId(null);
     setTenantType(null);
     setEmail(null);
     setName(null);
@@ -292,12 +314,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // window.location.href = "/login"; // Opcional
   };
 
-  const enterAsGuest = (selectedTenantId?: string | null) => {
+  const enterAsGuest = (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => {
     const guestToken = "guest-anonymous-token";
     setToken(guestToken);
     setRefreshToken("");
     setRole("visitor");
     setTenantId(selectedTenantId ?? null);
+    setEquipamentoId(selectedEquipamentoId ?? null);
     setTenantType("MUSEUM");
     setEmail(null);
     setName("Visitante");
@@ -309,6 +332,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       refreshToken: "",
       role: "visitor",
       tenantId: selectedTenantId ?? null,
+      equipamentoId: selectedEquipamentoId ?? null,
       tenantType: "MUSEUM",
       email: null,
       name: "Visitante",
@@ -318,7 +342,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   };
 
-  const updateSession = (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null) => {
+  const updateSession = (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null, newEquipamentoId?: string | null) => {
     let mappedRole: Role = "visitor";
     const upperRole = (newRole || "").toUpperCase();
 
@@ -331,6 +355,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setRefreshToken(newRefreshToken);
     setRole(mappedRole);
     setTenantId(newTenantId);
+    setEquipamentoId(newEquipamentoId ?? null);
     if (newName !== undefined) setName(newName ?? null);
 
     const currentTenantType = tenantType ?? "MUSEUM";
@@ -340,6 +365,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       refreshToken: newRefreshToken,
       role: mappedRole,
       tenantId: newTenantId,
+      equipamentoId: newEquipamentoId ?? null,
       tenantType: currentTenantType,
       email: email || "",
       name: newName !== undefined ? (newName ?? null) : name,
@@ -357,6 +383,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         token,
         refreshToken,
         tenantId,
+        equipamentoId,
         tenantType,
         email,
         name,

@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { Camera, Keyboard, ArrowLeft, ArrowRight, ScanLine } from "lucide-react";
 import { Input, Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
+import { useAuth } from "../../auth/AuthContext";
+import { api } from "../../../api/client";
 import "./Scanner.css";
 
 export const ScannerPage: React.FC = () => {
@@ -14,6 +16,8 @@ export const ScannerPage: React.FC = () => {
     const [manualCode, setManualCode] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
+    const [validating, setValidating] = useState(false);
+    const { equipamentoId, tenantId, enterAsGuest, updateSession, token, role, name, isAuthenticated } = useAuth();
     const scannerRef = useRef<Html5Qrcode | null>(null);
 
     const stopScanner = async () => {
@@ -68,8 +72,9 @@ export const ScannerPage: React.FC = () => {
         }
     };
 
-    const handleScanSuccess = (decodedText: string) => {
+    const handleScanSuccess = async (decodedText: string) => {
         stopScanner();
+        setValidating(true);
 
         let workId = decodedText;
 
@@ -77,25 +82,42 @@ export const ScannerPage: React.FC = () => {
             const data = JSON.parse(decodedText);
             if (data.id) workId = data.id;
         } catch {
-            // Not JSON, assume string ID
+            // Not JSON
         }
 
-        if (workId.includes("/works/")) {
-            workId = workId.split("/works/")[1];
-        } else if (workId.includes("/qr/")) {
-            workId = workId.split("/qr/")[1];
-        }
+        if (workId.includes("/works/")) workId = workId.split("/works/")[1];
+        else if (workId.includes("/qr/")) workId = workId.split("/qr/")[1];
+        if (workId.startsWith("http")) workId = workId.split("/").pop() || "";
 
-        // Limpar URL completa se houver
-        if (workId.startsWith("http")) {
-            const parts = workId.split("/");
-            workId = parts[parts.length - 1];
-        }
+        try {
+            // Validar contexto da obra
+            const res = await api.get(`/works/${workId}`);
+            const work = res.data;
 
-        if (decodedText.includes("/qr/")) {
-            navigate(`/qr/${workId}`);
-        } else {
-            navigate(`/obras/${workId}`);
+            if (work.equipamentoId && work.equipamentoId !== equipamentoId) {
+                const change = window.confirm(`Esta obra pertence ao espaço "${work.equipamento?.nome || 'outro local'}". Deseja entrar neste espaço para ver os detalhes?`);
+                if (change) {
+                    if (isAuthenticated && token) {
+                        updateSession(token, "", role || "visitor", work.tenantId, name, work.equipamentoId);
+                    } else {
+                        enterAsGuest(work.tenantId, work.equipamentoId);
+                    }
+                    addToast("Boas-vindas ao novo espaço!", "success");
+                } else {
+                    setValidating(false);
+                    return;
+                }
+            }
+            
+            if (decodedText.includes("/qr/")) {
+                navigate(`/qr/${workId}`);
+            } else {
+                navigate(`/obras/${workId}`);
+            }
+        } catch (err) {
+            console.error("Erro ao validar obra", err);
+            addToast("Obra não encontrada neste setor.", "error");
+            setValidating(false);
         }
     };
 
@@ -142,15 +164,16 @@ export const ScannerPage: React.FC = () => {
 
                 {isScanning && (
                     <div className="absolute inset-0 pointer-events-none">
+                        <div className="scan-line"></div>
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-gold/50 rounded-lg">
                             <div className="absolute top-0 left-0 w-4 h-4 border-t-4 border-l-4 border-gold -mt-1 -ml-1"></div>
                             <div className="absolute top-0 right-0 w-4 h-4 border-t-4 border-r-4 border-gold -mt-1 -mr-1"></div>
                             <div className="absolute bottom-0 left-0 w-4 h-4 border-b-4 border-l-4 border-gold -mb-1 -ml-1"></div>
                             <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-gold -mb-1 -mr-1"></div>
                         </div>
-                        <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm animate-pulse">{t("visitor.scannerpage.procurandoCdigo", `
-                            Procurando código...
-                        `)}</div>
+                        <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm animate-pulse">
+                            {validating ? "Validando Localização..." : t("visitor.scannerpage.procurandoCdigo", "Procurando código...")}
+                        </div>
                     </div>
                 )}
             </div>

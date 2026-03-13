@@ -12,11 +12,12 @@ export const MapView: React.FC = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const initialWorkId = searchParams.get("workId");
-  const { tenantId } = useAuth();
+  const { tenantId, equipamentoId } = useAuth();
   const [loading, setLoading] = useState(true);
   const [mapSettings, setMapSettings] = useState<{
     outdoorCenter: [number, number];
     indoorImageUrl?: string;
+    nome?: string;
   } | null>(null);
 
   const [pois, setPois] = useState<{ id: string; title: string; lat: number; lng: number; description: string }[]>([]);
@@ -30,16 +31,17 @@ export const MapView: React.FC = () => {
     setLoading(true);
     try {
       const [settingsRes, worksRes] = await Promise.all([
-        api.get(`/tenants/${tenantId}/settings`),
-        api.get(`/works`, { params: { tenantId } })
+        equipamentoId ? api.get(`/equipamentos/public/${equipamentoId}`) : api.get(`/tenants/${tenantId}/settings`),
+        api.get(`/works`, { params: { tenantId, equipamentoId } })
       ]);
 
       const s = settingsRes.data;
       const works = Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []);
 
       setMapSettings({
-        outdoorCenter: [s.latitude || -20.385574, s.longitude || -43.503578],
-        indoorImageUrl: s.mapImageUrl
+        outdoorCenter: [s.lat || s.latitude || -20.385574, s.lng || s.longitude || -43.503578],
+        indoorImageUrl: s.fotoMapaUrl || s.mapImageUrl,
+        nome: s.nome || s.name
       });
 
       setPois(works.map((w: any) => ({
@@ -54,7 +56,7 @@ export const MapView: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [tenantId]);
+  }, [tenantId, equipamentoId]);
 
   useEffect(() => {
     fetchMapData();
@@ -85,9 +87,11 @@ export const MapView: React.FC = () => {
     >
       <header className="map-view-header flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-           <h1 className="map-view-title italic">Exploração de Espaço</h1>
+           <h1 className="map-view-title italic">
+              Exploração: <span className="text-gold-400">{mapSettings?.nome || "Espaço Cultural"}</span>
+           </h1>
            <p className="map-view-subtitle">
-             Navegue pelos andares, encontre suas obras favoritas e planeje sua rota com precisão.
+             Navegue pelos andares e encontre obras neste equipamento.
            </p>
         </div>
 

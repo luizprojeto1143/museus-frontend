@@ -1,5 +1,5 @@
 export const getFullUrl = (path: string | null | undefined) => {
-    if (!path) return null;
+    if (!path) return undefined;
     if (path.startsWith("http")) return path;
 
     // Use the VITE_API_URL or default to production backend

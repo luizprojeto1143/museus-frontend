@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
+import { api } from "../../../api/client";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { VideoPlayer } from "../../../components/common/VideoPlayer";
 import { getFullUrl } from "../../../utils/url";
-import { Star } from "lucide-react";
+import { Heart, Clock, List, Share2, ChevronRight } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
+import { motion } from "framer-motion";
 import "./Trails.css";
 
 type TrailDetailData = {
@@ -35,56 +36,36 @@ export const TrailDetail: React.FC = () => {
     api.get(`/favorites/check?type=trail&id=${id}`)
       .then(res => setIsFavorite(res.data.isFavorite))
       .catch(err => console.error("Error checking favorite status", err));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isGuest]);
 
   useEffect(() => {
     if (!id) return;
-
     setApiLoading(true);
-    setError(false);
-    api
-      .get(`/trails/${id}`)
+    api.get(`/trails/${id}`)
       .then((res) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const t = res.data as any;
-        const works =
-          Array.isArray(t.works) && t.works.length
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ? t.works.map((tw: any) => ({
-              id: tw.work?.id ?? tw.id,
-              title: tw.work?.title ?? tw.title ?? "Obra da trilha"
-            }))
-            : [];
+        const t = res.data;
+        const works = Array.isArray(t.works) ? t.works.map((tw: any) => ({
+          id: tw.work?.id ?? tw.id,
+          title: tw.work?.title ?? tw.title ?? "Obra da trilha"
+        })) : [];
 
-        const mapped: TrailDetailData = {
+        setApiTrail({
           id: t.id,
           name: t.title || t.name,
           title: t.title || t.name,
           description: t.description ?? "",
-          duration: t.durationLabel ?? t.duration ?? "",
+          duration: t.durationLabel || t.duration || "45 min",
           audioUrl: getFullUrl(t.audioUrl),
           videoUrl: getFullUrl(t.videoUrl),
           works
-        };
-        setApiTrail(mapped);
+        });
       })
-      .catch((err) => {
-        console.error("Failed to fetch trail details", err);
-        setError(true);
-      })
+      .catch(() => setError(true))
       .finally(() => setApiLoading(false));
   }, [id]);
 
-  const trail = apiTrail;
-  const loading = apiLoading;
-
   const toggleFavorite = async () => {
-    if (isGuest) {
-      alert(t("visitor.favorites.loginRequired", "Crie uma conta para salvar favoritos na nuvem."));
-      return;
-    }
-
+    if (isGuest) return;
     try {
       if (isFavorite) {
         await api.delete(`/favorites/trail/${id}`);
@@ -93,107 +74,92 @@ export const TrailDetail: React.FC = () => {
         await api.post('/favorites', { type: "trail", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err) {
-      console.error("Erro ao favoritar", err);
-    }
+    } catch (err) { console.error(err); }
   };
 
-  if (loading) {
-    return (
-      <div className="trail-detail-loading">
-        <div className="trail-detail-spinner"></div>
-        <p>{t("common.loading")}</p>
-      </div>
-    );
-  }
+  if (apiLoading) return (
+    <div className="flex justify-center p-40">
+       <div className="splash-loader-fill h-1 w-40"></div>
+    </div>
+  );
 
-  if (error || !trail) {
-    return (
-      <div className="trail-detail-error">
-        <span className="trail-detail-error-icon">🗺️</span>
-        <h1>{t("visitor.trailDetail.notFound", "Trilha não encontrada")}</h1>
-        <p>
-          {error ? t("common.errorConnection", "Houve um problema ao carregar os dados.") : t("visitor.trailDetail.notFoundDesc", "A trilha que você procura não existe ou foi removida.")}
-        </p>
-        <button className="trail-back-btn" onClick={() => window.history.back()}>
-          {t("common.back")}
-        </button>
-      </div>
-    );
-  }
+  if (error || !apiTrail) return (
+    <div className="work-error">
+      <h1 className="font-fd text-4xl mb-6">Jornada Extraviada</h1>
+      <button className="gallery-cta" onClick={() => window.history.back()}>Retornar às Trilhas</button>
+    </div>
+  );
 
   return (
-    <div className="trail-detail-container">
-      <header className="trail-detail-header" style={{ position: 'relative' }}>
-        <span className="trail-detail-badge">{t("visitor.trails.badge")}</span>
-        <h1 className="trail-detail-title">{trail.name}</h1>
-        <p className="trail-detail-meta">
-          {trail.duration} • {trail.works.length} {t("visitor.sidebar.artworks")}
-        </p>
-
-        <button
-          onClick={toggleFavorite}
-          style={{
-            position: 'absolute',
-            top: '2rem',
-            right: '2rem',
-            background: 'rgba(0,0,0,0.4)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)',
-            color: 'white',
-            borderRadius: '50%',
-            width: '45px',
-            height: '45px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}
-          title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-        >
-          <Star size={20} fill={isFavorite ? "#d4af37" : "none"} color={isFavorite ? "#d4af37" : "white"} />
-        </button>
+    <motion.div 
+      className="work-detail-container"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      <header className="work-header-premium">
+        <span className="work-badge-premium">Jornada Cultural</span>
+        <h1 className="work-title-premium">{apiTrail.name}</h1>
+        <div className="work-meta-premium">
+           <div className="flex items-center gap-2"><Clock size={16} className="text-gold" /> {apiTrail.duration}</div>
+           <div className="flex items-center gap-2"><List size={16} className="text-gold" /> {apiTrail.works.length} Estações</div>
+        </div>
+        
+        <div className="work-actions-premium">
+           <button 
+             onClick={toggleFavorite} 
+             className={`action-btn-premium ${isFavorite ? 'active' : ''}`}
+           >
+             <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+           </button>
+           <button className="action-btn-premium">
+             <Share2 size={18} />
+           </button>
+        </div>
       </header>
 
-      <section className="trail-about-section">
-        <h2>{t("visitor.trailDetail.about")}</h2>
-        <p className="trail-about-text">{trail.description}</p>
-      </section>
+      <div className="work-editorial-content">
+         <main className="work-body-premium">
+            <div className="mb-12">
+               <h2 className="text-sm font-fm uppercase text-gold mb-4">Sobre esta Experiência</h2>
+               {apiTrail.description}
+            </div>
 
-      {/* AUDIO GUIDE */}
-      <NarrativeAudioGuide
-        audioUrl={trail.audioUrl}
-        title={trail.name}
-      />
+            <section className="mt-20">
+               <h2 className="text-2xl font-fd text-white mb-8">Estações da Jornada</h2>
+               <div className="ranking-list-premium">
+                  {apiTrail.works.map((w, idx) => (
+                    <Link to={`/obras/${w.id}?trailId=${id}`} key={w.id} className="ranking-row-premium !grid-cols-[50px_1fr_40px] hover:border-gold transition-colors">
+                       <span className="ranking-pos-premium !text-gold">0{idx + 1}</span>
+                       <span className="ranking-name-premium">{w.title}</span>
+                       <ChevronRight className="text-muted" size={16} />
+                    </Link>
+                  ))}
+               </div>
+            </section>
+         </main>
 
-      {/* VIDEO SECTION */}
-      <VideoPlayer
-        url={trail.videoUrl}
-        title={t('visitor.trailDetail.videoTitle', 'O que esperar desta trilha')}
-      />
+         <aside className="work-sidebar-premium">
+            <div className="sidebar-card-premium">
+               <span className="sidebar-label-premium">Audioguia da Trilha</span>
+               <NarrativeAudioGuide audioUrl={apiTrail.audioUrl} title={apiTrail.name} />
+            </div>
 
-      <section className="trail-works-section">
-        <h2>{t("visitor.trailDetail.artworks")}</h2>
-        {trail.works.length > 0 ? (
-          <div className="trail-works-grid">
-            {trail.works.map((work, index) => (
-              <article key={work.id} className="trail-work-card">
-                <div className="trail-work-number">{index + 1}</div>
-                <h3 className="trail-work-title">{work.title}</h3>
-                <p className="trail-work-subtitle">{t("visitor.trailDetail.clickDetails")}</p>
-                <button
-                  className="trail-work-btn"
-                  onClick={() => window.location.href = `/obras/${work.id}`}
-                >
-                  {t("visitor.home.viewDetails")}
-                </button>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="trail-no-works">{t("visitor.trailDetail.noWorks", "Esta trilha ainda não possui obras.")}</p>
-        )}
-      </section>
-    </div>
+            {apiTrail.videoUrl && (
+               <div className="sidebar-card-premium">
+                  <span className="sidebar-label-premium">Introdução Visual</span>
+                  <VideoPlayer url={apiTrail.videoUrl} title="Apresentação" />
+               </div>
+            )}
+            
+            <button 
+              className="gallery-cta w-full"
+              onClick={() => window.location.href = `/obras/${apiTrail.works[0].id}?trailId=${id}`}
+            >
+              Iniciar Jornada
+            </button>
+         </aside>
+      </div>
+    </motion.div>
   );
 };
