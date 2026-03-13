@@ -16,7 +16,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ name, onComplete }) 
     }, 4500);
 
     return () => clearTimeout(timer);
-  }, [onComplete]);
+  }, []); // Only run once on mount
 
   return (
     <div className={`splash-wrapper ${isExiting ? 'splash-exit' : ''}`}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
@@ -55,10 +55,14 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const { currentLevel, stats, progressToNextLevel } = useGamification();
 
-  // Fix: Check session storage so it doesn't show on every route change
   const [showWelcome, setShowWelcome] = useState(() => {
     return !sessionStorage.getItem("hasSeenWelcome");
   });
+
+  const handleSplashComplete = useCallback(() => {
+    setShowWelcome(false);
+    sessionStorage.setItem("hasSeenWelcome", "true");
+  }, []);
 
   // Theme and Features State
   const [settings, setSettings] = useState<{
@@ -184,10 +188,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       {showWelcome && name && (
         <SplashScreen
           name={name}
-          onComplete={() => {
-            setShowWelcome(false);
-            sessionStorage.setItem("hasSeenWelcome", "true");
-          }}
+          onComplete={handleSplashComplete}
         />
       )}
 
