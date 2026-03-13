@@ -11,6 +11,22 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.json">
+  <script>
+    // Correção para erros de carregamento de chunks (comum após novo deploy)
+    window.addEventListener('unhandledrejection', (event) => {
+      const errorMsg = event.reason?.message || '';
+      if (errorMsg.includes('Failed to fetch dynamically imported module') || 
+          errorMsg.includes('loading chunk')) {
+        console.warn('Chunk load error detected. Auto-reloading app...');
+        window.location.reload();
+      }
+    });
+    window.addEventListener('error', (e) => {
+      if (e.message && e.message.includes('Failed to fetch dynamically imported module')) {
+        window.location.reload();
+      }
+    }, true);
+  </script>
 </head>
 
 <body>
