@@ -34,8 +34,13 @@ export const WorksList: React.FC = () => {
   };
 
   const [filter, setFilter] = React.useState("all");
-  const filteredWorks = filter === "all" ? works : works.filter((w: any) => w.category?.name?.toLowerCase() === filter.toLowerCase());
-  const categories = ["all", ...new Set(works.map((w: any) => w.category?.name).filter(Boolean))];
+  const filteredWorks = filter === "all" 
+    ? works 
+    : works.filter((w: any) => {
+        const catName = typeof w.category === 'object' ? w.category?.name : w.category;
+        return catName?.toLowerCase() === filter.toLowerCase();
+      });
+  const categories = ["all", ...new Set(works.map((w: any) => typeof w.category === 'object' ? w.category?.name : w.category).filter(Boolean))];
 
   return (
     <motion.div 

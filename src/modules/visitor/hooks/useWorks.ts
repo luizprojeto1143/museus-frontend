@@ -37,7 +37,7 @@ export function useWorks(params?: { limit?: number; page?: number; search?: stri
                 title: w.title,
                 artist: w.artist ?? "Artista desconhecido",
                 year: w.year ?? "",
-                category: typeof w.category === 'object' ? w.category?.name : w.category ?? "Obra",
+                category: w.category && typeof w.category === 'object' ? w.category.name : (w.category || "Obra"),
                 accessible: !!w.audioUrl || !!w.librasUrl,
                 imageUrl: getFullUrl(w.imageUrl)
             }));
