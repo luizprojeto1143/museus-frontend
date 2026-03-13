@@ -81,7 +81,12 @@ export const SelectMuseum: React.FC = () => {
       const baseUrl = import.meta.env.VITE_API_URL as string;
       const res = await fetch(baseUrl + "/equipamentos/public");
       const data = await res.json();
-      setEquipamentos(data);
+      if (Array.isArray(data)) {
+        setEquipamentos(data);
+      } else {
+        console.error("Data is not an array", data);
+        setEquipamentos([]);
+      }
     } catch (err) {
       console.error("Error loading equipments", err);
     } finally {
