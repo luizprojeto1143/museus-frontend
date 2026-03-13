@@ -5,7 +5,6 @@ import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { api } from "../../api/client";
 
 import { useAuth } from "../auth/AuthContext";
-import { SplashScreen } from "./components/SplashScreen";
 import { NavPill } from "./components/NavPill";
 import { HUDRPG } from "./components/HUDRPG";
 
@@ -54,15 +53,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isDialerOpen, setIsDialerOpen] = useState(false);
 
   const { currentLevel, stats, progressToNextLevel } = useGamification();
-
-  const [showWelcome, setShowWelcome] = useState(() => {
-    return !sessionStorage.getItem("hasSeenWelcome");
-  });
-
-  const handleSplashComplete = useCallback(() => {
-    setShowWelcome(false);
-    sessionStorage.setItem("hasSeenWelcome", "true");
-  }, []);
 
   // Theme and Features State
   const [settings, setSettings] = useState<{
@@ -184,13 +174,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
       <GlobalBackground />
-
-      {showWelcome && name && (
-        <SplashScreen
-          name={name}
-          onComplete={handleSplashComplete}
-        />
-      )}
 
       <NavPill />
 
