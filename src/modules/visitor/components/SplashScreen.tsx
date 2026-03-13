@@ -12,8 +12,8 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ name, onComplete }) 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsExiting(true);
-      setTimeout(onComplete, 800); // Wait for exit animation
-    }, 4500);
+      setTimeout(onComplete, 500); // Reduzido de 800 - Wait for exit animation
+    }, 1500); // Reduzido de 4500
 
     return () => clearTimeout(timer);
   }, []); // Only run once on mount

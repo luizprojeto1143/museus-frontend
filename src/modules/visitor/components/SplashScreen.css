@@ -98,7 +98,7 @@
   width: 100%;
   background: var(--gold);
   transform: translateX(-100%);
-  animation: loadProgress 3s cubic-bezier(0.65, 0.05, 0.36, 1) forwards 0.5s;
+  animation: loadProgress 1.2s cubic-bezier(0.65, 0.05, 0.36, 1) forwards 0.2s;
 }
 
 @keyframes fadeIn {
@@ -118,7 +118,7 @@
 }
 
 .splash-exit {
-  animation: splashExit 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation: splashExit 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
 @keyframes splashExit {
