@@ -41,12 +41,11 @@ export const EventsList: React.FC = () => {
       if (selectedCategory !== 'ALL' && e.type !== selectedCategory) return false;
       const eventDate = new Date(e.startDate);
       const now = new Date();
-      if (filter === 'WEEK') {
-        const nextWeek = new Date();
-        nextWeek.setDate(now.getDate() + 7);
-        return eventDate >= now && eventDate <= nextWeek;
+      if (filter === 'UPCOMING') {
+        const nextMonth = new Date();
+        nextMonth.setDate(now.getDate() + 30);
+        return eventDate >= now && eventDate <= nextMonth;
       }
-      if (filter === 'MONTH') return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear();
       return eventDate >= now;
     });
 
@@ -97,7 +96,7 @@ export const EventsList: React.FC = () => {
                 className={`filter-btn ${filter === f ? 'active' : ''}`}
                 onClick={() => setFilter(f as any)}
               >
-                {f === 'UPCOMING' ? 'Em Breve' : f === 'WEEK' ? 'Esta Semana' : 'Este Mês'}
+                {f === 'UPCOMING' ? t('visitor.eventslist.setfilterupcomingPrximos') : f === 'WEEK' ? 'Esta Semana' : 'Este Mês'}
               </button>
             ))}
           </div>

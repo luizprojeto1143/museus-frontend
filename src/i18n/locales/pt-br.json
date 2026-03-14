@@ -448,7 +448,7 @@
       "vocEstAqui": "Você está aqui.",
       "suaLocalizao": "Sua Localização",
       "imagemDaPlantaNoConfigurada": "Imagem da planta não configurada.",
-      "setdestinationidpoiidIrParaC": "setDestinationId(poi.id)}\r\n                                        >\r\n                                            Ir para cá 🏃",
+      "setdestinationidpoiidIrParaC": "Ir para cá 🏃",
       "irParaC": "Ir para cá 🏃"
     },
     "narrativeaudioguide": {
@@ -480,7 +480,7 @@
     "eventdetail": {
       "eventoNoEncontrado": "Evento não encontrado",
       "materiaisNecessrios": "Materiais Necessários",
-      "windowopeneventmeetinglinkBlan": "window.open(event.meetingLink, '_blank')} className=\"w-full py-6 text-lg rounded-2xl\">\n                        Acessar Transmissão",
+      "windowopeneventmeetinglinkBlan": "Acessar Transmissão",
       "linkDeAcessoSerLiberadoApsAIns": "Link de acesso será liberado após a inscrição",
       "mapaIndisponvelModoDemo": "Mapa Indisponível (Modo Demo)",
       "numbertpriceIndisponvel": "Number(t.price)))}`) : 'Indisponível'}",
@@ -496,7 +496,7 @@
     },
     "eventslist": {
       "exploreAProgramaoEPlanejeSuaVi": "Explore a programação e planeje sua visita.",
-      "setfilterupcomingPrximos": "setFilter('UPCOMING')}\n          >Próximos",
+      "setfilterupcomingPrximos": "Em Breve",
       "organizandoProgramao": "Organizando programação...",
       "noEncontramosEventosParaEstePe": "Não encontramos eventos para este período ou categoria.",
       "incio": "Início",

@@ -10,21 +10,28 @@ import {
     TrendingUp,
     Accessibility,
     CheckCircle2,
-    XCircle
+    XCircle,
+    Info,
+    ShieldCheck,
+    FileCheck
 } from "lucide-react";
 
 export const MunicipalAccessibilityGaps: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [data, setData] = useState<any>(null);
+    const [matrix, setMatrix] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            // Reutiliza o endpoint de dashboard mas com visão consolidada
-            const res = await api.get("/secretary/dashboard", { params: { tenantId, consolidated: true } });
-            setData(res.data);
+            const [dashboardRes, matrixRes] = await Promise.all([
+                api.get("/secretary/dashboard", { params: { tenantId, consolidated: true } }),
+                api.get("/secretary/legal-compliance", { params: { tenantId } })
+            ]);
+            setData(dashboardRes.data);
+            setMatrix(matrixRes.data.matrix || []);
         } catch (error) { 
             console.error(error); 
         } finally { 
@@ -112,6 +119,41 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Matrix Section */}
+            <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                    <ShieldCheck className="text-blue-600" size={28} />
+                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Matriz de Conformidade Legal</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {matrix.map((item, idx) => (
+                        <div key={idx} className="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden group">
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="space-y-1">
+                                        <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{item.law}</div>
+                                        <h4 className="text-lg font-bold leading-tight">{item.requirement}</h4>
+                                    </div>
+                                    <div className={`p-2 rounded-xl ${item.compliant ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                                        {item.compliant ? <CheckCircle2 size={24} /> : <AlertTriangle size={24} />}
+                                    </div>
+                                </div>
+                                <div className="mt-auto space-y-4">
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                                        <div className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Evidência</div>
+                                        <div className="text-sm font-medium text-slate-300">{item.evidence}</div>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                        <Info size={12} /> {item.howWeComply}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl opacity-20 -mr-16 -mt-16 rounded-full ${item.compliant ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
