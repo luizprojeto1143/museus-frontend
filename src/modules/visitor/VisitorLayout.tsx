@@ -185,17 +185,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
-      {showWelcome && (
-        <WelcomeAnimation
-          name={name || "Visitante"}
-          email={email || "guest"}
-          videoUrl={settings?.welcomeVideoUrl}
-          logoUrl={settings?.logoUrl}
-          primaryColor={settings?.primaryColor}
-          theme={(settings?.theme as "light" | "dark") || "dark"}
-          onComplete={() => setShowWelcome(false)}
-        />
-      )}
 
       <GlobalBackground 
         primaryColor={settings?.primaryColor} 
@@ -249,6 +238,18 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <GlobalAudioPlayer />
       {settings?.featureChatAI !== false && <AiChatWidget />}
       <InstallGuideModal isOpen={showInstallGuide} onClose={() => setShowInstallGuide(false)} />
+
+      {showWelcome && (
+        <WelcomeAnimation
+          name={name || "Visitante"}
+          email={email || "guest"}
+          videoUrl={settings?.welcomeVideoUrl}
+          logoUrl={settings?.logoUrl}
+          primaryColor={settings?.primaryColor}
+          theme={(settings?.theme as "light" | "dark") || "dark"}
+          onComplete={() => setShowWelcome(false)}
+        />
+      )}
     </div>
   );
 };

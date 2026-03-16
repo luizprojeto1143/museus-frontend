@@ -117,10 +117,10 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                                 style={{ zIndex: 1 }}
                             >
                                 <h1 style={{
-                                    fontSize: "3rem",
+                                    fontSize: "clamp(2rem, 8vw, 3.5rem)",
                                     fontWeight: "900",
                                     color: theme === 'light' ? "#0f172a" : "#f8fafc",
-                                    marginBottom: "1rem",
+                                    marginBottom: "1.5rem",
                                     background: theme === 'light'
                                         ? `linear-gradient(to right, ${primaryColor}, #0f172a)`
                                         : `linear-gradient(to right, ${primaryColor}, #ffffff)`,
@@ -128,7 +128,9 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                                     WebkitTextFillColor: "transparent",
                                     textTransform: "uppercase",
                                     letterSpacing: "-0.04em",
-                                    lineHeight: 1.1
+                                    lineHeight: "1.2",
+                                    textAlign: "center",
+                                    padding: "0 1rem"
                                 }}>
                                     {isFirstTime
                                         ? t("welcome.firstTime", { name })
