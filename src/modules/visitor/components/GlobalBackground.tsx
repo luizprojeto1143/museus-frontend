@@ -3,11 +3,13 @@ import React, { useEffect, useRef } from 'react';
 interface GlobalBackgroundProps {
   primaryColor?: string;
   secondaryColor?: string;
+  theme?: "light" | "dark";
 }
 
 export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
   primaryColor = "#d4af37",
-  secondaryColor = "#cd7f32"
+  secondaryColor = "#cd7f32",
+  theme = "dark"
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -63,10 +65,17 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
         vec3 colorB = u_color2;
         
         float pulse = 0.5 + 0.5 * sin(u_time * 0.3);
-        vec3 finalColor = mix(colorA, colorB, uv.y * pulse + dist * 0.1);
         
-        finalColor *= 0.12; // Mantenha escuro para visibilidade
-        gl_FragColor = vec4(finalColor, 1.0);
+        // Se for tema claro, usamos um fundo quase branco e misturamos as cores de forma muito sutil
+        // Se for escuro, mantemos a base escura
+        ${theme === 'light' ? `
+          vec3 finalColor = mix(vec3(0.97, 0.98, 1.0), mix(colorA, colorB, uv.y * pulse + dist * 0.1), 0.08);
+          gl_FragColor = vec4(finalColor, 1.0);
+        ` : `
+          vec3 finalColor = mix(colorA, colorB, uv.y * pulse + dist * 0.1);
+          finalColor *= 0.12; 
+          gl_FragColor = vec4(finalColor, 1.0);
+        `}
       }
     `;
 
@@ -141,7 +150,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
       gl.deleteShader(fs);
       gl.deleteBuffer(positionBuffer);
     };
-  }, [primaryColor, secondaryColor]);
+  }, [primaryColor, secondaryColor, theme]);
 
   return (
     <canvas

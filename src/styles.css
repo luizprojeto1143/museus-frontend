@@ -254,9 +254,9 @@
 
 body {
   margin: 0;
-  background: #05050c !important;
+  background: var(--bg-page, #05050c);
   background-attachment: fixed;
-  color: #ede8d8 !important;
+  color: var(--fg-main, #ede8d8);
   font-family: var(--fb);
   position: relative;
   overflow-x: hidden;

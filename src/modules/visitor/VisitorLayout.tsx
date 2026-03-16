@@ -79,6 +79,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     featureAccessibility?: boolean;
     // Media
     welcomeVideoUrl?: string;
+    theme?: string;
   } | null>(null);
 
   const { setSpaceTheme } = useVisitorTheme();
@@ -198,6 +199,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <GlobalBackground 
         primaryColor={settings?.primaryColor} 
         secondaryColor={settings?.secondaryColor} 
+        theme={(settings?.theme as "light" | "dark") || "dark"}
       />
 
       {/* Moldura de Tela (Frame Overlay) */}
