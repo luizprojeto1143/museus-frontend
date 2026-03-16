@@ -94,6 +94,10 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             ...equip,
             primaryColor: equip.corPrimaria || equip.tenant?.primaryColor || "#d4af37",
             secondaryColor: equip.corSecundaria || equip.tenant?.secondaryColor || "#cd7f32",
+            logoUrl: equip.logoUrl || equip.tenant?.logoUrl,
+            welcomeVideoUrl: equip.welcomeVideoUrl || equip.tenant?.welcomeVideoUrl,
+            theme: equip.theme || equip.tenant?.theme || "dark",
+            historicalFont: equip.historicalFont !== undefined ? equip.historicalFont : equip.tenant?.historicalFont,
             name: equip.nome,
           };
           setSettings(mergedSettings);
