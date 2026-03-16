@@ -190,7 +190,7 @@ export const AdminAIAssistant: React.FC = () => {
               max="1"
               step="0.1"
               value={persona.temperature}
-              onChange={(e) => setPersona({ ...persona, temperature: parseFloat(e.target.value) })}
+              onChange={(e) => setPersona({ ...persona, temperature: e.target.value === "" ? 0.7 : parseFloat(e.target.value) })}
             />
             <p style={{ fontSize: "0.75rem", color: "var(--fg-soft)", marginTop: "0.25rem" }}>
               {t("admin.aiAssistant.helpers.temperature")}
@@ -205,7 +205,7 @@ export const AdminAIAssistant: React.FC = () => {
               max="2000"
               step="50"
               value={persona.maxTokens}
-              onChange={(e) => setPersona({ ...persona, maxTokens: parseInt(e.target.value) })}
+              onChange={(e) => setPersona({ ...persona, maxTokens: e.target.value === "" ? 500 : parseInt(e.target.value) })}
             />
             <p style={{ fontSize: "0.75rem", color: "var(--fg-soft)", marginTop: "0.25rem" }}>
               {t("admin.aiAssistant.helpers.maxTokens")}

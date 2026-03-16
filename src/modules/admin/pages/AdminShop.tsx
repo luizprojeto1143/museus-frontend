@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon, TrendingUp, AlertTriangle, Filter } from 'lucide-react';
 import { api } from '../../../api/client';
@@ -469,6 +469,7 @@ const ProductForm: React.FC<{
     onClose: () => void;
     onSave: () => void;
 }> = ({ product, tenantId, onClose, onSave }) => {
+    const { t } = useTranslation();
     const [form, setForm] = useState({
         name: product?.name || '',
         description: product?.description || '',
@@ -519,7 +520,7 @@ const ProductForm: React.FC<{
                             type="number"
                             step="0.01"
                             value={form.price}
-                            onChange={(e) => setForm(f => ({ ...f, price: parseFloat(e.target.value) }))}
+                            onChange={(e) => setForm(f => ({ ...f, price: e.target.value === "" ? 0 : parseFloat(e.target.value) }))}
                             required
                             className="w-full bg-black/40 border border-white/10 rounded-xl p-4 pl-12 text-white focus:border-amber-500 focus:outline-none"
                         />
@@ -551,7 +552,7 @@ const ProductForm: React.FC<{
                     <input
                         type="number"
                         value={form.stock}
-                        onChange={(e) => setForm(f => ({ ...f, stock: parseInt(e.target.value) }))}
+                        onChange={(e) => setForm(f => ({ ...f, stock: e.target.value === "" ? 0 : parseInt(e.target.value) }))}
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
                     />
                 </div>
