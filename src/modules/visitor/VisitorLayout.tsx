@@ -192,6 +192,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           videoUrl={settings?.welcomeVideoUrl}
           logoUrl={settings?.logoUrl}
           primaryColor={settings?.primaryColor}
+          theme={(settings?.theme as "light" | "dark") || "dark"}
           onComplete={() => setShowWelcome(false)}
         />
       )}

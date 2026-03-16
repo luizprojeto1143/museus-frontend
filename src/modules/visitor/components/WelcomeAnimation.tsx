@@ -8,6 +8,7 @@ interface WelcomeAnimationProps {
     videoUrl?: string;
     logoUrl?: string;
     primaryColor?: string;
+    theme?: "light" | "dark";
     onComplete: () => void;
 }
 
@@ -16,7 +17,8 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
     email, 
     videoUrl, 
     logoUrl,
-    primaryColor = "#38bdf8",
+    primaryColor = "#d4af37",
+    theme = "dark",
     onComplete 
 }) => {
     const { t } = useTranslation();
@@ -72,7 +74,9 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                         left: 0,
                         width: "100vw",
                         height: "100vh",
-                        background: "linear-gradient(135deg, #0f172a 0%, #020617 100%)",
+                        background: theme === "light" 
+                            ? `linear-gradient(135deg, #ffffff 0%, ${getTranslucentColor(primaryColor, 0.1)} 100%)`
+                            : `linear-gradient(135deg, #05050c 0%, ${getTranslucentColor(primaryColor, 0.15)} 100%)`,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -87,21 +91,21 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                             {/* Círculos decorativos animados baseados na cor primária */}
                             <motion.div
                                 animate={{
-                                    scale: [1, 1.3, 1],
-                                    opacity: [0.2, 0.4, 0.2],
+                                    scale: [1, 1.4, 1],
+                                    opacity: [0.3, 0.5, 0.3],
                                 }}
                                 transition={{
-                                    duration: 5,
+                                    duration: 8,
                                     repeat: Infinity,
                                     ease: "easeInOut"
                                 }}
                                 style={{
                                     position: "absolute",
-                                    width: "400px",
-                                    height: "400px",
+                                    width: "600px",
+                                    height: "600px",
                                     borderRadius: "50%",
-                                    background: `radial-gradient(circle, ${getTranslucentColor(primaryColor, 0.3)} 0%, transparent 70%)`,
-                                    filter: "blur(60px)",
+                                    background: `radial-gradient(circle, ${getTranslucentColor(primaryColor, theme === 'light' ? 0.2 : 0.4)} 0%, transparent 70%)`,
+                                    filter: "blur(80px)",
                                     zIndex: 0
                                 }}
                             />
@@ -113,15 +117,18 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                                 style={{ zIndex: 1 }}
                             >
                                 <h1 style={{
-                                    fontSize: "2.5rem",
-                                    fontWeight: "black",
-                                    color: "#f8fafc",
+                                    fontSize: "3rem",
+                                    fontWeight: "900",
+                                    color: theme === 'light' ? "#0f172a" : "#f8fafc",
                                     marginBottom: "1rem",
-                                    background: `linear-gradient(to right, ${primaryColor}, #ffffff)`,
+                                    background: theme === 'light'
+                                        ? `linear-gradient(to right, ${primaryColor}, #0f172a)`
+                                        : `linear-gradient(to right, ${primaryColor}, #ffffff)`,
                                     WebkitBackgroundClip: "text",
                                     WebkitTextFillColor: "transparent",
                                     textTransform: "uppercase",
-                                    letterSpacing: "-0.02em"
+                                    letterSpacing: "-0.04em",
+                                    lineHeight: 1.1
                                 }}>
                                     {isFirstTime
                                         ? t("welcome.firstTime", { name })
@@ -136,11 +143,12 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                                 style={{ zIndex: 1 }}
                             >
                                 <p style={{
-                                    fontSize: "1.1rem",
-                                    color: "#94a3b8",
-                                    maxWidth: "500px",
+                                    fontSize: "1.2rem",
+                                    color: theme === 'light' ? "#475569" : "#94a3b8",
+                                    maxWidth: "600px",
                                     lineHeight: 1.6,
-                                    fontWeight: "medium"
+                                    fontWeight: "600",
+                                    letterSpacing: "0.01em"
                                 }}>
                                     {t("welcome.subtitle")}
                                 </p>
@@ -158,23 +166,25 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                                 }}
                                 style={{ 
                                     marginTop: "4rem", 
-                                    width: "120px",
-                                    height: "120px",
-                                    borderRadius: "30%",
-                                    backgroundColor: "rgba(255,255,255,0.05)",
-                                    backdropFilter: "blur(10px)",
-                                    border: "1px solid rgba(255,255,255,0.1)",
+                                    width: "140px",
+                                    height: "140px",
+                                    borderRadius: "32px",
+                                    backgroundColor: theme === 'light' ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.05)",
+                                    backdropFilter: "blur(12px)",
+                                    border: theme === 'light' ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(255,255,255,0.1)",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    padding: "20px",
-                                    boxShadow: `0 20px 40px rgba(0,0,0,0.4), 0 0 20px ${getTranslucentColor(primaryColor, 0.2)}`
+                                    padding: "24px",
+                                    boxShadow: theme === 'light'
+                                        ? `0 20px 40px rgba(0,0,0,0.08), 0 0 20px ${getTranslucentColor(primaryColor, 0.1)}`
+                                        : `0 20px 40px rgba(0,0,0,0.4), 0 0 20px ${getTranslucentColor(primaryColor, 0.2)}`
                                 }}
                             >
                                 {logoUrl ? (
                                     <img src={logoUrl} alt="Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                                 ) : (
-                                    <span style={{ fontSize: "3.5rem" }}>🏛️</span>
+                                    <span style={{ fontSize: "4rem" }}>🏛️</span>
                                 )}
                             </motion.div>
                         </div>
