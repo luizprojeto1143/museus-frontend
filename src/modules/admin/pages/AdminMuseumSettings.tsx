@@ -382,8 +382,8 @@ export const AdminMuseumSettings: React.FC = () => {
                   <input ref={mapInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("mapImageUrl", e.target.files[0])} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="number" step="any" className="visitor-input" placeholder="Lat" value={settings.latitude} onChange={(e) => setSettings({ ...settings, latitude: parseFloat(e.target.value) })} />
-                  <input type="number" step="any" className="visitor-input" placeholder="Lng" value={settings.longitude} onChange={(e) => setSettings({ ...settings, longitude: parseFloat(e.target.value) })} />
+                  <input type="number" step="any" className="visitor-input" placeholder="Lat" value={settings.latitude ?? ""} onChange={(e) => setSettings({ ...settings, latitude: e.target.value === "" ? null : parseFloat(e.target.value) })} />
+                  <input type="number" step="any" className="visitor-input" placeholder="Lng" value={settings.longitude ?? ""} onChange={(e) => setSettings({ ...settings, longitude: e.target.value === "" ? null : parseFloat(e.target.value) })} />
                 </div>
               </div>
               <div>
