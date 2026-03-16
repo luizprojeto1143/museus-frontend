@@ -99,18 +99,19 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           setSpaceTheme({
             primaryColor: mergedSettings.primaryColor,
             secondaryColor: mergedSettings.secondaryColor,
-            theme: "dark"
+            theme: (mergedSettings.theme as "light" | "dark") || "dark",
+            historicalFont: mergedSettings.historicalFont
           });
         } else if (tenantId) {
           const res = await api.get(`/tenants/${tenantId}/settings`);
-          setSettings(res.data);
-          if (res.data?.primaryColor) {
-            setSpaceTheme({
-              primaryColor: res.data.primaryColor,
-              secondaryColor: res.data.secondaryColor,
-              theme: "dark"
-            });
-          }
+          const tenantSettings = res.data;
+          setSettings(tenantSettings);
+          setSpaceTheme({
+            primaryColor: tenantSettings.primaryColor,
+            secondaryColor: tenantSettings.secondaryColor,
+            theme: (tenantSettings.theme as "light" | "dark") || "dark",
+            historicalFont: tenantSettings.historicalFont
+          });
         }
       } catch (err) {
         console.error("Error loading settings", err);
@@ -178,10 +179,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [fontSizeMultiplier]);
 
   const themeStyles = settings ? {
-    "--primary-color": settings.primaryColor,
-    "--secondary-color": settings.secondaryColor,
     "--bg-primary": isCityMode ? "#060b13" : "#0d0a08",
-    fontFamily: settings.historicalFont ? "Georgia, serif" : "Inter, sans-serif",
   } as React.CSSProperties : {};
 
   return (
