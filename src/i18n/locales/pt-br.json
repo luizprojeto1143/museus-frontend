@@ -2143,6 +2143,7 @@
       "trafficGen": "Traffic Gen",
       "conquistas": "Conquistas",
       "logsDeAuditoria": "Logs de Auditoria",
+      "monitorDeErros": "Monitor de Erros",
       "acessibilidade": "Acessibilidade",
       "saDeDoSistema": "Saúde do Sistema"
     },

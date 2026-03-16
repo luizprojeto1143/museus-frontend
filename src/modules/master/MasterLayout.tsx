@@ -20,6 +20,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
     { to: "/master/seeder", label: t("master.sidebar.trafficGen", "Traffic Gen"), icon: "🚦" }, // Assuming 'Users' was a placeholder and 'path' was meant for 'to'
     { to: "/master/achievements", label: t("master.sidebar.conquistas", "Conquistas"), icon: "🏆" },
     { to: "/master/audit-logs", label: t("master.sidebar.logsDeAuditoria", "Logs de Auditoria"), icon: "📋" },
+    { to: "/master/error-monitor", label: t("master.sidebar.monitorDeErros", "Monitor de Erros"), icon: "🚨" },
     { to: "/master/accessibility-requests", label: t("master.sidebar.acessibilidade", "Acessibilidade"), icon: "♿" },
     { to: "/master/system-health", label: t("master.sidebar.saDeDoSistema", "Saúde do Sistema"), icon: "🖥️" }
   ];
