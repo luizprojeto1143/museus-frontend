@@ -6,10 +6,19 @@ interface WelcomeAnimationProps {
     name: string;
     email: string;
     videoUrl?: string;
+    logoUrl?: string;
+    primaryColor?: string;
     onComplete: () => void;
 }
 
-export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email, videoUrl, onComplete }) => {
+export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ 
+    name, 
+    email, 
+    videoUrl, 
+    logoUrl,
+    primaryColor = "#38bdf8",
+    onComplete 
+}) => {
     const { t } = useTranslation();
     const [show, setShow] = useState(true);
     const [showVideo, setShowVideo] = useState(false);
@@ -41,6 +50,14 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email,
         setShow(false);
     };
 
+    // Helper to get translucent version of primary color
+    const getTranslucentColor = (hex: string, opacity: number) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    };
+
     return (
         <AnimatePresence onExitComplete={onComplete}>
             {show && (
@@ -55,7 +72,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email,
                         left: 0,
                         width: "100vw",
                         height: "100vh",
-                        background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+                        background: "linear-gradient(135deg, #0f172a 0%, #020617 100%)",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -67,24 +84,24 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email,
                 >
                     {!showVideo ? (
                         <div style={{ padding: "2rem", position: "relative", width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                            {/* Círculos decorativos animados */}
+                            {/* Círculos decorativos animados baseados na cor primária */}
                             <motion.div
                                 animate={{
-                                    scale: [1, 1.2, 1],
-                                    opacity: [0.3, 0.5, 0.3],
+                                    scale: [1, 1.3, 1],
+                                    opacity: [0.2, 0.4, 0.2],
                                 }}
                                 transition={{
-                                    duration: 4,
+                                    duration: 5,
                                     repeat: Infinity,
                                     ease: "easeInOut"
                                 }}
                                 style={{
                                     position: "absolute",
-                                    width: "300px",
-                                    height: "300px",
+                                    width: "400px",
+                                    height: "400px",
                                     borderRadius: "50%",
-                                    background: "radial-gradient(circle, rgba(56,189,248,0.2) 0%, transparent 70%)",
-                                    filter: "blur(40px)",
+                                    background: `radial-gradient(circle, ${getTranslucentColor(primaryColor, 0.3)} 0%, transparent 70%)`,
+                                    filter: "blur(60px)",
                                     zIndex: 0
                                 }}
                             />
@@ -97,12 +114,14 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email,
                             >
                                 <h1 style={{
                                     fontSize: "2.5rem",
-                                    fontWeight: "bold",
+                                    fontWeight: "black",
                                     color: "#f8fafc",
                                     marginBottom: "1rem",
-                                    background: "linear-gradient(to right, #38bdf8, #818cf8)",
+                                    background: `linear-gradient(to right, ${primaryColor}, #ffffff)`,
                                     WebkitBackgroundClip: "text",
-                                    WebkitTextFillColor: "transparent"
+                                    WebkitTextFillColor: "transparent",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "-0.02em"
                                 }}>
                                     {isFirstTime
                                         ? t("welcome.firstTime", { name })
@@ -111,29 +130,52 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({ name, email,
                             </motion.div>
 
                             <motion.div
-                                initial={{ scale: 0.8, opacity: 0 }}
+                                initial={{ scale: 0.9, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ delay: 0.8, duration: 0.5 }}
                                 style={{ zIndex: 1 }}
                             >
                                 <p style={{
-                                    fontSize: "1.2rem",
+                                    fontSize: "1.1rem",
                                     color: "#94a3b8",
-                                    maxWidth: "600px",
-                                    lineHeight: 1.6
+                                    maxWidth: "500px",
+                                    lineHeight: 1.6,
+                                    fontWeight: "medium"
                                 }}>
                                     {t("welcome.subtitle")}
                                 </p>
                             </motion.div>
 
-                            {/* Ícone ou Logo animado */}
+                            {/* Logo ou Ícone do Tenant */}
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1.2, duration: 0.5 }}
-                                style={{ marginTop: "3rem", fontSize: "3rem" }}
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ 
+                                    delay: 1.2, 
+                                    duration: 0.8,
+                                    type: "spring",
+                                    stiffness: 100
+                                }}
+                                style={{ 
+                                    marginTop: "4rem", 
+                                    width: "120px",
+                                    height: "120px",
+                                    borderRadius: "30%",
+                                    backgroundColor: "rgba(255,255,255,0.05)",
+                                    backdropFilter: "blur(10px)",
+                                    border: "1px solid rgba(255,255,255,0.1)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    padding: "20px",
+                                    boxShadow: `0 20px 40px rgba(0,0,0,0.4), 0 0 20px ${getTranslucentColor(primaryColor, 0.2)}`
+                                }}
                             >
-                                🏛️
+                                {logoUrl ? (
+                                    <img src={logoUrl} alt="Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                                ) : (
+                                    <span style={{ fontSize: "3.5rem" }}>🏛️</span>
+                                )}
                             </motion.div>
                         </div>
                     ) : (

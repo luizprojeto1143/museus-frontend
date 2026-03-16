@@ -45,6 +45,8 @@ interface MuseumSettings {
   // Welcome Media
   welcomeAudioUrl?: string;
   welcomeVideoUrl?: string;
+  frameUrl?: string;
+  bannerUrl?: string;
   capacityPerHour?: number;
   asaasWalletId?: string;
 }
@@ -58,6 +60,8 @@ export const AdminMuseumSettings: React.FC = () => {
   const coverInputRef = useRef<HTMLInputElement>(null);
   const iconInputRef = useRef<HTMLInputElement>(null);
   const mapInputRef = useRef<HTMLInputElement>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
+  const frameInputRef = useRef<HTMLInputElement>(null);
   const floorPlanInputRef = useRef<HTMLInputElement>(null);
 
   const [settings, setSettings] = useState<MuseumSettings>({
@@ -81,6 +85,8 @@ export const AdminMuseumSettings: React.FC = () => {
     historicalFont: true,
     welcomeAudioUrl: "",
     welcomeVideoUrl: "",
+    frameUrl: "",
+    bannerUrl: "",
     asaasWalletId: "",
   });
 
@@ -428,6 +434,38 @@ export const AdminMuseumSettings: React.FC = () => {
                     <p className="text-xs text-[#c9b58c] mt-2 font-bold uppercase tracking-wider">Logomarca</p>
                   </div>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex flex-col items-center p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
+                      <div
+                        onClick={() => bannerInputRef.current?.click()}
+                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors"
+                      >
+                        {settings.bannerUrl ? (
+                          <img src={settings.bannerUrl} className="w-full h-full object-cover" alt="Fundo atual" />
+                        ) : (
+                          <Upload size={20} className="text-[#d4af37]" />
+                        )}
+                        <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("bannerUrl", e.target.files[0])} />
+                      </div>
+                      <p className="text-[10px] text-[#c9b58c] mt-2 font-bold uppercase tracking-widest">Fundo do Portal</p>
+                    </div>
+
+                    <div className="flex flex-col items-center p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
+                      <div
+                        onClick={() => frameInputRef.current?.click()}
+                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors"
+                      >
+                        {settings.frameUrl ? (
+                          <img src={settings.frameUrl} className="w-full h-full object-cover" alt="Moldura atual" />
+                        ) : (
+                          <Upload size={20} className="text-[#d4af37]" />
+                        )}
+                        <input ref={frameInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("frameUrl", e.target.files[0])} />
+                      </div>
+                      <p className="text-[10px] text-[#c9b58c] mt-2 font-bold uppercase tracking-widest">Moldura Decorativa</p>
+                    </div>
+                  </div>
+
                   <div className="visitor-input-group">
                     <label>{t("admin.museumsettings.corPrimriaDestaquesEBotes", `Cor Primária (Destaques e Botões)`)}</label>
                     <div className="flex gap-3">
@@ -595,8 +633,22 @@ export const AdminMuseumSettings: React.FC = () => {
                   </div>
                   <div className="mt-8 grid grid-cols-3 gap-2">
                     <div className="h-1 bg-current opacity-20 rounded"></div>
-                    <div className="h-1 bg-current opacity-20 rounded"></div>
-                    <div className="h-1 bg-current opacity-20 rounded"></div>
+                  </div>
+                  
+                  <div className="mt-8 pt-4 border-t border-white/5">
+                    <p className="text-[8px] uppercase tracking-widest opacity-40 mb-3">Preview da Animação</p>
+                    <div className="aspect-[16/9] bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer" onClick={() => setActiveTab("preview")}>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                            <div className="w-8 h-8 rounded-full border-2 border-dashed border-white/20 mb-2 flex items-center justify-center">
+                                {settings.logoUrl ? <img src={settings.logoUrl} className="w-6 h-6 object-contain" /> : "🏛️"}
+                            </div>
+                            <div className="w-20 h-1 rounded-full mb-1" style={{ background: `linear-gradient(to right, ${settings.primaryColor}, #fff)` }}></div>
+                            <div className="w-12 h-1 bg-white/10 rounded-full"></div>
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 p-1 bg-black/60 text-[6px] text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            CLIQUE PARA VER ANIMAÇÃO COMPLETA
+                        </div>
+                    </div>
                   </div>
                 </div>
               </div>

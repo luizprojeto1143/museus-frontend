@@ -24,6 +24,8 @@ import { InstallGuideModal } from "./components/InstallGuideModal";
 import { useGamification } from "../gamification/context/GamificationContext";
 import { GlobalBackground } from "./components/GlobalBackground";
 
+import { WelcomeAnimation } from "./components/WelcomeAnimation";
+
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -36,8 +38,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [showInstallGuide, setShowInstallGuide] = useState(false);
 
   // Logic: Show button if NOT installed.
-  // If canInstall (native) => promptInstall
-  // If NOT canInstall => showInstallGuide (iOS / Manual)
   const shouldShowInstallButton = !isInstalled;
 
   const handleInstallClick = () => {
@@ -51,6 +51,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const { currentLevel, stats, progressToNextLevel } = useGamification();
 
@@ -61,6 +62,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     historicalFont: boolean;
     logoUrl?: string;
     name?: string;
+    frameUrl?: string;
+    bannerUrl?: string;
     // Feature Flags
     featureWorks?: boolean;
     featureTrails?: boolean;
@@ -116,6 +119,16 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
     fetchSettings();
   }, [tenantId, equipamentoId, setSpaceTheme]);
+
+  // Welcome Logic: Show only once per mount/session if authenticated
+  useEffect(() => {
+    if (name && email && settings) {
+        const storageKey = `welcome_seen_${email}`;
+        if (!localStorage.getItem(storageKey)) {
+            setShowWelcome(true);
+        }
+    }
+  }, [name, email, settings]);
 
   // Check if visitor is a teacher
   const [isTeacher, setIsTeacher] = useState(false);
@@ -173,7 +186,38 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
-      <GlobalBackground />
+      {showWelcome && (
+        <WelcomeAnimation
+          name={name || "Visitante"}
+          email={email || "guest"}
+          videoUrl={settings?.welcomeVideoUrl}
+          logoUrl={settings?.logoUrl}
+          primaryColor={settings?.primaryColor}
+          onComplete={() => setShowWelcome(false)}
+        />
+      )}
+
+      <GlobalBackground 
+        primaryColor={settings?.primaryColor} 
+        secondaryColor={settings?.secondaryColor} 
+      />
+
+      {/* Moldura de Tela (Frame Overlay) */}
+      {settings?.frameUrl && (
+        <div 
+          className="tenant-frame-overlay"
+          style={{
+            position: "fixed",
+            inset: 0,
+            pointerEvents: "none",
+            zIndex: 9999,
+            backgroundImage: `url(${settings.frameUrl})`,
+            backgroundSize: "100% 100%",
+            backgroundRepeat: "no-repeat",
+            opacity: 0.8
+          }}
+        />
+      )}
 
       <NavPill />
 

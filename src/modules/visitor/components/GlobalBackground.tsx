@@ -1,6 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 
-export const GlobalBackground: React.FC = () => {
+interface GlobalBackgroundProps {
+  primaryColor?: string;
+  secondaryColor?: string;
+}
+
+export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
+  primaryColor = "#d4af37",
+  secondaryColor = "#cd7f32"
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -14,130 +22,140 @@ export const GlobalBackground: React.FC = () => {
     }
 
     const resize = () => {
-      const scale = Math.min(1, 720 / window.innerWidth);
-      canvas.width = Math.round(window.innerWidth * scale);
-      canvas.height = Math.round(window.innerHeight * scale);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
 
-    resize();
     window.addEventListener('resize', resize);
+    resize();
 
-    const V = `attribute vec2 p; void main(){gl_Position=vec4(p,0,1);}`;
-    const F = `
-precision mediump float;
-uniform float T;
-uniform vec2 R;
-uniform vec2 M;
+    const hexToRgb = (hex: string) => {
+      const r = parseInt(hex.slice(1, 3), 16) / 255;
+      const g = parseInt(hex.slice(3, 5), 16) / 255;
+      const b = parseInt(hex.slice(5, 7), 16) / 255;
+      return [r, g, b];
+    };
 
-float h(vec2 p){
-  p=fract(p*vec2(127.1,311.7));
-  p+=dot(p,p+19.19);
-  return fract(p.x*p.y);
-}
-float n(vec2 p){
-  vec2 i=floor(p),f=fract(p);
-  vec2 u=f*f*(3.0-2.0*f);
-  return mix(mix(h(i),h(i+vec2(1,0)),u.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),u.x),u.y);
-}
-float fbm(vec2 p){
-  float v=0.0,a=0.5;
-  mat2 rot=mat2(cos(0.5),sin(0.5),-sin(0.5),cos(0.5));
-  for(int i=0;i<5;i++){v+=a*n(p);p=rot*p*2.1;a*=0.48;}
-  return v;
-}
-void main(){
-  vec2 uv=gl_FragCoord.xy/R;
-  float ar=R.x/R.y;
-  uv.x*=ar;
-  float t=T*0.05;
-  vec2 q=vec2(fbm(uv+t),fbm(uv+vec2(5.2,1.3)+t*0.9));
-  vec2 r=vec2(fbm(uv+4.0*q+vec2(1.7,9.2)+t*0.4),fbm(uv+4.0*q+vec2(8.3,2.8)+t*0.35));
-  float f=fbm(uv+4.0*r);
-  vec2 mo=vec2(M.x*ar,M.y);
-  f+=0.1*exp(-length(uv-mo)*3.0);
-  vec3 c=vec3(0.02,0.01,0.04);
-  c=mix(c,vec3(0.10,0.04,0.01),smoothstep(0.2,0.55,f));
-  c=mix(c,vec3(0.35,0.18,0.02),smoothstep(0.5,0.72,f));
-  c=mix(c,vec3(0.65,0.42,0.06),smoothstep(0.68,0.88,f));
-  c=mix(c,vec3(0.88,0.65,0.15),smoothstep(0.82,1.0,f));
-  vec2 vig=(gl_FragCoord.xy/R)-0.5;
-  c*=clamp(1.0-dot(vig,vig)*1.8,0.0,1.0);
-  c*=0.55;
-  gl_FragColor=vec4(c,1.0);
-}`;
+    const color1 = hexToRgb(primaryColor);
+    const color2 = hexToRgb(secondaryColor);
 
-    const sh = (src: string, type: number) => {
-      const s = gl.createShader(type);
-      if (!s) return null;
-      gl.shaderSource(s, src);
-      gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(s));
+    const vertexShaderSource = `
+      attribute vec2 position;
+      void main() {
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    `;
+
+    const fragmentShaderSource = `
+      precision highp float;
+      uniform vec2 u_resolution;
+      uniform float u_time;
+      uniform vec2 u_mouse;
+      uniform vec3 u_color1;
+      uniform vec3 u_color2;
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+        float dist = distance(uv, u_mouse / u_resolution.xy);
+        
+        vec3 colorA = u_color1;
+        vec3 colorB = u_color2;
+        
+        float pulse = 0.5 + 0.5 * sin(u_time * 0.3);
+        vec3 finalColor = mix(colorA, colorB, uv.y * pulse + dist * 0.1);
+        
+        finalColor *= 0.12; // Mantenha escuro para visibilidade
+        gl_FragColor = vec4(finalColor, 1.0);
+      }
+    `;
+
+    const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
+      const shader = gl.createShader(type);
+      if (!shader) return null;
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
         return null;
       }
-      return s;
+      return shader;
     };
 
-    const vs = sh(V, gl.VERTEX_SHADER);
-    const fs = sh(F, gl.FRAGMENT_SHADER);
-    if (!vs || !fs) return;
+    const vs = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+    const fs = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+    const program = gl.createProgram();
+    if (!program || !vs || !fs) return;
 
-    const prog = gl.createProgram();
-    if (!prog) return;
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(program));
+      return;
+    }
+    gl.useProgram(program);
 
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, 'p');
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
 
-    const uT = gl.getUniformLocation(prog, 'T');
-    const uR = gl.getUniformLocation(prog, 'R');
-    const uM = gl.getUniformLocation(prog, 'M');
+    const positionLoc = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(positionLoc);
+    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
 
-    let mx = 0.5, my = 0.5, t = 0;
-    const onMouseMove = (e: MouseEvent) => {
-      mx = e.clientX / window.innerWidth;
-      my = 1 - (e.clientY / window.innerHeight);
+    const resLoc = gl.getUniformLocation(program, "u_resolution");
+    const timeLoc = gl.getUniformLocation(program, "u_time");
+    const mouseLoc = gl.getUniformLocation(program, "u_mouse");
+    const color1Loc = gl.getUniformLocation(program, "u_color1");
+    const color2Loc = gl.getUniformLocation(program, "u_color2");
+
+    let mouseX = 0;
+    let mouseY = 0;
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = canvas.height - e.clientY;
     };
-    document.addEventListener('mousemove', onMouseMove);
+    window.addEventListener("mousemove", handleMouseMove);
 
     let animationFrameId: number;
-    const frame = () => {
-      t += 0.4;
-      gl.uniform1f(uT, t);
-      gl.uniform2f(uR, canvas.width, canvas.height);
-      gl.uniform2f(uM, mx, my);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      animationFrameId = requestAnimationFrame(frame);
+    const render = (time: number) => {
+      gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.uniform1f(timeLoc, time * 0.001);
+      gl.uniform2f(mouseLoc, mouseX, mouseY);
+      gl.uniform3f(color1Loc, color1[0], color1[1], color1[2]);
+      gl.uniform3f(color2Loc, color2[0], color2[1], color2[2]);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      animationFrameId = requestAnimationFrame(render);
     };
-    frame();
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener('resize', resize);
-      document.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
+      gl.deleteProgram(program);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(positionBuffer);
     };
-  }, []);
+  }, [primaryColor, secondaryColor]);
 
   return (
     <canvas
       ref={canvasRef}
-      id="bg"
+      className="global-background-canvas"
       style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100vh',
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
         zIndex: -1,
-        pointerEvents: 'none',
-        display: 'block'
+        pointerEvents: "none",
+        display: "block"
       }}
     />
   );
