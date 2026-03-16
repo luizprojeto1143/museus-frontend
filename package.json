@@ -1,6 +1,6 @@
 {
   "name": "museus-frontend",
-  "version": "1.0.1",
+  "version": "1.3.0",
   "type": "module",
   "private": true,
   "scripts": {
