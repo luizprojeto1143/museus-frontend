@@ -72,65 +72,67 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                         position: "fixed",
                         top: 0,
                         left: 0,
-                        width: "100vw",
-                        height: "100vh",
-                        background: theme === "light" 
-                            ? `linear-gradient(135deg, #ffffff 0%, ${getTranslucentColor(primaryColor, 0.1)} 100%)`
-                            : `linear-gradient(135deg, #05050c 0%, ${getTranslucentColor(primaryColor, 0.15)} 100%)`,
+                        width: "100%",
+                        height: "100%",
+                        background: theme === "light" ? "#ffffff" : "#05050c",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
                         zIndex: 2147483647,
-                        padding: "0",
-                        textAlign: "center"
+                        padding: "1rem",
+                        textAlign: "center",
+                        overflow: "hidden"
                     }}
                 >
+                    {/* Camada de gradiente sutil sobre o fundo sólido */}
+                    <div style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: theme === 'light' 
+                            ? `linear-gradient(135deg, #ffffff 0%, ${getTranslucentColor(primaryColor, 0.05)} 100%)`
+                            : `linear-gradient(135deg, rgba(5,5,12,0) 0%, ${getTranslucentColor(primaryColor, 0.1)} 100%)`,
+                        pointerEvents: "none"
+                    }} />
+
                     {!showVideo ? (
-                        <div style={{ padding: "2rem", position: "relative", width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                            {/* Círculos decorativos animados baseados na cor primária */}
+                        <div style={{ position: "relative", width: "100%", maxWidth: "600px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 1 }}>
+                            {/* Círculos decorativos menores */}
                             <motion.div
                                 animate={{
-                                    scale: [1, 1.4, 1],
-                                    opacity: [0.3, 0.5, 0.3],
+                                    scale: [1, 1.2, 1],
+                                    opacity: [0.2, 0.4, 0.2],
                                 }}
-                                transition={{
-                                    duration: 8,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }}
+                                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                                 style={{
                                     position: "absolute",
-                                    width: "600px",
-                                    height: "600px",
+                                    width: "300px",
+                                    height: "300px",
                                     borderRadius: "50%",
-                                    background: `radial-gradient(circle, ${getTranslucentColor(primaryColor, theme === 'light' ? 0.2 : 0.4)} 0%, transparent 70%)`,
-                                    filter: "blur(80px)",
-                                    zIndex: 0
+                                    background: `radial-gradient(circle, ${getTranslucentColor(primaryColor, theme === 'light' ? 0.15 : 0.3)} 0%, transparent 70%)`,
+                                    filter: "blur(50px)",
+                                    zIndex: -1
                                 }}
                             />
 
                             <motion.div
                                 initial={{ y: 20, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.3, duration: 0.8 }}
-                                style={{ zIndex: 1 }}
+                                transition={{ delay: 0.2, duration: 0.6 }}
                             >
                                 <h1 style={{
-                                    fontSize: "clamp(2rem, 8vw, 3.5rem)",
+                                    fontSize: "clamp(1.5rem, 6vw, 2.5rem)",
                                     fontWeight: "900",
                                     color: theme === 'light' ? "#0f172a" : "#f8fafc",
-                                    marginBottom: "1.5rem",
+                                    marginBottom: "1rem",
                                     background: theme === 'light'
-                                        ? `linear-gradient(to right, ${primaryColor}, #0f172a)`
+                                        ? `linear-gradient(to right, ${primaryColor}, #1e293b)`
                                         : `linear-gradient(to right, ${primaryColor}, #ffffff)`,
                                     WebkitBackgroundClip: "text",
                                     WebkitTextFillColor: "transparent",
                                     textTransform: "uppercase",
-                                    letterSpacing: "-0.04em",
-                                    lineHeight: "1.2",
-                                    textAlign: "center",
-                                    padding: "0 1rem"
+                                    letterSpacing: "-0.02em",
+                                    lineHeight: "1.2"
                                 }}>
                                     {isFirstTime
                                         ? t("welcome.firstTime", { name })
@@ -139,54 +141,52 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
                             </motion.div>
 
                             <motion.div
-                                initial={{ scale: 0.9, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ delay: 0.8, duration: 0.5 }}
-                                style={{ zIndex: 1 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.6, duration: 0.5 }}
                             >
                                 <p style={{
-                                    fontSize: "1.2rem",
-                                    color: theme === 'light' ? "#475569" : "#94a3b8",
-                                    maxWidth: "600px",
-                                    lineHeight: 1.6,
-                                    fontWeight: "600",
-                                    letterSpacing: "0.01em"
+                                    fontSize: "min(1rem, 4vw)",
+                                    color: theme === 'light' ? "#64748b" : "#94a3b8",
+                                    maxWidth: "80%",
+                                    lineHeight: 1.5,
+                                    margin: "0 auto"
                                 }}>
                                     {t("welcome.subtitle")}
                                 </p>
                             </motion.div>
 
-                            {/* Logo ou Ícone do Tenant */}
+                            {/* Logo com carregamento rápido e garantido */}
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.5 }}
+                                initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ 
-                                    delay: 1.2, 
-                                    duration: 0.8,
-                                    type: "spring",
-                                    stiffness: 100
-                                }}
+                                transition={{ delay: 0.4, duration: 0.6 }}
                                 style={{ 
-                                    marginTop: "4rem", 
-                                    width: "140px",
-                                    height: "140px",
-                                    borderRadius: "32px",
-                                    backgroundColor: theme === 'light' ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.05)",
-                                    backdropFilter: "blur(12px)",
-                                    border: theme === 'light' ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(255,255,255,0.1)",
+                                    marginTop: "2.5rem", 
+                                    width: "120px",
+                                    height: "120px",
+                                    borderRadius: "24px",
+                                    backgroundColor: "#ffffff",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    padding: "24px",
-                                    boxShadow: theme === 'light'
-                                        ? `0 20px 40px rgba(0,0,0,0.08), 0 0 20px ${getTranslucentColor(primaryColor, 0.1)}`
-                                        : `0 20px 40px rgba(0,0,0,0.4), 0 0 20px ${getTranslucentColor(primaryColor, 0.2)}`
+                                    padding: "15px",
+                                    boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+                                    border: `2px solid ${getTranslucentColor(primaryColor, 0.2)}`
                                 }}
                             >
                                 {logoUrl ? (
-                                    <img src={logoUrl} alt="Logo" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                                    <img 
+                                        src={logoUrl} 
+                                        alt="Logo" 
+                                        style={{ width: "100%", height: "100%", objectFit: "contain" }} 
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                            (e.target as HTMLImageElement).parentElement!.innerHTML = '<span style="font-size: 3rem">🏛️</span>';
+                                        }}
+                                    />
                                 ) : (
-                                    <span style={{ fontSize: "4rem" }}>🏛️</span>
+                                    <span style={{ fontSize: "3rem" }}>🏛️</span>
                                 )}
                             </motion.div>
                         </div>
