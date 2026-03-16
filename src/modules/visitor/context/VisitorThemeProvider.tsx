@@ -56,17 +56,29 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
         root.style.setProperty("--fb", fontStack);
         root.style.setProperty("--fd", settings.historicalFont ? "Georgia, serif" : "Syne, sans-serif");
         
-        // Background logic
+        // Background and Text logic
         if (settings.theme === "light") {
-            root.style.setProperty("--bg-page", "#f8fafc");
+            root.style.setProperty("--bg-page", "#ffffff");
+            root.style.setProperty("--bg-primary", "#f8fafc");
             root.style.setProperty("--fg-main", "#0f172a");
-            root.style.setProperty("--bg", "#f8fafc");
+            root.style.setProperty("--text-primary", "#0f172a");
+            root.style.setProperty("--text-secondary", "rgba(15, 23, 42, 0.7)");
+            root.style.setProperty("--bg", "#ffffff");
             root.style.setProperty("--cream", "#1a1108");
+            root.style.setProperty("--border-color", "rgba(0, 0, 0, 0.08)");
+            root.style.setProperty("--bg-card", "rgba(0, 0, 0, 0.03)");
+            root.style.setProperty("--bg-hover", "rgba(0, 0, 0, 0.05)");
         } else {
             root.style.setProperty("--bg-page", "#05050c");
+            root.style.setProperty("--bg-primary", "#0a0a0b");
             root.style.setProperty("--fg-main", "#f5e6d3");
+            root.style.setProperty("--text-primary", "#ffffff");
+            root.style.setProperty("--text-secondary", "rgba(255, 255, 255, 0.6)");
             root.style.setProperty("--bg", "#05050c");
             root.style.setProperty("--cream", "#ede8d8");
+            root.style.setProperty("--border-color", "rgba(255, 255, 255, 0.08)");
+            root.style.setProperty("--bg-card", "rgba(255, 255, 255, 0.03)");
+            root.style.setProperty("--bg-hover", "rgba(255, 255, 255, 0.05)");
         }
     };
 

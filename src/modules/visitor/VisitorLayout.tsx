@@ -183,12 +183,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => { document.documentElement.style.fontSize = ""; };
   }, [fontSizeMultiplier]);
 
-  const themeStyles = settings ? {
-    "--bg-primary": isCityMode ? "#060b13" : "#0d0a08",
-  } as React.CSSProperties : {};
-
   return (
-    <div id="visitor-layout" className="layout-wrapper" style={themeStyles}>
+    <div id="visitor-layout" className="layout-wrapper">
 
       <GlobalBackground 
         primaryColor={settings?.primaryColor} 
