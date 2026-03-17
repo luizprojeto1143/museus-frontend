@@ -1,8 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGamification } from '../../gamification/context/GamificationContext';
 import './HUDRPG.css';
 
 export const HUDRPG: React.FC = () => {
+  const navigate = useNavigate();
   const { currentLevel, nextLevel, stats, progressToNextLevel } = useGamification();
 
   return (
@@ -31,8 +33,20 @@ export const HUDRPG: React.FC = () => {
       </div>
 
       <div className="hud-actions">
-        <button className="hud-btn" title="Coleção">✨</button>
-        <button className="hud-btn" title="Desafios">🎯</button>
+        <button 
+          className="hud-btn" 
+          title="Coleção"
+          onClick={() => navigate('/colecao')}
+        >
+          ✨
+        </button>
+        <button 
+          className="hud-btn" 
+          title="Desafios"
+          onClick={() => navigate('/desafios')}
+        >
+          🎯
+        </button>
       </div>
     </div>
   );

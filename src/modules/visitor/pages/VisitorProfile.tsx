@@ -82,7 +82,18 @@ export const VisitorProfile: React.FC = () => {
     const [orders, setOrders] = useState<Order[]>([]);
     const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
     const [redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>([]);
+    const [stamps, setStamps] = useState<any[]>([]);
+    const [favorites, setFavorites] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (isGuest) return;
+        setLoading(true);
+        Promise.all([
+            api.get('/visitors/stamps').then(res => setStamps(res.data.slice(0, 4))).catch(() => {}),
+            api.get('/favorites').then(res => setFavorites(res.data.slice(0, 3))).catch(() => {})
+        ]).finally(() => setLoading(false));
+    }, [isGuest]);
 
     const handleTabChange = (tab: 'info' | 'tickets' | 'certificates' | 'orders' | 'rewards') => {
         setActiveTab(tab);
@@ -183,6 +194,36 @@ export const VisitorProfile: React.FC = () => {
                                 <p>Trocas épicas por XP</p>
                             </div>
                         </div>
+
+                        {stamps.length > 0 && (
+                            <div className="status-summary-premium col-span-full">
+                                <h4 className="text-gold font-fm text-[10px] uppercase tracking-widest mb-4">Carimbos Recentes</h4>
+                                <div className="flex gap-4 overflow-x-auto pb-4">
+                                    {stamps.map((stamp, idx) => (
+                                        <div key={idx} className="stamp-mini-card" title={stamp.name}>
+                                            <span className="text-2xl">{stamp.icon || '🏛️'}</span>
+                                        </div>
+                                    ))}
+                                    <button onClick={() => navigate("/passaporte")} className="stamp-mini-more">
+                                        <ChevronRight size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {favorites.length > 0 && (
+                            <div className="status-summary-premium col-span-full">
+                                <h4 className="text-gold font-fm text-[10px] uppercase tracking-widest mb-4">Meus Favoritos</h4>
+                                <div className="space-y-2">
+                                    {favorites.map((fav, idx) => (
+                                        <div key={idx} className="fav-mini-row" onClick={() => navigate(fav.type === 'work' ? `/obras/${fav.itemId}` : `/trilhas/${fav.itemId}`)}>
+                                            <Star size={12} className="text-gold" />
+                                            <span className="truncate">{fav.title || fav.name || "Item Favorito"}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         <button 
                             className="text-red-500 font-fm text-[10px] uppercase tracking-widest mt-10 hover:opacity-70 transition-opacity flex items-center gap-2"

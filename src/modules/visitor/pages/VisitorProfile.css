@@ -3,6 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px;
+  padding-bottom: 180px;
 }
 
 /* ═══ HUD CARD ═══════════════ */
@@ -30,8 +31,6 @@
 
 .profile-hero-premium {
   display: flex;
-  align-items: center;
-  gap: 40px;
   margin-bottom: 60px;
 }
 
@@ -188,4 +187,61 @@
   font-family: var(--fb);
   font-size: 12px;
   color: var(--muted);
+}
+
+/* ═══ SUMMARY EXTRAS ═════════ */
+.status-summary-premium {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.stamp-mini-card {
+  width: 54px;
+  height: 54px;
+  background: var(--bg);
+  border: 1px solid var(--gold-glow);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+
+.stamp-mini-card:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stamp-mini-more {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  border: 1px dashed var(--gold);
+  background: transparent;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fav-mini-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.8rem;
+  color: var(--cream);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fav-mini-row:hover {
+  border-color: var(--gold);
+  background: var(--gold-dim);
 }

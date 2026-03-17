@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
@@ -23,8 +23,10 @@ type TrailDetailData = {
 
 export const TrailDetail: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { isGuest } = useAuth();
+  const { playTrack, currentTrack } = useAudio();
 
   const [apiTrail, setApiTrail] = useState<TrailDetailData | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -127,12 +129,15 @@ export const TrailDetail: React.FC = () => {
 
             <section className="mt-20">
                <h2 className="text-2xl font-fd text-white mb-8">Estações da Jornada</h2>
-               <div className="ranking-list-premium">
+               <div className="journey-stations-grid">
                   {apiTrail.works.map((w, idx) => (
-                    <Link to={`/obras/${w.id}?trailId=${id}`} key={w.id} className="ranking-row-premium !grid-cols-[50px_1fr_40px] hover:border-gold transition-colors">
-                       <span className="ranking-pos-premium !text-gold">0{idx + 1}</span>
-                       <span className="ranking-name-premium">{w.title}</span>
-                       <ChevronRight className="text-muted" size={16} />
+                    <Link to={`/obras/${w.id}?trailId=${id}`} key={w.id} className="journey-station-card">
+                       <div className="station-number">{idx + 1}</div>
+                       <div className="station-info">
+                          <span className="station-title">{w.title}</span>
+                          <span className="station-subtitle">Explorar estação</span>
+                       </div>
+                       <ChevronRight className="text-gold" size={18} />
                     </Link>
                   ))}
                </div>
@@ -154,7 +159,20 @@ export const TrailDetail: React.FC = () => {
             
             <button 
               className="gallery-cta w-full"
-              onClick={() => window.location.href = `/obras/${apiTrail.works[0].id}?trailId=${id}`}
+              onClick={() => {
+                const firstWorkId = apiTrail.works[0]?.id;
+                if (firstWorkId) {
+                  // If playing trail audio, keep it in global player
+                  if (apiTrail.audioUrl && currentTrack?.url !== apiTrail.audioUrl) {
+                    playTrack({
+                       title: apiTrail.name,
+                       url: apiTrail.audioUrl,
+                       coverUrl: undefined
+                    });
+                  }
+                  navigate(`/obras/${firstWorkId}?trailId=${id}`);
+                }
+              }}
             >
               Iniciar Jornada
             </button>

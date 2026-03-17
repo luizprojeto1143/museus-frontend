@@ -5,8 +5,8 @@
    ============================================ */
 .ai-chat-fab {
     position: fixed;
-    bottom: 6rem;
-    right: 2rem;
+    bottom: 12rem;
+    right: 1.5rem;
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -37,8 +37,8 @@
    ============================================ */
 .ai-chat-window {
     position: fixed;
-    bottom: 6rem;
-    right: 2rem;
+    bottom: 12rem;
+    right: 1.5rem;
     width: 360px;
     height: 520px;
     background: linear-gradient(145deg, #1a1108 0%, #2c1e10 100%);
@@ -258,6 +258,6 @@
     .ai-chat-window {
         width: calc(100vw - 2rem);
         right: 1rem;
-        bottom: 1rem;
+        bottom: 15rem;
     }
 }

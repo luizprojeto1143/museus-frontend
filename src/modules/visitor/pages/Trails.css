@@ -133,3 +133,71 @@
     padding: 30px;
   }
 }
+
+/* ═══ JOURNEY STATIONS ══════════════ */
+.journey-stations-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.journey-station-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px 24px;
+  display: grid;
+  grid-template-columns: 48px 1fr 24px;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.journey-station-card:hover {
+  background: var(--surface2);
+  border-color: var(--gold);
+  transform: translateX(8px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.journey-station-card:hover .station-number {
+  background: var(--gold);
+  color: var(--surface);
+  transform: scale(1.1);
+}
+
+.station-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--gold-dim);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fd);
+  font-size: 18px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.station-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.station-title {
+  color: var(--cream);
+  font-family: var(--fb);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.station-subtitle {
+  color: var(--muted);
+  font-family: var(--fm);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
