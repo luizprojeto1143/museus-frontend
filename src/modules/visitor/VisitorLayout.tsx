@@ -209,6 +209,21 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         />
       )}
 
+      <header className="layout-header">
+        <div className="layout-header-inner">
+          <Link to="/home" className="header-logo-container">
+            {settings?.logoUrl && <img src={settings.logoUrl} alt={settings.name} className="header-logo" />}
+            <span className="app-title">{settings?.name || "Cultura Viva"}</span>
+          </Link>
+          <div className="header-actions">
+             <LanguageSwitcher />
+             <button onClick={logout} className="logout-btn-minimal" title="Sair">
+               <span className="nav-icon">🚪</span>
+             </button>
+          </div>
+        </div>
+      </header>
+
       <NavPill />
 
       <main className="layout-main-premium">

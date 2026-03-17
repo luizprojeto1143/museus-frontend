@@ -21,10 +21,11 @@
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--gold);
-  border: 1px solid var(--gold-glow);
+  border: 1px solid var(--gold);
   padding: 6px 12px;
   border-radius: 100px;
   margin-bottom: 24px;
+  background: var(--gold-glow);
 }
 
 .hero-title-premium {
@@ -32,7 +33,7 @@
   font-size: clamp(48px, 10vw, 120px);
   line-height: 0.9;
   font-weight: 500;
-  color: var(--gold-hi);
+  color: var(--text-primary);
   max-width: 900px;
   margin-bottom: 24px;
 }
@@ -101,7 +102,7 @@
 .bento-title {
   font-family: var(--fd);
   font-size: 24px;
-  color: var(--cream);
+  color: var(--text-primary);
 }
 
 .bento-bg {
@@ -196,7 +197,7 @@
   font-family: var(--fd);
   font-size: 48px;
   line-height: 1;
-  color: var(--cream);
+  color: var(--text-primary);
 }
 
 .gallery-desc {
