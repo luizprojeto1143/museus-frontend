@@ -7,55 +7,90 @@ import { useToast } from "../../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../auth/AuthContext";
 
-interface VisitorSkin {
+interface CharacterProfile {
     id: string;
-    equipped: boolean;
+    characterName: string;
+    isActive: boolean;
+    selectedCharacter: {
+        id: string;
+        name: string;
+        imageUrl: string;
+        description: string;
+    };
+    equippedSkin?: {
+        id: string;
+        name: string;
+        imageUrl: string;
+    } | null;
+}
+
+interface OwnedSkin {
+    id: string;
     skin: {
         id: string;
         name: string;
         imageUrl: string;
         rarity: string;
+        characterBaseId: string | null;
     }
 }
 
 export const VisitorWardrobe: React.FC = () => {
-    const { t } = useTranslation();
     const { addToast } = useToast();
     const { isAuthenticated } = useAuth();
-    const [visitorSkins, setVisitorSkins] = useState<VisitorSkin[]>([]);
+    const [characters, setCharacters] = useState<CharacterProfile[]>([]);
+    const [ownedSkins, setOwnedSkins] = useState<OwnedSkin[]>([]);
+    const [selectedCharId, setSelectedCharId] = useState<string | null>(null);
     const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [equipping, setEquipping] = useState<string | null>(null);
 
     useEffect(() => {
-        const loadSkins = async () => {
-             try {
-                 // Get real visitor ID
-                 const profileRes = await api.get("/visitors/me");
-                 const vid = profileRes.data.id;
-                 setVisitorId(vid);
-
-                 const res = await api.get(`/visitors/${vid}/skins`);
-                 setVisitorSkins(res.data);
-             } catch (err) {
-                 console.error(err);
-             } finally {
-                 setLoading(false);
-             }
+        const loadData = async () => {
+            try {
+                const [rpgRes, profileRes] = await Promise.all([
+                    api.get("/rpg/me"),
+                    api.get("/visitors/me")
+                ]);
+                
+                const vid = profileRes.data.id;
+                setVisitorId(vid);
+                
+                const skinsRes = await api.get(`/visitors/${vid}/skins`);
+                
+                setCharacters(rpgRes.data.characters);
+                setOwnedSkins(skinsRes.data);
+                
+                // Select active character by default
+                const active = rpgRes.data.characters.find((c: any) => c.isActive);
+                if (active) setSelectedCharId(active.selectedCharacter.id);
+                else if (rpgRes.data.characters.length > 0) setSelectedCharId(rpgRes.data.characters[0].selectedCharacter.id);
+                
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         };
-        if(isAuthenticated) loadSkins();
+        if (isAuthenticated) loadData();
     }, [isAuthenticated]);
 
     const handleEquip = async (skinId: string) => {
+        if (!selectedCharId) return;
         setEquipping(skinId);
         try {
-            await api.put(`/visitors/${visitorId}/skin/equip`, { skinId });
+            await api.put(`/rpg/equip-skin`, { 
+                characterId: selectedCharId, 
+                skinId 
+            });
             addToast("Visual atualizado!", "success");
-            // Refresh local state to show new equipped skin
-            setVisitorSkins(prev => prev.map(vs => ({
-                ...vs,
-                equipped: vs.skin.id === skinId
-            })));
+            
+            // Update local state
+            setCharacters(prev => prev.map(c => 
+                c.selectedCharacter.id === selectedCharId 
+                    ? { ...c, equippedSkinId: skinId, equippedSkin: ownedSkins.find(s => s.skin.id === skinId)?.skin } 
+                    : c
+            ));
         } catch (err) {
             addToast("Erro ao equipar", "error");
         } finally {
@@ -63,7 +98,10 @@ export const VisitorWardrobe: React.FC = () => {
         }
     };
 
-    const equippedSkin = visitorSkins.find(vs => vs.equipped)?.skin;
+    const currentChar = characters.find(c => c.selectedCharacter.id === selectedCharId);
+    const compatibleSkins = ownedSkins.filter(s => 
+        !s.skin.characterBaseId || s.skin.characterBaseId === selectedCharId
+    );
 
     const getRarityStyle = (rarity: string) => {
         switch(rarity) {
@@ -96,7 +134,31 @@ export const VisitorWardrobe: React.FC = () => {
                 </div>
             </header>
 
-            {/* PREVIEW SECTION - PREMIUM CASE */}
+            {/* CHARACTER SELECTOR CAROUSEL */}
+            <div className="flex gap-4 overflow-x-auto pb-8 mb-8 no-scrollbar snap-x">
+                {characters.map((profile) => (
+                    <button
+                        key={profile.id}
+                        onClick={() => setSelectedCharId(profile.selectedCharacter.id)}
+                        className={`flex-shrink-0 snap-center p-4 rounded-[32px] border-2 transition-all relative w-32
+                            ${selectedCharId === profile.selectedCharacter.id 
+                                ? 'bg-blue-600/10 border-blue-500 shadow-xl shadow-blue-500/10' 
+                                : 'bg-white/5 border-white/5 hover:border-white/10'}
+                        `}
+                    >
+                        <img 
+                            src={profile.selectedCharacter.imageUrl} 
+                            className="w-16 h-16 object-contain mx-auto mb-2 drop-shadow-md" 
+                            alt={profile.selectedCharacter.name} 
+                        />
+                        <span className="text-[10px] font-black text-white uppercase tracking-tighter block text-center truncate">
+                            {profile.selectedCharacter.name}
+                        </span>
+                    </button>
+                ))}
+            </div>
+
+            {/* PREVIEW SECTION */}
             <div className="relative aspect-square w-full max-w-[340px] mx-auto mb-16 group">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 via-transparent to-purple-500/20 rounded-[48px] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
                 
@@ -105,34 +167,60 @@ export const VisitorWardrobe: React.FC = () => {
                     
                     <AnimatePresence mode="wait">
                         <motion.div
-                            key={equippedSkin?.id || 'default'}
+                            key={`${selectedCharId}-${currentChar?.equippedSkin?.id}`}
                             initial={{ opacity: 0, scale: 0.8, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: -20 }}
                             className="relative z-10 w-full h-full flex items-center justify-center"
                         >
                             <img
-                                src={equippedSkin?.imageUrl || "/default_avatar.png"}
+                                src={currentChar?.equippedSkin?.imageUrl || currentChar?.selectedCharacter?.imageUrl || "/default_avatar.png"}
                                 alt="Preview"
                                 className="h-full object-contain drop-shadow-[0_45px_65px_rgba(0,0,0,0.8)]"
                             />
                         </motion.div>
                     </AnimatePresence>
                 </div>
+                
+                {currentChar && (
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-white/10 px-6 py-2 rounded-full shadow-2xl backdrop-blur-xl z-30">
+                        <span className="text-white font-bold text-[10px] uppercase tracking-[0.2em]">
+                            {currentChar.equippedSkin?.name || "Skin Padrão"}
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-                {visitorSkins.map((vs) => {
+                {/* DEFAULT SKIN OPTION */}
+                {selectedCharId && (
+                    <motion.button
+                        layout
+                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ y: -5 }}
+                        onClick={() => currentChar?.equippedSkin && handleEquip("")}
+                        className={`relative aspect-square rounded-3xl border transition-all duration-300 flex flex-col items-center justify-center p-4 group
+                            ${!currentChar?.equippedSkin ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' : 'border-white/5 bg-white/5 hover:border-white/20'}
+                        `}
+                    >
+                         <img src={currentChar?.selectedCharacter?.imageUrl} className="h-[75%] object-contain opacity-50 drop-shadow-lg" alt="Padrão" />
+                         <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 mt-2">Padrão</span>
+                    </motion.button>
+                )}
+
+                {compatibleSkins.map((vs) => {
                     const style = getRarityStyle(vs.skin.rarity);
+                    const isEquipped = currentChar?.equippedSkin?.id === vs.skin.id;
+
                     return (
                         <motion.button
                             key={vs.id}
                             layout
                             whileTap={{ scale: 0.95 }}
                             whileHover={{ y: -5 }}
-                            onClick={() => !vs.equipped && handleEquip(vs.skin.id)}
+                            onClick={() => !isEquipped && handleEquip(vs.skin.id)}
                             className={`relative aspect-square rounded-3xl border transition-all duration-300 flex flex-col items-center justify-center p-4 group
-                                ${vs.equipped ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' : `${style} hover:border-white/20`}
+                                ${isEquipped ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' : `${style} hover:border-white/20`}
                             `}
                         >
                             <img src={vs.skin.imageUrl} className="h-[75%] object-contain drop-shadow-lg group-hover:scale-110 transition-transform" alt={vs.skin.name} />
@@ -141,7 +229,7 @@ export const VisitorWardrobe: React.FC = () => {
                                 <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 truncate block text-center opacity-0 group-hover:opacity-100 transition-opacity">{vs.skin.name}</span>
                             </div>
 
-                            {vs.equipped && (
+                            {isEquipped && (
                                 <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1.5 shadow-xl border-2 border-slate-950">
                                     <Check size={12} className="text-white" />
                                 </div>
@@ -156,13 +244,11 @@ export const VisitorWardrobe: React.FC = () => {
                     );
                 })}
 
-                {visitorSkins.length === 0 && !loading && (
-                    <div className="col-span-3 py-20 text-center bg-white/5 rounded-[40px] border border-dashed border-white/10 backdrop-blur-sm">
-                        <div className="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl border border-white/5">
-                            <Gem className="text-slate-700" size={32} />
-                        </div>
-                        <h3 className="text-white font-black uppercase text-xs tracking-[0.2em] mb-2">Acervo Vazio</h3>
-                        <p className="text-slate-500 text-xs font-medium px-12">Você ainda não conquistou itens visuais. Explore o Marketplace para personalizar seu avatar!</p>
+                {compatibleSkins.length === 0 && !loading && (
+                    <div className="col-span-3 py-12 text-center bg-white/5 rounded-[40px] border border-dashed border-white/10 backdrop-blur-sm">
+                        <Gem className="text-slate-700 mx-auto mb-4" size={24} />
+                        <h3 className="text-white font-black uppercase text-[10px] tracking-[0.2em] mb-1">Sem Skins</h3>
+                        <p className="text-slate-500 text-[10px] font-medium px-12 italic">Nenhuma skin descoberta para este herói ainda.</p>
                     </div>
                 )}
             </div>

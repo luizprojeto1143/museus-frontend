@@ -15,6 +15,10 @@ interface Skin {
     rarity: string;
     active: boolean;
     tenantId: string | null;
+    characterBaseId: string | null;
+    characterBase?: {
+        name: string;
+    }
     _count?: { owners: number };
 }
 
@@ -50,6 +54,7 @@ export const MasterSkinManager: React.FC = () => {
         xpCost: 500,
         rarity: "COMMON",
         tenantId: "",
+        characterBaseId: "",
         active: true
     });
 
@@ -88,7 +93,11 @@ export const MasterSkinManager: React.FC = () => {
     const handleSkinSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const payload = { ...skinForm, tenantId: skinForm.tenantId || null };
+            const payload = { 
+                ...skinForm, 
+                tenantId: skinForm.tenantId || null,
+                characterBaseId: skinForm.characterBaseId || null
+            };
             if (editingId) {
                 await api.put(`/skins/${editingId}`, payload);
                 addToast("Skin atualizada!", "success");
@@ -124,7 +133,7 @@ export const MasterSkinManager: React.FC = () => {
     const resetForms = () => {
         setShowForm(false);
         setEditingId(null);
-        setSkinForm({ name: "", description: "", imageUrl: "", xpCost: 500, rarity: "COMMON", tenantId: "", active: true });
+        setSkinForm({ name: "", description: "", imageUrl: "", xpCost: 500, rarity: "COMMON", tenantId: "", characterBaseId: "", active: true });
         setCharForm({ name: "", description: "", imageUrl: "", tenantId: "", active: true });
     };
 
@@ -207,6 +216,17 @@ export const MasterSkinManager: React.FC = () => {
                                 <Input label="Custo XP" type="number" value={skinForm.xpCost} onChange={e => setSkinForm({...skinForm, xpCost: Number(e.target.value)})} required />
                             )}
 
+                            {activeTab === 'skins' && (
+                                <Select 
+                                    label="Personagem Compatível" 
+                                    value={skinForm.characterBaseId} 
+                                    onChange={e => setSkinForm({...skinForm, characterBaseId: e.target.value})}
+                                >
+                                    <option value="">Global (Todos)</option>
+                                    {characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                </Select>
+                            )}
+
                             <Select 
                                 label="Tenant (Opcional)" 
                                 value={activeTab === 'skins' ? skinForm.tenantId : charForm.tenantId} 
@@ -250,7 +270,12 @@ export const MasterSkinManager: React.FC = () => {
                                 </div>
                                 <div className="flex gap-2">
                                     <button className="p-2 hover:bg-white/10 rounded-lg text-blue-400" onClick={() => { 
-                                        setSkinForm({ ...skin, tenantId: skin.tenantId || '', description: skin.description || '' }); 
+                                        setSkinForm({ 
+                                            ...skin, 
+                                            tenantId: skin.tenantId || '', 
+                                            characterBaseId: skin.characterBaseId || '',
+                                            description: skin.description || '' 
+                                        }); 
                                         setEditingId(skin.id); 
                                         setShowForm(true); 
                                     }}>
@@ -268,7 +293,12 @@ export const MasterSkinManager: React.FC = () => {
                             <p className="master-card-desc h-12 overflow-hidden">{skin.description}</p>
                             <div className="flex justify-between items-center mt-auto pt-4 border-t border-white/5">
                                 <span className="text-yellow-500 font-bold">⭐ {skin.xpCost} XP</span>
-                                <span className="text-xs text-slate-500">{skin._count?.owners || 0} donos</span>
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${skin.characterBase ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-500/20 text-slate-400'}`}>
+                                    {skin.characterBase?.name || "Global"}
+                                </span>
+                            </div>
+                            <div className="flex justify-end mt-1">
+                                <span className="text-[10px] text-slate-500">{skin._count?.owners || 0} donos</span>
                             </div>
                             {skin.tenantId && (
                                <div className="mt-2 flex items-center gap-1 text-[10px] text-blue-400 uppercase font-black tracking-widest">

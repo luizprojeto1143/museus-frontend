@@ -18,7 +18,9 @@ export const VisitorRPG: React.FC = () => {
     const { t } = useTranslation();
     const { isGuest } = useAuth();
     const navigate = useNavigate();
-    const [rpg, setRpg] = useState<any>(null);
+    const [visitor, setVisitor] = useState<any>(null);
+    const [characters, setCharacters] = useState<any[]>([]);
+    const [activeChar, setActiveChar] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
@@ -27,11 +29,15 @@ export const VisitorRPG: React.FC = () => {
     const fetchRPG = useCallback(async () => {
         try {
             const res = await api.get('/rpg/me');
-            setRpg(res.data);
-            setNewName(res.data.characterName);
+            setVisitor(res.data.visitor);
+            setCharacters(res.data.characters);
             
-            // If no character selected, show selection modal
-            if (!res.data.selectedCharacterId) {
+            const active = res.data.characters.find((c: any) => c.isActive) || res.data.characters[0];
+            setActiveChar(active);
+            if (active) setNewName(active.characterName);
+            
+            // If no characters, show selection modal
+            if (res.data.characters.length === 0) {
                 setShowSelection(true);
             }
         } catch (error) { 
@@ -57,8 +63,8 @@ export const VisitorRPG: React.FC = () => {
 
     const handleSelectCharacter = async (characterId: string) => {
         try {
-            await api.put('/rpg/select-character', { characterId });
-            toast.success("Personagem desbloqueado!");
+            await api.post('/rpg/select-character', { characterId });
+            toast.success("Personagem selecionado!");
             setShowSelection(false);
             fetchRPG();
         } catch (err) {
@@ -78,10 +84,10 @@ export const VisitorRPG: React.FC = () => {
         );
     }
 
-    if (!rpg) return null;
+    if (!visitor) return null;
 
-    const cls = classConfig[rpg.characterClass] || classConfig.NOVATO;
-    const xpPct = rpg.nextLevelXp > 0 ? Math.round((rpg.currentXp / rpg.nextLevelXp) * 100) : 0;
+    const cls = classConfig[visitor.class] || classConfig.NOVATO;
+    const xpPct = visitor.nextLevelXp > 0 ? Math.round((visitor.currentXp / visitor.nextLevelXp) * 100) : 0;
 
     return (
         <div className="rpg-container animate-in fade-in duration-700">
@@ -91,7 +97,7 @@ export const VisitorRPG: React.FC = () => {
                 <div className="rpg-avatar-wrapper">
                     <div className="rpg-avatar-ring"></div>
                     <img 
-                        src={rpg.equippedSkin?.skin?.imageUrl || rpg.selectedCharacter?.imageUrl || '/default_avatar.png'} 
+                        src={activeChar?.equippedSkin?.imageUrl || activeChar?.selectedCharacter?.imageUrl || '/default_avatar.png'} 
                         className="rpg-avatar-img"
                         alt="Character" 
                     />
@@ -108,8 +114,8 @@ export const VisitorRPG: React.FC = () => {
                     </div>
                 ) : (
                     <h1 onClick={() => setEditing(true)} className="rpg-name cursor-pointer group">
-                        {rpg.characterName} 
-                        <span className="opacity-0 group-hover:opacity-100 text-xs ml-2 text-yellow-600 font-mono transition-opacity">EDIT</span>
+                        {activeChar?.characterName || "Escolha um Herói"} 
+                        {activeChar && <span className="opacity-0 group-hover:opacity-100 text-xs ml-2 text-yellow-600 font-mono transition-opacity">EDIT</span>}
                     </h1>
                 )}
 
@@ -119,10 +125,10 @@ export const VisitorRPG: React.FC = () => {
                 <div className="bg-black/40 rounded-3xl p-6 border border-white/5">
                     <div className="flex justify-between items-end mb-3">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl font-black text-white italic">Nv. {rpg.level}</span>
+                            <span className="text-3xl font-black text-white italic">Nv. {visitor.level}</span>
                             <span className="text-[10px] bg-yellow-600/20 text-yellow-600 px-2 rounded-md font-mono">{xpPct}%</span>
                         </div>
-                        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{rpg.currentXp.toLocaleString()} / {rpg.nextLevelXp.toLocaleString()} XP</span>
+                        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{visitor.currentXp.toLocaleString()} / {visitor.nextLevelXp.toLocaleString()} XP</span>
                     </div>
                     <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                         <div 
@@ -136,16 +142,39 @@ export const VisitorRPG: React.FC = () => {
             {/* ═══ STATS GRID ══════════════════ */}
             <div className="rpg-stats">
                 <div className="rpg-stat-box">
-                    <span className="rpg-stat-val italic">{rpg.totalVisits}</span>
+                    <span className="rpg-stat-val italic">{visitor.totalVisits || 0}</span>
                     <span className="rpg-stat-lbl">Explorações</span>
                 </div>
                 <div className="rpg-stat-box">
-                    <span className="rpg-stat-val italic">{rpg.totalWorks}</span>
+                    <span className="rpg-stat-val italic">{visitor.totalWorks || 0}</span>
                     <span className="rpg-stat-lbl">Relíquias</span>
                 </div>
                 <div className="rpg-stat-box">
-                    <span className="rpg-stat-val italic">{rpg.totalCards}</span>
+                    <span className="rpg-stat-val italic">{visitor.totalCards || 0}</span>
                     <span className="rpg-stat-lbl">Grimório</span>
+                </div>
+            </div>
+
+            {/* ═══ CHARACTER MINI-CAROUSEL ═════════ */}
+            <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-white font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
+                        <Crown size={14} className="text-yellow-600" /> Seus Heróis
+                    </h2>
+                    <button onClick={() => setShowSelection(true)} className="text-[10px] text-yellow-600 font-bold uppercase tracking-tighter hover:underline">
+                        Adicionar +
+                    </button>
+                </div>
+                <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+                    {characters.map((char) => (
+                        <button
+                            key={char.id}
+                            onClick={() => setActiveChar(char)}
+                            className={`flex-shrink-0 p-3 rounded-2xl border transition-all ${activeChar?.id === char.id ? 'bg-yellow-600/10 border-yellow-600' : 'bg-black/20 border-white/5'}`}
+                        >
+                            <img src={char.selectedCharacter?.imageUrl} className="w-10 h-10 object-contain" alt={char.characterName} />
+                        </button>
+                    ))}
                 </div>
             </div>
 
@@ -182,7 +211,7 @@ export const VisitorRPG: React.FC = () => {
                 <div className="rpg-evo-title">Graus de Iniciação Cultural</div>
                 <div className="rpg-evo-path">
                     {Object.entries(classConfig).map(([key, cfg], idx) => {
-                        const reached = Object.keys(classConfig).indexOf(rpg.characterClass) >= idx;
+                        const reached = Object.keys(classConfig).indexOf(visitor.class) >= idx;
                         return (
                             <div key={key} className={`rpg-evo-node ${reached ? 'active' : ''}`}>
                                 <div className="rpg-evo-icon">

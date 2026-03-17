@@ -15,7 +15,9 @@ interface Skin {
     xpCost: number;
     rarity: string;
     owned: boolean;
-    equipped: boolean;
+    characterBase?: {
+        name: string;
+    }
 }
 
 export const SkinMarketplace: React.FC = () => {
@@ -129,6 +131,11 @@ export const SkinMarketplace: React.FC = () => {
                         >
                             <div className="market-visual-premium">
                                 <span className="market-rarity-tag">{getRarityLabel(skin.rarity)}</span>
+                                <div className="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 z-20">
+                                    <span className="text-[10px] text-white font-bold uppercase tracking-tighter">
+                                        {skin.characterBase?.name || "Global"}
+                                    </span>
+                                </div>
                                 <img src={skin.imageUrl} className="market-img-premium" alt={skin.name} />
                                 
                                 {skin.owned && (
