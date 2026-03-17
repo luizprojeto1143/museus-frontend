@@ -35,6 +35,10 @@ export const SkinMarketplace: React.FC = () => {
             try {
                 const profileRes = await api.get("/visitors/me");
                 const vid = profileRes.data.id;
+                if (!vid) {
+                    setLoading(false);
+                    return;
+                }
                 setVisitorId(vid);
 
                 const [skinsRes, visitorRes] = await Promise.all([

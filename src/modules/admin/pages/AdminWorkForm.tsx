@@ -113,12 +113,12 @@ export const AdminWorkForm: React.FC = () => {
 
         // Load translations if available in backend
         if (data.metadata?.translations?.en) {
-          setTitleEn(data.metadata.translations.en.title || "");
-          setDescriptionEn(data.metadata.translations.en.description || "");
+          setTitleEn(data.metadata?.translations?.en?.title || "");
+          setDescriptionEn(data.metadata?.translations?.en?.description || "");
         }
         if (data.metadata?.translations?.es) {
-          setTitleEs(data.metadata.translations.es.title || "");
-          setDescriptionEs(data.metadata.translations.es.description || "");
+          setTitleEs(data.metadata?.translations?.es?.title || "");
+          setDescriptionEs(data.metadata?.translations?.es?.description || "");
         }
 
         setRadius(data.radius || 5);

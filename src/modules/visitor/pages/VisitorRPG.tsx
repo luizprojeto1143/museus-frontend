@@ -87,7 +87,9 @@ export const VisitorRPG: React.FC = () => {
     if (!visitor) return null;
 
     const cls = classConfig[visitor.class] || classConfig.NOVATO;
-    const xpPct = visitor.nextLevelXp > 0 ? Math.round((visitor.currentXp / visitor.nextLevelXp) * 100) : 0;
+    const currentXp = Number(visitor.currentXp) || 0;
+    const nextLevelXp = Number(visitor.nextLevelXp) || 100;
+    const xpPct = nextLevelXp > 0 ? Math.round((currentXp / nextLevelXp) * 100) : 0;
 
     return (
         <div className="rpg-container animate-in fade-in duration-700">
