@@ -12,12 +12,16 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
 
   const links = [
     { to: "/master", label: t("master.sidebar.dashboard", "Dashboard"), icon: "📊" },
-    { to: "/master/messages", label: t("master.sidebar.caixaDeEntrada", "Caixa de Entrada"), icon: "📨" }, // NEW
+    { to: "/master/messages", label: t("master.sidebar.caixaDeEntrada", "Caixa de Entrada"), icon: "📨" },
     { to: "/master/tenants", label: t("master.sidebar.museusTenants", "Museus / Tenants"), icon: "🏛️" },
     { to: "/master/users", label: t("master.sidebar.usuRios", "Usuários"), icon: "👥" },
-    { to: "/master/providers", label: t("master.sidebar.prestadores", "Prestadores"), icon: "🛠️" }, // NEW
+    { to: "/master/plans", label: t("master.sidebar.plans", "Planos de Assinatura"), icon: "💳" },
+    { to: "/master/providers", label: t("master.sidebar.prestadores", "Prestadores"), icon: "🛠️" },
     { to: "/master/servicos-presenciais", label: t("master.sidebar.serviOsPresenciais", "Serviços Presenciais"), icon: "🤝" },
-    { to: "/master/seeder", label: t("master.sidebar.trafficGen", "Traffic Gen"), icon: "🚦" }, // Assuming 'Users' was a placeholder and 'path' was meant for 'to'
+    { to: "/master/ai-costs", label: t("master.sidebar.aiCosts", "Custos de IA"), icon: "🤖" },
+    { to: "/master/skins", label: t("master.sidebar.skins", "Skins / Mercado"), icon: "👕" },
+    { to: "/master/badges", label: t("master.sidebar.badges", "Fila de Crachás"), icon: "🆔" },
+    { to: "/master/seeder", label: t("master.sidebar.trafficGen", "Traffic Gen"), icon: "🚦" },
     { to: "/master/achievements", label: t("master.sidebar.conquistas", "Conquistas"), icon: "🏆" },
     { to: "/master/audit-logs", label: t("master.sidebar.logsDeAuditoria", "Logs de Auditoria"), icon: "📋" },
     { to: "/master/error-monitor", label: t("master.sidebar.monitorDeErros", "Monitor de Erros"), icon: "🚨" },

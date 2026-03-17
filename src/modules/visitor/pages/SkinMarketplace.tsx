@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
 import { Gem, Star, Lock, Info, CheckCircle2 } from "lucide-react";
 import { useToast } from "../../../contexts/ToastContext";
@@ -47,8 +48,20 @@ export const SkinMarketplace: React.FC = () => {
                 setLoading(false);
             }
         };
+
+        // B-07: Sync XP when window regains focus
+        const handleFocus = () => {
+            if (isAuthenticated && visitorId) {
+                api.get(`/visitors/${visitorId}`).then(res => setVisitorXp(res.data.xp)).catch(() => {});
+            }
+        };
+
         if(isAuthenticated) loadMarketplace();
-    }, [isAuthenticated, tenantId]);
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [isAuthenticated, tenantId, visitorId]);
+
+    const navigate = useNavigate();
 
     const handleBuy = async (skin: Skin) => {
         if (visitorXp < skin.xpCost) {
@@ -58,8 +71,11 @@ export const SkinMarketplace: React.FC = () => {
 
         setBuyingId(skin.id);
         try {
-            const res = await api.post(`/marketplace/${skin.id}/buy`, { visitorId });
-            addToast("Skin desbloqueada!", "success");
+            const res = await api.post(`/marketplace/${skin.id}/buy`);
+            // B-04: Toast with CTA to wardrobe
+            addToast("Skin desbloqueada! Vá ao Vestiário para equipar.", "success", {
+                duration: 5000,
+            });
             setVisitorXp(res.data.newXpBalance);
             setSkins(prev => prev.map(s => s.id === skin.id ? { ...s, owned: true } : s));
             setShowWarning(null);

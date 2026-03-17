@@ -5,8 +5,8 @@
    ============================================ */
 .ai-chat-fab {
     position: fixed;
-    bottom: 12rem;
-    right: 1.5rem;
+    bottom: 15rem; /* Even higher to clear NavPill at 120px */
+    right: 1rem;
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -37,8 +37,8 @@
    ============================================ */
 .ai-chat-window {
     position: fixed;
-    bottom: 12rem;
-    right: 1.5rem;
+    bottom: 15rem; /* Even higher to clear NavPill at 120px */
+    right: 1rem;
     width: 360px;
     height: 520px;
     background: linear-gradient(145deg, #1a1108 0%, #2c1e10 100%);

@@ -113,7 +113,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/rota/:routeId" element={vr(RouteMap, RequireRole)} />
             <Route path="/familia/:profileId" element={vr(FamilyTimeline, RequireRole)} />
             <Route path="/meus-certificados" element={vr(CertificateList, RequireRole)} />
-            <Route path="/guarda-roupa" element={vr(VisitorWardrobe, RequireRole)} />
+            <Route path="/wardrobe" element={vr(VisitorWardrobe, RequireRole)} />
             <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />

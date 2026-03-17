@@ -1,8 +1,8 @@
 .nav-pill-canvas {
   position: fixed;
-  top: 24px;
-  left: 0;
-  width: 100%;
+  bottom: 120px; /* Elevated to clear HUD */
+  left: 1rem;
+  right: 1rem;
   display: flex;
   justify-content: center;
   z-index: 1000;

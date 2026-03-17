@@ -29,10 +29,11 @@
     max-width: 1200px;
     height: 100%;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .header-logo-container {
@@ -216,6 +217,9 @@
     letter-spacing: 0.1em;
     color: var(--text-secondary);
     margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sidebar-content {
@@ -385,8 +389,16 @@
     }
 
     .layout-content {
-        padding: 1.5rem;
-        padding-bottom: calc(1.5rem + 80px);
+        padding: 1rem;
+        padding-bottom: 240px; /* Space for NavPill + HUD */
+    }
+
+    .app-title {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
     }
 }
 
