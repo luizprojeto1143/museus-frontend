@@ -69,8 +69,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
         // Se for tema claro, usamos um fundo quase branco e misturamos as cores de forma muito sutil
         // Se for escuro, mantemos a base escura
         ${theme === 'light' ? `
-          vec3 finalColor = mix(vec3(0.99, 0.99, 1.0), mix(colorA, colorB, uv.y * pulse + dist * 0.1), 0.02);
-          gl_FragColor = vec4(finalColor, 1.0);
+          gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
         ` : `
           vec3 finalColor = mix(colorA, colorB, uv.y * pulse + dist * 0.1);
           finalColor *= 0.12; 

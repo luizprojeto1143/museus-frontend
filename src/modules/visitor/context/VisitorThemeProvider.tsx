@@ -62,21 +62,21 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
             root.style.setProperty("--bg-primary", "#f8fafc");
             root.style.setProperty("--fg-main", "#0f172a");
             root.style.setProperty("--text-primary", "#0f172a");
-            root.style.setProperty("--text-secondary", "rgba(15, 23, 42, 0.7)");
+            root.style.setProperty("--text-secondary", "rgba(15, 23, 42, 0.8)");
             root.style.setProperty("--bg", "#ffffff");
             root.style.setProperty("--cream", "#1a1108");
             root.style.setProperty("--gold", settings.primaryColor || "#c9943a");
-            root.style.setProperty("--gold-hi", settings.primaryColor || "#0f172a");
+            root.style.setProperty("--gold-hi", "#0f172a"); // Forçar títulos escuros no tema claro
             root.style.setProperty("--gold-dim", "rgba(15, 23, 42, 0.05)");
             root.style.setProperty("--gold-glow", "rgba(15, 23, 42, 0.1)");
-            root.style.setProperty("--muted", "rgba(15, 23, 42, 0.5)");
+            root.style.setProperty("--muted", "rgba(15, 23, 42, 0.6)");
             root.style.setProperty("--faint", "rgba(0, 0, 0, 0.03)");
-            root.style.setProperty("--border", "rgba(0, 0, 0, 0.08)");
-            root.style.setProperty("--border-color", "rgba(0, 0, 0, 0.08)");
-            root.style.setProperty("--surface", "rgba(255, 255, 255, 0.9)");
-            root.style.setProperty("--surface2", "rgba(240, 242, 245, 0.7)");
-            root.style.setProperty("--bg-card", "rgba(0, 0, 0, 0.03)");
-            root.style.setProperty("--bg-hover", "rgba(0, 0, 0, 0.05)");
+            root.style.setProperty("--border", "rgba(0, 0, 0, 0.12)");
+            root.style.setProperty("--border-color", "rgba(0, 0, 0, 0.12)");
+            root.style.setProperty("--surface", "rgba(255, 255, 255, 0.95)");
+            root.style.setProperty("--surface2", "rgba(241, 245, 249, 0.9)");
+            root.style.setProperty("--bg-card", "rgba(0, 0, 0, 0.04)");
+            root.style.setProperty("--bg-hover", "rgba(0, 0, 0, 0.06)");
         } else {
             root.style.setProperty("--bg-page", "#05050c");
             root.style.setProperty("--bg-primary", "#0a0a0b");
