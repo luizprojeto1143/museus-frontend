@@ -19,7 +19,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
 
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl') as WebGLRenderingContext | null;
     if (!gl) {
-      canvas.style.background = '#05050c';
+      canvas.style.background = 'var(--bg-page, #05050c)';
       return;
     }
 
