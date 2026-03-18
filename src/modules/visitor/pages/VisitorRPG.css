@@ -117,26 +117,43 @@
 
 /* ═══ PROGRESSION ═════════════════ */
 .rpg-evolution {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 32px;
-  padding: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 24px;
+  margin-top: 20px;
 }
 
 .rpg-evo-title {
   font-family: var(--fm);
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--muted);
-  margin-bottom: 24px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  margin-bottom: 30px;
+  text-align: center;
+  opacity: 0.8;
 }
 
 .rpg-evo-path {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   position: relative;
+  padding: 0 10px;
+}
+
+/* Connecting line */
+.rpg-evo-path::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 40px;
+  right: 40px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  z-index: 0;
 }
 
 .rpg-evo-node {
@@ -144,38 +161,45 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  width: 60px;
+  width: 70px;
   z-index: 1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .rpg-evo-icon {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  background: var(--bg2);
-  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.3);
   transition: all 0.5s;
 }
 
 .rpg-evo-node.active .rpg-evo-icon {
-  border-color: var(--gold);
-  color: var(--gold-hi);
-  box-shadow: 0 0 20px var(--gold-glow);
+  background: linear-gradient(135deg, #d4af37, #b8941e);
+  border-color: #f7e09a;
+  color: #1a1108;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+  transform: scale(1.1);
 }
 
 .rpg-evo-lbl {
   font-family: var(--fm);
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
-  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+  transition: all 0.3s;
 }
 
 .rpg-evo-node.active .rpg-evo-lbl {
-  color: var(--gold);
+  color: #d4af37;
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 @keyframes rotate {

@@ -6,6 +6,7 @@ import { Loader2, Sword, Shield, Trophy, Star, Sparkles, User, Crown } from "luc
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { CharacterSelectModal } from "../components/CharacterSelectModal";
+import "./VisitorRPG.css";
 
 const classConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
     NOVATO: { label: 'Novato', color: '#9ca3af', bg: 'rgba(156,163,175,0.1)', icon: <User size={20} /> },
