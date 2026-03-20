@@ -22,6 +22,7 @@ interface CharacterProfile {
         name: string;
         imageUrl: string;
     } | null;
+    avatarStatus?: string;
 }
 
 interface OwnedSkin {
@@ -32,7 +33,8 @@ interface OwnedSkin {
         imageUrl: string;
         rarity: string;
         characterBaseId: string | null;
-    }
+    };
+    generatedAvatarUrl?: string | null;
 }
 
 export const VisitorWardrobe: React.FC = () => {
@@ -44,6 +46,7 @@ export const VisitorWardrobe: React.FC = () => {
     const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [equipping, setEquipping] = useState<string | null>(null);
+    const [generatingSkin, setGeneratingSkin] = useState<string | null>(null);
 
     useEffect(() => {
         const loadData = async () => {
@@ -75,6 +78,30 @@ export const VisitorWardrobe: React.FC = () => {
         if (isAuthenticated) loadData();
     }, [isAuthenticated]);
 
+    // Polling for skin generation
+    useEffect(() => {
+        if (!generatingSkin) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const res = await api.get(`/rpg/skin-status/${generatingSkin}`);
+                if (res.data.status !== 'GENERATING') {
+                    setGeneratingSkin(null);
+                    if (res.data.status === 'READY') {
+                        addToast("Skin aplicada com sucesso pela IA! ✨", "success");
+                        // Refresh to get the new generatedAvatarUrl
+                        const skinsRes = await api.get(`/visitors/${visitorId}/skins`);
+                        setOwnedSkins(skinsRes.data);
+                    }
+                }
+            } catch (err) {
+                console.error("Polling skin error", err);
+            }
+        }, 4000);
+
+        return () => clearInterval(interval);
+    }, [generatingSkin, visitorId, addToast]);
+
     const handleEquip = async (skinId: string) => {
         if (!selectedCharId) return;
         setEquipping(skinId);
@@ -95,6 +122,18 @@ export const VisitorWardrobe: React.FC = () => {
             addToast("Erro ao equipar", "error");
         } finally {
             setEquipping(null);
+        }
+
+        // Trigger AI skin application if avatar is ready
+        if (currentChar?.avatarStatus === 'READY' && skinId) {
+            try {
+                setGeneratingSkin(skinId);
+                await api.post(`/rpg/apply-skin/${skinId}`);
+                addToast("IA está aplicando a skin ao seu avatar...", "info");
+            } catch (err) {
+                setGeneratingSkin(null);
+                console.error("AI Skin start error", err);
+            }
         }
     };
 
@@ -174,7 +213,12 @@ export const VisitorWardrobe: React.FC = () => {
                             className="relative z-10 w-full h-full flex items-center justify-center"
                         >
                             <img
-                                src={currentChar?.equippedSkin?.imageUrl || currentChar?.selectedCharacter?.imageUrl || "/default_avatar.png"}
+                                src={
+                                    (currentChar?.avatarStatus === 'READY' && ownedSkins.find(s => s.skin.id === currentChar?.equippedSkin?.id)?.generatedAvatarUrl) ||
+                                    currentChar?.equippedSkin?.imageUrl || 
+                                    currentChar?.selectedCharacter?.imageUrl || 
+                                    "/default_avatar.png"
+                                }
                                 alt="Preview"
                                 className="h-full object-contain drop-shadow-[0_45px_65px_rgba(0,0,0,0.8)]"
                             />

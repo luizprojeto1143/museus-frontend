@@ -10,6 +10,7 @@ type AdminWorkItem = {
   title: string;
   artist?: string;
   published?: boolean;
+  vestigeActive?: boolean;
 };
 
 export const AdminWorks: React.FC = () => {
@@ -39,6 +40,7 @@ export const AdminWorks: React.FC = () => {
           title: w.title,
           artist: w.artist ?? "",
           published: w.published ?? true,
+          vestigeActive: w.vestigeActive ?? false,
           imageUrl: w.imageUrl,
           description: w.description,
           year: w.year
@@ -95,11 +97,37 @@ export const AdminWorks: React.FC = () => {
                       <span className="chip">
                         {work.published ? t("admin.works.status.published") : t("admin.works.status.draft")}
                       </span>
+                      {work.vestigeActive && (
+                        <span className="chip" style={{ background: '#d4af37', color: 'black', marginLeft: '0.5rem' }}>
+                          {t('vestige.admin.vestigeMode', 'Vestígio')}
+                        </span>
+                      )}
                     </td>
                     <td style={{ textAlign: "right" }}>
-                      <Link to={`/admin/obras/${work.id}`} className="btn btn-secondary">
-                        {t("common.edit")}
-                      </Link>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                        {work.vestigeActive && (
+                          <button 
+                            className="btn btn-secondary"
+                            style={{ borderColor: '#d4af37', color: '#d4af37' }}
+                            onClick={async () => {
+                              if (window.confirm(t('vestige.admin.confirmExpire', 'Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas.'))) {
+                                try {
+                                  await api.post(`/vestiges/expire/${work.id}`);
+                                  alert(t('common.success', 'Sucesso!'));
+                                  window.location.reload();
+                                } catch (err) {
+                                  alert(t('common.error', 'Erro!'));
+                                }
+                              }
+                            }}
+                          >
+                            {t('vestige.admin.expireAction', 'Expirar')}
+                          </button>
+                        )}
+                        <Link to={`/admin/obras/${work.id}`} className="btn btn-secondary">
+                          {t("common.edit")}
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))

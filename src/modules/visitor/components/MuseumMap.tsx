@@ -19,6 +19,13 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
+const VestigeIcon = L.divIcon({
+    className: 'vestige-map-marker',
+    html: '<div style="width:20px;height:20px;background:#d4af37;border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(212,175,55,0.6)"></div>',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+});
+
 type MapMode = "outdoor" | "indoor";
 
 interface POI {
@@ -27,6 +34,8 @@ interface POI {
     lat: number;
     lng: number;
     description?: string;
+    type?: string;
+    vestigeActive?: boolean;
 }
 
 interface MuseumMapProps {
@@ -211,6 +220,23 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                                 />
                             </>
                         )}
+
+                        {/* Outdoor POI Markers */}
+                        {pois.filter(p => p.lat != null && p.lng != null).map(poi => (
+                            <React.Fragment key={`outdoor-${poi.id}`}>
+                                <Marker position={[poi.lat, poi.lng]} icon={poi.type === 'vestige' ? VestigeIcon : DefaultIcon}>
+                                    <Popup>
+                                        <div className="museum-map-popup">
+                                            <p className="museum-map-popup-title">{poi.type === 'vestige' && '\u2728 '}{poi.title}</p>
+                                            {poi.description && <p className="museum-map-popup-desc">{poi.description}</p>}
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                                {poi.type === 'vestige' && (
+                                    <Circle center={[poi.lat, poi.lng]} radius={20} pathOptions={{ color: '#d4af37', fillColor: '#d4af37', fillOpacity: 0.08, dashArray: '5,10', weight: 2 }} />
+                                )}
+                            </React.Fragment>
+                        ))}
                     </>
                 ) : (
                     <>

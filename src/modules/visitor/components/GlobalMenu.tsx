@@ -1,0 +1,90 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { X, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import './GlobalMenu.css';
+import { NavLink } from '../utils/navigation';
+
+interface GlobalMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  links: NavLink[];
+  currentPath: string;
+}
+
+export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, currentPath }) => {
+  // Categories structure
+  const categories = [
+    {
+      title: 'Exploração',
+      items: links.filter(l => ['/home', '/obras', '/trilhas', '/mapa', '/eventos', '/scanner'].includes(l.to))
+    },
+    {
+      title: 'Minha Jornada',
+      items: links.filter(l => ['/rpg', '/perfil', '/colecao', '/meus-certificados'].includes(l.to))
+    },
+    {
+      title: 'Social & Mais',
+      items: links.filter(l => ['/desafios', '/ranking', '/loja', '/favoritos', '/chat'].includes(l.to))
+    }
+  ];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div 
+            className="global-menu-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+          <motion.nav 
+            className="global-menu-drawer"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          >
+            <div className="menu-header">
+              <div className="menu-brand">
+                <span className="brand-dot" />
+                <h2>Menu de Exploração</h2>
+              </div>
+              <button className="menu-close-btn" onClick={onClose}>
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="menu-content">
+              {categories.map((cat, idx) => (
+                <div key={idx} className="menu-category">
+                  <h3 className="category-title">{cat.title}</h3>
+                  <div className="category-items">
+                    {cat.items.map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className={`menu-item ${currentPath === item.to ? 'active' : ''}`}
+                        onClick={onClose}
+                      >
+                        <span className="item-icon">{item.icon}</span>
+                        <span className="item-label">{item.label}</span>
+                        <ChevronRight className="item-chevron" size={16} />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="menu-footer">
+              <p>© 2026 Cultura Viva • Experiência Institucional de Luxo</p>
+            </div>
+          </motion.nav>
+        </>
+      )}
+    </AnimatePresence>
+  );
+};

@@ -6,6 +6,7 @@ import { Loader2, Sword, Shield, Trophy, Star, Sparkles, User, Crown } from "luc
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { CharacterSelectModal } from "../components/CharacterSelectModal";
+import { SelfieCapture } from "../components/SelfieCapture";
 import "./VisitorRPG.css";
 
 const classConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
@@ -26,6 +27,8 @@ export const VisitorRPG: React.FC = () => {
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
     const [showSelection, setShowSelection] = useState(false);
+    const [avatarStatus, setAvatarStatus] = useState<string>('NONE');
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const fetchRPG = useCallback(async () => {
         try {
@@ -35,7 +38,11 @@ export const VisitorRPG: React.FC = () => {
             
             const active = res.data.characters.find((c: any) => c.isActive) || res.data.characters[0];
             setActiveChar(active);
-            if (active) setNewName(active.characterName);
+            if (active) {
+                setNewName(active.characterName);
+                setAvatarStatus(active.avatarStatus || 'NONE');
+                setIsGenerating(active.avatarStatus === 'GENERATING');
+            }
             
             // If no characters, show selection modal
             if (res.data.characters.length === 0) {
@@ -47,6 +54,29 @@ export const VisitorRPG: React.FC = () => {
             setLoading(false); 
         }
     }, []);
+
+    // Polling for avatar status
+    useEffect(() => {
+        if (!isGenerating) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const res = await api.get('/rpg/avatar-status');
+                if (res.data.status !== 'GENERATING') {
+                    setIsGenerating(false);
+                    setAvatarStatus(res.data.status);
+                    fetchRPG(); // Refresh to get the new URL
+                    if (res.data.status === 'READY') {
+                        toast.success("Seu avatar personalizado está pronto! ✨");
+                    }
+                }
+            } catch (err) {
+                console.error("Polling error", err);
+            }
+        }, 4000);
+
+        return () => clearInterval(interval);
+    }, [isGenerating, fetchRPG]);
 
     useEffect(() => { 
         fetchRPG(); 
@@ -70,6 +100,21 @@ export const VisitorRPG: React.FC = () => {
             fetchRPG();
         } catch (err) {
             toast.error("Erro ao selecionar personagem");
+        }
+    };
+
+    const handleSelfieUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append('selfie', file);
+        try {
+            setIsGenerating(true);
+            await api.post('/rpg/selfie', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            toast.success("Foto enviada! A IA está trabalhando...");
+        } catch (err) {
+            setIsGenerating(false);
+            toast.error("Erro ao enviar selfie");
         }
     };
 
@@ -100,7 +145,7 @@ export const VisitorRPG: React.FC = () => {
                 <div className="rpg-avatar-wrapper">
                     <div className="rpg-avatar-ring"></div>
                     <img 
-                        src={activeChar?.equippedSkin?.imageUrl || activeChar?.selectedCharacter?.imageUrl || '/default_avatar.png'} 
+                        src={activeChar?.displayAvatarUrl || '/default_avatar.png'} 
                         className="rpg-avatar-img"
                         alt="Character" 
                     />
@@ -208,6 +253,11 @@ export const VisitorRPG: React.FC = () => {
                     </div>
                 </button>
             </div>
+
+            {/* ═══ AI AVATAR SECTION ═══════════ */}
+            {(avatarStatus === 'NONE' || avatarStatus === 'ERROR' || isGenerating) && (
+                <SelfieCapture onCapture={handleSelfieUpload} isGenerating={isGenerating} />
+            )}
 
             {/* ═══ EVOLUTION PATH ══════════════ */}
             <div className="rpg-evolution">

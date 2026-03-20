@@ -2813,5 +2813,40 @@
       "noPrecisaTocarEmNadaLeituraAut": "Não precisa tocar em nada, leitura automática",
       "noPrecisaTocarEmNadaLeituraAutomtica": "Não precisa tocar em nada, leitura automática"
     }
+  },
+  "vestige": {
+    "capture": {
+      "title": "Captura de Vestígio",
+      "syncing": "Sincronizando Satélites GPS...",
+      "failed": "Falha na Captura",
+      "success": "Vestígio Coletado!",
+      "distance": "Distância: {{distance}}m",
+      "radarStatus": "Status do Radar",
+      "inRange": "ALVO EM ALCANCE",
+      "outOfRange": "FORA DE ALCANCE",
+      "scan": "Escanear Área",
+      "collect": "Coletar Vestígio",
+      "backToMap": "Voltar ao Mapa"
+    },
+    "passport": {
+      "exploration": "Sua Jornada de Exploração",
+      "relics": "Relíquias Definitivas",
+      "feats": "Proezas do Visitante",
+      "emptyVestiges": "Nenhum vestígio coletado neste museu ainda.",
+      "relicDescription": "Vestígios capturados tornam-se relíquias permanentes quando expiram.",
+      "totalRelics": "Total de Relíquias"
+    },
+    "admin": {
+      "vestigeMode": "Modo Vestígio",
+      "active": "Ativado",
+      "inactive": "Desativado",
+      "gpsLat": "Latitude GPS",
+      "gpsLng": "Longitude GPS",
+      "radius": "Raio de Captura (metros)",
+      "expiry": "Data de Expiração",
+      "vestigeImageUrl": "URL da Imagem do Vestígio (Opcional)",
+      "expireAction": "Expirar Agora",
+      "confirmExpire": "Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas."
+    }
   }
 }

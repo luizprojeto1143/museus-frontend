@@ -50,6 +50,7 @@ const VisitorWardrobe = React.lazy(() => import("../modules/visitor/pages/Visito
 const SkinMarketplace = React.lazy(() => import("../modules/visitor/pages/SkinMarketplace").then(m => ({ default: m.SkinMarketplace })));
 const BadgeRequestPage = React.lazy(() => import("../modules/visitor/pages/BadgeRequestPage").then(m => ({ default: m.BadgeRequestPage })));
 const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTracking").then(m => ({ default: m.BadgeTracking })));
+const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -117,6 +118,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
+            <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
         </>
     );
 }

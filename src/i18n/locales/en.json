@@ -2829,5 +2829,53 @@
       "noPrecisaTocarEmNadaLeituraAut": "No need to touch anything, automatic reading",
       "noPrecisaTocarEmNadaLeituraAutomtica": "No need to touch anything, automatic reading"
     }
+  },
+  "vestige": {
+    "capture": {
+      "title": "Vestige Capture",
+      "syncing": "Syncing GPS Satellites...",
+      "failed": "Capture Failed",
+      "success": "Vestige Collected!",
+      "distance": "Distance: {{distance}}m",
+      "radarStatus": "Radar Status",
+      "inRange": "TARGET IN RANGE",
+      "outOfRange": "OUT OF RANGE",
+      "scan": "Scan Area",
+      "collect": "Collect Vestige",
+      "backToMap": "Back to Map"
+    },
+    "passport": {
+      "exploration": "Your Exploration Journey",
+      "relics": "Permanent Relics",
+      "feats": "Visitor Achievements",
+      "emptyVestiges": "No vestiges collected in this museum yet.",
+      "relicDescription": "Captured vestiges become permanent relics upon expiration.",
+      "totalRelics": "Total Relics"
+    },
+    "admin": {
+      "vestigeMode": "Vestige Mode",
+      "active": "Active",
+      "inactive": "Inactive",
+      "gpsLat": "GPS Latitude",
+      "gpsLng": "GPS Longitude",
+      "radius": "Capture Radius (meters)",
+      "expiry": "Expiration Date",
+      "vestigeImageUrl": "Vestige Image URL (Optional)",
+      "vestigeImageUrlPlaceholder": "URL of the specific radar image",
+      "expireAction": "Expire Now",
+      "confirmExpire": "Are you sure you want to expire this vestige? All collected stamps will become permanent relics.",
+      "vestigeDescription": "Makes this point collectable via GPS by visitors",
+      "vestigeTypeLabel": "Vestige Type (Context)",
+      "tip": "Tip: By activating Vestige Mode, the work will appear on the Map Radar for visitors.",
+      "type": {
+        "work": "Work of Art (Default)",
+        "streetArt": "Street Art / Graffiti",
+        "installation": "Installation / Monument",
+        "event": "Temporary Event"
+      }
+    }
+  },
+  "gamification": {
+    "xpAccumulated": "{{xp}} XP accumulated"
   }
 }

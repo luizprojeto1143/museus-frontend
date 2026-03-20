@@ -20,7 +20,7 @@ export const MapView: React.FC = () => {
     nome?: string;
   } | null>(null);
 
-  const [pois, setPois] = useState<{ id: string; title: string; lat: number; lng: number; description: string }[]>([]);
+  const [pois, setPois] = useState<{ id: string; title: string; lat: number; lng: number; description: string; type?: string; vestigeActive?: boolean }[]>([]);
 
   const fetchMapData = useCallback(async () => {
     if (!tenantId) {
@@ -47,9 +47,11 @@ export const MapView: React.FC = () => {
       setPois(works.map((w: any) => ({
         id: w.id,
         title: w.title,
-        lat: w.latitude,
-        lng: w.longitude,
-        description: w.room ? `${w.room} • ${w.floor || ""}` : w.artist || "Ponto de Interesse"
+        lat: w.lat || w.latitude,
+        lng: w.lng || w.longitude,
+        type: w.vestigeActive ? 'vestige' : 'work',
+        vestigeActive: w.vestigeActive,
+        description: w.vestigeActive ? t('vestige.admin.active', 'Vestígio Ativo') : (w.room ? `${w.room} • ${w.floor || ""}` : w.artist || t('common.poi', 'Ponto de Interesse'))
       })));
     } catch (err) {
       console.error("Erro ao carregar dados do mapa", err);
@@ -65,7 +67,9 @@ export const MapView: React.FC = () => {
   if (loading) return (
     <div className="map-view-loading">
       <div className="map-view-spinner"></div>
-      <p className="text-gold-400 font-bold tracking-widest uppercase text-xs">Mapeando Experiência...</p>
+      <p className="text-gold-400 font-bold tracking-widest uppercase text-xs">
+        {t('visitor.map.mappingExperience', 'Mapeando Experiência...')}
+      </p>
     </div>
   );
 

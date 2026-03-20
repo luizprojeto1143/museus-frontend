@@ -160,6 +160,22 @@ export const Home: React.FC = () => {
           </div>
           <div className="bento-bg" style={{ background: 'linear-gradient(-45deg, var(--gold), transparent)' }}></div>
         </Link>
+
+        <Link to="/desafios" className="bento-card">
+          <div className="bento-icon">🎯</div>
+          <div className="bento-info">
+            <span className="bento-label">Provas de Saber</span>
+            <span className="bento-title">Desafios</span>
+          </div>
+        </Link>
+
+        <Link to="/ranking" className="bento-card">
+          <div className="bento-icon">🏆</div>
+          <div className="bento-info">
+            <span className="bento-label">Hall da Fama</span>
+            <span className="bento-title">Ranking</span>
+          </div>
+        </Link>
       </section>
 
       {/* ═══ FEATURED GALLERY ═══════════ */}

@@ -40,7 +40,8 @@ export const AdminWorkForm: React.FC = () => {
     { id: 0, title: "Dados Básicos", icon: FileText, description: `Informações principais da ${term.work.toLowerCase()}` },
     { id: 1, title: "Localização", icon: MapPin, description: `Onde encontrar o ${term.work.toLowerCase()}` },
     { id: 2, title: "Mídia e Conteúdo", icon: MonitorPlay, description: "Imagens, áudios e vídeos" },
-    { id: 3, title: "Revisão", icon: CheckCircle, description: "Confirmação e publicação" }
+    { id: 3, title: "Modo Vestígio", icon: Sparkles, description: "Gamificação e Coleção" },
+    { id: 4, title: "Revisão", icon: CheckCircle, description: "Confirmação e publicação" }
   ];
 
   // Wizard State
@@ -82,6 +83,15 @@ export const AdminWorkForm: React.FC = () => {
   const [dimensions, setDimensions] = useState("");
   const [radius, setRadius] = useState(5);
   const [equipamentoId, setEquipamentoId] = useState("");
+
+  // Vestige Fields
+  const [vestigeActive, setVestigeActive] = useState(false);
+  const [vestigeLat, setVestigeLat] = useState<number | string>("");
+  const [vestigeLng, setVestigeLng] = useState<number | string>("");
+  const [captureRadius, setCaptureRadius] = useState(15);
+  const [vestigeType, setVestigeType] = useState("PIONEER");
+  const [vestigeExpiresAt, setVestigeExpiresAt] = useState("");
+  const [vestigeImageUrl, setVestigeImageUrl] = useState("");
 
   // Fetch Data
   useEffect(() => {
@@ -127,6 +137,15 @@ export const AdminWorkForm: React.FC = () => {
         setWorkMedium(data.medium || "");
         setDimensions(data.dimensions || "");
         if (data.qrCode) setCode(data.qrCode.code);
+
+        // Vestige Data
+        if (data.vestigeActive) setVestigeActive(true);
+        setVestigeLat(data.lat || "");
+        setVestigeLng(data.lng || "");
+        setCaptureRadius(data.captureRadiusM || 15);
+        setVestigeType(data.vestigeType || "PIONEER");
+        if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
+        setVestigeImageUrl(data.vestigeImageUrl || "");
       }).catch(err => {
         console.error(err);
         addToast(`Erro ao carregar ${term.work.toLowerCase()}`, "error");
@@ -257,6 +276,15 @@ export const AdminWorkForm: React.FC = () => {
     if (imageUrl) payload.imageUrl = imageUrl;
     if (audioUrl) payload.audioUrl = audioUrl;
     if (librasUrl) payload.librasUrl = librasUrl;
+
+    // Vestige payload
+    payload.vestigeActive = vestigeActive;
+    payload.lat = vestigeLat ? Number(vestigeLat) : undefined;
+    payload.lng = vestigeLng ? Number(vestigeLng) : undefined;
+    payload.captureRadiusM = Number(captureRadius);
+    payload.vestigeType = vestigeType;
+    payload.vestigeExpiresAt = vestigeExpiresAt || undefined;
+    payload.vestigeImageUrl = vestigeImageUrl || undefined;
 
     try {
       if (id) {
@@ -681,8 +709,109 @@ export const AdminWorkForm: React.FC = () => {
               </div>
             )}
 
-            {/* STEP 3: REVISÃO */}
+            {/* STEP 3: MODO VESTÍGIO */}
             {currentStep === 3 && (
+              <div className="flex-col gap-6">
+                <div className="admin-section">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+                    <div>
+                      <h3 className="admin-section-title" style={{ margin: 0 }}>
+                        {t('vestige.admin.vestigeMode', 'Modo Vestígio')}: {vestigeActive ? t('vestige.admin.active', 'Ativado') : t('vestige.admin.inactive', 'Desativado')}
+                      </h3>
+                      <p style={{ fontSize: '0.8rem', color: 'gray' }}>{t('vestige.admin.vestigeDescription', 'Torna este ponto capturável via GPS pelos visitantes')}</p>
+                    </div>
+                    <div 
+                      onClick={() => setVestigeActive(!vestigeActive)}
+                      style={{ 
+                        width: '60px', height: '32px', background: vestigeActive ? '#d4af37' : '#333',
+                        borderRadius: '16px', position: 'relative', cursor: 'pointer', transition: '0.3s'
+                      }}
+                    >
+                      <div style={{ 
+                        width: '24px', height: '24px', background: 'white', borderRadius: '50%',
+                        position: 'absolute', top: '4px', left: vestigeActive ? '32px' : '4px', transition: '0.3s'
+                      }} />
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {vestigeActive && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-6 overflow-hidden"
+                      >
+                        <div className="admin-grid-2">
+                          <Input 
+                            label={t('vestige.admin.gpsLat', 'Latitude (GPS)')}
+                            type="number"
+                            step="any"
+                            value={vestigeLat}
+                            onChange={e => setVestigeLat(e.target.value)}
+                            placeholder="-25.4297"
+                          />
+                          <Input 
+                            label={t('vestige.admin.gpsLng', 'Longitude (GPS)')}
+                            type="number"
+                            step="any"
+                            value={vestigeLng}
+                            onChange={e => setVestigeLng(e.target.value)}
+                            placeholder="-49.2719"
+                          />
+                        </div>
+
+                        <div className="admin-grid-2">
+                           <Input 
+                            label={t('vestige.admin.radius', 'Raio de Captura (metros)')}
+                            type="number"
+                            value={captureRadius}
+                            onChange={e => setCaptureRadius(Number(e.target.value))}
+                          />
+                          <Select
+                            label={t('vestige.admin.vestigeTypeLabel', 'Tipo de Vestígio (Contexto)')}
+                            value={vestigeType}
+                            onChange={e => setVestigeType(e.target.value)}
+                          >
+                             <option value="WORK">{t('vestige.admin.type.work', 'Obra de Arte (Padrão)')}</option>
+                             <option value="STREET_ART">{t('vestige.admin.type.streetArt', 'Arte Urbana / Grafite')}</option>
+                             <option value="INSTALLATION">{t('vestige.admin.type.installation', 'Instalação / Monumento')}</option>
+                             <option value="EVENT">{t('vestige.admin.type.event', 'Evento Temporário')}</option>
+                          </Select>
+                        </div>
+
+                        <div className="admin-grid-2">
+                           <Input 
+                            label={t('vestige.admin.expiry', 'Expira em')}
+                            type="date"
+                            value={vestigeExpiresAt}
+                            onChange={e => setVestigeExpiresAt(e.target.value)}
+                          />
+                           <Input 
+                            label={t('vestige.admin.vestigeImageUrl', 'Imagem de Captura (opcional)')}
+                            value={vestigeImageUrl}
+                            onChange={e => setVestigeImageUrl(e.target.value)}
+                            placeholder={t('vestige.admin.vestigeImageUrlPlaceholder', 'URL da imagem específica para o radar')}
+                          />
+                        </div>
+
+                        <div style={{ 
+                          padding: '1rem', background: 'rgba(212, 175, 55, 0.1)', 
+                          borderLeft: '4px solid #d4af37', borderRadius: '4px' 
+                        }}>
+                          <p style={{ fontSize: '0.8rem', color: '#d4af37', fontWeight: '700' }}>
+                             {t('vestige.admin.tip', 'Dica: Ao ativar o Modo Vestígio, a obra aparecerá no Radar do Mapa para os visitantes.')}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: REVISÃO */}
+            {currentStep === 4 && (
               <div className="flex-col gap-6">
                 <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '1rem', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
                   <CheckCircle size={48} color="var(--status-success)" style={{ margin: '0 auto 1rem' }} />

@@ -12,6 +12,8 @@ import { GlobalSearch } from "./components/GlobalSearch";
 import { DialerModal } from "./components/DialerModal";
 import { AiChatWidget } from "./components/AiChatWidget";
 import { GlobalAudioPlayer } from "./components/GlobalAudioPlayer";
+import { GlobalMenu } from "./components/GlobalMenu";
+import { getVisitorLinks } from "./utils/navigation";
 
 import "./VisitorLayout.css";
 
@@ -52,6 +54,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [isGlobalMenuOpen, setIsGlobalMenuOpen] = useState(false);
 
   const { currentLevel, stats, progressToNextLevel } = useGamification();
 
@@ -149,23 +152,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const term = useTerminology();
   const isCityMode = useIsCityMode();
 
-  const allLinks = [
-    { to: "/home", label: t("visitor.sidebar.home"), icon: <span className="nav-icon">🏠</span>, feature: null },
-    { to: "/obras", label: term.works, icon: <span className="nav-icon">{isCityMode ? "🏛️" : "🎨"}</span>, feature: "featureWorks" },
-    { to: "/trilhas", label: term.trails, icon: <span className="nav-icon">🗺️</span>, feature: "featureTrails" },
-    { to: "/mapa", label: t("visitor.sidebar.map", "Mapa"), icon: <span className="nav-icon">📍</span>, feature: null },
-    { to: "/eventos", label: t("visitor.sidebar.events"), icon: <span className="nav-icon">📅</span>, feature: "featureEvents" },
-    { to: "/desafios", label: t("visitor.sidebar.challenges", "Desafios"), icon: <span className="nav-icon">🎯</span>, feature: "featureGamification" },
-    { to: "/loja", label: t("visitor.sidebar.shop", "Loja"), icon: <span className="nav-icon">🛒</span>, feature: "featureShop" },
-    { to: "/ranking", label: t("visitor.sidebar.leaderboard", "Ranking"), icon: <span className="nav-icon">🏆</span>, feature: "featureGamification" },
-    { to: "/favoritos", label: t("visitor.sidebar.favorites", "Favoritos"), icon: <span className="nav-icon">❤️</span>, feature: "featureReviews" },
-    { to: "/chat", label: t("visitor.sidebar.aiChat", "Chat IA"), icon: <span className="nav-icon">🤖</span>, feature: "featureChatAI" },
-    { to: "/scanner", label: t("visitor.sidebar.scanner", "Scanner"), icon: <span className="nav-icon">📷</span>, feature: "featureQRCodes" },
-    { to: "/perfil", label: t("visitor.sidebar.profile"), icon: <span className="nav-icon">👤</span>, feature: null },
-    { to: "/rpg", label: "Meu Personagem", icon: <span className="nav-icon">🗡️</span>, feature: "featureGamification" },
-    { to: "/colecao", label: "Colecionáveis", icon: <span className="nav-icon">✨</span>, feature: "featureGamification" },
-    { to: "/meus-certificados", label: "Meus Certificados", icon: <span className="nav-icon">🏅</span>, feature: "featureCertificates" },
-  ];
+  const allLinks = getVisitorLinks(t, term, isCityMode);
 
   const links = allLinks.filter(link => {
     if (link.feature === "teacherOnly") return isTeacher;
@@ -224,7 +211,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         </div>
       </header>
 
-      <NavPill />
+      <NavPill onMenuClick={() => setIsGlobalMenuOpen(true)} />
 
       <main className="layout-main-premium">
         {isGuest && (
@@ -247,6 +234,13 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       </main>
 
       <HUDRPG />
+
+      <GlobalMenu 
+        isOpen={isGlobalMenuOpen} 
+        onClose={() => setIsGlobalMenuOpen(false)} 
+        links={links}
+        currentPath={location.pathname}
+      />
 
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       <DialerModal isOpen={isDialerOpen} onClose={() => setIsDialerOpen(false)} />
