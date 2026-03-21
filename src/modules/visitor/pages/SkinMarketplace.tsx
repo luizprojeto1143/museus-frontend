@@ -15,9 +15,6 @@ interface Skin {
     xpCost: number;
     rarity: string;
     owned: boolean;
-    characterBase?: {
-        name: string;
-    }
 }
 
 export const SkinMarketplace: React.FC = () => {
@@ -79,9 +76,7 @@ export const SkinMarketplace: React.FC = () => {
         try {
             const res = await api.post(`/marketplace/${skin.id}/buy`);
             // B-04: Toast with CTA to wardrobe
-            addToast("Skin desbloqueada! Vá ao Vestiário para equipar.", "success", {
-                duration: 5000,
-            });
+            addToast("Skin desbloqueada! Vá ao Vestiário para equipar.", "success");
             setVisitorXp(res.data.newXpBalance);
             setSkins(prev => prev.map(s => s.id === skin.id ? { ...s, owned: true } : s));
             setShowWarning(null);
@@ -135,11 +130,6 @@ export const SkinMarketplace: React.FC = () => {
                         >
                             <div className="market-visual-premium">
                                 <span className="market-rarity-tag">{getRarityLabel(skin.rarity)}</span>
-                                <div className="absolute top-2 right-2 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 z-20">
-                                    <span className="text-[10px] text-white font-bold uppercase tracking-tighter">
-                                        {skin.characterBase?.name || "Global"}
-                                    </span>
-                                </div>
                                 <img src={skin.imageUrl} className="market-img-premium" alt={skin.name} />
                                 
                                 {skin.owned && (

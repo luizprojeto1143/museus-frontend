@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { X, ChevronRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { X, ChevronRight, LogOut, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../auth/AuthContext';
 import './GlobalMenu.css';
 import { NavLink } from '../utils/navigation';
 
@@ -13,6 +14,9 @@ interface GlobalMenuProps {
 }
 
 export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, currentPath }) => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
   // Categories structure
   const categories = [
     {
@@ -28,6 +32,16 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
       items: links.filter(l => ['/desafios', '/ranking', '/loja', '/favoritos', '/chat'].includes(l.to))
     }
   ];
+
+  const handleSwitchMuseum = () => {
+    onClose();
+    navigate('/select-museum');
+  };
+
+  const handleLogout = () => {
+    onClose();
+    logout();
+  };
 
   return (
     <AnimatePresence>
@@ -77,6 +91,19 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
                   </div>
                 </div>
               ))}
+
+              <div className="menu-separator" />
+
+              <div className="menu-actions">
+                <button className="action-item" onClick={handleSwitchMuseum}>
+                  <RefreshCcw size={20} className="action-icon" />
+                  <span className="action-label">Trocar de Museu</span>
+                </button>
+                <button className="action-item logout" onClick={handleLogout}>
+                  <LogOut size={20} className="action-icon" />
+                  <span className="action-label">Sair da Conta</span>
+                </button>
+              </div>
             </div>
 
             <div className="menu-footer">

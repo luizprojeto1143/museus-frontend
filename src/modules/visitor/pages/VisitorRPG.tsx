@@ -2,10 +2,9 @@ import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, Sword, Shield, Trophy, Star, Sparkles, User, Crown } from "lucide-react";
+import { Loader2, Sword, Shield, Trophy, User, Crown } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { CharacterSelectModal } from "../components/CharacterSelectModal";
 import { SelfieCapture } from "../components/SelfieCapture";
 import "./VisitorRPG.css";
 
@@ -26,7 +25,6 @@ export const VisitorRPG: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
-    const [showSelection, setShowSelection] = useState(false);
     const [avatarStatus, setAvatarStatus] = useState<string>('NONE');
     const [isGenerating, setIsGenerating] = useState(false);
 
@@ -42,11 +40,6 @@ export const VisitorRPG: React.FC = () => {
                 setNewName(active.characterName);
                 setAvatarStatus(active.avatarStatus || 'NONE');
                 setIsGenerating(active.avatarStatus === 'GENERATING');
-            }
-            
-            // If no characters, show selection modal
-            if (res.data.characters.length === 0) {
-                setShowSelection(true);
             }
         } catch (error) { 
             console.error(error); 
@@ -90,17 +83,6 @@ export const VisitorRPG: React.FC = () => {
             setEditing(false);
             fetchRPG();
         } catch (err) { toast.error("Erro"); }
-    };
-
-    const handleSelectCharacter = async (characterId: string) => {
-        try {
-            await api.post('/rpg/select-character', { characterId });
-            toast.success("Personagem selecionado!");
-            setShowSelection(false);
-            fetchRPG();
-        } catch (err) {
-            toast.error("Erro ao selecionar personagem");
-        }
     };
 
     const handleSelfieUpload = async (file: File) => {
@@ -162,7 +144,7 @@ export const VisitorRPG: React.FC = () => {
                     </div>
                 ) : (
                     <h1 onClick={() => setEditing(true)} className="rpg-name cursor-pointer group">
-                        {activeChar?.characterName || "Escolha um Herói"} 
+                        {activeChar?.characterName || "Seu Herói"} 
                         {activeChar && <span className="opacity-0 group-hover:opacity-100 text-xs ml-2 text-yellow-600 font-mono transition-opacity">EDIT</span>}
                     </h1>
                 )}
@@ -204,27 +186,26 @@ export const VisitorRPG: React.FC = () => {
             </div>
 
             {/* ═══ CHARACTER MINI-CAROUSEL ═════════ */}
-            <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-white font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
-                        <Crown size={14} className="text-yellow-600" /> Seus Heróis
-                    </h2>
-                    <button onClick={() => setShowSelection(true)} className="text-[10px] text-yellow-600 font-bold uppercase tracking-tighter hover:underline">
-                        Adicionar +
-                    </button>
+            {characters.length > 1 && (
+                <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-white font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
+                            <Crown size={14} className="text-yellow-600" /> Seus heróis
+                        </h2>
+                    </div>
+                    <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+                        {characters.map((char) => (
+                            <button
+                                key={char.id}
+                                onClick={() => setActiveChar(char)}
+                                className={`flex-shrink-0 p-3 rounded-2xl border transition-all ${activeChar?.id === char.id ? 'bg-yellow-600/10 border-yellow-600' : 'bg-black/20 border-white/5'}`}
+                            >
+                                <img src={char.displayAvatarUrl || '/default_avatar.png'} className="w-10 h-10 object-contain rounded-full" alt={char.characterName} />
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
-                    {characters.map((char) => (
-                        <button
-                            key={char.id}
-                            onClick={() => setActiveChar(char)}
-                            className={`flex-shrink-0 p-3 rounded-2xl border transition-all ${activeChar?.id === char.id ? 'bg-yellow-600/10 border-yellow-600' : 'bg-black/20 border-white/5'}`}
-                        >
-                            <img src={char.selectedCharacter?.imageUrl} className="w-10 h-10 object-contain" alt={char.characterName} />
-                        </button>
-                    ))}
-                </div>
-            </div>
+            )}
 
             {/* ═══ ACTIONS & EVOLUTION ═════════ */}
             <div className="flex flex-col gap-3">
@@ -276,8 +257,6 @@ export const VisitorRPG: React.FC = () => {
                     })}
                 </div>
             </div>
-
-            <CharacterSelectModal isOpen={showSelection} onSelect={handleSelectCharacter} />
         </div>
     );
 };

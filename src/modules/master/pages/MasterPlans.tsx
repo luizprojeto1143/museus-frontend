@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { Plus, Edit, Trash2, Shield, Zap, FileText, CheckCircle2, DollarSign } from "lucide-react";
@@ -194,6 +194,7 @@ const FeatureBadge: React.FC<{ label: string }> = ({ label }) => (
 );
 
 const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: () => void }> = ({ plan, onClose, onSave }) => {
+    const { t } = useTranslation();
     const { addToast } = useToast();
     const [form, setForm] = useState({
         name: plan?.name || "",
@@ -268,6 +269,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                         <Input
                             label={t("master.plans.preoMensalR", `Preço Mensal (R$)`)}
                             type="number"
+                            step="0.01"
                             value={form.monthlyPrice}
                             onChange={(e) => setForm({ ...form, monthlyPrice: Number(e.target.value) })}
                             leftIcon={<DollarSign size={16} />}
@@ -303,6 +305,31 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                             type="number"
                             value={form.maxChildTenants}
                             onChange={(e) => setForm({ ...form, maxChildTenants: Number(e.target.value) })}
+                        />
+
+                        <Input
+                            label="Max Análises IA / Mês"
+                            type="number"
+                            value={form.maxAIAnalyses}
+                            onChange={(e) => setForm({ ...form, maxAIAnalyses: Number(e.target.value) })}
+                        />
+                        <Input
+                            label="Max Relatórios / Mês"
+                            type="number"
+                            value={form.maxReportsPerMonth}
+                            onChange={(e) => setForm({ ...form, maxReportsPerMonth: Number(e.target.value) })}
+                        />
+                        <Input
+                            label="Max Solic. Acessibilidade"
+                            type="number"
+                            value={form.maxAccessibilityReqs}
+                            onChange={(e) => setForm({ ...form, maxAccessibilityReqs: Number(e.target.value) })}
+                        />
+                        <Input
+                            label="Horas Resposta Suporte"
+                            type="number"
+                            value={form.supportResponseHours}
+                            onChange={(e) => setForm({ ...form, supportResponseHours: Number(e.target.value) })}
                         />
 
                         <Select

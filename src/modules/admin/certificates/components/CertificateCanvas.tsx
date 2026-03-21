@@ -79,7 +79,7 @@ export const CertificateCanvas: React.FC = () => {
             if (el) domTargets.push(el as HTMLElement);
         });
         setTargets(domTargets);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [selectedIds]);
 
     // Handle element selection

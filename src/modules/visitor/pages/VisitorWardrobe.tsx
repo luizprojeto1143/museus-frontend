@@ -11,17 +11,18 @@ interface CharacterProfile {
     id: string;
     characterName: string;
     isActive: boolean;
-    selectedCharacter: {
+    selectedCharacter?: {
         id: string;
         name: string;
         imageUrl: string;
         description: string;
-    };
+    } | null;
     equippedSkin?: {
         id: string;
         name: string;
         imageUrl: string;
     } | null;
+    baseAvatarUrl?: string | null;
     avatarStatus?: string;
 }
 
@@ -32,7 +33,6 @@ interface OwnedSkin {
         name: string;
         imageUrl: string;
         rarity: string;
-        characterBaseId: string | null;
     };
     generatedAvatarUrl?: string | null;
 }
@@ -66,8 +66,8 @@ export const VisitorWardrobe: React.FC = () => {
                 
                 // Select active character by default
                 const active = rpgRes.data.characters.find((c: any) => c.isActive);
-                if (active) setSelectedCharId(active.selectedCharacter.id);
-                else if (rpgRes.data.characters.length > 0) setSelectedCharId(rpgRes.data.characters[0].selectedCharacter.id);
+                if (active) setSelectedCharId(active.id);
+                else if (rpgRes.data.characters.length > 0) setSelectedCharId(rpgRes.data.characters[0].id);
                 
             } catch (err) {
                 console.error(err);
@@ -114,7 +114,7 @@ export const VisitorWardrobe: React.FC = () => {
             
             // Update local state
             setCharacters(prev => prev.map(c => 
-                c.selectedCharacter.id === selectedCharId 
+                c.id === selectedCharId 
                     ? { ...c, equippedSkinId: skinId, equippedSkin: ownedSkins.find(s => s.skin.id === skinId)?.skin } 
                     : c
             ));
@@ -137,10 +137,8 @@ export const VisitorWardrobe: React.FC = () => {
         }
     };
 
-    const currentChar = characters.find(c => c.selectedCharacter.id === selectedCharId);
-    const compatibleSkins = ownedSkins.filter(s => 
-        !s.skin.characterBaseId || s.skin.characterBaseId === selectedCharId
-    );
+    const currentChar = characters.find(c => c.id === selectedCharId);
+    const compatibleSkins = ownedSkins;
 
     const getRarityStyle = (rarity: string) => {
         switch(rarity) {
@@ -178,20 +176,20 @@ export const VisitorWardrobe: React.FC = () => {
                 {characters.map((profile) => (
                     <button
                         key={profile.id}
-                        onClick={() => setSelectedCharId(profile.selectedCharacter.id)}
+                        onClick={() => setSelectedCharId(profile.id)}
                         className={`flex-shrink-0 snap-center p-4 rounded-[32px] border-2 transition-all relative w-32
-                            ${selectedCharId === profile.selectedCharacter.id 
+                            ${selectedCharId === profile.id 
                                 ? 'bg-blue-600/10 border-blue-500 shadow-xl shadow-blue-500/10' 
                                 : 'bg-white/5 border-white/5 hover:border-white/10'}
                         `}
                     >
                         <img 
-                            src={profile.selectedCharacter.imageUrl} 
-                            className="w-16 h-16 object-contain mx-auto mb-2 drop-shadow-md" 
-                            alt={profile.selectedCharacter.name} 
+                            src={profile.baseAvatarUrl || profile.selectedCharacter?.imageUrl || '/default_avatar.png'} 
+                            className="w-16 h-16 object-contain mx-auto mb-2 drop-shadow-md rounded-full" 
+                            alt={profile.characterName} 
                         />
                         <span className="text-[10px] font-black text-white uppercase tracking-tighter block text-center truncate">
-                            {profile.selectedCharacter.name}
+                            {profile.characterName}
                         </span>
                     </button>
                 ))}
@@ -216,6 +214,7 @@ export const VisitorWardrobe: React.FC = () => {
                                 src={
                                     (currentChar?.avatarStatus === 'READY' && ownedSkins.find(s => s.skin.id === currentChar?.equippedSkin?.id)?.generatedAvatarUrl) ||
                                     currentChar?.equippedSkin?.imageUrl || 
+                                    currentChar?.baseAvatarUrl ||
                                     currentChar?.selectedCharacter?.imageUrl || 
                                     "/default_avatar.png"
                                 }
@@ -247,7 +246,7 @@ export const VisitorWardrobe: React.FC = () => {
                             ${!currentChar?.equippedSkin ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' : 'border-white/5 bg-white/5 hover:border-white/20'}
                         `}
                     >
-                         <img src={currentChar?.selectedCharacter?.imageUrl} className="h-[75%] object-contain opacity-50 drop-shadow-lg" alt="Padrão" />
+                         <img src={currentChar?.baseAvatarUrl || currentChar?.selectedCharacter?.imageUrl || '/default_avatar.png'} className="h-[75%] object-contain opacity-50 drop-shadow-lg rounded-full" alt="Padrão" />
                          <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 mt-2">Padrão</span>
                     </motion.button>
                 )}

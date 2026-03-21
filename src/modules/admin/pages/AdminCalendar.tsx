@@ -48,7 +48,7 @@ const getDaysInMonth = (date: Date) => {
     }
 
     const days = [];
-    let current = new Date(startDate);
+    const current = new Date(startDate);
     while (current <= endDate) {
         days.push(new Date(current));
         current.setDate(current.getDate() + 1);
