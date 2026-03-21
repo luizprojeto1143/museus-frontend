@@ -152,6 +152,55 @@ export const AdminWorkForm: React.FC = () => {
       });
     }
   }, [id, tenantId]);
+  
+  const handleDownloadQR = () => {
+    const originalCanvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
+    if (originalCanvas) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const padding = 40;
+      const bottomTextHeight = 100;
+      const minWidth = 360;
+      canvas.width = Math.max(originalCanvas.width + (padding * 2), minWidth);
+      canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
+
+      // Background
+      ctx.fillStyle = "#0f172a"; // dark premium background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Premium Gold/Dark Border
+      ctx.strokeStyle = "#1e293b"; // slate-800 outer border
+      ctx.lineWidth = 10;
+      ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+      ctx.strokeStyle = "#fbbf24"; // gold inner border
+      ctx.lineWidth = 2;
+      ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+
+      // Draw QR Code
+      const qrX = (canvas.width - originalCanvas.width) / 2;
+      // Preencher um quadrado branco para garantir opacidade do QR se original for transparente
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(qrX - 5, padding - 5, originalCanvas.width + 10, originalCanvas.height + 10);
+      ctx.drawImage(originalCanvas, qrX, padding);
+
+      // Draw Text
+      ctx.fillStyle = "#f8fafc"; // white text
+      ctx.font = "bold 32px 'Inter', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, originalCanvas.height + padding + 40);
+      ctx.font = "normal 14px 'Inter', sans-serif";
+      ctx.fillStyle = "#94a3b8"; // slate-400
+      ctx.fillText("Escaneie ou digite no app", canvas.width / 2, originalCanvas.height + padding + 75);
+
+      const url = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `qrcode-moldura-${code}.png`;
+      a.click();
+    }
+  };
 
   // Handlers
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "image" | "audio" | "video", setter: (url: string) => void) => {
@@ -563,54 +612,7 @@ export const AdminWorkForm: React.FC = () => {
                       <Button
                         variant="ghost"
                         leftIcon={<Upload size={16} style={{ transform: 'rotate(180deg)' }} />}
-                        onClick={() => {
-                          const originalCanvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
-                          if (originalCanvas) {
-                            const canvas = document.createElement("canvas");
-                            const ctx = canvas.getContext("2d");
-                            if (!ctx) return;
-
-                            const padding = 40;
-                            const bottomTextHeight = 100;
-                            const minWidth = 360;
-                            canvas.width = Math.max(originalCanvas.width + (padding * 2), minWidth);
-                            canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
-
-                            // Background
-                            ctx.fillStyle = "#0f172a"; // dark premium background
-                            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                            // Premium Gold/Dark Border
-                            ctx.strokeStyle = "#1e293b"; // slate-800 outer border
-                            ctx.lineWidth = 10;
-                            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-                            ctx.strokeStyle = "#fbbf24"; // gold inner border
-                            ctx.lineWidth = 2;
-                            ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
-
-                            // Draw QR Code
-                            const qrX = (canvas.width - originalCanvas.width) / 2;
-                            // Preencher um quadrado branco para garantir opacidade do QR se original for transparente
-                            ctx.fillStyle = "#ffffff";
-                            ctx.fillRect(qrX - 5, padding - 5, originalCanvas.width + 10, originalCanvas.height + 10);
-                            ctx.drawImage(originalCanvas, qrX, padding);
-
-                            // Draw Text
-                            ctx.fillStyle = "#f8fafc"; // white text
-                            ctx.font = "bold 32px 'Inter', sans-serif";
-                            ctx.textAlign = "center";
-                            ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, originalCanvas.height + padding + 40);
-                            ctx.font = "normal 14px 'Inter', sans-serif";
-                            ctx.fillStyle = "#94a3b8"; // slate-400
-                            ctx.fillText("Escaneie ou digite no app", canvas.width / 2, originalCanvas.height + padding + 75);
-
-                            const url = canvas.toDataURL("image/png");
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = `qrcode-moldura-${code}.png`;
-                            a.click();
-                          }
-                        }}
+                        onClick={handleDownloadQR}
                       >
                         Baixar QR Code com Moldura
                       </Button>
@@ -848,6 +850,22 @@ export const AdminWorkForm: React.FC = () => {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {code && (
+                      <div className="admin-section" style={{ textAlign: 'center' }}>
+                         <h3 className="admin-section-title">QR Code</h3>
+                         <div id={`qr-${code}`} style={{ display: 'inline-block', marginBottom: '1rem', background: 'white', padding: '1rem', borderRadius: '1rem' }}>
+                            <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={160} level="H" />
+                         </div>
+                         <Button
+                            variant="outline"
+                            className="w-full"
+                            leftIcon={<Upload size={16} style={{ transform: 'rotate(180deg)' }} />}
+                            onClick={handleDownloadQR}
+                         >
+                            Baixar QR Code com Moldura
+                         </Button>
+                      </div>
+                    )}
                     <h3 className="admin-section-title">{t("admin.work.aesAdicionais", `Ações Adicionais`)}</h3>
 
                     <div
