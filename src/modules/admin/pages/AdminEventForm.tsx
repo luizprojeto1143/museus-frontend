@@ -22,16 +22,22 @@ interface TicketData {
   quantity: number;
 }
 
-// Wizard Steps
-const STEPS = [
-  { id: 0, title: "B�sico", desc: "Informa��es principais", icon: Calendar },
-  { id: 1, title: "Local & Data", desc: "Onde e quando", icon: MapPin },
-  { id: 2, title: "Ingressos", desc: "Valores e lotes", icon: Ticket },
-  { id: 3, title: "Divulga��o", desc: "M�dia e visibilidade", icon: PlayCircle }
-];
+// Wizard Steps moved inside
+// const STEPS = [
+//   { id: 0, title: "B�sico", desc: "Informa��es principais", icon: Calendar },
+//   { id: 1, title: "Local & Data", desc: "Onde e quando", icon: MapPin },
+//   { id: 2, title: "Ingressos", desc: "Valores e lotes", icon: Ticket },
+//   { id: 3, title: "Divulga��o", desc: "M�dia e visibilidade", icon: PlayCircle }
+// ];
 
 export const AdminEventForm: React.FC = () => {
   const { t } = useTranslation();
+  const STEPS = [
+    { id: 0, title: t("admin.eventForm.steps.basic.title", "Básico"), desc: t("admin.eventForm.steps.basic.desc", "Informações principais"), icon: Calendar },
+    { id: 1, title: t("admin.eventForm.steps.location.title", "Local & Data"), desc: t("admin.eventForm.steps.location.desc", "Onde e quando"), icon: MapPin },
+    { id: 2, title: t("admin.eventForm.steps.tickets.title", "Ingressos"), desc: t("admin.eventForm.steps.tickets.desc", "Valores e lotes"), icon: Ticket },
+    { id: 3, title: t("admin.eventForm.steps.marketing.title", "Divulgação"), desc: t("admin.eventForm.steps.marketing.desc", "Mídia e visibilidade"), icon: PlayCircle }
+  ];
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
   const { addToast } = useToast();
@@ -251,8 +257,8 @@ export const AdminEventForm: React.FC = () => {
 
       // Save Tickets (Simple create logic)
       if (eventId) {
-        for (const t of tickets) {
-          if (!t.id) await api.post(`/events/${eventId}/tickets`, t);
+        for (const ticket of tickets) {
+          if (!ticket.id) await api.post(`/events/${eventId}/tickets`, ticket);
         }
       }
 
@@ -304,7 +310,7 @@ export const AdminEventForm: React.FC = () => {
         </Button>
         <div>
           <h1 className="admin-wizard-title">
-            {isEdit ? "Editar Evento" : "Novo Evento"}
+            {isEdit ? t("admin.eventForm.editTitle", "Editar Evento") : t("admin.eventForm.newTitle", "Novo Evento")}
           </h1>
           <p className="admin-wizard-subtitle">
             Passo {currentStep + 1} de {STEPS.length}: {STEPS[currentStep].title}
@@ -445,7 +451,10 @@ export const AdminEventForm: React.FC = () => {
                   <label className="form-label">Nome do Evento</label>
                   <input
                     value={formData.title}
+                    onChange={e => setFormData({ ...formData, title: e.target.value })}
                     className="input w-full"
+                    placeholder={t("admin.eventForm.placeholders.title", "Ex: Concerto de Primavera")}
+                    required
                   />
                 </div>
 
@@ -725,13 +734,13 @@ export const AdminEventForm: React.FC = () => {
                   </div>
                 ) : (
                   <div className="grid gap-4">
-                    {tickets.map((t, idx) => (
+                    {tickets.map((ticket, idx) => (
                       <div key={idx} className="bg-[rgba(255,255,255,0.03)] p-6 rounded-xl border border-[rgba(255,255,255,0.05)] flex gap-4 items-start">
                         <div className="flex-1 gap-4 grid">
                           <div className="form-group">
                             <label className="form-label">Nome do Lote</label>
                             <input
-                              value={t.name}
+                              value={ticket.name}
                               onChange={e => {
                                 const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
                               }}
@@ -742,7 +751,7 @@ export const AdminEventForm: React.FC = () => {
                             <div className="form-group">
                               <label className="form-label">Tipo</label>
                               <select
-                                value={t.type}
+                                value={ticket.type}
                                 onChange={e => {
                                   const n = [...tickets]; n[idx].type = e.target.value as any; setTickets(n);
                                 }}
@@ -756,19 +765,19 @@ export const AdminEventForm: React.FC = () => {
                               <label className="form-label">Quantidade</label>
                               <input
                                 type="number"
-                                value={t.quantity}
+                                value={ticket.quantity}
                                 onChange={e => {
                                   const n = [...tickets]; n[idx].quantity = Number(e.target.value); setTickets(n);
                                 }}
                                 className="input w-full"
                               />
                             </div>
-                            {t.type === 'PAID' && (
+                            {ticket.type === 'PAID' && (
                               <div className="form-group">
                                 <label className="form-label">Pre�o (R$)</label>
                                 <input
                                   type="number"
-                                  value={t.price}
+                                  value={ticket.price}
                                   onChange={e => {
                                     const n = [...tickets]; n[idx].price = Number(e.target.value); setTickets(n);
                                   }}
@@ -856,12 +865,12 @@ export const AdminEventForm: React.FC = () => {
                     <div className="flex gap-4">
                       <button
                         onClick={() => setFormData({ ...formData, status: "DRAFT" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? '0/10 border-gray-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? 'bg-zinc-500/10 border-zinc-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
                         <div className={`w-3 h-3 rounded-full ${formData.status === "DRAFT" ? 'bg-zinc-500' : 'bg-transparent border-2 border-zinc-600'}`}></div>
                         <div>
-                          <div className="font-bold text-[#f5e6d3]">Rascunho</div>
-                          <div className="text-xs text-zinc-400">Oculto do pblico</div>
+                          <div className="font-bold text-[#f5e6d3]">{t("admin.eventForm.values.draft", "Rascunho")}</div>
+                          <div className="text-xs text-zinc-400">{t("admin.eventForm.values.draftDesc", "Oculto do público")}</div>
                         </div>
                       </button>
                       <button
