@@ -293,7 +293,7 @@ export const WorkDetail: React.FC = () => {
                    {work.collectibleCards.map((card: any) => (
                        <div key={card.id} className="mt-4 p-4 rounded-xl bg-black/40 border border-white/5 text-center">
                            <div className="w-20 h-24 mx-auto mb-3 rounded-lg overflow-hidden border-2 border-gold/30">
-                               <img src={card.imageUrl || work.imageUrl || ''} alt={card.title} className="w-full h-full object-cover" />
+                               <img src={getFullUrl(card.imageUrl || work.imageUrl)} alt={card.title} className="w-full h-full object-cover" />
                            </div>
                            <h4 className="text-white text-xs font-black uppercase tracking-widest">{card.title}</h4>
                            <div className="flex items-center justify-center gap-2 mt-2">

@@ -1,10 +1,11 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Sparkles, Plus, Star, Zap, Crown, Diamond } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import { getFullUrl } from "../../../utils/url";
 import "./AdminShared.css";
 
 
@@ -123,8 +124,8 @@ export const AdminCollectibles: React.FC = () => {
                     const r = rarityConfig[card.rarity] || rarityConfig.COMMON;
                     return (
                         <div key={card.id} className="card" style={{ padding: "1.25rem", textAlign: "center" }}>
-                            {card.imageUrl ? (
-                                <img src={card.imageUrl} alt={card.title} style={{ width: "80px", height: "80px", borderRadius: "12px", margin: "0 auto 0.75rem", objectFit: "cover" }} />
+                            {(card.imageUrl || card.work?.imageUrl) ? (
+                                <img src={getFullUrl(card.imageUrl || card.work?.imageUrl)} alt={card.title} style={{ width: "80px", height: "80px", borderRadius: "12px", margin: "0 auto 0.75rem", objectFit: "cover" }} />
                             ) : (
                                 <div style={{ width: "80px", height: "80px", borderRadius: "12px", margin: "0 auto 0.75rem", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                     <Sparkles size={28} className={r.color} />
