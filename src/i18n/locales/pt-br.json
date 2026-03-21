@@ -1216,7 +1216,23 @@
     },
     "bookingForm": {
       "title": "Solicitar Serviço Presencial",
-      "subtitle": "Faça uma solicitação para intérprete de Libras, guias ou outros serviços para o seu equipamento."
+      "subtitle": "Faça uma solicitação para intérprete de Libras, guias ou outros serviços para o seu equipamento.",
+      "serviceTab": "Serviço Desejado",
+      "serviceLabel": "Selecione o Serviço Presencial *",
+      "chooseService": "Escolha um serviço...",
+      "dateTimeTab": "Data e Horário",
+      "date": "Data *",
+      "start": "Início *",
+      "end": "Término *",
+      "spaceLabel": "Espaço (Opcional)",
+      "noSpace": "Nenhum espaço reservado",
+      "eventLabel": "Evento Vinculado (Opcional)",
+      "noEvent": "Nenhum evento específico",
+      "detailsTab": "Detalhes Adicionais",
+      "participants": "Quantidade de Participantes",
+      "observations": "Observações e Necessidades Específicas",
+      "observationsPlaceholder": "Forneça detalhes que possam ajudar o prestador de serviço...",
+      "pendingNotice": "A solicitação ficará pendente até aprovação"
     },
     "layout": {
       "setsidebaropentrueArialabelabr": "setSidebarOpen(true)} aria-label=\"Abrir menu de navegação\">\n            ☰",

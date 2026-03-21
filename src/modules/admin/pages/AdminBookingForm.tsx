@@ -52,16 +52,19 @@ export const AdminBookingForm: React.FC = () => {
         const loadFormOptions = async () => {
             setLoading(true);
             try {
-                // Since this uses the QS Inclusão master tenant for services in our prototype workflow
-                const servicesRes = await api.get(`/in-person-services?tenantId=8cc9b546-7f7d-4908-a6cf-acdd7b86982b`);
+                // Fetch services using the current tenantId (was hardcoded to QS Inclusão before)
+                const servicesRes = await api.get(`/in-person-services?tenantId=${tenantId}`);
                 const spacesRes = await api.get(`/spaces?tenantId=${tenantId}`);
                 const eventsRes = await api.get(`/events?tenantId=${tenantId}`);
 
-                setServices(servicesRes.data);
-                setSpaces(spacesRes.data);
-                setEvents(eventsRes.data);
+                setServices(Array.isArray(servicesRes.data) ? servicesRes.data : []);
+                setSpaces(Array.isArray(spacesRes.data) ? spacesRes.data : []);
+                setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : []);
             } catch (err) {
                 console.error("Erro ao carregar opções para o formulário:", err);
+                setServices([]);
+                setSpaces([]);
+                setEvents([]);
             } finally {
                 setLoading(false);
             }
