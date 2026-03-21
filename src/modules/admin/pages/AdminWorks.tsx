@@ -11,6 +11,7 @@ type AdminWorkItem = {
   artist?: string;
   published?: boolean;
   vestigeActive?: boolean;
+  code?: string;
 };
 
 export const AdminWorks: React.FC = () => {
@@ -43,7 +44,8 @@ export const AdminWorks: React.FC = () => {
           vestigeActive: w.vestigeActive ?? false,
           imageUrl: w.imageUrl,
           description: w.description,
-          year: w.year
+          year: w.year,
+          code: w.qrCode?.code || ""
         }));
 
         setWorks(apiWorks);
@@ -76,6 +78,7 @@ export const AdminWorks: React.FC = () => {
             <thead>
               <tr>
                 <th>{term.work}</th>
+                <th>{t("admin.works.table.code", "Código")}</th>
                 <th>{term.artist}</th>
                 <th>{t("admin.works.table.status")}</th>
                 <th style={{ textAlign: "right" }}>{t("admin.works.table.actions")}</th>
@@ -92,6 +95,7 @@ export const AdminWorks: React.FC = () => {
                 works.map(work => (
                   <tr key={work.id}>
                     <td>{work.title}</td>
+                    <td><strong>{work.code || '-'}</strong></td>
                     <td>{work.artist}</td>
                     <td>
                       <span className="chip">
