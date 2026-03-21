@@ -293,10 +293,10 @@ export const AdminInstagramCard: React.FC = () => {
                         <div>
                             <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Template</label>
                             <div className="grid grid-cols-2 gap-2">
-                                {templates.map(t => (
-                                    <button key={t.id} onClick={() => setTemplate(t)} className={`p-3 rounded-xl border text-sm font-bold text-left transition-all ${template.id === t.id ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-white/10 text-gray-400 hover:bg-zinc-900/40 border border-gold/20/5'}`}>
-                                        <div className="w-full h-4 rounded mb-2" style={{ background: t.bg }} />
-                                        {t.name}
+                                {templates.map(item => (
+                                    <button key={item.id} onClick={() => setTemplate(item)} className={`p-3 rounded-xl border text-sm font-bold text-left transition-all ${template.id === item.id ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-white/10 text-gray-400 hover:bg-zinc-900/40 border border-gold/20/5'}`}>
+                                        <div className="w-full h-4 rounded mb-2" style={{ background: item.bg }} />
+                                        {item.name}
                                     </button>
                                 ))}
                             </div>

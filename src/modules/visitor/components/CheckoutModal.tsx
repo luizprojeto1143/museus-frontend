@@ -36,7 +36,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
     const [loading, setLoading] = useState(false);
 
     const totalAmount = Object.entries(quantities).reduce((acc, [ticketId, qty]) => {
-        const ticket = tickets.find(t => t.id === ticketId);
+        const ticket = tickets.find(item => ticket.id === ticketId);
         return acc + (qty * (Number(ticket?.price) || 0));
     }, 0);
 

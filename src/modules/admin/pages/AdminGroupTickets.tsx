@@ -35,9 +35,9 @@ export const AdminGroupTickets: React.FC = () => {
         </div>
     );
 
-    const pending = tickets.filter(t => t.status === 'PENDING').length;
-    const confirmed = tickets.filter(t => t.status === 'CONFIRMED').length;
-    const totalIngressos = tickets.reduce((sum, t) => sum + t.totalTickets, 0);
+    const pending = tickets.filter(it => it.status === 'PENDING').length;
+    const confirmed = tickets.filter(it => it.status === 'CONFIRMED').length;
+    const totalIngressos = tickets.reduce((sum, it) => sum + it.totalTickets, 0);
 
     const statusConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
         PENDING: { label: 'Pendente', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', icon: <Clock size={14} /> },
@@ -73,14 +73,14 @@ export const AdminGroupTickets: React.FC = () => {
             </div>
 
             {/* List */}
-            {tickets.map((t: any) => {
-                const st = statusConfig[t.status] || statusConfig.PENDING;
+            {tickets.map((item: any) => {
+                const st = statusConfig[item.status] || statusConfig.PENDING;
                 return (
-                    <div key={t.id} className="card" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>
+                    <div key={item.id} className="card" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                                    <h3 style={{ color: 'white', fontWeight: 700, fontSize: '1rem', margin: 0 }}>{t.groupName}</h3>
+                                    <h3 style={{ color: 'white', fontWeight: 700, fontSize: '1rem', margin: 0 }}>{item.groupName}</h3>
                                     <span style={{
                                         display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
                                         fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.6rem',
@@ -89,21 +89,21 @@ export const AdminGroupTickets: React.FC = () => {
                                 </div>
                                 <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.8rem', color: '#94a3b8', flexWrap: 'wrap' }}>
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                                        <Users size={13} /> {t.totalTickets} ingressos
+                                        <Users size={13} /> {item.totalTickets} ingressos
                                     </span>
-                                    <span>📧 {t.contactEmail}</span>
-                                    <span>👤 {t.contactName}</span>
-                                    {t.contactPhone && <span>📱 {t.contactPhone}</span>}
+                                    <span>📧 {item.contactEmail}</span>
+                                    <span>👤 {item.contactName}</span>
+                                    {t.contactPhone && <span>📱 {item.contactPhone}</span>}
                                 </div>
                                 <p style={{ color: '#475569', fontSize: '0.7rem', marginTop: '0.5rem' }}>
                                     {new Date(t.createdAt).toLocaleString("pt-BR")}
                                 </p>
                             </div>
 
-                            {t.status === 'PENDING' && (
+                            {item.status === 'PENDING' && (
                                 <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0, marginLeft: '1rem' }}>
                                     <button
-                                        onClick={() => onUpdateStatus(t.id, 'CONFIRMED')}
+                                        onClick={() => onUpdateStatus(item.id, 'CONFIRMED')}
                                         style={{
                                             background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
                                             borderRadius: '0.75rem', padding: '0.5rem 1rem', cursor: 'pointer',
@@ -113,7 +113,7 @@ export const AdminGroupTickets: React.FC = () => {
                                         }}
                                     ><CheckCircle size={14} /> Confirmar</button>
                                     <button
-                                        onClick={() => onUpdateStatus(t.id, 'CANCELED')}
+                                        onClick={() => onUpdateStatus(item.id, 'CANCELED')}
                                         style={{
                                             background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.15)',
                                             borderRadius: '0.75rem', padding: '0.5rem 1rem', cursor: 'pointer',

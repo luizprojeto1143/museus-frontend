@@ -287,7 +287,7 @@ export const EventDetail: React.FC = () => {
           <div className="flex flex-col">
             <span className="font-fm text-[10px] uppercase text-gold">Ingressos a partir de</span>
             <span className="event-footer-price">
-              {tickets.length > 0 ? (Math.min(...tickets.map(t => Number(t.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(t => Number(t.price)))}`) : '---'}
+              {tickets.length > 0 ? (Math.min(...tickets.map(item => Number(item.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(item => Number(item.price)))}`) : '---'}
             </span>
           </div>
 
@@ -351,18 +351,18 @@ export const EventDetail: React.FC = () => {
               ) : (
                 <div className="space-y-8">
                   <div className="space-y-4">
-                    {tickets.map(t => (
+                    {tickets.map(item => (
                       <div 
-                        key={t.id} 
-                        onClick={() => setSelectedTicketId(t.id)}
-                        className={`event-ticket-card-premium ${selectedTicketId === t.id ? 'selected' : ''}`}
+                        key={item.id} 
+                        onClick={() => setSelectedTicketId(item.id)}
+                        className={`event-ticket-card-premium ${selectedTicketId === item.id ? 'selected' : ''}`}
                       >
                         <div className="flex flex-col">
-                           <span className="font-fd text-white text-xl">{t.name}</span>
-                           <span className="text-muted text-xs uppercase tracking-widest">{t.quantity - t.sold} disponíveis</span>
+                           <span className="font-fd text-white text-xl">{item.name}</span>
+                           <span className="text-muted text-xs uppercase tracking-widest">{item.quantity - item.sold} disponíveis</span>
                         </div>
                         <span className="font-fd text-2xl text-gold-hi">
-                           {Number(t.price) === 0 ? "FREE" : `R$ ${t.price}`}
+                           {Number(item.price) === 0 ? "FREE" : `R$ ${item.price}`}
                         </span>
                       </div>
                     ))}

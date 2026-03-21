@@ -90,8 +90,8 @@ export const CertificateRuleForm: React.FC = () => {
                             onChange={e => setConditions({ ...conditions, trail_id: e.target.value })}
                         >
                             <option value="">Qualquer Trilha</option>
-                            {trails.map(t => (
-                                <option key={t.id} value={t.id}>{t.title}</option>
+                            {trails.map(trail => (
+                                <option key={trail.id} value={trail.id}>{trail.title}</option>
                             ))}
                         </select>
                     </div>
@@ -117,8 +117,8 @@ export const CertificateRuleForm: React.FC = () => {
                         onChange={e => setTemplateId(e.target.value)}
                     >
                         <option value="">Selecione um modelo...</option>
-                        {templates.map(t => (
-                            <option key={t.id} value={t.id}>{t.name}</option>
+                        {templates.map(item => (
+                            <option key={trail.id} value={trail.id}>{item.name}</option>
                         ))}
                     </select>
                 </div>

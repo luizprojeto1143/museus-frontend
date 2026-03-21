@@ -20,12 +20,12 @@ export const AdminTeachers: React.FC = () => {
 
     const fetchData = useCallback(async () => {
         try {
-            const [t, v] = await Promise.all([
+            const [results_t, results_v] = await Promise.all([
                 api.get(`/teachers?tenantId=${tenantId}`),
                 api.get(`/teachers/visits?tenantId=${tenantId}`)
             ]);
-            setTeachers(t.data);
-            setVisits(v.data);
+            setTeachers(results_t.data);
+            setVisits(results_v.data);
         } catch (error) { console.error(error); toast.error("Erro ao carregar dados"); }
         finally { setLoading(false); }
     }, [tenantId]);
@@ -90,12 +90,12 @@ export const AdminTeachers: React.FC = () => {
                             <tr><th className="px-6 py-3">Professor</th><th className="px-6 py-3">Escola</th><th className="px-6 py-3">Disciplina</th><th className="px-6 py-3 text-center">Visitas</th></tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {teachers.map((t: any) => (
-                                <tr key={t.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
-                                    <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{t.name}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{t.email}</p></td>
-                                    <td className="px-6 py-3 text-gray-300 text-sm">{t.school}</td>
-                                    <td className="px-6 py-3 text-gray-400 text-sm">{t.subject || '—'}</td>
-                                    <td className="px-6 py-3 text-center text-amber-400 font-bold">{t._count?.schoolVisits || 0}</td>
+                            {teachers.map((item: any) => (
+                                <tr key={item.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
+                                    <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{item.name}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{item.email}</p></td>
+                                    <td className="px-6 py-3 text-gray-300 text-sm">{item.school}</td>
+                                    <td className="px-6 py-3 text-gray-400 text-sm">{item.subject || '—'}</td>
+                                    <td className="px-6 py-3 text-center text-amber-400 font-bold">{item._count?.schoolVisits || 0}</td>
                                 </tr>
                             ))}
                         </tbody>

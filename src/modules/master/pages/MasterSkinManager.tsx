@@ -157,7 +157,7 @@ export const MasterSkinManager: React.FC = () => {
                                 onChange={e => setSkinForm({...skinForm, tenantId: e.target.value})}
                             >
                                 <option value="">Global (Todos)</option>
-                                {tenants.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                {tenants.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
                             </Select>
                         </div>
 
@@ -228,7 +228,7 @@ export const MasterSkinManager: React.FC = () => {
                         </div>
                         {skin.tenantId && (
                             <div className="mt-2 flex items-center gap-1 text-[10px] text-blue-400 uppercase font-black tracking-widest">
-                                <Building2 size={10} /> {tenants.find(t => t.id === skin.tenantId)?.name}
+                                <Building2 size={10} /> {tenants.find(item => item.id === skin.tenantId)?.name}
                             </div>
                         )}
                     </div>

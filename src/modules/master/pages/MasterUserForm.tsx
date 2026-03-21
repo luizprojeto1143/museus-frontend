@@ -199,8 +199,8 @@ export const MasterUserForm: React.FC = () => {
               leftIcon={<Building size={16} />}
             >
               <option value="">{t("master.userForm.placeholders.selectTenant")}</option>
-              {tenants.map(t => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+              {tenants.map(item => (
+                <option key={item.id} value={item.id}>{item.name}</option>
               ))}
             </Select>
           )}

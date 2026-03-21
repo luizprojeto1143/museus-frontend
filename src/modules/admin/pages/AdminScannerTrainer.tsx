@@ -31,7 +31,7 @@ export const AdminScannerTrainer: React.FC = () => {
     const stopCamera = useCallback(() => {
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach(t => t.stop());
+            stream.getTracks().forEach(track => track.stop());
         }
     }, []);
 

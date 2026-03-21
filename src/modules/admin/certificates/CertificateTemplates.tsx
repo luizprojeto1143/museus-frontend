@@ -53,30 +53,30 @@ export const CertificateTemplates: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {templates.map(t => (
-                    <div key={t.id} className="card hover:border-[var(--accent-gold)] transition-colors group">
+                {templates.map(template => (
+                    <div key={template.id} className="card hover:border-[var(--accent-gold)] transition-colors group">
                         <div
                             className="h-40 bg-[var(--bg-elevated-soft)] rounded mb-4 bg-cover bg-center border border-[var(--border-subtle)]"
-                            style={{ backgroundImage: t.backgroundUrl ? `url(${t.backgroundUrl})` : 'none' }}
+                            style={{ backgroundImage: template.backgroundUrl ? `url(${template.backgroundUrl})` : 'none' }}
                         >
-                            {!t.backgroundUrl && (
+                            {!template.backgroundUrl && (
                                 <div className="h-full flex items-center justify-center text-[var(--fg-muted)] opacity-50">
                                     <FileText size={48} />
                                 </div>
                             )}
                         </div>
-                        <h3 className="card-title text-lg">{t.name}</h3>
-                        <p className="text-sm text-[var(--fg-muted)] mb-4">{t.elements?.length || 0} elementos</p>
-
+                        <h3 className="card-title text-lg">{template.name}</h3>
+                        <p className="text-sm text-[var(--fg-muted)] mb-4">{template.elements?.length || 0} elementos</p>
+ 
                         <div className="flex gap-2">
                             <button
-                                onClick={() => navigate(`/admin/certificates/edit/${t.id}`)}
+                                onClick={() => navigate(`/admin/certificates/edit/${template.id}`)}
                                 className="flex-1 btn btn-secondary py-2 justify-center hover:bg-[var(--accent-gold)] hover:text-[var(--bg-page)]"
                             >
                                 <Edit size={16} className="mr-2" /> Editar
                             </button>
                             <button
-                                onClick={() => handleDelete(t.id)}
+                                onClick={() => handleDelete(template.id)}
                                 className="p-2 btn btn-secondary text-red-500 hover:bg-red-500/20 border-red-500/30"
                             >
                                 <Trash size={16} />

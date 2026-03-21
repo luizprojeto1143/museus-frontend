@@ -160,9 +160,9 @@ export const MasterSeeder: React.FC = () => {
                                         appearance: 'auto',
                                     }}
                                 >
-                                    {tenants.map(t => (
-                                        <option key={t.id} value={t.id} style={{ background: '#1e293b', color: '#fff' }}>
-                                            {t.name} ({t.slug})
+                                    {tenants.map(item => (
+                                        <option key={item.id} value={item.id} style={{ background: '#1e293b', color: '#fff' }}>
+                                            {item.name} ({item.slug})
                                         </option>
                                     ))}
                                 </select>

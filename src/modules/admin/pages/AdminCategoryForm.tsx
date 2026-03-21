@@ -134,8 +134,8 @@ export const AdminCategoryForm: React.FC = () => {
               onChange={(e) => setType(e.target.value)}
               className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
             >
-              {CATEGORY_TYPES.map(t => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+              {CATEGORY_TYPES.map(item => (
+                <option key={item.value} value={item.value}>{item.label}</option>
               ))}
             </Select>
           </div>

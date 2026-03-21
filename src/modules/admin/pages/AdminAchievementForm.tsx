@@ -331,8 +331,8 @@ export const AdminAchievementForm: React.FC = () => {
                       value={form.triggerType}
                       onChange={(e) => setForm({ ...form, triggerType: e.target.value as any })}
                     >
-                      {TRIGGER_TYPES.map(t => (
-                        <option key={t.value} value={t.value}>{t.label}</option>
+                      {TRIGGER_TYPES.map(item => (
+                        <option key={item.value} value={item.value}>{item.label}</option>
                       ))}
                     </Select>
 
@@ -447,7 +447,7 @@ export const AdminAchievementForm: React.FC = () => {
                       </div>
                       <div className="summary-row">
                         <span className="summary-label">Gatilho:</span>
-                        <span className="summary-value">{TRIGGER_TYPES.find(t => t.value === form.triggerType)?.label}</span>
+                        <span className="summary-value">{TRIGGER_TYPES.find(item => item.value === form.triggerType)?.label}</span>
                       </div>
                       <div className="summary-row">
                         <span className="summary-label">Recompensa:</span>

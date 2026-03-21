@@ -3,7 +3,7 @@ export const getFullUrl = (path: string | null | undefined) => {
     if (path.startsWith("http")) return path;
 
     // Use the VITE_API_URL or default to production backend
-    let baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend.onrender.com";
+    let baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend-1.onrender.com";
 
     // Remove trailing slash
     baseURL = baseURL.replace(/\/$/, "");
