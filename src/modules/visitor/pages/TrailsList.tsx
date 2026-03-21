@@ -34,11 +34,11 @@ export const TrailsList: React.FC = () => {
       .then((res) => {
         if (!mounted) return;
         const apiTrails = (res.data as any[]).map((t) => ({
-          id: t.id,
-          name: t.title,
-          description: t.description,
-          duration: t.duration ? `${t.duration} min` : undefined,
-          worksCount: Array.isArray(t.workIds) ? t.workIds.length : 0,
+          id: item.id,
+          name: item.title,
+          description: item.description,
+          duration: item.duration ? `${item.duration} min` : undefined,
+          worksCount: Array.isArray(item.workIds) ? item.workIds.length : 0,
           type: "Trilha"
         }));
         setTrails(apiTrails);

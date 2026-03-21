@@ -27,7 +27,7 @@ const CertificateEditorContent: React.FC = () => {
                 try {
                     const res = await api.get('/certificate-templates');
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const found = res.data.find((t: any) => t.id === id);
+                    const found = res.data.find((item: any) => item.id === id);
                     if (found) {
                         loadTemplate({
                             id: found.id,

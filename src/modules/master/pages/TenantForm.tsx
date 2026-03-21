@@ -119,10 +119,10 @@ export const TenantForm: React.FC = () => {
     api.get("/tenants")
       .then(res => {
         // Filter for tenants that can be parents (CITY, SECRETARIA or isCityMode)
-        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((t: any) =>
-          t.type === "CITY" ||
-          t.type === "SECRETARIA" ||
-          t.isCityMode === true
+        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: any) =>
+          item.type === "CITY" ||
+          item.type === "SECRETARIA" ||
+          item.isCityMode === true
         );
         setCities(cityTenants);
       })

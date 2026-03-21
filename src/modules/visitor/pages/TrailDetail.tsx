@@ -46,19 +46,19 @@ export const TrailDetail: React.FC = () => {
     api.get(`/trails/${id}`)
       .then((res) => {
         const t = res.data;
-        const works = Array.isArray(t.works) ? t.works.map((tw: any) => ({
+        const works = Array.isArray(item.works) ? item.works.map((tw: any) => ({
           id: tw.work?.id ?? tw.id,
           title: tw.work?.title ?? tw.title ?? "Obra da trilha"
         })) : [];
 
         setApiTrail({
-          id: t.id,
-          name: t.title || t.name,
-          title: t.title || t.name,
-          description: t.description ?? "",
-          duration: t.durationLabel || t.duration || "45 min",
-          audioUrl: getFullUrl(t.audioUrl),
-          videoUrl: getFullUrl(t.videoUrl),
+          id: item.id,
+          name: item.title || item.name,
+          title: item.title || item.name,
+          description: item.description ?? "",
+          duration: item.durationLabel || item.duration || "45 min",
+          audioUrl: getFullUrl(item.audioUrl),
+          videoUrl: getFullUrl(item.videoUrl),
           works
         });
       })

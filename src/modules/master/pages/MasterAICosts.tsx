@@ -40,7 +40,7 @@ export const MasterAICosts: React.FC = () => {
             setReport(res.data);
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao carregar relatório de IA");
+            toast.error("Erro ao carregar relatï¿½rio de IA");
         } finally {
             setLoading(false);
         }
@@ -51,14 +51,14 @@ export const MasterAICosts: React.FC = () => {
     }, [fetchReport]);
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
-    if (!report) return <div className="text-center text-gray-500 py-20">{t("master.aicosts.nenhumDadoDisponvel", `Nenhum dado disponível.`)}</div>;
+    if (!report) return <div className="text-center text-gray-500 py-20">{t("master.aicosts.nenhumDadoDisponvel", `Nenhum dado disponï¿½vel.`)}</div>;
 
     const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
     const periodLabel = `${monthNames[report.period.month - 1]} ${report.period.year}`;
 
     const summaryCards = [
         { label: "Custo Total", value: `R$ ${report.summary.totalCost.toFixed(2).replace('.', ',')}`, icon: <DollarSign size={20} />, color: "text-green-500 bg-green-500/10" },
-        { label: "Total Análises", value: report.summary.totalAnalyses.toLocaleString("pt-BR"), icon: <BarChart3 size={20} />, color: "text-blue-500 bg-blue-500/10" },
+        { label: "Total Anï¿½lises", value: report.summary.totalAnalyses.toLocaleString("pt-BR"), icon: <BarChart3 size={20} />, color: "text-blue-500 bg-blue-500/10" },
         { label: "Total Tokens", value: report.summary.totalTokens.toLocaleString("pt-BR"), icon: <Cpu size={20} />, color: "text-purple-500 bg-purple-500/10" },
         { label: "Tenants Ativos", value: report.summary.activeTenants, icon: <Building2 size={20} />, color: "text-amber-500 bg-amber-500/10" }
     ];
@@ -69,7 +69,7 @@ export const MasterAICosts: React.FC = () => {
                 <h1 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
                     <Brain className="text-purple-500" /> Custos de IA
                 </h1>
-                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Relatório global de uso e custos — {periodLabel}</p>
+                <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Relatï¿½rio global de uso e custos ï¿½ {periodLabel}</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -93,7 +93,7 @@ export const MasterAICosts: React.FC = () => {
                             <tr>
                                 <th className="px-6 py-4">#</th>
                                 <th className="px-6 py-4">Tenant</th>
-                                <th className="px-6 py-4">{t("master.aicosts.anlises", `Análises`)}</th>
+                                <th className="px-6 py-4">{t("master.aicosts.anlises", `Anï¿½lises`)}</th>
                                 <th className="px-6 py-4">Tokens</th>
                                 <th className="px-6 py-4">Custo</th>
                             </tr>
@@ -112,7 +112,7 @@ export const MasterAICosts: React.FC = () => {
                                 </tr>
                             ))}
                             {report.topConsumers.length === 0 && (
-                                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500 italic">{t("master.aicosts.nenhumConsumoRegistradoNestePerodo", `Nenhum consumo registrado neste período.`)}</td></tr>
+                                <tr><td colSpan={5} className="px-6 py-10 text-center text-gray-500 italic">{t("master.aicosts.nenhumConsumoRegistradoNestePerodo", `Nenhum consumo registrado neste perï¿½odo.`)}</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -123,24 +123,24 @@ export const MasterAICosts: React.FC = () => {
             {report.nearLimitTenants.length > 0 && (
                 <div>
                     <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                        <AlertTriangle size={20} className="text-amber-500" /> Tenants Próximos do Limite (80%+)
+                        <AlertTriangle size={20} className="text-amber-500" /> Tenants Prï¿½ximos do Limite (80%+)
                     </h2>
                     <div style={{ display: "grid", gap: "0.75rem" }}>
                         {report.nearLimitTenants.map(item => (
                             <div key={item.tenantId} className="card" style={{ padding: "1.25rem", borderColor: "rgba(212,175,55,0.2)" }}>
                                 <div className="flex justify-between items-center mb-3">
                                     <span style={{ color: "white", fontWeight: 700 }}>{item.tenantName}</span>
-                                    <span className={`text-sm font-black ${t.percentUsed >= 95 ? 'text-red-400' : 'text-amber-400'}`}>
+                                    <span className={`text-sm font-black ${item.percentUsed >= 95 ? 'text-red-400' : 'text-amber-400'}`}>
                                         {item.percentUsed}%
                                     </span>
                                 </div>
                                 <div className="w-full bg-black/40 rounded-full h-2 overflow-hidden">
                                     <div
-                                        className={`h-full rounded-full transition-all ${t.percentUsed >= 95 ? 'bg-red-500' : 'bg-amber-500'}`}
-                                        style={{ width: `${Math.min(t.percentUsed, 100)}%` }}
+                                        className={`h-full rounded-full transition-all ${item.percentUsed >= 95 ? 'bg-red-500' : 'bg-amber-500'}`}
+                                        style={{ width: `${Math.min(item.percentUsed, 100)}%` }}
                                     />
                                 </div>
-                                <p className="text-gray-500 text-xs mt-2">{item.current} / {item.limit} análises</p>
+                                <p className="text-gray-500 text-xs mt-2">{item.current} / {item.limit} anï¿½lises</p>
                             </div>
                         ))}
                     </div>

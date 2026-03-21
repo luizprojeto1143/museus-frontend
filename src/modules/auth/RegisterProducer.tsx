@@ -39,7 +39,7 @@ export const RegisterProducer: React.FC = () => {
     useEffect(() => {
         api.get("/tenants/public")
             .then(res => {
-                const cityTenants = res.data.filter((t: City) => t.type === "CITY");
+                const cityTenants = res.data.filter((item: City) => item.type === "CITY");
                 setCities(cityTenants);
                 if (urlTenantId) {
                     setSelectedCity(urlTenantId);

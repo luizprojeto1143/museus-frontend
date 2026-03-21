@@ -149,18 +149,18 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 const tenantsRes = await api.get("/tenants/public");
                 const tenants = Array.isArray(tenantsRes.data) ? tenantsRes.data : [];
 
-                tenants.forEach((t: { id: string; name: string; latitude?: number; longitude?: number; logoUrl?: string | null }) => {
-                    if (typeof t.latitude === 'number' && typeof t.longitude === 'number') {
+                tenants.forEach((item: { id: string; name: string; latitude?: number; longitude?: number; logoUrl?: string | null }) => {
+                    if (typeof item.latitude === 'number' && typeof item.longitude === 'number') {
                         points.push({
-                            id: `tenant-${t.id}`,
+                            id: `tenant-${item.id}`,
                             type: 'museum',
-                            title: t.name,
+                            title: item.name,
                             subtitle: 'Museu',
-                            latitude: t.latitude,
-                            longitude: t.longitude,
+                            latitude: item.latitude,
+                            longitude: item.longitude,
                             radius: 100, // 100m for museums
-                            imageUrl: t.logoUrl || undefined,
-                            url: `/museu/${t.id}`
+                            imageUrl: item.logoUrl || undefined,
+                            url: `/museu/${item.id}`
                         });
                     }
                 });

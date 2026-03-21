@@ -47,11 +47,11 @@ export const AdminEventDashboard: React.FC = () => {
             // Fetch Tickets to calc total
             api.get(`/events/${id}/tickets`).then(res => {
                 const tickets = res.data as TicketInfo[];
-                const total = tickets.reduce((acc: number, t) => acc + t.quantity, 0);
-                const sold = tickets.reduce((acc: number, t) => acc + t.sold, 0);
+                const total = tickets.reduce((acc: number, ticket) => acc + ticket.quantity, 0);
+                const sold = tickets.reduce((acc: number, ticket) => acc + ticket.sold, 0);
                 // Calculate simple revenue based on tickets sold (approx) if backend doesn't give precise
                 // Ideally backend gives this. We'll sum up price * sold for now.
-                const rev = tickets.reduce((acc: number, t) => acc + (t.sold * Number(t.price)), 0);
+                const rev = tickets.reduce((acc: number, ticket) => acc + (ticket.sold * Number(ticket.price)), 0);
 
                 setStats(prev => ({ ...prev, totalTickets: total, ticketsSold: sold, revenue: rev }));
             }).catch(console.error);
