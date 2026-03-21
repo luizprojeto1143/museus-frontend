@@ -20,6 +20,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
     { to: "/master/servicos-presenciais", label: t("master.sidebar.serviOsPresenciais", "Serviços Presenciais"), icon: "🤝" },
     { to: "/master/ai-costs", label: t("master.sidebar.aiCosts", "Custos de IA"), icon: "🤖" },
     { to: "/master/skins", label: t("master.sidebar.skins", "Skins / Mercado"), icon: "👕" },
+    { to: "/master/cards", label: t("master.sidebar.cards", "Grimório / Cards"), icon: "🃏" },
     { to: "/master/badges", label: t("master.sidebar.badges", "Fila de Crachás"), icon: "🆔" },
     { to: "/master/seeder", label: t("master.sidebar.trafficGen", "Traffic Gen"), icon: "🚦" },
     { to: "/master/achievements", label: t("master.sidebar.conquistas", "Conquistas"), icon: "🏆" },

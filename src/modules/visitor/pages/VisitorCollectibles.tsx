@@ -85,17 +85,36 @@ export const VisitorCollectibles: React.FC = () => {
                             padding: '1.25rem',
                             textAlign: 'center',
                             position: 'relative',
-                            opacity: card.owned ? 1 : 0.5
+                            opacity: card.owned ? 1 : 0.5,
+                            transition: 'all 0.3s ease',
+                            boxShadow: card.owned ? `0 8px 16px ${r.color}20` : 'none'
                         }}>
                             {!card.owned && <Lock size={20} style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', color: '#666' }} />}
-                            {card.imageUrl ? (
-                                <img src={card.imageUrl} alt={card.title} style={{ width: '60px', height: '60px', borderRadius: '0.75rem', objectFit: 'cover', margin: '0 auto 0.75rem' }} />
-                            ) : (
-                                <div style={{ width: '60px', height: '60px', borderRadius: '0.75rem', margin: '0 auto 0.75rem', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Sparkles size={24} style={{ color: r.color }} />
-                                </div>
-                            )}
+                            
+                            <div style={{ position: 'relative', width: '70px', height: '70px', margin: '0 auto 0.75rem' }}>
+                                { (card.imageUrl || card.work?.imageUrl) ? (
+                                    <img 
+                                        src={card.imageUrl || card.work?.imageUrl} 
+                                        alt={card.title} 
+                                        style={{ 
+                                            width: '100%', height: '100%', borderRadius: '0.75rem', 
+                                            objectFit: 'cover',
+                                            border: `2px solid ${card.owned ? r.color : 'rgba(255,255,255,0.1)'}`
+                                        }} 
+                                    />
+                                ) : (
+                                    <div style={{ width: '100%', height: '100%', borderRadius: '0.75rem', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Sparkles size={24} style={{ color: r.color }} />
+                                    </div>
+                                )}
+                            </div>
+
                             <h3 style={{ color: 'white', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.25rem' }}>{card.title}</h3>
+                            {card.work && (
+                                <p style={{ color: r.color, fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                                    {card.work.title}
+                                </p>
+                            )}
                             <span style={{ fontSize: '0.65rem', padding: '0.15rem 0.5rem', borderRadius: '0.25rem', fontWeight: 700, background: r.color + '20', color: r.color, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
                                 {r.icon} {r.label}
                             </span>
