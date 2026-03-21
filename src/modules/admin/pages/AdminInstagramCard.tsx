@@ -1,10 +1,11 @@
-﻿import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api, baseURL } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Instagram, Download, RefreshCw, Image as ImageIcon, Palette, Type } from "lucide-react";
 import { Button } from "../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import { getFullUrl } from "../../../utils/url";
 import "./AdminShared.css";
 
 
@@ -49,7 +50,9 @@ export const AdminInstagramCard: React.FC = () => {
                     console.error("Image load failed for URL:", url, e);
                     reject(e);
                 };
-                const encodedUrl = encodeURIComponent(url);
+                const fullUrl = getFullUrl(url);
+                if (!fullUrl) return reject("No URL");
+                const encodedUrl = encodeURIComponent(fullUrl);
                 img.src = `${baseURL}/upload/proxy?url=${encodedUrl}`;
             });
         };
