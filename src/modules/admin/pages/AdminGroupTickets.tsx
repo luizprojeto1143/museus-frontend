@@ -93,10 +93,10 @@ export const AdminGroupTickets: React.FC = () => {
                                     </span>
                                     <span>📧 {item.contactEmail}</span>
                                     <span>👤 {item.contactName}</span>
-                                    {t.contactPhone && <span>📱 {item.contactPhone}</span>}
+                                    {item.contactPhone && <span>📱 {item.contactPhone}</span>}
                                 </div>
                                 <p style={{ color: '#475569', fontSize: '0.7rem', marginTop: '0.5rem' }}>
-                                    {new Date(t.createdAt).toLocaleString("pt-BR")}
+                                    {new Date(item.createdAt).toLocaleString("pt-BR")}
                                 </p>
                             </div>
 

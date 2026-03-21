@@ -466,7 +466,7 @@
       "windowopeneventmeetinglinkBlan": "window.open(event.meetingLink, '_blank')} className=\"w-full py-6 text-lg rounded-2xl\">\n                        Access Broadcast",
       "linkDeAcessoSerLiberadoApsAIns": "Access link will be released after registration",
       "mapaIndisponvelModoDemo": "Map Unavailable (Demo Mode)",
-      "numbertpriceIndisponvel": "Number(t.price)))}`) : 'Unavailable'}",
+
       "selecioneSuaModalidadeDePartic": "Select your mode of participation",
       "ateno": "Attention:",
       "apsOPagamentoSuaInscrioSerConf": "After payment, your registration will be automatically confirmed. You will receive an email with your ticket once the system processes the transaction.",

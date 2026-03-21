@@ -45,7 +45,7 @@ export const TrailDetail: React.FC = () => {
     setApiLoading(true);
     api.get(`/trails/${id}`)
       .then((res) => {
-        const t = res.data;
+        const item = res.data;
         const works = Array.isArray(item.works) ? item.works.map((tw: any) => ({
           id: tw.work?.id ?? tw.id,
           title: tw.work?.title ?? tw.title ?? "Obra da trilha"

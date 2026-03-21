@@ -144,9 +144,9 @@ export const MasterAchievementForm: React.FC = () => {
                         leftIcon={<Building2 size={16} />}
                     >
                         <option value="">{t("master.achievements.select")}</option>
-                        {tenants.map((t) => (
-                            <option key={t.id} value={t.id}>
-                                {t.name}
+                        {tenants.map(item => (
+                            <option key={item.id} value={item.id}>
+                                {item.name}
                             </option>
                         ))}
                     </Select>

@@ -33,7 +33,7 @@ export const TrailsList: React.FC = () => {
     api.get("/trails", { params: { tenantId, equipamentoId } })
       .then((res) => {
         if (!mounted) return;
-        const apiTrails = (res.data as any[]).map((t) => ({
+        const apiTrails = (res.data as any[]).map((item) => ({
           id: item.id,
           name: item.title,
           description: item.description,

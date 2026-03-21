@@ -114,9 +114,9 @@ export const MasterAchievements: React.FC = () => {
                             style={{ maxWidth: '400px' }}
                         >
                             <option value="">{t("master.achievements.select")}</option>
-                            {tenants.map((t) => (
-                                <option key={t.id} value={t.id}>
-                                    {t.name}
+                            {tenants.map(item => (
+                                <option key={item.id} value={item.id}>
+                                    {item.name}
                                 </option>
                             ))}
                         </select>
