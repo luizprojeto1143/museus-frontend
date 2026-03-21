@@ -5,6 +5,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Sparkles, Star, Zap, Crown, Diamond, Lock } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { getFullUrl } from "../../../utils/url";
 
 const rarityConfig: Record<string, { label: string; color: string; gradient: string; icon: React.ReactNode }> = {
     COMMON: { label: 'Comum', color: '#9ca3af', gradient: 'linear-gradient(135deg, #374151, #1f2937)', icon: <Star size={14} /> },
@@ -94,7 +95,7 @@ export const VisitorCollectibles: React.FC = () => {
                             <div style={{ position: 'relative', width: '70px', height: '70px', margin: '0 auto 0.75rem' }}>
                                 { (card.imageUrl || card.work?.imageUrl) ? (
                                     <img 
-                                        src={card.imageUrl || card.work?.imageUrl} 
+                                        src={getFullUrl(card.imageUrl || card.work?.imageUrl)} 
                                         alt={card.title} 
                                         style={{ 
                                             width: '100%', height: '100%', borderRadius: '0.75rem', 

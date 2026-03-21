@@ -3,6 +3,7 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Plus, Trash2, Edit3, Image as ImageIcon, Star, Zap, Crown, Diamond, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { getFullUrl } from "../../../utils/url";
 
 const rarities = [
   { value: 'COMMON', label: 'Comum', icon: <Star size={14} />, color: '#9ca3af' },
@@ -136,6 +137,26 @@ export const MasterCardManager: React.FC = () => {
                                 ))}
                             </select>
                         </label>
+                        
+                        {/* Artwork Preview */}
+                        {formData.workId && (
+                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-4 animate-in fade-in zoom-in-95">
+                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-black/40">
+                                    <img 
+                                        src={getFullUrl(works.find(w => w.id === formData.workId)?.imageUrl || '')} 
+                                        className="w-full h-full object-cover"
+                                        alt="Preview"
+                                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-gold uppercase tracking-widest">Imagem da Obra</p>
+                                    <p className="text-white text-xs font-bold">{works.find(w => w.id === formData.workId)?.title}</p>
+                                    <p className="text-slate-500 text-[10px] italic mt-1">Esta imagem será usada no card por padrão.</p>
+                                </div>
+                            </div>
+                        )}
+
                         <label className="block">
                             <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Raridade</span>
                             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -151,7 +172,7 @@ export const MasterCardManager: React.FC = () => {
                             </div>
                         </label>
                         <label className="block">
-                            <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Imagem de Fundo (Opcional)</span>
+                            <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">Imagem Customizada (Opcional)</span>
                             <input 
                                 type="text" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})}
                                 className="w-full mt-2 bg-black/40 border border-white/10 rounded-xl p-4 text-white" 
@@ -159,7 +180,7 @@ export const MasterCardManager: React.FC = () => {
                             />
                         </label>
                         <button type="submit" className="w-full mt-4 h-14 bg-white text-black font-black uppercase tracking-widest rounded-2xl hover:bg-gold transition-colors">
-                            Criar Card no Sistema
+                            Confirmar e Salvar no Grimório
                         </button>
                     </div>
                 </form>
@@ -173,7 +194,7 @@ export const MasterCardManager: React.FC = () => {
                             <div className="flex justify-between items-start mb-4">
                                 <div className="w-16 h-20 rounded-xl bg-black/40 border border-white/10 overflow-hidden flex items-center justify-center">
                                     {(card.imageUrl || card.work?.imageUrl) ? (
-                                        <img src={card.imageUrl || card.work?.imageUrl} className="w-full h-full object-cover" />
+                                        <img src={getFullUrl(card.imageUrl || card.work?.imageUrl)} className="w-full h-full object-cover" />
                                     ) : (
                                         <ImageIcon className="text-white/20" size={24} />
                                     )}

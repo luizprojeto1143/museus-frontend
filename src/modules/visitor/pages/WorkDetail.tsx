@@ -16,7 +16,7 @@ import { NavigationModal } from "../../../components/navigation/NavigationModal"
 import { useTerminology } from "../../../hooks/useTerminology";
 import { 
   Compass, Share2, Star, Volume2, VolumeX, ChevronLeft, 
-  ChevronRight, MapPin, Map, MessageCircle, Heart 
+  ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./WorkDetail.css";
@@ -36,6 +36,7 @@ type WorkDetailData = {
   videoUrl?: string | null;
   latitude?: number;
   longitude?: number;
+  collectibleCards?: any[];
 };
 
 export const WorkDetail: React.FC = () => {
@@ -104,7 +105,8 @@ export const WorkDetail: React.FC = () => {
           librasUrl: getFullUrl(w.librasUrl),
           videoUrl: getFullUrl(w.videoUrl),
           latitude: w.latitude,
-          longitude: w.longitude
+          longitude: w.longitude,
+          collectibleCards: w.collectibleCards || []
         };
         setWork(mapped);
         
@@ -282,6 +284,28 @@ export const WorkDetail: React.FC = () => {
          </main>
 
          <aside className="work-sidebar-premium">
+            {work.collectibleCards && work.collectibleCards.length > 0 && (
+                <div className="sidebar-card-premium !bg-gold/5 !border-gold/20">
+                   <div className="flex items-center gap-2 mb-2">
+                       <Sparkles size={14} className="text-gold" />
+                       <span className="sidebar-label-premium !text-gold !mb-0">Card Colecionável</span>
+                   </div>
+                   {work.collectibleCards.map((card: any) => (
+                       <div key={card.id} className="mt-4 p-4 rounded-xl bg-black/40 border border-white/5 text-center">
+                           <div className="w-20 h-24 mx-auto mb-3 rounded-lg overflow-hidden border-2 border-gold/30">
+                               <img src={card.imageUrl || work.imageUrl || ''} alt={card.title} className="w-full h-full object-cover" />
+                           </div>
+                           <h4 className="text-white text-xs font-black uppercase tracking-widest">{card.title}</h4>
+                           <div className="flex items-center justify-center gap-2 mt-2">
+                               <span className="text-[8px] font-black text-gold bg-gold/10 px-2 py-0.5 rounded uppercase">{card.rarity}</span>
+                               <span className="text-[8px] font-black text-white/40 uppercase">+{card.xpReward} XP</span>
+                           </div>
+                           <p className="text-[9px] text-muted mt-3 leading-relaxed">Escanei o QR Code desta obra para adicionar este card ao seu Grimório!</p>
+                       </div>
+                   ))}
+                </div>
+            )}
+
             <div className="sidebar-card-premium">
                <span className="sidebar-label-premium">Audioguia Imersivo</span>
                <NarrativeAudioGuide audioUrl={work.audioUrl} title={work.title} artist={work.artist} />
