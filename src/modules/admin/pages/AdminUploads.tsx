@@ -10,7 +10,10 @@ interface UploadedFile {
   type: string;
   size: number;
   uploadedAt: string;
-  usedIn: Array<{ type: string; id: string; title: string }>;
+  usedIn?: string | null;
+  usedInId?: string | null;
+  usedInTitle?: string | null; // Optional if backend ever sends it
+  usageList?: Array<{ type: string; id: string; title: string }>; // For frontend compatibility
   useInAi?: boolean;
 }
 
@@ -58,10 +61,10 @@ export const AdminUploads: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string, usedIn: UploadedFile["usedIn"]) => {
-    if (usedIn.length > 0) {
+  const handleDelete = async (id: string, usedIn?: string | null) => {
+    if (usedIn) {
       const confirm = window.confirm(
-        t("admin.uploads.deleteConfirmUsed", { count: usedIn.length })
+        t("admin.uploads.deleteConfirmUsed")
       );
       if (!confirm) return;
     }
@@ -222,16 +225,14 @@ export const AdminUploads: React.FC = () => {
               </div>
 
               {/* Usado em */}
-              {file.usedIn.length > 0 && (
+              {file.usedIn && (
                 <div style={{ marginBottom: "0.75rem", fontSize: "0.75rem" }}>
                   <div style={{ color: "var(--fg-soft)", marginBottom: "0.25rem" }}>
                     {t("admin.uploads.usedIn")}:
                   </div>
-                  {file.usedIn.map((usage, idx) => (
-                    <div key={idx} className="badge" style={{ marginRight: "0.25rem", marginBottom: "0.25rem" }}>
-                      {usage.type}: {usage.title}
-                    </div>
-                  ))}
+                  <div className="badge">
+                    {file.usedIn}: {file.usedInId}
+                  </div>
                 </div>
               )}
 
