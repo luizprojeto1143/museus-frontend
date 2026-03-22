@@ -126,8 +126,8 @@ export const VisitorProfile: React.FC = () => {
             setLoading(true);
             api.get('/coupons/available')
                 .then(res => {
-                    setAvailableCoupons(res.data.available);
-                    setRedeemedCoupons(res.data.redeemed);
+                    setAvailableCoupons(res.data?.available || []);
+                    setRedeemedCoupons(res.data?.redeemed || []);
                 })
                 .catch(console.error)
                 .finally(() => setLoading(false));
@@ -139,8 +139,8 @@ export const VisitorProfile: React.FC = () => {
             setLoading(true);
             await api.post(`/coupons/${couponId}/redeem`);
             const res = await api.get('/coupons/available');
-            setAvailableCoupons(res.data.available);
-            setRedeemedCoupons(res.data.redeemed);
+            setAvailableCoupons(res.data?.available || []);
+            setRedeemedCoupons(res.data?.redeemed || []);
         } catch (error: any) {
             console.error(error);
         } finally {
@@ -300,10 +300,10 @@ export const VisitorProfile: React.FC = () => {
                                         <span className="sidebar-label-premium">PEDIDO #{order.id.slice(-6)}</span>
                                         <span className="bg-gold-dim text-gold px-3 py-1 rounded-full text-[10px] font-bold">{order.status}</span>
                                     </div>
-                                    {order.items.map((item, idx) => (
+                                    {(order.items || []).map((item, idx) => (
                                         <div key={idx} className="flex justify-between text-muted text-xs mb-2">
-                                            <span>{item.quantity}x {item.product.name}</span>
-                                            <span className="text-white">R$ {(item.priceAtTime * item.quantity).toFixed(2)}</span>
+                                            <span>{item.quantity}x {item.product?.name || 'Produto'}</span>
+                                            <span className="text-white">R$ {((item.priceAtTime || 0) * (item.quantity || 1)).toFixed(2)}</span>
                                         </div>
                                     ))}
                                     <div className="pt-4 mt-4 border-t border-border flex justify-between">
