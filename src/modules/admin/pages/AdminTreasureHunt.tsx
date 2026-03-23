@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Button, Input, Textarea, Select } from "../../../components/ui";
 
 interface Clue {
     id: string;
@@ -113,8 +114,7 @@ export const AdminTreasureHunt: React.FC = () => {
                         {t("admin.treasure.subtitle", "Crie charadas manuais para os visitantes encontrarem.")}
                     </p>
                 </div>
-                <button
-                    className="btn btn-primary"
+                <Button
                     onClick={() => {
                         setEditingClue(null);
                         setFormData({ riddle: "", answer: "", workId: "", order: clues.length + 1 });
@@ -122,7 +122,7 @@ export const AdminTreasureHunt: React.FC = () => {
                     }}
                 >
                     + {t("admin.treasure.add", "Nova Pista")}
-                </button>
+                </Button>
             </header>
 
             {/* Lista de Pistas */}
@@ -172,62 +172,56 @@ export const AdminTreasureHunt: React.FC = () => {
                 <div style={{
                     position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
                     background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center",
-                    zIndex: 1000
+                    zIndex: 1000, backdropFilter: "blur(4px)"
                 }}>
-                    <div className="card" style={{ width: "90%", maxWidth: "500px", padding: "2rem" }}>
-                        <h2>{editingClue ? "Editar Pista" : "Nova Pista"}</h2>
-                        <form onSubmit={handleSave}>
-                            <div className="form-group">
-                                <label>Charada / Pergunta *</label>
-                                <textarea
-                                    required
-                                    className="input"
-                                    value={formData.riddle}
-                                    onChange={e => setFormData({ ...formData, riddle: e.target.value })}
-                                    rows={3}
-                                    placeholder="Ex: Sou alto e verde..."
-                                />
-                            </div>
+                    <div className="card" style={{ width: "95%", maxWidth: "600px", padding: "2.5rem", background: "rgba(20,12,8,0.95)", border: "1px solid var(--accent-gold)" }}>
+                        <h2 style={{ color: "var(--accent-gold)", marginBottom: "1.5rem", fontSize: "1.5rem" }}>
+                            {editingClue ? "Editar Pista" : "Nova Pista"}
+                        </h2>
+                        <form onSubmit={handleSave} className="space-y-4">
+                            <Textarea
+                                label="Charada / Pergunta *"
+                                required
+                                value={formData.riddle}
+                                onChange={e => setFormData({ ...formData, riddle: e.target.value })}
+                                rows={3}
+                                placeholder="Ex: Sou alto e verde..."
+                            />
 
-                            <div className="form-group">
-                                <label>Resposta Esperada *</label>
-                                <input
-                                    required
-                                    type="text"
-                                    className="input"
-                                    value={formData.answer}
-                                    onChange={e => setFormData({ ...formData, answer: e.target.value })}
-                                    placeholder="Ex: Palmeira"
-                                />
-                            </div>
+                            <Input
+                                label="Resposta Esperada *"
+                                required
+                                type="text"
+                                value={formData.answer}
+                                onChange={e => setFormData({ ...formData, answer: e.target.value })}
+                                placeholder="Ex: Palmeira"
+                            />
 
-                            <div className="form-group">
-                                <label>{t("admin.treasurehunt.obraRelacionadaOndeEstAPistaOuASoluo", `Obra Relacionada (Onde está a pista ou a solução)`)}</label>
-                                <select
-                                    className="input"
-                                    value={formData.workId}
-                                    onChange={e => setFormData({ ...formData, workId: e.target.value })}
-                                >
-                                    <option value="">-- Nenhuma (Pista solta) --</option>
-                                    {works.map(w => (
-                                        <option key={w.id} value={w.id}>{w.title}</option>
-                                    ))}
-                                </select>
-                            </div>
+                            <Select
+                                label={t("admin.treasurehunt.obraRelacionadaOndeEstAPistaOuASoluo", `Obra Relacionada (Onde está a pista ou a solução)`)}
+                                value={formData.workId}
+                                onChange={e => setFormData({ ...formData, workId: e.target.value })}
+                            >
+                                <option value="">-- Nenhuma (Pista solta) --</option>
+                                {works.map(w => (
+                                    <option key={w.id} value={w.id}>{w.title}</option>
+                                ))}
+                            </Select>
 
-                            <div className="form-group">
-                                <label>{t("admin.treasurehunt.ordemNaSequncia", `Ordem na sequência`)}</label>
-                                <input
-                                    type="number"
-                                    className="input"
-                                    value={formData.order}
-                                    onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) })}
-                                />
-                            </div>
+                            <Input
+                                label={t("admin.treasurehunt.ordemNaSequncia", `Ordem na sequência`)}
+                                type="number"
+                                value={formData.order}
+                                onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) })}
+                            />
 
-                            <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
-                                <button type="button" className="btn btn-outline" onClick={() => setShowForm(false)}>Cancelar</button>
-                                <button type="submit" className="btn btn-primary">Salvar</button>
+                            <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", justifyContent: "flex-end" }}>
+                                <Button type="button" variant="ghost" className="text-gray-400" onClick={() => setShowForm(false)}>
+                                    Cancelar
+                                </Button>
+                                <Button type="submit" className="btn-primary">
+                                    Salvar
+                                </Button>
                             </div>
                         </form>
                     </div>

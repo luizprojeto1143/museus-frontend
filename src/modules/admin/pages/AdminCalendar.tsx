@@ -31,7 +31,6 @@ type Space = {
 
 // --- Utils ---
 const getDaysInMonth = (date: Date) => {
-  const { t } = useTranslation();
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -57,6 +56,7 @@ const getDaysInMonth = (date: Date) => {
 };
 
 export const AdminCalendar: React.FC = () => {
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const { addToast } = useToast();
 
@@ -546,4 +546,3 @@ export const AdminCalendar: React.FC = () => {
         </div>
     );
 };
-
