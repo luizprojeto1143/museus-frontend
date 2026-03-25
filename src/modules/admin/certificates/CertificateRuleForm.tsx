@@ -56,24 +56,24 @@ export const CertificateRuleForm: React.FC = () => {
     };
 
     return (
-        <div className="p-6 max-w-2xl bg-white rounded-lg shadow m-6">
-            <h1 className="text-2xl font-bold mb-6">{t("admin.certificaterule.novaRegraDeAutomao", `Nova Regra de Automação`)}</h1>
+        <div className="visitor-card max-w-2xl m-6">
+            <h1 className="text-2xl font-bold mb-6 text-[#d4af37]">{t("admin.certificaterule.novaRegraDeAutomao", `Nova Regra de Automação`)}</h1>
 
             <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium mb-1">Nome da Regra</label>
+                <div className="visitor-input-group">
+                    <label>Nome da Regra</label>
                     <input
-                        className="w-full p-2 border rounded"
+                        className="visitor-input"
                         value={name}
                         onChange={e => setName(e.target.value)}
                         placeholder={t("admin.certificaterule.exCertificadoTrilhaHistrica", `Ex: Certificado Trilha Histórica`)}
                     />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Gatilho (Quando emitir?)</label>
+                <div className="visitor-input-group">
+                    <label>Gatilho (Quando emitir?)</label>
                     <select
-                        className="w-full p-2 border rounded"
+                        className="visitor-input"
                         value={triggerType}
                         onChange={e => setTriggerType(e.target.value)}
                     >
@@ -85,10 +85,10 @@ export const CertificateRuleForm: React.FC = () => {
 
                 {/* Conditional Inputs based on Trigger */}
                 {triggerType === 'TRAIL_COMPLETED' && (
-                    <div className="p-4 bg-gray-50 rounded border">
-                        <label className="block text-sm font-medium mb-1">Qual Trilha?</label>
+                    <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
+                        <label className="block text-sm font-medium mb-2 text-[#c9b58c]">Qual Trilha?</label>
                         <select
-                            className="w-full p-2 border rounded"
+                            className="visitor-input"
                             onChange={e => setConditions({ ...conditions, trail_id: e.target.value })}
                         >
                             <option value="">Qualquer Trilha</option>
@@ -100,21 +100,21 @@ export const CertificateRuleForm: React.FC = () => {
                 )}
 
                 {triggerType === 'XP_THRESHOLD' && (
-                    <div className="p-4 bg-gray-50 rounded border">
-                        <label className="block text-sm font-medium mb-1">{t("admin.certificaterule.mnimoDeXp", `Mínimo de XP`)}</label>
+                    <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
+                        <label className="block text-sm font-medium mb-2 text-[#c9b58c]">{t("admin.certificaterule.mnimoDeXp", `Mínimo de XP`)}</label>
                         <input
                             type="number"
-                            className="w-full p-2 border rounded"
+                            className="visitor-input"
                             onChange={e => setConditions({ ...conditions, min_xp: Number(e.target.value) })}
                             placeholder="Ex: 1000"
                         />
                     </div>
                 )}
 
-                <div>
-                    <label className="block text-sm font-medium mb-1">Modelo de Certificado</label>
+                <div className="visitor-input-group">
+                    <label>Modelo de Certificado</label>
                     <select
-                        className="w-full p-2 border rounded"
+                        className="visitor-input"
                         value={templateId}
                         onChange={e => setTemplateId(e.target.value)}
                     >
@@ -126,9 +126,7 @@ export const CertificateRuleForm: React.FC = () => {
                 </div>
 
                 <div className="pt-4">
-                    <Button onClick={handleSave} disabled={!name || !templateId}>{t("admin.certificaterule.salvarRegraAutomtica", `
-                        Salvar Regra Automática
-                    `)}</Button>
+                    <Button onClick={handleSave} disabled={!name || !templateId}>{t("admin.certificaterule.salvarRegraAutomtica", `Salvar Regra Automática`)}</Button>
                 </div>
             </div>
         </div>
