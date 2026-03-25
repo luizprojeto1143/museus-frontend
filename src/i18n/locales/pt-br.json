@@ -595,6 +595,7 @@
     },
     "layout": {
       "VocEstExplorandoComoVisitanteC": "✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!",
+      "VocEstExplorandoComoVisitanteCrieUmaCont": "Explore como visitante ou crie uma conta para ganhar selos!",
       "criarContaGrtis": "Criar Conta Grátis",
       "abrirTecladoNumrico": "Abrir teclado numérico"
     }
@@ -1951,7 +1952,12 @@
       "logsDeAuditoria": "Logs de Auditoria",
       "monitorDeErros": "Monitor de Erros",
       "acessibilidade": "Acessibilidade",
-      "saDeDoSistema": "Saúde do Sistema"
+      "saDeDoSistema": "Saúde do Sistema",
+      "plans": "Planos de Assinatura",
+      "aiCosts": "Custos de IA",
+      "skins": "Skins / Mercado",
+      "cards": "Grimório / Cards",
+      "badges": "Fila de Crachás"
     },
     "layout": {
       "panel": "Master Panel",
