@@ -98,11 +98,9 @@
   "welcome": {
     "title": "Cultura Viva",
     "subtitle": "Sua jornada cultural começa aqui",
-    "firstTime": "Bem-vindo ao Cultura Viva, {{name}}!",
     "selectTenantAlert": "Selecione um museu!",
     "errorSave": "Erro ao salvar conquista",
     "errorUpload": "Erro ao fazer upload da imagem",
-    "returning": "Que bom te ver de novo, {{name}}!",
     "explore": "Explorar",
     "login": "Login"
   },
@@ -177,31 +175,31 @@
       "askAnything": "Pergunte qualquer coisa...",
       "placeholder": "Digite sua pergunta aqui..."
     },
-      "sidebar": {
-        "home": "Início",
-        "artworks": "Obras",
-        "trails": "Trilhas",
-        "map": "Mapa",
-        "events": "Eventos",
-        "favorites": "Favoritos",
-        "aiChat": "Chat IA",
-        "souvenir": "Souvenir",
-        "passport": "Passaporte",
-        "profile": "Meu Perfil",
-        "achievements": "Conquistas",
-        "visualScanner": "Scanner Visual",
-        "leaderboard": "Ranking",
-        "changeMuseum": "Trocar Museu",
-        "logout": "Sair",
-        "scheduling": "Agendamento",
-        "smartItinerary": "Roteiro Inteligente",
-        "treasureHunt": "Caça ao Tesouro",
-        "challenges": "Desafios",
-        "shop": "Loja",
-        "guestbook": "Livro de Visitas",
-        "installApp": "Instalar App",
-        "scanner": "Leitor QR"
-      },
+    "sidebar": {
+      "home": "Início",
+      "artworks": "Obras",
+      "trails": "Trilhas",
+      "map": "Mapa",
+      "events": "Eventos",
+      "favorites": "Favoritos",
+      "aiChat": "Chat IA",
+      "souvenir": "Souvenir",
+      "passport": "Passaporte",
+      "profile": "Meu Perfil",
+      "achievements": "Conquistas",
+      "visualScanner": "Scanner Visual",
+      "leaderboard": "Ranking",
+      "changeMuseum": "Trocar Museu",
+      "logout": "Sair",
+      "scheduling": "Agendamento",
+      "smartItinerary": "Roteiro Inteligente",
+      "treasureHunt": "Caça ao Tesouro",
+      "challenges": "Desafios",
+      "shop": "Loja",
+      "guestbook": "Livro de Visitas",
+      "installApp": "Instalar App",
+      "scanner": "Leitor QR"
+    },
     "smartRoute": {
       "title": "Roteiro Inteligente",
       "subtitle": "Diga quanto tempo você tem, e nós criamos o trajeto.",
@@ -229,7 +227,6 @@
     },
     "home": {
       "badge": "Bem-vindo",
-      "title": "Olá, {{name}}",
       "subtitle": "Explore a história e a cultura dos nossos museus.",
       "startTrail": "Começar Trilha",
       "viewMap": "Ver Mapa",
@@ -483,7 +480,6 @@
       "windowopeneventmeetinglinkBlan": "Acessar Transmissão",
       "linkDeAcessoSerLiberadoApsAIns": "Link de acesso será liberado após a inscrição",
       "mapaIndisponvelModoDemo": "Mapa Indisponível (Modo Demo)",
-
       "selecioneSuaModalidadeDePartic": "Selecione sua modalidade de participação",
       "ateno": "Atenção:",
       "apsOPagamentoSuaInscrioSerConf": "Após o pagamento, sua inscrição será confirmada automaticamente. Você receberá um e-mail com o seu ingresso assim que o sistema processar a transação.",
@@ -507,7 +503,6 @@
     },
     "eventsurveypage": {
       "suasRespostasForamEnviadasComS": "Suas respostas foram enviadas com sucesso e nos ajudarão a melhorar cada vez mais.",
-      "navigateClassnamewfullPy4Textl": "navigate('/')} className=\"w-full py-4 text-lg\">\r\n                        Voltar para o Início",
       "esteEventoNoPossuiUmaPesquisaA": "Este evento não possui uma pesquisa ativa no momento.",
       "pesquisaDeSatisfao": "Pesquisa de Satisfação",
       "paraValidarSuaParticipaoInform": "Para validar sua participação, informe seu e-mail.",
@@ -601,9 +596,7 @@
     "layout": {
       "VocEstExplorandoComoVisitanteC": "✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!",
       "criarContaGrtis": "Criar Conta Grátis",
-      "setisdialeropentrueArialabelab": "setIsDialerOpen(true)}\r\n              aria-label=\"Abrir teclado numérico\"\r\n            >\r\n              🔢",
-      "abrirTecladoNumrico": "Abrir teclado numérico",
-      "VocEstExplorandoComoVisitanteCrieUmaCont": "✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!"
+      "abrirTecladoNumrico": "Abrir teclado numérico"
     }
   },
   "admin": {
@@ -701,7 +694,6 @@
       "subtitle": "Gerencie as classes e treine o modelo para reconhecer obras.",
       "aponteACmeraParaOQrCodeDoVisit": "Aponte a câmera para o QR Code do visitante ou digite o código manualmente.",
       "ouDigiteOCdigo": "OU DIGITE O CÓDIGO",
-      "EscanearPrximo": "}\r\n                                >\r\n                                    Escanear Próximo",
       "aponteACmeraEmUmAmbienteIlumin": "Aponte a câmera em um ambiente iluminado para uma leitura mais rápida.",
       "escanearPrximo": "Escanear Próximo",
       "aponteACmeraParaOQrCodeDoVisitanteOuDigi": "Aponte a câmera para o QR Code do visitante ou digite o código manualmente.",
@@ -732,43 +724,37 @@
       "title": "Visão Geral do Museu"
     },
     "spaces": {
-      "title": "Espaços",
-      "subtitle": "Gerencie as áreas e setores do museu",
+      "title": "Gestão de Espaços",
+      "add": "Novo Espaço",
       "new": "Novo Espaço",
       "edit": "Editar Espaço",
+      "empty": "Nenhum espaço cadastrado",
+      "actions": "Ações",
       "table": {
         "name": "Nome",
-        "description": "Descrição",
+        "type": "Tipo",
+        "capacity": "Capacidade",
+        "status": "Status",
         "actions": "Ações"
       }
     },
-    "museumsettings": {
+    "space": {
+      "informaesBsicas": "Informações Básicas",
+      "nomeDoEspao": "Nome do Espaço",
+      "exSalaDeEnsaio1AuditrioPrincipal": "Ex: Sala de Ensaio 1, Auditório Principal...",
+      "auditrio": "Auditório",
+      "laboratrio": "Laboratório",
+      "estdio": "Estúdio",
+      "reaExterna": "Área Externa",
+      "descrio": "Descrição",
+      "descrevaOEspaoDimensesFinalidade": "Descreva o espaço, dimensões, finalidade...",
+      "configuraes": "Configurações",
+      "disponvelParaReserva": "Disponível para Reserva",
+      "permitirQueEsteEspaoSejaReservadoNoCalen": "Permitir que este espaço seja reservado no calendário."
+    },
+    "museumSettings": {
       "title": "Configurações do Museu",
-      "subtitle": "Personalize a aparência e informações do seu museu",
-      "institutionalData": "Dados Institucionais",
-      "labels": {
-        "name": "Nome do Museu",
-        "mission": "Missão / Descrição",
-        "address": "Endereço",
-        "openingHours": "Horário de Funcionamento",
-        "whatsapp": "WhatsApp",
-        "email": "E-mail de Contato",
-        "website": "Site Oficial"
-      },
-      "exMuseuHistrico": "Ex: Museu Histórico",
-      "missoDescrio": "Missão / Descrição",
-      "endereo": "Endereço",
-      "horrio": "Horário",
-      "boasvindasMultimdia": "Boas-vindas Multimídia",
-      "udioDeNarrao": "Áudio de Narração",
-      "enviarUdioMp3": "Enviar Áudio (MP3)",
-      "udioConfigurado": "Áudio Configurado",
-      "vdeoDeApresentaoUrl": "Vídeo de Apresentação (URL)",
-      "plantasELocalizao": "Plantas e Localização",
-      "fazerUploadDeUdioDeBoasvindas": "Fazer upload de áudio de boas-vindas",
-      "playerDeUdioDeBoasvindas": "Player de áudio de boas-vindas",
-      "saving": "Salvando...",
-      "save": "Salvar Configurações",
+      "subtitle": "Personalize sua identidade",
       "success": "Configurações salvas com sucesso!",
       "error": "Erro ao salvar configurações."
     },
@@ -854,7 +840,6 @@
         "published": "Publicado",
         "draft": "Rascunho"
       },
-      "setpagepP1Prxima": "setPage(p => p + 1)}\n              >\n                Próxima ▶",
       "prxima": "Próxima ▶"
     },
     "workForm": {
@@ -916,7 +901,6 @@
       },
       "gerencieTodaAProgramaoCultural": "Gerencie toda a programação cultural.",
       "relatrio": "Relatório",
-      "setpagepP1Classnameborderwhite": "setPage(p => p + 1)}\n            className=\"border-white/10 text-zinc-400 hover:text-white\"\n          >\n            Próxima ▶",
       "prxima": "Próxima ▶"
     },
     "eventForm": {
@@ -1245,12 +1229,10 @@
       "pendingNotice": "A solicitação ficará pendente até aprovação"
     },
     "layout": {
-      "setsidebaropentrueArialabelabr": "setSidebarOpen(true)} aria-label=\"Abrir menu de navegação\">\n            ☰",
       "abrirMenuDeNavegao": "Abrir menu de navegação"
     },
     "certificateruleform": {
       "novaRegraDeAutomao": "Nova Regra de Automação",
-      "setnameetargetvaluePlaceholder": "setName(e.target.value)}\r\n                        placeholder=\"Ex: Certificado Trilha Histórica\"\r\n                    />",
       "mnimoDeXp": "Mínimo de XP",
       "salvarRegraAutomtica": "Salvar Regra Automática",
       "exCertificadoTrilhaHistrica": "Ex: Certificado Trilha Histórica"
@@ -1261,7 +1243,6 @@
       "nenhumaRegraDeAutomaoCriada": "Nenhuma regra de automação criada."
     },
     "certificatetemplates": {
-      "navigateadmincertificatesrules": "navigate('/admin/certificates/rules')}>\r\n                        🤖 Regras e Automação",
       "RegrasEAutomao": "🤖 Regras e Automação"
     },
     "certificatecanvas": {
@@ -1293,11 +1274,9 @@
       "detalhesDaSolicitao": "Detalhes da Solicitação",
       "statusEOramento": "Status e Orçamento",
       "situaoAtual": "Situação Atual",
-      "SalvarSolicitao": "}\r\n                    >\r\n                        Salvar Solicitação",
       "descrioDosEntregveis": "Descrição dos Entregáveis",
       "oramentoAprovadoR": "Orçamento Aprovado (R$)",
-      "statusDaValidao": "Status da Validação",
-      "salvarSolicitao": "Salvar Solicitação\")}"
+      "statusDaValidao": "Status da Validação"
     },
     "accessibilitymanagement": {
       "GestoDeAcessibilidade": "♿ Gestão de Acessibilidade",
@@ -1305,7 +1284,6 @@
       "fbricaDeContedoMasterobras": "Fábrica de Conteúdo (Master/Obras)",
       "porTipoDeServio": "Por Tipo de Serviço",
       "solicitaesRecentesServios": "Solicitações Recentes (Serviços)",
-      "windowlocationhrefAdminacessib": "window.location.href = '/admin/acessibilidade/novo'}\r\n                                className=\"text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition-colors\"\r\n                            >\r\n                                + Nova Solicitação",
       "servio": "Serviço",
       "nenhumaExecuoEncontrada": "Nenhuma execução encontrada.",
       "solicitaesDeContedoParaObrasMa": "Solicitações de Conteúdo para Obras (Master)",
@@ -1313,19 +1291,6 @@
       "NovaSolicitao": "+ Nova Solicitação",
       "solicitaesDeContedoParaObrasMaster": "Solicitações de Conteúdo para Obras (Master)",
       "acompanheAquiOsPedidosDeLibrasEAudiodesc": "Acompanhe aqui os pedidos de Libras e Audiodescrição feitos diretamente no cadastro de obras para a equipe Master."
-    },
-    "achievementform": {
-      "informaesBsicas": "Informações Básicas",
-      "desbloqueioAutomtico": "Desbloqueio Automático",
-      "seMarcadoOSistemaAConcederAuto": "Se marcado, o sistema a concederá automaticamente assim que a condição for atendida.",
-      "xpConcedidoAoVisitanteQuandoAC": "XP concedido ao visitante quando a conquista é desbloqueada.",
-      "cone": "Ícone",
-      "ttulo": "Título:",
-      "cdigo": "Código:",
-      "prvisualizao": "Pré-visualização",
-      "Prximo": "}\n              >\n                Próximo",
-      "cdigoNico": "Código Único",
-      "prximo": "Próximo\")}"
     },
     "aidescriptions": {
       "geradorDeDescriesIa": "Gerador de Descrições IA",
@@ -1347,10 +1312,6 @@
       "DistribuioPorIdade": "👥 Distribuição por Idade",
       "TendnciaDeVisitantes": "📈 Tendência de Visitantes"
     },
-    "bookingform": {
-      "EnviarSolicitao": "}\r\n                    >\r\n                        Enviar Solicitação",
-      "enviarSolicitao": "Enviar Solicitação\")}"
-    },
     "calendar": {
       "espaos": "Espaços",
       "gestoCentralizadaDaOcupaoEHorr": "Gestão centralizada da ocupação e horários dos ambientes do museu.",
@@ -1360,12 +1321,6 @@
       "exTreinamentoDeEquipeManutenoP": "Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo...",
       "gestoCentralizadaDaOcupaoEHorriosDosAmbi": "Gestão centralizada da ocupação e horários dos ambientes do museu.",
       "exTreinamentoDeEquipeManutenoPreventivaG": "Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo..."
-    },
-    "categoryform": {
-      "gerencieAsCategoriasParaOrgani": "Gerencie as categorias para organizar seu conteúdo.",
-      "informaes": "Informações",
-      "descrevaOPropsitoDestaCategori": "Descreva o propósito desta categoria...",
-      "tipoDeContedo": "Tipo de Conteúdo"
     },
     "collectibles": {
       "cardsColecionveis": "Cards Colecionáveis",
@@ -1410,15 +1365,7 @@
       "nenhumaDoaoRegistradaAinda": "Nenhuma doação registrada ainda.",
       "painelDeArrecadaoEMuralDeDoadores": "Painel de arrecadação e mural de doadores"
     },
-    "equipmentform": {
-      "identificao": "Identificação",
-      "identificadorNicoUsadoNaUrlDoM": "Identificador único usado na URL do museu.",
-      "oGestorPoderAlterarEstaSenhaNo": "O gestor poderá alterar esta senha no primeiro acesso.",
-      "mdulosHabilitados": "Módulos Habilitados",
-      "gamificao": "Gamificação"
-    },
     "eventcheckin": {
-      "setscanresultnullClassnamebtnB": "setScanResult(null)} className=\"btn btn-primary w-full mt-4\">\r\n                                Ler Próximo",
       "cdigoDoIngresso": "Código do ingresso",
       "lerPrximo": "Ler Próximo",
       "aponteACmeraParaOQrCodeDoIngresso": "Aponte a câmera para o QR Code do ingresso"
@@ -1444,7 +1391,6 @@
       "AvaliaoEstrelas": "⭐ Avaliação (Estrelas)",
       "MltiplaEscolha": "🔘 Múltipla Escolha",
       "opesSeparadasPorVrgula": "Opções (separadas por vírgula)",
-      "updatequestionindexRequiredEta": "updateQuestion(index, 'required', e.target.checked)}\r\n                                                    className=\"w-4 h-4 text-blue-600 rounded\"\r\n                                                />\r\n                                                Obrigatória",
       "obrigatria": "Obrigatória",
       "crieUmFormulrioParaColetarFeedbackDosPar": "Crie um formulário para coletar feedback dos participantes."
     },
@@ -1554,39 +1500,10 @@
       "suaPosio": "Sua Posição",
       "nenhumRankingParaEsteMs": "Nenhum ranking para este mês"
     },
-
     "newsletter": {
       "osInscritosNaNewsletterAparece": "Os inscritos na newsletter aparecerão aqui.",
       "dataDeInscrio": "Data de Inscrição",
       "osInscritosNaNewsletterApareceroAqui": "Os inscritos na newsletter aparecerão aqui."
-    },
-    "noticeform": {
-      "perodoDeInscrio": "Período de Inscrição",
-      "execuoEResultados": "Execução e Resultados",
-      "oramentoGeral": "Orçamento Geral",
-      "regiesAlvo": "Regiões Alvo",
-      "nenhumaRegioRestritaAbrangncia": "Nenhuma região restrita (Abrangência Global)",
-      "quaseL": "Quase lá!",
-      "ttulo": "Título:",
-      "oramento": "Orçamento:",
-      "inscries": "Inscrições:",
-      "configuraesFinais": "Configurações Finais",
-      "mostrarPontuaoFinalParaOPblico": "Mostrar pontuação final para o público",
-      "Prximo": "}\r\n                            >\r\n                                Próximo",
-      "breveApresentaoDoEdital": "Breve apresentação do edital...",
-      "descrevaOQueEsteEditalBuscaFom": "Descreva o que este edital busca fomentar... (Será usado pela IA para avaliar mérito)",
-      "listeOsCritriosDeEliminaoOuPon": "Liste os critérios de eliminação ou pontuação... (Será usado pela IA para checklist)",
-      "ttuloDoEdital": "Título do Edital *",
-      "descrioObjetivoDoEdital": "Descrição / Objetivo do Edital *",
-      "objetivosEstratgicosParaAnlise": "Objetivos Estratégicos (Para Análise IA) *",
-      "requisitosTcnicosCritriosParaA": "Requisitos Técnicos / Critérios (Para Análise IA) *",
-      "aberturaDasInscries": "Abertura das Inscrições *",
-      "encerramentoDasInscries": "Encerramento das Inscrições *",
-      "divulgaoDosResultados": "Divulgação dos Resultados",
-      "prazoFinalDeExecuo": "Prazo Final de Execução",
-      "mnimoR": "Mínimo (R$)",
-      "mximoR": "Máximo (R$)",
-      "prximo": "Próximo\")}"
     },
     "noticeprojects": {
       "emAnlise": "Em Análise",
@@ -1605,7 +1522,6 @@
       "notificaesPush": "Notificações Push",
       "envieMensagensEmTempoRealParaT": "Envie mensagens em tempo real para todos os usuários do seu museu/instituição.",
       "ttuloDaNotificao": "Título da Notificação",
-      "settitleetargetvalueClassnamew": "setTitle(e.target.value)}\r\n                                className=\"w-full border border-white/10 rounded-xl px-4 py-2 focus:border-amber-500 transition-colors outline-none\"\r\n                                placeholder=\"Ex: Exposição Nova Amanhã!\"\r\n                                required\r\n                            />",
       "boasPrticas": "Boas Práticas",
       "sejaBreveEDiretoNotificaesCurt": "Seja breve e direto: notificações curtas têm maior taxa de clique.",
       "useEmojisParaChamarAAtenoMasSe": "Use emojis para chamar a atenção, mas sem exageros.",
@@ -1629,46 +1545,8 @@
       "ttulo": "Título",
       "mtrica": "Métrica"
     },
-    "projectform": {
-      "gestoDePropostasCulturaisEEdit": "Gestão de propostas culturais e editais.",
-      "informaesDoProjeto": "Informações do Projeto",
-      "painelDeAnlisePorIa": "Painel de Análise por IA",
-      "resumoDaAnlise": "Resumo da Análise",
-      "recomendaoIa": "Recomendação IA",
-      "pontuaoTcnica": "Pontuação Técnica",
-      "pontosCrticos": "Pontos Críticos",
-      "nenhumaAnliseAutomticaGeradaAi": "Nenhuma análise automática gerada ainda ou projeto pendente de submissão.",
-      "avaliaoHumanaParecer": "Avaliação Humana (Parecer)",
-      "mdiaIaHumana": "(Média IA + Humana)",
-      "PedirReviso": "}\r\n                                        >\r\n                                            Pedir Revisão",
-      "mtricasEdital": "Métricas & Edital",
-      "breveResumoParaListagemPblica": "Breve resumo para listagem pública...",
-      "descrevaComoOsRecursosSeroImpl": "Descreva como os recursos serão implementados...",
-      "descrevaOsMotivosDaDecisoOuAes": "Descreva os motivos da decisão ou ações necessárias...",
-      "ttuloDoProjeto": "Título do Projeto *",
-      "regioDeAtuao": "Região de Atuação",
-      "descrioDetalhada": "Descrição Detalhada",
-      "observaesDaReviso": "Observações da Revisão",
-      "pblicoPrevisto": "Público Previsto",
-      "pblicoReal": "Público Real",
-      "pedirReviso": "Pedir Revisão\")}"
-    },
     "projects": {
       "oramento": "Orçamento"
-    },
-    "providerform": {
-      "gestoDePrestadores": "Gestão de Prestadores",
-      "cadastreProfissionaisOuEmpresa": "Cadastre profissionais ou empresas especializadas em serviços de acessibilidade (LIBRAS, Audiodescrição, etc).",
-      "informaesBsicas": "Informações Básicas",
-      "pessoaJurdicaEmpresa": "Pessoa Jurídica (Empresa)",
-      "pessoaFsicaAutnomo": "Pessoa Física (Autônomo)",
-      "ServiosOferecidos": "♿ Serviços Oferecidos",
-      "selecioneTodosOsServiosDeAcess": "Selecione todos os serviços de acessibilidade que este prestador oferece:",
-      "avaliaoEHistrico": "Avaliação e Histórico",
-      "prestadorAtivoDisponvelParaNov": "Prestador ativo (disponível para novos trabalhos)",
-      "nomeOuRazoSocial": "Nome ou Razão Social",
-      "avaliao05": "Avaliação (0-5)",
-      "trabalhosConcludos": "Trabalhos Concluídos"
     },
     "providers": {
       "servios": "Serviços",
@@ -1713,21 +1591,6 @@
       "ecossistemaDeGestoDeAcervoEVendas": "Ecossistema de gestão de acervo e vendas",
       "osPedidosDosClientesApareceroAqui": "Os pedidos dos clientes aparecerão aqui."
     },
-    "spaceform": {
-      "informaesBsicas": "Informações Básicas",
-      "nomeDoEspao": "Nome do Espaço",
-      "auditrio": "Auditório",
-      "laboratrio": "Laboratório",
-      "estdio": "Estúdio",
-      "reaExterna": "Área Externa",
-      "descrio": "Descrição",
-      "configuraes": "Configurações",
-      "disponvelParaReserva": "Disponível para Reserva",
-      "permitirQueEsteEspaoSejaReserv": "Permitir que este espaço seja reservado no calendário.",
-      "exSalaDeEnsaio1AuditrioPrincip": "Ex: Sala de Ensaio 1, Auditório Principal...",
-      "descrevaOEspaoDimensesFinalida": "Descreva o espaço, dimensões, finalidade..."
-    },
-
     "sponsorships": {
       "patrocnios": "Patrocínios",
       "gestoDePatrocniosEApoiosAObras": "Gestão de patrocínios e apoios a obras específicas",
@@ -1756,13 +1619,6 @@
       "nenhumEventoComInscries": "Nenhum evento com inscrições",
       "digiteOCdigoDoIngresso": "Digite o código do ingresso"
     },
-    "trailform": {
-      "udioguia": "Áudio-Guia",
-      "vdeo": "Vídeo",
-      "mdias": "Mídias:",
-      "Prximo": "}\n              >\n                Próximo",
-      "prximo": "Próximo\")}"
-    },
     "translations": {
       "internacionalizao": "Internacionalização",
       "traduesDasFichasDasObras": "Traduções das fichas das obras",
@@ -1784,30 +1640,6 @@
       "habilidadesSepararPorVrgula": "Habilidades (separar por vírgula)",
       "voluntrio": "Voluntário",
       "recepoGuiaLibrasFotografia": "Recepção, Guia, Libras, Fotografia"
-    },
-    "workform": {
-      "vdeoEmLibras": "Vídeo em Libras",
-      "nomettulo": "Nome/Título:",
-      "cdigo": "Código:",
-      "mdias": "Mídias:",
-      "aesAdicionais": "Ações Adicionais",
-      "solicitarProduoDeLibrasudio": "Solicitar produção de Libras/Áudio",
-      "Prximo": "}\n              >\n                Próximo",
-      "apenasVdeoEmLibras": "Apenas Vídeo em Libras",
-      "apenasAudiodescrio": "Apenas Audiodescrição",
-      "comboLibrasUdio": "Combo (Libras + Áudio)",
-      "exLeoSobreTelaEsculturaEmBronz": "Ex: Óleo sobre tela, Escultura em bronze",
-      "exTelaMadeiraMrmore": "Ex: Tela, Madeira, Mármore",
-      "exPrioridadeAltaDetalhesEspecf": "Ex: Prioridade alta, detalhes específicos...",
-      "tcnica": "Técnica",
-      "perodoEstilo": "Período / Estilo",
-      "dimenses": "Dimensões",
-      "descrioCompleta": "Descrição Completa",
-      "CdigoDoDiscadorApenasNmeros": "🔢 Código do Discador (Apenas Números)",
-      "raioDeDetecoM": "Raio de Detecção (m)",
-      "tipoDeServio": "Tipo de Serviço",
-      "observaes": "Observações",
-      "prximo": "Próximo\")}"
     },
     "aiusagedashboard": {
       "90LimiteQuaseAtingidoAteno": "= 90 ? \"Limite quase atingido!\" : \"Atenção\"}",
@@ -1947,20 +1779,6 @@
       "nomeOuRazoSocial": "Nome ou Razão Social",
       "avaliao05": "Avaliação (0-5)",
       "trabalhosConcludos": "Trabalhos Concluídos"
-    },
-    "space": {
-      "informaesBsicas": "Informações Básicas",
-      "nomeDoEspao": "Nome do Espaço",
-      "auditrio": "Auditório",
-      "laboratrio": "Laboratório",
-      "estdio": "Estúdio",
-      "reaExterna": "Área Externa",
-      "descrio": "Descrição",
-      "configuraes": "Configurações",
-      "disponvelParaReserva": "Disponível para Reserva",
-      "permitirQueEsteEspaoSejaReservadoNoCalen": "Permitir que este espaço seja reservado no calendário.",
-      "exSalaDeEnsaio1AuditrioPrincipal": "Ex: Sala de Ensaio 1, Auditório Principal...",
-      "descrevaOEspaoDimensesFinalidade": "Descreva o espaço, dimensões, finalidade..."
     },
     "trail": {
       "udioguia": "Áudio-Guia",
@@ -2109,7 +1927,6 @@
         "action": "Ações"
       },
       "gestoGlobal": "Gestão Global",
-      "ClassnamewautoPx8NovoUsurio": "}\n              className=\"w-auto px-8\"\n            >\n              Novo Usuário",
       "todosOsUsurios": "Todos os Usuários",
       "listaGeralDeTodosOsUsuriosCada": "Lista geral de todos os usuários cadastrados na plataforma",
       "novoUsurio": "Novo Usuário",
@@ -2215,7 +2032,6 @@
     "seeder": {
       "simuladorDeTrfego": "Simulador de Tráfego",
       "crieVidaNoSeuMuseuGereVisitant": "Crie vida no seu museu. Gere visitantes virtuais e simule interações reais para testar dashboards e recursos.",
-      "RodarSimulaoCompleta": "}\r\n                        >\r\n                            Rodar Simulação Completa",
       "LtimaSimulao": "✅ Última Simulação",
       "limpezaDeDadosRemoveApenasUsur": "Limpeza de dados. remove apenas usuários marcados como `isFake`.",
       "rodarSimulaoCompleta": "Rodar Simulação Completa",
@@ -2238,16 +2054,13 @@
       "mdulosDoSistema": "Módulos do Sistema",
       "configuraoDoPlano": "Configuração do Plano",
       "startBsico": "Start (Básico)",
-      "setprivacypolicyetargetvaluePl": "setPrivacyPolicy(e.target.value)}\n                        placeholder=\"Cole a política aqui...\"\n                      />",
       "esteUsurioTerPermissoTotalAdmi": "Este usuário terá permissão total (ADMIN) sobre a nova instituição.",
       "aEdioDeAdministradoresFeitaNaA": "A edição de administradores é feita na aba \"Usuários\".",
       "reviseOsDadosAbaixoAntesDeCria": "Revise os dados abaixo antes de criar o ambiente da instituição.",
-      "Prximo": "}\n              >\n                Próximo",
       "coleAPolticaAqui": "Cole a política aqui...",
       "vnculoHierrquicoOpcional": "Vínculo Hierárquico (Opcional)",
       "nvelDeServio": "Nível de Serviço",
-      "polticaDePrivacidade": "Política de Privacidade",
-      "prximo": "Próximo\")}"
+      "polticaDePrivacidade": "Política de Privacidade"
     },
     "tenantslist": {
       "crieNovasInstituiesGerencieAss": "Crie novas instituições, gerencie assinaturas e controle o acesso de cada conta.",
@@ -2505,7 +2318,6 @@
     "producerprofile": {
       "gerencieSuasInformaesPessoaisE": "Gerencie suas informações pessoais e de contato.",
       "informaesVisveisParaAdministra": "Informações visíveis para administradores e em seus projetos",
-      "Classnamebgd4af37Text1a1108Hov": "}\r\n                            className=\"bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold h-12 shadow-lg shadow-[#D4AF37]/20 border-none\"\r\n                        >\r\n                            Salvar Alterações",
       "conteUmPoucoSobreSuaTrajetriaC": "Conte um pouco sobre sua trajetória cultural...",
       "sitePortflioRedesSociais": "Site / Portfólio / Redes Sociais",
       "biografiaApresentao": "Biografia / Apresentação",
@@ -2540,7 +2352,6 @@
     },
     "producerservices": {
       "encontrePrestadoresHomologados": "Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais.\r\n                    Contrate direto pela plataforma através de canais seguros.",
-      "SolicitarOramento": "}\r\n                                >\r\n                                    Solicitar Orçamento",
       "nenhumPrestadorDisponvel": "Nenhum prestador disponível",
       "solicitarOramento": "Solicitar Orçamento",
       "encontrePrestadoresHomologadosParaTornar": "Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais. Contrate direto pela plataforma através de canais seguros."
@@ -2552,7 +2363,6 @@
       "perfilPblicoVisvelNaPlataforma": "Perfil Público visível na plataforma",
       "segurana": "Segurança",
       "ativarAutenticaoDeDoisFatores2": "Ativar Autenticação de Dois Fatores (2FA)",
-      "Classnamebgd4af37Text1a1108Hov": "}\r\n                        className=\"bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[#D4AF37]/20 border-none rounded-xl\"\r\n                    >\r\n                        Salvar Alterações",
       "salvarAlteraes": "Salvar Alterações",
       "receberAtualizaesDeProjetosPorEmail": "Receber atualizações de projetos por e-mail",
       "ativarAutenticaoDeDoisFatores2fa": "Ativar Autenticação de Dois Fatores (2FA)",
@@ -2633,7 +2443,6 @@
       "gestoDeMuseusBibliotecasECentr": "Gestão de museus, bibliotecas e centros culturais vinculados",
       "equipamentosCulturaisFilhosApa": "Equipamentos culturais filhos aparecerão aqui.",
       "monitoramentoDeExecuoFsicaEFin": "Monitoramento de execução física e financeira",
-      "navigateadminprojetosnovoLanar": "navigate(\"/admin/projetos/novo\")}\r\n                    >\r\n                        Lançar Projeto Especial",
       "projetosEmExecuo": "Projetos em Execução",
       "ao": "Ação",
       "acompanhamentoAutomticoDeNorma": "Acompanhamento automático de normativas federais (LBI, NBR 9050)",
@@ -2678,7 +2487,6 @@
   },
   "provider": {
     "providerdashboard": {
-      "SuaAgendaEstEmDiaPorEnquanto": ") : ( \"Sua agenda está em dia por enquanto.\" )}",
       "mantenhaSeuPerfilAtualizadoPar": "Mantenha seu perfil atualizado para atrair mais produtores culturais. O tempo médio de resposta influencia seu ranking na plataforma.",
       "mantenhaSeuPerfilAtualizadoParaAtrairMai": "Mantenha seu perfil atualizado para atrair mais produtores culturais. O tempo médio de resposta influencia seu ranking na plataforma."
     },
@@ -2714,7 +2522,6 @@
       "nomePblicoInstitucional": "Nome Público / Institucional",
       "emailPblico": "Email Público",
       "descrioProfissionalCurrculoRes": "Descrição Profissional / Currículo resumido",
-      "SalvarAlteraes": "} Salvar Alterações",
       "personalizeComoOsProdutoresCulturaisVero": "Personalize como os produtores culturais verão seu serviço.",
       "descrioProfissionalCurrculoResumido": "Descrição Profissional / Currículo resumido"
     }
@@ -2809,7 +2616,6 @@
       "syncing": "Sincronizando Satélites GPS...",
       "failed": "Falha na Captura",
       "success": "Vestígio Coletado!",
-      "distance": "Distância: {{distance}}m",
       "radarStatus": "Status do Radar",
       "inRange": "ALVO EM ALCANCE",
       "outOfRange": "FORA DE ALCANCE",

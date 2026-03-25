@@ -61,6 +61,7 @@ const ElementRenderer: React.FC<ElementRendererProps> = ({ element, onSelect }) 
 };
 
 export const CertificateCanvas: React.FC = () => {
+    const { t } = useTranslation();
     const {
         elements, selectedIds, setSelectedIds, updateElement,
         backgroundUrl, zoom, saveSnapshot

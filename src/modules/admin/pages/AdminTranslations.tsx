@@ -8,8 +8,8 @@ import { toast } from "react-hot-toast";
 
 const languageOptions = [
     { code: 'en', name: 'English', flag: '????' },
-    { code: 'es', name: 'Español', flag: '????' },
-    { code: 'fr', name: 'Français', flag: '????' },
+    { code: 'es', name: 'EspaÃ±ol', flag: '????' },
+    { code: 'fr', name: 'FranÃ§ais', flag: '????' },
     { code: 'de', name: 'Deutsch', flag: '????' },
     { code: 'it', name: 'Italiano', flag: '????' },
     { code: 'ja', name: '???', flag: '????' },
@@ -44,15 +44,15 @@ export const AdminTranslations: React.FC = () => {
         if (!form.workId || !form.language) return toast.error("Selecione obra e idioma");
         try {
             await api.post("/translations", form);
-            toast.success("Tradução salva!");
+            toast.success("TraduÃ§Ã£o salva!");
             setShowForm(false);
             fetchData();
         } catch (err) { toast.error("Erro"); }
     };
 
     const onDelete = async (id: string) => {
-        if (!confirm("Excluir tradução?")) return;
-        try { await api.delete(`/translations/${id}`); toast.success("Excluída"); fetchData(); } catch { toast.error("Erro"); }
+        if (!confirm("Excluir traduÃ§Ã£o?")) return;
+        try { await api.delete(`/translations/${id}`); toast.success("ExcluÃ­da"); fetchData(); } catch { toast.error("Erro"); }
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
@@ -61,10 +61,10 @@ export const AdminTranslations: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.translations.internacionalizao", `Internacionalização`)}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.translations.traduesDasFichasDasObras", `Traduções das fichas das obras`)}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.translations.internacionalizao", `InternacionalizaÃ§Ã£o`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.translations.traduesDasFichasDasObras", `TraduÃ§Ãµes das fichas das obras`)}</p>
                 </div>
-                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Nova Tradução</Button>
+                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Nova TraduÃ§Ã£o</Button>
             </div>
 
             {/* Stats */}
@@ -72,7 +72,7 @@ export const AdminTranslations: React.FC = () => {
                 <div className="stat-card">
                     <Globe className="mx-auto text-blue-500 mb-2" size={24} />
                     <p className="stat-value">{data?.total || 0}</p>
-                    <p className="stat-label">{t("admin.translations.totalTradues", `Total Traduções`)}</p>
+                    <p className="stat-label">{t("admin.translations.totalTradues", `Total TraduÃ§Ãµes`)}</p>
                 </div>
                 <div className="stat-card">
                     <Languages style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
@@ -89,7 +89,7 @@ export const AdminTranslations: React.FC = () => {
 
             {showForm && (
                 <div className="card" style={{ display: "grid", gap: "1rem" }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.translations.novaTraduo", `Nova Tradução`)}</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.translations.novaTraduo", `Nova TraduÃ§Ã£o`)}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -102,8 +102,8 @@ export const AdminTranslations: React.FC = () => {
                             </select>
                         </div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.ttuloTraduzido", `Título Traduzido`)}</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.descrioTraduzida", `Descrição Traduzida`)}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.ttuloTraduzido", `TÃ­tulo Traduzido`)}</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.translations.descrioTraduzida", `DescriÃ§Ã£o Traduzida`)}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                         <Button onClick={onSave}>Salvar</Button>
@@ -119,7 +119,7 @@ export const AdminTranslations: React.FC = () => {
                         <div key={workId} className="card" style={{ padding: "1.25rem" }}>
                             <h3 className="text-white font-bold text-sm mb-3">{work?.title || workId}</h3>
                             <div className="flex gap-2 flex-wrap">
-                                {(translations as any[]).map((item: any) => {
+                                {Array.isArray(translations) && translations.map((item: any) => {
                                     const lang = languageOptions.find(o => o.code === item.language);
                                     return (
                                         <div key={item.id} className="bg-black/30 rounded-xl px-3 py-2 flex items-center gap-2 group">

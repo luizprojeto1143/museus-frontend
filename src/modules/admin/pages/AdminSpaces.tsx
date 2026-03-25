@@ -115,7 +115,7 @@ export const AdminSpaces: React.FC = () => {
                             <th>Tipo</th>
                             <th>Capacidade</th>
                             <th>Status</th>
-                            <th style={{ textAlign: "right" }}>{t("admin.spaces.aes", `Ações`)}</th>
+                            <th style={{ textAlign: "right" }}>{t("admin.spaces.actions", "Ações")}</th>
                         </tr>
                     </thead>
                     <tbody>
