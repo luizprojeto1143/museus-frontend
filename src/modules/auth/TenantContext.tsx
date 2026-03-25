@@ -25,12 +25,12 @@ interface TenantContextValue {
 const TenantContext = createContext<TenantContextValue | undefined>(undefined);
 
 export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { tenantId } = useAuth();
+    const { tenantId, role } = useAuth();
     const [tenant, setTenant] = useState<TenantSettings | null>(null);
     const [loading, setLoading] = useState(true);
 
     const fetchTenant = async () => {
-        if (!tenantId) {
+        if (!tenantId || role === 'master') {
             setTenant(null);
             setLoading(false);
             return;
