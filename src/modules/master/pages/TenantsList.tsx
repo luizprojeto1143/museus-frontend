@@ -49,7 +49,7 @@ export const TenantsList: React.FC = () => {
   };
 
   const handleCleanDemo = async () => {
-    if (!window.confirm("Isso apagará todos os museus de demonstração (slugs: museu-a, cidade-b, demo, exemplo). Continuar?")) return;
+    if (!window.confirm("Isso apagará todos os museus de demonstração (slugs que contêm 'demo' ou 'teste'). Continuar?")) return;
 
     try {
       await api.delete("/tenants/utils/demo");
