@@ -219,8 +219,8 @@ export function AdminCoupons() {
 
             {/* Create Modal */}
             {isModalOpen && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-zinc-900/40 rounded-xl shadow-xl w-full max-w-md p-6 relative">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+                    <div className="bg-zinc-900 border border-gold/20 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-md p-8 relative">
                         <button
                             onClick={() => setIsModalOpen(false)}
                             className="absolute top-4 right-4 text-gray-400 hover:text-zinc-400"
@@ -241,7 +241,7 @@ export function AdminCoupons() {
                                     value={code}
                                     onChange={(e) => setCode(e.target.value.toUpperCase().replace(/\s/g, ''))}
                                     placeholder="GAMER20"
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono"
+                                    className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold font-mono"
                                     required
                                 />
                             </div>
@@ -252,7 +252,7 @@ export function AdminCoupons() {
                                     <select
                                         value={discountType}
                                         onChange={(e) => setDiscountType(e.target.value as any)}
-                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold"
                                     >
                                         <option value="PERCENTAGE">Porcentagem (%)</option>
                                         <option value="FIXED">Valor Fixo (R$)</option>
@@ -267,7 +267,7 @@ export function AdminCoupons() {
                                         value={discountValue}
                                         onChange={(e) => setDiscountValue(e.target.value)}
                                         placeholder={discountType === 'PERCENTAGE' ? "20" : "15.00"}
-                                        className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                        className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold"
                                         required
                                     />
                                 </div>
@@ -282,7 +282,7 @@ export function AdminCoupons() {
                                     step="1"
                                     onChange={(e) => setXpCost(e.target.value)}
                                     placeholder={t("admin.coupons.ex500VazioGrtis", `Ex: 500 (Vazio = Grátis)`)}
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold"
                                 />
                                 <p className="text-xs text-zinc-400 mt-1">{t("admin.coupons.sePreenchidoOVisitantePoderComprarEsteCu", `Se preenchido, o visitante poderá comprar este cupom usando seu saldo de XP ganho nas interações (ex: Caça ao Tesouro).`)}</p>
                             </div>
@@ -294,22 +294,22 @@ export function AdminCoupons() {
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     placeholder="Desconto para quem fechou o roteiro secreto"
-                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold"
                                 />
                             </div>
 
-                            <div className="pt-4 flex justify-end space-x-3 border-t">
+                            <div className="pt-6 flex justify-end space-x-3 border-t border-white/10">
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-zinc-300 hover:text-white rounded-lg"
+                                    className="px-6 py-2.5 text-zinc-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="px-4 py-2 bg-gold-dark text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                                    className="px-6 py-2.5 bg-gradient-to-r from-gold to-gold-dark text-black font-bold rounded-xl hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-gold/20"
                                 >
                                     {isSubmitting ? 'Salvando...' : 'Salvar Cupom'}
                                 </button>
