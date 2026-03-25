@@ -129,14 +129,14 @@ export const TenantsList: React.FC = () => {
                     </span>
                   </td>
                   <td>{tenant.createdAt}</td>
-                  <td style={{ textAlign: "right" }}>
-                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+                  <td className="text-right whitespace-nowrap">
+                    <div className="flex justify-end gap-2 pr-4">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => navigate(`/master/tenants/${tenant.id}`)}
                         title="Editar"
-                        className="w-10 h-10 p-0"
+                        className="w-10 h-10 p-0 hover:bg-white/10"
                       >
                         <Edit size={16} />
                       </Button>
