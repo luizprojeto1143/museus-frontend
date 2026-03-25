@@ -18,6 +18,7 @@ interface Coupon {
 }
 
 export function AdminCoupons() {
+    const { t } = useTranslation();
     const [coupons, setCoupons] = useState<Coupon[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,7 +100,6 @@ export function AdminCoupons() {
     };
 
     const resetForm = () => {
-  const { t } = useTranslation();
         setCode('');
         setDiscountType('PERCENTAGE');
         setDiscountValue('');
@@ -117,9 +117,7 @@ export function AdminCoupons() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-white">Cupons e Recompensas</h1>
-                    <p className="text-zinc-300 mt-1">{t("admin.coupons.gerencieCdigosDeDescontoEDefinaOCustoEmX", `
-                        Gerencie códigos de desconto e defina o custo em XP para visitantes resgatarem.
-                    `)}</p>
+                    <p className="text-zinc-300 mt-1">{t("admin.coupons.gerencieCdigosDeDescontoEDefinaOCustoEmX", `Gerencie códigos de desconto e defina o custo em XP para visitantes resgatarem.`)}</p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -286,9 +284,7 @@ export function AdminCoupons() {
                                     placeholder={t("admin.coupons.ex500VazioGrtis", `Ex: 500 (Vazio = Grátis)`)}
                                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 />
-                                <p className="text-xs text-zinc-400 mt-1">{t("admin.coupons.sePreenchidoOVisitantePoderComprarEsteCu", `
-                                    Se preenchido, o visitante poderá comprar este cupom usando seu saldo de XP ganho nas interações (ex: Caça ao Tesouro).
-                                `)}</p>
+                                <p className="text-xs text-zinc-400 mt-1">{t("admin.coupons.sePreenchidoOVisitantePoderComprarEsteCu", `Se preenchido, o visitante poderá comprar este cupom usando seu saldo de XP ganho nas interações (ex: Caça ao Tesouro).`)}</p>
                             </div>
 
                             <div>
@@ -306,7 +302,7 @@ export function AdminCoupons() {
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-4 py-2 text-zinc-300 hover: rounded-lg"
+                                    className="px-4 py-2 text-zinc-300 hover:text-white rounded-lg"
                                 >
                                     Cancelar
                                 </button>
