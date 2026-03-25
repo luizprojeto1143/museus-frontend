@@ -40,6 +40,7 @@ export const TenantForm: React.FC = () => {
   const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA">("MUSEUM");
   const [parentId, setParentId] = useState<string | null>(null);
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
+  const [availablePlans, setAvailablePlans] = useState<any[]>([]);
 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminName, setAdminName] = useState("");
@@ -113,7 +114,7 @@ export const TenantForm: React.FC = () => {
     }
   }, [isEdit, id]);
 
-  // Load cities for parent selector
+  // Load cities for parent selector and plans for subscription
   useEffect(() => {
     // Use authenticated endpoint to ensure we see all tenants (avoiding rate limits or public-only filters)
     api.get("/tenants")
@@ -125,6 +126,13 @@ export const TenantForm: React.FC = () => {
           item.isCityMode === true
         );
         setCities(cityTenants);
+      })
+      .catch(console.error);
+
+    api.get("/plans")
+      .then(res => {
+        const data = Array.isArray(res.data) ? res.data : [];
+        setAvailablePlans(data);
       })
       .catch(console.error);
   }, []);
@@ -547,15 +555,32 @@ export const TenantForm: React.FC = () => {
                         onChange={e => {
                           const newPlan = e.target.value;
                           setPlan(newPlan);
-                          if (newPlan === "START") setMaxWorks(50);
+                          
+                          // Auto set maxWorks based on plan
+                          const selectedObj = availablePlans.find(p => p.name === newPlan || p.id === newPlan);
+                          if (selectedObj && selectedObj.features && selectedObj.features.maxWorks) {
+                            setMaxWorks(selectedObj.features.maxWorks);
+                          } else if (newPlan === "START") setMaxWorks(50);
                           else if (newPlan === "PRO") setMaxWorks(200);
                           else if (newPlan === "ENTERPRISE") setMaxWorks(500);
                         }}
                       >
-                        <option value="START">{t("master.tenant.startBsico", `Start (Básico)`)}</option>
-                        <option value="PRO">Professional</option>
-                        <option value="ENTERPRISE">Enterprise</option>
-                        <option value="CUSTOM">Customizado</option>
+                        {availablePlans.length > 0 ? (
+                          <>
+                            <option value="">Selecione um plano...</option>
+                            {availablePlans.map(p => (
+                              <option key={p.id} value={p.name}>{p.name}</option>
+                            ))}
+                            <option value="CUSTOM">Customizado</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="START">{t("master.tenant.startBsico", `Start (Básico)`)}</option>
+                            <option value="PRO">Professional</option>
+                            <option value="ENTERPRISE">Enterprise</option>
+                            <option value="CUSTOM">Customizado</option>
+                          </>
+                        )}
                       </Select>
 
                       <div className="master-grid-2">
