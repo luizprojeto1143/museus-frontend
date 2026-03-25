@@ -114,7 +114,7 @@ export const TenantsList: React.FC = () => {
                 <th>{t("master.tenants.table.name", "Cidade / Órgão")}</th>
                 <th>{t("master.tenants.table.slug", "Identificador (Slug)")}</th>
                 <th>{t("master.tenants.table.createdAt")}</th>
-                <th style={{ textAlign: "right" }}>{t("master.tenants.table.actions")}</th>
+                <th className="text-right w-[120px] pr-8">{t("master.tenants.table.actions", "Ações")}</th>
               </tr>
             </thead>
             <tbody>
@@ -129,26 +129,22 @@ export const TenantsList: React.FC = () => {
                     </span>
                   </td>
                   <td>{tenant.createdAt}</td>
-                  <td className="text-right whitespace-nowrap">
-                    <div className="flex justify-end gap-2 pr-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
+                  <td className="text-right whitespace-nowrap align-middle min-w-[120px]">
+                    <div className="flex items-center justify-end gap-3 pr-4">
+                      <button
                         onClick={() => navigate(`/master/tenants/${tenant.id}`)}
                         title="Editar"
-                        className="w-10 h-10 p-0 hover:bg-white/10"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white transition-colors"
                       >
                         <Edit size={16} />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
+                      </button>
+                      <button
                         onClick={() => handleDelete(tenant.id)}
                         title="Excluir"
-                        className="w-10 h-10 p-0 border-red-500/50 text-red-500 hover:bg-red-500/10"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500 hover:text-white transition-colors"
                       >
                         <Trash2 size={16} />
-                      </Button>
+                      </button>
                     </div>
                   </td>
                 </tr>
