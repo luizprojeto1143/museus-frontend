@@ -30,6 +30,7 @@ export const CertificateList: React.FC = () => {
     };
 
     const handleVerify = (code: string) => {
+        if (!code) return;
         window.open(`/verify/${code}`, "_blank");
     };
 

@@ -534,7 +534,8 @@
       "aponteACmeraParaAObraEDeixeAIaIdentifica": "Aponte a câmera para a obra e deixe a IA identificar."
     },
     "scannerpage": {
-      "procurandoCdigo": "Procurando código..."
+      "procurandoCdigo": "Procurando código...",
+      "scanError": "Erro ao escanear. Tente novamente."
     },
     "selectmuseum": {
       "localizaoAtiva": "Localização Ativa",
@@ -676,7 +677,24 @@
       "cardInstagram": "Card Instagram",
       "traduEs": "Traduções",
       "gestOMunicipal": "Gestão Municipal",
-      "gestOInstitucional": "Gestão Institucional"
+      "gestOInstitucional": "Gestão Institucional",
+      "vestigeMode": "Modo Vestígio",
+      "active": "Ativado",
+      "inactive": "Desativado",
+      "gpsLat": "Latitude GPS",
+      "gpsLng": "Longitude GPS",
+      "radius": "Raio de Captura (metros)",
+      "expiry": "Data de Expiração",
+      "vestigeImageUrl": "URL da Imagem do Vestígio (Opcional)",
+      "expireAction": "Expirar Agora",
+      "confirmExpire": "Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas.",
+      "certificatecanvas": {
+        "reaDoCertificado": "Área do Certificado"
+      },
+      "errors": {
+        "save": "Erro ao salvar. Verifique os dados.",
+        "delete": "Erro ao excluir. Tente novamente."
+      }
     },
     "scanner": {
       "title": "Treinamento do Scanner IA",
@@ -713,7 +731,18 @@
     "museums": {
       "title": "Visão Geral do Museu"
     },
-    "museumSettings": {
+    "spaces": {
+      "title": "Espaços",
+      "subtitle": "Gerencie as áreas e setores do museu",
+      "new": "Novo Espaço",
+      "edit": "Editar Espaço",
+      "table": {
+        "name": "Nome",
+        "description": "Descrição",
+        "actions": "Ações"
+      }
+    },
+    "museumsettings": {
       "title": "Configurações do Museu",
       "subtitle": "Personalize a aparência e informações do seu museu",
       "institutionalData": "Dados Institucionais",
@@ -726,37 +755,18 @@
         "email": "E-mail de Contato",
         "website": "Site Oficial"
       },
-      "placeholders": {
-        "mission": "Descreva a missão e história do museu...",
-        "address": "Rua, Número, Bairro, Cidade - UF"
-      },
-      "images": {
-        "title": "Imagens e Identidade Visual",
-        "logo": "Logo do Museu",
-        "cover": "Imagem de Capa (App)",
-        "appIcon": "Ícone do App",
-        "banner": "Banner Promocional",
-        "clickToUpload": "Clique para enviar imagem"
-      },
-      "map": {
-        "title": "Configuração de Mapa",
-        "floorPlan": "Planta Baixa (Indoor)",
-        "coordinates": "Coordenadas (Outdoor)"
-      },
-      "colors": {
-        "title": "Cores e Tema",
-        "primary": "Cor Primária",
-        "secondary": "Cor Secundária",
-        "theme": "Tema Padrão",
-        "light": "Claro",
-        "dark": "Escuro",
-        "historicalFont": "Usar fonte histórica (Serif)"
-      },
-      "preview": {
-        "title": "Visualização",
-        "text": "Este é um exemplo de como o texto ficará no aplicativo com as cores selecionadas.",
-        "button": "Botão Exemplo"
-      },
+      "exMuseuHistrico": "Ex: Museu Histórico",
+      "missoDescrio": "Missão / Descrição",
+      "endereo": "Endereço",
+      "horrio": "Horário",
+      "boasvindasMultimdia": "Boas-vindas Multimídia",
+      "udioDeNarrao": "Áudio de Narração",
+      "enviarUdioMp3": "Enviar Áudio (MP3)",
+      "udioConfigurado": "Áudio Configurado",
+      "vdeoDeApresentaoUrl": "Vídeo de Apresentação (URL)",
+      "plantasELocalizao": "Plantas e Localização",
+      "fazerUploadDeUdioDeBoasvindas": "Fazer upload de áudio de boas-vindas",
+      "playerDeUdioDeBoasvindas": "Player de áudio de boas-vindas",
       "saving": "Salvando...",
       "save": "Salvar Configurações",
       "success": "Configurações salvas com sucesso!",
@@ -1544,40 +1554,7 @@
       "suaPosio": "Sua Posição",
       "nenhumRankingParaEsteMs": "Nenhum ranking para este mês"
     },
-    "museumsettings": {
-      "configuraesDoMuseu": "Configurações do Museu",
-      "missoDescrio": "Missão / Descrição",
-      "endereo": "Endereço",
-      "horrio": "Horário",
-      "boasvindasMultimdia": "Boas-vindas Multimídia",
-      "udioDeNarrao": "Áudio de Narração",
-      "enviarUdioMp3": "Enviar Áudio (MP3)",
-      "udioConfigurado": "Áudio Configurado",
-      "vdeoDeApresentaoUrl": "Vídeo de Apresentação (URL)",
-      "plantasELocalizao": "Plantas e Localização",
-      "corPrimriaDestaquesEBotes": "Cor Primária (Destaques e Botões)",
-      "corSecundriaBordasEDetalhes": "Cor Secundária (Bordas e Detalhes)",
-      "fonteHistrica": "Fonte Histórica",
-      "visualizaoEmTempoReal": "Visualização em Tempo Real",
-      "configuraesFinanceiras": "Configurações Financeiras",
-      "vocEncontraEsteIdNoMenuConfigu": "Você encontra este ID no menu \"Configurações &gt; Webhooks &gt; Token de Autenticação\" ou entrando em contato com o suporte Asaas.",
-      "comissoPlataforma": "Comissão Plataforma",
-      "retidosNaTransao": "Retidos na transação",
-      "ateno": "Atenção:",
-      "certifiqueseDeQueOWalletIdEstC": "Certifique-se de que o Wallet ID está correto. Transferências para IDs incorretos não podem ser estornadas automaticamente.",
-      "simulaoCompleta": "Simulação Completa",
-      "alteraesNoSalvas": "Alterações não salvas",
-      "SalvarConfiguraes": "}\n            >\n              Salvar Configurações",
-      "exMuseuHistrico": "Ex: Museu Histórico",
-      "nomeExTrreo": "Nome (Ex: Térreo)",
-      "fazerUploadDeUdioDeBoasvindas": "Fazer upload de áudio de boas-vindas",
-      "playerDeUdioDeBoasvindas": "Player de áudio de boas-vindas",
-      "alternarFonteHistrica": "Alternar fonte histórica",
-      "salvarConfiguraes": "Salvar Configurações",
-      "vocEncontraEsteIdNoMenuConfiguraesGtWebh": "Você encontra este ID no menu \"Configurações &gt; Webhooks &gt; Token de Autenticação\" ou entrando em contato com o suporte Asaas.",
-      "certifiqueseDeQueOWalletIdEstCorretoTran": "Certifique-se de que o Wallet ID está correto. Transferências para IDs incorretos não podem ser estornadas automaticamente.",
-      "95ParaVoc": "95% para você"
-    },
+
     "newsletter": {
       "osInscritosNaNewsletterAparece": "Os inscritos na newsletter aparecerão aqui.",
       "dataDeInscrio": "Data de Inscrição",
@@ -1750,11 +1727,7 @@
       "exSalaDeEnsaio1AuditrioPrincip": "Ex: Sala de Ensaio 1, Auditório Principal...",
       "descrevaOEspaoDimensesFinalida": "Descreva o espaço, dimensões, finalidade..."
     },
-    "spaces": {
-      "navigateadminespacosnovoVarian": "navigate(\"/admin/espacos/novo\")} variant=\"outline\">\r\n                        Adicionar Espaço",
-      "aes": "Ações",
-      "adicionarEspao": "Adicionar Espaço"
-    },
+
     "sponsorships": {
       "patrocnios": "Patrocínios",
       "gestoDePatrocniosEApoiosAObras": "Gestão de patrocínios e apoios a obras específicas",
@@ -2852,17 +2825,18 @@
       "relicDescription": "Vestígios capturados tornam-se relíquias permanentes quando expiram.",
       "totalRelics": "Total de Relíquias"
     },
-    "admin": {
-      "vestigeMode": "Modo Vestígio",
-      "active": "Ativado",
-      "inactive": "Desativado",
-      "gpsLat": "Latitude GPS",
-      "gpsLng": "Longitude GPS",
-      "radius": "Raio de Captura (metros)",
-      "expiry": "Data de Expiração",
-      "vestigeImageUrl": "URL da Imagem do Vestígio (Opcional)",
-      "expireAction": "Expirar Agora",
-      "confirmExpire": "Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas."
+    "public": {
+      "certificatevalidator": {
+        "title": "Verificação de Certificado",
+        "subtitle": "Valide a autenticidade de certificados emitidos",
+        "placeholder": "Digite o código do certificado...",
+        "verify": "Verificar",
+        "valid": "Certificado Válido",
+        "invalid": "Certificado Inválido",
+        "issuedTo": "Emitido para",
+        "issueDate": "Data de Emissão",
+        "course": "Evento/Atividade"
+      }
     }
   }
 }

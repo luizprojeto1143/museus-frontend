@@ -33,8 +33,8 @@ interface MuseumSettings {
 
   // 2.3 Mapa
   mapImageUrl: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | null;
+  longitude: number | null;
 
   // 2.2 Cores e Tema
   primaryColor: string;
@@ -129,9 +129,9 @@ export const AdminMuseumSettings: React.FC = () => {
     setSaving(true);
     try {
       await api.put(`/tenants/${tenantId}/settings`, settings);
-      alert(t("admin.museumSettings.success"));
+      alert(t("admin.museumsettings.success"));
     } catch {
-      alert(t("admin.museumSettings.error"));
+      alert(t("admin.museumsettings.error"));
     } finally {
       setSaving(false);
     }
