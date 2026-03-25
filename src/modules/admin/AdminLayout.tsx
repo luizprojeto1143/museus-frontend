@@ -48,7 +48,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     if (tenantId) {
-      api.get(`/tenants/${tenantId}`)
+      api.get(`/tenants/${tenantId}/settings`)
         .then(res => setFeatures(res.data))
         .catch(err => console.error("Error loading tenant features", err));
     }

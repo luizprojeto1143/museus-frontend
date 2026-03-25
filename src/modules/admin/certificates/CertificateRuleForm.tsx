@@ -3,10 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { Button } from '../../../components/ui/Button';
+import { useAuth } from '../../auth/AuthContext';
 
 export const CertificateRuleForm: React.FC = () => {
   const { t } = useTranslation();
     const navigate = useNavigate();
+    const { tenantId } = useAuth();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [templates, setTemplates] = useState<any[]>([]);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,7 +25,7 @@ export const CertificateRuleForm: React.FC = () => {
         try {
             const [tplRes, trailRes] = await Promise.all([
                 api.get('/certificate-templates'),
-                api.get('/admin/trails') // Assuming generic trail list endpoint exists
+                api.get('/trails', { params: { tenantId } })
             ]);
             setTemplates(tplRes.data);
             setTrails(trailRes.data);
@@ -118,7 +120,7 @@ export const CertificateRuleForm: React.FC = () => {
                     >
                         <option value="">Selecione um modelo...</option>
                         {templates.map(item => (
-                            <option key={trail.id} value={trail.id}>{item.name}</option>
+                            <option key={item.id} value={item.id}>{item.name}</option>
                         ))}
                     </select>
                 </div>
