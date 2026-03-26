@@ -74,19 +74,22 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
     pois,
     initialPoiId
 }) => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const [mode, setMode] = useState<MapMode>("outdoor");
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
     const [aspectRatio, setAspectRatio] = useState<number>(1);
     const [destinationId, setDestinationId] = useState<string | null>(null);
 
     useEffect(() => {
+        if (indoorImageUrl && mode === "outdoor") {
+            setMode("indoor");
+        }
+    }, [indoorImageUrl]);
+
+    useEffect(() => {
         if (initialPoiId) {
             const poi = pois.find(p => p.id === initialPoiId);
             if (poi) {
-                // If the POI has coordinates that look like indoor ( Simple CRS )
-                // but actually we should probably check if it has room/floor? 
-                // For now, let's assume if it's referenced from Detail, we show the floor plan if available
                 if (indoorImageUrl) {
                     setMode("indoor");
                 }

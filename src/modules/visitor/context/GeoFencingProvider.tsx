@@ -173,7 +173,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     ? worksRes.data
                     : (worksRes.data?.data || worksRes.data?.works || []);
 
-                worksArray.forEach((w: { id: string; title: string; artist?: string; latitude?: number; longitude?: number; lat?: number; lng?: number; vestigeActive?: boolean; captureRadiusM?: number; imageUrl?: string | null }) => {
+                worksArray.forEach((w: any) => {
                     // Support both legacy (latitude/longitude) and new (lat/lng) fields
                     const finalLat = w.lat ?? w.latitude;
                     const finalLng = w.lng ?? w.longitude;
@@ -186,7 +186,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                             subtitle: w.artist,
                             latitude: finalLat,
                             longitude: finalLng,
-                            radius: w.captureRadiusM || (w.vestigeActive ? 20 : 10), 
+                            radius: w.captureRadiusM || (w.room || w.floor || w.equipamentoId ? 3 : (w.vestigeActive ? 20 : 10)), 
                             imageUrl: w.imageUrl || undefined,
                             url: w.vestigeActive ? `/vestigios/capturar/${w.id}` : `/obras/${w.id}`
                         });

@@ -40,7 +40,7 @@ export const MapView: React.FC = () => {
 
       setMapSettings({
         outdoorCenter: [s.lat || s.latitude || -20.385574, s.lng || s.longitude || -43.503578],
-        indoorImageUrl: s.fotoMapaUrl || s.mapImageUrl,
+        indoorImageUrl: s.plantaUrl || s.fotoMapaUrl || s.mapImageUrl,
         nome: s.nome || s.name
       });
 
