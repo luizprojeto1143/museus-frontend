@@ -57,7 +57,7 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 0.75rem;
 }
 
 .logout-btn-minimal {
@@ -394,11 +394,11 @@
     }
 
     .app-title {
-        font-size: 1rem;
+        font-size: 0.9rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 150px;
+        max-width: 120px;
     }
 }
 

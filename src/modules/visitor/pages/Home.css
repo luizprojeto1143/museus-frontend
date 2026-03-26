@@ -133,6 +133,11 @@
   gap: 120px;
 }
 
+.gallery-item-link {
+  text-decoration: none;
+  display: block;
+}
+
 .gallery-item {
   display: grid;
   grid-template-columns: 1fr 1fr;

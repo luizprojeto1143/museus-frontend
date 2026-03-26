@@ -25,9 +25,10 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
                 right: absolute ? "1rem" : undefined,
                 zIndex: 10,
                 display: "flex",
-                gap: "0.5rem",
-                flexWrap: "wrap",
+                gap: "0.4rem",
+                flexWrap: "nowrap",
                 justifyContent: "center",
+                alignItems: "center",
                 ...style
             }}
         >

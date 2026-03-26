@@ -203,7 +203,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             <span className="app-title">{settings?.name || "Cultura Viva"}</span>
           </Link>
           <div className="header-actions">
-             <LanguageSwitcher />
+             <LanguageSwitcher absolute={false} />
              <button onClick={logout} className="logout-btn-minimal" title="Sair">
                <span className="nav-icon">🚪</span>
              </button>

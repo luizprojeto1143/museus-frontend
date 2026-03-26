@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
-import { useTerminology } from "../../../hooks/useTerminology";
 import { useIsCityMode } from "../../auth/TenantContext";
-import { Camera, Map, Compass, ArrowRight } from "lucide-react";
-import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import "./Home.css";
 
@@ -20,21 +17,12 @@ interface FeaturedWork {
   category?: { name: string } | string;
 }
 
-interface FeaturedTrail {
-  id: string;
-  title: string;
-  description?: string;
-}
 
 export const Home: React.FC = () => {
-  const { t } = useTranslation();
-  const { name, tenantId, equipamentoId, role } = useAuth();
+  const { tenantId, equipamentoId, role } = useAuth();
   const navigate = useNavigate();
-  const term = useTerminology();
   const isCityMode = useIsCityMode();
   const [featuredWorks, setFeaturedWorks] = useState<FeaturedWork[]>([]);
-  const [featuredTrails, setFeaturedTrails] = useState<FeaturedTrail[]>([]);
-  const [welcomeAudioUrl, setWelcomeAudioUrl] = useState<string | undefined>(undefined);
   const [museumName, setMuseumName] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
@@ -47,16 +35,14 @@ export const Home: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [worksRes, trailsRes, equipRes] = await Promise.all([
+        const [worksRes, , equipRes] = await Promise.all([
           api.get(`/works?tenantId=${tenantId}&equipamentoId=${equipamentoId}&limit=3`),
           api.get(`/trails?tenantId=${tenantId}&equipamentoId=${equipamentoId}&limit=2`),
           api.get(`/equipamentos/public/${equipamentoId}`).catch(() => ({ data: {} }))
         ]);
         setFeaturedWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
-        setFeaturedTrails(Array.isArray(trailsRes.data) ? trailsRes.data : (trailsRes.data.data || trailsRes.data || []));
 
         if (equipRes.data) {
-          setWelcomeAudioUrl(equipRes.data.welcomeAudioUrl ? getFullUrl(equipRes.data.welcomeAudioUrl) : undefined);
           setMuseumName(equipRes.data.nome || "");
         }
         
@@ -87,11 +73,11 @@ export const Home: React.FC = () => {
   };
 
   const toRoman = (num: number) => {
-    const map = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
+    const map: Record<string, number> = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
     let res = '';
     for (const key in map) {
-      const repeat = Math.floor(num / (map as any)[key]);
-      num -= repeat * (map as any)[key];
+      const repeat = Math.floor(num / map[key]);
+      num -= repeat * map[key];
       res += key.repeat(repeat);
     }
     return res;
@@ -106,9 +92,11 @@ export const Home: React.FC = () => {
     >
       {/* ═══ HERO SECTION ═══════════════ */}
       <motion.section variants={itemVariants} className="home-hero-premium">
-        <span className="hero-badge-premium">
-          Secretaria Municipal de Cultura
-        </span>
+        {isCityMode && (
+          <span className="hero-badge-premium">
+            Secretaria Municipal de Cultura
+          </span>
+        )}
         <h1 className="hero-title-premium">
           {museumName || "Cultura Viva"}
         </h1>
@@ -192,22 +180,24 @@ export const Home: React.FC = () => {
         ) : (
           <div className="gallery-grid">
             {featuredWorks.map((work, idx) => (
-              <article key={work.id} className="gallery-item">
-                <div className="gallery-visual">
-                  <div className="gallery-number">{toRoman(idx + 1)}</div>
-                  <img src={getFullUrl(work.imageUrl || '')} alt={work.title} className="gallery-img" />
-                </div>
-                <div className="gallery-info">
-                  <span className="gallery-artist">{work.artist || 'Artista Desconhecido'}</span>
-                  <h3 className="gallery-title">{work.title}</h3>
-                  <p className="gallery-desc">
-                    Uma peça fundamental do nosso acervo, representando a riqueza artística e o legado histórico preservado neste equipamento.
-                  </p>
-                  <Link to={`/obras/${work.id}`} className="gallery-cta">
-                    Explorar Detalhes <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </article>
+              <Link key={work.id} to={`/obras/${work.id}`} className="gallery-item-link">
+                <article className="gallery-item">
+                  <div className="gallery-visual">
+                    <div className="gallery-number">{toRoman(idx + 1)}</div>
+                    <img src={getFullUrl(work.imageUrl || '')} alt={work.title} className="gallery-img" />
+                  </div>
+                  <div className="gallery-info">
+                    <span className="gallery-artist">{work.artist || 'Artista Desconhecido'}</span>
+                    <h3 className="gallery-title">{work.title}</h3>
+                    <p className="gallery-desc">
+                      Uma peça fundamental do nosso acervo, representando a riqueza artística e o legado histórico preservado neste equipamento.
+                    </p>
+                    <span className="gallery-cta">
+                      Explorar Detalhes <ArrowRight size={14} />
+                    </span>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         )}
