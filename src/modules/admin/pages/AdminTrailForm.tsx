@@ -84,6 +84,7 @@ export const AdminTrailForm: React.FC = () => {
   const [workToAdd, setWorkToAdd] = useState("");
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
   const [equipamentoId, setEquipamentoId] = useState("");
 
@@ -239,6 +240,33 @@ export const AdminTrailForm: React.FC = () => {
     }
   };
 
+  const handlePdfExtract = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "trail");
+
+      try {
+        setIsExtracting(true);
+        const res = await api.post("/ai/extract-pdf", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        const data = res.data;
+        if (data.title) setName(data.title);
+        if (data.description) setDescription(data.description);
+
+        addToast("Informações extraídas do PDF com sucesso!", "success");
+      } catch (err) {
+        console.error("Erro ao extrair PDF:", err);
+        addToast("Houve um erro ao extrair informações do PDF.", "error");
+      } finally {
+        setIsExtracting(false);
+      }
+    }
+  };
+
   // Animation Variants
   const variants = {
     enter: (direction: number) => ({
@@ -327,6 +355,30 @@ export const AdminTrailForm: React.FC = () => {
             {/* STEP 0: DADOS GERAIS */}
             {currentStep === 0 && (
               <div className="flex-col gap-6">
+                <div style={{ padding: '1rem', background: 'rgba(96, 165, 250, 0.1)', borderRadius: '1rem', border: '1px solid rgba(96, 165, 250, 0.2)', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold', color: '#60a5fa' }}>Preencher automaticamente?</h4>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Suba um arquivo PDF com os dados da {term.trail.toLowerCase()} e faremos o resto.</p>
+                    </div>
+                    <label className={`btn-outline ${isExtracting ? 'opacity-50 cursor-not-allowed' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', border: '1px solid #60a5fa', color: '#60a5fa' }}>
+                      {isExtracting ? (
+                        <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Upload size={18} />
+                      )}
+                      {isExtracting ? "Extraindo..." : "Subir PDF"}
+                      <input 
+                        type="file" 
+                        accept=".pdf" 
+                        onChange={handlePdfExtract} 
+                        disabled={isExtracting}
+                        style={{ display: 'none' }} 
+                      />
+                    </label>
+                  </div>
+                </div>
+
                 <Input
                   label={t("admin.trailForm.labels.name")}
                   value={name}

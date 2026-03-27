@@ -57,6 +57,7 @@ export const AdminWorkForm: React.FC = () => {
   // Data State
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
   const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
 
@@ -261,6 +262,41 @@ export const AdminWorkForm: React.FC = () => {
     }
   };
 
+  const handlePdfExtract = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "work");
+
+      try {
+        setIsExtracting(true);
+        const res = await api.post("/ai/extract-pdf", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        const data = res.data;
+        if (data.title) setTitle(data.title);
+        if (data.artist) setArtist(data.artist);
+        if (data.year) setYear(data.year);
+        if (data.description) setDescription(data.description);
+        if (data.technique) setTechnique(data.technique);
+        if (data.period) setPeriod(data.period);
+        if (data.medium) setWorkMedium(data.medium);
+        if (data.dimensions) setDimensions(data.dimensions);
+        if (data.room) setRoom(data.room);
+        if (data.floor) setFloor(data.floor);
+
+        addToast("Informações extraídas do PDF com sucesso!", "success");
+      } catch (err) {
+        console.error("Erro ao extrair PDF:", err);
+        addToast("Houve um erro ao extrair informações do PDF.", "error");
+      } finally {
+        setIsExtracting(false);
+      }
+    }
+  };
+
   const validateStep = (stepIndex: number) => {
     switch (stepIndex) {
       case 0: // Basic Info
@@ -443,6 +479,30 @@ export const AdminWorkForm: React.FC = () => {
             {/* STEP 0: DADOS BÁSICOS */}
             {currentStep === 0 && (
               <div className="flex-col gap-6">
+                <div style={{ padding: '1rem', background: 'rgba(96, 165, 250, 0.1)', borderRadius: '1rem', border: '1px solid rgba(96, 165, 250, 0.2)', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold', color: '#60a5fa' }}>Preencher automaticamente?</h4>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Suba um arquivo PDF com os dados da {term.work.toLowerCase()} e faremos o resto.</p>
+                    </div>
+                    <label className={`btn-outline ${isExtracting ? 'opacity-50 cursor-not-allowed' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', border: '1px solid #60a5fa', color: '#60a5fa' }}>
+                      {isExtracting ? (
+                        <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <Upload size={18} />
+                      )}
+                      {isExtracting ? "Extraindo..." : "Subir PDF"}
+                      <input 
+                        type="file" 
+                        accept=".pdf" 
+                        onChange={handlePdfExtract} 
+                        disabled={isExtracting}
+                        style={{ display: 'none' }} 
+                      />
+                    </label>
+                  </div>
+                </div>
+
                 <div className="admin-grid-2">
                   <Input
                     label={isCity ? "Nome do Ponto/Monumento (PT-BR)" : isCultural ? "Título da Atividade (PT-BR)" : "Título da Obra (PT-BR)"}
