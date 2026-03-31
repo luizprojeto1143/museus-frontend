@@ -59,7 +59,7 @@ export const AdminWorkForm: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
-  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
+  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string; lat?: number; lng?: number }>>([]);
 
   // Form Fields
   const [code, setCode] = useState("");
@@ -89,6 +89,8 @@ export const AdminWorkForm: React.FC = () => {
   const [vestigeActive, setVestigeActive] = useState(false);
   const [vestigeLat, setVestigeLat] = useState<number | string>("");
   const [vestigeLng, setVestigeLng] = useState<number | string>("");
+  const [latitude, setLatitude] = useState<number | string>("");
+  const [longitude, setLongitude] = useState<number | string>("");
   const [captureRadius, setCaptureRadius] = useState(15);
   const [vestigeType, setVestigeType] = useState("PIONEER");
   const [vestigeExpiresAt, setVestigeExpiresAt] = useState("");
@@ -146,6 +148,8 @@ export const AdminWorkForm: React.FC = () => {
         if (data.vestigeActive) setVestigeActive(true);
         setVestigeLat(data.lat || "");
         setVestigeLng(data.lng || "");
+        setLatitude(data.latitude || "");
+        setLongitude(data.longitude || "");
         setCaptureRadius(data.captureRadiusM || 15);
         setVestigeType(data.vestigeType || "PIONEER");
         if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
@@ -369,6 +373,8 @@ export const AdminWorkForm: React.FC = () => {
     payload.vestigeActive = vestigeActive;
     payload.lat = vestigeLat ? Number(vestigeLat) : undefined;
     payload.lng = vestigeLng ? Number(vestigeLng) : undefined;
+    payload.latitude = latitude || (vestigeLat ? Number(vestigeLat) : undefined);
+    payload.longitude = longitude || (vestigeLng ? Number(vestigeLng) : undefined);
     payload.captureRadiusM = Number(captureRadius);
     payload.vestigeType = vestigeType;
     payload.vestigeExpiresAt = vestigeExpiresAt || undefined;
@@ -545,7 +551,20 @@ export const AdminWorkForm: React.FC = () => {
                   <Select
                     label="Equipamento Responsável"
                     value={equipamentoId}
-                    onChange={e => setEquipamentoId(e.target.value)}
+                    onChange={e => {
+                      const newId = e.target.value;
+                      setEquipamentoId(newId);
+                      
+                      // Auto-pull coordinates if they are empty
+                      const eq = equipamentos.find(item => item.id === newId);
+                      if (eq && eq.lat && eq.lng && !vestigeLat && !vestigeLng) {
+                        setVestigeLat(eq.lat);
+                        setVestigeLng(eq.lng);
+                        setLatitude(eq.lat);
+                        setLongitude(eq.lng);
+                        addToast(`Coordenadas puxadas do equipamento: ${eq.nome}`, "info");
+                      }
+                    }}
                     required
                   >
                     <option value="">Selecione o equipamento...</option>
@@ -813,7 +832,10 @@ export const AdminWorkForm: React.FC = () => {
                             type="number"
                             step="any"
                             value={vestigeLat}
-                            onChange={e => setVestigeLat(e.target.value)}
+                            onChange={e => {
+                              setVestigeLat(e.target.value);
+                              setLatitude(e.target.value);
+                            }}
                             placeholder="-25.4297"
                           />
                           <Input 
@@ -821,7 +843,10 @@ export const AdminWorkForm: React.FC = () => {
                             type="number"
                             step="any"
                             value={vestigeLng}
-                            onChange={e => setVestigeLng(e.target.value)}
+                            onChange={e => {
+                              setVestigeLng(e.target.value);
+                              setLongitude(e.target.value);
+                            }}
                             placeholder="-49.2719"
                           />
                         </div>
