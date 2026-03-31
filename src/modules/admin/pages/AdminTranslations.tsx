@@ -120,6 +120,7 @@ export const AdminTranslations: React.FC = () => {
                             <h3 className="text-white font-bold text-sm mb-3">{work?.title || workId}</h3>
                             <div className="flex gap-2 flex-wrap">
                                 {Array.isArray(translations) && translations.map((item: any) => {
+                                    if (!item) return null;
                                     const lang = languageOptions.find(o => o.code === item.language);
                                     return (
                                         <div key={item.id} className="bg-black/30 rounded-xl px-3 py-2 flex items-center gap-2 group">

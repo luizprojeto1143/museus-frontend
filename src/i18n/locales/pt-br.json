@@ -672,16 +672,6 @@
       "traduEs": "Traduções",
       "gestOMunicipal": "Gestão Municipal",
       "gestOInstitucional": "Gestão Institucional",
-      "vestigeMode": "Modo Vestígio",
-      "active": "Ativado",
-      "inactive": "Desativado",
-      "gpsLat": "Latitude GPS",
-      "gpsLng": "Longitude GPS",
-      "radius": "Raio de Captura (metros)",
-      "expiry": "Data de Expiração",
-      "vestigeImageUrl": "URL da Imagem do Vestígio (Opcional)",
-      "expireAction": "Expirar Agora",
-      "confirmExpire": "Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas.",
       "certificatecanvas": {
         "reaDoCertificado": "Área do Certificado"
       },
@@ -833,6 +823,7 @@
       "new": "Nova Obra",
       "table": {
         "title": "Título",
+        "code": "Código",
         "artist": "Artista",
         "status": "Status",
         "actions": "Ações"
@@ -2617,6 +2608,19 @@
     }
   },
   "vestige": {
+    "admin": {
+      "vestigeMode": "Modo Vestígio",
+      "active": "Ativado",
+      "inactive": "Desativado",
+      "gpsLat": "Latitude GPS",
+      "gpsLng": "Longitude GPS",
+      "radius": "Raio de Captura (metros)",
+      "expiry": "Data de Expiração",
+      "vestigeImageUrl": "URL da Imagem do Vestígio (Opcional)",
+      "expireAction": "Expirar Agora",
+      "confirmExpire": "Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas.",
+      "vestigeDescription": "Torna este ponto capturável via GPS pelos visitantes"
+    },
     "capture": {
       "title": "Captura de Vestígio",
       "syncing": "Sincronizando Satélites GPS...",

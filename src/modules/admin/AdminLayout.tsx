@@ -155,15 +155,15 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       ]
     },
     {
-      label: t("admin.sidebar.municipalAvanAdo", "Municipal Avançado"),
+      label: t("admin.sidebar.municipalAvanAdo", "Gestão e Preservação"),
       links: [
         { to: "/admin/voluntarios", label: t("admin.sidebar.voluntRios", "Voluntários"), icon: "🙋", show: true },
         { to: "/admin/conservacao", label: t("admin.sidebar.conservaO", "Conservação"), icon: "🔧", show: true },
-        { to: "/admin/metas-ppa", label: t("admin.sidebar.metasPPA", "Metas PPA"), icon: "🎯", show: true },
+        { to: "/admin/metas-ppa", label: t("admin.sidebar.metasPPA", "Indicadores de Gestão"), icon: "🎯", show: true },
         { to: "/admin/patrimonio", label: t("admin.sidebar.patrimNioImaterial", "Patrimônio Imaterial"), icon: "📜", show: true },
         { to: "/admin/calendario-municipal", label: t("admin.sidebar.calendRioCultural", "Calendário Cultural"), icon: "🗓️", show: true },
-        { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Exportação TCE"), icon: "📄", show: true },
-        { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Vazios Culturais"), icon: "🗺️", show: true },
+        { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Relatórios Externos"), icon: "📄", show: true },
+        { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Impacto Territorial"), icon: "🗺️", show: true },
       ]
     },
     {

@@ -123,13 +123,16 @@ export const AdminWorkForm: React.FC = () => {
         setEquipamentoId(data.equipamentoId || "");
 
         // Load translations if available in backend
-        if (data.metadata?.translations?.en) {
-          setTitleEn(data.metadata?.translations?.en?.title || "");
-          setDescriptionEn(data.metadata?.translations?.en?.description || "");
-        }
-        if (data.metadata?.translations?.es) {
-          setTitleEs(data.metadata?.translations?.es?.title || "");
-          setDescriptionEs(data.metadata?.translations?.es?.description || "");
+        if (data?.metadata?.translations) {
+          const trans = typeof data.metadata === 'string' ? JSON.parse(data.metadata).translations : data.metadata.translations;
+          if (trans?.en) {
+            setTitleEn(trans.en.title || "");
+            setDescriptionEn(trans.en.description || "");
+          }
+          if (trans?.es) {
+            setTitleEs(trans.es.title || "");
+            setDescriptionEs(trans.es.description || "");
+          }
         }
 
         setRadius(data.radius || 5);

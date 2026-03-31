@@ -818,9 +818,10 @@
       "new": "Nuevo trabajo",
       "table": {
         "title": "Título",
+        "code": "Código",
         "artist": "Artista",
         "status": "Estado",
-        "actions": "Comportamiento"
+        "actions": "Acciones"
       },
       "status": {
         "published": "Publicado",
@@ -2796,6 +2797,33 @@
       "aponteOCdigoQrParaACmera": "Apunta el código QR a la cámara",
       "noPrecisaTocarEmNadaLeituraAut": "No es necesario tocar nada, lectura automática.",
       "noPrecisaTocarEmNadaLeituraAutomtica": "No es necesario tocar nada, lectura automática."
+    }
+  },
+  "vestige": {
+    "admin": {
+      "vestigeMode": "Modo Vestigio",
+      "active": "Activado",
+      "inactive": "Desactivado",
+      "gpsLat": "Latitud GPS",
+      "gpsLng": "Longitud GPS",
+      "radius": "Radio de Captura (metros)",
+      "expiry": "Fecha de Expiración",
+      "vestigeImageUrl": "URL de la Imagen del Vestigio (Opcional)",
+      "expireAction": "Expirar Ahora",
+      "confirmExpire": "¿Desea expirar este vestigio? Todos los sellos coleccionados se convertirán en reliquias definitivas.",
+      "vestigeDescription": "Hace que este punto sea capturable vía GPS por los visitantes"
+    },
+    "capture": {
+      "title": "Captura de Vestigio",
+      "syncing": "Sincronizando Satélites GPS...",
+      "failed": "Fallo en la Captura",
+      "success": "¡Vestigio Recolectado!",
+      "radarStatus": "Status del Radar",
+      "inRange": "OBJETIVO EN ALCANCE",
+      "outOfRange": "FUERA DE ALCANCE",
+      "scan": "Escanear Área",
+      "collect": "Recolectar Vestigio",
+      "backToMap": "Volver al Mapa"
     }
   }
 }

@@ -818,6 +818,7 @@
       "new": "New Work",
       "table": {
         "title": "Title",
+        "code": "Code",
         "artist": "Artist",
         "status": "Status",
         "actions": "Actions"
@@ -2831,6 +2832,29 @@
     }
   },
   "vestige": {
+    "admin": {
+      "vestigeMode": "Vestige Mode",
+      "active": "Active",
+      "inactive": "Inactive",
+      "gpsLat": "GPS Latitude",
+      "gpsLng": "GPS Longitude",
+      "radius": "Capture Radius (meters)",
+      "expiry": "Expiration Date",
+      "vestigeImageUrl": "Vestige Image URL (Optional)",
+      "vestigeImageUrlPlaceholder": "URL of the specific radar image",
+      "expireAction": "Expire Now",
+      "confirmExpire": "Are you sure you want to expire this vestige? All collected stamps will become permanent relics.",
+      "vestigeDescription": "Makes this point collectable via GPS by visitors",
+      "vestigeTypeLabel": "Vestige Type (Context)",
+      "tip": "Tip: By activating Vestige Mode, the work will appear on the Map Radar for visitors.",
+      "type": {
+        "work": "Work of Art (Default)",
+        "streetArt": "Street Art / Graffiti",
+        "installation": "Installation / Monument",
+        "historical": "Historical Point / Landmark",
+        "nature": "Nature / Scenic View"
+      }
+    },
     "capture": {
       "title": "Vestige Capture",
       "syncing": "Syncing GPS Satellites...",
@@ -2851,28 +2875,6 @@
       "emptyVestiges": "No vestiges collected in this museum yet.",
       "relicDescription": "Captured vestiges become permanent relics upon expiration.",
       "totalRelics": "Total Relics"
-    },
-    "admin": {
-      "vestigeMode": "Vestige Mode",
-      "active": "Active",
-      "inactive": "Inactive",
-      "gpsLat": "GPS Latitude",
-      "gpsLng": "GPS Longitude",
-      "radius": "Capture Radius (meters)",
-      "expiry": "Expiration Date",
-      "vestigeImageUrl": "Vestige Image URL (Optional)",
-      "vestigeImageUrlPlaceholder": "URL of the specific radar image",
-      "expireAction": "Expire Now",
-      "confirmExpire": "Are you sure you want to expire this vestige? All collected stamps will become permanent relics.",
-      "vestigeDescription": "Makes this point collectable via GPS by visitors",
-      "vestigeTypeLabel": "Vestige Type (Context)",
-      "tip": "Tip: By activating Vestige Mode, the work will appear on the Map Radar for visitors.",
-      "type": {
-        "work": "Work of Art (Default)",
-        "streetArt": "Street Art / Graffiti",
-        "installation": "Installation / Monument",
-        "event": "Temporary Event"
-      }
     }
   },
   "gamification": {
