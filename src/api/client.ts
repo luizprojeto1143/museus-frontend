@@ -1,11 +1,30 @@
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import toast from "react-hot-toast";
 
 export const baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend-1.onrender.com";
 
 export const api = axios.create({
   baseURL,
-  withCredentials: false
+  withCredentials: false,
+  timeout: 15000, // 15s — handles Render.com cold starts
+});
+
+// ─── Retry exponencial ─────────────────────────────────────────────
+// Tenta até 3x com delay crescente (1s → 2s → 4s)
+// Apenas para erros de rede e 5xx. Nunca para 4xx.
+axiosRetry(api, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay,
+  retryCondition: (error) => {
+    const status = error.response?.status;
+    // Nunca retry para erros do cliente (4xx)
+    if (status !== undefined && status >= 400 && status < 500) return false;
+    return axiosRetry.isNetworkOrIdempotentRequestError(error);
+  },
+  onRetry: (retryCount, error) => {
+    console.warn(`[API] Retry ${retryCount}/3 — ${error.config?.url} (${error.message})`);
+  },
 });
 
 export const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";

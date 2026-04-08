@@ -1,8 +1,11 @@
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, ImageOverlay, Circle, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import L from "leaflet";
+import "leaflet.markercluster";
 import { Building, Map as MapIcon } from "lucide-react";
 import "./MuseumMap.css";
 
@@ -49,6 +52,80 @@ interface MuseumMapProps {
 function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
     const map = useMap();
     map.setView(center, zoom);
+    return null;
+}
+
+/** Renders a MarkerClusterGroup for outdoor POIs */
+function ClusteredMarkers({ pois, vestigeIcon, defaultIcon }: {
+    pois: POI[];
+    vestigeIcon: L.DivIcon;
+    defaultIcon: L.Icon;
+}) {
+    const map = useMap();
+    const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
+
+    useEffect(() => {
+        const { t: _t } = { t: (k: string, d: string) => d }; // local fallback
+        if (!map) return;
+
+        // Remove existing cluster group
+        if (clusterGroupRef.current) {
+            map.removeLayer(clusterGroupRef.current);
+        }
+
+        // Create new cluster group
+        const clusterGroup = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            maxClusterRadius: 60,
+            iconCreateFunction: (cluster) => {
+                const count = cluster.getChildCount();
+                const size = count < 10 ? 36 : count < 50 ? 44 : 52;
+                return L.divIcon({
+                    html: `<div style="
+                        width:${size}px;height:${size}px;
+                        background:linear-gradient(135deg,#d4af37,#cd7f32);
+                        border-radius:50%;
+                        display:flex;align-items:center;justify-content:center;
+                        color:#000;font-weight:900;font-size:${size < 44 ? 13 : 15}px;
+                        box-shadow:0 4px 16px rgba(212,175,55,0.5);
+                        border:2px solid rgba(255,255,255,0.4);
+                    ">${count}</div>`,
+                    className: "",
+                    iconSize: [size, size],
+                    iconAnchor: [size / 2, size / 2],
+                });
+            },
+        });
+
+        // Add markers to cluster
+        pois
+            .filter(p => p.lat != null && p.lng != null)
+            .forEach(poi => {
+                const marker = L.marker(
+                    [poi.lat, poi.lng],
+                    { icon: poi.type === "vestige" ? vestigeIcon : defaultIcon }
+                );
+
+                const popupContent = document.createElement("div");
+                popupContent.className = "museum-map-popup";
+                popupContent.innerHTML = `
+                    <p class="museum-map-popup-title">${poi.type === "vestige" ? "\u2728 " : ""}${poi.title}</p>
+                    ${poi.description ? `<p class="museum-map-popup-desc">${poi.description}</p>` : ""}
+                `;
+                marker.bindPopup(popupContent);
+                clusterGroup.addLayer(marker);
+            });
+
+        map.addLayer(clusterGroup);
+        clusterGroupRef.current = clusterGroup;
+
+        return () => {
+            if (clusterGroupRef.current) {
+                map.removeLayer(clusterGroupRef.current);
+            }
+        };
+    }, [map, pois, vestigeIcon, defaultIcon]);
+
     return null;
 }
 
@@ -224,22 +301,12 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                             </>
                         )}
 
-                        {/* Outdoor POI Markers */}
-                        {pois.filter(p => p.lat != null && p.lng != null).map(poi => (
-                            <React.Fragment key={`outdoor-${poi.id}`}>
-                                <Marker position={[poi.lat, poi.lng]} icon={poi.type === 'vestige' ? VestigeIcon : DefaultIcon}>
-                                    <Popup>
-                                        <div className="museum-map-popup">
-                                            <p className="museum-map-popup-title">{poi.type === 'vestige' && '\u2728 '}{poi.title}</p>
-                                            {poi.description && <p className="museum-map-popup-desc">{poi.description}</p>}
-                                        </div>
-                                    </Popup>
-                                </Marker>
-                                {poi.type === 'vestige' && (
-                                    <Circle center={[poi.lat, poi.lng]} radius={20} pathOptions={{ color: '#d4af37', fillColor: '#d4af37', fillOpacity: 0.08, dashArray: '5,10', weight: 2 }} />
-                                )}
-                            </React.Fragment>
-                        ))}
+                        {/* Clustered outdoor POI markers */}
+                        <ClusteredMarkers
+                            pois={pois}
+                            vestigeIcon={VestigeIcon}
+                            defaultIcon={DefaultIcon}
+                        />
                     </>
                 ) : (
                     <>

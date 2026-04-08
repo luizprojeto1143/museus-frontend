@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from "react";
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
 import { AchievementModal } from "../components/AchievementModal";
@@ -216,7 +216,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         ? Math.min(100, Math.max(0, ((stats.xp - currentLevel.minXp) / (nextLevel.minXp - currentLevel.minXp)) * 100))
         : 100;
 
-    const contextValue: GamificationContextType = {
+    const contextValue: GamificationContextType = useMemo(() => ({
         stats,
         currentLevel,
         nextLevel,
@@ -227,7 +227,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         visitWork,
         completeTrail,
         refreshGamification
-    };
+    }), [stats, currentLevel, nextLevel, progressToNextLevel, loading, addXp, unlockAchievement, visitWork, completeTrail, refreshGamification]);
 
     return (
         <GamificationContext.Provider value={contextValue}>

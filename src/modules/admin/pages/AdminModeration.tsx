@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { api } from "../../../api/client";
-import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Shield, Check, X, AlertTriangle, MessageSquare } from "lucide-react";
 import { toast } from "react-hot-toast";
 

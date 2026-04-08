@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../../api/client";
+import { useAuth } from "../../auth/AuthContext";
 import { getFullUrl } from "../../../utils/url";
 import { ProximityAlert, ProximityAlertData } from "../components/ProximityAlert";
 
@@ -21,23 +22,6 @@ const GeoContext = createContext<GeoContextType>({
 
 export const useGeoFencing = () => useContext(GeoContext);
 
-// Helper to safely get tenantId and isCityMode from localStorage
-const getAuthFromStorage = (): { tenantId: string | null; isCityMode: boolean } => {
-    try {
-        const stored = window.localStorage.getItem("museus_auth_v1");
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            return {
-                tenantId: parsed.tenantId ?? null,
-                isCityMode: parsed.isCityMode === true
-            };
-        }
-    } catch {
-        // Ignore parse errors
-    }
-    return { tenantId: null, isCityMode: false };
-};
-
 type GeoPoint = {
     id: string;
     type: 'work' | 'museum' | 'point';
@@ -51,12 +35,13 @@ type GeoPoint = {
 };
 
 export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { tenantId } = useAuth();
+    const isCityMode = false; // Will be fetched from TenantContext if needed
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [permission, setPermission] = useState<"granted" | "denied" | "prompt">("prompt");
     const [geoPoints, setGeoPoints] = useState<GeoPoint[]>([]);
     const [notifiedPoints, setNotifiedPoints] = useState<Set<string>>(new Set());
     const [activeAlerts, setActiveAlerts] = useState<ProximityAlertData[]>([]);
-    const [authData, setAuthData] = useState(getAuthFromStorage);
 
     // Refs for stale closure prevention
     const geoPointsRef = useRef(geoPoints);
@@ -140,7 +125,6 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }, [triggerNotification]);
 
     const loadGeoPoints = useCallback(async () => {
-        const { tenantId, isCityMode } = authData;
         const points: GeoPoint[] = [];
 
         try {
@@ -158,7 +142,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                             subtitle: 'Museu',
                             latitude: item.latitude,
                             longitude: item.longitude,
-                            radius: 100, // 100m for museums
+                            radius: 100,
                             imageUrl: item.logoUrl || undefined,
                             url: `/museu/${item.id}`
                         });
@@ -174,7 +158,6 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     : (worksRes.data?.data || worksRes.data?.works || []);
 
                 worksArray.forEach((w: any) => {
-                    // Support both legacy (latitude/longitude) and new (lat/lng) fields
                     const finalLat = w.lat ?? w.latitude;
                     const finalLng = w.lng ?? w.longitude;
 
@@ -186,7 +169,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                             subtitle: w.artist,
                             latitude: finalLat,
                             longitude: finalLng,
-                            radius: w.captureRadiusM || (w.room || w.floor || w.equipamentoId ? 3 : (w.vestigeActive ? 20 : 10)), 
+                            radius: w.captureRadiusM || (w.room || w.floor || w.equipamentoId ? 3 : (w.vestigeActive ? 20 : 10)),
                             imageUrl: w.imageUrl || undefined,
                             url: w.vestigeActive ? `/vestigios/capturar/${w.id}` : `/obras/${w.id}`
                         });
@@ -199,7 +182,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             console.error("Failed to load geo points", err);
             setGeoPoints([]);
         }
-    }, [authData]);
+    }, [tenantId, isCityMode]);
 
     // Dismiss handlers
     const dismissAlert = useCallback((id: string) => {
@@ -210,25 +193,16 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setActiveAlerts([]);
     }, []);
 
-    // Storage listener
+    // Storage listener — apenas para sincronização cross-tab
+    // (not needed for same-tab changes; useAuth() handles that reactively)
     useEffect(() => {
         const handleStorageChange = () => {
-            setAuthData(getAuthFromStorage());
+            // Cross-tab: recarregar pontos se tenantId mudou
+            loadGeoPoints();
         };
-
         window.addEventListener("storage", handleStorageChange);
-        const interval = setInterval(() => {
-            const newData = getAuthFromStorage();
-            if (newData.tenantId !== authData.tenantId || newData.isCityMode !== authData.isCityMode) {
-                setAuthData(newData);
-            }
-        }, 2000);
-
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-            clearInterval(interval);
-        };
-    }, [authData]);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, [loadGeoPoints]);
 
     // Load geo points when auth changes
     useEffect(() => {

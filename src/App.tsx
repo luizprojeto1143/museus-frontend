@@ -10,23 +10,23 @@ import { GeoFencingProvider } from "./modules/visitor/context/GeoFencingProvider
 import { AudioProvider } from "./modules/visitor/context/AudioContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { VisitorThemeProvider } from "./modules/visitor/context/VisitorThemeProvider";
+import { PageLoader } from "./components/ui/PageLoader";
 
-// Auth pages
-import { Login } from "./modules/auth/Login";
-import { RegisterWrapper } from "./modules/auth/RegisterWrapper";
-import { RegisterProducer } from "./modules/auth/RegisterProducer";
-import { ForgotPassword } from "./modules/auth/ForgotPassword";
-import { ResetPasswordPage } from "./modules/auth/ResetPassword";
+// Auth pages — lazy loaded
+const Login = React.lazy(() => import("./modules/auth/Login").then(m => ({ default: m.Login })));
+const RegisterWrapper = React.lazy(() => import("./modules/auth/RegisterWrapper").then(m => ({ default: m.RegisterWrapper })));
+const RegisterProducer = React.lazy(() => import("./modules/auth/RegisterProducer").then(m => ({ default: m.RegisterProducer })));
+const ForgotPassword = React.lazy(() => import("./modules/auth/ForgotPassword").then(m => ({ default: m.ForgotPassword })));
+const ResetPasswordPage = React.lazy(() => import("./modules/auth/ResetPassword").then(m => ({ default: m.ResetPasswordPage })));
 
-// Public pages
-import { LandingPage } from "./modules/public/LandingPage";
-import { Welcome } from "./modules/visitor/pages/Welcome";
-import { SelectMuseum } from "./modules/visitor/pages/SelectMuseum";
-import { CertificateValidator } from "./modules/public/CertificateValidator";
-import { GlobalEvents } from "./modules/public/GlobalEvents";
-import { NotFound } from "./modules/public/NotFound";
-import { Home } from "./modules/visitor/pages/Home";
-import { PublicPassportPage } from "./modules/visitor/pages/PublicPassportPage";
+// Public pages — lazy loaded
+const LandingPage = React.lazy(() => import("./modules/public/LandingPage").then(m => ({ default: m.LandingPage })));
+const Welcome = React.lazy(() => import("./modules/visitor/pages/Welcome").then(m => ({ default: m.Welcome })));
+const SelectMuseum = React.lazy(() => import("./modules/visitor/pages/SelectMuseum").then(m => ({ default: m.SelectMuseum })));
+const CertificateValidator = React.lazy(() => import("./modules/public/CertificateValidator").then(m => ({ default: m.CertificateValidator })));
+const GlobalEvents = React.lazy(() => import("./modules/public/GlobalEvents").then(m => ({ default: m.GlobalEvents })));
+const Home = React.lazy(() => import("./modules/visitor/pages/Home").then(m => ({ default: m.Home })));
+const PublicPassportPage = React.lazy(() => import("./modules/visitor/pages/PublicPassportPage").then(m => ({ default: m.PublicPassportPage })));
 
 // Route groups
 import { visitorRoutes } from "./routes/visitorRoutes";
@@ -35,12 +35,18 @@ import { masterRoutes } from "./routes/masterRoutes";
 import { producerRoutes } from "./routes/producerRoutes";
 import { providerRoutes, municipalRoutes, totemRoutes } from "./routes/otherRoutes";
 
-// QueryClient
+// QueryClient — with exponential retry backoff
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5,
-      retry: 1,
+      retry: (failureCount, error: unknown) => {
+        const status = (error as { response?: { status?: number } })?.response?.status;
+        // Don't retry on client errors (4xx)
+        if (status !== undefined && status >= 400 && status < 500) return false;
+        return failureCount < 3;
+      },
+      retryDelay: (attempt: number) => Math.min(1000 * 2 ** attempt, 30000),
       refetchOnWindowFocus: false
     }
   }
@@ -109,11 +115,7 @@ const App: React.FC = () => {
           <GeoFencingProvider>
             <AudioProvider>
               <ToastProvider>
-              <React.Suspense fallback={
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#1a1a1a', color: '#d4af37' }}>
-                  Loading...
-                </div>
-              }>
+              <React.Suspense fallback={<PageLoader />}>
                 <Routes>
                   {/* PUBLIC ROUTES */}
                   <Route path="/" element={<LandingPage />} />

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useTerminology } from "../../../hooks/useTerminology";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 type AdminWorkItem = {
   id: string;
@@ -17,20 +18,21 @@ type AdminWorkItem = {
 export const AdminWorks: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
-  const term = useTerminology(); // Hook for dynamic terms
+  const term = useTerminology();
 
   const [works, setWorks] = useState<AdminWorkItem[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebounce(searchInput, 400);
 
   React.useEffect(() => {
     if (!tenantId) return;
 
     setLoading(true);
-    // Note: The API endpoint remains /works regardless of terminology
     api
-      .get("/works", { params: { tenantId, page, limit: 10 } })
+      .get("/works", { params: { tenantId, page, limit: 10, search: debouncedSearch || undefined } })
       .then((res) => {
         const responseData = res.data;
         const worksList = responseData.data || [];
@@ -56,16 +58,35 @@ export const AdminWorks: React.FC = () => {
         setWorks([]);
       })
       .finally(() => setLoading(false));
-  }, [tenantId, page]);
+  }, [tenantId, page, debouncedSearch]);
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-        <div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem", gap: "1rem", flexWrap: "wrap" }}>
+        <div style={{ flex: 1 }}>
           <h1 className="section-title">{term.works}</h1>
-
+          {/* Debounced search */}
+          <input
+            type="search"
+            placeholder={`Buscar ${term.work.toLowerCase()}...`}
+            value={searchInput}
+            onChange={e => { setSearchInput(e.target.value); setPage(1); }}
+            aria-label={`Buscar ${term.work.toLowerCase()}`}
+            style={{
+              marginTop: "0.5rem",
+              padding: "0.5rem 1rem",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--border-default)",
+              background: "var(--bg-surface)",
+              color: "var(--fg-main)",
+              fontSize: "0.9rem",
+              width: "100%",
+              maxWidth: "360px",
+              outline: "none",
+            }}
+          />
         </div>
-        <Link to="/admin/obras/nova" className="btn">
+        <Link to="/admin/obras/nova" className="btn" style={{ alignSelf: "flex-start" }}>
           + Nova {term.work}
         </Link>
       </div>

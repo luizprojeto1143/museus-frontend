@@ -1,194 +1,158 @@
 import React, {
   createContext,
   useContext,
-  useState,
+  useReducer,
   ReactNode
 } from "react";
 import { api } from "../../api/client";
 
 export type Role = "visitor" | "admin" | "master" | "producer";
 
+// ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
   token: string;
-  refreshToken: string; // [NEW]
+  refreshToken: string;
   role: Role;
   tenantId: string | null;
-  equipamentoId: string | null; // [NEW]
-  tenantType: "MUSEUM" | "PRODUCER" | null;
-  email: string | null;
-  name: string | null;
-  userId: string | null; // [NEW] UUID do usuário
-  hasProviderProfile: boolean;
-  isGuest?: boolean;
-}
-
-interface AuthContextValue {
-  isAuthenticated: boolean;
-  isGuest: boolean;
-  role: Role | null;
-  token: string | null;
-  refreshToken: string | null; // [NEW]
-  tenantId: string | null;
-  equipamentoId: string | null; // [NEW]
+  equipamentoId: string | null;
   tenantType: "MUSEUM" | "PRODUCER" | null;
   email: string | null;
   name: string | null;
   userId: string | null;
   hasProviderProfile: boolean;
-  login: (params: { email: string; password: string }) => Promise<{ role: Role; tenantType: "MUSEUM" | "PRODUCER" | null; hasProviderProfile: boolean }>;
-  enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => void;
-  logout: () => void;
-  updateSession: (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null, newEquipamentoId?: string | null) => void;
+  isGuest?: boolean;
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+interface AuthState {
+  token: string | null;
+  refreshToken: string | null;
+  role: Role | null;
+  tenantId: string | null;
+  equipamentoId: string | null;
+  tenantType: "MUSEUM" | "PRODUCER" | null;
+  email: string | null;
+  name: string | null;
+  userId: string | null;
+  hasProviderProfile: boolean;
+  isGuest: boolean;
+}
 
+interface AuthContextValue extends AuthState {
+  isAuthenticated: boolean;
+  login: (params: { email: string; password: string }) => Promise<{
+    role: Role;
+    tenantType: "MUSEUM" | "PRODUCER" | null;
+    hasProviderProfile: boolean;
+  }>;
+  enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => void;
+  logout: () => void;
+  updateSession: (
+    newToken: string,
+    newRefreshToken: string,
+    newRole: string,
+    newTenantId: string | null,
+    newName?: string | null,
+    newEquipamentoId?: string | null
+  ) => void;
+}
+
+// ─── Actions ──────────────────────────────────────────────────────
+type AuthAction =
+  | { type: "LOGIN"; payload: AuthState }
+  | { type: "LOGOUT" }
+  | { type: "UPDATE_SESSION"; payload: Partial<AuthState> };
+
+// ─── Reducer ──────────────────────────────────────────────────────
+const EMPTY_STATE: AuthState = {
+  token: null,
+  refreshToken: null,
+  role: null,
+  tenantId: null,
+  equipamentoId: null,
+  tenantType: null,
+  email: null,
+  name: null,
+  userId: null,
+  hasProviderProfile: false,
+  isGuest: false,
+};
+
+function authReducer(state: AuthState, action: AuthAction): AuthState {
+  switch (action.type) {
+    case "LOGIN":
+      return { ...action.payload };
+    case "LOGOUT":
+      return { ...EMPTY_STATE };
+    case "UPDATE_SESSION":
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+}
+
+// ─── Leitura única do localStorage ────────────────────────────────
 const STORAGE_KEY = "museus_auth_v1";
 
+function readStoredAuth(): AuthState {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return EMPTY_STATE;
+    const parsed = JSON.parse(raw) as Partial<StoredAuth>;
+    return {
+      token: parsed.token ?? null,
+      refreshToken: parsed.refreshToken ?? null,
+      role: parsed.role ?? null,
+      tenantId: parsed.tenantId ?? null,
+      equipamentoId: parsed.equipamentoId ?? null,
+      tenantType: parsed.tenantType ?? null,
+      email: parsed.email ?? null,
+      name: parsed.name ?? null,
+      userId: parsed.userId ?? null,
+      hasProviderProfile: parsed.hasProviderProfile ?? false,
+      isGuest: parsed.isGuest ?? false,
+    };
+  } catch {
+    return EMPTY_STATE;
+  }
+}
+
+function persistAuth(state: AuthState): void {
+  try {
+    const toStore: StoredAuth = {
+      token: state.token ?? "",
+      refreshToken: state.refreshToken ?? "",
+      role: state.role ?? "visitor",
+      tenantId: state.tenantId,
+      equipamentoId: state.equipamentoId,
+      tenantType: state.tenantType,
+      email: state.email,
+      name: state.name,
+      userId: state.userId,
+      hasProviderProfile: state.hasProviderProfile,
+      isGuest: state.isGuest,
+    };
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+  } catch {
+    // Ignore storage errors (private/incognito)
+  }
+}
+
+function mapRole(raw: string): Role {
+  const upper = (raw || "").toUpperCase();
+  if (upper === "MASTER") return "master";
+  if (upper === "ADMIN") return "admin";
+  if (upper === "PRODUCER") return "producer";
+  return "visitor";
+}
+
+// ─── Context ──────────────────────────────────────────────────────
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.token;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
+  // Leitura única na inicialização — não 9 chamadas a localStorage
+  const [state, dispatch] = useReducer(authReducer, undefined, readStoredAuth);
 
-  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.refreshToken || null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [role, setRole] = useState<Role | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.role;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [tenantId, setTenantId] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.tenantId ?? null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [equipamentoId, setEquipamentoId] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.equipamentoId ?? null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.tenantType ?? null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [email, setEmail] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.email ?? null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [name, setName] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.name ?? null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [hasProviderProfile, setHasProviderProfile] = useState<boolean>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.hasProviderProfile ?? false;
-      } catch {
-        return false;
-      }
-    }
-    return false;
-  });
-
-  const [isGuest, setIsGuest] = useState<boolean>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.isGuest ?? false;
-      } catch {
-        return false;
-      }
-    }
-    return false;
-  });
-
-  const [userId, setUserId] = useState<string | null>(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as StoredAuth;
-        return parsed.userId ?? null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
+  // ─── Login ────────────────────────────────────────────────────
   const login: AuthContextValue["login"] = async ({ email, password }) => {
     const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
     const demo = import.meta.env.VITE_DEMO_MODE === "true";
@@ -197,12 +161,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const res = await fetch(baseUrl + "/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
-      if (!res.ok) {
-        throw new Error("Falha no login");
-      }
+      if (!res.ok) throw new Error("Falha no login");
 
       const data = (await res.json()) as {
         accessToken?: string;
@@ -212,104 +174,70 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         equipamentoId?: string | null;
         tenantType?: "MUSEUM" | "PRODUCER" | null;
         hasProviderProfile?: boolean;
-        user?: { email: string; name?: string; hasProviderProfile?: boolean };
+        user?: { email: string; name?: string; id?: string; hasProviderProfile?: boolean };
       };
 
-      const receivedToken = data.accessToken;
-      const receivedRefreshToken = data.refreshToken || ""; // Fallback logic
-      if (!receivedToken) {
-        throw new Error("Token não recebido do backend");
-      }
+      const token = data.accessToken;
+      if (!token) throw new Error("Token não recebido do backend");
 
-      const backendRole = (data.role || "").toUpperCase();
-
-      let mappedRole: Role = "visitor";
-      if (backendRole === "MASTER") mappedRole = "master";
-      else if (backendRole === "ADMIN") mappedRole = "admin";
-      else if (backendRole === "PRODUCER") mappedRole = "producer";
-      else if (backendRole === "VISITOR") mappedRole = "visitor";
-
-      const receivedTenantId = data.tenantId ?? null;
-      const receivedEquipamentoId = data.equipamentoId ?? null;
-      const receivedTenantType = data.tenantType ?? "MUSEUM";
-      const receivedEmail = data.user?.email ?? email;
-      const receivedName = data.user?.name ?? null;
-      const receivedUserId = (data as any).user?.id ?? null;
-      const receivedHasProviderProfile = data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false;
-
-      setToken(receivedToken);
-      setRefreshToken(receivedRefreshToken);
-      setRole(mappedRole);
-      setTenantId(receivedTenantId);
-      setEquipamentoId(receivedEquipamentoId);
-      setTenantType(receivedTenantType);
-      setEmail(receivedEmail);
-      setName(receivedName);
-      setUserId(receivedUserId);
-      setHasProviderProfile(receivedHasProviderProfile);
-
-      const toStore: StoredAuth = {
-        token: receivedToken,
-        refreshToken: receivedRefreshToken,
-        role: mappedRole,
-        tenantId: receivedTenantId,
-        equipamentoId: receivedEquipamentoId,
-        tenantType: receivedTenantType,
-        email: receivedEmail,
-        name: receivedName,
-        userId: receivedUserId,
-        hasProviderProfile: receivedHasProviderProfile
+      const newState: AuthState = {
+        token,
+        refreshToken: data.refreshToken ?? "",
+        role: mapRole(data.role ?? ""),
+        tenantId: data.tenantId ?? null,
+        equipamentoId: data.equipamentoId ?? null,
+        tenantType: data.tenantType ?? "MUSEUM",
+        email: data.user?.email ?? email,
+        name: data.user?.name ?? null,
+        userId: data.user?.id ?? null,
+        hasProviderProfile: data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false,
+        isGuest: false,
       };
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
 
-      return { role: mappedRole, tenantType: receivedTenantType, hasProviderProfile: receivedHasProviderProfile };
+      dispatch({ type: "LOGIN", payload: newState });
+      persistAuth(newState);
+
+      return {
+        role: newState.role!,
+        tenantType: newState.tenantType,
+        hasProviderProfile: newState.hasProviderProfile,
+      };
     } else {
-      // modo demo (mock)
-      const simulatedRole: Role =
-        email.includes("master") ? "master" : "admin";
+      // Modo demo
+      const simulatedRole: Role = email.includes("master") ? "master" : "admin";
       const simulatedTenantType = email.includes("producer") ? "PRODUCER" : "MUSEUM";
 
-      const fakeToken = "demo-access-token";
-      const fakeRefToken = "demo-refresh-token";
-
-      setToken(fakeToken);
-      setRefreshToken(fakeRefToken);
-      setRole(simulatedRole);
-      setTenantId(null);
-      setEquipamentoId(null);
-      setTenantType(simulatedTenantType);
-      setEmail(email);
-      setName("Usuário Demo");
-
-      const toStore: StoredAuth = {
-        token: fakeToken,
-        refreshToken: fakeRefToken,
+      const newState: AuthState = {
+        token: "demo-access-token",
+        refreshToken: "demo-refresh-token",
         role: simulatedRole,
         tenantId: null,
         equipamentoId: null,
         tenantType: simulatedTenantType,
-        email: email,
+        email,
         name: "Usuário Demo",
         userId: null,
-        hasProviderProfile: false
+        hasProviderProfile: false,
+        isGuest: false,
       };
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+
+      dispatch({ type: "LOGIN", payload: newState });
+      persistAuth(newState);
 
       return { role: simulatedRole, tenantType: simulatedTenantType, hasProviderProfile: false };
     }
   };
 
+  // ─── Logout ───────────────────────────────────────────────────
   const logout = async () => {
-    // Tenta avisar o backend para revogar token
     try {
-      if (refreshToken) {
-        // Usar fetch direto para evitar ciclo de dependência com api client se ele usar context
+      if (state.refreshToken) {
         const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
         if (baseUrl) {
           await fetch(baseUrl + "/auth/logout", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken })
+            body: JSON.stringify({ refreshToken: state.refreshToken }),
           });
         }
       }
@@ -317,37 +245,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error("Erro ao notificar logout", e);
     }
 
-    setToken(null);
-    setRefreshToken(null);
-    setRole(null);
-    setTenantId(null);
-    setEquipamentoId(null);
-    setTenantType(null);
-    setEmail(null);
-    setName(null);
-    setHasProviderProfile(false);
-    setIsGuest(false);
+    dispatch({ type: "LOGOUT" });
     window.localStorage.removeItem(STORAGE_KEY);
-
-    // Forçar recarga ou limpeza de cache se necessário
-    // window.location.href = "/login"; // Opcional
   };
 
+  // ─── Guest ────────────────────────────────────────────────────
   const enterAsGuest = (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => {
-    const guestToken = "guest-anonymous-token";
-    setToken(guestToken);
-    setRefreshToken("");
-    setRole("visitor");
-    setTenantId(selectedTenantId ?? null);
-    setEquipamentoId(selectedEquipamentoId ?? null);
-    setTenantType("MUSEUM");
-    setEmail(null);
-    setName("Visitante");
-    setHasProviderProfile(false);
-    setIsGuest(true);
-
-    const toStore: StoredAuth = {
-      token: guestToken,
+    const newState: AuthState = {
+      token: "guest-anonymous-token",
       refreshToken: "",
       role: "visitor",
       tenantId: selectedTenantId ?? null,
@@ -355,67 +260,54 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       tenantType: "MUSEUM",
       email: null,
       name: "Visitante",
-      hasProviderProfile: false,
       userId: null,
-      isGuest: true
+      hasProviderProfile: false,
+      isGuest: true,
     };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+
+    dispatch({ type: "LOGIN", payload: newState });
+    persistAuth(newState);
   };
 
-  const updateSession = (newToken: string, newRefreshToken: string, newRole: string, newTenantId: string | null, newName?: string | null, newEquipamentoId?: string | null) => {
-    let mappedRole: Role = "visitor";
-    const upperRole = (newRole || "").toUpperCase();
-
-    if (upperRole === "MASTER") mappedRole = "master";
-    else if (upperRole === "ADMIN") mappedRole = "admin";
-    else if (upperRole === "PRODUCER") mappedRole = "producer";
-    else if (upperRole === "VISITOR") mappedRole = "visitor";
-
-    setToken(newToken);
-    setRefreshToken(newRefreshToken);
-    setRole(mappedRole);
-    setTenantId(newTenantId);
-    setEquipamentoId(newEquipamentoId ?? null);
-    if (newName !== undefined) setName(newName ?? null);
-
-    const currentTenantType = tenantType ?? "MUSEUM";
-
-    const toStore: StoredAuth = {
+  // ─── Update Session ───────────────────────────────────────────
+  const updateSession = (
+    newToken: string,
+    newRefreshToken: string,
+    newRole: string,
+    newTenantId: string | null,
+    newName?: string | null,
+    newEquipamentoId?: string | null
+  ) => {
+    const partial: Partial<AuthState> = {
       token: newToken,
       refreshToken: newRefreshToken,
-      role: mappedRole,
+      role: mapRole(newRole),
       tenantId: newTenantId,
       equipamentoId: newEquipamentoId ?? null,
-      tenantType: currentTenantType,
-      email: email || "",
-      name: newName !== undefined ? (newName ?? null) : name,
-      userId: userId,
-      hasProviderProfile: hasProviderProfile
+      ...(newName !== undefined ? { name: newName ?? null } : {}),
     };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+
+    dispatch({ type: "UPDATE_SESSION", payload: partial });
+
+    const merged = { ...state, ...partial };
+    persistAuth(merged);
+  };
+
+  // ─── Interceptor para token refresh ──────────────────────────
+  // O api client já lê do localStorage, mas atualizamos o state também
+  // quando o token é renovado externamente (ex: interceptor de client.ts)
+
+  const contextValue: AuthContextValue = {
+    ...state,
+    isAuthenticated: !!state.token,
+    login,
+    enterAsGuest,
+    logout,
+    updateSession,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: !!token,
-        isGuest,
-        role,
-        token,
-        refreshToken,
-        tenantId,
-        equipamentoId,
-        tenantType,
-        email,
-        name,
-        userId,
-        hasProviderProfile,
-        login,
-        enterAsGuest,
-        logout,
-        updateSession
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

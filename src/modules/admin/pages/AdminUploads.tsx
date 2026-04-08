@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { validateFile, UPLOAD_PRESETS, formatFileSize, getFileTypeLabel } from "../../../utils/uploadValidator";
 
 interface UploadedFile {
   id: string;
@@ -43,6 +44,21 @@ export const AdminUploads: React.FC = () => {
   }, [loadFiles]);
 
   const handleUpload = async (file: File) => {
+    // ─── Validate before sending ────────────────────────────
+    const validation = validateFile(file, UPLOAD_PRESETS.general);
+
+    if (!validation.valid) {
+      alert(`❌ Arquivo inválido: ${validation.error}`);
+      return;
+    }
+
+    if (validation.warning) {
+      const proceed = window.confirm(
+        `⚠️ ${validation.warning}\n\nDeseja continuar com o upload?`
+      );
+      if (!proceed) return;
+    }
+
     setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
@@ -121,9 +137,14 @@ export const AdminUploads: React.FC = () => {
           id="file-upload"
           type="file"
           multiple
+          accept="image/*,audio/*,video/*"
+          aria-label="Selecionar arquivos para upload"
           style={{ display: "none" }}
           onChange={(e) => {
-            Array.from(e.target.files || []).forEach(handleUpload);
+            const selected = Array.from(e.target.files || []);
+            // Filter out empty slots
+            const valid = selected.filter(f => f.size > 0);
+            valid.forEach(handleUpload);
             e.target.value = "";
           }}
         />
