@@ -12,14 +12,13 @@ export const AudioDescriptionPlayer: React.FC<AudioDescriptionPlayerProps> = ({ 
   const [duration, setDuration] = useState(0);
 
 
-  useEffect(() => {
-    if (audioRef.current) {
-      // Reset state on src change
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsPlaying(false);
-      setCurrentTime(0);
-    }
-  }, [src]);
+  const [prevSrc, setPrevSrc] = useState(src);
+
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    setIsPlaying(false);
+    setCurrentTime(0);
+  }
 
   if (!src) {
     return (

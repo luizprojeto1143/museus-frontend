@@ -54,6 +54,7 @@ interface AuthContextValue extends AuthState {
     newName?: string | null,
     newEquipamentoId?: string | null
   ) => void;
+  isRestoring: boolean;
 }
 
 // ─── Actions ──────────────────────────────────────────────────────
@@ -138,10 +139,10 @@ function persistAuth(state: AuthState): void {
 }
 
 function mapRole(raw: string): Role {
-  const upper = (raw || "").toUpperCase();
-  if (upper === "MASTER") return "master";
-  if (upper === "ADMIN") return "admin";
-  if (upper === "PRODUCER") return "producer";
+  const upper = (raw || "").toLowerCase();
+  if (upper === "master") return "master";
+  if (upper === "admin") return "admin";
+  if (upper === "producer") return "producer";
   return "visitor";
 }
 
@@ -154,19 +155,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // ─── Login ────────────────────────────────────────────────────
   const login: AuthContextValue["login"] = async ({ email, password }) => {
-    const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
-    const demo = import.meta.env.VITE_DEMO_MODE === "true";
-
-    if (!demo && baseUrl) {
-      const res = await fetch(baseUrl + "/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!res.ok) throw new Error("Falha no login");
-
-      const data = (await res.json()) as {
+    if (!demo && baseURL) {
+      const res = await api.post("/auth/login", { email, password });
+      
+      const data = res.data as {
         accessToken?: string;
         refreshToken?: string;
         role?: string;
@@ -231,16 +223,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // ─── Logout ───────────────────────────────────────────────────
   const logout = async () => {
     try {
-      if (state.refreshToken) {
-        const baseUrl = import.meta.env.VITE_API_URL as string | undefined;
-        if (baseUrl) {
-          await fetch(baseUrl + "/auth/logout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refreshToken: state.refreshToken }),
-          });
-        }
-      }
+      await api.post("/auth/logout");
     } catch (e) {
       console.error("Erro ao notificar logout", e);
     }
@@ -293,9 +276,45 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     persistAuth(merged);
   };
 
-  // ─── Interceptor para token refresh ──────────────────────────
-  // O api client já lê do localStorage, mas atualizamos o state também
-  // quando o token é renovado externamente (ex: interceptor de client.ts)
+  // ─── Restore Session ─────────────────────────────────────────
+  const [isRestoring, setIsRestoring] = React.useState(true);
+
+  React.useEffect(() => {
+    const restore = async () => {
+      try {
+        const res = await api.get("/auth/me");
+        if (res.data) {
+          const user = res.data;
+          const restoredState: AuthState = {
+            token: "valid-session", // Placeholder to indicate authenticated
+            refreshToken: "managed-by-cookies",
+            role: mapRole(user.role),
+            tenantId: user.tenantId,
+            equipamentoId: user.equipamentoId,
+            tenantType: user.tenantType || "MUSEUM",
+            email: user.email,
+            name: user.name,
+            userId: user.id,
+            hasProviderProfile: user.hasProviderProfile,
+            isGuest: false,
+          };
+          dispatch({ type: "LOGIN", payload: restoredState });
+        }
+      } catch (e) {
+        // Not authenticated or error, clear storage
+        console.log("Session restore failed, treating as guest/logged out.");
+        window.localStorage.removeItem(STORAGE_KEY);
+      } finally {
+        setIsRestoring(false);
+      }
+    };
+
+    if (import.meta.env.VITE_DEMO_MODE === "true") {
+      setIsRestoring(false);
+    } else {
+      restore();
+    }
+  }, []);
 
   const contextValue: AuthContextValue = {
     ...state,
@@ -304,6 +323,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     enterAsGuest,
     logout,
     updateSession,
+    isRestoring
   };
 
   return (

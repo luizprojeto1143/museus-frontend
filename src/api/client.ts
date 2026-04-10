@@ -2,12 +2,16 @@ import axios from "axios";
 import axiosRetry from "axios-retry";
 import toast from "react-hot-toast";
 
-export const baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend-1.onrender.com";
+export const baseURL = import.meta.env.VITE_API_URL as string;
+
+if (!baseURL) {
+  console.error("❌ CRITICAL: VITE_API_URL is not defined in environment variables!");
+}
 
 export const api = axios.create({
   baseURL,
-  withCredentials: false,
-  timeout: 15000, // 15s — handles Render.com cold starts
+  withCredentials: true,
+  timeout: 15000,
 });
 
 // ─── Retry exponencial ─────────────────────────────────────────────
@@ -29,20 +33,9 @@ axiosRetry(api, {
 
 export const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
 
-// Anexa automaticamente o token JWT (quando existir) em todas as requisições.
+// Automatically attached cookies will be sent due to withCredentials: true.
+// We no longer read tokens from localStorage for security reasons.
 api.interceptors.request.use((config) => {
-  try {
-    const raw = window.localStorage.getItem("museus_auth_v1");
-    if (raw) {
-      const parsed = JSON.parse(raw) as { token?: string };
-      if (parsed.token) {
-        config.headers = config.headers ?? {};
-        config.headers.Authorization = `Bearer ${parsed.token}`;
-      }
-    }
-  } catch {
-    // ignora erro de leitura do storage
-  }
   return config;
 });
 
@@ -146,8 +139,8 @@ api.interceptors.response.use(
       url: error.config?.url,
       method: error.config?.method,
       status: error.response?.status,
-      data: error.response?.data,
       message: error.message
+      // Data removed from logs to avoid sensitive leakage
     });
 
     // Show user-friendly toast for API errors

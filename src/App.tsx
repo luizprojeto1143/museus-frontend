@@ -99,6 +99,12 @@ const RootRedirector: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const { isRestoring } = useAuth();
+
+  if (isRestoring) {
+    return <PageLoader />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster

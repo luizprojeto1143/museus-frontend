@@ -68,25 +68,19 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     // Listen for storage changes to update auth state
     useEffect(() => {
-        const handleStorageChange = () => {
-            setAuthState(getAuthFromStorage());
+        const handleStorageChange = (e: StorageEvent) => {
+            // Only update if it's our auth key
+            if (e.key === AUTH_STORAGE_KEY || !e.key) {
+                setAuthState(getAuthFromStorage());
+            }
         };
 
         window.addEventListener("storage", handleStorageChange);
 
-        // Also check periodically in case storage changed in same tab
-        const interval = setInterval(() => {
-            const newAuth = getAuthFromStorage();
-            if (newAuth.email !== authState.email || newAuth.tenantId !== authState.tenantId) {
-                setAuthState(newAuth);
-            }
-        }, 1000);
-
         return () => {
             window.removeEventListener("storage", handleStorageChange);
-            clearInterval(interval);
         };
-    }, [authState.email, authState.tenantId]);
+    }, []);
 
     const { isAuthenticated, email, tenantId } = authState;
 

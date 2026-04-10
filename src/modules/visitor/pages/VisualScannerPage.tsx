@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-backend-webgl";
-import "@tensorflow/tfjs-backend-cpu";
-import * as mobilenet from "@tensorflow-models/mobilenet";
-import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Camera, ArrowLeft, StopCircle, Brain, Loader2 } from "lucide-react";
@@ -21,8 +16,8 @@ export const VisualScannerPage: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState(t("visitor.visualScanner.loadingModel", "Carregando modelo de IA..."));
-    const [classifier, setClassifier] = useState<knnClassifier.KNNClassifier | null>(null);
-    const [net, setNet] = useState<mobilenet.MobileNet | null>(null);
+    const [classifier, setClassifier] = useState<any>(null);
+    const [net, setNet] = useState<any>(null);
     const [scanning, setScanning] = useState(false);
     const [match, setMatch] = useState<{ label: string; conf: number } | null>(null);
 
@@ -32,6 +27,18 @@ export const VisualScannerPage: React.FC = () => {
         const init = async () => {
             try {
                 if (!tenantId) return;
+
+                // Load TensorFlow dynamically
+                setStatus(t("visitor.visualScanner.loadingEngine", "Carregando motor de IA..."));
+                const [tf, mobilenet, knnClassifier] = await Promise.all([
+                    import("@tensorflow/tfjs"),
+                    import("@tensorflow-models/mobilenet"),
+                    import("@tensorflow-models/knn-classifier"),
+                ]);
+                
+                // Set up backends
+                await import("@tensorflow/tfjs-backend-webgl");
+                await import("@tensorflow/tfjs-backend-cpu");
 
                 // Ensure TFJS backend is ready
                 await tf.ready();
@@ -49,7 +56,11 @@ export const VisualScannerPage: React.FC = () => {
                 if (savedModel) {
                     try {
                         const datasetObj = JSON.parse(savedModel);
-                        const dataset: Record<string, tf.Tensor2D> = {};
+                        const dataset: Record<string, any> = {};
+                        
+                        // Import tf for tensor creation if not available in current scope
+                        const tf = await import("@tensorflow/tfjs");
+
                         Object.keys(datasetObj).forEach((key) => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
