@@ -19,6 +19,7 @@ import {
   ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles 
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import "./WorkDetail.css";
 
 type WorkDetailData = {
@@ -176,7 +177,17 @@ export const WorkDetail: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
+      role="main"
+      aria-busy={loading}
     >
+      <Helmet>
+        <title>{work.title} | {work.artist} | Cultura Viva</title>
+        <meta name="description" content={work.description?.substring(0, 160) || `Explore a obra ${work.title} de ${work.artist} no portal Cultura Viva.`} />
+        <meta property="og:title" content={`${work.title} - ${work.artist}`} />
+        <meta property="og:image" content={work.imageUrl || ""} />
+        <meta property="og:type" content="article" />
+      </Helmet>
+
       <header className="work-header-premium">
         <span className="work-badge-premium">{work.category || 'Obra de Arte'}</span>
         <h1 className="work-title-premium">{work.title}</h1>

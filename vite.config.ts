@@ -39,20 +39,6 @@ export default defineConfig({
             purpose: "any maskable"
           }
         ],
-        screenshots: [
-          {
-            src: "/screenshot-wide.png",
-            sizes: "1280x720",
-            type: "image/png",
-            form_factor: "wide"
-          },
-          {
-            src: "/screenshot-mobile.png",
-            sizes: "640x1136",
-            type: "image/png",
-            form_factor: "narrow"
-          }
-        ]
       },
       workbox: {
         // Increase file size limit for caching
@@ -128,7 +114,7 @@ export default defineConfig({
               }
             }
           },
-          // Cache video files (Libras)
+          // Cache Video files (Libras)
           {
             urlPattern: /\.(?:mp4|webm)$/,
             handler: 'CacheFirst',
@@ -137,6 +123,21 @@ export default defineConfig({
               expiration: {
                 maxEntries: 30,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              }
+            }
+          },
+          // Cache Map Tiles (OpenStreetMap & Others)
+          {
+            urlPattern: /https:\/\/.*tile\.openstreetmap\.org\/.*/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'map-tiles-cache',
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
               }
             }
           }
@@ -153,6 +154,19 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['lucide-react', 'framer-motion'],
+          'vendor-maps': ['leaflet', 'react-leaflet'],
+          'vendor-utils': ['axios', 'i18next', 'react-i18next']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
+  },
   server: {
     port: 5173
   },

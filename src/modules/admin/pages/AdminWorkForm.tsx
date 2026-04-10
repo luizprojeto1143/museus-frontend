@@ -17,6 +17,7 @@ import "./AdminShared.css";
 
 import { useTerminology } from "../../../hooks/useTerminology";
 import { useIsCityMode, useTenant } from "../../auth/TenantContext";
+import { validateFileAsync, UPLOAD_PRESETS } from "../../../utils/uploadValidator";
 
 // Steps Configuration
 // Note: We move STEPS inside the component or make it a function to use terminology, 
@@ -214,6 +215,23 @@ export const AdminWorkForm: React.FC = () => {
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "image" | "audio" | "video", setter: (url: string) => void) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      
+      // Validação prévia conforme o tipo
+      const preset = type === "image" ? UPLOAD_PRESETS.imageOnly 
+                   : type === "audio" ? UPLOAD_PRESETS.audioOnly 
+                   : UPLOAD_PRESETS.videoOnly;
+      
+      const validation = await validateFileAsync(file, preset);
+      
+      if (!validation.valid) {
+        addToast(validation.error || "Arquivo inválido", "error");
+        return;
+      }
+
+      if (validation.warning) {
+        addToast(validation.warning, "info");
+      }
+
       const formData = new FormData();
       formData.append("file", file);
 

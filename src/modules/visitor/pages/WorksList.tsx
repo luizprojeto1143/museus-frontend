@@ -6,6 +6,7 @@ import { ArrowRight, Search, SlidersHorizontal } from "lucide-react";
 import { getFullUrl } from "../../../utils/url";
 import { useWorks } from "../hooks/useWorks";
 import { motion, AnimatePresence } from "framer-motion";
+import { WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
 import "./WorksList.css";
 
 export const WorksList: React.FC = () => {
@@ -72,8 +73,10 @@ export const WorksList: React.FC = () => {
       </header>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-20">
-           <div className="splash-loader-fill h-1 w-full max-w-md mx-auto"></div>
+        <div className="workslist-grid-premium">
+           <WorkCardSkeleton />
+           <WorkCardSkeleton />
+           <WorkCardSkeleton />
         </div>
       ) : filteredWorks.length === 0 ? (
         <div className="workslist-empty py-40">

@@ -1,5 +1,11 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../../auth/AuthContext";
 import { useTenant } from "../../auth/TenantContext";
 import { TenantLogo } from "../../../components/Branding/TenantLogo";
+import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
+import { Smartphone, Eye, Lock } from "lucide-react";
 
 export const Welcome: React.FC = () => {
   const navigate = useNavigate();
@@ -44,7 +50,10 @@ export const Welcome: React.FC = () => {
         </button>
 
         <button
-          onClick={() => navigate("/select-museum")}
+          onClick={() => {
+            enterAsGuest();
+            navigate("/select-museum");
+          }}
           className="welcome-secondary-btn guest"
         >
           <Eye size={18} /> Explorar sem Conta
@@ -64,3 +73,4 @@ export const Welcome: React.FC = () => {
     </div>
   );
 };
+

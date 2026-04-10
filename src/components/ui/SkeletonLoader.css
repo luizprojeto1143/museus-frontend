@@ -1,0 +1,55 @@
+.skeleton-loader {
+  background: var(--bg-surface-hover);
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface-hover) 25%,
+    var(--border-default) 50%,
+    var(--bg-surface-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite linear;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-loader.circle {
+  border-radius: 50%;
+}
+
+.skeleton-loader.text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.skeleton-loader.bento {
+  border-radius: var(--radius-lg);
+  min-height: 180px;
+}
+
+.skeleton-loader.bento.large {
+  min-height: 220px;
+}
+
+.skeleton-loader.bento.tall {
+  min-height: 480px;
+}
+
+.gallery-item.skeleton-variant {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  pointer-events: none;
+}
+
+.gallery-item.skeleton-variant .gallery-visual {
+  min-height: 250px;
+}

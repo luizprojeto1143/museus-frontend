@@ -6,6 +6,8 @@ import { getFullUrl } from "../../../utils/url";
 import { useIsCityMode, useTenant } from "../../auth/TenantContext";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { BentoSkeleton, WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
 import "./Home.css";
 
 interface FeaturedWork {
@@ -47,7 +49,6 @@ export const Home: React.FC = () => {
           setMuseumName(equipRes.data.nome || "");
         }
         
-        console.log(`[Home] Tenant: ${tenantId}, Works found: ${Array.isArray(worksRes.data) ? worksRes.data.length : (worksRes.data.data?.length || 0)}`);
       } catch (err) {
         console.error("Error fetching home data", err);
       } finally {
@@ -90,7 +91,17 @@ export const Home: React.FC = () => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
+      role="main"
+      aria-busy={loading}
     >
+      <Helmet>
+        <title>{museumName || tenant?.name || "Cultura Viva"} | Portal do Visitante</title>
+        <meta name="description" content={`Bem-vindo ao ${museumName || tenant?.name || "Cultura Viva"}. Explore nosso acervo digital e experiências interativas.`} />
+        <meta property="og:title" content={museumName || tenant?.name || "Cultura Viva"} />
+        <meta property="og:description" content="Uma jornada cultural imersiva te espera." />
+        {tenant?.logoUrl && <meta property="og:image" content={tenant.logoUrl} />}
+      </Helmet>
+
       {/* ═══ HERO SECTION ═══════════════ */}
       <motion.section variants={itemVariants} className="home-hero-premium">
         {isCityMode && (
@@ -107,65 +118,69 @@ export const Home: React.FC = () => {
       </motion.section>
 
       {/* ═══ BENTO ACTIONS ══════════════ */}
-      <section className="bento-grid">
-        <Link to="/scanner" className="bento-card large">
-          <div className="bento-icon">📷</div>
-          <div className="bento-info">
-            <span className="bento-label">Scanner Inteligente</span>
-            <span className="bento-title">Decifrar Obra</span>
-          </div>
-          <div className="bento-bg" style={{ background: 'linear-gradient(45deg, var(--gold), transparent)' }}></div>
-        </Link>
-        
-        <Link to="/mapa" className="bento-card tall">
-          <div className="bento-icon">📍</div>
-          <div className="bento-info">
-            <span className="bento-label">Cartografia Digital</span>
-            <span className="bento-title">Explorar Mapa</span>
-          </div>
-        </Link>
+      {loading ? (
+        <BentoSkeleton />
+      ) : (
+        <section className="bento-grid">
+          <Link to="/scanner" className="bento-card large">
+            <div className="bento-icon">📷</div>
+            <div className="bento-info">
+              <span className="bento-label">Scanner Inteligente</span>
+              <span className="bento-title">Decifrar Obra</span>
+            </div>
+            <div className="bento-bg" style={{ background: 'linear-gradient(45deg, var(--gold), transparent)' }}></div>
+          </Link>
+          
+          <Link to="/mapa" className="bento-card tall">
+            <div className="bento-icon">📍</div>
+            <div className="bento-info">
+              <span className="bento-label">Cartografia Digital</span>
+              <span className="bento-title">Explorar Mapa</span>
+            </div>
+          </Link>
 
-        <Link to="/eventos" className="bento-card">
-          <div className="bento-icon">📅</div>
-          <div className="bento-info">
-            <span className="bento-label">Efemérides</span>
-            <span className="bento-title">Eventos</span>
-          </div>
-        </Link>
+          <Link to="/eventos" className="bento-card">
+            <div className="bento-icon">📅</div>
+            <div className="bento-info">
+              <span className="bento-label">Efemérides</span>
+              <span className="bento-title">Eventos</span>
+            </div>
+          </Link>
 
-        <Link to="/trilhas" className="bento-card">
-          <div className="bento-icon">🧭</div>
-          <div className="bento-info">
-            <span className="bento-label">Roteiros Históricos</span>
-            <span className="bento-title">Trilhas</span>
-          </div>
-        </Link>
+          <Link to="/trilhas" className="bento-card">
+            <div className="bento-icon">🧭</div>
+            <div className="bento-info">
+              <span className="bento-label">Roteiros Históricos</span>
+              <span className="bento-title">Trilhas</span>
+            </div>
+          </Link>
 
-        <Link to="/rpg" className="bento-card large">
-          <div className="bento-icon">⚔️</div>
-          <div className="bento-info">
-            <span className="bento-label">Selo de Embaixador</span>
-            <span className="bento-title">Minha Jornada RPG</span>
-          </div>
-          <div className="bento-bg" style={{ background: 'linear-gradient(-45deg, var(--gold), transparent)' }}></div>
-        </Link>
+          <Link to="/rpg" className="bento-card large">
+            <div className="bento-icon">⚔️</div>
+            <div className="bento-info">
+              <span className="bento-label">Selo de Embaixador</span>
+              <span className="bento-title">Minha Jornada RPG</span>
+            </div>
+            <div className="bento-bg" style={{ background: 'linear-gradient(-45deg, var(--gold), transparent)' }}></div>
+          </Link>
 
-        <Link to="/desafios" className="bento-card">
-          <div className="bento-icon">🎯</div>
-          <div className="bento-info">
-            <span className="bento-label">Provas de Saber</span>
-            <span className="bento-title">Desafios</span>
-          </div>
-        </Link>
+          <Link to="/desafios" className="bento-card">
+            <div className="bento-icon">🎯</div>
+            <div className="bento-info">
+              <span className="bento-label">Provas de Saber</span>
+              <span className="bento-title">Desafios</span>
+            </div>
+          </Link>
 
-        <Link to="/ranking" className="bento-card">
-          <div className="bento-icon">🏆</div>
-          <div className="bento-info">
-            <span className="bento-label">Hall da Fama</span>
-            <span className="bento-title">Ranking</span>
-          </div>
-        </Link>
-      </section>
+          <Link to="/ranking" className="bento-card">
+            <div className="bento-icon">🏆</div>
+            <div className="bento-info">
+              <span className="bento-label">Hall da Fama</span>
+              <span className="bento-title">Ranking</span>
+            </div>
+          </Link>
+        </section>
+      )}
 
       {/* ═══ FEATURED GALLERY ═══════════ */}
       <section className="gallery-section">
@@ -175,8 +190,10 @@ export const Home: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center p-20">
-            <div className="splash-loader-fill h-1 w-40"></div>
+          <div className="gallery-grid">
+            <WorkCardSkeleton />
+            <WorkCardSkeleton />
+            <WorkCardSkeleton />
           </div>
         ) : (
           <div className="gallery-grid">

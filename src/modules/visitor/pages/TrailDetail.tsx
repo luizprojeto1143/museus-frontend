@@ -8,6 +8,8 @@ import { getFullUrl } from "../../../utils/url";
 import { Heart, Clock, List, Share2, ChevronRight } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
+import { useAudio } from "../context/AudioContext";
 import "./Trails.css";
 
 type TrailDetailData = {
@@ -99,6 +101,13 @@ export const TrailDetail: React.FC = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
+      <Helmet>
+        <title>{apiTrail.name} | Trilha Cultural | Cultura Viva</title>
+        <meta name="description" content={apiTrail.description?.substring(0, 160) || `Siga a trilha ${apiTrail.name} e descubra belezas escondidas.`} />
+        <meta property="og:title" content={apiTrail.name} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
       <header className="work-header-premium">
         <span className="work-badge-premium">Jornada Cultural</span>
         <h1 className="work-title-premium">{apiTrail.name}</h1>

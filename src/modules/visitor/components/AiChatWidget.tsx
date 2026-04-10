@@ -80,13 +80,16 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
         }
     };
 
-    if (!isOpen) {
         return (
-            <button onClick={() => setIsOpen(true)} className="ai-chat-fab">
+            <button 
+                onClick={() => setIsOpen(true)} 
+                className="ai-chat-fab"
+                aria-label={t("visitor.ai.openChat", "Abrir chat com guia virtual")}
+                aria-expanded="false"
+            >
                 <Bot size={28} />
             </button>
         );
-    }
 
     return (
         <div className="ai-chat-window">
@@ -96,13 +99,22 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
                     <Bot size={20} />
                     <span>{t("visitor.ai.chatTitle", "Guia Virtual")}</span>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="ai-chat-close-btn">
+                <button 
+                    onClick={() => setIsOpen(false)} 
+                    className="ai-chat-close-btn"
+                    aria-label={t("common.close", "Fechar")}
+                >
                     <X size={20} />
                 </button>
             </div>
 
             {/* Messages */}
-            <div className="ai-chat-messages">
+            <div 
+                className="ai-chat-messages" 
+                role="log" 
+                aria-live="polite"
+                aria-relevant="additions"
+            >
                 {messages.length === 0 && (
                     <div className="ai-chat-empty">
                         <div className="ai-chat-empty-icon">👋</div>
@@ -141,11 +153,13 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={t("visitor.ai.placeholder", "Digite sua pergunta...")}
                     className="ai-chat-input"
+                    aria-label={t("visitor.ai.inputLabel", "Sua mensagem para o guia IA")}
                 />
                 <button
                     type="submit"
                     disabled={loading || !input.trim()}
                     className="ai-chat-send-btn"
+                    aria-label={t("visitor.ai.send", "Enviar mensagem")}
                 >
                     <Send size={18} />
                 </button>
