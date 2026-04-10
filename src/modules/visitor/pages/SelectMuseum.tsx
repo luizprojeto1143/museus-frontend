@@ -10,6 +10,7 @@ import {
   Clock, Landmark, Theater
 } from "lucide-react";
 import "./SelectMuseum.css";
+import { useGeoFencing } from "../../visitor/context/GeoFencingProvider";
 
 interface Equipamento {
   id: string;
@@ -40,27 +41,10 @@ export const SelectMuseum: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const { userLocation } = useGeoFencing();
   const [selectedLandmark, setSelectedLandmark] = useState<Equipamento | null>(null);
 
-  // 1. Get User Location on Mount
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.warn("Geolocation denied or error:", error);
-        }
-      );
-    }
-  }, []);
-
-  // 2. Load Tenants & Handle Auto-selection
+  // Load Tenants & Handle Auto-selection
   useEffect(() => {
     async function init() {
       await loadEquipamentos();

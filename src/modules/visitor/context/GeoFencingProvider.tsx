@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { useIsCityMode } from "../../auth/TenantContext";
 import { getFullUrl } from "../../../utils/url";
 import { ProximityAlert, ProximityAlertData } from "../components/ProximityAlert";
 
@@ -36,7 +37,10 @@ type GeoPoint = {
 
 export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { tenantId } = useAuth();
-    const isCityMode = false; // Will be fetched from TenantContext if needed
+    const isCityModeFromContext = useIsCityMode();
+    // In discovery mode (no tenant selected), we treat it as city mode to notify about nearby museums
+    const isCityMode = isCityModeFromContext || !tenantId; 
+
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [permission, setPermission] = useState<"granted" | "denied" | "prompt">("prompt");
     const [geoPoints, setGeoPoints] = useState<GeoPoint[]>([]);
@@ -144,7 +148,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                             longitude: item.longitude,
                             radius: 100,
                             imageUrl: item.logoUrl || undefined,
-                            url: `/museu/${item.id}`
+                            url: `/select-museum?select=${item.id}`
                         });
                     }
                 });

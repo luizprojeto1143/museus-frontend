@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { api } from "../../api/client";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 import { useAuth } from "../auth/AuthContext";
 import { NavPill } from "./components/NavPill";
@@ -203,6 +204,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             <span className="app-title">{settings?.name || "Cultura Viva"}</span>
           </Link>
           <div className="header-actions">
+             <ThemeToggle />
              <LanguageSwitcher absolute={false} />
              <button onClick={logout} className="logout-btn-minimal" title="Sair">
                <span className="nav-icon">🚪</span>

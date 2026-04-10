@@ -11,12 +11,16 @@ interface ThemeSettings {
 interface ThemeContextType {
     theme: ThemeSettings;
     setSpaceTheme: (settings: Partial<ThemeSettings>) => void;
+    toggleTheme: () => void;
+    setThemeMode: (mode: "light" | "dark") => void;
     resetTheme: () => void;
 }
 
+import { useTenant } from "../../auth/TenantContext";
+
 const defaultTheme: ThemeSettings = {
-    primaryColor: "#d4af37", // Gold
-    secondaryColor: "#cd7f32", // Bronze
+    primaryColor: "#d4af37", // Gold fallback
+    secondaryColor: "#cd7f32", // Bronze fallback
     theme: "dark",
     historicalFont: true
 };
@@ -24,81 +28,58 @@ const defaultTheme: ThemeSettings = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [theme, setTheme] = useState<ThemeSettings>(defaultTheme);
+    const tenant = useTenant();
+    
+    // Initialize with fallback but check localStorage first
+    const getInitialTheme = (): ThemeSettings => {
+        const localMode = localStorage.getItem("visitor_theme_mode") as "light" | "dark" | null;
+        return {
+            ...defaultTheme,
+            theme: localMode || defaultTheme.theme
+        };
+    };
+
+    const [theme, setTheme] = useState<ThemeSettings>(getInitialTheme());
 
     const applyTheme = (settings: ThemeSettings) => {
         const root = document.documentElement;
         
-        // Unify standard variable names used across different components
+        // Dynamic Branding Colors
         const primary = settings.primaryColor;
         const secondary = settings.secondaryColor;
 
-        // Primary mappings (Gold variations)
-        root.style.setProperty("--primary-color", primary);
+        // Apply primary branding colors to root variables
         root.style.setProperty("--accent-primary", primary);
-        root.style.setProperty("--accent-gold", primary);
         root.style.setProperty("--gold", primary);
         root.style.setProperty("--color-gold-400", primary);
-        
-        // Secondary mappings (Bronze variations)
-        root.style.setProperty("--secondary-color", secondary);
         root.style.setProperty("--accent-secondary", secondary);
-        root.style.setProperty("--accent-bronze", secondary);
         root.style.setProperty("--bronze", secondary);
-        root.style.setProperty("--color-bronze-400", secondary);
 
         // Theme and Fonts
-        const fontStack = settings.historicalFont ? "Georgia, serif" : "Inter, system-ui, sans-serif";
+        const isHistorical = settings.historicalFont ?? true;
+        const fontStack = isHistorical ? "Georgia, serif" : "'Inter', system-ui, sans-serif";
+        
+        // Trigger CSS data-theme selectors
         root.setAttribute("data-theme", settings.theme);
+        
         root.style.setProperty("--font-fb", fontStack);
         root.style.setProperty("--font-body", fontStack);
-        root.style.setProperty("--font-heading", settings.historicalFont ? "Georgia, serif" : "Syne, sans-serif");
-        root.style.setProperty("--fb", fontStack);
-        root.style.setProperty("--fd", settings.historicalFont ? "Georgia, serif" : "Syne, sans-serif");
-        
-        // Background and Text logic
-        if (settings.theme === "light") {
-            root.style.setProperty("--bg-page", "#ffffff");
-            root.style.setProperty("--bg-primary", "#f8fafc");
-            root.style.setProperty("--fg-main", "#0f172a");
-            root.style.setProperty("--text-primary", "#0f172a");
-            root.style.setProperty("--text-secondary", "rgba(15, 23, 42, 0.8)");
-            root.style.setProperty("--bg", "#ffffff");
-            root.style.setProperty("--cream", "#1a1108");
-            root.style.setProperty("--gold", settings.primaryColor || "#c9943a");
-            root.style.setProperty("--gold-hi", "#0f172a"); // Forçar títulos escuros no tema claro
-            root.style.setProperty("--gold-dim", "rgba(15, 23, 42, 0.05)");
-            root.style.setProperty("--gold-glow", "rgba(15, 23, 42, 0.1)");
-            root.style.setProperty("--muted", "rgba(15, 23, 42, 0.6)");
-            root.style.setProperty("--faint", "rgba(0, 0, 0, 0.03)");
-            root.style.setProperty("--border", "rgba(0, 0, 0, 0.12)");
-            root.style.setProperty("--border-color", "rgba(0, 0, 0, 0.12)");
-            root.style.setProperty("--surface", "rgba(255, 255, 255, 0.95)");
-            root.style.setProperty("--surface2", "rgba(241, 245, 249, 0.9)");
-            root.style.setProperty("--bg-card", "rgba(0, 0, 0, 0.04)");
-            root.style.setProperty("--bg-hover", "rgba(0, 0, 0, 0.06)");
-        } else {
-            root.style.setProperty("--bg-page", "#05050c");
-            root.style.setProperty("--bg-primary", "#0a0a0b");
-            root.style.setProperty("--fg-main", "#f5e6d3");
-            root.style.setProperty("--text-primary", "#ffffff");
-            root.style.setProperty("--text-secondary", "rgba(255, 255, 255, 0.6)");
-            root.style.setProperty("--bg", "#05050c");
-            root.style.setProperty("--cream", "#ede8d8");
-            root.style.setProperty("--gold", "#c9943a");
-            root.style.setProperty("--gold-hi", "#f0c060");
-            root.style.setProperty("--gold-dim", "rgba(201,148,58,.14)");
-            root.style.setProperty("--gold-glow", "rgba(201,148,58,.28)");
-            root.style.setProperty("--muted", "rgba(237,232,216,.5)");
-            root.style.setProperty("--faint", "rgba(237,232,216,.07)");
-            root.style.setProperty("--border", "rgba(237,232,216,.07)");
-            root.style.setProperty("--border-color", "rgba(255, 255, 255, 0.08)");
-            root.style.setProperty("--surface", "rgba(9,9,15,.82)");
-            root.style.setProperty("--surface2", "rgba(12,12,22,.7)");
-            root.style.setProperty("--bg-card", "rgba(255, 255, 255, 0.03)");
-            root.style.setProperty("--bg-hover", "rgba(255, 255, 255, 0.05)");
-        }
+        root.style.setProperty("--font-heading", isHistorical ? "Georgia, serif" : "'Syne', sans-serif");
     };
+
+    // Auto-sync theme from Tenant context if available (only if no local override)
+    useEffect(() => {
+        if (tenant) {
+            const localMode = localStorage.getItem("visitor_theme_mode");
+            setTheme(prev => ({
+                ...prev,
+                primaryColor: tenant.primaryColor,
+                secondaryColor: tenant.secondaryColor,
+                theme: (localMode as "light" | "dark") || (tenant.theme as "light" | "dark") || "dark",
+                historicalFont: true 
+            }));
+        }
+    }, [tenant]);
 
     useEffect(() => {
         applyTheme(theme);
@@ -108,12 +89,23 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
         setTheme(prev => ({ ...prev, ...settings }));
     };
 
+    const setThemeMode = (mode: "light" | "dark") => {
+        setTheme(prev => ({ ...prev, theme: mode }));
+        localStorage.setItem("visitor_theme_mode", mode);
+    };
+
+    const toggleTheme = () => {
+        const newMode = theme.theme === "light" ? "dark" : "light";
+        setThemeMode(newMode);
+    };
+
     const resetTheme = () => {
         setTheme(defaultTheme);
+        localStorage.removeItem("visitor_theme_mode");
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, setSpaceTheme, resetTheme }}>
+        <ThemeContext.Provider value={{ theme, setSpaceTheme, toggleTheme, setThemeMode, resetTheme }}>
             {children}
         </ThemeContext.Provider>
     );

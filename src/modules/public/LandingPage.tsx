@@ -3,10 +3,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Smartphone, Globe, Ear, Eye, Award, ArrowRight, Layout, Menu, X, Mail, Instagram, MapPin } from "lucide-react";
 import { ContactForm } from "./ContactForm";
+import { useTenant } from "../auth/TenantContext";
+import { TenantLogo } from "../../components/Branding/TenantLogo";
 
 export const LandingPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const tenant = useTenant();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     // Helper para scroll suave que funciona em SPA
@@ -48,10 +51,9 @@ export const LandingPage: React.FC = () => {
                     style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--accent-primary)", display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}
                     onClick={() => window.scrollTo(0, 0)}
                     onKeyDown={(e) => e.key === 'Enter' && window.scrollTo(0, 0)}
-                    aria-label="Cultura Viva - Voltar ao topo"
+                    aria-label={`${tenant?.name || 'Cultura Viva'} - Voltar ao topo`}
                 >
-                    <img src="/logo-culturaviva.jpg" alt="" aria-hidden="true" style={{ height: "40px", borderRadius: "50%" }} />
-                    <span className="logo-text">Cultura Viva</span>
+                    <TenantLogo size={40} />
                 </div>
 
                 {/* Desktop Menu */}
@@ -151,13 +153,19 @@ export const LandingPage: React.FC = () => {
 
                 <h1 style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", marginBottom: "1.5rem", lineHeight: "1.1", fontWeight: "bold" }}>
                     Transforme Patrimônio <br />
-                    <span style={{
-                        background: "linear-gradient(to right, var(--accent-primary), var(--color-gold-200), var(--accent-primary))",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent"
-                    }}>{t("public.landingpage.emExperinciaViva", `
-                        em Experiência Viva.
-                    `)}</span>
+                    {tenant ? (
+                        <span style={{
+                            background: `linear-gradient(to right, ${tenant.primaryColor}, var(--color-gold-200), ${tenant.primaryColor})`,
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent"
+                        }}> em {tenant.name}.</span>
+                    ) : (
+                        <span style={{
+                            background: "linear-gradient(to right, var(--accent-primary), var(--color-gold-200), var(--accent-primary))",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent"
+                        }}>{t("public.landingpage.emExperinciaViva", ` em Experiência Viva.`)}</span>
+                    )}
                 </h1>
 
                 <p style={{ maxWidth: "700px", margin: "0 auto 3rem", fontSize: "1.2rem", opacity: 0.8, lineHeight: "1.6", fontFamily: "var(--font-body)" }}>{t("public.landingpage.aSoluoCompletaParaDigitalizarMuseusECida", `
@@ -216,22 +224,6 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>
-                    <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
-                        <Award size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
-                        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{t("public.landingpage.gamificaoReal", `Gamificação Real`)}</h3>
-                        <p style={{ opacity: 0.7, fontFamily: "var(--font-body)", lineHeight: "1.6" }}>{t("public.landingpage.sistemaDeXpConquistasENveisQueTransforma", `
-                            Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora.
-                            Aumente a retenção e o interesse do público jovem com desafios interativos.
-                        `)}</p>
-                    </div>
-                    <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
-                        <Award size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
-                        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{t("public.landingpage.gamificaoReal", `Gamificação Real`)}</h3>
-                        <p style={{ opacity: 0.7, fontFamily: "var(--font-body)", lineHeight: "1.6" }}>{t("public.landingpage.sistemaDeXpConquistasENveisQueTransforma", `
-                            Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora.
-                            Aumente a retenção e o interesse do público jovem com desafios interativos.
-                        `)}</p>
-                    </div>
                     <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
                         <Smartphone size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
                         <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Web App (PWA)</h3>

@@ -1,14 +1,14 @@
 /* Premium Welcome Theme - Grand Entrance Dark & Gold */
 
 .welcome-container {
-    font-family: 'Georgia', serif;
+    font-family: var(--font-body);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background:
-        linear-gradient(135deg, rgba(26, 17, 8, 0.97), rgba(45, 24, 16, 0.97)),
+        linear-gradient(135deg, var(--bg-page), var(--bg-surface)),
         url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     padding: 2rem;
     position: relative;
@@ -45,32 +45,32 @@
 
 .welcome-title {
     font-size: 3rem;
-    color: #d4af37;
+    color: var(--accent-primary);
     margin: 0 0 0.75rem 0;
     text-shadow:
-        0 4px 16px rgba(212, 175, 55, 0.6),
-        0 0 40px rgba(212, 175, 55, 0.3);
+        0 4px 16px var(--shadow-glow),
+        0 0 40px rgba(var(--accent-primary-rgb), 0.3);
     letter-spacing: 2px;
 }
 
 .welcome-subtitle {
-    color: #c9b58c;
+    color: var(--accent-primary);
     font-size: 1.15rem;
     font-style: italic;
     margin: 0;
-    opacity: 0.9;
+    opacity: 0.7;
 }
 
 /* ============================================
    BUTTONS
    ============================================ */
 .welcome-primary-btn {
-    background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
-    color: #1a1108;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: var(--fg-inverse);
     font-size: 1.2rem;
     font-weight: bold;
     padding: 1rem 3rem;
-    border: 2px solid #d4af37;
+    border: 2px solid var(--accent-primary);
     border-radius: 0.8rem;
     cursor: pointer;
     box-shadow:
@@ -98,9 +98,9 @@
    ACTIONS GROUP
    ============================================ */
 .welcome-actions-group {
-    background: rgba(42, 24, 16, 0.4);
+    background: var(--bg-surface-hover);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--border-default);
     border-radius: 1.25rem;
     padding: 1.5rem;
     display: flex;
@@ -109,17 +109,15 @@
     width: 100%;
     max-width: 320px;
     animation: welcomeFadeIn 1.5s ease-out 0.2s both;
-    box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.4),
-        inset 0 1px 1px rgba(212, 175, 55, 0.05);
+    box-shadow: var(--shadow-surface);
 }
 
 .welcome-secondary-btn {
-    background: rgba(26, 17, 8, 0.5);
-    color: #c9b58c;
+    background: var(--bg-surface);
+    color: var(--fg-secondary);
     font-size: 0.9rem;
     padding: 0.75rem 1.25rem;
-    border: 1px solid rgba(139, 115, 85, 0.4);
+    border: 1px solid var(--border-subtle);
     border-radius: 0.75rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -134,20 +132,20 @@
 }
 
 .welcome-secondary-btn:hover {
-    background: rgba(212, 175, 55, 0.1);
-    color: #d4af37;
-    border-color: #d4af37;
+    background: var(--bg-surface-hover);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-surface);
 }
 
 .welcome-secondary-btn.agenda {
-    border-color: rgba(212, 175, 55, 0.3);
-    color: #d4af37;
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
 }
 
 .welcome-secondary-btn.guest {
-    border-color: rgba(139, 115, 85, 0.3);
+    border-color: var(--border-default);
 }
 
 .welcome-secondary-btn.login {

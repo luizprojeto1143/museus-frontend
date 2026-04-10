@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
-import { useIsCityMode } from "../../auth/TenantContext";
+import { useIsCityMode, useTenant } from "../../auth/TenantContext";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import "./Home.css";
@@ -22,6 +22,7 @@ export const Home: React.FC = () => {
   const { tenantId, equipamentoId, role } = useAuth();
   const navigate = useNavigate();
   const isCityMode = useIsCityMode();
+  const tenant = useTenant();
   const [featuredWorks, setFeaturedWorks] = useState<FeaturedWork[]>([]);
   const [museumName, setMuseumName] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -98,10 +99,10 @@ export const Home: React.FC = () => {
           </span>
         )}
         <h1 className="hero-title-premium">
-          {museumName || "Cultura Viva"}
+          {museumName || tenant?.name || "Cultura Viva"}
         </h1>
-        <p className="hero-subtitle-premium">
-          Explore a alma cultural de Betim através de uma jornada digital imersiva, onde a história encontra o futuro.
+        <p className="hero-subtitle-premium" style={{ opacity: 0.85 }}>
+          Explore o patrimônio cultural através de uma jornada digital imersiva, onde a história e a inovação se encontram.
         </p>
       </motion.section>
 
