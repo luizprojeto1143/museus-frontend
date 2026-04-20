@@ -71,10 +71,15 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
     useEffect(() => {
         if (tenant) {
             const localMode = localStorage.getItem("visitor_theme_mode");
+            
+            // SECURITY: If the tenant colors are the old brown/bordeaux, 
+            // we favor the cinematic lux colors unless it's a specific custom museum.
+            const isOldBranding = tenant.primaryColor === "#2a1108" || tenant.slug === "cultura-viva";
+            
             setTheme(prev => ({
                 ...prev,
-                primaryColor: tenant.primaryColor,
-                secondaryColor: tenant.secondaryColor,
+                primaryColor: isOldBranding ? "var(--color-gold-400)" : tenant.primaryColor,
+                secondaryColor: isOldBranding ? "var(--color-neutral-950)" : tenant.secondaryColor,
                 theme: (localMode as "light" | "dark") || (tenant.theme as "light" | "dark") || "dark",
                 historicalFont: true 
             }));
@@ -82,6 +87,10 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }, [tenant]);
 
     useEffect(() => {
+        const root = document.documentElement;
+        // Enforce the high-end font stack globally
+        root.style.setProperty("--font-heading", "'Bodoni Moda', Georgia, serif");
+        root.style.setProperty("--font-body", "'Syne', system-ui, sans-serif");
         applyTheme(theme);
     }, [theme]);
 
