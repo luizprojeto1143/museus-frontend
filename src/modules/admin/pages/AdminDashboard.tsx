@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2, Users, Star } from "lucide-react";
+import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2, Users, Star, Layout } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsCityMode } from "../../auth/TenantContext";
+import { Card, AnimatedCounter, Button, Badge, AnimateIn } from "@/components/ui";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
 
 type DashboardData = {
   // ... (previous fields remain the same)
@@ -147,18 +149,22 @@ export const AdminDashboard: React.FC = () => {
       {/* HEADER SECTION */}
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div>
-          <span className={`${isCityMode ? 'text-blue-400' : 'text-gold-400'} font-black text-[10px] uppercase tracking-[0.3em] mb-4 block`}>
+          <Badge variant="outline" className={`${isCityMode ? 'text-blue-400 border-blue-400/30' : 'text-gold-400 border-gold-400/30'} mb-4`}>
             Command Center
-          </span>
-          <h1 className="premium-title">{t("admin.dashboard.title")}</h1>
+          </Badge>
+          <h1 className="premium-title text-5xl font-black tracking-tighter">{t("admin.dashboard.title")}</h1>
           <p className="text-slate-400 font-medium mt-4 max-w-lg leading-relaxed">
             Gestão estratégica de conteúdo, engajamento e logística institucional.
           </p>
         </div>
         <div className="flex gap-3">
-           <button className="h-14 px-8 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all duration-300 shadow-xl shadow-white/5 active:scale-95">
+           <Button
+             variant="glass"
+             className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+             onClick={() => window.location.href = "/admin/config"}
+           >
               Configurar Espaço
-           </button>
+           </Button>
         </div>
       </header>
 
@@ -191,32 +197,40 @@ export const AdminDashboard: React.FC = () => {
       </motion.div>
 
       {/* INDICADORES PRINCIPAIS - DENSE GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <motion.div 
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
         {[
           { label: t("admin.dashboard.stats.visitors"), value: data.visitorsThisMonth, icon: Users, color: 'blue' },
           { label: t("admin.dashboard.stats.qrScans"), value: data.totalQRScans, icon: Ticket, color: 'purple' },
-          { label: t("admin.dashboard.stats.xpDistributed"), value: data.totalXPDistributed.toLocaleString(), icon: Star, color: 'gold' },
-          { label: t("admin.dashboard.stats.monthlyGrowth"), value: `+${data.monthlyGrowth}%`, icon: BarChart2, color: 'green' },
+          { label: t("admin.dashboard.stats.xpDistributed"), value: data.totalXPDistributed, icon: Star, color: 'gold' },
+          { label: t("admin.dashboard.stats.monthlyGrowth"), value: data.monthlyGrowth, icon: BarChart2, color: 'green', unit: '%' },
         ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.1 }}
-            className="stat-card group hover:border-white/20"
-          >
-            <div className="flex justify-between items-start mb-6">
-               <div className={`w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 group-hover:border-white/20 transition-all`}>
-                  <stat.icon size={18} className="text-slate-400 group-hover:text-white" />
-               </div>
-            </div>
-            <div className="flex flex-col">
-               <span className="text-slate-500 font-black text-[10px] uppercase tracking-widest mb-1">{stat.label}</span>
-               <span className="text-2xl font-black text-white tracking-tighter leading-none">{stat.value}</span>
-            </div>
+          <motion.div key={i} variants={staggerItem}>
+            <Card
+              hover="premium"
+              className="p-8 border-white/5 bg-black/20 group hover:border-white/20 transition-all"
+            >
+              <div className="flex justify-between items-start mb-6">
+                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 border border-white/5 group-hover:border-white/20 transition-all`}>
+                    <stat.icon size={20} className="text-slate-400 group-hover:text-white transition-colors" />
+                 </div>
+              </div>
+              <div className="flex flex-col">
+                 <span className="text-slate-500 font-black text-[10px] uppercase tracking-widest mb-2">{stat.label}</span>
+                 <div className="text-3xl font-black text-white tracking-tighter leading-none flex items-baseline">
+                   {stat.unit === '%' && <span className="mr-1 opacity-50">+</span>}
+                   <AnimatedCounter value={stat.value} />
+                   {stat.unit && <span className="ml-1 text-sm opacity-50">{stat.unit}</span>}
+                 </div>
+              </div>
+            </Card>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* AGENDA & BOOKINGS COL */}

@@ -6,8 +6,12 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import L from "leaflet";
 import "leaflet.markercluster";
-import { Building, Map as MapIcon } from "lucide-react";
+import { Building, Map as MapIcon, Navigation, Target, Zap, Waves } from "lucide-react";
 import "./MuseumMap.css";
+import { Button, Badge, AnimateIn } from "@/components/ui";
+import { motion, AnimatePresence } from "framer-motion";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
+import { cn } from "@/lib/cn";
 
 // Local assets from public folder
 const icon = "/images/leaflet/marker-icon.png";
@@ -24,9 +28,16 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const VestigeIcon = L.divIcon({
     className: 'vestige-map-marker',
-    html: '<div style="width:20px;height:20px;background:var(--accent-primary);border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(212,175,55,0.6)"></div>',
-    iconSize: [20, 20],
-    iconAnchor: [10, 10]
+    html: `
+        <div class="relative flex items-center justify-center">
+            <div class="absolute w-10 h-10 bg-[var(--accent-primary)]/20 rounded-full animate-ping"></div>
+            <div class="relative w-5 h-5 bg-[var(--accent-primary)] rounded-full border-2 border-white shadow-[0_0_15px_rgba(212,175,55,0.8)] flex items-center justify-center">
+                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            </div>
+        </div>
+    `,
+    iconSize: [40, 40],
+    iconAnchor: [20, 20]
 });
 
 type MapMode = "outdoor" | "indoor";
@@ -107,10 +118,16 @@ function ClusteredMarkers({ pois, vestigeIcon, defaultIcon }: {
                 );
 
                 const popupContent = document.createElement("div");
-                popupContent.className = "museum-map-popup";
+                popupContent.className = "flex flex-col gap-3 min-w-[200px] p-2";
                 popupContent.innerHTML = `
-                    <p class="museum-map-popup-title">${poi.type === "vestige" ? "\u2728 " : ""}${poi.title}</p>
-                    ${poi.description ? `<p class="museum-map-popup-desc">${poi.description}</p>` : ""}
+                    <div class="flex items-center gap-2">
+                        ${poi.type === "vestige" ? '<span class="text-gold-500">✨</span>' : ""}
+                        <h4 class="font-black text-slate-900 tracking-tight text-lg">${poi.title}</h4>
+                    </div>
+                    ${poi.description ? `<p class="text-slate-600 text-xs leading-relaxed font-medium">${poi.description}</p>` : ""}
+                    <div class="flex items-center gap-1 mt-1">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">${poi.type || 'Ponto de Interesse'}</span>
+                    </div>
                 `;
                 marker.bindPopup(popupContent);
                 clusterGroup.addLayer(marker);
@@ -215,39 +232,57 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
 
     return (
         <div
-            className={`museum-map-container ${mode === 'outdoor' ? 'outdoor' : ''}`}
+            className={cn(
+                "museum-map-container relative w-full overflow-hidden rounded-[var(--radius-xl)] border-2 border-[var(--border-strong)] shadow-2xl transition-all duration-500",
+                mode === 'outdoor' ? 'h-[600px]' : 'aspect-square md:aspect-video'
+            )}
             style={{
-                aspectRatio: mode === "indoor" ? `${aspectRatio}` : "auto",
-                height: mode === "indoor" ? "auto" : undefined
+                aspectRatio: mode === "indoor" ? `${aspectRatio}` : undefined,
             }}
         >
-            {/* Controls */}
-            <div className="museum-map-controls">
-                <div className="museum-map-mode-btns">
-                    <button
-                        onClick={() => setMode("outdoor")}
-                        className={`museum-map-mode-btn ${mode === "outdoor" ? 'active' : 'inactive'}`}
-                    >
-                        <MapIcon size={16} /> Cidade
-                    </button>
-                    <button
-                        onClick={() => setMode("indoor")}
-                        className={`museum-map-mode-btn ${mode === "indoor" ? 'active' : 'inactive'}`}
-                    >
-                        <Building size={16} /> Planta
-                    </button>
-                </div>
+            {/* Controls Layer */}
+            <div className="absolute top-6 right-6 z-[1000] flex flex-col gap-4 items-end">
+                <AnimateIn variant="fadeUp" delay={0.2}>
+                    <div className="flex bg-[var(--bg-overlay)] backdrop-blur-xl p-1.5 rounded-2xl border border-[var(--border-subtle)] shadow-2xl">
+                        <Button
+                            variant={mode === "outdoor" ? "primary" : "ghost"}
+                            size="sm"
+                            onClick={() => setMode("outdoor")}
+                            className="rounded-xl h-12 px-5 font-bold uppercase tracking-widest text-[10px]"
+                            leftIcon={<MapIcon size={14} />}
+                        >
+                            Cidade
+                        </Button>
+                        <Button
+                            variant={mode === "indoor" ? "primary" : "ghost"}
+                            size="sm"
+                            onClick={() => setMode("indoor")}
+                            className="rounded-xl h-12 px-5 font-bold uppercase tracking-widest text-[10px]"
+                            leftIcon={<Building size={14} />}
+                        >
+                            Planta
+                        </Button>
+                    </div>
+                </AnimateIn>
 
-                {mode === "indoor" && pois.length > 0 && (
-                    <select
-                        className="museum-map-destination-select"
-                        onChange={(e) => setDestinationId(e.target.value)}
-                        value={destinationId || ""}
-                    >
-                        <option value="">🎯 Ir para...</option>
-                        {pois.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
-                    </select>
-                )}
+                <AnimatePresence>
+                    {mode === "indoor" && pois.length > 0 && (
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                        >
+                            <select
+                                className="bg-[var(--bg-overlay)] backdrop-blur-xl border border-[var(--border-subtle)] text-white text-xs font-bold rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[var(--accent-primary)] shadow-2xl min-w-[180px]"
+                                onChange={(e) => setDestinationId(e.target.value)}
+                                value={destinationId || ""}
+                            >
+                                <option value="" className="bg-slate-900 text-gray-400">🎯 Ir para...</option>
+                                {pois.map(p => <option key={p.id} value={p.id} className="bg-slate-900">{p.title}</option>)}
+                            </select>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             <MapContainer
@@ -266,9 +301,11 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                         />
                         <Marker position={outdoorCenter}>
                             <Popup>
-                                <div className="museum-map-popup">
-                                    <p className="museum-map-popup-title">Museu Principal</p>
-                                    <p className="museum-map-popup-desc">{t("visitor.museummap.vocEstAqui", `Você está aqui.`)}</p>
+                                <div className="p-2 min-w-[160px]">
+                                    <h4 className="font-black text-slate-900 mb-1">Museu Principal</h4>
+                                    <Badge variant="outline" className="text-blue-500 border-blue-200 bg-blue-50 text-[10px]">
+                                        Você está aqui
+                                    </Badge>
                                 </div>
                             </Popup>
                         </Marker>
@@ -296,7 +333,13 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                                 <Circle
                                     center={[userLocation.lat, userLocation.lng]}
                                     radius={userLocation.accuracy}
-                                    pathOptions={{ color: 'var(--accent-primary)', fillColor: 'var(--accent-primary)', fillOpacity: 0.1 }}
+                                    pathOptions={{ 
+                                        color: 'var(--accent-primary)', 
+                                        fillColor: 'var(--accent-primary)', 
+                                        fillOpacity: 0.1,
+                                        weight: 2,
+                                        dashArray: '5, 10'
+                                    }}
                                 />
                             </>
                         )}
@@ -323,15 +366,17 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                         {pois.filter(p => p.lat != null && p.lng != null).map(poi => (
                             <Marker key={poi.id} position={[poi.lat, poi.lng]}>
                                 <Popup>
-                                    <div className="museum-map-popup">
-                                        <p className="museum-map-popup-title">{poi.title}</p>
-                                        {poi.description && <p className="museum-map-popup-desc">{poi.description}</p>}
-                                        <button
-                                            className="museum-map-popup-btn"
+                                    <div className="flex flex-col gap-3 min-w-[200px] p-2">
+                                        <h4 className="font-black text-slate-900 text-lg tracking-tight">{poi.title}</h4>
+                                        {poi.description && <p className="text-slate-600 text-xs font-medium leading-relaxed">{poi.description}</p>}
+                                        <Button
+                                            size="sm"
+                                            className="w-full h-10 font-bold text-[10px] uppercase tracking-widest"
                                             onClick={() => setDestinationId(poi.id)}
+                                            leftIcon={<Target size={14} />}
                                         >
-                                            Ir para cá 🏃
-                                        </button>
+                                            Ir para cá
+                                        </Button>
                                     </div>
                                 </Popup>
                             </Marker>

@@ -3,14 +3,23 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
-import {
-  MapPin, Search, Compass,
-  ArrowRight, Star, Info,
-  Zap, Navigation, X,
-  Clock, Landmark, Theater
+import { 
+  MapPin, Search, Compass, 
+  ArrowRight, Star, Info, 
+  Zap, Navigation, X, 
+  Clock, Landmark, Theater 
 } from "lucide-react";
 import "./SelectMuseum.css";
 import { useGeoFencing } from "../../visitor/context/GeoFencingProvider";
+import { 
+  Button, 
+  Card, 
+  AnimateIn, 
+  ParticleBackground,
+  Badge
+} from "@/components/ui";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
+import { motion } from "framer-motion";
 
 interface Equipamento {
   id: string;
@@ -157,142 +166,169 @@ export const SelectMuseum: React.FC = () => {
   };
 
   return (
-    <div className="discovery-page pulse-hub">
+    <div className="discovery-page pulse-hub bg-[var(--bg-page)] min-h-screen relative overflow-x-hidden">
       {/* 🔮 PULSE BACKGROUND ELEMENTS */}
-      <div className="pulse-particles"></div>
+      <ParticleBackground />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--bg-page)]/80 pointer-events-none"></div>
 
       {/* HEADER TOP BAR */}
-      <div className="pulse-top-bar">
-        <div className="pulse-brand">
-          <Zap size={20} className="pulse-icon-animated" />
-          <span>Pulse Hub</span>
+      <nav className="pulse-top-bar flex justify-between items-center px-8 py-6 sticky top-0 z-[100] backdrop-blur-xl bg-[var(--bg-overlay)] border-b border-[var(--border-subtle)]">
+        <div className="pulse-brand flex items-center gap-3 font-black text-xl tracking-tighter">
+          <Zap size={24} className="text-[var(--accent-primary)] animate-pulse" />
+          <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Pulse Hub</span>
         </div>
-        <div className="pulse-top-actions">
-          {isAuthenticated && <div className="user-indicator">Online</div>}
+        <div className="pulse-top-actions flex items-center gap-4">
+          {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
           <LanguageSwitcher absolute={false} />
         </div>
-      </div>
+      </nav>
 
       {/* HERO / RADAR SECTION */}
-      <header className="pulse-hero">
-        <div className="pulse-hero-content">
-          <div className="pulse-aura"></div>
-          <h1 className="pulse-title">
-            O Pulso da <span className="pulse-gradient">Cultura</span>
-          </h1>
-          <p className="pulse-subtitle">
-            Descubra monumentos históricos e museus em tempo real.
-          </p>
+      <header className="pulse-hero py-24 px-8 text-center relative z-10">
+        <AnimateIn variant="fadeUp">
+          <div className="pulse-hero-content max-w-4xl mx-auto">
+            <h1 className="text-[clamp(3rem,8vw,5rem)] font-black leading-[0.95] tracking-tighter mb-6">
+              O Pulso da <span className="bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent italic">Cultura</span>
+            </h1>
+            <p className="text-xl text-[var(--fg-secondary)] max-w-lg mx-auto mb-12 leading-relaxed">
+              Descubra monumentos históricos e museus em tempo real.
+            </p>
 
-          {/* SMART SEARCH */}
-          <div className="pulse-search-wrapper">
-            <div className="pulse-search-container">
-              <Search className="pulse-search-icon" size={20} />
-              <input
-                type="text"
-                placeholder="Qual história você quer viver?"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pulse-search-input"
-              />
-              <div className="pulse-search-glass"></div>
-            </div>
+            {/* SMART SEARCH */}
+            <div className="pulse-search-wrapper max-w-2xl mx-auto space-y-8">
+              <div className="relative group transition-all duration-500">
+                <div className="absolute inset-0 bg-[var(--accent-primary)]/10 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+                <div className="relative flex items-center bg-[var(--bg-surface-hover)] border border-[var(--border-default)] rounded-full px-6 py-2 backdrop-blur-md group-focus-within:border-[var(--accent-primary)] transition-all">
+                  <Search className="text-[var(--accent-primary)] mr-4" size={24} />
+                  <input
+                    type="text"
+                    placeholder="Qual história você quer viver?"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-gray-500"
+                  />
+                </div>
+              </div>
 
-            {/* QUICK ACTIONS */}
-            <div className="pulse-filters">
-              {[
-                { id: "ALL", label: "Todos", icon: <Compass size={14} /> },
-                { id: "museu", label: "Museus", icon: <Theater size={14} /> },
-                { id: "teatro", label: "Teatros", icon: <Landmark size={14} /> },
-                { id: "centro_cultural", label: "Centros", icon: <Navigation size={14} /> }
-              ].map(f => (
-                <button
-                  key={f.id}
-                  className={`pulse-filter-chip ${activeFilter === f.id ? "active" : ""}`}
-                  onClick={() => setActiveFilter(f.id)}
-                >
-                  {f.icon} {f.label}
-                </button>
-              ))}
+              {/* QUICK ACTIONS */}
+              <div className="pulse-filters flex flex-wrap justify-center gap-3">
+                {[
+                  { id: "ALL", label: "Todos", icon: <Compass size={16} /> },
+                  { id: "museu", label: "Museus", icon: <Theater size={16} /> },
+                  { id: "teatro", label: "Teatros", icon: <Landmark size={16} /> },
+                  { id: "centro_cultural", label: "Centros", icon: <Navigation size={16} /> }
+                ].map(f => (
+                  <Button
+                    key={f.id}
+                    variant={activeFilter === f.id ? "primary" : "glass"}
+                    size="sm"
+                    onClick={() => setActiveFilter(f.id)}
+                    className="rounded-full px-6 py-2 h-auto"
+                    leftIcon={f.icon}
+                  >
+                    {f.label}
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </AnimateIn>
       </header>
 
       {/* PROXIMITY RADAR (If location active) */}
       {userLocation && nearestEquipamentos.length > 0 && !searchTerm && (
-        <section className="pulse-radar-section">
-          <h2 className="pulse-section-title">
-            <Navigation size={18} className="text-blue-400" /> Próximo a Você
-          </h2>
-          <div className="pulse-radar-grid">
-            {nearestEquipamentos.map(e => (
-              <div key={e.id} className="pulse-radar-card" onClick={() => handleSelect(e)}>
-                <div className="radar-dist">{formatDistance(e.distance)}</div>
-                <div className="radar-info">
-                  <h4>{e.nome}</h4>
-                  <span>{e.tipo}</span>
-                </div>
-                <Zap size={16} className="radar-icon" />
-              </div>
-            ))}
-          </div>
+        <section className="px-8 py-12 max-w-7xl mx-auto relative z-10">
+          <AnimateIn variant="fadeUp">
+            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-gray-500 mb-8 flex items-center gap-3">
+              <Navigation size={18} className="text-blue-400 animate-pulse" /> Próximo a Você
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {nearestEquipamentos.map(e => (
+                <Card 
+                  key={e.id} 
+                  hover="premium" 
+                  className="p-6 cursor-pointer border-blue-500/10 group bg-blue-500/5 backdrop-blur-md"
+                  onClick={() => handleSelect(e)}
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center font-mono font-bold text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                      {formatDistance(e.distance)}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white mb-1">{e.nome}</h4>
+                      <span className="text-xs uppercase tracking-widest text-gray-500">{e.tipo}</span>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </AnimateIn>
         </section>
       )}
 
       {/* MAIN CONTENT GRID */}
-      <main className="pulse-main">
-        <div className="pulse-main-header">
-          <h2>{searchTerm ? `Resultados para "${searchTerm}"` : "Explorar Tudo"}</h2>
-          <p>{filteredAndSortedEquipamentos.length} equipamentos encontrados</p>
+      <main className="px-8 py-20 max-w-7xl mx-auto relative z-10">
+        <div className="flex justify-between items-end mb-12 border-b border-[var(--border-subtle)] pb-8">
+          <div>
+            <h2 className="text-3xl font-black tracking-tighter mb-2">{searchTerm ? `Resultados para "${searchTerm}"` : "Explorar Tudo"}</h2>
+            <p className="text-gray-500 font-medium">{filteredAndSortedEquipamentos.length} equipamentos encontrados</p>
+          </div>
         </div>
 
         {loading ? (
-          <div className="pulse-loading">
-            <div className="pulse-loader"></div>
+          <div className="flex flex-col items-center justify-center py-20 opacity-50">
+            <div className="w-12 h-12 border-t-2 border-[var(--accent-primary)] rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="pulse-grid">
+          <motion.div 
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {filteredAndSortedEquipamentos.map(equip => (
-              <div
-                key={equip.id}
-                className="pulse-card"
-                onClick={() => handleSelect(equip)}
-              >
-                <div className="pulse-card-media">
-                  <img
-                    src={equip.fotoCapaUrl || "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=800&auto=format&fit=crop"}
-                    alt={equip.nome}
-                  />
-                  <div className="pulse-card-tag">
-                    <Theater size={12} />
-                    {equip.tipo}
+              <motion.div key={equip.id} variants={staggerItem}>
+                <Card
+                  hover="premium"
+                  className="h-full flex flex-col group cursor-pointer overflow-hidden border-white/5"
+                  onClick={() => handleSelect(equip)}
+                >
+                  <div className="relative h-60 overflow-hidden">
+                    <img
+                      src={equip.fotoCapaUrl || "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=800&auto=format&fit=crop"}
+                      alt={equip.nome}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                    />
+                    <Badge className="absolute top-4 left-4 bg-black/60 shadow-xl" variant="glass">
+                      <Theater size={12} className="mr-2" />
+                      {equip.tipo}
+                    </Badge>
                   </div>
-                </div>
 
-                <div className="pulse-card-body">
-                  <h3 className="pulse-card-title">{equip.nome}</h3>
-                  <div className="pulse-card-meta">
-                    <div className="meta-pill">
-                      <MapPin size={12} /> {equip.distance ? formatDistance(equip.distance) : "Explore"}
+                  <div className="p-8 flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold mb-4 tracking-tight group-hover:text-[var(--accent-primary)] transition-colors">{equip.nome}</h3>
+                    <div className="flex gap-3 mb-6">
+                      <Badge variant="outline" className="opacity-60">
+                        <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : "Explore"}
+                      </Badge>
+                      <Badge variant="outline" className="opacity-60 border-yellow-500/30 text-yellow-500/80">
+                        <Star size={12} className="mr-1 fill-current" /> 4.9
+                      </Badge>
                     </div>
-                    <div className="meta-pill">
-                      <Star size={12} className="text-yellow-400 fill-yellow-400" /> 4.9
-                    </div>
-                  </div>
-                  <p className="pulse-card-excerpt">
-                    {equip.endereco || "Betim - MG"}
-                  </p>
-                  <div className="pulse-card-footer">
-                    <button className="pulse-btn-visit">
+                    <p className="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-8 flex-1">
+                      {equip.endereco || "Betim - MG"}
+                    </p>
+                    <Button 
+                      className="w-full group-hover:shadow-[0_0_30px_rgba(212,175,55,0.2)]"
+                      rightIcon={<ArrowRight size={18} />}
+                    >
                       Entrar no Local
-                      <ArrowRight size={16} />
-                    </button>
+                    </Button>
                   </div>
-                </div>
-              </div>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {filteredAndSortedEquipamentos.length === 0 && !loading && (
@@ -305,45 +341,66 @@ export const SelectMuseum: React.FC = () => {
 
       {/* LANDMARK DETAIL MODAL */}
       {selectedLandmark && (
-        <div className="landmark-modal-overlay" onClick={() => setSelectedLandmark(null)}>
-          <div className="landmark-modal-card" onClick={e => e.stopPropagation()}>
-            <button className="landmark-close" onClick={() => setSelectedLandmark(null)}>
+        <div className="landmark-modal-overlay fixed inset-0 z-[1000] bg-black/95 backdrop-blur-lg p-4 flex items-center justify-center animate-in fade-in duration-300" onClick={() => setSelectedLandmark(null)}>
+          <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden relative border-white/10 shadow-2xl animate-in slide-in-from-bottom-8 duration-500" onClick={e => e.stopPropagation()}>
+            <Button 
+                variant="glass" 
+                size="sm" 
+                className="absolute top-6 right-6 z-20 rounded-full w-12 h-12 p-0"
+                onClick={() => setSelectedLandmark(null)}
+            >
               <X size={24} />
-            </button>
-            <div className="landmark-hero">
-              <img src={selectedLandmark.fotoCapaUrl || ""} alt={selectedLandmark.nome} />
-              <div className="landmark-overlay-content">
-                <div className="landmark-tag">{selectedLandmark.tipo.toUpperCase()}</div>
-                <h2>{selectedLandmark.nome}</h2>
+            </Button>
+            
+            <div className="relative h-80">
+              <img src={selectedLandmark.fotoCapaUrl || ""} alt={selectedLandmark.nome} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent"></div>
+              <div className="absolute bottom-10 left-10">
+                <Badge className="bg-[var(--accent-primary)] text-black mb-4 font-black">{selectedLandmark.tipo.toUpperCase()}</Badge>
+                <h2 className="text-5xl font-black tracking-tighter text-white">{selectedLandmark.nome}</h2>
               </div>
             </div>
-            <div className="landmark-content">
-              <div className="landmark-quick-info">
-                <div className="info-item">
-                  <MapPin size={16} />
-                  <span>{selectedLandmark.endereco}</span>
+
+            <div className="p-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 text-gray-400">
+                    <MapPin size={20} className="text-[var(--accent-primary)]" />
+                    <span className="font-medium">{selectedLandmark.endereco}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-gray-400">
+                    <Clock size={20} className="text-[var(--accent-primary)]" />
+                    <span className="font-medium">{selectedLandmark.horarios?.seg || "Visitação Livre"}</span>
+                  </div>
                 </div>
-                <div className="info-item">
-                  <Clock size={16} />
-                  <span>{selectedLandmark.horarios?.seg || "Visitação Livre"}</span>
+                
+                <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                  <h3 className="text-sm font-black uppercase tracking-widest text-[var(--accent-primary)] mb-3">História & Missão</h3>
+                  <p className="text-gray-300 text-sm leading-relaxed italic">
+                    {selectedLandmark.missao || selectedLandmark.descricao || "Este local é um marco da cultura local, preservando memórias e histórias que moldaram a identidade da região."}
+                  </p>
                 </div>
               </div>
 
-              <div className="landmark-story">
-                <h3>Sobre o Local</h3>
-                <p>{selectedLandmark.missao || selectedLandmark.descricao || "Este local é um marco da cultura local, preservando memórias e histórias que moldaram a identidade da região."}</p>
-              </div>
-
-              <div className="landmark-actions">
-                <button className="landmark-btn-entry" onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id); navigate("/home"); }}>
-                  Entrar no Espaço <Zap size={18} />
-                </button>
-                <button className="landmark-btn-secondary" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.lat},${selectedLandmark.lng}`, '_blank')}>
-                  Como Chegar <Navigation size={18} />
-                </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                    className="flex-1 h-14 text-lg font-bold"
+                    onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id); navigate("/home"); }}
+                    rightIcon={<Zap size={20} />}
+                >
+                  Entrar no Espaço
+                </Button>
+                <Button
+                    variant="outline"
+                    className="flex-1 h-14 text-lg font-bold"
+                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.lat},${selectedLandmark.lng}`, '_blank')}
+                    rightIcon={<Navigation size={20} />}
+                >
+                  Como Chegar
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

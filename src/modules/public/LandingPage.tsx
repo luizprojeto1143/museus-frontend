@@ -5,6 +5,15 @@ import { Shield, Smartphone, Globe, Ear, Eye, Award, ArrowRight, Layout, Menu, X
 import { ContactForm } from "./ContactForm";
 import { useTenant } from "../auth/TenantContext";
 import { TenantLogo } from "../../components/Branding/TenantLogo";
+import { 
+    Badge, 
+    Button, 
+    AnimateIn, 
+    AnimatedCounter, 
+    ParticleBackground 
+} from "@/components/ui";
+import { staggerContainer, staggerItem, fadeInUp } from "@/lib/motion";
+import { motion } from "framer-motion";
 
 export const LandingPage: React.FC = () => {
     const { t } = useTranslation();
@@ -21,34 +30,20 @@ export const LandingPage: React.FC = () => {
         }
     };
 
+    const containerVariants = {
+        initial: { opacity: 0 },
+        animate: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
+    };
+
     return (
-        <div className="landing-page" style={{
-            background: "var(--bg-page)",
-            minHeight: "100vh",
-            color: "var(--fg-main)",
-            fontFamily: "var(--font-heading)",
-            overflowX: "hidden"
-        }}>
+        <div className="landing-page bg-[var(--bg-page)] min-h-screen text-[var(--fg-main)] font-[var(--font-heading)] overflow-x-hidden">
 
             {/* HEADER FIXO */}
-            <nav style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "1rem 2rem",
-                borderBottom: "1px solid var(--border-default)",
-                background: "var(--bg-overlay)",
-                position: "fixed",
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 1000,
-                backdropFilter: "blur(10px)"
-            }} aria-label={t("public.landingpage.navegaoPrincipal", `Navegação Principal`)}>
+            <nav className="flex justify-between items-center px-8 py-4 border-b border-[var(--border-default)] bg-[var(--bg-overlay)] fixed top-0 left-0 right-0 z-[1000] backdrop-blur-md" aria-label={t("public.landingpage.navegaoPrincipal", `Navegação Principal`)}>
                 <div
                     role="button"
                     tabIndex={0}
-                    style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--accent-primary)", display: "flex", alignItems: "center", gap: "0.5rem", cursor: "pointer" }}
+                    className="text-2xl font-bold text-[var(--accent-primary)] flex items-center gap-2 cursor-pointer"
                     onClick={() => window.scrollTo(0, 0)}
                     onKeyDown={(e) => e.key === 'Enter' && window.scrollTo(0, 0)}
                     aria-label={`${tenant?.name || 'Cultura Viva'} - Voltar ao topo`}
@@ -57,52 +52,32 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 {/* Desktop Menu */}
-                <div style={{ display: "flex", gap: "2rem", fontSize: "0.95rem" }} className="desktop-menu" role="menubar">
-                    <button role="menuitem" onClick={() => scrollToSection("solucoes")} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontFamily: "var(--font-body)" }}>Soluções</button>
-                    <button role="menuitem" onClick={() => scrollToSection("acessibilidade")} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontFamily: "var(--font-body)" }}>Acessibilidade</button>
-                    <button role="menuitem" onClick={() => scrollToSection("casos")} style={{ background: "none", border: "none", color: "inherit", cursor: "pointer", fontFamily: "var(--font-body)" }}>Benefícios</button>
+                <div className="hidden md:flex gap-8 text-[0.95rem] font-[var(--font-body)]" role="menubar">
+                    <button role="menuitem" onClick={() => scrollToSection("solucoes")} className="bg-none border-none text-inherit cursor-pointer hover:text-[var(--accent-primary)] transition-colors">Soluções</button>
+                    <button role="menuitem" onClick={() => scrollToSection("acessibilidade")} className="bg-none border-none text-inherit cursor-pointer hover:text-[var(--accent-primary)] transition-colors">Acessibilidade</button>
+                    <button role="menuitem" onClick={() => scrollToSection("casos")} className="bg-none border-none text-inherit cursor-pointer hover:text-[var(--accent-primary)] transition-colors">Benefícios</button>
                 </div>
 
-                <div style={{ display: "flex", gap: "1rem" }} className="desktop-actions">
-                    <button
+                <div className="hidden md:flex gap-4 desktop-actions">
+                    <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => navigate("/welcome")}
-                        style={{
-                            padding: "0.5rem 1rem",
-                            border: "1px solid var(--accent-primary)",
-                            background: "transparent",
-                            color: "var(--accent-primary)",
-                            borderRadius: "var(--radius-md)",
-                            cursor: "pointer",
-                            fontFamily: "var(--font-body)",
-                            fontSize: "0.9rem"
-                        }}
                         aria-label="Abrir aplicativo como visitante"
                     >
                         Iniciar Visita (App)
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => navigate("/login")}
-                        style={{
-                            padding: "0.5rem 1.5rem",
-                            background: "var(--accent-primary)",
-                            color: "var(--bg-page)",
-                            borderRadius: "var(--radius-md)",
-                            cursor: "pointer",
-                            fontWeight: "bold",
-                            border: "none",
-                            fontFamily: "var(--font-body)",
-                            fontSize: "0.9rem"
-                        }}
                     >
                         Entrar
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Mobile Toggle */}
                 <button
-                    className="mobile-toggle"
+                    className="md:hidden bg-none border-none text-[var(--accent-primary)]"
                     onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    style={{ background: "none", border: "none", color: "var(--accent-primary)" }}
                     aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
                     aria-expanded={mobileMenuOpen}
                 >
@@ -127,286 +102,245 @@ export const LandingPage: React.FC = () => {
             )}
 
             {/* HERO SECTION */}
-            <header style={{
-                textAlign: "center",
-                padding: "10rem 2rem 6rem",
-                background: "radial-gradient(circle at 50% 30%, rgba(212,175,55,0.15), transparent 60%), linear-gradient(to bottom, var(--color-neutral-900) 0%, var(--bg-surface) 100%)",
-                minHeight: "80vh",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center"
-            }}>
-                <div style={{
-                    padding: "0.5rem 1rem",
-                    border: "1px solid var(--border-default)",
-                    borderRadius: "2rem",
-                    marginBottom: "2rem",
-                    display: "inline-block",
-                    fontSize: "0.8rem",
-                    letterSpacing: "1px",
-                    color: "var(--accent-primary)",
-                    background: "rgba(212,175,55,0.05)"
-                }}>{t("public.landingpage.plataformaDeGestoCultural40", `
-                    PLATAFORMA DE GESTÃO CULTURAL 4.0
-                `)}</div>
+            <header className="relative flex flex-col items-center justify-center min-h-[90vh] px-8 pt-32 pb-24 text-center overflow-hidden">
+                <ParticleBackground />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--bg-page)]/80 to-[var(--bg-page)] z-10"></div>
+                
+                <motion.div 
+                    variants={containerVariants}
+                    initial="initial"
+                    animate="animate"
+                    className="relative z-20 flex flex-col items-center"
+                >
+                    <motion.div variants={fadeInUp} className="px-4 py-2 border border-[var(--border-default)] rounded-full mb-8 text-xs tracking-widest text-[var(--accent-primary)] bg-[var(--accent-primary)]/5">
+                        {t("public.landingpage.plataformaDeGestoCultural40", `PLATAFORMA DE GESTÃO CULTURAL 4.0`)}
+                    </motion.div>
 
-                <h1 style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)", marginBottom: "1.5rem", lineHeight: "1.1", fontWeight: "bold" }}>
-                    Transforme Patrimônio <br />
-                    {tenant ? (
-                        <span style={{
-                            background: `linear-gradient(to right, ${tenant.primaryColor}, var(--color-gold-200), ${tenant.primaryColor})`,
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent"
-                        }}> em {tenant.name}.</span>
-                    ) : (
-                        <span style={{
-                            background: "linear-gradient(to right, var(--accent-primary), var(--color-gold-200), var(--accent-primary))",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent"
-                        }}>{t("public.landingpage.emExperinciaViva", ` em Experiência Viva.`)}</span>
-                    )}
-                </h1>
+                    <motion.h1 variants={fadeInUp} className="text-[clamp(2.5rem,5vw,4.5rem)] mb-6 font-bold leading-tight tracking-tight">
+                        Transforme Patrimônio <br />
+                        {tenant ? (
+                            <span className="bg-gradient-to-r from-[var(--accent-primary)] via-white to-[var(--accent-primary)] bg-clip-text text-transparent"> em {tenant.name}.</span>
+                        ) : (
+                            <span className="bg-gradient-to-r from-[var(--accent-primary)] via-white to-[var(--accent-primary)] bg-clip-text text-transparent">{t("public.landingpage.emExperinciaViva", ` em Experiência Viva.`)}</span>
+                        )}
+                    </motion.h1>
 
-                <p style={{ maxWidth: "700px", margin: "0 auto 3rem", fontSize: "1.2rem", opacity: 0.8, lineHeight: "1.6", fontFamily: "var(--font-body)" }}>{t("public.landingpage.aSoluoCompletaParaDigitalizarMuseusECida", `
-                    A solução completa para digitalizar museus, centros culturais e monumentos históricos.
-                    Sinta o pulso da cultura em tempo real com o novo Pulse Hub e engaje visitantes com gamificação avançada.
-                `)}</p>
+                    <motion.p variants={fadeInUp} className="max-w-2xl mx-auto mb-12 text-lg md:text-xl opacity-80 leading-relaxed font-[var(--font-body)]">
+                        {t("public.landingpage.aSoluoCompletaParaDigitalizarMuseusECida", `
+                            A solução completa para digitalizar museus, centros culturais e monumentos históricos.
+                            Sinta o pulso da cultura em tempo real com o novo Pulse Hub e engaje visitantes com gamificação avançada.
+                        `)}
+                    </motion.p>
 
-                <div style={{ display: "flex", gap: "1rem", flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
-                    <button
-                        onClick={() => navigate("/welcome")}
-                        style={{
-                            padding: "1rem 2.5rem",
-                            background: "linear-gradient(135deg, var(--accent-primary), var(--accent-gold-soft))",
-                            color: "var(--bg-page)",
-                            borderRadius: "var(--radius-md)",
-                            fontSize: "1.1rem",
-                            fontWeight: "bold",
-                            border: "none",
-                            cursor: "pointer",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            boxShadow: "0 10px 30px rgba(212,175,55,0.2)",
-                            transition: "transform 0.2s"
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-                        aria-label="Iniciar Visita no Aplicativo"
-                    >
-                        Iniciar Visita <ArrowRight size={20} />
-                    </button>
+                    <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button
+                            size="lg"
+                            onClick={() => navigate("/welcome")}
+                            rightIcon={<ArrowRight size={20} />}
+                            className="shadow-2xl shadow-[var(--accent-primary)]/20"
+                        >
+                            Iniciar Visita
+                        </Button>
 
-                    <button
-                        onClick={() => scrollToSection("solucoes")}
-                        style={{
-                            padding: "1rem 2.5rem",
-                            background: "rgba(255,255,255,0.05)",
-                            color: "var(--fg-main)",
-                            borderRadius: "var(--radius-md)",
-                            fontSize: "1.1rem",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                            cursor: "pointer",
-                            fontFamily: "var(--font-body)"
-                        }}
-                    >
-                        Conhecer Soluções
-                    </button>
-                </div>
+                        <Button
+                            variant="glass"
+                            size="lg"
+                            onClick={() => scrollToSection("solucoes")}
+                        >
+                            Conhecer Soluções
+                        </Button>
+                    </motion.div>
+                </motion.div>
             </header>
 
             {/* FEATURES GRID */}
-            <section id="solucoes" style={{ padding: "6rem 2rem", maxWidth: "1200px", margin: "0 auto" }} aria-labelledby="features-title">
-                <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-                    <h2 id="features-title" style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>{t("public.landingpage.tecnologiaAServioDaCultura", `Tecnologia a Serviço da Cultura`)}</h2>
-                    <p style={{ opacity: 0.7, fontFamily: "var(--font-body)" }}>{t("public.landingpage.tudoOQueVocPrecisaParaModernizarSuaInsti", `Tudo o que você precisa para modernizar sua institution.`)}</p>
-                </div>
+            <section id="solucoes" className="py-24 px-8 max-w-7xl mx-auto">
+                <AnimateIn variant="fadeUp">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold mb-4">{t("public.landingpage.tecnologiaAServioDaCultura", `Tecnologia a Serviço da Cultura`)}</h2>
+                        <p className="opacity-70 font-[var(--font-body)] max-w-xl mx-auto">{t("public.landingpage.tudoOQueVocPrecisaParaModernizarSuaInsti", `Tudo o que você precisa para modernizar sua instituição.`)}</p>
+                    </div>
+                </AnimateIn>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem" }}>
-                    <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
-                        <Smartphone size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
-                        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Web App (PWA)</h3>
-                        <p style={{ opacity: 0.7, fontFamily: "var(--font-body)", lineHeight: "1.6" }}>{t("public.landingpage.semNecessidadeDeDownloadNasLojasSeusVisi", `
-                            Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia
-                            através de QR Codes inteligentes espalhados pelo acervo.
-                        `)}</p>
-                    </div>
-                    <div className="feature-card" style={{ padding: "2.5rem", background: "var(--bg-surface)", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)" }}>
-                        <Globe size={48} color="var(--accent-primary)" style={{ marginBottom: "1.5rem" }} aria-hidden="true" />
-                        <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Turismo Inteligente</h3>
-                        <p style={{ opacity: 0.7, fontFamily: "var(--font-body)", lineHeight: "1.6" }}>{t("public.landingpage.mapasInterativosRoteirosSugeridosPorIaEI", `
-                            Pulse Hub: Mapas interativos, roteiros inteligentes e descoberta de monumentos via QR Code.
-                            Conecte seu patrimônio ao pulso digital da cidade.
-                        `)}</p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <AnimateIn variant="fadeUp" delay={0.1}>
+                        <div className="p-10 bg-[var(--bg-surface)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] hover:border-[var(--accent-primary)]/30 transition-all group">
+                            <Smartphone size={48} className="text-[var(--accent-primary)] mb-6 group-hover:scale-110 transition-transform" />
+                            <h3 className="text-2xl font-bold mb-4">Web App (PWA)</h3>
+                            <p className="opacity-70 font-[var(--font-body)] leading-relaxed">
+                                {t("public.landingpage.semNecessidadeDeDownloadNasLojasSeusVisi", `
+                                    Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia
+                                    através de QR Codes inteligentes espalhados pelo acervo.
+                                `)}
+                            </p>
+                        </div>
+                    </AnimateIn>
+                    <AnimateIn variant="fadeUp" delay={0.2}>
+                        <div className="p-10 bg-[var(--bg-surface)] rounded-[var(--radius-lg)] border border-[var(--border-subtle)] hover:border-[var(--accent-primary)]/30 transition-all group">
+                            <Globe size={48} className="text-[var(--accent-primary)] mb-6 group-hover:scale-110 transition-transform" />
+                            <h3 className="text-2xl font-bold mb-4">Turismo Inteligente</h3>
+                            <p className="opacity-70 font-[var(--font-body)] leading-relaxed">
+                                {t("public.landingpage.mapasInterativosRoteirosSugeridosPorIaEI", `
+                                    Pulse Hub: Mapas interativos, roteiros inteligentes e descoberta de monumentos via QR Code.
+                                    Conecte seu patrimônio ao pulso digital da cidade.
+                                `)}
+                            </p>
+                        </div>
+                    </AnimateIn>
                 </div>
             </section>
 
             {/* ACCESSIBILITY SECTION */}
-            <section id="acessibilidade" style={{ padding: "8rem 2rem", background: "var(--bg-elevated)", position: "relative", overflow: "hidden" }} aria-labelledby="a11y-title">
-                {/* Background Ornament */}
-                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.05, background: "url('https://www.transparenttextures.com/patterns/cubes.png')" }}></div>
+            <section id="acessibilidade" className="py-32 px-8 bg-[var(--bg-surface-active)] relative overflow-hidden">
+                <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 
-                <div style={{ maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "5rem", alignItems: "center", position: "relative" }}>
-                    <div>
-                        <span style={{ color: "var(--accent-primary)", fontWeight: "bold", textTransform: "uppercase", fontSize: "0.9rem", letterSpacing: "2px" }}>IN MinC 01/2023</span>
-                        <h2 id="a11y-title" style={{ fontSize: "3rem", margin: "1rem 0", lineHeight: "1.1" }}>Adequação Total à <br />Lei Rouanet</h2>
-                        <p style={{ fontSize: "1.1rem", opacity: 0.8, marginBottom: "2.5rem", lineHeight: "1.6", fontFamily: "var(--font-body)" }}>{t("public.landingpage.garantaAAprovaoDaSuaPrestaoDeContasNossa", `
-                            Garanta a aprovação da sua prestação de contas. Nossa plataforma já vem com a suíte técnica exigida, e oferecemos a produção de conteúdo como serviço.
-                        `)}</p>
+                <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                    <AnimateIn variant="fadeRight">
+                        <div>
+                            <Badge variant="outline" className="mb-6 tracking-widest">IN MinC 01/2023</Badge>
+                            <h2 className="text-5xl font-bold mb-6 leading-tight">Adequação Total à <br />Lei Rouanet</h2>
+                            <p className="text-xl opacity-80 mb-10 leading-relaxed font-[var(--font-body)]">
+                                {t("public.landingpage.garantaAAprovaoDaSuaPrestaoDeContasNossa", `
+                                    Garanta a aprovação da sua prestação de contas. Nossa plataforma já vem com a suíte técnica exigida, e oferecemos a produção de conteúdo como serviço.
+                                `)}
+                            </p>
 
-                        <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                            <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Ear size={20} color="var(--accent-primary)" aria-hidden="true" /></div>
-                                <div>
-                                    <strong style={{ display: "block", fontSize: "1.1rem" }}>{t("public.landingpage.librasLnguaDeSinais", `Libras (Língua de Sinais)`)}</strong>
-                                    <span style={{ fontSize: "0.9rem", opacity: 0.6, fontFamily: "var(--font-body)" }}>{t("public.landingpage.janelaDeVdeoIntegradaAoPlayer", `Janela de vídeo integrada ao player`)}</span>
-                                </div>
-                            </li>
-                            <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Eye size={20} color="var(--accent-primary)" aria-hidden="true" /></div>
-                                <div>
-                                    <strong style={{ display: "block", fontSize: "1.1rem" }}>{t("public.landingpage.audiodescrio", `Audiodescrição`)}</strong>
-                                    <span style={{ fontSize: "0.9rem", opacity: 0.6, fontFamily: "var(--font-body)" }}>{t("public.landingpage.narraoDescritivaParaDeficientesVisuais", `Narração descritiva para deficientes visuais`)}</span>
-                                </div>
-                            </li>
-                            <li style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <div style={{ background: "rgba(212,175,55,0.1)", padding: "0.5rem", borderRadius: "50%", width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}><Shield size={20} color="var(--accent-primary)" aria-hidden="true" /></div>
-                                <div>
-                                    <strong style={{ display: "block", fontSize: "1.1rem" }}>{t("public.landingpage.relatriosAutomticos", `Relatórios Automáticos`)}</strong>
-                                    <span style={{ fontSize: "0.9rem", opacity: 0.6, fontFamily: "var(--font-body)" }}>Gere comprovantes de acessibilidade em 1 clique</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                            <ul className="space-y-6">
+                                {[
+                                    { icon: <Ear size={20} />, title: "Libras", sub: "Janela de vídeo integrada ao player" },
+                                    { icon: <Eye size={20} />, title: "Audiodescrição", sub: "Narração descritiva para deficientes visuais" },
+                                    { icon: <Shield size={20} />, title: "Relatórios Automáticos", sub: "Gere comprovantes de acessibilidade em 1 clique" }
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-center gap-4 group">
+                                        <div className="p-3 bg-[var(--accent-primary)]/10 rounded-xl text-[var(--accent-primary)] group-hover:scale-110 transition-transform">
+                                            {item.icon}
+                                        </div>
+                                        <div>
+                                            <strong className="block text-lg">{item.title}</strong>
+                                            <span className="text-sm opacity-60 font-[var(--font-body)]">{item.sub}</span>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </AnimateIn>
 
-                    <div style={{
-                        background: "linear-gradient(145deg, var(--bg-surface-active), var(--bg-surface))",
-                        padding: "3rem",
-                        borderRadius: "2rem",
-                        border: "1px solid rgba(212,175,55,0.3)",
-                        textAlign: "center",
-                        boxShadow: "var(--shadow-lg)"
-                    }}>
-                        <h3 style={{ color: "var(--accent-primary)", marginBottom: "1rem", fontSize: "1.5rem" }}>Precisa de Ajuda?</h3>
-                        <p style={{ marginBottom: "2rem", fontFamily: "var(--font-body)", opacity: 0.8 }}>{t("public.landingpage.nossaEquipeDeEspecialistasProduzOsVdeosD", `
-                            Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.
-                        `)}</p>
-                        <button onClick={() => scrollToSection("contato")} style={{
-                            padding: "1rem 2rem",
-                            background: "transparent",
-                            border: "1px solid var(--accent-primary)",
-                            color: "var(--accent-primary)",
-                            borderRadius: "var(--radius-md)",
-                            cursor: "pointer",
-                            width: "100%",
-                            fontWeight: "bold",
-                            fontSize: "1rem",
-                            transition: "all 0.2s"
-                        }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--accent-primary)"; e.currentTarget.style.color = "var(--bg-page)" }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--accent-primary)" }}
-                        >
-                            Falar com Consultor
-                        </button>
-                    </div>
+                    <AnimateIn variant="fadeLeft">
+                        <div className="p-12 bg-gradient-to-br from-[var(--bg-surface-hover)] to-[var(--bg-surface)] rounded-[2.5rem] border border-[var(--accent-primary)]/20 text-center shadow-2xl relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-[var(--accent-primary)]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <h3 className="text-[var(--accent-primary)] text-2xl font-bold mb-4 relative z-10">Precisa de Ajuda?</h3>
+                            <p className="mb-10 font-[var(--font-body)] opacity-80 relative z-10 px-4">
+                                {t("public.landingpage.nossaEquipeDeEspecialistasProduzOsVdeosD", `
+                                    Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.
+                                `)}
+                            </p>
+                            <Button 
+                                variant="outline" 
+                                size="lg" 
+                                className="w-full font-bold relative z-10"
+                                onClick={() => scrollToSection("contato")}
+                            >
+                                Falar com Consultor
+                            </Button>
+                        </div>
+                    </AnimateIn>
                 </div>
             </section>
 
             {/* CASES / BENEFITS */}
-            <section id="casos" style={{ padding: "6rem 2rem", maxWidth: "1200px", margin: "0 auto" }}>
-                <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-                    <h2 style={{ fontSize: "2.5rem" }}>Quem usa, recomenda</h2>
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "2rem", textAlign: "center" }}>
-                    <div>
-                        <h3 style={{ fontSize: "3rem", color: "var(--accent-primary)", marginBottom: "0.5rem" }}>+40%</h3>
-                        <p style={{ fontFamily: "var(--font-body)", opacity: 0.7 }}>Aumento no engajamento jovem</p>
+            <section id="casos" className="py-24 px-8 max-w-7xl mx-auto">
+                <AnimateIn variant="fadeUp">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold">Quem usa, recomenda</h2>
                     </div>
-                    <div>
-                        <h3 style={{ fontSize: "3rem", color: "var(--accent-primary)", marginBottom: "0.5rem" }}>100%</h3>
-                        <p style={{ fontFamily: "var(--font-body)", opacity: 0.7 }}>{t("public.landingpage.aprovaoNasContasDaRouanet", `Aprovação nas contas da Rouanet`)}</p>
-                    </div>
-                    <div>
-                        <h3 style={{ fontSize: "3rem", color: "var(--accent-primary)", marginBottom: "0.5rem" }}>24/7</h3>
-                        <p style={{ fontFamily: "var(--font-body)", opacity: 0.7 }}>{t("public.landingpage.museuDisponvelNoDigital", `Museu disponível no digital`)}</p>
-                    </div>
+                </AnimateIn>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                    <AnimateIn variant="scaleIn" delay={0.1}>
+                        <div>
+                            <div className="text-5xl font-bold text-[var(--accent-primary)] mb-4">
+                                +<AnimatedCounter value={40} />%
+                            </div>
+                            <p className="font-[var(--font-body)] opacity-70">Aumento no engajamento jovem</p>
+                        </div>
+                    </AnimateIn>
+                    <AnimateIn variant="scaleIn" delay={0.2}>
+                        <div>
+                            <div className="text-5xl font-bold text-[var(--accent-primary)] mb-4">
+                                <AnimatedCounter value={100} />%
+                            </div>
+                            <p className="font-[var(--font-body)] opacity-70">{t("public.landingpage.aprovaoNasContasDaRouanet", `Aprovação nas contas da Rouanet`)}</p>
+                        </div>
+                    </AnimateIn>
+                    <AnimateIn variant="scaleIn" delay={0.3}>
+                        <div>
+                            <div className="text-5xl font-bold text-[var(--accent-primary)] mb-4">
+                                24/7
+                            </div>
+                            <p className="font-[var(--font-body)] opacity-70">{t("public.landingpage.museuDisponvelNoDigital", `Museu disponível no digital`)}</p>
+                        </div>
+                    </AnimateIn>
                 </div>
             </section>
 
             {/* CONTACT FORM SECTION */}
-            <section id="contato" style={{ padding: "6rem 2rem", maxWidth: "800px", margin: "0 auto" }}>
-                <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-                    <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>Fale com um Especialista</h2>
-                    <p style={{ opacity: 0.7, fontFamily: "var(--font-body)" }}>{t("public.landingpage.tireSuasDvidasSobreALeiRouanetPlanosEImp", `Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.`)}</p>
-                </div>
+            <section id="contato" className="py-24 px-8 max-w-3xl mx-auto">
+                <AnimateIn variant="fadeUp">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold mb-4">Fale com um Especialista</h2>
+                        <p className="opacity-70 font-[var(--font-body)]">{t("public.landingpage.tireSuasDvidasSobreALeiRouanetPlanosEImp", `Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.`)}</p>
+                    </div>
+                </AnimateIn>
                 <ContactForm />
             </section>
 
             {/* PRODUCER CTA */}
-            <section style={{ padding: "8rem 2rem", textAlign: "center", background: "linear-gradient(to top, var(--bg-surface), var(--bg-page))" }}>
-                <h2 style={{ fontSize: "3rem", marginBottom: "1.5rem" }}>{t("public.landingpage.comeceSuaTransformaoDigital", `Comece sua Transformação Digital`)}</h2>
-                <p style={{ maxWidth: "600px", margin: "0 auto 3rem", opacity: 0.7, fontSize: "1.2rem", fontFamily: "var(--font-body)" }}>{t("public.landingpage.junteseAosMuseusEProjetosCulturaisQueJEs", `
-                    Junte-se aos museus e projetos culturais que já estão no futuro.
-                    Crie seu espaço agora mesmo.
-                `)}</p>
-                <button
-                    onClick={() => scrollToSection("contato")}
-                    style={{
-                        padding: "1.2rem 3.5rem",
-                        background: "var(--accent-primary)",
-                        color: "var(--bg-page)",
-                        borderRadius: "var(--radius-md)",
-                        fontSize: "1.3rem",
-                        fontWeight: "bold",
-                        border: "none",
-                        cursor: "pointer",
-                        boxShadow: "0 0 30px rgba(212,175,55,0.4)"
-                    }}
-                >
-                    Quero Cadastrar Meu Projeto
-                </button>
+            <section className="py-32 px-8 text-center bg-gradient-to-t from-[var(--bg-surface)] to-[var(--bg-page)] relative overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--accent-primary)]/5 blur-[120px] rounded-full"></div>
+                <AnimateIn variant="scaleIn">
+                    <h2 className="text-5xl font-bold mb-6 relative z-10">{t("public.landingpage.comeceSuaTransformaoDigital", `Comece sua Transformação Digital`)}</h2>
+                    <p className="max-w-xl mx-auto mb-12 opacity-70 text-xl font-[var(--font-body)] relative z-10 leading-relaxed">
+                        {t("public.landingpage.junteseAosMuseusEProjetosCulturaisQueJEs", `
+                            Junte-se aos museus e projetos culturais que já estão no futuro.
+                            Crie seu espaço agora mesmo.
+                        `)}
+                    </p>
+                    <Button
+                        size="lg"
+                        className="px-16 py-8 text-xl font-bold relative z-10 shadow-[0_0_50px_rgba(212,175,55,0.3)] transition-all hover:scale-105"
+                        onClick={() => scrollToSection("contato")}
+                    >
+                        Quero Cadastrar Meu Projeto
+                    </Button>
+                </AnimateIn>
             </section>
 
             {/* FOOTER */}
-            <footer style={{ padding: "4rem 2rem", borderTop: "1px solid var(--border-subtle)", background: "var(--bg-page)" }}>
-                <div style={{ maxWidth: "1200px", margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "3rem" }}>
-                    <div>
-                        <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--accent-primary)", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                            <Layout size={24} aria-hidden="true" /> Cultura Viva
+            <footer className="py-20 px-8 border-t border-[var(--border-subtle)] bg-[var(--bg-page)] relative z-10">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                    <div className="col-span-1 md:col-span-2">
+                        <div className="text-2xl font-bold text-[var(--accent-primary)] mb-6 flex items-center gap-3">
+                            <Layout size={32} /> Cultura Viva
                         </div>
-                        <p style={{ opacity: 0.5, fontSize: "0.9rem", lineHeight: "1.6", fontFamily: "var(--font-body)" }}>
+                        <p className="opacity-50 text-sm leading-relaxed font-[var(--font-body)] max-w-xs">
                             Tecnologia para valorizar nossa história.<br />
-                            Feito com ❤️ no Brasil.
+                            Implementando acessibilidade e engajamento digital para museus 4.0.
                         </p>
                     </div>
 
                     <div>
-                        <h4 style={{ color: "var(--fg-main)", marginBottom: "1rem" }}>Plataforma</h4>
-                        <ul style={{ listStyle: "none", padding: 0, opacity: 0.7, fontSize: "0.95rem", display: "flex", flexDirection: "column", gap: "0.5rem", fontFamily: "var(--font-body)" }}>
-                            <li><a href="#solucoes" style={{ color: "inherit", textDecoration: "none" }} onClick={(e) => { e.preventDefault(); scrollToSection("solucoes"); }}>Funcionalidades</a></li>
-                            <li><a href="#acessibilidade" style={{ color: "inherit", textDecoration: "none" }} onClick={(e) => { e.preventDefault(); scrollToSection("acessibilidade"); }}>Acessibilidade</a></li>
-                            <li><a href="/login" style={{ color: "inherit", textDecoration: "none" }}>{t("public.landingpage.reaDoCliente", `Área do Cliente`)}</a></li>
+                        <h4 className="font-bold mb-6">Plataforma</h4>
+                        <ul className="space-y-4 opacity-70 text-sm font-[var(--font-body)]">
+                            <li><button onClick={() => scrollToSection("solucoes")} className="hover:text-[var(--accent-primary)] transition-colors">Funcionalidades</button></li>
+                            <li><button onClick={() => scrollToSection("acessibilidade")} className="hover:text-[var(--accent-primary)] transition-colors">Acessibilidade</button></li>
+                            <li><button onClick={() => navigate("/login")} className="hover:text-[var(--accent-primary)] transition-colors">{t("public.landingpage.reaDoCliente", `Área do Cliente`)}</button></li>
                         </ul>
                     </div>
                 </div>
-                <div style={{ textAlign: "center", marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid rgba(255,255,255,0.05)", opacity: 0.4, fontSize: "0.8rem", fontFamily: "var(--font-body)" }}>
-                    &copy; {new Date().getFullYear()} Cultura Viva Tecnologia. Todos os direitos reservados.
+                <div className="text-center mt-20 pt-10 border-t border-white/5 opacity-30 text-xs font-[var(--font-body)]">
+                    &copy; {new Date().getFullYear()} Cultura Viva Tecnologia. Desenvolvido para o impacto cultural nacional.
                 </div>
             </footer>
-
-            {/* Styles for responsive menu */}
-            <style>{`
-        .desktop-menu, .desktop-actions { display: flex; }
-        .mobile-toggle { display: none; }
-        
-        @media (max-width: 768px) {
-          .desktop-menu, .desktop-actions { display: none !important; }
-          .mobile-toggle { display: block; }
-          h1 { font-size: 2.5rem !important; }
-        }
-      `}</style>
         </div>
     );
 };

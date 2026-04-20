@@ -3,7 +3,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
 
 describe('Translations', () => {
     beforeAll(async () => {
-        // Ensure i18n is initialized
+        // Ensure i18n is initialized with bundled resources for tests
         if (!i18n.isInitialized) {
             await i18n.init();
         }
@@ -11,22 +11,22 @@ describe('Translations', () => {
 
     it('should have correct Portuguese translations', () => {
         i18n.changeLanguage('pt-BR');
-        expect(i18n.t('welcome.subtitle')).toBe('Explore a História, Viva a Cultura');
+        expect(i18n.t('welcome.subtitle')).toBe('Sua jornada cultural começa aqui');
         expect(i18n.t('auth.login.title')).toBe('Acesse sua conta');
-        expect(i18n.t('admin.dashboard.title')).toBe('Painel de Controle');
+        expect(i18n.t('dashboard.title')).toBe('Painel de Controle');
     });
 
     it('should have correct English translations', () => {
         i18n.changeLanguage('en');
-        expect(i18n.t('welcome.subtitle')).toBe('Explore History, Live Culture');
+        expect(i18n.t('welcome.subtitle')).toBe('Your cultural journey starts here');
         expect(i18n.t('auth.login.title')).toBe('Access your account');
-        expect(i18n.t('admin.dashboard.title')).toBe('Control Panel');
+        expect(i18n.t('dashboard.title')).toBe('Control Panel');
     });
 
     it('should have correct Spanish translations', () => {
         i18n.changeLanguage('es');
-        expect(i18n.t('welcome.subtitle')).toBe('Explora la Historia, Vive la Cultura');
+        expect(i18n.t('welcome.subtitle')).toBe('Tu viaje cultural comienza aquí');
         expect(i18n.t('auth.login.title')).toBe('Accede a tu cuenta');
-        expect(i18n.t('admin.dashboard.title')).toBe('Panel de Control');
+        expect(i18n.t('dashboard.title')).toBe('Panel de Control');
     });
 });

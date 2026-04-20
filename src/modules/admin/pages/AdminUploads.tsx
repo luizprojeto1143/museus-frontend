@@ -3,6 +3,30 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { validateFile, UPLOAD_PRESETS, formatFileSize, getFileTypeLabel } from "../../../utils/uploadValidator";
+import { 
+  Button, 
+  Card, 
+  Badge, 
+  AnimatedCounter, 
+  AnimateIn,
+  ModelViewer,
+  EmptyState
+} from "@/components/ui";
+import { 
+  Plus, 
+  Search, 
+  Trash2, 
+  ExternalLink, 
+  Image as ImageIcon, 
+  Music, 
+  Video, 
+  Box, 
+  Brain, 
+  HardDrive
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
+import { cn } from "@/lib/cn";
 
 interface UploadedFile {
   id: string;
@@ -24,7 +48,7 @@ export const AdminUploads: React.FC = () => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [filter, setFilter] = useState<"all" | "image" | "audio" | "video">("all");
+  const [filter, setFilter] = useState<"all" | "image" | "audio" | "video" | "model">("all");
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -108,7 +132,7 @@ export const AdminUploads: React.FC = () => {
 
   const filteredFiles = files.filter(f => {
     if (filter === "all") return true;
-    return f.type.startsWith(filter);
+    return f.type.toLowerCase().includes(filter);
   });
 
   const totalSize = files.reduce((acc, f) => acc + f.size, 0);
@@ -119,85 +143,85 @@ export const AdminUploads: React.FC = () => {
   };
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+    <div className="space-y-12 animate-in fade-in duration-700">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div>
-          <h1 className="section-title">📤 {t("admin.uploads.title")}</h1>
-
+          <Badge variant="outline" className="text-[var(--accent-primary)] mb-4 border-[var(--accent-primary)]/30">
+            Assets & Media
+          </Badge>
+          <h1 className="text-5xl font-black tracking-tighter text-white">{t("admin.uploads.title")}</h1>
+          <p className="text-slate-400 font-medium mt-4 max-w-lg">
+            Repositório centralizado de mídias, guias de áudio e artefatos 3D.
+          </p>
         </div>
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-        >
-          {uploading ? t("common.uploading") : "+ " + t("admin.uploads.newUpload")}
-        </button>
-        <input
-          ref={fileInputRef}
-          id="file-upload"
-          type="file"
-          multiple
-          accept="image/*,audio/*,video/*"
-          aria-label="Selecionar arquivos para upload"
-          style={{ display: "none" }}
-          onChange={(e) => {
-            const selected = Array.from(e.target.files || []);
-            // Filter out empty slots
-            const valid = selected.filter(f => f.size > 0);
-            valid.forEach(handleUpload);
-            e.target.value = "";
-          }}
-        />
-      </div>
-
-      {/* Stats */}
-      <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{files.length}</div>
-          <div className="stat-label">{t("admin.uploads.stats.total")}</div>
-        </div>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{formatSize(totalSize)}</div>
-          <div className="stat-label">{t("admin.uploads.stats.usedSpace")}</div>
-        </div>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{files.filter(f => f.type.startsWith("image")).length}</div>
-          <div className="stat-label">{t("admin.uploads.stats.images")}</div>
+        <div className="flex items-center gap-4">
+            <Button
+                onClick={() => fileInputRef.current?.click()}
+                isLoading={uploading}
+                size="lg"
+                className="h-16 px-10 rounded-2xl font-black uppercase text-xs tracking-widest"
+                leftIcon={<Plus size={18} />}
+            >
+                {uploading ? t("common.uploading") : t("admin.uploads.newUpload")}
+            </Button>
+            <input
+                ref={fileInputRef}
+                id="file-upload"
+                type="file"
+                multiple
+                accept="image/*,audio/*,video/*,.glb,.gltf"
+                className="hidden"
+                onChange={(e) => {
+                    const selected = Array.from(e.target.files || []);
+                    const valid = selected.filter(f => f.size > 0);
+                    valid.forEach(handleUpload);
+                    e.target.value = "";
+                }}
+            />
         </div>
       </div>
 
-      {/* Filtros */}
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "1.5rem", padding: "1rem" }}>
-        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-          <button
-            onClick={() => setFilter("all")}
-            className={filter === "all" ? "btn btn-primary" : "btn btn-secondary"}
-            style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+      {/* STATS SECTION */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { label: t("admin.uploads.stats.total"), value: files.length, icon: HardDrive, color: 'blue' },
+          { label: t("admin.uploads.stats.usedSpace"), value: totalSize / (1024 * 1024), icon: HardDrive, color: 'purple', unit: ' MB' },
+          { label: t("admin.uploads.stats.images"), value: files.filter(f => f.type.startsWith("image")).length, icon: ImageIcon, color: 'gold' },
+          { label: "Acervo 3D", value: files.filter(f => f.type.toLowerCase().includes("model") || f.filename.endsWith(".glb")).length, icon: Box, color: 'green' },
+        ].map((stat, i) => (
+          <Card key={i} hover="premium" className="p-8 border-white/5 bg-black/20 flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+              <stat.icon size={20} className="text-slate-400" />
+            </div>
+            <div className="text-3xl font-black tracking-tighter text-white leading-none mb-1">
+              <AnimatedCounter value={stat.value} />
+              {stat.unit && <span className="text-sm opacity-50 ml-1">{stat.unit}</span>}
+            </div>
+            <span className="text-slate-500 font-black text-[10px] uppercase tracking-widest">{stat.label}</span>
+          </Card>
+        ))}
+      </div>
+
+      {/* FILTERS */}
+      <div className="flex bg-[var(--bg-surface)] p-2 rounded-2xl border border-[var(--border-subtle)] gap-2 overflow-x-auto no-scrollbar">
+        {[
+          { id: "all", label: t("common.all"), icon: <HardDrive size={14} />, count: files.length },
+          { id: "image", label: t("common.images"), icon: <ImageIcon size={14} />, count: files.filter(f => f.type.startsWith("image")).length },
+          { id: "audio", label: t("common.audios"), icon: <Music size={14} />, count: files.filter(f => f.type.startsWith("audio")).length },
+          { id: "video", label: t("common.videos"), icon: <Video size={14} />, count: files.filter(f => f.type.startsWith("video")).length },
+          { id: "model", label: "Modelos 3D", icon: <Box size={14} />, count: files.filter(f => f.type.toLowerCase().includes("model") || f.filename.endsWith(".glb")).length }
+        ].map(cat => (
+          <Button
+            key={cat.id}
+            variant={filter === cat.id ? "primary" : "ghost"}
+            size="sm"
+            onClick={() => setFilter(cat.id as any)}
+            className="rounded-xl h-12 px-6 font-bold uppercase tracking-widest text-[10px] whitespace-nowrap"
+            leftIcon={cat.icon}
           >
-            {t("common.all")} ({files.length})
-          </button>
-          <button
-            onClick={() => setFilter("image")}
-            className={filter === "image" ? "btn btn-primary" : "btn btn-secondary"}
-            style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
-          >
-            {t("common.images")} ({files.filter(f => f.type.startsWith("image")).length})
-          </button>
-          <button
-            onClick={() => setFilter("audio")}
-            className={filter === "audio" ? "btn btn-primary" : "btn btn-secondary"}
-            style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
-          >
-            {t("common.audios")} ({files.filter(f => f.type.startsWith("audio")).length})
-          </button>
-          <button
-            onClick={() => setFilter("video")}
-            className={filter === "video" ? "btn btn-primary" : "btn btn-secondary"}
-            style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
-          >
-            {t("common.videos")} ({files.filter(f => f.type.startsWith("video")).length})
-          </button>
-        </div>
+            {cat.label} ({cat.count})
+          </Button>
+        ))}
       </div>
 
       {loading && <p>{t("common.loading")}</p>}
@@ -209,108 +233,90 @@ export const AdminUploads: React.FC = () => {
       )}
 
       {!loading && filteredFiles.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
-          {filteredFiles.map((file) => (
-            <div key={file.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem" }}>
-              {/* Preview */}
-              <div
-                style={{
-                  width: "100%",
-                  height: "150px",
-                  borderRadius: "var(--radius-md)",
-                  marginBottom: "1rem",
-                  background: file.type.startsWith("image")
-                    ? `url(${file.url}) center/cover`
-                    : "linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(42, 24, 16, 0.8))",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "3rem",
-                  border: "1px solid var(--border-subtle)"
-                }}
-              >
-                {!file.type.startsWith("image") && (
-                  file.type.startsWith("audio") ? "🎵" :
-                    file.type.startsWith("video") ? "🎬" : "📄"
-                )}
-              </div>
+        <motion.div 
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8"
+        >
+          {filteredFiles.map((file) => {
+            const is3D = file.type.toLowerCase().includes("model") || file.filename.endsWith(".glb") || file.filename.endsWith(".gltf");
+            const isImg = file.type.startsWith("image");
 
-              {/* Info */}
-              <div style={{ fontSize: "0.85rem", marginBottom: "0.75rem" }}>
-                <div style={{ fontWeight: 600, marginBottom: "0.25rem", wordBreak: "break-all" }}>
-                  {file.filename}
-                </div>
-                <div style={{ color: "var(--fg-soft)", fontSize: "0.75rem" }}>
-                  {formatSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
-                </div>
-              </div>
-
-              {/* Usado em */}
-              {file.usedIn && (
-                <div style={{ marginBottom: "0.75rem", fontSize: "0.75rem" }}>
-                  <div style={{ color: "var(--fg-soft)", marginBottom: "0.25rem" }}>
-                    {t("admin.uploads.usedIn")}:
+            return (
+              <motion.div key={file.id} variants={staggerItem}>
+                <Card hover="premium" className="h-full flex flex-col group overflow-hidden border-white/5 bg-white/5">
+                  <div className="relative h-48 overflow-hidden bg-slate-900 flex items-center justify-center">
+                    {isImg ? (
+                        <img src={file.url} alt={file.filename} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    ) : is3D ? (
+                        <div className="w-full h-full">
+                           <ModelViewer url={file.url} className="w-full h-full pointer-events-none" />
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center gap-4 text-slate-500">
+                           {file.type.includes("audio") ? <Music size={48} /> : <Video size={48} />}
+                        </div>
+                    )}
+                    <Badge variant="glass" className="absolute top-4 left-4 font-black uppercase text-[9px] tracking-widest backdrop-blur-md">
+                        {getFileTypeLabel(file.type)}
+                    </Badge>
                   </div>
-                  <div className="badge">
-                    {file.usedIn}: {file.usedInId}
+
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="text-white font-bold text-sm mb-1 truncate tracking-tight">{file.filename}</h3>
+                    <div className="flex items-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest mb-4">
+                        <span>{formatFileSize(file.size)}</span>
+                        <span>•</span>
+                        <span>{new Date(file.uploadedAt).toLocaleDateString()}</span>
+                    </div>
+
+                    <div className="space-y-4 mt-auto">
+                        {file.usedIn && (
+                            <div className="p-3 bg-white/5 rounded-xl border border-white/5">
+                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Vinculado a</span>
+                                <span className="text-xs text-slate-300 font-bold truncate block">{file.usedIn} ID: {file.usedInId}</span>
+                            </div>
+                        )}
+
+                        <div className="flex flex-col gap-2">
+                             <Button
+                                variant={file.useInAi ? "primary" : "glass"}
+                                size="sm"
+                                onClick={() => handleToggleAi(file.id, !!file.useInAi)}
+                                className="w-full h-10 font-bold text-[10px] uppercase tracking-widest border-white/5"
+                                leftIcon={<Brain size={14} />}
+                             >
+                                {file.useInAi ? "✓ Ativo para IA" : "Usar no Treino IA"}
+                             </Button>
+                             
+                             <div className="flex gap-2">
+                                 <Button
+                                    variant="glass"
+                                    size="sm"
+                                    className="flex-1 h-10 font-bold text-[10px] uppercase tracking-widest border-white/5"
+                                    onClick={() => window.open(file.url, '_blank')}
+                                    leftIcon={<ExternalLink size={14} />}
+                                 >
+                                    Ver
+                                 </Button>
+                                 <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-10 w-10 p-0 text-red-500 hover:bg-red-500/10 hover:text-red-500 border-none"
+                                    onClick={() => handleDelete(file.id, file.usedIn)}
+                                 >
+                                    <Trash2 size={16} />
+                                 </Button>
+                             </div>
+                        </div>
+                    </div>
                   </div>
-                </div>
-              )}
-
-              {/* Ações */}
-              <div style={{ display: "flex", gap: "0.5rem", flexDirection: 'column' }}>
-                <label
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                    padding: '0.5rem',
-                    background: file.useInAi ? 'rgba(212, 175, 55, 0.1)' : 'rgba(255,255,255,0.05)',
-                    border: `1px solid ${file.useInAi ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)'}`,
-                    borderRadius: 'var(--radius-sm)'
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={!!file.useInAi}
-                    onChange={() => handleToggleAi(file.id, !!file.useInAi)}
-                    style={{ accentColor: 'var(--accent-gold)' }}
-                  />
-                  <span>
-                    {file.useInAi ? "✅ Usar na IA" : "Usar na IA"}
-                  </span>
-                </label>
-
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <a
-                    href={file.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                    style={{ flex: 1, fontSize: "0.8rem", textAlign: "center" }}
-                  >
-                    {t("common.view")}
-                  </a>
-                  <button
-                    onClick={() => handleDelete(file.id, file.usedIn)}
-                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                    style={{
-                      padding: "0.5rem",
-                      fontSize: "0.8rem",
-                      background: "rgba(239, 68, 68, 0.1)",
-                      color: "#ef4444",
-                      border: "1px solid #ef4444"
-                    }}
-                  >
-                    🗑
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       )}
     </div>
   );

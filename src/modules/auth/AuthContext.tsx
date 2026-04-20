@@ -4,7 +4,7 @@ import React, {
   useReducer,
   ReactNode
 } from "react";
-import { api } from "../../api/client";
+import { api, baseURL, isDemoMode } from "../../api/client";
 
 export type Role = "visitor" | "admin" | "master" | "producer";
 
@@ -155,7 +155,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // ─── Login ────────────────────────────────────────────────────
   const login: AuthContextValue["login"] = async ({ email, password }) => {
-    if (!demo && baseURL) {
+    if (!isDemoMode && baseURL) {
       const res = await api.post("/auth/login", { email, password });
       
       const data = res.data as {

@@ -26,14 +26,21 @@ export interface UploadConfig {
 // ─── Preset Configs ───────────────────────────────────────────────
 
 export const UPLOAD_PRESETS = {
-  /** General purpose: images, audio, video */
+  /** General purpose: images, audio, video, 3D */
   general: {
     allowedTypes: [
       "image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif",
       "audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg",
       "video/mp4", "video/webm",
+      "model/gltf-binary", "model/gltf+json", ".glb", ".gltf"
     ],
-    maxBytes: 50 * 1024 * 1024, // 50 MB
+    maxBytes: 100 * 1024 * 1024, // 100 MB (increased for 3D)
+  },
+
+  /** 3D Models only */
+  model3DOnly: {
+    allowedTypes: ["model/gltf-binary", "model/gltf+json", ".glb", ".gltf"],
+    maxBytes: 100 * 1024 * 1024, // 100 MB
   },
 
   /** Images only */
@@ -77,6 +84,7 @@ export function getFileTypeLabel(type: string): string {
   if (type.startsWith("image/")) return "Imagem";
   if (type.startsWith("audio/")) return "Áudio";
   if (type.startsWith("video/")) return "Vídeo";
+  if (type.startsWith("model/") || type.endsWith(".glb") || type.endsWith(".gltf")) return "Modelo 3D";
   if (type === "application/pdf") return "PDF";
   return "Arquivo";
 }
