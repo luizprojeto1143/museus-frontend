@@ -17,13 +17,14 @@
       const errorMsg = event.reason?.message || '';
       if (errorMsg.includes('Failed to fetch dynamically imported module') || 
           errorMsg.includes('loading chunk')) {
-        console.warn('Chunk load error detected. Auto-reloading app...');
-        window.location.reload();
+        console.warn('Chunk load error detected. (Auto-reload disabled for debugging)');
+        // window.location.reload(); 
       }
     });
     window.addEventListener('error', (e) => {
       if (e.message && e.message.includes('Failed to fetch dynamically imported module')) {
-        window.location.reload();
+        console.warn('Dynamic module error detected. (Auto-reload disabled for debugging)');
+        // window.location.reload();
       }
     }, true);
   </script>

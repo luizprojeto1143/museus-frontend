@@ -39,10 +39,18 @@ export const LandingPage: React.FC = () => {
 
     // Track scroll for header transition
     useEffect(() => {
+        let lastScrollY = window.scrollY;
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            const currentScrollY = window.scrollY;
+            const isScrolled = currentScrollY > 50;
+            // Only update if state actually changes
+            setScrolled((prev) => {
+                if (prev !== isScrolled) return isScrolled;
+                return prev;
+            });
+            lastScrollY = currentScrollY;
         };
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
