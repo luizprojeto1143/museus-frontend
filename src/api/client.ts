@@ -148,8 +148,13 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     // Don't show toast for 401 (handled by refresh) or network errors during page load
+    // For 5xx errors, only show toast if it's not a generic background retry
     if (status !== 401 && error.config?.url) {
-      toast.error(errorMessage, { id: `api-error-${status}` });
+      if (status >= 500 && status < 600) {
+        console.error(`[API] Server error (5xx) on ${error.config.url}. Check backend logs.`);
+      } else {
+        toast.error(errorMessage, { id: `api-error-${status}` });
+      }
     }
 
     return Promise.reject(error);
