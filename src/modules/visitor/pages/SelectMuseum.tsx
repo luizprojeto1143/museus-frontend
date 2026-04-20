@@ -46,12 +46,7 @@ export const SelectMuseum: React.FC = () => {
   const [searchParams] = useSearchParams();
   const isRegisterMode = searchParams.get("mode") === "register";
 
-  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState<string>("ALL");
-  const { userLocation } = useGeoFencing();
-  const [selectedLandmark, setSelectedLandmark] = useState<Equipamento | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Load Tenants & Handle Auto-selection
   useEffect(() => {
@@ -70,9 +65,16 @@ export const SelectMuseum: React.FC = () => {
   }, [searchParams, equipamentos]);
 
   const loadEquipamentos = async () => {
+    setLoading(true);
+    setErrorMsg(null);
     try {
       const baseUrl = import.meta.env.VITE_API_URL as string;
-      const res = await fetch(baseUrl + "/equipamentos/public");
+      const res = await fetch(baseUrl + "/tenants/public");
+      
+      if (!res.ok) {
+        throw new Error(`Servidor respondeu com erro ${res.status}`);
+      }
+
       const data = await res.json();
       if (Array.isArray(data)) {
         setEquipamentos(data);
@@ -82,6 +84,7 @@ export const SelectMuseum: React.FC = () => {
       }
     } catch (err) {
       console.error("Error loading equipments", err);
+      setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
     } finally {
       setLoading(false);
     }
@@ -112,8 +115,8 @@ export const SelectMuseum: React.FC = () => {
       const lower = searchTerm.toLowerCase();
       result = result.filter(e =>
         e.nome.toLowerCase().includes(lower) ||
-        e.slug.toLowerCase().includes(lower) ||
-        e.endereco?.toLowerCase().includes(lower)
+        (e.slug && e.slug.toLowerCase().includes(lower)) ||
+        (e.address && e.address.toLowerCase().includes(lower))
       );
     }
 
@@ -274,6 +277,15 @@ export const SelectMuseum: React.FC = () => {
             <p className="text-gray-500 font-medium">{filteredAndSortedEquipamentos.length} equipamentos encontrados</p>
           </div>
         </div>
+
+        {errorMsg && (
+          <div className="p-12 mb-12 bg-red-400/5 border border-red-400/20 rounded-3xl text-center">
+             <Info className="mx-auto mb-4 text-red-400" size={48} />
+             <h3 className="text-xl font-bold mb-2">Conexão em Restauração</h3>
+             <p className="text-gray-400">{errorMsg}</p>
+             <Button variant="outline" className="mt-6 border-red-400/30 text-red-400" onClick={() => loadEquipamentos()}>Tentar Reconectar</Button>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 opacity-50">
