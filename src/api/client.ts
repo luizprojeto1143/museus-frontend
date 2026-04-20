@@ -127,10 +127,21 @@ api.interceptors.response.use(
         console.error("Session expired or refresh failed", refreshError);
         isRefreshing = false;
         refreshSubscribers = []; // clear queue
-        // Logout forçado só se realmente for um erro de renew
+        
+        // Remove potentially invalid token
         window.localStorage.removeItem("museus_auth_v1");
-        // Opcional: Redirecionar para login
-        window.location.href = "/login";
+
+        // 🛑 BREAK LOOP: Só redireciona se não estivermos já em uma rota pública
+        const publicRoutes = ["/login", "/welcome", "/register", "/", "/select-museum"];
+        const currentPath = window.location.pathname;
+        
+        const isPublicRoute = publicRoutes.includes(currentPath) || currentPath.startsWith("/verify/") || currentPath.startsWith("/p/");
+
+        if (!isPublicRoute && !originalRequest.url?.includes("/auth/me")) {
+          console.warn("[API] Redirecting to login to clear session loop.");
+          window.location.href = "/login";
+        }
+        
         return Promise.reject(refreshError);
       }
     }
