@@ -11,6 +11,10 @@ import { AudioProvider } from "./modules/visitor/context/AudioContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { VisitorThemeProvider } from "./modules/visitor/context/VisitorThemeProvider";
 import { PageLoader } from "./components/ui/PageLoader";
+import { registerGSAPPlugins } from "./lib/gsap-utils";
+
+// Register GSAP plugins once at app level
+registerGSAPPlugins();
 
 // Auth pages — lazy loaded
 const Login = React.lazy(() => import("./modules/auth/Login").then(m => ({ default: m.Login })));
@@ -122,7 +126,7 @@ const App: React.FC = () => {
             <AudioProvider>
               <ToastProvider>
               <React.Suspense fallback={<PageLoader />}>
-                <Routes>
+                <Routes key={"app-routes"}>
                   {/* PUBLIC ROUTES */}
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/welcome" element={<Welcome />} />

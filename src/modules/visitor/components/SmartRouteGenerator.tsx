@@ -69,10 +69,10 @@ export const SmartRouteGenerator: React.FC = () => {
         }}>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
                 <div style={{ background: "rgba(212, 175, 55, 0.15)", padding: "0.8rem", borderRadius: "50%" }}>
-                    <Clock size={24} color="#d4af37" />
+                    <Clock size={24} color="var(--accent-primary)" />
                 </div>
                 <div>
-                    <h2 style={{ fontSize: "1.2rem", color: "#d4af37", fontFamily: "serif" }}>
+                    <h2 style={{ fontSize: "1.2rem", color: "var(--accent-primary)", fontFamily: "serif" }}>
                         {t("visitor.smartRoute.title")}
                     </h2>
                     <p style={{ fontSize: "0.9rem", opacity: 0.7 }}>
@@ -92,8 +92,8 @@ export const SmartRouteGenerator: React.FC = () => {
                                 style={{
                                     padding: "0.5rem 1rem",
                                     borderRadius: "2rem",
-                                    border: time === m ? "1px solid #d4af37" : "1px solid rgba(255,255,255,0.1)",
-                                    background: time === m ? "#d4af37" : "transparent",
+                                    border: time === m ? "1px solid var(--accent-primary)" : "1px solid rgba(255,255,255,0.1)",
+                                    background: time === m ? "var(--accent-primary)" : "transparent",
                                     color: time === m ? "black" : "white",
                                     fontWeight: time === m ? "bold" : "normal",
                                     cursor: "pointer",
@@ -135,7 +135,7 @@ export const SmartRouteGenerator: React.FC = () => {
                             width: "100%",
                             padding: "1rem",
                             borderRadius: "0.8rem",
-                            background: "linear-gradient(to right, #d4af37, #b4932a)",
+                            background: "linear-gradient(to right, var(--accent-primary), #b4932a)",
                             color: "#1a1108",
                             fontWeight: "bold",
                             border: "none",
@@ -157,7 +157,7 @@ export const SmartRouteGenerator: React.FC = () => {
                             Baseado em {interests.join(", ") || "seus interesses"} e {time} min.
                         </p>
 
-                        <div style={{ display: "flex", gap: "1rem", fontSize: "0.9rem", color: "#d4af37" }}>
+                        <div style={{ display: "flex", gap: "1rem", fontSize: "0.9rem", color: "var(--accent-primary)" }}>
                             <span style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                                 <Clock size={16} /> ~{time} min
                             </span>
@@ -176,7 +176,7 @@ export const SmartRouteGenerator: React.FC = () => {
                         </button>
                         <button
                             onClick={handleStart}
-                            style={{ flex: 1, padding: "0.8rem", background: "#d4af37", border: "none", borderRadius: "0.5rem", color: "#000", fontWeight: "bold", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}
+                            style={{ flex: 1, padding: "0.8rem", background: "var(--accent-primary)", border: "none", borderRadius: "0.5rem", color: "#000", fontWeight: "bold", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem" }}
                         >
                             <Play size={18} fill="black" /> {t("visitor.smartRoute.start")}
                         </button>

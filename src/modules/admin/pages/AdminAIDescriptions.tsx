@@ -53,7 +53,7 @@ export const AdminAIDescriptions: React.FC = () => {
 
     const worksWithoutDesc = works.filter(w => !w.description || w.description.length < 50);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -66,25 +66,25 @@ export const AdminAIDescriptions: React.FC = () => {
 
             {/* Stats */}
             <div className="card-grid">
-                <div className="stat-card">
-                    <p className="stat-value">{works.length}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{works.length}</p>
                     <p className="stat-label">Total de Obras</p>
                 </div>
-                <div className="stat-card" style={{ borderColor: "rgba(212,175,55,0.2)" }}>
-                    <p className="stat-value" style={{ color: "#d4af37" }}>{worksWithoutDesc.length}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ borderColor: "rgba(212,175,55,0.2)" }}>
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "var(--accent-primary)" }}>{worksWithoutDesc.length}</p>
                     <p className="stat-label">{t("admin.aidescriptions.semDescrio", `Sem Descrição`)}</p>
                 </div>
-                <div className="stat-card">
-                    <p className="stat-value" style={{ color: "#22c55e" }}>{works.length - worksWithoutDesc.length}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "#22c55e" }}>{works.length - worksWithoutDesc.length}</p>
                     <p className="stat-label">{t("admin.aidescriptions.comDescrio", `Com Descrição`)}</p>
                 </div>
             </div>
 
             {/* Generator */}
-            <div className="card" style={{ display: "grid", gap: "1rem" }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                 <h2 className="card-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}><Wand2 size={20} style={{ color: "#a78bfa" }} /> Gerar Descrição</h2>
                 <div>
-                    <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Selecione uma Obra</label>
+                    <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Selecione uma Obra</label>
                     <select value={selected || ''} onChange={e => { setSelected(e.target.value); setGenerated(''); }} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                         <option value="">Selecione...</option>
                         {works.map((w: any) => (
@@ -120,13 +120,13 @@ export const AdminAIDescriptions: React.FC = () => {
                     <h2 className="card-title">{t("admin.aidescriptions.obrasSemDescrio", `Obras sem Descrição`)}</h2>
                     <div style={{ display: "grid", gap: "0.5rem" }}>
                         {worksWithoutDesc.slice(0, 10).map((w: any) => (
-                            <div key={w.id} className="card" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", borderColor: "rgba(212,175,55,0.1)", transition: "all 0.2s" }} onClick={() => { setSelected(w.id); setGenerated(''); }}>
+                            <div key={w.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", borderColor: "rgba(212,175,55,0.1)", transition: "all 0.2s" }} onClick={() => { setSelected(w.id); setGenerated(''); }}>
                                 {w.imageUrl ? <img src={w.imageUrl} alt={w.title} style={{ width: "48px", height: "48px", borderRadius: "12px", objectFit: "cover", flexShrink: 0 }} /> : <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><ImageIcon size={18} style={{ color: "#475569" }} /></div>}
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{w.title}</p>
                                     <p style={{ color: "#64748b", fontSize: "0.75rem" }}>{w.artist || 'Artista desconhecido'}</p>
                                 </div>
-                                <Wand2 size={16} style={{ color: "#d4af37", flexShrink: 0 }} />
+                                <Wand2 size={16} style={{ color: "var(--accent-primary)", flexShrink: 0 }} />
                             </div>
                         ))}
                     </div>

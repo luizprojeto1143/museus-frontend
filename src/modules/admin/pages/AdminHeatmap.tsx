@@ -38,7 +38,7 @@ export const AdminHeatmap: React.FC = () => {
         if (tenantId) fetchData();
     }, [tenantId, fetchData]);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
     if (!data) return null;
 
     const maxVisits = Math.max(...(data.byWork.map(w => w.visits) || [1]), 1);
@@ -49,7 +49,7 @@ export const AdminHeatmap: React.FC = () => {
         if (ratio >= 0.8) return { bg: "bg-red-500", text: "text-red-400", border: "border-red-500/30" };
         if (ratio >= 0.5) return { bg: "bg-orange-500", text: "text-orange-400", border: "border-orange-500/30" };
         if (ratio >= 0.3) return { bg: "bg-amber-500", text: "text-amber-400", border: "border-amber-500/30" };
-        return { bg: "bg-blue-500", text: "text-blue-400", border: "border-blue-500/30" };
+        return { bg: "bg-[var(--accent-primary)]", text: "text-blue-400", border: "border-blue-500/30" };
     };
 
     return (
@@ -78,7 +78,7 @@ export const AdminHeatmap: React.FC = () => {
             </div>
 
             {/* Room Heatmap */}
-            <div className="card">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                 <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <MapPin size={20} className="text-amber-500" /> Por Sala
                 </h2>
@@ -103,7 +103,7 @@ export const AdminHeatmap: React.FC = () => {
             </div>
 
             {/* Work Detail */}
-            <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                 <div className="px-6 py-4 border-b border-white/5">
                     <h2 className="card-title" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <Flame size={20} className="text-red-500" /> Top Obras Visitadas
@@ -138,7 +138,7 @@ export const AdminHeatmap: React.FC = () => {
 
             {/* Legend */}
             <div className="flex justify-center gap-6 text-xs text-zinc-400">
-                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-blue-500" /> Baixo</div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-[var(--accent-primary)]" /> Baixo</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-amber-500" />{t("admin.heatmap.mdio", ` Médio`)}</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-orange-500" /> Alto</div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><div className="w-3 h-3 rounded bg-red-500" /> Muito Alto</div>

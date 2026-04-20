@@ -100,7 +100,7 @@ export const EventSurveyPage: React.FC = () => {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center">
-            <Loader2 className="animate-spin text-blue-500 mr-2" />
+            <Loader2 className="animate-spin text-[var(--accent-primary)] mr-2" />
             <span className="text-slate-400">Carregando pesquisa...</span>
         </div>
     );
@@ -144,7 +144,7 @@ export const EventSurveyPage: React.FC = () => {
 
                     <form onSubmit={handleSubmit} className="p-10 space-y-10">
                         {!currentUser && (
-                            <div className="bg-blue-500/10 p-6 rounded-2xl border border-blue-500/20 mb-8 space-y-4">
+                            <div className="bg-[var(--accent-primary)]/10 p-6 rounded-2xl border border-blue-500/20 mb-8 space-y-4">
                                 <Input
                                     label="Seu E-mail *"
                                     type="email"
@@ -188,7 +188,7 @@ export const EventSurveyPage: React.FC = () => {
                                                 type="button"
                                                 onClick={() => handleAnswer(q.id, score)}
                                                 className={`w-11 h-11 rounded-xl font-black border transition-all ${String(answers[q.id]) === String(score)
-                                                    ? 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-600/30 -translate-y-1'
+                                                    ? 'bg-[var(--accent-primary)] text-white border-blue-500 shadow-lg shadow-blue-600/30 -translate-y-1'
                                                     : 'bg-white/5 text-slate-400 border-white/10 hover:border-white/30'
                                                     }`}
                                             >
@@ -206,11 +206,11 @@ export const EventSurveyPage: React.FC = () => {
                                                 type="button"
                                                 onClick={() => handleAnswer(q.id, opt)}
                                                 className={`flex items-center gap-3 p-4 rounded-xl border transition-all text-left ${answers[q.id] === opt
-                                                    ? 'bg-blue-600/10 border-blue-500 text-blue-400 shadow-md'
+                                                    ? 'bg-[var(--accent-primary)]/10 border-blue-500 text-blue-400 shadow-md'
                                                     : 'bg-white/5 border-white/10 text-slate-400 hover:bg-white/10'
                                                     }`}
                                             >
-                                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${answers[q.id] === opt ? 'bg-blue-500 border-blue-500' : 'border-white/20'}`}>
+                                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${answers[q.id] === opt ? 'bg-[var(--accent-primary)] border-blue-500' : 'border-white/20'}`}>
                                                     {answers[q.id] === opt && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                                                 </div>
                                                 <span className="font-medium">{opt}</span>

@@ -41,7 +41,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
         grouped.get(day)!.push(e);
     });
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -55,24 +55,24 @@ export const AdminMunicipalCalendar: React.FC = () => {
 
             {/* Summary */}
             <div className="card-grid">
-                <div className="stat-card">
-                    <Calendar style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
-                    <p className="stat-value">{filteredEvents.length}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <Calendar style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{filteredEvents.length}</p>
                     <p className="stat-label">{t("admin.municipalcalendar.eventosNoMs", `Eventos no Mês`)}</p>
                 </div>
-                <div className="stat-card">
-                    <p className="stat-value">{grouped.size}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{grouped.size}</p>
                     <p className="stat-label">Dias com Evento</p>
                 </div>
-                <div className="stat-card">
-                    <p className="stat-value" style={{ color: "#d4af37" }}>{filteredEvents.reduce((sum, e) => sum + (e.maxCapacity || 0), 0)}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "var(--accent-primary)" }}>{filteredEvents.reduce((sum, e) => sum + (e.maxCapacity || 0), 0)}</p>
                     <p className="stat-label">Capacidade Total</p>
                 </div>
             </div>
 
             {/* Calendar view */}
             {grouped.size === 0 ? (
-                <div className="card" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <Calendar size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <p style={{ color: "#64748b" }}>{t("admin.municipalcalendar.nenhumEventoNesteMs", `Nenhum evento neste mês`)}</p>
                 </div>
@@ -83,7 +83,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
                             <h3 className="text-sm font-bold text-amber-500 uppercase tracking-wider mb-3">{day}</h3>
                             <div style={{ display: "grid", gap: "0.5rem" }}>
                                 {dayEvents.map((e: any) => (
-                                    <div key={e.id} className="card" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "all 0.2s" }}>
+                                    <div key={e.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "all 0.2s" }}>
                                         <div className="w-14 text-center shrink-0">
                                             <p className="text-lg font-black text-white">{new Date(e.startDate).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</p>
                                         </div>

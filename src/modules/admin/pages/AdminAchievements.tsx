@@ -65,23 +65,23 @@ export const AdminAchievements: React.FC = () => {
           <h1 className="section-title">🏅 {t("admin.achievements.title")}</h1>
 
         </div>
-        <Link to="/admin/conquistas/nova" className="btn btn-primary">
+        <Link to="/admin/conquistas/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
           + {t("admin.achievements.new")}
         </Link>
       </div>
 
       {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="stat-card">
-          <div className="stat-value">{achievements.length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{achievements.length}</div>
           <div className="stat-label">{t("admin.achievements.stats.total")}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{achievements.filter(a => a.active).length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{achievements.filter(a => a.active).length}</div>
           <div className="stat-label">{t("admin.achievements.stats.active")}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">
             {achievements.reduce((acc, a) => acc + a.unlockedCount, 0)}
           </div>
           <div className="stat-label">{t("admin.achievements.stats.unlocked")}</div>
@@ -91,9 +91,9 @@ export const AdminAchievements: React.FC = () => {
       {loading && <p>{t("common.loading")}</p>}
 
       {!loading && achievements.length === 0 && (
-        <div className="card">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
           <p>{t("admin.achievements.empty")}</p>
-          <Link to="/admin/conquistas/nova" className="btn btn-primary" style={{ marginTop: "1rem" }}>
+          <Link to="/admin/conquistas/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ marginTop: "1rem" }}>
             {t("admin.achievements.createFirst")}
           </Link>
         </div>
@@ -102,7 +102,7 @@ export const AdminAchievements: React.FC = () => {
       {!loading && achievements.length > 0 && (
         <div className="card-grid">
           {achievements.map((achievement) => (
-            <div key={achievement.id} className="card" style={{ position: "relative" }}>
+            <div key={achievement.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ position: "relative" }}>
               {/* Badge de status */}
               <div style={{ position: "absolute", top: "1rem", right: "1rem" }}>
                 <span
@@ -172,19 +172,19 @@ export const AdminAchievements: React.FC = () => {
               )}
 
               <div style={{ display: "flex", gap: "0.5rem" }}>
-                <Link to={`/admin/conquistas/${achievement.id}`} className="btn btn-secondary" style={{ flex: 1, fontSize: "0.85rem" }}>
+                <Link to={`/admin/conquistas/${achievement.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ flex: 1, fontSize: "0.85rem" }}>
                   {t("admin.achievements.card.edit")}
                 </Link>
                 <button
                   onClick={() => handleToggleActive(achievement.id, achievement.active)}
-                  className="btn btn-secondary"
+                  className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                   style={{ flex: 1, fontSize: "0.85rem" }}
                 >
                   {achievement.active ? t("admin.achievements.card.disable") : t("admin.achievements.card.enable")}
                 </button>
                 <button
                   onClick={() => handleDelete(achievement.id)}
-                  className="btn"
+                  className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                   style={{
                     padding: "0.5rem",
                     fontSize: "0.85rem",

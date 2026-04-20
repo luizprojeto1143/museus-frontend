@@ -19,8 +19,8 @@ interface ThemeContextType {
 import { useTenant } from "../../auth/TenantContext";
 
 const defaultTheme: ThemeSettings = {
-    primaryColor: "#d4af37", // Gold fallback
-    secondaryColor: "#cd7f32", // Bronze fallback
+    primaryColor: "var(--accent-primary)", // Gold fallback
+    secondaryColor: "var(--accent-secondary)", // Bronze fallback
     theme: "dark",
     historicalFont: true
 };

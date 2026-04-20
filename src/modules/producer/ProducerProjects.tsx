@@ -30,7 +30,7 @@ export const ProducerProjects: React.FC = () => {
     const getStatusBadge = (status: string) => {
         const config: Record<string, string> = {
             DRAFT: "bg-gray-500/20 text-gray-400 border-gray-500/50",
-            SUBMITTED: "bg-blue-500/20 text-blue-400 border-blue-500/50",
+            SUBMITTED: "bg-[var(--accent-primary)]/20 text-blue-400 border-blue-500/50",
             APPROVED: "bg-green-500/20 text-green-400 border-green-500/50",
             REJECTED: "bg-red-500/20 text-red-400 border-red-500/50",
             UNDER_REVIEW: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
@@ -63,14 +63,14 @@ export const ProducerProjects: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif flex items-center gap-3">
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif flex items-center gap-3">
                         Meus Projetos
                     </h1>
                     <p className="text-[#B0A090]">Gerencie seus projetos culturais e acompanhe o status.</p>
                 </div>
                 <Link
                     to="/producer/projects/new"
-                    className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg shadow-[#D4AF37]/20"
+                    className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg shadow-[var(--accent-primary)]/20"
                 >
                     <Plus size={20} /> Novo Projeto
                 </Link>
@@ -78,7 +78,7 @@ export const ProducerProjects: React.FC = () => {
 
             {loading ? (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]"></div>
                 </div>
             ) : (
                 <div className="space-y-4">
@@ -93,7 +93,7 @@ export const ProducerProjects: React.FC = () => {
                             </p>
                             <Link
                                 to="/producer/projects/new"
-                                className="inline-flex items-center gap-2 text-[#D4AF37] hover:underline font-bold"
+                                className="inline-flex items-center gap-2 text-[var(--accent-primary)] hover:underline font-bold"
                             >
                                 Criar meu primeiro projeto <ArrowRight size={16} />
                             </Link>
@@ -102,11 +102,11 @@ export const ProducerProjects: React.FC = () => {
                         projects.map(project => (
                             <div
                                 key={project.id}
-                                className="bg-[#2c1e10] p-6 rounded-xl border border-[#463420] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-[#D4AF37]/50 transition-all group"
+                                className="bg-[#2c1e10] p-6 rounded-xl border border-[#463420] flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-[var(--accent-primary)]/50 transition-all group"
                             >
                                 <div>
                                     <div className="flex items-center gap-3 mb-2">
-                                        <h3 className="text-lg font-bold text-[#EAE0D5] group-hover:text-[#D4AF37] transition-colors">
+                                        <h3 className="text-lg font-bold text-[#EAE0D5] group-hover:text-[var(--accent-primary)] transition-colors">
                                             {project.title}
                                         </h3>
                                         {getStatusBadge(project.status)}
@@ -114,7 +114,7 @@ export const ProducerProjects: React.FC = () => {
                                     <div className="flex flex-wrap gap-4 text-sm text-[#B0A090]">
                                         <span>Criado em: <strong className="text-[#EAE0D5]">{new Date(project.createdAt).toLocaleDateString()}</strong></span>
                                         {project.notice && (
-                                            <span className="flex items-center gap-1 text-[#D4AF37]">
+                                            <span className="flex items-center gap-1 text-[var(--accent-primary)]">
                                                 <FileText size={14} /> Edital: {project.notice.title}
                                             </span>
                                         )}
@@ -123,7 +123,7 @@ export const ProducerProjects: React.FC = () => {
                                 <div className="flex gap-2 w-full md:w-auto">
                                     <button
                                         onClick={() => router(`/producer/projects/${project.id}`)}
-                                        className="flex-1 md:flex-none px-4 py-2 bg-black/20 hover:bg-[#D4AF37] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                                        className="flex-1 md:flex-none px-4 py-2 bg-black/20 hover:bg-[var(--accent-primary)] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
                                         title={project.status === 'DRAFT' ? "Editar" : "Visualizar"}
                                     >
                                         {project.status === 'DRAFT' ? <><Edit size={16} /> Editar</> : <><Eye size={16} /> Detalhes</>}

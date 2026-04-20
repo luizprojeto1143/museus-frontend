@@ -42,7 +42,7 @@ export const GlobalEvents: React.FC = () => {
                 <Link to="/welcome" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "var(--fg-muted)", textDecoration: "none", marginBottom: "1rem" }}>
                     <ArrowLeft size={20} /> Voltar
                 </Link>
-                <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(90deg, #d4af37, #f3e5b5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
+                <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(90deg, var(--accent-primary), #f3e5b5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
                     Agenda Cultural Unificada
                 </h1>
                 <p style={{ opacity: 0.7, fontSize: "1.1rem" }}>{t("public.globalevents.exploreEventosExposiesEOficinasEmTodosOs", `
@@ -104,8 +104,8 @@ export const GlobalEvents: React.FC = () => {
                                     borderRadius: "2rem",
                                     fontSize: "0.75rem",
                                     fontWeight: "bold",
-                                    color: "#d4af37",
-                                    border: "1px solid #d4af37"
+                                    color: "var(--accent-primary)",
+                                    border: "1px solid var(--accent-primary)"
                                 }}>
                                     {event.tenant.name}
                                 </span>

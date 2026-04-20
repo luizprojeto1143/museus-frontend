@@ -29,7 +29,7 @@ export const AdminSponsorships: React.FC = () => {
     // Filter works that have sponsorship data
     const sponsoredWorks = works.filter((w: any) => w.sponsorships && w.sponsorships.length > 0);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -43,37 +43,37 @@ export const AdminSponsorships: React.FC = () => {
 
             {/* Stats */}
             <div className="card-grid">
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <DollarSign className="mx-auto text-green-500 mb-2" size={24} />
-                    <p className="stat-value">{sponsoredWorks.length}</p>
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{sponsoredWorks.length}</p>
                     <p className="stat-label">Obras Patrocinadas</p>
                 </div>
-                <div className="stat-card">
-                    <p className="stat-value" style={{ color: "#d4af37" }}>{works.length}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "var(--accent-primary)" }}>{works.length}</p>
                     <p className="stat-label">Total de Obras</p>
                 </div>
-                <div className="stat-card">
-                    <p className="stat-value">{works.length > 0 ? Math.round((sponsoredWorks.length / works.length) * 100) : 0}%</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{works.length > 0 ? Math.round((sponsoredWorks.length / works.length) * 100) : 0}%</p>
                     <p className="stat-label">Cobertura</p>
                 </div>
             </div>
 
             {showForm && (
-                <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>{t("admin.sponsorships.novoPatrocnio", `Novo Patrocínio`)}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div>
-                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
+                            <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione...</option>
                                 {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome do Patrocinador</label><input value={form.sponsorName} onChange={e => setForm({ ...form, sponsorName: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Site do Patrocinador</label><input value={form.sponsorUrl} onChange={e => setForm({ ...form, sponsorUrl: e.target.value })} placeholder="https://..." style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Valor (R$)</label><input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome do Patrocinador</label><input value={form.sponsorName} onChange={e => setForm({ ...form, sponsorName: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Site do Patrocinador</label><input value={form.sponsorUrl} onChange={e => setForm({ ...form, sponsorUrl: e.target.value })} placeholder="https://..." style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Valor (R$)</label><input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Mensagem do Patrocinador</label><textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Mensagem do Patrocinador</label><textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                         <Button onClick={() => { toast.success("Patrocínio salvo!"); setShowForm(false); }}>Salvar</Button>
@@ -84,7 +84,7 @@ export const AdminSponsorships: React.FC = () => {
             {/* Works list with sponsorship status */}
             <div style={{ display: "grid", gap: "0.75rem" }}>
                 {works.slice(0, 20).map((w: any) => (
-                    <div key={w.id} className="card" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+                    <div key={w.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
                         {w.imageUrl ? (
                             <img src={w.imageUrl} alt={w.title} className="w-14 h-14 rounded-xl object-cover shrink-0" />
                         ) : (

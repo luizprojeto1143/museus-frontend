@@ -42,10 +42,10 @@ export const MunicipalDashboard: React.FC = () => {
         fetchData();
     }, [period]);
 
-    if (loading && !data) return <div className="p-10 text-center animate-pulse text-blue-600">Carregando panorama executivo...</div>;
+    if (loading && !data) return <div className="p-10 text-center animate-pulse text-[var(--accent-primary)]">Carregando panorama executivo...</div>;
 
     const cards = [
-        { label: "Equipamentos Culturais", value: data?.cards?.totalEquipments || 0, icon: <Building2 className="text-blue-600" />, trend: "+2 este mês", color: "blue" },
+        { label: "Equipamentos Culturais", value: data?.cards?.totalEquipments || 0, icon: <Building2 className="text-[var(--accent-primary)]" />, trend: "+2 este mês", color: "blue" },
         { label: "Ações de Acessibilidade", value: data?.cards?.totalAccessibilityActions || 0, icon: <Accessibility className="text-emerald-600" />, trend: "98% concluídas", color: "emerald" },
         { label: "Projetos em Execução", value: data?.cards?.activeProjects || 0, icon: <FileText className="text-orange-600" />, trend: "15 aguardando análise", color: "orange" },
         { label: "Impacto Público (Est.)", value: data?.cards?.estimatedPublicImpact || 0, icon: <Users className="text-purple-600" />, trend: "+12.4% vs mês anterior", color: "purple" }
@@ -76,7 +76,7 @@ export const MunicipalDashboard: React.FC = () => {
                                 <button
                                     key={val}
                                     onClick={() => setPeriod(val as any)}
-                                    className={`w-full text-left px-4 py-3 text-sm font-bold hover:bg-blue-50 transition-colors ${period === val ? 'text-blue-600 bg-blue-50/50' : 'text-slate-600'}`}
+                                    className={`w-full text-left px-4 py-3 text-sm font-bold hover:bg-blue-50 transition-colors ${period === val ? 'text-[var(--accent-primary)] bg-blue-50/50' : 'text-slate-600'}`}
                                 >
                                     {label}
                                 </button>
@@ -85,7 +85,7 @@ export const MunicipalDashboard: React.FC = () => {
                     </div>
                     <Button
                         onClick={() => window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank')}
-                        className="bg-blue-600 hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20"
+                        className="bg-[var(--accent-primary)] hover:bg-blue-700 text-white gap-2 font-bold px-8 shadow-xl shadow-blue-600/20"
                     >
                         Exportar Relatório PDF
                     </Button>
@@ -118,7 +118,7 @@ export const MunicipalDashboard: React.FC = () => {
                                 <h3 className="text-xl font-bold text-slate-900">Conformidade por Equipamento</h3>
                                 <p className="text-sm text-slate-500">Status dos recursos de acessibilidade nas unidades culturais.</p>
                             </div>
-                            <Button variant="ghost" size="sm" onClick={() => navigate('/municipal/compliance')} className="text-blue-600 font-bold hover:bg-blue-50">Ver todos</Button>
+                            <Button variant="ghost" size="sm" onClick={() => navigate('/municipal/compliance')} className="text-[var(--accent-primary)] font-bold hover:bg-blue-50">Ver todos</Button>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
@@ -135,7 +135,7 @@ export const MunicipalDashboard: React.FC = () => {
                                     {(data?.equipmentAccessibility || []).map((eq: any, idx: number) => (
                                         <tr key={idx} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-8 py-6">
-                                                <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{eq.name}</div>
+                                                <div className="font-bold text-slate-900 group-hover:text-[var(--accent-primary)] transition-colors">{eq.name}</div>
                                                 <div className="text-xs text-slate-400">ID: {eq.id.slice(0, 8)}</div>
                                             </td>
                                             <td className="px-8 py-6">
@@ -158,7 +158,7 @@ export const MunicipalDashboard: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6 text-right">
-                                                <button className="p-2 text-slate-300 hover:text-blue-600 transition-colors">
+                                                <button className="p-2 text-slate-300 hover:text-[var(--accent-primary)] transition-colors">
                                                     <ArrowUpRight size={20} />
                                                 </button>
                                             </td>
@@ -180,7 +180,7 @@ export const MunicipalDashboard: React.FC = () => {
                             </div>
                             <div className="flex gap-2">
                                 <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1.5 rounded-full">
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div> Unidades
+                                    <div className="w-2 h-2 bg-[var(--accent-primary)] rounded-full"></div> Unidades
                                 </span>
                                 <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1.5 rounded-full">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full"></div> Projetos
@@ -204,7 +204,7 @@ export const MunicipalDashboard: React.FC = () => {
 
                                 return (
                                     <div key={eq.id} className="absolute group/marker" style={{ ...pos }}>
-                                        <div className={`w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75 ${isCulturalSpace ? 'bg-blue-600' : 'bg-emerald-500'} ${idx === 0 ? 'animate-bounce' : ''}`}>
+                                        <div className={`w-8 h-8 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-75 ${isCulturalSpace ? 'bg-[var(--accent-primary)]' : 'bg-emerald-500'} ${idx === 0 ? 'animate-bounce' : ''}`}>
                                             {isCulturalSpace ? <Building2 size={12} /> : <FileText size={12} />}
                                         </div>
                                         <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-10">
@@ -216,8 +216,8 @@ export const MunicipalDashboard: React.FC = () => {
 
                             {/* Map Tools Overlay */}
                             <div className="absolute bottom-6 left-6 flex flex-col gap-2">
-                                <button className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md text-slate-600 hover:text-blue-600 transition-all font-black text-xs">+</button>
-                                <button className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md text-slate-600 hover:text-blue-600 transition-all font-black text-xs">-</button>
+                                <button className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md text-slate-600 hover:text-[var(--accent-primary)] transition-all font-black text-xs">+</button>
+                                <button className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm hover:shadow-md text-slate-600 hover:text-[var(--accent-primary)] transition-all font-black text-xs">-</button>
                             </div>
 
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -240,7 +240,7 @@ export const MunicipalDashboard: React.FC = () => {
                                     <div key={idx} className="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
                                         <p className="text-sm font-medium text-slate-300 leading-relaxed mb-2 group-hover:text-white transition-colors">{alert.message}</p>
                                         <div className="flex justify-between items-center">
-                                            <span className={`text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${alert.severity === 'WARNING' ? 'bg-orange-500/20 text-orange-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                            <span className={`text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${alert.severity === 'WARNING' ? 'bg-orange-500/20 text-orange-400' : 'bg-[var(--accent-primary)]/20 text-blue-400'}`}>
                                                 {alert.severity}
                                             </span>
                                             <ChevronRight size={14} className="text-white/20 group-hover:text-white transition-colors" />
@@ -253,13 +253,13 @@ export const MunicipalDashboard: React.FC = () => {
                             </div>
                         </div>
                         {/* Decorative Gradient */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--accent-primary)]/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
                     </div>
 
                     {/* Timeline Panel */}
                     <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
                         <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                            <Clock size={20} className="text-blue-600" /> Fluxo de Projetos
+                            <Clock size={20} className="text-[var(--accent-primary)]" /> Fluxo de Projetos
                         </h3>
                         <div className="space-y-6">
                             {(data?.recentProjects || []).map((proj: any, idx: number) => (
@@ -272,13 +272,13 @@ export const MunicipalDashboard: React.FC = () => {
                                         {idx < (data.recentProjects.length - 1) && <div className="w-0.5 h-full bg-slate-100 my-2"></div>}
                                     </div>
                                     <div className="flex-1 pb-4">
-                                        <div className="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition-colors">{proj.title}</div>
+                                        <div className="font-bold text-slate-800 text-sm group-hover:text-[var(--accent-primary)] transition-colors">{proj.title}</div>
                                         <div className="flex items-center gap-2 mt-1">
                                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                                                 {new Date(proj.createdAt).toLocaleDateString()}
                                             </span>
                                             <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                                            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{proj.status}</span>
+                                            <span className="text-[10px] font-bold text-[var(--accent-primary)] uppercase tracking-widest">{proj.status}</span>
                                         </div>
                                     </div>
                                 </div>

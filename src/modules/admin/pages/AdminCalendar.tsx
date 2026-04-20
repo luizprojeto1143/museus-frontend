@@ -270,7 +270,7 @@ export const AdminCalendar: React.FC = () => {
             <div style={{ display: "flex", gap: "2rem", height: "calc(100vh - 320px)", minHeight: "650px" }}>
 
                 {/* --- CALENDAR MAIN GRID --- */}
-                <div className="card" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
                     {/* Day Names Row */}
                     <div style={{
                         display: "grid", gridTemplateColumns: "repeat(7, 1fr)",
@@ -379,7 +379,7 @@ export const AdminCalendar: React.FC = () => {
                     </Button>
 
                     {/* Details Card */}
-                    <div className="card" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
                         <div style={{ padding: "1.5rem", borderBottom: "1px solid var(--border-subtle)", background: "rgba(212,175,55,0.03)" }}>
                             <span style={{ display: "block", fontSize: "0.7rem", fontWeight: 800, color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "0.25rem" }}>
                                 Detalhes do Dia
@@ -464,7 +464,7 @@ export const AdminCalendar: React.FC = () => {
                     background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
                     padding: "1rem"
                 }} className="animate-fadeIn">
-                    <div className="card" style={{ width: "100%", maxWidth: "550px", padding: "2.5rem", position: "relative" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ width: "100%", maxWidth: "550px", padding: "2.5rem", position: "relative" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2.5rem" }}>
                             <div>
                                 <h2 className="card-title" style={{ margin: 0, fontSize: "1.75rem" }}>

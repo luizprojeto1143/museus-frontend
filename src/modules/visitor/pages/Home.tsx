@@ -8,6 +8,9 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { BentoSkeleton, WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
+import { staggerContainer, staggerItem, fadeInUp, pageVariants, durations } from "@/lib/motion";
+import { Badge, Card, AnimateIn, AnimatedCounter, PageLoader } from "@/components/ui";
+import { cn } from "@/lib/cn";
 import "./Home.css";
 
 interface FeaturedWork {
@@ -64,16 +67,6 @@ export const Home: React.FC = () => {
     }
   }, [tenantId, equipamentoId, navigate]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1 }
-  };
-
   const toRoman = (num: number) => {
     const map: Record<string, number> = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
     let res = '';
@@ -88,9 +81,10 @@ export const Home: React.FC = () => {
   return (
     <motion.div 
       className="home-container"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      variants={pageVariants}
+      initial="initial"
+      animate="enter"
+      exit="exit"
       role="main"
       aria-busy={loading}
     >
@@ -103,11 +97,11 @@ export const Home: React.FC = () => {
       </Helmet>
 
       {/* ═══ HERO SECTION ═══════════════ */}
-      <motion.section variants={itemVariants} className="home-hero-premium">
+      <motion.section variants={staggerItem} className="home-hero-premium">
         {isCityMode && (
-          <span className="hero-badge-premium">
+          <Badge variant="glass" size="lg" className="mb-4 text-[var(--accent-primary)]">
             Secretaria Municipal de Cultura
-          </span>
+          </Badge>
         )}
         <h1 className="hero-title-premium">
           {museumName || tenant?.name || "Cultura Viva"}
@@ -183,11 +177,12 @@ export const Home: React.FC = () => {
       )}
 
       {/* ═══ FEATURED GALLERY ═══════════ */}
-      <section className="gallery-section">
-        <div className="section-header">
-          <span className="hero-badge-premium">Galeria de Destaques</span>
-          <h2 className="gallery-title">Obras Selecionadas</h2>
-        </div>
+      <AnimateIn variant="fadeUp" delay={0.1}>
+        <section className="gallery-section">
+          <div className="section-header">
+            <Badge variant="outline" className="mb-3">Galeria de Destaques</Badge>
+            <h2 className="text-3xl font-[var(--font-heading)] font-bold text-[var(--fg-main)]">Obras Selecionadas</h2>
+          </div>
 
         {loading ? (
           <div className="gallery-grid">
@@ -219,7 +214,8 @@ export const Home: React.FC = () => {
             ))}
           </div>
         )}
-      </section>
+        </section>
+      </AnimateIn>
     </motion.div>
   );
 };

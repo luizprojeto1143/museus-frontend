@@ -14,7 +14,7 @@ import "./AdminShared.css";
 
 const STATUS_OPTIONS = [
     { value: "DRAFT", label: "Rascunho", icon: <Clock size={16} />, color: "text-zinc-500", bg: "0/10", border: "border-slate-500/20" },
-    { value: "SUBMITTED", label: "Submetido", icon: <CheckCircle2 size={16} />, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+    { value: "SUBMITTED", label: "Submetido", icon: <CheckCircle2 size={16} />, color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
     { value: "UNDER_REVIEW", label: "Em Análise", icon: <AlertCircle size={16} />, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
     { value: "APPROVED", label: "Aprovado", icon: <CheckCircle2 size={16} />, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     { value: "REJECTED", label: "Rejeitado", icon: <XCircle size={16} />, color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" },
@@ -573,7 +573,7 @@ export const AdminProjectForm: React.FC = () => {
                                                     value={formData.humanScore}
                                                     onChange={e => setFormData({ ...formData, humanScore: e.target.value })}
                                                     placeholder="0-100"
-                                                    className="h-24 text-4xl text-center font-black text-blue-400 bg-blue-500/5 border-blue-500/20"
+                                                    className="h-24 text-4xl text-center font-black text-blue-400 bg-[var(--accent-primary)]/5 border-blue-500/20"
                                                 />
                                             </div>
                                         </div>

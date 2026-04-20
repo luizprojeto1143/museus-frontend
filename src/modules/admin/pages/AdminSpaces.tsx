@@ -70,7 +70,7 @@ export const AdminSpaces: React.FC = () => {
                 </div>
                 <Button
                     onClick={() => navigate("/admin/espacos/novo")}
-                    className="btn btn-primary"
+                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                     leftIcon={<Plus size={20} />}
                 >
                     {t("admin.spaces.add", "Novo Espaço")}
@@ -94,7 +94,7 @@ export const AdminSpaces: React.FC = () => {
             {/* Content */}
             {loading ? (
                 <div className="flex justify-center p-20">
-                    <Loader2 className="animate-spin text-blue-500" size={40} />
+                    <Loader2 className="animate-spin text-[var(--accent-primary)]" size={40} />
                 </div>
             ) : filteredSpaces.length === 0 ? (
                 <div className="text-center p-20 /5 rounded-3xl border border-white/10 border-dashed">

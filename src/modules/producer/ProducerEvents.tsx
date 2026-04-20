@@ -47,12 +47,12 @@ export const ProducerEvents: React.FC = () => {
         <div className="pb-16 animate-in fade-in duration-500">
             <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meus Eventos</h1>
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">Meus Eventos</h1>
                     <p className="text-[#B0A090]">{t("producer.producerevents.gerencieSeusEventosExposiesEWorkshops", `Gerencie seus eventos, exposições e workshops.`)}</p>
                 </div>
                 <button
                     onClick={() => navigate("/producer/events/new")}
-                    className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg shadow-[#D4AF37]/20"
+                    className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg shadow-[var(--accent-primary)]/20"
                 >
                     <Plus size={20} /> Novo Evento
                 </button>
@@ -60,7 +60,7 @@ export const ProducerEvents: React.FC = () => {
 
             {loading ? (
                 <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]"></div>
                 </div>
             ) : events.length === 0 ? (
                 <div className="bg-[#2c1e10] rounded-2xl p-12 text-center border border-dashed border-[#463420]">
@@ -73,7 +73,7 @@ export const ProducerEvents: React.FC = () => {
                     `)}</p>
                     <button
                         onClick={() => navigate("/producer/events/new")}
-                        className="px-6 py-3 border border-[#D4AF37] text-[#D4AF37] rounded-lg hover:bg-[#D4AF37] hover:text-[#1a1108] transition-all font-bold"
+                        className="px-6 py-3 border border-[var(--accent-primary)] text-[var(--accent-primary)] rounded-lg hover:bg-[var(--accent-primary)] hover:text-[#1a1108] transition-all font-bold"
                     >
                         Criar Agora
                     </button>
@@ -83,7 +83,7 @@ export const ProducerEvents: React.FC = () => {
                     {events.map(event => (
                         <div
                             key={event.id}
-                            className="bg-[#2c1e10] rounded-2xl overflow-hidden border border-[#463420] hover:border-[#D4AF37]/50 transition-all group hover:-translate-y-1 shadow-lg shadow-black/20"
+                            className="bg-[#2c1e10] rounded-2xl overflow-hidden border border-[#463420] hover:border-[var(--accent-primary)]/50 transition-all group hover:-translate-y-1 shadow-lg shadow-black/20"
                         >
                             {/* Cover Image */}
                             <div
@@ -105,17 +105,17 @@ export const ProducerEvents: React.FC = () => {
 
                             {/* Content */}
                             <div className="p-6 relative">
-                                <h3 className="text-xl font-bold text-[#EAE0D5] mb-2 font-serif line-clamp-1 group-hover:text-[#D4AF37] transition-colors">
+                                <h3 className="text-xl font-bold text-[#EAE0D5] mb-2 font-serif line-clamp-1 group-hover:text-[var(--accent-primary)] transition-colors">
                                     {event.title}
                                 </h3>
 
                                 <div className="space-y-2 mb-6">
                                     <div className="flex items-center gap-2 text-[#B0A090] text-sm">
-                                        <Calendar size={14} className="text-[#D4AF37]" />
+                                        <Calendar size={14} className="text-[var(--accent-primary)]" />
                                         {formatDate(event.startDate)}
                                     </div>
                                     <div className="flex items-center gap-2 text-[#B0A090] text-sm line-clamp-1">
-                                        <MapPin size={14} className="text-[#D4AF37]" />
+                                        <MapPin size={14} className="text-[var(--accent-primary)]" />
                                         {event.location || "Local não informado"}
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@ export const ProducerEvents: React.FC = () => {
                                 <div className="flex gap-2 pt-4 border-t border-[#463420]">
                                     <button
                                         onClick={() => navigate(`/producer/events/${event.id}`)}
-                                        className="flex-1 py-2.5 bg-black/20 hover:bg-[#D4AF37] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                                        className="flex-1 py-2.5 bg-black/20 hover:bg-[var(--accent-primary)] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
                                     >
                                         <Edit size={16} /> Gerenciar
                                     </button>

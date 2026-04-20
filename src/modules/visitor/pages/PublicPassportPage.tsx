@@ -30,10 +30,10 @@ export const PublicPassportPage: React.FC = () => {
     const equippedSkin = visitor.skins?.find((s: any) => s.equipped)?.skin;
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500/30 overflow-x-hidden">
+        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-[var(--accent-primary)]/30 overflow-x-hidden">
             {/* AMBIENT BACKGROUNDS */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[var(--accent-primary)]/10 rounded-full blur-[120px] animate-pulse" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
                 
                 {/* GRID PATTERN */}
@@ -46,7 +46,7 @@ export const PublicPassportPage: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-16"
                 >
-                     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-6 shadow-lg shadow-blue-500/5">
+                     <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[var(--accent-primary)]/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-6 shadow-lg shadow-blue-500/5">
                         <ShieldCheck size={14} className="animate-pulse" /> Passaporte Digital Verificado
                      </div>
                      <h1 className="text-5xl font-black text-white tracking-tighter mb-2">
@@ -78,7 +78,7 @@ export const PublicPassportPage: React.FC = () => {
                         </div>
 
                         <h2 className="text-3xl font-black text-white mb-2 tracking-tight">{visitor.name}</h2>
-                        <div className="flex items-center gap-2 mb-8 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/10">
+                        <div className="flex items-center gap-2 mb-8 bg-[var(--accent-primary)]/10 px-3 py-1 rounded-full border border-blue-500/10">
                             <div className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
                             <span className="text-blue-400 font-black uppercase tracking-[0.1em] text-[10px]">Cidadão Embaixador</span>
                         </div>
@@ -101,7 +101,7 @@ export const PublicPassportPage: React.FC = () => {
                 {/* STAMPS GRID */}
                 <div className="flex items-center justify-between mb-8 px-2">
                     <h3 className="text-white font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-3">
-                        <MapPin size={16} className="text-blue-500" /> Jornada Cultural
+                        <MapPin size={16} className="text-[var(--accent-primary)]" /> Jornada Cultural
                     </h3>
                     <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent ml-6" />
                 </div>
@@ -114,7 +114,7 @@ export const PublicPassportPage: React.FC = () => {
                             className="aspect-square bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center group relative cursor-help shadow-lg"
                         >
                             <img src={stamp.work?.imageUrl} className="w-[75%] h-[75%] object-contain drop-shadow-lg transition-transform" />
-                            <div className="absolute inset-0 bg-blue-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-[var(--accent-primary)]/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg p-1.5 shadow-xl border border-white/20">
                                 <ShieldCheck size={12} className="text-white" />
                             </div>

@@ -9,7 +9,7 @@ const rarities = [
   { value: 'COMMON', label: 'Comum', icon: <Star size={14} />, color: '#9ca3af' },
   { value: 'RARE', label: 'Raro', icon: <Zap size={14} />, color: '#60a5fa' },
   { value: 'EPIC', label: 'Épico', icon: <Crown size={14} />, color: '#a78bfa' },
-  { value: 'LEGENDARY', label: 'Lendário', icon: <Diamond size={14} />, color: '#d4af37' }
+  { value: 'LEGENDARY', label: 'Lendário', icon: <Diamond size={14} />, color: 'var(--accent-primary)' }
 ];
 
 export const MasterCardManager: React.FC = () => {

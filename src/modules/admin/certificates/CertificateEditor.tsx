@@ -201,7 +201,7 @@ const CertificateEditorContent: React.FC = () => {
                     <button
                         onClick={() => navigate('/admin/certificates')}
                         style={styles.backBtn}
-                        onMouseEnter={(e) => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent-primary)'; e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.color = '#a89060'; e.currentTarget.style.background = 'transparent'; }}
                     >
                         <ArrowLeft size={16} />
@@ -212,7 +212,7 @@ const CertificateEditorContent: React.FC = () => {
 
                     <div style={styles.titleWrapper}>
                         <div style={styles.titleIcon}>
-                            <FileText size={18} color="#d4af37" />
+                            <FileText size={18} color="var(--accent-primary)" />
                         </div>
                         <input
                             value={name}
@@ -249,7 +249,7 @@ const CertificateEditorContent: React.FC = () => {
                         disabled={saving}
                         style={{
                             ...styles.saveBtn,
-                            background: saving ? '#3d2e1a' : 'linear-gradient(135deg, #d4af37 0%, #c4a030 50%, #b8942a 100%)',
+                            background: saving ? '#3d2e1a' : 'linear-gradient(135deg, var(--accent-primary) 0%, #c4a030 50%, #b8942a 100%)',
                             color: saving ? '#8a7a5a' : '#1a1108',
                             boxShadow: saving ? 'none' : '0 4px 20px -4px rgba(212,175,55,0.4)',
                         }}

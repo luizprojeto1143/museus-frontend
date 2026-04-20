@@ -159,7 +159,7 @@ export const MasterBadgeQueue: React.FC = () => {
                                     <td>
                                         <div className="flex gap-2 justify-end">
                                             <button 
-                                                className="p-3 hover:bg-blue-500/10 text-blue-400 rounded-[14px] transition-all border border-transparent hover:border-blue-500/20 shadow-lg" 
+                                                className="p-3 hover:bg-[var(--accent-primary)]/10 text-blue-400 rounded-[14px] transition-all border border-transparent hover:border-blue-500/20 shadow-lg" 
                                                 title="Visualizar Design"
                                                 onClick={() => setPreviewBadge(req)}
                                             >
@@ -220,11 +220,11 @@ export const MasterBadgeQueue: React.FC = () => {
                             <h3 className="text-white font-black text-xl mb-10 tracking-tight">Design de Impressão</h3>
                             
                             <div className="aspect-[2/3] bg-gradient-to-b from-slate-800 to-slate-950 rounded-[40px] border-[6px] border-white/5 p-8 relative flex flex-col items-center shadow-2xl overflow-hidden group">
-                                 <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                 <div className="absolute inset-0 bg-[var(--accent-primary)]/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                                  <div className="w-16 h-1.5 bg-white/5 rounded-full mb-12" />
                                  
                                  <div className="w-28 h-28 bg-white/5 rounded-[32px] border border-white/5 flex items-center justify-center mb-8 relative">
-                                    <div className="absolute inset-0 bg-blue-500/10 blur-xl animate-pulse" />
+                                    <div className="absolute inset-0 bg-[var(--accent-primary)]/10 blur-xl animate-pulse" />
                                     <img src={previewBadge.visitor.skins?.[0]?.skin?.imageUrl || "/default_avatar.png"} className="h-[85%] object-contain drop-shadow-2xl z-10" alt="" />
                                  </div>
                                  

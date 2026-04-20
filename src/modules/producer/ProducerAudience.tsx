@@ -73,13 +73,13 @@ export const ProducerAudience: React.FC = () => {
         <div className="pb-16 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.produceraudience.meuPblicoCrm", `Meu Público (CRM)`)}</h1>
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">{t("producer.produceraudience.meuPblicoCrm", `Meu Público (CRM)`)}</h1>
                     <p className="text-[#B0A090]">{t("producer.produceraudience.visualizeQuemSoSeusVisitantesEExporteDad", `Visualize quem são seus visitantes e exporte dados para marketing.`)}</p>
                 </div>
                 <Button
                     onClick={handleExport}
                     variant="outline"
-                    className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[#D4AF37]/30"
+                    className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[var(--accent-primary)]/30"
                     leftIcon={<Download size={20} />}
                 >
                     Exportar CSV

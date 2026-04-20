@@ -20,8 +20,8 @@ type AccountabilityDoc = {
 // Gamified Status Styles - Gold Theme Adapted
 const STATUS_STYLES = {
     DRAFT: { label: "Rascunho", bg: "bg-gray-500/10", text: "text-gray-400", border: "border-gray-500/20", icon: <History size={16} /> },
-    SUBMITTED: { label: "Submetido", bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/20", icon: <Send size={16} /> },
-    UNDER_REVIEW: { label: "Em Análise", bg: "bg-[#D4AF37]/10", text: "text-[#D4AF37]", border: "border-[#D4AF37]/20", icon: <AlertCircle size={16} /> },
+    SUBMITTED: { label: "Submetido", bg: "bg-[var(--accent-primary)]/10", text: "text-blue-400", border: "border-blue-500/20", icon: <Send size={16} /> },
+    UNDER_REVIEW: { label: "Em Análise", bg: "bg-[var(--accent-primary)]/10", text: "text-[var(--accent-primary)]", border: "border-[var(--accent-primary)]/20", icon: <AlertCircle size={16} /> },
     APPROVED: { label: "Aprovado!", bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/20", icon: <Trophy size={16} /> },
     REJECTED: { label: "Não Aprovado", bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/20", icon: <AlertCircle size={16} /> },
     IN_EXECUTION: { label: "Em Execução", bg: "bg-purple-500/10", text: "text-purple-400", border: "border-purple-500/20", icon: <Rocket size={16} /> },
@@ -240,7 +240,7 @@ export const ProducerProjectForm: React.FC = () => {
 
     if (loading) return (
         <div className="flex justify-center items-center h-screen bg-[#1a1108]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--accent-primary)]"></div>
         </div>
     );
 
@@ -257,7 +257,7 @@ export const ProducerProjectForm: React.FC = () => {
                     <Button
                         variant="ghost"
                         onClick={() => navigate('/producer/projects')}
-                        className="w-10 h-10 p-0 rounded-full bg-[#2c1e10] hover:bg-[#D4AF37]/10 text-[#B0A090] border border-[#463420]"
+                        className="w-10 h-10 p-0 rounded-full bg-[#2c1e10] hover:bg-[var(--accent-primary)]/10 text-[#B0A090] border border-[#463420]"
                     >
                         <ArrowLeft size={20} />
                     </Button>
@@ -289,13 +289,13 @@ export const ProducerProjectForm: React.FC = () => {
 
             {/* NOTICE BANNER */}
             {notice && (
-                <div className="max-w-5xl mx-auto mb-8 bg-gradient-to-r from-[#D4AF37]/20 to-transparent border border-[#D4AF37]/30 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="max-w-5xl mx-auto mb-8 bg-gradient-to-r from-[var(--accent-primary)]/20 to-transparent border border-[var(--accent-primary)]/30 rounded-3xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[#D4AF37] rounded-2xl flex items-center justify-center text-[#1a1108]">
+                        <div className="w-12 h-12 bg-[var(--accent-primary)] rounded-2xl flex items-center justify-center text-[#1a1108]">
                             <FileText size={24} />
                         </div>
                         <div>
-                            <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-widest mb-1">{t("producer.producerproject.inscrioVinculada", `Inscrição Vinculada`)}</div>
+                            <div className="text-xs font-bold text-[var(--accent-primary)] uppercase tracking-widest mb-1">{t("producer.producerproject.inscrioVinculada", `Inscrição Vinculada`)}</div>
                             <h2 className="text-xl font-bold text-[#EAE0D5]">{notice.title}</h2>
                             <div className="flex flex-wrap gap-4 mt-1 text-sm text-[#B0A090]">
                                 <span className="flex items-center gap-1"><Calendar size={14} /> Fim: {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
@@ -318,7 +318,7 @@ export const ProducerProjectForm: React.FC = () => {
 
             {/* REVIEW NOTES FROM ADMIN */}
             {isEdit && formData.reviewNotes && formData.status !== 'DRAFT' && (
-                <div className="max-w-5xl mx-auto mb-8 bg-blue-500/10 border border-blue-500/20 rounded-3xl p-6 flex flex-col gap-3">
+                <div className="max-w-5xl mx-auto mb-8 bg-[var(--accent-primary)]/10 border border-blue-500/20 rounded-3xl p-6 flex flex-col gap-3">
                     <div className="flex items-center gap-2 text-blue-400 font-bold">
                         <Info size={18} /> Parecer da Avaliação
                     </div>
@@ -340,19 +340,19 @@ export const ProducerProjectForm: React.FC = () => {
                     <div className="bg-[#2c1e10] rounded-2xl p-2 border border-[#463420]">
                         <button
                             onClick={() => setActiveTab("DETAILS")}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm mb-1 ${activeTab === "DETAILS" ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm mb-1 ${activeTab === "DETAILS" ? "bg-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
                         >
                             <FileText size={18} /> Detalhes
                         </button>
                         <button
                             onClick={() => setActiveTab("ACCESSIBILITY")}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm mb-1 ${activeTab === "ACCESSIBILITY" ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm mb-1 ${activeTab === "ACCESSIBILITY" ? "bg-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
                         >
                             <Accessibility size={18} /> Acessibilidade
                         </button>
                         <button
                             onClick={() => setActiveTab("ACCOUNTABILITY")}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm ${activeTab === "ACCOUNTABILITY" ? "bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
+                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm ${activeTab === "ACCOUNTABILITY" ? "bg-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
                         >
                             <Banknote size={18} /> Prestação de Contas
                         </button>
@@ -360,7 +360,7 @@ export const ProducerProjectForm: React.FC = () => {
 
                     {/* TIPS CARD */}
                     <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] rounded-2xl p-5 border border-[#463420]">
-                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold text-sm mb-3">
+                        <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-sm mb-3">
                             <Rocket size={16} /> Dica do Mentor
                         </div>
                         <p className="text-xs text-[#B0A090] leading-relaxed">{t("producer.producerproject.projetosComDescriesDetalhadasEOramentosR", `
@@ -375,7 +375,7 @@ export const ProducerProjectForm: React.FC = () => {
                     {activeTab === "DETAILS" ? (
                         <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8 animate-in fade-in slide-in-from-right-4 duration-300">
                             {readOnly && (
-                                <div className="mb-6 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex gap-3 text-blue-300 text-sm">
+                                <div className="mb-6 bg-[var(--accent-primary)]/10 border border-blue-500/20 rounded-xl p-4 flex gap-3 text-blue-300 text-sm">
                                     <AlertCircle size={20} className="shrink-0" />
                                     Este projeto já foi submetido. Edições estão restritas. {formData.status === 'REJECTED' && "Caso deseje realizar ajustes, entre em contato com a organização."}
                                 </div>
@@ -391,18 +391,18 @@ export const ProducerProjectForm: React.FC = () => {
                                             onChange={handleChange}
                                             disabled={readOnly}
                                             required
-                                            className="h-12 bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] text-lg font-bold"
+                                            className="h-12 bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] text-lg font-bold"
                                         />
                                     </div>
 
                                     {notice && (
                                         <>
                                             <div className="p-4 bg-black/20 rounded-xl border border-[#463420]/50">
-                                                <div className="text-[10px] font-bold text-[#D4AF37] uppercase mb-1">Objetivos do Edital</div>
+                                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-1">Objetivos do Edital</div>
                                                 <div className="text-xs text-[#B0A090] line-clamp-3">{notice.objectives || 'Não informados'}</div>
                                             </div>
                                             <div className="p-4 bg-black/20 rounded-xl border border-[#463420]/50">
-                                                <div className="text-[10px] font-bold text-[#D4AF37] uppercase mb-1">Requisitos do Edital</div>
+                                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-1">Requisitos do Edital</div>
                                                 <div className="text-xs text-[#B0A090] line-clamp-3">{notice.requirements || 'Não informados'}</div>
                                             </div>
                                         </>
@@ -417,8 +417,8 @@ export const ProducerProjectForm: React.FC = () => {
                                         value={formData.requestedBudget}
                                         onChange={handleChange}
                                         disabled={readOnly}
-                                        leftIcon={<span className="text-[#D4AF37] font-bold">$</span>}
-                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] font-mono"
+                                        leftIcon={<span className="text-[var(--accent-primary)] font-bold">$</span>}
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] font-mono"
                                     />
                                     <Input
                                         label={t("producer.producerproject.pblicoEstimado", `Público Estimado`)}
@@ -427,7 +427,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         value={formData.expectedAudience}
                                         onChange={handleChange}
                                         disabled={readOnly}
-                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                                     />
                                 </div>
 
@@ -439,7 +439,7 @@ export const ProducerProjectForm: React.FC = () => {
                                     rows={3}
                                     maxLength={200}
                                     disabled={readOnly}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[#D4AF37]"
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
                                     placeholder={t("producer.producerproject.vendaSeuPeixeEmAt200Caracteres", `Venda seu peixe em até 200 caracteres...`)}
                                 />
 
@@ -450,7 +450,7 @@ export const ProducerProjectForm: React.FC = () => {
                                     onChange={handleChange}
                                     rows={8}
                                     disabled={readOnly}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[#D4AF37]"
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
                                 />
 
                                 <Textarea
@@ -461,7 +461,7 @@ export const ProducerProjectForm: React.FC = () => {
                                     rows={5}
                                     disabled={readOnly}
                                     placeholder="Por que este projeto deve receber o recurso?"
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[#D4AF37]"
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
                                 />
 
                                 <div className="grid grid-cols-2 gap-4">
@@ -472,7 +472,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         value={formData.startDate}
                                         onChange={handleChange}
                                         disabled={readOnly}
-                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                                     />
                                     <Input
                                         label={t("producer.producerproject.dataDeTrmino", `Data de Término`)}
@@ -481,7 +481,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         value={formData.endDate}
                                         onChange={handleChange}
                                         disabled={readOnly}
-                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                                     />
                                 </div>
 
@@ -491,7 +491,7 @@ export const ProducerProjectForm: React.FC = () => {
                                             <Button
                                                 onClick={handleSubmitProject}
                                                 isLoading={submitting}
-                                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 font-bold"
+                                                className="bg-[var(--accent-primary)] hover:bg-blue-700 text-white px-8 font-bold"
                                                 leftIcon={<Send size={18} />}
                                             >
                                                 Submeter ao Edital
@@ -502,7 +502,7 @@ export const ProducerProjectForm: React.FC = () => {
                                                 onClick={handlePublish}
                                                 disabled={saving}
                                                 variant="outline"
-                                                className="border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37]/10"
+                                                className="border-[var(--accent-primary)] text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10"
                                                 leftIcon={<Rocket size={16} />}
                                             >
                                                 Publicar na Agenda
@@ -511,7 +511,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         <Button
                                             onClick={() => handleSave()}
                                             isLoading={saving}
-                                            className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold"
+                                            className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold"
                                             leftIcon={<Save size={18} />}
                                         >
                                             {isEdit ? "Salvar Alterações" : "Criar Proposta"}
@@ -523,7 +523,7 @@ export const ProducerProjectForm: React.FC = () => {
                     ) : activeTab === "ACCESSIBILITY" ? (
                         <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8 animate-in fade-in slide-in-from-right-4 duration-300">
                             <div className="flex items-center gap-3 mb-8">
-                                <div className="p-3 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37]">
+                                <div className="p-3 rounded-2xl bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
                                     <Accessibility size={28} />
                                 </div>
                                 <div>
@@ -545,7 +545,7 @@ export const ProducerProjectForm: React.FC = () => {
                             <div className="space-y-8">
                                 <div className="flex items-center justify-between p-6 bg-black/20 rounded-2xl border border-[#463420]">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                        <div className="w-10 h-10 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center text-blue-400">
                                             <CheckCircle2 size={24} />
                                         </div>
                                         <div>
@@ -564,7 +564,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         })}
                                         className={`
                                                 w-14 h-8 rounded-full transition-all relative
-                                                ${formData.accessibilityPlan.hasPlan ? 'bg-[#D4AF37]' : 'bg-[#463420]'}
+                                                ${formData.accessibilityPlan.hasPlan ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}
                                             `}
                                     >
                                         <div className={`
@@ -602,11 +602,11 @@ export const ProducerProjectForm: React.FC = () => {
                                                         className={`
                                                                 flex items-center gap-2 px-4 py-3 rounded-xl border text-xs font-bold transition-all
                                                                 ${formData.accessibilityPlan.services.includes(service.id)
-                                                                ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37]'
-                                                                : 'bg-black/20 border-[#463420] text-[#B0A090] hover:border-[#D4AF37]/30'}
+                                                                ? 'bg-[var(--accent-primary)]/10 border-[var(--accent-primary)] text-[var(--accent-primary)]'
+                                                                : 'bg-black/20 border-[#463420] text-[#B0A090] hover:border-[var(--accent-primary)]/30'}
                                                             `}
                                                     >
-                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.accessibilityPlan.services.includes(service.id) ? 'bg-[#D4AF37] border-[#D4AF37]' : 'border-[#463420]'}`}>
+                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.accessibilityPlan.services.includes(service.id) ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]' : 'border-[#463420]'}`}>
                                                             {formData.accessibilityPlan.services.includes(service.id) && <CheckCircle2 size={12} className="text-[#1a1108]" />}
                                                         </div>
                                                         {service.label}
@@ -625,7 +625,7 @@ export const ProducerProjectForm: React.FC = () => {
                                                 accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
                                             })}
                                             rows={5}
-                                            className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[#D4AF37]"
+                                            className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
                                         />
                                     </div>
                                 )}
@@ -635,7 +635,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         <Button
                                             onClick={() => handleSave()}
                                             isLoading={saving}
-                                            className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold"
+                                            className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold"
                                             leftIcon={<Save size={18} />}
                                         >
                                             Salvar Acessibilidade
@@ -651,7 +651,7 @@ export const ProducerProjectForm: React.FC = () => {
                             <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
-                                        <Banknote className="text-[#D4AF37]" size={24} /> Comprovantes
+                                        <Banknote className="text-[var(--accent-primary)]" size={24} /> Comprovantes
                                     </h2>
                                     <div className="text-xs font-mono text-[#B0A090] bg-black/30 px-3 py-1 rounded-full">
                                         {formData.attachments.length} arquivos
@@ -659,12 +659,12 @@ export const ProducerProjectForm: React.FC = () => {
                                 </div>
 
                                 {!accountabilityEditable ? (
-                                    <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-xl p-6 text-center">
-                                        <div className="w-12 h-12 bg-[#D4AF37]/20 text-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <div className="bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/20 rounded-xl p-6 text-center">
+                                        <div className="w-12 h-12 bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] rounded-full flex items-center justify-center mx-auto mb-3">
                                             <AlertCircle size={24} />
                                         </div>
-                                        <h3 className="text-[#D4AF37] font-bold mb-1">{t("producer.producerproject.aguardandoAprovao", `Aguardando Aprovação`)}</h3>
-                                        <p className="text-[#D4AF37]/70 text-sm">{t("producer.producerproject.aPrestaoDeContasSerLiberadaAssimQueOProj", `
+                                        <h3 className="text-[var(--accent-primary)] font-bold mb-1">{t("producer.producerproject.aguardandoAprovao", `Aguardando Aprovação`)}</h3>
+                                        <p className="text-[var(--accent-primary)]/70 text-sm">{t("producer.producerproject.aPrestaoDeContasSerLiberadaAssimQueOProj", `
                                             A prestação de contas será liberada assim que o projeto for aprovado ou entrar em execução.
                                         `)}</p>
                                     </div>
@@ -672,7 +672,7 @@ export const ProducerProjectForm: React.FC = () => {
                                     <div
                                         className={`
                                             border-2 border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer relative overflow-hidden group
-                                            ${dragActive ? 'border-[#D4AF37] bg-[#D4AF37]/10 scale-[1.02]' : 'border-[#463420] hover:border-[#D4AF37]/50 hover:bg-black/20'}
+                                            ${dragActive ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 scale-[1.02]' : 'border-[#463420] hover:border-[var(--accent-primary)]/50 hover:bg-black/20'}
                                         `}
                                         onDragEnter={handleDrag}
                                         onDragLeave={handleDrag}
@@ -688,7 +688,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         />
 
                                         <div className="relative z-0 pointer-events-none transition-transform group-hover:-translate-y-2">
-                                            <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37] to-[#b39025] rounded-2xl shadow-2xl shadow-[#D4AF37]/20 mx-auto mb-4 flex items-center justify-center">
+                                            <div className="w-16 h-16 bg-gradient-to-br from-[var(--accent-primary)] to-[#b39025] rounded-2xl shadow-2xl shadow-[var(--accent-primary)]/20 mx-auto mb-4 flex items-center justify-center">
                                                 {uploading ? <div className="animate-spin border-2 border-white border-t-transparent rounded-full w-8 h-8" /> : <Upload className="text-[#1a1108]" size={32} />}
                                             </div>
                                             <h3 className="text-lg font-bold text-[#EAE0D5] mb-1">
@@ -706,7 +706,7 @@ export const ProducerProjectForm: React.FC = () => {
                             {formData.attachments.length > 0 && (
                                 <div className="grid gap-3">
                                     {formData.attachments.map((doc, idx) => (
-                                        <div key={idx} className="group flex items-center justify-between p-4 bg-[#2c1e10] border border-[#463420] rounded-2xl hover:border-[#D4AF37]/50 transition-colors">
+                                        <div key={idx} className="group flex items-center justify-between p-4 bg-[#2c1e10] border border-[#463420] rounded-2xl hover:border-[var(--accent-primary)]/50 transition-colors">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-lg bg-black/30 flex items-center justify-center text-[#B0A090]">
                                                     <Paperclip size={20} />
@@ -750,7 +750,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         onClick={() => handleSave()}
                                         isLoading={saving}
                                         disabled={uploading}
-                                        className="bg-[#D4AF37] hover:bg-[#c5a028] text-[#1a1108] font-bold px-8 rounded-xl shadow-lg shadow-[#D4AF37]/20 border-none"
+                                        className="bg-[var(--accent-primary)] hover:bg-[#c5a028] text-[#1a1108] font-bold px-8 rounded-xl shadow-lg shadow-[var(--accent-primary)]/20 border-none"
                                         leftIcon={<Save size={18} />}
                                     >
                                         Salvar Documentos

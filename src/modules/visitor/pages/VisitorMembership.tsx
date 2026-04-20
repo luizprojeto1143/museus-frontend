@@ -35,14 +35,14 @@ export const VisitorMembership: React.FC = () => {
         finally { setSubscribing(null); }
     };
 
-    if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+    if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} /></div>;
 
     if (isGuest) {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
                 <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>{t("visitor.membership.crieUmaContaGratuitaParaSeTornarMembroDo", `Crie uma conta gratuita para se tornar membro do museu e garantir benefícios exclusivos!`)}</p>
-                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
             </div>
         );
     }
@@ -50,7 +50,7 @@ export const VisitorMembership: React.FC = () => {
     return (
         <div className="membership-page" style={{ padding: '1.5rem', maxWidth: '800px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <Crown size={48} style={{ color: '#d4af37', margin: '0 auto 1rem' }} />
+                <Crown size={48} style={{ color: 'var(--accent-primary)', margin: '0 auto 1rem' }} />
                 <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'white', letterSpacing: '-0.02em' }}>Amigo do Museu</h1>
                 <p style={{ color: '#999', fontSize: '0.9rem', marginTop: '0.5rem' }}>{t("visitor.membership.apoieACulturaEGanheBenefciosExclusivos", `Apoie a cultura e ganhe benefícios exclusivos`)}</p>
             </div>
@@ -67,14 +67,14 @@ export const VisitorMembership: React.FC = () => {
                     }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div>
-                                <h2 style={{ color: '#d4af37', fontWeight: 800, fontSize: '1.3rem' }}>{plan.name}</h2>
+                                <h2 style={{ color: 'var(--accent-primary)', fontWeight: 800, fontSize: '1.3rem' }}>{plan.name}</h2>
                                 {plan.description && <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '0.25rem' }}>{plan.description}</p>}
                             </div>
                             <div style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: '2rem', fontWeight: 900, color: 'white' }}>R$ {Number(plan.monthlyPrice).toFixed(2)}</span>
                                 <span style={{ color: '#888', fontSize: '0.8rem', display: 'block' }}>{t("visitor.membership.ms", `/mês`)}</span>
                                 {plan.yearlyPrice && (
-                                    <span style={{ color: '#d4af37', fontSize: '0.75rem' }}>ou R$ {Number(plan.yearlyPrice).toFixed(2)}/ano</span>
+                                    <span style={{ color: 'var(--accent-primary)', fontSize: '0.75rem' }}>ou R$ {Number(plan.yearlyPrice).toFixed(2)}/ano</span>
                                 )}
                             </div>
                         </div>
@@ -83,7 +83,7 @@ export const VisitorMembership: React.FC = () => {
                             <div style={{ marginTop: '1.5rem', display: 'grid', gap: '0.75rem' }}>
                                 {(Array.isArray(plan.benefits) ? plan.benefits : []).map((b: string, i: number) => (
                                     <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                        <Check size={16} style={{ color: '#d4af37', flexShrink: 0 }} />
+                                        <Check size={16} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
                                         <span style={{ color: '#ccc', fontSize: '0.85rem' }}>{b}</span>
                                     </div>
                                 ))}
@@ -92,8 +92,8 @@ export const VisitorMembership: React.FC = () => {
 
                         {plan.shopDiscount && (
                             <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: 'rgba(212,175,55,0.08)', borderRadius: '1rem', border: '1px solid rgba(212,175,55,0.15)' }}>
-                                <Star size={14} style={{ color: '#d4af37' }} />
-                                <span style={{ color: '#d4af37', fontSize: '0.8rem', fontWeight: 700 }}>{plan.shopDiscount}% de desconto na loja</span>
+                                <Star size={14} style={{ color: 'var(--accent-primary)' }} />
+                                <span style={{ color: 'var(--accent-primary)', fontSize: '0.8rem', fontWeight: 700 }}>{plan.shopDiscount}% de desconto na loja</span>
                             </div>
                         )}
 
@@ -103,7 +103,7 @@ export const VisitorMembership: React.FC = () => {
                             style={{
                                 marginTop: '1.5rem',
                                 width: '100%',
-                                background: subscribing === plan.id ? '#555' : 'linear-gradient(135deg, #d4af37, #b8941e)',
+                                background: subscribing === plan.id ? '#555' : 'linear-gradient(135deg, var(--accent-primary), #b8941e)',
                                 color: '#1a1108',
                                 border: 'none',
                                 padding: '1rem',

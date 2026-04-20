@@ -108,7 +108,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
         return (
             <section className="narrative-guide-section bg-gradient-to-br from-[#12121e] to-[#0a0a0c] border border-white/5 p-8 rounded-[2.5rem] shadow-2xl">
                 <div className="narrative-guide-header flex items-center gap-4 mb-8">
-                    <div className="w-14 h-14 bg-blue-600/20 rounded-2xl flex items-center justify-center text-blue-400">
+                    <div className="w-14 h-14 bg-[var(--accent-primary)]/20 rounded-2xl flex items-center justify-center text-blue-400">
                         <Headphones size={28} />
                     </div>
                     <div>
@@ -120,7 +120,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                 <div className="narrative-guide-empty text-center py-10 bg-white/5 rounded-[2rem] border border-white/5 border-dashed">
                     <div className="mb-6 relative mx-auto w-20 h-20">
                         <Volume2 size={48} className="text-white/10 mx-auto" />
-                        <div className="absolute inset-0 bg-blue-500/10 blur-2xl rounded-full"></div>
+                        <div className="absolute inset-0 bg-[var(--accent-primary)]/10 blur-2xl rounded-full"></div>
                     </div>
                     <p className="text-slate-400 font-medium px-4">{t('visitor.audioGuide.notAvailable', 'Áudio-guia oficial ainda não disponível.')}</p>
                 </div>
@@ -131,10 +131,10 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
     return (
         <section className="narrative-guide-section bg-gradient-to-br from-[#12121e] to-[#0a0a0c] border border-white/10 p-8 rounded-[2.5rem] shadow-2xl overflow-hidden relative group">
             {/* Decorative BG element */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[100px] -mr-32 -mt-32 rounded-full pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--accent-primary)]/10 blur-[100px] -mr-32 -mt-32 rounded-full pointer-events-none"></div>
 
             <div className="narrative-guide-header flex items-center gap-4 mb-10 relative z-10">
-                <div className="w-14 h-14 bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.3)] rounded-2xl flex items-center justify-center text-white">
+                <div className="w-14 h-14 bg-[var(--accent-primary)] shadow-[0_0_20px_rgba(37,99,235,0.3)] rounded-2xl flex items-center justify-center text-white">
                     <Headphones size={28} />
                 </div>
                 <div>
@@ -150,7 +150,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                             w-32 h-32 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center relative overflow-hidden transition-all duration-700
                             ${isTrackPlaying ? 'scale-110 shadow-3xl shadow-blue-500/20' : ''}
                         `}>
-                            <Headphones size={48} className={`text-blue-500 transition-all duration-700 ${isTrackPlaying ? 'rotate-[-10deg]' : ''}`} />
+                            <Headphones size={48} className={`text-[var(--accent-primary)] transition-all duration-700 ${isTrackPlaying ? 'rotate-[-10deg]' : ''}`} />
 
                             {/* Animated pulses when playing */}
                             {isTrackPlaying && (
@@ -164,7 +164,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
 
                     <div className="player-info flex-1 text-center md:text-left">
                         <h3 className="text-2xl font-black text-white leading-none mb-2">{title}</h3>
-                        {artist && <p className="text-blue-500 font-bold text-sm tracking-widest uppercase">{artist}</p>}
+                        {artist && <p className="text-[var(--accent-primary)] font-bold text-sm tracking-widest uppercase">{artist}</p>}
                         {generatedAudioUrl && (
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-lg mt-3">
                                 <Sparkles size={12} className="text-purple-400" />
@@ -191,7 +191,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                             />
                             {/* Visual Progress Layer */}
                             <div
-                                className="absolute left-0 bg-blue-500 h-1.5 rounded-full pointer-events-none"
+                                className="absolute left-0 bg-[var(--accent-primary)] h-1.5 rounded-full pointer-events-none"
                                 style={{ width: `${isCurrentTrack ? progress : 0}%` }}
                             ></div>
                         </div>
@@ -214,7 +214,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
                             onClick={handlePlay}
                             className={`
                                 w-20 h-20 rounded-3xl flex items-center justify-center transition-all shadow-xl active:scale-90
-                                ${isTrackPlaying ? 'bg-white text-black' : 'bg-blue-600 text-white shadow-blue-600/30'}
+                                ${isTrackPlaying ? 'bg-white text-black' : 'bg-[var(--accent-primary)] text-white shadow-blue-600/30'}
                             `}
                             title={isTrackPlaying ? 'Pausar' : 'Reproduzir'}
                         >

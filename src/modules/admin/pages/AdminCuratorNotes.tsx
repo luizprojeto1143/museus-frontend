@@ -101,7 +101,7 @@ export const AdminCuratorNotes: React.FC = () => {
         }
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -116,10 +116,10 @@ export const AdminCuratorNotes: React.FC = () => {
             </div>
 
             {showForm && (
-                <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>{editingNote ? "Editar Nota" : "Nova Nota do Curador"}</h2>
                     <div>
-                        <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Obra</label>
+                        <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Obra</label>
                         <select
                             value={workId}
                             onChange={e => setWorkId(e.target.value)}
@@ -133,7 +133,7 @@ export const AdminCuratorNotes: React.FC = () => {
                         </select>
                     </div>
                     <div>
-                        <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Nota do Curador</label>
+                        <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Nota do Curador</label>
                         <textarea
                             value={content}
                             onChange={e => setContent(e.target.value)}
@@ -144,7 +144,7 @@ export const AdminCuratorNotes: React.FC = () => {
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div>
-                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Curador (opcional)</label>
+                            <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Curador (opcional)</label>
                             <input
                                 type="text"
                                 value={author}
@@ -168,7 +168,7 @@ export const AdminCuratorNotes: React.FC = () => {
             )}
 
             {notes.length === 0 && !showForm ? (
-                <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <MessageSquare size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <h3 className="text-lg font-bold text-white mb-1">Nenhuma nota cadastrada</h3>
                     <p style={{ color: "#64748b" }}>{t("admin.curatornotes.adicioneNotasDeCuradorSObrasDoAcervoPara", `Adicione notas de curador às obras do acervo para enriquecer a experiência do visitante.`)}</p>
@@ -176,7 +176,7 @@ export const AdminCuratorNotes: React.FC = () => {
             ) : (
                 <div style={{ display: "grid", gap: "0.75rem" }}>
                     {notes.map(note => (
-                        <div key={note.id} className="card" style={{ padding: "1.25rem", borderColor: note.pinned ? 'border-amber-500/30' : 'border-white/5' }}>
+                        <div key={note.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", borderColor: note.pinned ? 'border-amber-500/30' : 'border-white/5' }}>
                             <div style={{ display: "flex", alignItems: "flex-start", gap: "1rem" }}>
                                 {note.work?.imageUrl ? (
                                     <img src={note.work.imageUrl} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />

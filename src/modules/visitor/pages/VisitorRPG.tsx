@@ -12,7 +12,7 @@ const classConfig: Record<string, { label: string; color: string; bg: string; ic
     NOVATO: { label: 'Novato', color: '#9ca3af', bg: 'rgba(156,163,175,0.1)', icon: <User size={20} /> },
     APRENDIZ: { label: 'Aprendiz', color: '#60a5fa', bg: 'rgba(96,165,250,0.1)', icon: <Shield size={20} /> },
     MESTRE: { label: 'Mestre', color: '#a78bfa', bg: 'rgba(167,139,250,0.1)', icon: <Sword size={20} /> },
-    LENDA: { label: 'Lenda', color: '#d4af37', bg: 'rgba(212,175,55,0.1)', icon: <Trophy size={20} /> }
+    LENDA: { label: 'Lenda', color: 'var(--accent-primary)', bg: 'rgba(212,175,55,0.1)', icon: <Trophy size={20} /> }
 };
 
 export const VisitorRPG: React.FC = () => {
@@ -100,14 +100,14 @@ export const VisitorRPG: React.FC = () => {
         }
     };
 
-    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} /></div>;
 
     if (isGuest) {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
                 <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>{t("visitor.rpg.crieUmaContaGratuitaParaEvoluirSeuAvatar", `Crie uma conta gratuita para evoluir seu avatar, ganhar níveis e desbloquear novos títulos do museu!`)}</p>
-                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
             </div>
         );
     }

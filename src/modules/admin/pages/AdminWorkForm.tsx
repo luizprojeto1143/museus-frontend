@@ -825,7 +825,7 @@ export const AdminWorkForm: React.FC = () => {
                     <div 
                       onClick={() => setVestigeActive(!vestigeActive)}
                       style={{ 
-                        width: '60px', height: '32px', background: vestigeActive ? '#d4af37' : '#333',
+                        width: '60px', height: '32px', background: vestigeActive ? 'var(--accent-primary)' : '#333',
                         borderRadius: '16px', position: 'relative', cursor: 'pointer', transition: '0.3s'
                       }}
                     >
@@ -905,9 +905,9 @@ export const AdminWorkForm: React.FC = () => {
 
                         <div style={{ 
                           padding: '1rem', background: 'rgba(212, 175, 55, 0.1)', 
-                          borderLeft: '4px solid #d4af37', borderRadius: '4px' 
+                          borderLeft: '4px solid var(--accent-primary)', borderRadius: '4px' 
                         }}>
-                          <p style={{ fontSize: '0.8rem', color: '#d4af37', fontWeight: '700' }}>
+                          <p style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '700' }}>
                              {t('vestige.admin.tip', 'Dica: Ao ativar o Modo Vestígio, a obra aparecerá no Radar do Mapa para os visitantes.')}
                           </p>
                         </div>

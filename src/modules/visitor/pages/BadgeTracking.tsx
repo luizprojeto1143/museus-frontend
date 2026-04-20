@@ -15,7 +15,7 @@ interface BadgeRequest {
 
 const statusConfig: Record<string, { label: string, color: string, icon: any }> = {
     PENDING: { label: "Em Análise", color: "text-amber-500", icon: Clock },
-    APPROVED: { label: "Aprovado", color: "text-blue-500", icon: BadgeCheck },
+    APPROVED: { label: "Aprovado", color: "text-[var(--accent-primary)]", icon: BadgeCheck },
     PRINTING: { label: "Em Impressão", color: "text-purple-500", icon: Package },
     SHIPPED: { label: "Enviado", color: "text-green-500", icon: Truck },
     DELIVERED: { label: "Entregue", color: "text-emerald-500", icon: CheckCircle },
@@ -95,7 +95,7 @@ export const BadgeTracking: React.FC = () => {
                                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Código de Rastreio</span>
                                         <code className="text-blue-400 font-mono font-bold text-sm tracking-widest">{req.trackingCode}</code>
                                     </div>
-                                    <button className="p-3 bg-blue-500 rounded-2xl text-white shadow-xl shadow-blue-500/20">
+                                    <button className="p-3 bg-[var(--accent-primary)] rounded-2xl text-white shadow-xl shadow-blue-500/20">
                                         <ChevronRight size={20} />
                                     </button>
                                 </div>

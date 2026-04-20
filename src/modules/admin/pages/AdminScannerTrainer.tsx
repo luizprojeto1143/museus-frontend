@@ -137,7 +137,7 @@ export const AdminScannerTrainer: React.FC = () => {
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "1rem" }}>
                 {/* Camera Feed */}
-                <div className="card" style={{ padding: "1rem", textAlign: "center" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", textAlign: "center" }}>
                     <div style={{ position: "relative", width: "100%", height: "300px", background: "#000", borderRadius: "0.5rem", overflow: "hidden", marginBottom: "1rem" }}>
                         <video ref={videoRef} style={{ width: "100%", height: "100%", objectFit: "cover" }} muted />
                         {training && (
@@ -149,7 +149,7 @@ export const AdminScannerTrainer: React.FC = () => {
                 </div>
 
                 {/* Controls */}
-                <div className="card" style={{ padding: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem" }}>
                     <h3>Selecionar Obra</h3>
                     <select
                         className="input"
@@ -191,7 +191,7 @@ export const AdminScannerTrainer: React.FC = () => {
                     </ul>
 
                     <button
-                        className="btn btn-secondary"
+                        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                         onClick={saveModel}
                         style={{ width: "100%", marginTop: "1rem" }}
                     >

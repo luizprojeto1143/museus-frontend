@@ -44,8 +44,8 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 slug: res.data.slug || "",
                 type: res.data.type || "MUSEUM",
                 isCityMode: res.data.isCityMode || false,
-                primaryColor: res.data.primaryColor || "#d4af37",
-                secondaryColor: res.data.secondaryColor || "#cd7f32",
+                primaryColor: res.data.primaryColor || "var(--accent-primary)",
+                secondaryColor: res.data.secondaryColor || "var(--accent-secondary)",
                 theme: res.data.theme || "dark",
                 logoUrl: res.data.logoUrl
             });

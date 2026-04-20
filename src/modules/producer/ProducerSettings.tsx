@@ -48,7 +48,7 @@ export const ProducerSettings: React.FC = () => {
     return (
         <div className="max-w-4xl mx-auto pb-16 animate-in fade-in duration-500">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.producersettings.configuraes", `Configurações`)}</h1>
+                <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">{t("producer.producersettings.configuraes", `Configurações`)}</h1>
                 <p className="text-[#B0A090]">{t("producer.producersettings.gerencieSuasPrefernciasDeContaEPrivacida", `Gerencie suas preferências de conta e privacidade.`)}</p>
             </div>
 
@@ -57,16 +57,16 @@ export const ProducerSettings: React.FC = () => {
                 {/* Notifications Section */}
                 <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
                     <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
-                        <Bell size={20} className="text-[#D4AF37]" /> Notificações
+                        <Bell size={20} className="text-[var(--accent-primary)]" /> Notificações
                     </h3>
                     <div className="flex justify-between items-center py-2">
                         <span className="text-[#B0A090] text-sm">{t("producer.producersettings.receberAtualizaesDeProjetosPorEmail", `Receber atualizações de projetos por e-mail`)}</span>
                         <div
                             onClick={() => toggleSetting('emailNotifications')}
-                            className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
+                            className="text-[var(--accent-primary)] cursor-pointer hover:scale-110 transition-transform"
                         >
                             {settings.emailNotifications ?
-                                <ToggleRight size={48} fill="currentColor" className="text-[#D4AF37]" /> :
+                                <ToggleRight size={48} fill="currentColor" className="text-[var(--accent-primary)]" /> :
                                 <ToggleLeft size={48} className="text-[#B0A090]" />
                             }
                         </div>
@@ -76,16 +76,16 @@ export const ProducerSettings: React.FC = () => {
                 {/* Privacy Section */}
                 <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
                     <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
-                        <Globe size={20} className="text-[#D4AF37]" /> Privacidade
+                        <Globe size={20} className="text-[var(--accent-primary)]" /> Privacidade
                     </h3>
                     <div className="flex justify-between items-center py-2">
                         <span className="text-[#B0A090] text-sm">{t("producer.producersettings.perfilPblicoVisvelNaPlataforma", `Perfil Público visível na plataforma`)}</span>
                         <div
                             onClick={() => toggleSetting('publicProfile')}
-                            className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
+                            className="text-[var(--accent-primary)] cursor-pointer hover:scale-110 transition-transform"
                         >
                             {settings.publicProfile ?
-                                <ToggleRight size={48} fill="currentColor" className="text-[#D4AF37]" /> :
+                                <ToggleRight size={48} fill="currentColor" className="text-[var(--accent-primary)]" /> :
                                 <ToggleLeft size={48} className="text-[#B0A090]" />
                             }
                         </div>
@@ -95,16 +95,16 @@ export const ProducerSettings: React.FC = () => {
                 {/* Security Section */}
                 <section className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] shadow-lg shadow-black/20">
                     <h3 className="text-lg font-bold text-[#EAE0D5] flex items-center gap-2 mb-6 border-b border-[#463420] pb-4">
-                        <Shield size={20} className="text-[#D4AF37]" /> Segurança
+                        <Shield size={20} className="text-[var(--accent-primary)]" /> Segurança
                     </h3>
                     <div className="flex justify-between items-center py-2 mb-6">
                         <span className="text-[#B0A090] text-sm">{t("producer.producersettings.ativarAutenticaoDeDoisFatores2fa", `Ativar Autenticação de Dois Fatores (2FA)`)}</span>
                         <div
                             onClick={() => toggleSetting('twoFactor')}
-                            className="text-[#D4AF37] cursor-pointer hover:scale-110 transition-transform"
+                            className="text-[var(--accent-primary)] cursor-pointer hover:scale-110 transition-transform"
                         >
                             {settings.twoFactor ?
-                                <ToggleRight size={48} fill="currentColor" className="text-[#D4AF37]" /> :
+                                <ToggleRight size={48} fill="currentColor" className="text-[var(--accent-primary)]" /> :
                                 <ToggleLeft size={48} className="text-[#B0A090]" />
                             }
                         </div>
@@ -113,7 +113,7 @@ export const ProducerSettings: React.FC = () => {
                         <Button
                             variant="outline"
                             leftIcon={<Lock size={16} />}
-                            className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[#D4AF37]/30"
+                            className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[var(--accent-primary)]/30"
                         >
                             Alterar Senha
                         </Button>
@@ -125,7 +125,7 @@ export const ProducerSettings: React.FC = () => {
                         onClick={handleSave}
                         isLoading={loading}
                         leftIcon={<Save size={20} />}
-                        className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[#D4AF37]/20 border-none rounded-xl"
+                        className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[var(--accent-primary)]/20 border-none rounded-xl"
                     >
                         Salvar Alterações
                     </Button>

@@ -47,7 +47,7 @@ export const AdminEquipments: React.FC = () => {
                     <h1 className="section-title">🏛️ Equipamentos Culturais</h1>
 
                 </div>
-                <Link to="/admin/equipamentos/novo" className="btn">
+                <Link to="/admin/equipamentos/novo" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                     + Novo Equipamento
                 </Link>
             </div>
@@ -55,9 +55,9 @@ export const AdminEquipments: React.FC = () => {
             {loading ? (
                 <p>Carregando...</p>
             ) : equipamentos.length === 0 ? (
-                <div className="card" style={{ textAlign: "center", padding: "2rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "2rem" }}>
                     <p>Nenhum equipamento cultural vinculado</p>
-                    <Link to="/admin/equipamentos/novo" className="btn" style={{ marginTop: "1rem" }}>
+                    <Link to="/admin/equipamentos/novo" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ marginTop: "1rem" }}>
                         Cadastrar primeiro equipamento
                     </Link>
                 </div>
@@ -66,7 +66,7 @@ export const AdminEquipments: React.FC = () => {
                     {equipamentos.map(item => {
                         const typeInfo = typeLabels[item.tipo] || { label: item.tipo, icon: "📍" };
                         return (
-                            <div key={item.id} className="card">
+                            <div key={item.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
                                     {item.logoUrl ? (
                                         <img
@@ -99,12 +99,12 @@ export const AdminEquipments: React.FC = () => {
                                 )}
 
                                 <div style={{ display: "flex", gap: "0.5rem" }}>
-                                    <Link to={`/admin/equipamentos/${item.id}`} className="btn btn-secondary">
+                                    <Link to={`/admin/equipamentos/${item.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                                         Configurar
                                     </Link>
                                     <Link
                                         to={`/home?equipamentoId=${item.id}`}
-                                        className="btn btn-primary"
+                                        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                                     >
                                         Ver Site
                                     </Link>

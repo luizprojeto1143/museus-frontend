@@ -83,7 +83,7 @@ export const AdminEventDashboard: React.FC = () => {
                     <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover: flex items-center gap-2 px-4 py-2 rounded-lg">
                         <Printer className="w-4 h-4" /> Relatório
                     </Link>
-                    <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-zinc-900/40 border border-white/10 text-blue-600 hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
+                    <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-zinc-900/40 border border-white/10 text-[var(--accent-primary)] hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
                         <CheckSquare className="w-4 h-4" /> Pesquisa
                     </Link>
                     <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-zinc-800/50 rounded-lg hover:bg-zinc-900/40 border border-gold/20/10 transition-colors">
@@ -107,13 +107,13 @@ export const AdminEventDashboard: React.FC = () => {
                                 {stats.ticketsSold} <span className="text-gray-400 text-lg font-normal">/ {stats.totalTickets}</span>
                             </h3>
                         </div>
-                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                        <div className="p-2 bg-blue-50 text-[var(--accent-primary)] rounded-lg">
                             <Users className="w-6 h-6" />
                         </div>
                     </div>
                     <div className="w-full bg-zinc-800/50 rounded-full h-2 mt-4">
                         <div
-                            className="bg-blue-600 h-2 rounded-full"
+                            className="bg-[var(--accent-primary)] h-2 rounded-full"
                             style={{ width: `${stats.totalTickets > 0 ? (stats.ticketsSold / stats.totalTickets) * 100 : 0}%` }}
                         ></div>
                     </div>
@@ -154,7 +154,7 @@ export const AdminEventDashboard: React.FC = () => {
                 <div className="lg:col-span-2 bg-zinc-900/40 rounded-xl shadow-md shadow-black/20 border border-white/10">
                     <div className="p-6 border-b border-white/5 flex justify-between items-center">
                         <h3 className="font-bold text-white">{t("admin.eventdashboard.inscriesRecentes", `Inscrições Recentes`)}</h3>
-                        <Link to={`/admin/eventos/${id}/relatorio`} className="text-blue-600 text-sm font-medium hover:underline">Ver todas</Link>
+                        <Link to={`/admin/eventos/${id}/relatorio`} className="text-[var(--accent-primary)] text-sm font-medium hover:underline">Ver todas</Link>
                     </div>
                     <div className="p-0">
                         {stats.recentRegistrations.length === 0 ? (
@@ -166,7 +166,7 @@ export const AdminEventDashboard: React.FC = () => {
                                 {stats.recentRegistrations.map((reg: any) => (
                                     <div key={reg.id} className="p-4 flex justify-between items-center hover:">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 text-[var(--accent-primary)] flex items-center justify-center font-bold text-sm">
                                                 {reg.guestName?.charAt(0) || reg.visitor?.name?.charAt(0) || "?"}
                                             </div>
                                             <div>

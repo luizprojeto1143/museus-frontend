@@ -126,10 +126,10 @@ export const AdminTicketVerifier: React.FC = () => {
                     </div>
                 </div>
                 <div className="header-stats">
-                    <div className="stat-card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                         <Users size={20} />
                         <div>
-                            <span className="stat-value">{stats.checkedIn}</span>
+                            <span className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.checkedIn}</span>
                             <span className="stat-label">Check-ins Hoje</span>
                         </div>
                     </div>

@@ -43,7 +43,7 @@ export const AdminNPS: React.FC = () => {
         if (tenantId) fetchReport();
     }, [tenantId, fetchReport]);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
     if (!report) return null;
 
     const npsColor = report.nps >= 50 ? "text-green-400" : report.nps >= 0 ? "text-amber-400" : "text-red-400";
@@ -68,7 +68,7 @@ export const AdminNPS: React.FC = () => {
             </div>
 
             {/* NPS Score */}
-            <div className="card" style={{ padding: "2rem", textAlign: "center", borderRadius: "1.5rem" }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "2rem", textAlign: "center", borderRadius: "1.5rem" }}>
                 <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-2">NPS Score</p>
                 <p className={`text-7xl font-black ${npsColor}`}>{report.nps}</p>
                 <p className={`text-sm font-bold mt-1 ${npsColor}`}>{npsLabel}</p>
@@ -77,19 +77,19 @@ export const AdminNPS: React.FC = () => {
 
             {/* Breakdown */}
             <div className="card-grid">
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <ThumbsUp className="mx-auto text-green-500 mb-2" size={24} />
                     <p className="text-2xl font-black text-white">{report.promoterPct || 0}%</p>
                     <p className="stat-label">Promotores (9-10)</p>
                     <p className="text-green-500 text-sm font-bold mt-1">{report.promoters}</p>
                 </div>
-                <div className="stat-card">
-                    <Minus style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <Minus style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
                     <p className="text-2xl font-black text-white">{report.passivePct || 0}%</p>
                     <p className="stat-label">Neutros (7-8)</p>
                     <p className="text-amber-500 text-sm font-bold mt-1">{report.passives}</p>
                 </div>
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <ThumbsDown className="mx-auto text-red-500 mb-2" size={24} />
                     <p className="text-2xl font-black text-white">{report.detractorPct || 0}%</p>
                     <p className="stat-label">Detratores (0-6)</p>
@@ -98,7 +98,7 @@ export const AdminNPS: React.FC = () => {
             </div>
 
             {/* Distribution */}
-            <div className="card">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                 <h2 className="card-title">{t("admin.nps.distribuioDeNotas", `Distribuição de Notas`)}</h2>
                 <div className="flex items-end gap-2 h-40">
                     {report.distribution.map((count, score) => {
@@ -118,7 +118,7 @@ export const AdminNPS: React.FC = () => {
 
             {/* Monthly Trend */}
             {report.monthlyTrend.length > 1 && (
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                         <TrendingUp size={20} className="text-amber-500" /> Tendência Mensal
                     </h2>
@@ -141,7 +141,7 @@ export const AdminNPS: React.FC = () => {
 
             {/* Recent Comments */}
             {report.recentComments.length > 0 && (
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                         <MessageCircle size={20} style={{ color: "#60a5fa" }} /> Comentários Recentes
                     </h2>

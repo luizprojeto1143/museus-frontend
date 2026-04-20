@@ -128,7 +128,7 @@ export const AdminUploads: React.FC = () => {
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="btn btn-primary"
+          className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
         >
           {uploading ? t("common.uploading") : "+ " + t("admin.uploads.newUpload")}
         </button>
@@ -152,22 +152,22 @@ export const AdminUploads: React.FC = () => {
 
       {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="stat-card">
-          <div className="stat-value">{files.length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{files.length}</div>
           <div className="stat-label">{t("admin.uploads.stats.total")}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{formatSize(totalSize)}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{formatSize(totalSize)}</div>
           <div className="stat-label">{t("admin.uploads.stats.usedSpace")}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{files.filter(f => f.type.startsWith("image")).length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{files.filter(f => f.type.startsWith("image")).length}</div>
           <div className="stat-label">{t("admin.uploads.stats.images")}</div>
         </div>
       </div>
 
       {/* Filtros */}
-      <div className="card" style={{ marginBottom: "1.5rem", padding: "1rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "1.5rem", padding: "1rem" }}>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           <button
             onClick={() => setFilter("all")}
@@ -203,7 +203,7 @@ export const AdminUploads: React.FC = () => {
       {loading && <p>{t("common.loading")}</p>}
 
       {!loading && filteredFiles.length === 0 && (
-        <div className="card">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
           <p>{t("common.noResults")}</p>
         </div>
       )}
@@ -211,7 +211,7 @@ export const AdminUploads: React.FC = () => {
       {!loading && filteredFiles.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
           {filteredFiles.map((file) => (
-            <div key={file.id} className="card" style={{ padding: "1rem" }}>
+            <div key={file.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem" }}>
               {/* Preview */}
               <div
                 style={{
@@ -288,14 +288,14 @@ export const AdminUploads: React.FC = () => {
                     href={file.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-secondary"
+                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                     style={{ flex: 1, fontSize: "0.8rem", textAlign: "center" }}
                   >
                     {t("common.view")}
                   </a>
                   <button
                     onClick={() => handleDelete(file.id, file.usedIn)}
-                    className="btn"
+                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                     style={{
                       padding: "0.5rem",
                       fontSize: "0.8rem",

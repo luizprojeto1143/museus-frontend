@@ -58,14 +58,14 @@ export const AdminVisitorProfile: React.FC = () => {
     return (
         <div>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-                <button onClick={() => navigate("/admin/visitantes")} className="btn btn-secondary">
+                <button onClick={() => navigate("/admin/visitantes")} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                     ← {t("common.back")}
                 </button>
                 <h1 className="section-title">{visitor.name || t("common.anonymous")}</h1>
             </div>
 
             <div className="card-grid" style={{ marginBottom: "2rem" }}>
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
                         <div
                             style={{
@@ -93,7 +93,7 @@ export const AdminVisitorProfile: React.FC = () => {
                         </div>
                         <div>
                             <label style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{t("admin.visitors.table.xp")}</label>
-                            <p style={{ fontWeight: "bold", color: "#d4af37" }}>{visitor.xp} XP</p>
+                            <p style={{ fontWeight: "bold", color: "var(--accent-primary)" }}>{visitor.xp} XP</p>
                         </div>
                         <div>
                             <label style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{t("common.createdAt")}</label>
@@ -102,7 +102,7 @@ export const AdminVisitorProfile: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h3 className="card-title">🏆 {t("admin.sidebar.achievements")}</h3>
                     {visitor.achievements.length === 0 ? (
                         <p style={{ color: "var(--text-secondary)" }}>{t("common.noData")}</p>
@@ -122,7 +122,7 @@ export const AdminVisitorProfile: React.FC = () => {
                 </div>
             </div>
 
-            <div className="card">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                 <h3 className="card-title">📅 {t("admin.visitors.history")}</h3>
                 <table className="table">
                     <thead>

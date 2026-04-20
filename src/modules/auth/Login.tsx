@@ -73,8 +73,8 @@ export const Login: React.FC = () => {
         }}
       >
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 60, height: 60, borderRadius: "50%", marginBottom: "1rem", border: "2px solid #d4af37" }} />
-          <h1 style={{ margin: 0, fontSize: "1.8rem", color: "#d4af37", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+          <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 60, height: 60, borderRadius: "50%", marginBottom: "1rem", border: "2px solid var(--accent-primary)" }} />
+          <h1 style={{ margin: 0, fontSize: "1.8rem", color: "var(--accent-primary)", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
             {t("auth.login.title")}
           </h1>
           <p style={{ color: "#8b7355", marginTop: "0.5rem", fontSize: "0.95rem" }}>
@@ -102,7 +102,7 @@ export const Login: React.FC = () => {
               outline: "none",
               transition: "border-color 0.3s"
             }}
-            onFocus={(e) => e.target.style.borderColor = "#d4af37"}
+            onFocus={(e) => e.target.style.borderColor = "var(--accent-primary)"}
             onBlur={(e) => e.target.style.borderColor = "#463420"}
           />
         </div>
@@ -127,13 +127,13 @@ export const Login: React.FC = () => {
               outline: "none",
               transition: "border-color 0.3s"
             }}
-            onFocus={(e) => e.target.style.borderColor = "#d4af37"}
+            onFocus={(e) => e.target.style.borderColor = "var(--accent-primary)"}
             onBlur={(e) => e.target.style.borderColor = "#463420"}
           />
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
-          <Link to="/forgot-password" style={{ color: '#d4af37', fontSize: '0.9rem', textDecoration: 'none', opacity: 0.8 }}>Esqueceu a senha?</Link>
+          <Link to="/forgot-password" style={{ color: 'var(--accent-primary)', fontSize: '0.9rem', textDecoration: 'none', opacity: 0.8 }}>Esqueceu a senha?</Link>
         </div>
 
         {import.meta.env.VITE_DEMO_MODE === "true" && (
@@ -154,7 +154,7 @@ export const Login: React.FC = () => {
           style={{
             width: "100%",
             padding: "1rem",
-            background: "linear-gradient(135deg, #d4af37 0%, #b8860b 100%)",
+            background: "linear-gradient(135deg, var(--accent-primary) 0%, #b8860b 100%)",
             color: "#1a1108",
             border: "none",
             borderRadius: "0.75rem",
@@ -172,7 +172,7 @@ export const Login: React.FC = () => {
           <p style={{ fontSize: "0.95rem", color: "#8b7355" }}>
             {t("auth.login.noAccount")}{" "}
             <span
-              style={{ color: "#d4af37", cursor: "pointer", textDecoration: "underline", fontWeight: "bold" }}
+              style={{ color: "var(--accent-primary)", cursor: "pointer", textDecoration: "underline", fontWeight: "bold" }}
               onClick={() => navigate("/select-museum?mode=register")}
             >
               {t("auth.register.submit")}

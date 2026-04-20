@@ -30,7 +30,7 @@ export const TotemLayout: React.FC = () => {
                     <div style={{
                         width: "40px",
                         height: "40px",
-                        background: "linear-gradient(135deg, #d4af37, #f1c40f)",
+                        background: "linear-gradient(135deg, var(--accent-primary), #f1c40f)",
                         borderRadius: "8px",
                         display: "flex",
                         alignItems: "center",

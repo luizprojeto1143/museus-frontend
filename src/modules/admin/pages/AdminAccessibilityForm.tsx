@@ -23,7 +23,7 @@ const ACCESSIBILITY_SERVICES = [
 const STATUS_OPTIONS = [
     { value: "PENDING", label: "Pendente", color: "text-amber-500", bg: "bg-amber-500/10", border: "border-amber-500/20" },
     { value: "APPROVED", label: "Aprovado", color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-    { value: "IN_PROGRESS", label: "Em Andamento", color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+    { value: "IN_PROGRESS", label: "Em Andamento", color: "text-[var(--accent-primary)]", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
     { value: "DELIVERED", label: "Entregue", color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
     { value: "VALIDATED", label: "Validado", color: "text-cyan-500", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
     { value: "REJECTED", label: "Rejeitado", color: "text-red-500", bg: "bg-red-500/10", border: "border-red-500/20" }
@@ -190,7 +190,7 @@ export const AdminAccessibilityForm: React.FC = () => {
                                     className={`
                                         cursor-pointer p-4 rounded-xl border transition-all duration-200 relative overflow-hidden group
                                         ${formData.serviceType === service.value
-                                            ? 'bg-blue-600/10 border-blue-500/50 shadow-[0_0_15px_rgba(37,99,235,0.1)]'
+                                            ? 'bg-[var(--accent-primary)]/10 border-blue-500/50 shadow-[0_0_15px_rgba(37,99,235,0.1)]'
                                             : 'bg-[var(--bg-surface-active)] border-[var(--border-subtle)] hover:border-[var(--border-default)] hover:bg-[var(--bg-surface-hover)]'}
                                     `}
                                 >

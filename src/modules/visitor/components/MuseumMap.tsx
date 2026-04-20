@@ -24,7 +24,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const VestigeIcon = L.divIcon({
     className: 'vestige-map-marker',
-    html: '<div style="width:20px;height:20px;background:#d4af37;border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(212,175,55,0.6)"></div>',
+    html: '<div style="width:20px;height:20px;background:var(--accent-primary);border-radius:50%;border:3px solid #fff;box-shadow:0 0 12px rgba(212,175,55,0.6)"></div>',
     iconSize: [20, 20],
     iconAnchor: [10, 10]
 });
@@ -83,7 +83,7 @@ function ClusteredMarkers({ pois, vestigeIcon, defaultIcon }: {
                 return L.divIcon({
                     html: `<div style="
                         width:${size}px;height:${size}px;
-                        background:linear-gradient(135deg,#d4af37,#cd7f32);
+                        background:linear-gradient(135deg,var(--accent-primary),var(--accent-secondary));
                         border-radius:50%;
                         display:flex;align-items:center;justify-content:center;
                         color:#000;font-weight:900;font-size:${size < 44 ? 13 : 15}px;
@@ -296,7 +296,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                                 <Circle
                                     center={[userLocation.lat, userLocation.lng]}
                                     radius={userLocation.accuracy}
-                                    pathOptions={{ color: '#d4af37', fillColor: '#d4af37', fillOpacity: 0.1 }}
+                                    pathOptions={{ color: 'var(--accent-primary)', fillColor: 'var(--accent-primary)', fillOpacity: 0.1 }}
                                 />
                             </>
                         )}
@@ -340,7 +340,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                         {destinationId && (
                             <Polyline
                                 positions={getRouteTo(destinationId)}
-                                color="#d4af37"
+                                color="var(--accent-primary)"
                                 dashArray={[10, 10]}
                                 weight={4}
                             />

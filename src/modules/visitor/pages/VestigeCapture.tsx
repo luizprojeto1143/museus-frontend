@@ -165,7 +165,7 @@ export const VestigeCapture: React.FC = () => {
           <div className="target-status">
             {inRange ? (
               <div className="status-active">
-                <CheckCircle2 color="#d4af37" />
+                <CheckCircle2 color="var(--accent-primary)" />
                 <span>{t('vestige.capture.readyToCollect', 'Pronto para Coleta')}</span>
               </div>
             ) : (

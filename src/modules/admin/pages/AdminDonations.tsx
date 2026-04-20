@@ -50,7 +50,7 @@ export const AdminDonations: React.FC = () => {
         if (tenantId) fetchData();
     }, [tenantId, fetchData]);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     const statCards = [
         { label: "Total Arrecadado", value: `R$ ${Number(stats?.totalRaised || 0).toFixed(2).replace('.', ',')}`, icon: <DollarSign size={20} />, color: "text-green-500 bg-green-50" },
@@ -68,7 +68,7 @@ export const AdminDonations: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {statCards.map((s, i) => (
-                    <div key={i} className="card">
+                    <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${s.color}`}>{s.icon}</div>
                         <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-1">{s.label}</p>
                         <p className="text-2xl font-black text-white">{s.value}</p>
@@ -81,12 +81,12 @@ export const AdminDonations: React.FC = () => {
                     <Heart size={20} className="text-rose-500" /> Mural de Doadores
                 </h2>
                 {donations.length === 0 ? (
-                    <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                         <Heart size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                         <p style={{ color: "#64748b" }}>{t("admin.donations.nenhumaDoaoRegistradaAinda", `Nenhuma doação registrada ainda.`)}</p>
                     </div>
                 ) : (
-                    <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                         <table className="w-full text-left">
                             <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                                 <tr>

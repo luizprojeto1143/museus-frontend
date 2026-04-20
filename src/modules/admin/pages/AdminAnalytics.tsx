@@ -113,10 +113,10 @@ export const AdminAnalytics: React.FC = () => {
             <option value="30d">{t("admin.analytics.ltimos30Dias", `Últimos 30 dias`)}</option>
             <option value="90d">{t("admin.analytics.ltimos90Dias", `Últimos 90 dias`)}</option>
           </select>
-          <button onClick={handleExportCSV} className="btn btn-secondary">
+          <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
             📥 CSV
           </button>
-          <button onClick={handleExportPDF} className="btn btn-secondary">
+          <button onClick={handleExportPDF} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
             📄 PDF
           </button>
         </div>
@@ -124,30 +124,30 @@ export const AdminAnalytics: React.FC = () => {
 
       {/* Indicadores Globais */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="stat-card">
-          <div className="stat-value">{data.totalVisitors.toLocaleString()}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{data.totalVisitors.toLocaleString()}</div>
           <div className="stat-label">Total de Visitantes</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{data.recurringVisitors}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{data.recurringVisitors}</div>
           <div className="stat-label">Visitantes Recorrentes</div>
           <div style={{ fontSize: "0.75rem", color: "var(--fg-soft)", marginTop: "0.25rem" }}>
             {((data.recurringVisitors / data.totalVisitors) * 100).toFixed(1)}% do total
           </div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{data.averageAge} anos</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{data.averageAge} anos</div>
           <div className="stat-label">{t("admin.analytics.idadeMdia", `Idade Média`)}</div>
         </div>
       </div>
 
       {/* Origem de Acessos */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">📍 Origem dos Acessos</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem", marginTop: "1rem" }}>
           {Object.entries(data.accessBySource).map(([source, count]) => (
-            <div key={source} className="stat-card">
-              <div className="stat-value">{count}</div>
+            <div key={source} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+              <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{count}</div>
               <div className="stat-label">{source.toUpperCase()}</div>
             </div>
           ))}
@@ -155,7 +155,7 @@ export const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Horários de Pico */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">{t("admin.analytics.HorriosDePico", `⏰ Horários de Pico`)}</h2>
         <div style={{ marginTop: "1rem" }}>
           {data.peakHours.map((hour) => (
@@ -187,7 +187,7 @@ export const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Heatmap */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">🔥 Heatmap - Obras Mais Quentes</h2>
         <p className="card-subtitle">{t("admin.analytics.intensidadeDeVisitaoDasObras", `Intensidade de visitação das obras`)}</p>
         <div style={{ marginTop: "1rem" }}>
@@ -226,7 +226,7 @@ export const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Visitantes por Idade */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">{t("admin.analytics.DistribuioPorIdade", `👥 Distribuição por Idade`)}</h2>
         <div style={{ marginTop: "1rem" }}>
           {data.visitorsByAge.map((age) => (
@@ -258,7 +258,7 @@ export const AdminAnalytics: React.FC = () => {
       </div>
 
       {/* Gráfico de Tendência */}
-      <div className="card">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
         <h2 className="card-title">{t("admin.analytics.TendnciaDeVisitantes", `📈 Tendência de Visitantes`)}</h2>
         <p className="card-subtitle">Visitantes novos vs recorrentes ao longo do tempo</p>
         <div style={{ marginTop: "1rem", overflowX: "auto" }}>

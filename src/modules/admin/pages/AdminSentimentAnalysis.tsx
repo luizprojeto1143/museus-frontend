@@ -44,7 +44,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
         if (tenantId) fetchReport();
     }, [tenantId, fetchReport]);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
     if (!report) return null;
 
     const s = report.summary;
@@ -58,23 +58,23 @@ export const AdminSentimentAnalysis: React.FC = () => {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="stat-card">
-                    <Star style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
-                    <p className="stat-value">{s.avgRating}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <Star style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{s.avgRating}</p>
                     <p className="stat-label">{t("admin.sentimentanalysis.mdiaGeral", `Média Geral`)}</p>
                 </div>
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <TrendingUp className="mx-auto text-green-500 mb-2" size={24} />
-                    <p className="stat-value" style={{ color: "#22c55e" }}>{s.positivePct || 0}%</p>
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "#22c55e" }}>{s.positivePct || 0}%</p>
                     <p className="stat-label">Positivas</p>
                 </div>
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <TrendingDown className="mx-auto text-red-500 mb-2" size={24} />
                     <p className="text-3xl font-black text-red-400">{s.negativePct || 0}%</p>
                     <p className="stat-label">Negativas</p>
                 </div>
-                <div className="stat-card">
-                    <p className="stat-value">{s.total}</p>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{s.total}</p>
                     <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-2">{t("admin.sentimentanalysis.totalAvaliaes", `Total Avaliações`)}</p>
                 </div>
             </div>
@@ -95,7 +95,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
 
             {/* By Room */}
             {report.byRoom.length > 0 && (
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h2 className="card-title">Sentimento por Sala</h2>
                     <div style={{ display: "grid", gap: "0.75rem" }}>
                         {report.byRoom.map(room => {
@@ -120,7 +120,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
 
             {/* By Work */}
             {report.byWork.length > 0 && (
-                <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                     <div className="px-6 py-4 border-b border-white/5">
                         <h2 className="card-title" style={{ margin: 0 }}>Ranking por Obra</h2>
                     </div>
@@ -151,7 +151,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
 
             {/* Recent Negative */}
             {report.recentNegative.length > 0 && (
-                <div className="card" style={{ border: "1px solid rgba(239,68,68,0.2)" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ border: "1px solid rgba(239,68,68,0.2)" }}>
                     <h2 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
                         <AlertTriangle size={20} /> Avaliações Negativas Recentes
                     </h2>

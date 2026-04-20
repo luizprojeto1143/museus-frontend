@@ -64,14 +64,14 @@ export const ProducerProfile: React.FC = () => {
     return (
         <div className="max-w-4xl mx-auto pb-16 animate-in fade-in duration-500">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">Meu Perfil</h1>
+                <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">Meu Perfil</h1>
                 <p className="text-[#B0A090]">{t("producer.producerprofile.gerencieSuasInformaesPessoaisEDeContato", `Gerencie suas informações pessoais e de contato.`)}</p>
             </div>
 
             <div className="bg-[#2c1e10] rounded-2xl p-8 border border-[#463420] shadow-lg shadow-black/20">
                 <div className="flex items-center gap-4 mb-8 pb-6 border-b border-[#463420]">
-                    <div className="p-4 bg-[#D4AF37]/10 rounded-full border border-[#D4AF37]/20">
-                        <User size={32} className="text-[#D4AF37]" />
+                    <div className="p-4 bg-[var(--accent-primary)]/10 rounded-full border border-[var(--accent-primary)]/20">
+                        <User size={32} className="text-[var(--accent-primary)]" />
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-[#EAE0D5] font-serif">Dados do Produtor</h2>
@@ -86,9 +86,9 @@ export const ProducerProfile: React.FC = () => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            leftIcon={<User size={18} className="text-[#D4AF37]" />}
+                            leftIcon={<User size={18} className="text-[var(--accent-primary)]" />}
                             required
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] h-12"
                         />
 
                         <Input
@@ -109,8 +109,8 @@ export const ProducerProfile: React.FC = () => {
                             value={formData.cpf}
                             onChange={handleChange}
                             placeholder="000.000.000-00"
-                            leftIcon={<FileText size={18} className="text-[#D4AF37]" />}
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
+                            leftIcon={<FileText size={18} className="text-[var(--accent-primary)]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] h-12"
                         />
 
                         <Input
@@ -119,8 +119,8 @@ export const ProducerProfile: React.FC = () => {
                             value={formData.phone}
                             onChange={handleChange}
                             placeholder="(00) 00000-0000"
-                            leftIcon={<Phone size={18} className="text-[#D4AF37]" />}
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
+                            leftIcon={<Phone size={18} className="text-[var(--accent-primary)]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] h-12"
                         />
                     </div>
 
@@ -130,8 +130,8 @@ export const ProducerProfile: React.FC = () => {
                         value={formData.website}
                         onChange={handleChange}
                         placeholder="https://..."
-                        leftIcon={<Globe size={18} className="text-[#D4AF37]" />}
-                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12"
+                        leftIcon={<Globe size={18} className="text-[var(--accent-primary)]" />}
+                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] h-12"
                     />
 
                     <Textarea
@@ -141,7 +141,7 @@ export const ProducerProfile: React.FC = () => {
                         value={formData.bio}
                         onChange={handleChange}
                         placeholder={t("producer.producerprofile.conteUmPoucoSobreSuaTrajetriaCultural", `Conte um pouco sobre sua trajetória cultural...`)}
-                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                        className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                     />
 
                     <div className="flex justify-end pt-6 border-t border-[#463420]">
@@ -149,7 +149,7 @@ export const ProducerProfile: React.FC = () => {
                             type="submit"
                             isLoading={loading}
                             leftIcon={<Save size={18} />}
-                            className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold h-12 shadow-lg shadow-[#D4AF37]/20 border-none"
+                            className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold h-12 shadow-lg shadow-[var(--accent-primary)]/20 border-none"
                         >
                             Salvar Alterações
                         </Button>

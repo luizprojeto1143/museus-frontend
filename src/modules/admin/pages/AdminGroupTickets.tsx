@@ -31,7 +31,7 @@ export const AdminGroupTickets: React.FC = () => {
 
     if (loading) return (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <Loader2 className="animate-spin" style={{ color: '#d4af37' }} />
+            <Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
     );
 
@@ -54,20 +54,20 @@ export const AdminGroupTickets: React.FC = () => {
 
             {/* Stats */}
             <div className="card-grid" style={{ marginBottom: '2rem' }}>
-                <div className="stat-card">
-                    <div className="stat-value">{tickets.length}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{tickets.length}</div>
                     <div className="stat-label">{t("admin.grouptickets.totalSolicitaes", `Total Solicitações`)}</div>
                 </div>
-                <div className="stat-card" style={{ borderColor: 'rgba(245,158,11,0.2)' }}>
-                    <div className="stat-value" style={{ color: '#f59e0b' }}>{pending}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ borderColor: 'rgba(245,158,11,0.2)' }}>
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: '#f59e0b' }}>{pending}</div>
                     <div className="stat-label">Pendentes</div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-value" style={{ color: '#22c55e' }}>{confirmed}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: '#22c55e' }}>{confirmed}</div>
                     <div className="stat-label">Confirmados</div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-value">{totalIngressos}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{totalIngressos}</div>
                     <div className="stat-label">Ingressos Totais</div>
                 </div>
             </div>
@@ -76,7 +76,7 @@ export const AdminGroupTickets: React.FC = () => {
             {tickets.map((item: any) => {
                 const st = statusConfig[item.status] || statusConfig.PENDING;
                 return (
-                    <div key={item.id} className="card" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>
+                    <div key={item.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
@@ -130,7 +130,7 @@ export const AdminGroupTickets: React.FC = () => {
             })}
 
             {tickets.length === 0 && (
-                <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
                     <Users size={48} style={{ margin: '0 auto 1rem', color: '#64748b', opacity: 0.3 }} />
                     <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>{t("admin.grouptickets.nenhumaSolicitaoDeGrupo", `Nenhuma solicitação de grupo`)}</h3>
                     <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.grouptickets.solicitaesDeIngressosEmGrupoApareceroAqu", `Solicitações de ingressos em grupo aparecerão aqui`)}</p>

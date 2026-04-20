@@ -11,7 +11,7 @@ const rarityConfig: Record<string, { label: string; color: string; gradient: str
     COMMON: { label: 'Comum', color: '#9ca3af', gradient: 'linear-gradient(135deg, #374151, #1f2937)', icon: <Star size={14} /> },
     RARE: { label: 'Raro', color: '#60a5fa', gradient: 'linear-gradient(135deg, #1e3a5f, #1e293b)', icon: <Zap size={14} /> },
     EPIC: { label: 'Épico', color: '#a78bfa', gradient: 'linear-gradient(135deg, #3b1f6e, #1e1b3a)', icon: <Crown size={14} /> },
-    LEGENDARY: { label: 'Lendário', color: '#d4af37', gradient: 'linear-gradient(135deg, #5c4a1e, #2d2310)', icon: <Diamond size={14} /> }
+    LEGENDARY: { label: 'Lendário', color: 'var(--accent-primary)', gradient: 'linear-gradient(135deg, #5c4a1e, #2d2310)', icon: <Diamond size={14} /> }
 };
 
 export const VisitorCollectibles: React.FC = () => {
@@ -42,14 +42,14 @@ export const VisitorCollectibles: React.FC = () => {
     const ownedCount = myCards.length;
     const pct = totalCards > 0 ? Math.round((ownedCount / totalCards) * 100) : 0;
 
-    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} /></div>;
 
     if (isGuest) {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
                 <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para colecionar cards, interagir com o museu e ganhar recompensas virtuais!</p>
-                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
             </div>
         );
     }
@@ -57,20 +57,20 @@ export const VisitorCollectibles: React.FC = () => {
     return (
         <div style={{ padding: '1.5rem' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <Sparkles size={36} style={{ color: '#d4af37', margin: '0 auto 0.5rem' }} />
+                <Sparkles size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 0.5rem' }} />
                 <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>{t("visitor.collectibles.minhaColeo", `Minha Coleção`)}</h1>
                 <p style={{ color: '#888', fontSize: '0.85rem' }}>{ownedCount} de {totalCards} cards • {pct}% completo</p>
                 <div style={{ width: '100%', maxWidth: '300px', margin: '0.75rem auto 0', height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, #d4af37, #f5d76e)', borderRadius: '3px', transition: 'width 0.5s' }} />
+                    <div style={{ width: `${pct}%`, height: '100%', background: 'linear-gradient(90deg, var(--accent-primary), #f5d76e)', borderRadius: '3px', transition: 'width 0.5s' }} />
                 </div>
             </div>
 
             {/* Tabs */}
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginBottom: '1.5rem' }}>
-                <button onClick={() => setTab('collection')} style={{ padding: '0.5rem 1.25rem', borderRadius: '2rem', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', background: tab === 'collection' ? '#d4af37' : 'rgba(255,255,255,0.05)', color: tab === 'collection' ? '#1a1108' : '#888' }}>
+                <button onClick={() => setTab('collection')} style={{ padding: '0.5rem 1.25rem', borderRadius: '2rem', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', background: tab === 'collection' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: tab === 'collection' ? '#1a1108' : '#888' }}>
                     Meus Cards ({ownedCount})
                 </button>
-                <button onClick={() => setTab('all')} style={{ padding: '0.5rem 1.25rem', borderRadius: '2rem', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', background: tab === 'all' ? '#d4af37' : 'rgba(255,255,255,0.05)', color: tab === 'all' ? '#1a1108' : '#888' }}>
+                <button onClick={() => setTab('all')} style={{ padding: '0.5rem 1.25rem', borderRadius: '2rem', border: 'none', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer', background: tab === 'all' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: tab === 'all' ? '#1a1108' : '#888' }}>
                     Todos ({totalCards})
                 </button>
             </div>

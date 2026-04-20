@@ -134,7 +134,7 @@ export const TenantsList: React.FC = () => {
                       <button
                         onClick={() => navigate(`/master/tenants/${tenant.id}`)}
                         title="Editar"
-                        className="w-9 h-9 flex items-center justify-center rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white transition-colors"
+                        className="w-9 h-9 flex items-center justify-center rounded-lg bg-[var(--accent-primary)]/10 text-blue-400 border border-blue-500/20 hover:bg-[var(--accent-primary)] hover:text-white transition-colors"
                       >
                         <Edit size={16} />
                       </button>

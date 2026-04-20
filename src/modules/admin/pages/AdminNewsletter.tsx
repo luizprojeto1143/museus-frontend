@@ -52,7 +52,7 @@ export const AdminNewsletter: React.FC = () => {
         toast.success("CSV exportado!");
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -79,13 +79,13 @@ export const AdminNewsletter: React.FC = () => {
             </div>
 
             {subscribers.length === 0 ? (
-                <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <Mail size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <h3 className="text-lg font-bold text-white mb-1">Nenhum inscrito</h3>
                     <p style={{ color: "#64748b" }}>{t("admin.newsletter.osInscritosNaNewsletterApareceroAqui", `Os inscritos na newsletter aparecerão aqui.`)}</p>
                 </div>
             ) : (
-                <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                     <table className="w-full text-left">
                         <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                             <tr>

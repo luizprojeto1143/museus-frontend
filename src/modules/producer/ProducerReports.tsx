@@ -78,7 +78,7 @@ export const ProducerReports: React.FC = () => {
         <div className="producer-reports p-6 md:p-12 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.reports.title")}</h1>
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">{t("producer.reports.title")}</h1>
                     <p className="text-[#B0A090]">{t("producer.reports.subtitle")}</p>
                 </div>
             </div>
@@ -87,7 +87,7 @@ export const ProducerReports: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
                 <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] shadow-lg shadow-black/20">
                     <div className="flex items-center gap-3 text-[#B0A090] text-sm font-medium mb-3">
-                        <DollarSign size={18} className="text-[#D4AF37]" /> {t("producer.reports.metrics.revenue")}
+                        <DollarSign size={18} className="text-[var(--accent-primary)]" /> {t("producer.reports.metrics.revenue")}
                     </div>
                     <div className="text-4xl font-bold text-[#EAE0D5] font-serif">
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats.revenue)}
@@ -99,7 +99,7 @@ export const ProducerReports: React.FC = () => {
 
                 <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] shadow-lg shadow-black/20">
                     <div className="flex items-center gap-3 text-[#B0A090] text-sm font-medium mb-3">
-                        <Ticket size={18} className="text-[#D4AF37]" /> {t("producer.reports.metrics.ticketsSold")}
+                        <Ticket size={18} className="text-[var(--accent-primary)]" /> {t("producer.reports.metrics.ticketsSold")}
                     </div>
                     <div className="text-4xl font-bold text-[#EAE0D5] font-serif">{stats.ticketsSold}</div>
                     <div className="text-xs text-[#B0A090]/60 mt-2">
@@ -109,7 +109,7 @@ export const ProducerReports: React.FC = () => {
 
                 <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] shadow-lg shadow-black/20">
                     <div className="flex items-center gap-3 text-[#B0A090] text-sm font-medium mb-3">
-                        <Users size={18} className="text-[#D4AF37]" /> {t("producer.reports.metrics.audience")}
+                        <Users size={18} className="text-[var(--accent-primary)]" /> {t("producer.reports.metrics.audience")}
                     </div>
                     <div className="text-4xl font-bold text-[#EAE0D5] font-serif">{stats.checkIns}</div>
                     <div className="text-xs text-[#B0A090]/60 mt-2">
@@ -119,20 +119,20 @@ export const ProducerReports: React.FC = () => {
             </div>
 
             {/* Reports List */}
-            <h3 className="text-xl font-bold text-[#EAE0D5] mb-6 pl-4 border-l-4 border-[#D4AF37]">
+            <h3 className="text-xl font-bold text-[#EAE0D5] mb-6 pl-4 border-l-4 border-[var(--accent-primary)]">
                 {t("producer.reports.available")}
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 {/* Accessibility Report */}
-                <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] group hover:border-[#D4AF37]/50 transition-all hover:-translate-y-1 shadow-lg shadow-black/20">
+                <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] group hover:border-[var(--accent-primary)]/50 transition-all hover:-translate-y-1 shadow-lg shadow-black/20">
                     <div className="flex items-center gap-4 mb-4">
                         <div className="bg-[#4cd964]/10 p-3 rounded-xl text-[#4cd964]">
                             <FileText size={24} />
                         </div>
                         <div>
-                            <div className="font-bold text-[#EAE0D5] group-hover:text-[#D4AF37] transition-colors">{t("producer.reports.accessibility.title")}</div>
+                            <div className="font-bold text-[#EAE0D5] group-hover:text-[var(--accent-primary)] transition-colors">{t("producer.reports.accessibility.title")}</div>
                             <div className="text-xs text-[#B0A090]">{accessStats.executions} execuções registradas</div>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ export const ProducerReports: React.FC = () => {
                     <Button
                         onClick={() => handleDownload('accessibility')}
                         variant="outline"
-                        className="w-full border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[#D4AF37]/30"
+                        className="w-full border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[var(--accent-primary)]/30"
                         leftIcon={<Download size={16} />}
                     >
                         {t("producer.reports.accessibility.download")}
@@ -150,13 +150,13 @@ export const ProducerReports: React.FC = () => {
                 </div>
 
                 {/* Financial Report */}
-                <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] group hover:border-[#D4AF37]/50 transition-all hover:-translate-y-1 shadow-lg shadow-black/20">
+                <div className="bg-[#2c1e10] p-6 rounded-2xl border border-[#463420] group hover:border-[var(--accent-primary)]/50 transition-all hover:-translate-y-1 shadow-lg shadow-black/20">
                     <div className="flex items-center gap-4 mb-4">
-                        <div className="bg-[#D4AF37]/10 p-3 rounded-xl text-[#D4AF37]">
+                        <div className="bg-[var(--accent-primary)]/10 p-3 rounded-xl text-[var(--accent-primary)]">
                             <BarChart3 size={24} />
                         </div>
                         <div>
-                            <div className="font-bold text-[#EAE0D5] group-hover:text-[#D4AF37] transition-colors">{t("producer.reports.financial.title")}</div>
+                            <div className="font-bold text-[#EAE0D5] group-hover:text-[var(--accent-primary)] transition-colors">{t("producer.reports.financial.title")}</div>
                             <div className="text-xs text-[#B0A090]">{t("producer.reports.financial.subtitle")}</div>
                         </div>
                     </div>
@@ -166,7 +166,7 @@ export const ProducerReports: React.FC = () => {
                     <Button
                         onClick={() => handleDownload('financial')}
                         variant="outline"
-                        className="w-full border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[#D4AF37]/30"
+                        className="w-full border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[var(--accent-primary)]/30"
                         leftIcon={<Download size={16} />}
                     >
                         {t("producer.reports.financial.download")}

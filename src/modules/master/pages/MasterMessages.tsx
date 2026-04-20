@@ -55,12 +55,12 @@ export const MasterMessages: React.FC = () => {
         <div style={{ padding: "2rem" }}>
             <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                 <div>
-                    <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "#d4af37", display: "flex", alignItems: "center", gap: "1rem" }}>
+                    <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "var(--accent-primary)", display: "flex", alignItems: "center", gap: "1rem" }}>
                         <Mail /> Caixa de Entrada
                     </h1>
                     <p style={{ opacity: 0.7 }}>{t("master.messages.solicitaesDeContatoELeadsDaLandingPage", `Solicitações de contato e leads da Landing Page.`)}</p>
                 </div>
-                <button onClick={fetchMessages} style={{ background: "transparent", border: "1px solid #d4af37", color: "#d4af37", padding: "0.5rem 1rem", borderRadius: "0.5rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <button onClick={fetchMessages} style={{ background: "transparent", border: "1px solid var(--accent-primary)", color: "var(--accent-primary)", padding: "0.5rem 1rem", borderRadius: "0.5rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                     <RefreshCw size={16} /> Atualizar
                 </button>
             </header>
@@ -68,19 +68,19 @@ export const MasterMessages: React.FC = () => {
             <div style={{ marginBottom: "2rem", display: "flex", gap: "1rem" }}>
                 <button
                     onClick={() => setFilter("NEW")}
-                    style={{ padding: "0.5rem 1rem", borderRadius: "2rem", border: "none", background: filter === "NEW" ? "#d4af37" : "rgba(255,255,255,0.1)", color: filter === "NEW" ? "#000" : "#fff", fontWeight: "bold", cursor: "pointer" }}
+                    style={{ padding: "0.5rem 1rem", borderRadius: "2rem", border: "none", background: filter === "NEW" ? "var(--accent-primary)" : "rgba(255,255,255,0.1)", color: filter === "NEW" ? "#000" : "#fff", fontWeight: "bold", cursor: "pointer" }}
                 >
                     Ativos ({messages.filter(m => m.status === "NEW" || m.status === "READ").length})
                 </button>
                 <button
                     onClick={() => setFilter("ARCHIVED")}
-                    style={{ padding: "0.5rem 1rem", borderRadius: "2rem", border: "none", background: filter === "ARCHIVED" ? "#d4af37" : "rgba(255,255,255,0.1)", color: filter === "ARCHIVED" ? "#000" : "#fff", fontWeight: "bold", cursor: "pointer" }}
+                    style={{ padding: "0.5rem 1rem", borderRadius: "2rem", border: "none", background: filter === "ARCHIVED" ? "var(--accent-primary)" : "rgba(255,255,255,0.1)", color: filter === "ARCHIVED" ? "#000" : "#fff", fontWeight: "bold", cursor: "pointer" }}
                 >
                     Arquivados
                 </button>
                 <button
                     onClick={() => setFilter("ALL")}
-                    style={{ padding: "0.5rem 1rem", borderRadius: "2rem", border: "none", background: filter === "ALL" ? "#d4af37" : "rgba(255,255,255,0.1)", color: filter === "ALL" ? "#000" : "#fff", fontWeight: "bold", cursor: "pointer" }}
+                    style={{ padding: "0.5rem 1rem", borderRadius: "2rem", border: "none", background: filter === "ALL" ? "var(--accent-primary)" : "rgba(255,255,255,0.1)", color: filter === "ALL" ? "#000" : "#fff", fontWeight: "bold", cursor: "pointer" }}
                 >
                     Todos
                 </button>
@@ -108,7 +108,7 @@ export const MasterMessages: React.FC = () => {
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                                 <div>
                                     <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#fff", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                        {msg.status === "NEW" && <span style={{ fontSize: "0.7rem", padding: "0.2rem 0.5rem", borderRadius: "4px", background: "#d4af37", color: "#000" }}>NOVO</span>}
+                                        {msg.status === "NEW" && <span style={{ fontSize: "0.7rem", padding: "0.2rem 0.5rem", borderRadius: "4px", background: "var(--accent-primary)", color: "#000" }}>NOVO</span>}
                                         {msg.subject}
                                     </h3>
                                     <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", opacity: 0.7, fontSize: "0.9rem" }}>
@@ -147,7 +147,7 @@ export const MasterMessages: React.FC = () => {
                             <div style={{ display: "flex", justifyContent: "flex-end" }}>
                                 <a
                                     href={`mailto:${msg.email}?subject=Re: ${msg.subject}`}
-                                    style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", background: "#d4af37", color: "#000", fontWeight: "bold", borderRadius: "0.5rem", textDecoration: "none", fontSize: "0.9rem" }}
+                                    style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", background: "var(--accent-primary)", color: "#000", fontWeight: "bold", borderRadius: "0.5rem", textDecoration: "none", fontSize: "0.9rem" }}
                                 >
                                     Responder via Email
                                 </a>

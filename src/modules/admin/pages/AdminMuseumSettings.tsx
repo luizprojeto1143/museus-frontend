@@ -79,8 +79,8 @@ export const AdminMuseumSettings: React.FC = () => {
     mapImageUrl: "",
     latitude: -20.385574,
     longitude: -43.503578,
-    primaryColor: "#d4af37",
-    secondaryColor: "#cd7f32",
+    primaryColor: "var(--accent-primary)",
+    secondaryColor: "var(--accent-secondary)",
     theme: "dark",
     historicalFont: true,
     welcomeAudioUrl: "",
@@ -257,7 +257,7 @@ export const AdminMuseumSettings: React.FC = () => {
         {activeTab === "dados" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
-              <Building2 className="text-[#d4af37]" size={24} />
+              <Building2 className="text-[var(--accent-primary)]" size={24} />
               <h2 className="visitor-card-title">Dados Institucionais</h2>
             </div>
             <div className="space-y-4">
@@ -306,7 +306,7 @@ export const AdminMuseumSettings: React.FC = () => {
         {activeTab === "multimidia" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
-              <Volume2 className="text-[#d4af37]" size={24} />
+              <Volume2 className="text-[var(--accent-primary)]" size={24} />
               <h2 className="visitor-card-title">{t("admin.museumsettings.boasvindasMultimdia", `Boas-vindas Multimídia`)}</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -320,13 +320,13 @@ export const AdminMuseumSettings: React.FC = () => {
                   tabIndex={0}
                   onKeyDown={(e) => e.key === 'Enter' && document.getElementById('welcome-audio-upload')?.click()}
                 >
-                  <Upload size={24} className="mx-auto text-[#d4af37] mb-2" />
+                  <Upload size={24} className="mx-auto text-[var(--accent-primary)] mb-2" />
                   <span className="text-xs text-[#c9b58c]">{t("admin.museumsettings.enviarUdioMp3", `Enviar Áudio (MP3)`)}</span>
                   <input id="welcome-audio-upload" type="file" accept="audio/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])} />
                 </div>
                 {settings.welcomeAudioUrl && (
                   <div className="floor-plan-item">
-                    <Headphones size={18} className="text-[#d4af37]" aria-hidden="true" />
+                    <Headphones size={18} className="text-[var(--accent-primary)]" aria-hidden="true" />
                     <span className="text-sm text-[#EAE0D5] flex-1">{t("admin.museumsettings.udioConfigurado", `Áudio Configurado`)}</span>
                     <audio controls src={settings.welcomeAudioUrl} className="h-6 w-24" aria-label={t("admin.museumsettings.playerDeUdioDeBoasvindas", `Player de áudio de boas-vindas`)} />
                   </div>
@@ -353,7 +353,7 @@ export const AdminMuseumSettings: React.FC = () => {
           <div className="visitor-card">
             <div className="visitor-card-header justify-between">
               <div className="flex items-center gap-3">
-                <MapIcon className="text-[#d4af37]" size={24} />
+                <MapIcon className="text-[var(--accent-primary)]" size={24} />
                 <h2 className="visitor-card-title">{t("admin.museumsettings.plantasELocalizao", `Plantas e Localização`)}</h2>
               </div>
               <button onClick={() => setShowFloorPlanModal(true)} className="btn-ghost-gold px-3 py-1 rounded-full text-xs font-bold">
@@ -375,7 +375,7 @@ export const AdminMuseumSettings: React.FC = () => {
                     <img src={settings.mapImageUrl} className="w-full h-full object-cover" alt="Mapa outdoor atual" />
                   ) : (
                     <div className="text-center p-4">
-                      <ImageIcon size={32} className="mx-auto mb-2 text-[#d4af37]" aria-hidden="true" />
+                      <ImageIcon size={32} className="mx-auto mb-2 text-[var(--accent-primary)]" aria-hidden="true" />
                       <span className="text-xs text-[#c9b58c]">Enviar Mapa Geral</span>
                     </div>
                   )}
@@ -393,7 +393,7 @@ export const AdminMuseumSettings: React.FC = () => {
                     <div key={plan.id} className="floor-plan-item">
                       <img src={plan.imageUrl} className="floor-plan-image" />
                       <div className="flex-1">
-                        <div className="text-[#d4af37] font-bold">{plan.name}</div>
+                        <div className="text-[var(--accent-primary)] font-bold">{plan.name}</div>
                         <div className="text-xs opacity-70">Andar {plan.floor}</div>
                       </div>
                       <button onClick={() => handleDeleteFloorPlan(plan.id)} className="text-red-400 p-2"><Trash2 size={16} /></button>
@@ -409,7 +409,7 @@ export const AdminMuseumSettings: React.FC = () => {
         {activeTab === "visual" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
-              <Palette className="text-[#d4af37]" size={24} />
+              <Palette className="text-[var(--accent-primary)]" size={24} />
               <h2 className="visitor-card-title">Identidade Visual</h2>
             </div>
             <div className="space-y-6">
@@ -418,7 +418,7 @@ export const AdminMuseumSettings: React.FC = () => {
                   <div className="flex flex-col items-center p-6 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
                     <div
                       onClick={() => logoInputRef.current?.click()}
-                      className="w-24 h-24 rounded-full border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors bg-black/20"
+                      className="w-24 h-24 rounded-full border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[var(--accent-primary)] transition-colors bg-black/20"
                       role="button"
                       tabIndex={0}
                       aria-label="Fazer upload da logomarca"
@@ -427,7 +427,7 @@ export const AdminMuseumSettings: React.FC = () => {
                       {settings.logoUrl ? (
                         <img src={settings.logoUrl} className="w-full h-full object-cover" alt="Logomarca atual" />
                       ) : (
-                        <Upload size={24} className="text-[#d4af37]" aria-hidden="true" />
+                        <Upload size={24} className="text-[var(--accent-primary)]" aria-hidden="true" />
                       )}
                       <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])} />
                     </div>
@@ -438,12 +438,12 @@ export const AdminMuseumSettings: React.FC = () => {
                     <div className="flex flex-col items-center p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
                       <div
                         onClick={() => bannerInputRef.current?.click()}
-                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors"
+                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[var(--accent-primary)] transition-colors"
                       >
                         {settings.bannerUrl ? (
                           <img src={settings.bannerUrl} className="w-full h-full object-cover" alt="Fundo atual" />
                         ) : (
-                          <Upload size={20} className="text-[#d4af37]" />
+                          <Upload size={20} className="text-[var(--accent-primary)]" />
                         )}
                         <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("bannerUrl", e.target.files[0])} />
                       </div>
@@ -453,12 +453,12 @@ export const AdminMuseumSettings: React.FC = () => {
                     <div className="flex flex-col items-center p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
                       <div
                         onClick={() => frameInputRef.current?.click()}
-                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[#d4af37] transition-colors"
+                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[var(--accent-primary)] transition-colors"
                       >
                         {settings.frameUrl ? (
                           <img src={settings.frameUrl} className="w-full h-full object-cover" alt="Moldura atual" />
                         ) : (
-                          <Upload size={20} className="text-[#d4af37]" />
+                          <Upload size={20} className="text-[var(--accent-primary)]" />
                         )}
                         <input ref={frameInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("frameUrl", e.target.files[0])} />
                       </div>
@@ -490,7 +490,7 @@ export const AdminMuseumSettings: React.FC = () => {
                       </div>
                       <div
                         onClick={() => setSettings({ ...settings, theme: settings.theme === 'dark' ? 'light' : 'dark' })}
-                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.theme === 'dark' ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
+                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.theme === 'dark' ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}`}
                         role="switch"
                         aria-checked={settings.theme === 'dark'}
                         aria-label="Alternar tema escuro"
@@ -505,7 +505,7 @@ export const AdminMuseumSettings: React.FC = () => {
                       </div>
                       <div
                         onClick={() => setSettings({ ...settings, historicalFont: !settings.historicalFont })}
-                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-[#d4af37]' : 'bg-[#463420]'}`}
+                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}`}
                         role="switch"
                         aria-checked={settings.historicalFont}
                         aria-label={t("admin.museumsettings.alternarFonteHistrica", `Alternar fonte histórica`)}
@@ -551,13 +551,13 @@ export const AdminMuseumSettings: React.FC = () => {
         {activeTab === "financeiro" && (
           <div className="visitor-card">
             <div className="visitor-card-header">
-              <CreditCard className="text-[#d4af37]" size={24} />
+              <CreditCard className="text-[var(--accent-primary)]" size={24} />
               <h2 className="visitor-card-title">{t("admin.museumsettings.configuraesFinanceiras", `Configurações Financeiras`)}</h2>
             </div>
 
             <div className="space-y-6">
               <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)] text-sm text-[#c9b58c] flex gap-3 items-start leading-relaxed">
-                <HelpCircle size={32} className="text-[#d4af37] shrink-0" />
+                <HelpCircle size={32} className="text-[var(--accent-primary)] shrink-0" />
                 <p>
                   Para receber pagamentos diretamente em sua conta, você deve configurar o seu <strong>Wallet ID</strong> do Asaas.
                   O sistema realizará um split automático: <strong>{t("admin.museumsettings.95ParaVoc", `95% para você`)}</strong> e 5% de taxa da plataforma.
@@ -568,8 +568,8 @@ export const AdminMuseumSettings: React.FC = () => {
                 <label className="flex items-center gap-2">
                   ID da Carteira Asaas (Wallet ID)
                   <div className="group relative">
-                    <HelpCircle size={14} className="text-[#d4af37] cursor-help" />
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black border border-[#d4af37] rounded-lg text-[10px] invisible group-hover:visible shadow-xl z-50">{t("admin.museumsettings.vocEncontraEsteIdNoMenuConfiguraesGtWebh", `
+                    <HelpCircle size={14} className="text-[var(--accent-primary)] cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black border border-[var(--accent-primary)] rounded-lg text-[10px] invisible group-hover:visible shadow-xl z-50">{t("admin.museumsettings.vocEncontraEsteIdNoMenuConfiguraesGtWebh", `
                       Você encontra este ID no menu "Configurações &gt; Webhooks &gt; Token de Autenticação" ou entrando em contato com o suporte Asaas.
                     `)}</div>
                   </div>
@@ -584,12 +584,12 @@ export const AdminMuseumSettings: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">{t("admin.museumsettings.comissoPlataforma", `Comissão Plataforma`)}</h4>
+                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">{t("admin.museumsettings.comissoPlataforma", `Comissão Plataforma`)}</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">5%</p>
                   <p className="text-[10px] opacity-60">{t("admin.museumsettings.retidosNaTransao", `Retidos na transação`)}</p>
                 </div>
                 <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[#d4af37] text-xs font-bold uppercase mb-2">Seu Recebimento</h4>
+                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">Seu Recebimento</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">95%</p>
                   <p className="text-[10px] opacity-60">Direto na sua carteira</p>
                 </div>

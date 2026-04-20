@@ -49,7 +49,7 @@ export const Toolbar: React.FC = () => {
         title: {
             fontSize: '12px',
             fontWeight: 700,
-            color: '#d4af37',
+            color: 'var(--accent-primary)',
             textTransform: 'uppercase' as const,
             letterSpacing: '2px',
             display: 'flex',
@@ -228,7 +228,7 @@ export const Toolbar: React.FC = () => {
         },
         zoomFill: {
             height: '100%',
-            background: 'linear-gradient(90deg, #d4af37 0%, #f0d878 100%)',
+            background: 'linear-gradient(90deg, var(--accent-primary) 0%, #f0d878 100%)',
             borderRadius: '3px',
             transition: 'width 0.2s ease',
         },
@@ -236,7 +236,7 @@ export const Toolbar: React.FC = () => {
             fontSize: '12px',
             fontFamily: 'monospace',
             fontWeight: 700,
-            color: '#d4af37',
+            color: 'var(--accent-primary)',
             width: '48px',
             textAlign: 'center' as const,
         },
@@ -273,7 +273,7 @@ export const Toolbar: React.FC = () => {
                             }}
                         >
                             <div style={styles.elementIcon}>
-                                <Type size={22} color="#d4af37" />
+                                <Type size={22} color="var(--accent-primary)" />
                             </div>
                             <span style={styles.elementLabel}>Texto</span>
                             <span style={styles.elementSub}>Adicionar texto</span>
@@ -292,7 +292,7 @@ export const Toolbar: React.FC = () => {
                             }}
                         >
                             <div style={styles.elementIcon}>
-                                <QrCode size={22} color="#d4af37" />
+                                <QrCode size={22} color="var(--accent-primary)" />
                             </div>
                             <span style={styles.elementLabel}>QR Code</span>
                             <span style={styles.elementSub}>{t("admin.toolbar.validao", `Validação`)}</span>
@@ -322,7 +322,7 @@ export const Toolbar: React.FC = () => {
                                 }}
                             >
                                 <div style={styles.variableIcon}>
-                                    <v.icon size={14} color="#d4af37" />
+                                    <v.icon size={14} color="var(--accent-primary)" />
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <div style={styles.variableLabel}>{v.label}</div>

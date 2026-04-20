@@ -85,25 +85,25 @@ export const AdminVisitors: React.FC = () => {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <h1 className="section-title">👥 {t("admin.visitors.title")}</h1>
-        <button onClick={handleExportCSV} className="btn btn-secondary">
+        <button onClick={handleExportCSV} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
           📥 {t("admin.visitors.exportCSV")}
         </button>
       </div>
 
       {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="stat-card">
-          <div className="stat-value">{total}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{total}</div>
           <div className="stat-label">{t("admin.visitors.totalVisitors")}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">
             {Math.round(visitors.reduce((acc, v) => acc + v.xp, 0) / visitors.length) || 0}
           </div>
           <div className="stat-label">{t("admin.visitors.avgXP")}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">
             {Math.round(visitors.reduce((acc, v) => acc + (v.age || 0), 0) / visitors.filter(v => v.age).length) || 0}
           </div>
           <div className="stat-label">{t("admin.visitors.avgAge")}</div>
@@ -111,7 +111,7 @@ export const AdminVisitors: React.FC = () => {
       </div>
 
       {/* Busca */}
-      <div className="card" style={{ marginBottom: "1.5rem", padding: "1rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "1.5rem", padding: "1rem" }}>
         <input
           type="text"
           placeholder={`🔍 ${t("admin.visitors.searchPlaceholder")}`}
@@ -131,7 +131,7 @@ export const AdminVisitors: React.FC = () => {
       {loading && <p>{t("admin.visitors.loading")}</p>}
 
       {!loading && filteredVisitors.length === 0 && (
-        <div className="card">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
           <p>{t("admin.visitors.noData")}</p>
         </div>
       )}
@@ -184,7 +184,7 @@ export const AdminVisitors: React.FC = () => {
                   {new Date(visitor.lastAccessAt).toLocaleDateString()}
                 </td>
                 <td style={{ textAlign: "right" }}>
-                  <Link to={`/admin/visitantes/${visitor.id}`} className="btn btn-secondary">
+                  <Link to={`/admin/visitantes/${visitor.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                     {t("admin.visitors.viewDetails")}
                   </Link>
                 </td>

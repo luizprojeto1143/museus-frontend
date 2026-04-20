@@ -177,7 +177,7 @@ export const VisualScannerPage: React.FC = () => {
                 {!scanning && !loading && (
                     <div className="visual-scanner-start-overlay backdrop-blur-md">
                         <div className="visual-scanner-start-content flex flex-col items-center">
-                            <div className="bg-blue-500/20 p-6 rounded-full mb-6">
+                            <div className="bg-[var(--accent-primary)]/20 p-6 rounded-full mb-6">
                                 <Brain size={48} className="text-blue-400" />
                             </div>
                             <h2 className="text-2xl font-bold text-white mb-2">{t("visitor.visualScanner.title", "Scanner de Obras (IA)")}</h2>
@@ -197,7 +197,7 @@ export const VisualScannerPage: React.FC = () => {
 
                 {loading && (
                     <div className="visual-scanner-loading-overlay backdrop-blur-sm">
-                        <Loader2 className="animate-spin text-blue-500 mb-4" size={48} />
+                        <Loader2 className="animate-spin text-[var(--accent-primary)] mb-4" size={48} />
                         <p className="text-white font-medium">{status}</p>
                     </div>
                 )}

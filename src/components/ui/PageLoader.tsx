@@ -1,111 +1,167 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { springs, fadeIn } from "../../lib/motion";
 
-const spinnerKeyframes = `
-@keyframes cv-spin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-@keyframes cv-pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), 0 0 60px rgba(212, 175, 55, 0.1); }
-  50%       { box-shadow: 0 0 40px rgba(212, 175, 55, 0.6), 0 0 80px rgba(212, 175, 55, 0.2); }
-}
-@keyframes cv-fade-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-`;
-
-const styles: Record<string, React.CSSProperties> = {
-  overlay: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    width: "100%",
-    background: "var(--bg-page, #0f0a06)",
-    flexDirection: "column",
-    gap: "1.5rem",
-    animation: "cv-fade-in 0.3s ease-out forwards",
-  },
-  spinnerWrapper: {
-    position: "relative",
-    width: "64px",
-    height: "64px",
-    animation: "cv-pulse-glow 2s ease-in-out infinite",
-    borderRadius: "50%",
-  },
-  spinnerOuter: {
-    position: "absolute",
-    inset: 0,
-    borderRadius: "50%",
-    border: "2px solid transparent",
-    borderTopColor: "var(--accent-primary, #d4af37)",
-    borderRightColor: "var(--accent-primary, #d4af37)",
-    animation: "cv-spin 0.9s linear infinite",
-  },
-  spinnerInner: {
-    position: "absolute",
-    inset: "10px",
-    borderRadius: "50%",
-    border: "2px solid transparent",
-    borderBottomColor: "rgba(212, 175, 55, 0.4)",
-    borderLeftColor: "rgba(212, 175, 55, 0.4)",
-    animation: "cv-spin 1.4s linear infinite reverse",
-  },
-  dot: {
-    position: "absolute",
-    inset: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "8px",
-    height: "8px",
-    borderRadius: "50%",
-    background: "var(--accent-primary, #d4af37)",
-    boxShadow: "0 0 10px rgba(212, 175, 55, 0.8)",
-  },
-  label: {
-    fontSize: "0.75rem",
-    fontWeight: 700,
-    letterSpacing: "0.2em",
-    textTransform: "uppercase" as const,
-    color: "rgba(212, 175, 55, 0.5)",
-    fontFamily: "var(--fm, 'DM Mono', monospace)",
-  },
-};
+const loadingMessages = [
+  "Carregando...",
+  "Preparando interface...",
+  "Quase lá...",
+  "Organizando dados...",
+  "Finalizando...",
+];
 
 interface PageLoaderProps {
-  /** Optional label below the spinner. Default: "Carregando" */
+  /** Optional label below the spinner. Uses rotating messages by default. */
   label?: string;
   /** If true, shows inline (no full-screen overlay) */
   inline?: boolean;
+  /** Optional progress value 0-100 */
+  progress?: number;
 }
 
+/**
+ * PageLoader — Smart loading component with Framer Motion.
+ *
+ * Features:
+ * - Rotating loading messages
+ * - Optional progress bar
+ * - Dual-ring spinner with glow
+ * - Fade in/out with AnimatePresence
+ *
+ * @example
+ * <PageLoader />
+ * <PageLoader inline label="Buscando obras..." />
+ * <PageLoader progress={65} />
+ */
 export const PageLoader: React.FC<PageLoaderProps> = ({
-  label = "Carregando",
+  label,
   inline = false,
+  progress,
 }) => {
+  const [msgIndex, setMsgIndex] = useState(0);
+
+  // Rotate messages every 2.5s if no fixed label
+  useEffect(() => {
+    if (label) return;
+    const interval = setInterval(() => {
+      setMsgIndex((prev) => (prev + 1) % loadingMessages.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [label]);
+
+  const currentMessage = label || loadingMessages[msgIndex];
+
   return (
-    <>
-      <style>{spinnerKeyframes}</style>
-      <div
-        style={
-          inline
-            ? { ...styles.overlay, height: "200px", background: "transparent" }
-            : styles.overlay
-        }
-        role="status"
-        aria-label={label}
-        aria-live="polite"
-      >
-        <div style={styles.spinnerWrapper}>
-          <div style={styles.spinnerOuter} />
-          <div style={styles.spinnerInner} />
-          <div style={styles.dot} />
-        </div>
-        <span style={styles.label} aria-hidden="true">
-          {label}
-        </span>
+    <motion.div
+      className={
+        inline
+          ? "flex flex-col items-center justify-center gap-5 py-12"
+          : "flex flex-col items-center justify-center gap-5 min-h-screen w-full bg-[var(--bg-page)]"
+      }
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      role="status"
+      aria-label={currentMessage}
+      aria-live="polite"
+    >
+      {/* Spinner */}
+      <div className="relative w-16 h-16">
+        {/* Outer ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full border-2 border-transparent"
+          style={{
+            borderTopColor: "var(--accent-primary, #d4af37)",
+            borderRightColor: "var(--accent-primary, #d4af37)",
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Inner ring */}
+        <motion.div
+          className="absolute rounded-full border-2 border-transparent"
+          style={{
+            inset: "10px",
+            borderBottomColor: "var(--accent-secondary, #cd7f32)",
+            borderLeftColor: "var(--accent-secondary, #cd7f32)",
+            opacity: 0.5,
+          }}
+          animate={{ rotate: -360 }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+        />
+
+        {/* Center dot with glow */}
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
+          style={{
+            background: "var(--accent-primary, #d4af37)",
+            boxShadow: "0 0 12px var(--accent-primary, #d4af37)",
+          }}
+          animate={{
+            scale: [1, 1.4, 1],
+            opacity: [0.8, 1, 0.8],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Outer glow */}
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          animate={{
+            boxShadow: [
+              "0 0 20px rgba(212, 175, 55, 0.15)",
+              "0 0 40px rgba(212, 175, 55, 0.3)",
+              "0 0 20px rgba(212, 175, 55, 0.15)",
+            ],
+          }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
       </div>
-    </>
+
+      {/* Progress bar (optional) */}
+      {progress !== undefined && (
+        <div className="w-48 h-1 rounded-full bg-[var(--border-subtle)] overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            style={{
+              background:
+                "linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))",
+            }}
+            initial={{ width: "0%" }}
+            animate={{ width: `${Math.min(progress, 100)}%` }}
+            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+          />
+        </div>
+      )}
+
+      {/* Rotating message */}
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={currentMessage}
+          className="text-xs font-bold tracking-[0.2em] uppercase text-[var(--accent-primary)] opacity-50 font-[var(--font-body)]"
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 0.5, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.3 }}
+          aria-hidden="true"
+        >
+          {currentMessage}
+        </motion.span>
+      </AnimatePresence>
+
+      {/* Progress percentage */}
+      {progress !== undefined && (
+        <span className="text-xs tabular-nums text-[var(--fg-secondary)]">
+          {Math.round(progress)}%
+        </span>
+      )}
+    </motion.div>
   );
 };
 

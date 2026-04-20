@@ -118,7 +118,7 @@ export const AdminEventCheckIn: React.FC = () => {
                             if (e.key === 'Enter') handleCheckIn((e.target as HTMLInputElement).value);
                         }}
                     />
-                    <button className="btn btn-secondary">Buscar</button>
+                    <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">Buscar</button>
                 </div>
             </div>
         </div>

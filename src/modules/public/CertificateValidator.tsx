@@ -55,7 +55,7 @@ export const CertificateValidator: React.FC = () => {
     // Extract tenant theme from query params or data if possible, 
     // but for now, we'll try to apply data-driven styling when data is loaded.
     const themeStyles = data ? {
-        '--primary-color': '#d4af37', // We could fetch this from backend if we extend the API
+        '--primary-color': 'var(--accent-primary)', // We could fetch this from backend if we extend the API
         '--text-color': '#f5e6d3',
     } as React.CSSProperties : {};
 

@@ -42,7 +42,7 @@ export const AdminMemberships: React.FC = () => {
         } catch (err) { toast.error("Erro ao criar plano"); }
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -57,19 +57,19 @@ export const AdminMemberships: React.FC = () => {
             {/* Stats */}
             {stats && (
                 <div className="card-grid">
-                    <div className="stat-card">
-                        <Users style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
-                        <p className="stat-value">{stats.active}</p>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                        <Users style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
+                        <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.active}</p>
                         <p className="stat-label">Assinantes Ativos</p>
                     </div>
-                    <div className="stat-card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                         <TrendingUp className="mx-auto text-green-500 mb-2" size={24} />
-                        <p className="stat-value" style={{ color: "#22c55e" }}>R$ {stats.mrr?.toFixed(2)}</p>
+                        <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "#22c55e" }}>R$ {stats.mrr?.toFixed(2)}</p>
                         <p className="stat-label">MRR</p>
                     </div>
-                    <div className="stat-card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                         <Crown className="mx-auto text-purple-500 mb-2" size={24} />
-                        <p className="stat-value">{stats.plans?.length || 0}</p>
+                        <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.plans?.length || 0}</p>
                         <p className="stat-label">Planos</p>
                     </div>
                 </div>
@@ -79,7 +79,7 @@ export const AdminMemberships: React.FC = () => {
             {stats?.plans && stats.plans.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {stats.plans.map((p: any) => (
-                        <div key={p.id} className="card">
+                        <div key={p.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                             <Crown className="text-amber-500 mb-3" size={28} />
                             <h3 className="text-white font-bold text-lg">{p.name}</h3>
                             <p className="text-amber-400 text-2xl font-black mt-1">R$ {Number(p.monthlyPrice).toFixed(2)}<span className="text-zinc-400 text-sm font-normal">{t("admin.memberships.ms", `/mês`)}</span></p>
@@ -91,15 +91,15 @@ export const AdminMemberships: React.FC = () => {
             )}
 
             {showPlanForm && (
-                <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>Novo Plano</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={planForm.name} onChange={e => setPlanForm({ ...planForm, name: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} placeholder="Amigo do Museu" /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.memberships.preoMensalR", `Preço Mensal (R$)`)}</label><input type="number" value={planForm.monthlyPrice} onChange={e => setPlanForm({ ...planForm, monthlyPrice: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.memberships.preoAnualR", `Preço Anual (R$)`)}</label><input type="number" value={planForm.yearlyPrice} onChange={e => setPlanForm({ ...planForm, yearlyPrice: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Desconto Loja (%)</label><input type="number" value={planForm.shopDiscount} onChange={e => setPlanForm({ ...planForm, shopDiscount: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={planForm.name} onChange={e => setPlanForm({ ...planForm, name: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} placeholder="Amigo do Museu" /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.memberships.preoMensalR", `Preço Mensal (R$)`)}</label><input type="number" value={planForm.monthlyPrice} onChange={e => setPlanForm({ ...planForm, monthlyPrice: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.memberships.preoAnualR", `Preço Anual (R$)`)}</label><input type="number" value={planForm.yearlyPrice} onChange={e => setPlanForm({ ...planForm, yearlyPrice: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Desconto Loja (%)</label><input type="number" value={planForm.shopDiscount} onChange={e => setPlanForm({ ...planForm, shopDiscount: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.memberships.descrio", `Descrição`)}</label><textarea value={planForm.description} onChange={e => setPlanForm({ ...planForm, description: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.memberships.descrio", `Descrição`)}</label><textarea value={planForm.description} onChange={e => setPlanForm({ ...planForm, description: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowPlanForm(false)}>Cancelar</Button>
                         <Button onClick={onSavePlan}>Criar Plano</Button>
@@ -108,7 +108,7 @@ export const AdminMemberships: React.FC = () => {
             )}
 
             {/* Members List */}
-            <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                 <div className="px-6 py-4 border-b border-white/5"><h2 className="card-title" style={{ margin: 0 }}>Assinantes</h2></div>
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">

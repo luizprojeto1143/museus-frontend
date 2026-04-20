@@ -96,8 +96,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           const equip = res.data;
           const mergedSettings = {
             ...equip,
-            primaryColor: equip.corPrimaria || equip.tenant?.primaryColor || "#d4af37",
-            secondaryColor: equip.corSecundaria || equip.tenant?.secondaryColor || "#cd7f32",
+            primaryColor: equip.corPrimaria || equip.tenant?.primaryColor || "var(--accent-primary)",
+            secondaryColor: equip.corSecundaria || equip.tenant?.secondaryColor || "var(--accent-secondary)",
             logoUrl: equip.logoUrl || equip.tenant?.logoUrl,
             welcomeVideoUrl: equip.welcomeVideoUrl || equip.tenant?.welcomeVideoUrl,
             theme: equip.theme || equip.tenant?.theme || "dark",

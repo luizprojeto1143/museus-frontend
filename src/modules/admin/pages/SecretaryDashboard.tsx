@@ -107,7 +107,7 @@ const SecretaryDashboard: React.FC = () => {
                     title="Equipamentos"
                     value={data.cards.totalEquipments}
                     icon="🏛️"
-                    color="#3b82f6"
+                    color="var(--accent-primary)"
                 />
                 <Card
                     title="Projetos Ativos"

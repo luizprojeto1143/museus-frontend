@@ -46,11 +46,11 @@ export const AdminContacts: React.FC = () => {
         }
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     const statusBadge = (status: string) => {
         const map: Record<string, { label: string; cls: string }> = {
-            NEW: { label: "Novo", cls: "bg-blue-500/10 text-blue-400" },
+            NEW: { label: "Novo", cls: "bg-[var(--accent-primary)]/10 text-blue-400" },
             READ: { label: "Lido", cls: "bg-green-500/10 text-green-400" },
             ARCHIVED: { label: "Arquivado", cls: "0/10 text-gray-400" }
         };
@@ -75,7 +75,7 @@ export const AdminContacts: React.FC = () => {
             </div>
 
             {messages.length === 0 ? (
-                <div className="card" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <Mail size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <p style={{ color: "#64748b" }}>Nenhuma mensagem recebida.</p>
                 </div>
@@ -84,7 +84,7 @@ export const AdminContacts: React.FC = () => {
                     {messages.map(msg => (
                         <div
                             key={msg.id}
-                            className="card" style={{ overflow: "hidden", transition: "all 0.2s" }}
+                            className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", transition: "all 0.2s" }}
                         >
                             <div
                                 style={{ padding: "1rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "background 0.2s" }}

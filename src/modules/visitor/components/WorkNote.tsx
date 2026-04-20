@@ -26,7 +26,7 @@ export const WorkNote: React.FC<WorkNoteProps> = ({ workId }) => {
     };
 
     return (
-        <div className="card" style={{ padding: "1rem", marginTop: "1rem" }}>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", marginTop: "1rem" }}>
             <h3 className="card-title" style={{ fontSize: "1rem", marginBottom: "0.5rem" }}>
                 📝 {t("visitor.work.myNotes", "Minhas Anotações")}
             </h3>
@@ -40,7 +40,7 @@ export const WorkNote: React.FC<WorkNoteProps> = ({ workId }) => {
             />
             <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "0.5rem" }}>
                 {saved && <span style={{ color: "green", fontSize: "0.8rem" }}>Salvo!</span>}
-                <button className="btn btn-secondary" onClick={handleSave} style={{ padding: "0.25rem 0.75rem", fontSize: "0.85rem" }}>
+                <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handleSave} style={{ padding: "0.25rem 0.75rem", fontSize: "0.85rem" }}>
                     {t("common.save", "Salvar")}
                 </button>
             </div>

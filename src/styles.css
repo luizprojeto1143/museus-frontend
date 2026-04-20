@@ -35,12 +35,65 @@
   --shadow-glow: 0 0 30px rgba(212, 175, 55, 0.2);
   --shadow-surface: 0 10px 40px rgba(0, 0, 0, 0.6);
   
+  --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 28px;
+  --radius-xl: 40px;
   --font-heading: 'Bodoni Moda', Georgia, serif;
   --font-body: 'Syne', system-ui, sans-serif;
 
+  /* --- Motion Tokens --- */
+  --duration-instant: 0.1s;
+  --duration-fast: 0.15s;
+  --duration-base: 0.3s;
+  --duration-medium: 0.5s;
+  --duration-slow: 0.7s;
+  --easing-premium: cubic-bezier(0.23, 1, 0.32, 1);
+  --easing-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Glass Tokens --- */
+  --glass-bg: rgba(26, 17, 8, 0.4);
+  --glass-blur: blur(28px);
+  --glass-border: rgba(212, 175, 55, 0.1);
+  --glass-bg-light: rgba(255, 255, 255, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.12);
+
+  /* --- Shadow Tokens --- */
+  --shadow-premium: 0 32px 64px -16px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+
   color-scheme: dark;
+}
+
+/* --- Reusable Keyframes --- */
+@keyframes cv-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes cv-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cv-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cv-pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+  50%      { box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
+}
+
+@keyframes cv-float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes cv-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 :root[data-theme="light"] {

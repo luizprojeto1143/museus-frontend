@@ -157,7 +157,7 @@ export const MasterProviders: React.FC = () => {
 
                             <div className="flex flex-wrap gap-1.5 mb-6">
                                 {provider.services.map(s => (
-                                    <span key={s} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-md text-[10px] uppercase font-bold tracking-wider">
+                                    <span key={s} className="px-2 py-0.5 bg-[var(--accent-primary)]/10 text-blue-400 border border-blue-500/20 rounded-md text-[10px] uppercase font-bold tracking-wider">
                                         {serviceLabels[s] || s}
                                     </span>
                                 ))}
@@ -205,10 +205,10 @@ export const MasterProviders: React.FC = () => {
                                             onClick={() => handleToggleService(opt)}
                                             className={`
                                                 flex items-center gap-2 p-3 text-left border rounded-xl transition-all
-                                                ${formData.services.includes(opt) ? 'bg-blue-500/10 border-blue-500' : 'bg-white/5 border-white/10 hover:border-white/20'}
+                                                ${formData.services.includes(opt) ? 'bg-[var(--accent-primary)]/10 border-blue-500' : 'bg-white/5 border-white/10 hover:border-white/20'}
                                             `}
                                         >
-                                            <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.services.includes(opt) ? 'bg-blue-500 border-blue-500' : 'border-white/20'}`}>
+                                            <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.services.includes(opt) ? 'bg-[var(--accent-primary)] border-blue-500' : 'border-white/20'}`}>
                                                 {formData.services.includes(opt) && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
                                             </div>
                                             <span className="text-xs">{serviceLabels[opt]}</span>

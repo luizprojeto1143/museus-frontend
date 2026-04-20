@@ -94,7 +94,7 @@ export const TotemEventDetails: React.FC = () => {
                         marginBottom: "2rem",
                         border: "1px solid rgba(255,255,255,0.1)"
                     }}>
-                        <h1 style={{ margin: "0 0 1rem", color: "#d4af37" }}>{event.title}</h1>
+                        <h1 style={{ margin: "0 0 1rem", color: "var(--accent-primary)" }}>{event.title}</h1>
                         <div style={{ display: "flex", gap: "2rem", color: "rgba(255,255,255,0.7)" }}>
                             <div>
                                 <strong>Data:</strong> {new Date(event.startDate).toLocaleDateString()}
@@ -168,7 +168,7 @@ export const TotemEventDetails: React.FC = () => {
                                     <button
                                         onClick={() => handleCheckIn(att.code)}
                                         style={{
-                                            background: "#d4af37",
+                                            background: "var(--accent-primary)",
                                             color: "#000",
                                             border: "none",
                                             padding: "0.8rem 1.5rem",
@@ -193,7 +193,7 @@ export const TotemEventDetails: React.FC = () => {
             )}
             <style>{`
                 input:focus {
-                    border-color: #d4af37 !important;
+                    border-color: var(--accent-primary) !important;
                 }
             `}</style>
         </div>

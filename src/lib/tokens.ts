@@ -140,6 +140,69 @@ export const tokens = {
     toast:   500,
     tooltip: 600,
   },
+
+  // ─── Motion Tokens (NEW) ───────────────────────────────────
+
+  /** Duration tokens in seconds — mirrors CSS --duration-* variables */
+  motion: {
+    duration: {
+      instant: 0.1,
+      fast:    0.15,
+      base:    0.3,
+      medium:  0.5,
+      slow:    0.7,
+      page:    0.6,
+    },
+    /** Named easing curves — matches CSS --easing-* variables */
+    easing: {
+      premium:    "cubic-bezier(0.23, 1, 0.32, 1)",
+      smooth:     "cubic-bezier(0.16, 1, 0.3, 1)",
+      inOut:      "cubic-bezier(0.45, 0, 0.55, 1)",
+      decelerate: "cubic-bezier(0, 0, 0.2, 1)",
+      accelerate: "cubic-bezier(0.4, 0, 1, 1)",
+      bounce:     "cubic-bezier(0.34, 1.56, 0.64, 1)",
+    },
+    /** Spring configs for Framer Motion */
+    spring: {
+      soft:   { stiffness: 120, damping: 20, mass: 1 },
+      bouncy: { stiffness: 300, damping: 15, mass: 0.8 },
+      stiff:  { stiffness: 400, damping: 30, mass: 0.5 },
+      smooth: { stiffness: 80,  damping: 20, mass: 1.2 },
+      snap:   { stiffness: 500, damping: 35, mass: 0.3 },
+    },
+  },
+
+  // ─── Breakpoint Tokens (NEW) ───────────────────────────────
+
+  /** Responsive breakpoints matching Tailwind defaults */
+  breakpoint: {
+    sm:  640,
+    md:  768,
+    lg:  1024,
+    xl:  1280,
+    "2xl": 1536,
+  },
+
+  // ─── Glass Tokens (NEW) ────────────────────────────────────
+
+  /** Glassmorphism presets */
+  glass: {
+    light: {
+      bg: "rgba(255, 255, 255, 0.08)",
+      blur: "blur(20px)",
+      border: "rgba(255, 255, 255, 0.12)",
+    },
+    medium: {
+      bg: "rgba(26, 17, 8, 0.4)",
+      blur: "blur(28px)",
+      border: "rgba(212, 175, 55, 0.1)",
+    },
+    heavy: {
+      bg: "rgba(15, 10, 6, 0.75)",
+      blur: "blur(40px)",
+      border: "rgba(212, 175, 55, 0.15)",
+    },
+  },
 } as const;
 
 /** Type helper — infer the value types from the tokens object */
@@ -153,6 +216,8 @@ export const gradients = {
   darkSurface:    `linear-gradient(135deg, rgba(255,255,255,0.03), transparent)`,
   glassSurface:   `linear-gradient(135deg, rgba(255,255,255,0.05), transparent 60%)`,
   premiumDark:    `linear-gradient(180deg, ${tokens.background.surface}, ${tokens.background.page})`,
+  accentGlow:     `radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.15), transparent 70%)`,
+  heroShimmer:    `linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.06), transparent)`,
 } as const;
 
 /** Commonly used CSS variable references (for inline styles via var()) */
@@ -161,6 +226,7 @@ export const cssVar = {
   accentSecondary:  "var(--accent-secondary)",
   bgPage:           "var(--bg-page)",
   bgSurface:        "var(--bg-surface)",
+  bgSurfaceHover:   "var(--bg-surface-hover)",
   fgMain:           "var(--fg-main)",
   fgSecondary:      "var(--fg-secondary)",
   borderSubtle:     "var(--border-subtle)",
@@ -169,4 +235,42 @@ export const cssVar = {
   shadowPremium:    "var(--shadow-premium)",
   radiusMd:         "var(--radius-md)",
   radiusLg:         "var(--radius-lg)",
+  glassBg:          "var(--glass-bg)",
+  glassBlur:        "var(--glass-blur)",
+  glassBorder:      "var(--glass-border)",
 } as const;
+
+// ─── Helpers ─────────────────────────────────────────────────
+
+/**
+ * Resolve a CSS custom property value at runtime.
+ * Useful for reading tenant-overridden accent colors in JS.
+ *
+ * @param varName - CSS variable name, e.g. "--accent-primary"
+ * @param fallback - Fallback default
+ */
+export function resolveCSSVar(varName: string, fallback = ""): string {
+  if (typeof window === "undefined") return fallback;
+  return (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue(varName)
+      .trim() || fallback
+  );
+}
+
+/**
+ * Check if current viewport matches a breakpoint.
+ *
+ * @param bp - Breakpoint key from tokens
+ * @param direction - "up" (min-width) or "down" (max-width)
+ */
+export function matchesBreakpoint(
+  bp: keyof typeof tokens.breakpoint,
+  direction: "up" | "down" = "up"
+): boolean {
+  if (typeof window === "undefined") return false;
+  const value = tokens.breakpoint[bp];
+  const query =
+    direction === "up" ? `(min-width: ${value}px)` : `(max-width: ${value - 1}px)`;
+  return window.matchMedia(query).matches;
+}

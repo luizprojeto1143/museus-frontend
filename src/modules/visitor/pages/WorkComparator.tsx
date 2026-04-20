@@ -30,7 +30,7 @@ export const WorkComparator: React.FC = () => {
 
     if (loading) return (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <Loader2 className="animate-spin" style={{ color: '#d4af37' }} />
+            <Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
     );
 
@@ -61,7 +61,7 @@ export const WorkComparator: React.FC = () => {
         }}>
             <span style={{ color: '#ddd', fontSize: '0.85rem', textAlign: 'right' }}>{left || "—"}</span>
             <span style={{
-                color: '#d4af37',
+                color: 'var(--accent-primary)',
                 fontSize: '0.6rem',
                 fontWeight: 900,
                 textTransform: 'uppercase',
@@ -105,7 +105,7 @@ export const WorkComparator: React.FC = () => {
                     color: 'white', fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.25rem',
                     fontFamily: 'Georgia, serif'
                 }}>{work.title}</h3>
-                <p style={{ color: '#d4af37', fontSize: '0.75rem', fontWeight: 600 }}>{work.artist}</p>
+                <p style={{ color: 'var(--accent-primary)', fontSize: '0.75rem', fontWeight: 600 }}>{work.artist}</p>
                 {work.year && <p style={{ color: '#888', fontSize: '0.7rem', marginTop: '0.15rem' }}>{work.year}</p>}
             </div>
         </div>
@@ -122,7 +122,7 @@ export const WorkComparator: React.FC = () => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     margin: '0 auto 0.75rem'
                 }}>
-                    <ArrowLeftRight size={24} style={{ color: '#d4af37' }} />
+                    <ArrowLeftRight size={24} style={{ color: 'var(--accent-primary)' }} />
                 </div>
                 <h1 style={{
                     fontSize: '1.8rem', fontWeight: 900, color: 'white',
@@ -134,7 +134,7 @@ export const WorkComparator: React.FC = () => {
                 {/* Gold divider */}
                 <div style={{
                     width: '60px', height: '2px', margin: '1rem auto 0',
-                    background: 'linear-gradient(90deg, transparent, #d4af37, transparent)'
+                    background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)'
                 }} />
             </div>
 
@@ -145,7 +145,7 @@ export const WorkComparator: React.FC = () => {
             }}>
                 <div>
                     <label style={{
-                        display: 'block', color: '#d4af37', fontSize: '0.7rem',
+                        display: 'block', color: 'var(--accent-primary)', fontSize: '0.7rem',
                         fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
                         marginBottom: '0.5rem'
                     }}>Obra 1</label>
@@ -168,7 +168,7 @@ export const WorkComparator: React.FC = () => {
                 </div>
                 <div>
                     <label style={{
-                        display: 'block', color: '#d4af37', fontSize: '0.7rem',
+                        display: 'block', color: 'var(--accent-primary)', fontSize: '0.7rem',
                         fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
                         marginBottom: '0.5rem'
                     }}>Obra 2</label>
@@ -213,7 +213,7 @@ export const WorkComparator: React.FC = () => {
                     }}>
                         <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3))' }} />
                         <span style={{
-                            color: '#d4af37', fontWeight: 900, fontSize: '0.75rem',
+                            color: 'var(--accent-primary)', fontWeight: 900, fontSize: '0.75rem',
                             letterSpacing: '0.2em', textTransform: 'uppercase'
                         }}>VS</span>
                         <div style={{ flex: 1, height: '1px', background: 'linear-gradient(270deg, transparent, rgba(212,175,55,0.3))' }} />
@@ -238,7 +238,7 @@ export const WorkComparator: React.FC = () => {
                     }}>
                         <div style={{ background: 'rgba(30,32,38,0.95)', padding: '1rem 1.25rem' }}>
                             <p style={{
-                                color: '#d4af37', fontSize: '0.6rem', fontWeight: 800,
+                                color: 'var(--accent-primary)', fontSize: '0.6rem', fontWeight: 800,
                                 textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem'
                             }}>{t("visitor.workcomparator.descrio", `Descrição`)}</p>
                             <p style={{
@@ -248,7 +248,7 @@ export const WorkComparator: React.FC = () => {
                         </div>
                         <div style={{ background: 'rgba(30,32,38,0.95)', padding: '1rem 1.25rem' }}>
                             <p style={{
-                                color: '#d4af37', fontSize: '0.6rem', fontWeight: 800,
+                                color: 'var(--accent-primary)', fontSize: '0.6rem', fontWeight: 800,
                                 textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem'
                             }}>{t("visitor.workcomparator.descrio", `Descrição`)}</p>
                             <p style={{

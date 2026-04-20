@@ -448,8 +448,8 @@ export const TenantForm: React.FC = () => {
                           {opt.desc}
                         </div>
                         {isSelected && (
-                          <div style={{ position: 'absolute', top: '1rem', right: '1rem', color: '#3b82f6' }}>
-                            <CheckCircle2 size={24} fill="currentColor" className="text-blue-500 bg-white rounded-full" />
+                          <div style={{ position: 'absolute', top: '1rem', right: '1rem', color: 'var(--accent-primary)' }}>
+                            <CheckCircle2 size={24} fill="currentColor" className="text-[var(--accent-primary)] bg-white rounded-full" />
                           </div>
                         )}
                       </div>

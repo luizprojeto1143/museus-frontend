@@ -36,7 +36,7 @@ export const MunicipalPPA: React.FC = () => {
 
     if (loading) return (
         <div className="p-20 text-center flex flex-col items-center gap-4">
-            <Loader2 className="animate-spin text-blue-600" size={48} />
+            <Loader2 className="animate-spin text-[var(--accent-primary)]" size={48} />
             <p className="font-black text-slate-800 uppercase tracking-widest text-xs">Consolidando Orçamento e Metas PPA...</p>
         </div>
     );
@@ -56,7 +56,7 @@ export const MunicipalPPA: React.FC = () => {
                     >
                         {[2024, 2025, 2026, 2027, 2028].map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
-                    <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 rounded-2xl shadow-lg shadow-blue-600/20">
+                    <Button className="bg-[var(--accent-primary)] hover:bg-blue-700 text-white font-bold px-8 rounded-2xl shadow-lg shadow-blue-600/20">
                         Exportar Relatório PPA
                     </Button>
                 </div>
@@ -70,8 +70,8 @@ export const MunicipalPPA: React.FC = () => {
                     </div>
                 ) : goals.map((g, idx) => {
                     const pct = g.targetValue > 0 ? Math.min(Math.round((g.currentValue / g.targetValue) * 100), 100) : 0;
-                    const colorClass = pct >= 90 ? 'bg-emerald-500' : pct >= 50 ? 'bg-blue-500' : 'bg-rose-500';
-                    const textColorClass = pct >= 90 ? 'text-emerald-600' : pct >= 50 ? 'text-blue-600' : 'text-rose-600';
+                    const colorClass = pct >= 90 ? 'bg-emerald-500' : pct >= 50 ? 'bg-[var(--accent-primary)]' : 'bg-rose-500';
+                    const textColorClass = pct >= 90 ? 'text-emerald-600' : pct >= 50 ? 'text-[var(--accent-primary)]' : 'text-rose-600';
 
                     return (
                         <div key={idx} className="bg-white rounded-[2.5rem] border border-slate-200 p-10 shadow-sm hover:shadow-xl transition-all group">
@@ -81,7 +81,7 @@ export const MunicipalPPA: React.FC = () => {
                                     <div className="flex items-center gap-2">
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{g.metric}</span>
                                         <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{g.goals.length} Unidades Culturais</span>
+                                        <span className="text-[10px] font-black text-[var(--accent-primary)] uppercase tracking-widest">{g.goals.length} Unidades Culturais</span>
                                     </div>
                                 </div>
                                 <div className={`text-3xl font-black ${textColorClass} italic tracking-tighter`}>{pct}%</div>

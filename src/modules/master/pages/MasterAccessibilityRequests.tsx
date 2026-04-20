@@ -370,7 +370,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
                                             <span>{progress}%</span>
                                         </div>
                                         <div style={{ width: "100%", height: "6px", backgroundColor: "#334155", borderRadius: "3px", overflow: "hidden" }}>
-                                            <div style={{ width: `${progress}%`, height: "100%", backgroundColor: "#3b82f6", transition: "width 0.3s ease" }}></div>
+                                            <div style={{ width: `${progress}%`, height: "100%", backgroundColor: "var(--accent-primary)", transition: "width 0.3s ease" }}></div>
                                         </div>
                                     </div>
                                 )}

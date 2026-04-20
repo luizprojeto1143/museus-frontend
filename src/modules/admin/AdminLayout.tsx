@@ -55,8 +55,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [tenantId]);
 
   const themeStyles = features ? {
-    "--accent-primary": features.primaryColor || (isCityMode ? "#2563eb" : "#d4af37"),
-    "--accent-secondary": features.secondaryColor || (isCityMode ? "#0ea5e9" : "#cd7f32"),
+    "--accent-primary": features.primaryColor || (isCityMode ? "var(--accent-primary)" : "var(--accent-primary)"),
+    "--accent-secondary": features.secondaryColor || (isCityMode ? "#0ea5e9" : "var(--accent-secondary)"),
   } as React.CSSProperties : {};
 
   type SidebarLink = { to: string; label: string; icon: string; show: boolean };
@@ -209,7 +209,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`} style={themeStyles}>
       {/* AMBIENT BACKGROUND - ADAPTIVE */}
       <div className="ambient-bg">
-        <div className={`ambient-orb w-[600px] h-[600px] ${isCityMode ? 'bg-blue-600/10' : 'bg-gold-500/10'} top-[-5%] left-[-5%]`} />
+        <div className={`ambient-orb w-[600px] h-[600px] ${isCityMode ? 'bg-[var(--accent-primary)]/10' : 'bg-gold-500/10'} top-[-5%] left-[-5%]`} />
         <div className={`ambient-orb w-[500px] h-[500px] ${isCityMode ? 'bg-indigo-600/10' : 'bg-bronze-500/10'} bottom-[-5%] right-[-5%]`} />
       </div>
 
@@ -233,7 +233,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 shadow-xl ${isCityMode ? 'bg-blue-600 shadow-blue-500/20' : 'bg-gradient-to-br from-gold-500 to-bronze-600 shadow-gold-500/20'}`}>
+             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 shadow-xl ${isCityMode ? 'bg-[var(--accent-primary)] shadow-blue-500/20' : 'bg-gradient-to-br from-gold-500 to-bronze-600 shadow-gold-500/20'}`}>
                 <img 
                   src={features?.logoUrl || "/logo-culturaviva.jpg"} 
                   alt="" 
@@ -346,7 +346,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                 <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Autenticado como</span>
                 <span className="text-white font-black text-xs">{userName || "Administrador"}</span>
              </div>
-             <div className={`px-4 py-1.5 rounded-full border border-white/10 font-black text-[10px] uppercase tracking-widest ${isCityMode ? 'bg-blue-500/10 text-blue-400' : 'bg-gold-500/10 text-gold-400'}`}>
+             <div className={`px-4 py-1.5 rounded-full border border-white/10 font-black text-[10px] uppercase tracking-widest ${isCityMode ? 'bg-[var(--accent-primary)]/10 text-blue-400' : 'bg-gold-500/10 text-gold-400'}`}>
                 {isCityMode ? "Gestão Municipal" : "Gestor Cultural"}
              </div>
           </div>

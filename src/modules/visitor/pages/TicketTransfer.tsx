@@ -32,10 +32,10 @@ export const TicketTransfer: React.FC = () => {
                     <Check size={40} style={{ color: '#22c55e' }} />
                 </div>
                 <h1 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white', marginBottom: '0.5rem' }}>{t("visitor.tickettransfer.transfernciaConcluda", `Transferência Concluída!`)}</h1>
-                <p style={{ color: '#888', fontSize: '0.9rem' }}>O ingresso foi transferido para <strong style={{ color: '#d4af37' }}>{success.toName}</strong></p>
+                <p style={{ color: '#888', fontSize: '0.9rem' }}>O ingresso foi transferido para <strong style={{ color: 'var(--accent-primary)' }}>{success.toName}</strong></p>
                 <div style={{ marginTop: '1.5rem', background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1rem', padding: '1.5rem' }}>
                     <p style={{ color: '#aaa', fontSize: '0.8rem' }}>{t("visitor.tickettransfer.novoCdigoDoIngresso", `Novo código do ingresso:`)}</p>
-                    <p style={{ color: '#d4af37', fontWeight: 900, fontSize: '1.5rem', letterSpacing: '0.1em', marginTop: '0.25rem' }}>{success.newCode}</p>
+                    <p style={{ color: 'var(--accent-primary)', fontWeight: 900, fontSize: '1.5rem', letterSpacing: '0.1em', marginTop: '0.25rem' }}>{success.newCode}</p>
                 </div>
                 <button onClick={() => { setSuccess(null); setForm({ registrationId: '', toName: '', toEmail: '' }); }} style={{ marginTop: '1.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.75rem 2rem', borderRadius: '1rem', fontWeight: 700, cursor: 'pointer' }}>
                     Nova Transferência
@@ -47,7 +47,7 @@ export const TicketTransfer: React.FC = () => {
     return (
         <div style={{ padding: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <ArrowRightLeft size={36} style={{ color: '#d4af37', margin: '0 auto 0.75rem' }} />
+                <ArrowRightLeft size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 0.75rem' }} />
                 <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>Transferir Ingresso</h1>
                 <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '0.25rem' }}>Transfira seu ingresso para outra pessoa</p>
             </div>
@@ -66,7 +66,7 @@ export const TicketTransfer: React.FC = () => {
                     <input value={form.toEmail} onChange={e => setForm({ ...form, toEmail: e.target.value })} type="email" placeholder="email@exemplo.com" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none' }} />
                 </div>
 
-                <button onClick={onTransfer} disabled={loading} style={{ marginTop: '0.5rem', width: '100%', background: loading ? '#555' : 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', border: 'none', padding: '1rem', borderRadius: '1rem', fontWeight: 800, fontSize: '0.95rem', cursor: loading ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <button onClick={onTransfer} disabled={loading} style={{ marginTop: '0.5rem', width: '100%', background: loading ? '#555' : 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', border: 'none', padding: '1rem', borderRadius: '1rem', fontWeight: 800, fontSize: '0.95rem', cursor: loading ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                     {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                     {loading ? 'Transferindo...' : 'Transferir Ingresso'}
                 </button>

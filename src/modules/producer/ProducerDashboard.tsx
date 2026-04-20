@@ -98,7 +98,7 @@ export const ProducerDashboard: React.FC = () => {
                 <h1 className="section-title">🎪 {t("producer.dashboard.title")}</h1>
                 <div className="card-grid" style={{ marginBottom: "2rem" }}>
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="stat-card" style={{ minHeight: 90 }}>
+                        <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ minHeight: 90 }}>
                             <div className="skeleton-line" style={{ width: "60%", height: 28 }} />
                             <div className="skeleton-line" style={{ width: "40%", height: 14, marginTop: 8 }} />
                         </div>
@@ -133,7 +133,7 @@ export const ProducerDashboard: React.FC = () => {
                         <button className="btn btn-primary btn-lg" onClick={() => navigate("/producer/events/new")}>
                             <Plus size={18} /> Criar Primeiro Evento
                         </button>
-                        <button className="btn btn-outline" onClick={() => navigate("/producer/profile")}>
+                        <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-transparent text-[var(--accent-primary)] border-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--fg-inverse)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => navigate("/producer/profile")}>
                             Completar Perfil
                         </button>
                     </div>
@@ -143,14 +143,14 @@ export const ProducerDashboard: React.FC = () => {
             {/* METRICS GRID */}
             <div className="card-grid" style={{ marginBottom: "2rem" }}>
                 {/* Receita */}
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <div className="flex justify-between items-start mb-3">
                         <span className="stat-label">{t("producer.dashboard.metrics.revenue")}</span>
                         <div className="metric-icon-box metric-icon-revenue">
                             <DollarSign size={18} />
                         </div>
                     </div>
-                    <div className="stat-value">{stats.revenue}</div>
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.revenue}</div>
                     {stats.revenueGrowth !== null && (
                         <div className={`growth-indicator ${stats.revenueGrowth >= 0 ? "growth-up" : "growth-down"}`}>
                             <TrendingUp size={14} style={stats.revenueGrowth < 0 ? { transform: "rotate(180deg)" } : undefined} />
@@ -160,40 +160,40 @@ export const ProducerDashboard: React.FC = () => {
                 </div>
 
                 {/* Ingressos Vendidos */}
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <div className="flex justify-between items-start mb-3">
                         <span className="stat-label">{t("producer.dashboard.metrics.ticketsSold")}</span>
                         <div className="metric-icon-box metric-icon-tickets">
                             <Ticket size={18} />
                         </div>
                     </div>
-                    <div className="stat-value">{stats.ticketsSold}</div>
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.ticketsSold}</div>
                     <span className="text-[0.75rem] text-[var(--fg-tertiary)]">{t("producer.dashboard.metrics.accumulated")}</span>
                 </div>
 
                 {/* Eventos Ativos */}
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <div className="flex justify-between items-start mb-3">
                         <span className="stat-label">{t("producer.dashboard.metrics.activeEvents")}</span>
                         <div className="metric-icon-box metric-icon-events">
                             <Calendar size={18} />
                         </div>
                     </div>
-                    <div className="stat-value">{stats.activeEvents}</div>
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.activeEvents}</div>
                     <button onClick={() => navigate("/producer/events/new")} className="create-event-link">
                         <Plus size={14} /> {t("producer.dashboard.metrics.createNew")}
                     </button>
                 </div>
 
                 {/* Valor Captado */}
-                <div className="stat-card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <div className="flex justify-between items-start mb-3">
                         <span className="stat-label">{t("producer.dashboard.metrics.raisedAmount", "Valor Captado")}</span>
                         <div className="metric-icon-box metric-icon-raised">
                             <BarChart3 size={18} />
                         </div>
                     </div>
-                    <div className="stat-value">{stats.raisedAmount}</div>
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.raisedAmount}</div>
                     <span className="text-[0.75rem] text-[var(--fg-tertiary)]">{t("producer.dashboard.metrics.approvedProjects", "Em projetos aprovados")}</span>
                 </div>
             </div>
@@ -201,7 +201,7 @@ export const ProducerDashboard: React.FC = () => {
             {/* EVENTS & SERVICES */}
             <div className="event-grid-container">
                 {/* Próximos Eventos */}
-                <div className="card" style={{ gridColumn: nextEvents.length > 0 ? "span 2" : undefined }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ gridColumn: nextEvents.length > 0 ? "span 2" : undefined }}>
                     <div className="card-header-flex">
                         <h2 className="card-title" style={{ margin: 0 }}>📅 {t("producer.dashboard.nextEvents.title")}</h2>
                         <button onClick={() => navigate("/producer/events")} className="btn btn-ghost text-[0.85rem]">
@@ -245,7 +245,7 @@ export const ProducerDashboard: React.FC = () => {
                             <div className="empty-events-state">
                                 <Calendar size={32} className="mb-2 opacity-50 inline-block" />
                                 <p className="mb-4">Nenhum evento agendado. Crie seu primeiro evento!</p>
-                                <button className="btn btn-primary" onClick={() => navigate("/producer/events/new")}>
+                                <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => navigate("/producer/events/new")}>
                                     <Plus size={16} /> Criar Evento
                                 </button>
                             </div>
@@ -278,7 +278,7 @@ export const ProducerDashboard: React.FC = () => {
                     </div>
 
                     {/* Relatórios */}
-                    <div className="card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <h3 className="card-title mb-4">📊 {t("producer.dashboard.services.reports")}</h3>
                         <div className="report-button-list">
                             <button className="report-button">

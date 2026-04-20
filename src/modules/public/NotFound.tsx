@@ -10,12 +10,12 @@ export const NotFound: React.FC = () => {
         <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1108] text-[#EAE0D5] relative overflow-hidden font-serif">
             {/* Background Elements */}
             <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#d4af37] rounded-full blur-[150px]"></div>
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--accent-primary)] rounded-full blur-[150px]"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#8b7355] rounded-full blur-[150px]"></div>
             </div>
 
             <div className="relative z-10 text-center p-8 max-w-md">
-                <div className="text-[120px] font-bold text-[#d4af37] leading-none opacity-80" style={{ textShadow: "0 0 30px rgba(212, 175, 55, 0.3)" }}>
+                <div className="text-[120px] font-bold text-[var(--accent-primary)] leading-none opacity-80" style={{ textShadow: "0 0 30px rgba(212, 175, 55, 0.3)" }}>
                     404
                 </div>
 
@@ -30,14 +30,14 @@ export const NotFound: React.FC = () => {
                 <div className="flex flex-col gap-3">
                     <button
                         onClick={() => navigate("/")}
-                        className="w-full py-3 px-6 bg-gradient-to-r from-[#d4af37] to-[#b8860b] text-[#1a1108] font-bold rounded-lg shadow-lg hover:shadow-[#d4af37]/20 transition-all transform hover:scale-[1.02]"
+                        className="w-full py-3 px-6 bg-gradient-to-r from-[var(--accent-primary)] to-[#b8860b] text-[#1a1108] font-bold rounded-lg shadow-lg hover:shadow-[var(--accent-primary)]/20 transition-all transform hover:scale-[1.02]"
                     >
                         {t("common.backToHome", "Voltar ao Início")}
                     </button>
 
                     <button
                         onClick={() => navigate(-1)}
-                        className="w-full py-3 px-6 bg-transparent border border-[#463420] text-[#8b7355] font-bold rounded-lg hover:bg-[#463420]/20 hover:text-[#d4af37] transition-all"
+                        className="w-full py-3 px-6 bg-transparent border border-[#463420] text-[#8b7355] font-bold rounded-lg hover:bg-[#463420]/20 hover:text-[var(--accent-primary)] transition-all"
                     >
                         {t("common.goBack", "Voltar à página anterior")}
                     </button>

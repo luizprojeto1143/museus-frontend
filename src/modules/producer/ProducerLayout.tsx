@@ -80,11 +80,11 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
             >
                 <div className="p-6 md:p-8 border-b border-[#463420] min-h-[120px] flex items-center">
                     <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-[#D4AF37] text-[#1a1108] rounded-full flex items-center justify-center font-bold text-lg shadow-[0_0_10px_rgba(212,175,55,0.3)] shrink-0">
+                        <div className="w-10 h-10 bg-[var(--accent-primary)] text-[#1a1108] rounded-full flex items-center justify-center font-bold text-lg shadow-[0_0_10px_rgba(212,175,55,0.3)] shrink-0">
                             PC
                         </div>
                         <div>
-                            <div className="font-serif text-[1.1rem] text-[#D4AF37] leading-tight uppercase tracking-widest">
+                            <div className="font-serif text-[1.1rem] text-[var(--accent-primary)] leading-tight uppercase tracking-widest">
                                 {t("producer.layout.title")}
                             </div>
                             <div className="text-xs text-[#B0A090] italic mt-1">
@@ -104,8 +104,8 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                             to={link.to}
                             className={`
                                 flex items-center px-4 py-3 text-[#B0A090] rounded-lg transition-all text-[0.95rem] font-serif group
-                                hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]
-                                ${location.pathname === link.to ? "bg-[#D4AF37]/10 text-[#D4AF37] border-l-4 border-[#D4AF37]" : ""}
+                                hover:bg-[var(--accent-primary)]/10 hover:text-[var(--accent-primary)]
+                                ${location.pathname === link.to ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-l-4 border-[var(--accent-primary)]" : ""}
                             `}
                             onClick={() => setSidebarOpen(false)}
                         >
@@ -118,13 +118,13 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                 <div className="p-4 border-t border-[#463420] bg-black/10">
                     <button
                         onClick={logout}
-                        className="flex items-center justify-center w-full px-4 py-2 text-[#EAE0D5] border border-[#463420] rounded hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors gap-2 font-serif text-sm"
+                        className="flex items-center justify-center w-full px-4 py-2 text-[#EAE0D5] border border-[#463420] rounded hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)] transition-colors gap-2 font-serif text-sm"
                         aria-label={t("producer.layout.logout")}
                     >
                         <LogOut size={16} /> {t("producer.layout.logout")}
                     </button>
                     <div className="mt-4 flex justify-center">
-                        <Link to="/visitor" className="text-xs text-[#B0A090] hover:text-[#D4AF37] flex items-center gap-1">
+                        <Link to="/visitor" className="text-xs text-[#B0A090] hover:text-[var(--accent-primary)] flex items-center gap-1">
                             <ExternalLink size={12} /> Ir para Visão do Visitante
                         </Link>
                     </div>
@@ -135,7 +135,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
             <main className="flex-1 md:ml-[280px] min-h-screen flex flex-col w-full transition-all duration-300">
                 <header className="h-16 px-4 md:px-8 flex items-center justify-between md:justify-end bg-transparent md:bg-transparent border-b md:border-none border-[#463420]">
                     <button
-                        className="md:hidden text-[#D4AF37]"
+                        className="md:hidden text-[var(--accent-primary)]"
                         onClick={() => setSidebarOpen(true)}
                         aria-label="Abrir menu lateral"
                         aria-expanded={isSidebarOpen}
@@ -143,7 +143,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                         <Menu size={24} />
                     </button>
                     <div className="flex items-center gap-4">
-                        <span className="border border-[#D4AF37] text-[#D4AF37] px-3 py-1 rounded-full text-[0.7rem] uppercase font-bold tracking-widest">
+                        <span className="border border-[var(--accent-primary)] text-[var(--accent-primary)] px-3 py-1 rounded-full text-[0.7rem] uppercase font-bold tracking-widest">
                             Agente Cultural
                         </span>
                     </div>

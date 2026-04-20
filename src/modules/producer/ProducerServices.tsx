@@ -35,12 +35,12 @@ export const ProducerServices: React.FC = () => {
     };
 
     const serviceIcons: Record<string, React.ReactNode> = {
-        "LIBRAS_INTERPRETATION": <Ear size={40} className="text-[#D4AF37]" />,
-        "AUDIO_DESCRIPTION": <Mic size={40} className="text-[#D4AF37]" />,
-        "CAPTIONING": <MessageSquare size={40} className="text-[#D4AF37]" />,
-        "BRAILLE": <ShieldCheck size={40} className="text-[#D4AF37]" />,
-        "TACTILE_MODEL": <PlayCircle size={40} className="text-[#D4AF37]" />,
-        "EASY_READING": <ArrowRight size={40} className="text-[#D4AF37]" />
+        "LIBRAS_INTERPRETATION": <Ear size={40} className="text-[var(--accent-primary)]" />,
+        "AUDIO_DESCRIPTION": <Mic size={40} className="text-[var(--accent-primary)]" />,
+        "CAPTIONING": <MessageSquare size={40} className="text-[var(--accent-primary)]" />,
+        "BRAILLE": <ShieldCheck size={40} className="text-[var(--accent-primary)]" />,
+        "TACTILE_MODEL": <PlayCircle size={40} className="text-[var(--accent-primary)]" />,
+        "EASY_READING": <ArrowRight size={40} className="text-[var(--accent-primary)]" />
     };
 
     const fetchProviders = useCallback(() => {
@@ -88,7 +88,7 @@ export const ProducerServices: React.FC = () => {
         <div className="producer-services py-12 px-4 max-w-7xl mx-auto animate-in fade-in duration-500">
             <div className="text-center mb-16 space-y-4">
                 <h1 className="text-4xl md:text-5xl font-bold text-[#EAE0D5] font-serif">
-                    Marketplace de <span className="text-[#D4AF37]">Acessibilidade</span>
+                    Marketplace de <span className="text-[var(--accent-primary)]">Acessibilidade</span>
                 </h1>
                 <p className="max-w-2xl mx-auto text-[#B0A090] text-lg leading-relaxed">{t("producer.producerservices.encontrePrestadoresHomologadosParaTornar", `
                     Encontre prestadores homologados para tornar seu projeto acessível e cumprir as exigências legais.
@@ -98,7 +98,7 @@ export const ProducerServices: React.FC = () => {
 
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
-                    <Loader2 className="animate-spin text-[#D4AF37]" size={48} />
+                    <Loader2 className="animate-spin text-[var(--accent-primary)]" size={48} />
                     <p className="text-[#B0A090] font-medium">Carregando parceiros homologados...</p>
                 </div>
             ) : providers.length === 0 ? (
@@ -109,20 +109,20 @@ export const ProducerServices: React.FC = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {providers.map(provider => (
-                        <div key={provider.id} className="group relative bg-[#2c1e10] border border-[#463420] rounded-[2rem] p-8 flex flex-col hover:border-[#D4AF37]/50 transition-all hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1">
+                        <div key={provider.id} className="group relative bg-[#2c1e10] border border-[#463420] rounded-[2rem] p-8 flex flex-col hover:border-[var(--accent-primary)]/50 transition-all hover:shadow-2xl hover:shadow-black/20 hover:-translate-y-1">
                             <div className="flex justify-between items-start mb-6">
                                 <div className="space-y-1">
-                                    <h3 className="text-xl font-bold text-[#EAE0D5] group-hover:text-[#D4AF37] transition-colors">{provider.name}</h3>
+                                    <h3 className="text-xl font-bold text-[#EAE0D5] group-hover:text-[var(--accent-primary)] transition-colors">{provider.name}</h3>
                                     <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-1 text-[#D4AF37] text-sm font-bold">
+                                        <div className="flex items-center gap-1 text-[var(--accent-primary)] text-sm font-bold">
                                             <Star size={14} fill="currentColor" />
                                             <span>{provider.rating?.toFixed(1) || "Novo"}</span>
                                         </div>
                                         <span className="text-xs text-[#B0A090] font-medium">• {provider.completedJobs} jobs concluídos</span>
                                     </div>
                                 </div>
-                                <div className="bg-[#D4AF37]/10 p-4 rounded-2xl group-hover:bg-[#D4AF37]/20 transition-colors">
-                                    {serviceIcons[provider.services[0]] || <ShieldCheck size={32} className="text-[#D4AF37]" />}
+                                <div className="bg-[var(--accent-primary)]/10 p-4 rounded-2xl group-hover:bg-[var(--accent-primary)]/20 transition-colors">
+                                    {serviceIcons[provider.services[0]] || <ShieldCheck size={32} className="text-[var(--accent-primary)]" />}
                                 </div>
                             </div>
 
@@ -141,7 +141,7 @@ export const ProducerServices: React.FC = () => {
                             <div className="mt-auto pt-6 border-t border-[#463420] flex flex-col gap-3">
                                 <Button
                                     onClick={() => handleRequestQuote(provider)}
-                                    className="w-full py-4 bg-[#D4AF37] hover:bg-[#c5a028] text-[#1a1108] border-none rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-[#D4AF37]/20"
+                                    className="w-full py-4 bg-[var(--accent-primary)] hover:bg-[#c5a028] text-[#1a1108] border-none rounded-2xl font-black text-sm uppercase tracking-wider shadow-lg shadow-[var(--accent-primary)]/20"
                                     leftIcon={<MessageSquare size={18} fill="currentColor" />}
                                 >
                                     Solicitar Orçamento

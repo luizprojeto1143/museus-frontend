@@ -136,7 +136,7 @@ export const AdminEventSurvey: React.FC = () => {
                         <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                         <h3 className="text-white font-medium mb-1">Nenhuma pergunta configurada</h3>
                         <p className="text-zinc-400 mb-6">{t("admin.eventsurvey.crieUmFormulrioParaColetarFeedbackDosPar", `Crie um formulário para coletar feedback dos participantes.`)}</p>
-                        <button onClick={addQuestion} className="btn btn-primary">
+                        <button onClick={addQuestion} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                             <Plus className="w-4 h-4 mr-2" /> Adicionar Primeira Pergunta
                         </button>
                     </div>
@@ -146,10 +146,10 @@ export const AdminEventSurvey: React.FC = () => {
                             <div key={index} className="bg-zinc-900/60 p-4 rounded-lg border border-white/10 animate-fadeIn">
                                 <div className="flex gap-4">
                                     <div className="flex flex-col gap-2 pt-2 text-gray-400">
-                                        <button onClick={() => moveQuestion(index, 'up')} disabled={index === 0} className="hover:text-blue-600 disabled:opacity-30">
+                                        <button onClick={() => moveQuestion(index, 'up')} disabled={index === 0} className="hover:text-[var(--accent-primary)] disabled:opacity-30">
                                             <ArrowUp className="w-5 h-5" />
                                         </button>
-                                        <button onClick={() => moveQuestion(index, 'down')} disabled={index === questions.length - 1} className="hover:text-blue-600 disabled:opacity-30">
+                                        <button onClick={() => moveQuestion(index, 'down')} disabled={index === questions.length - 1} className="hover:text-[var(--accent-primary)] disabled:opacity-30">
                                             <ArrowDown className="w-5 h-5" />
                                         </button>
                                     </div>
@@ -198,7 +198,7 @@ export const AdminEventSurvey: React.FC = () => {
                                                     type="checkbox"
                                                     checked={q.required}
                                                     onChange={e => updateQuestion(index, 'required', e.target.checked)}
-                                                    className="w-4 h-4 text-blue-600 rounded"
+                                                    className="w-4 h-4 text-[var(--accent-primary)] rounded"
                                                 />
                                                 Obrigatória
                                             </label>

@@ -28,7 +28,7 @@ const serviceTypeLabels: Record<string, { label: string; icon: string }> = {
 
 const statusLabels: Record<string, { label: string; color: string }> = {
     PENDING: { label: "Pendente", color: "#f59e0b" },
-    IN_PROGRESS: { label: "Em Execução", color: "#3b82f6" },
+    IN_PROGRESS: { label: "Em Execução", color: "var(--accent-primary)" },
     COMPLETED: { label: "Concluído", color: "#10b981" },
     CANCELLED: { label: "Cancelado", color: "#ef4444" }
 };

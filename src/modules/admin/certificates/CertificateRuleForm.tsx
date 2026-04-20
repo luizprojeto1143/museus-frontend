@@ -57,7 +57,7 @@ export const CertificateRuleForm: React.FC = () => {
 
     return (
         <div className="visitor-card max-w-2xl m-6">
-            <h1 className="text-2xl font-bold mb-6 text-[#d4af37]">{t("admin.certificaterule.novaRegraDeAutomao", `Nova Regra de Automação`)}</h1>
+            <h1 className="text-2xl font-bold mb-6 text-[var(--accent-primary)]">{t("admin.certificaterule.novaRegraDeAutomao", `Nova Regra de Automação`)}</h1>
 
             <div className="space-y-4">
                 <div className="visitor-input-group">

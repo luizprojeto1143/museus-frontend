@@ -101,7 +101,7 @@ export const ProducerEventForm: React.FC = () => {
 
     if (loading) return (
         <div className="flex justify-center items-center h-screen bg-[#1a1108]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--accent-primary)]"></div>
         </div>
     );
 
@@ -112,12 +112,12 @@ export const ProducerEventForm: React.FC = () => {
                     <Button
                         variant="ghost"
                         onClick={() => navigate("/producer/events")}
-                        className="w-10 h-10 p-0 rounded-full bg-[#2c1e10] hover:bg-[#D4AF37]/10 text-[#B0A090] border border-[#463420]"
+                        className="w-10 h-10 p-0 rounded-full bg-[#2c1e10] hover:bg-[var(--accent-primary)]/10 text-[#B0A090] border border-[#463420]"
                     >
                         <ArrowLeft size={20} />
                     </Button>
                     <div>
-                        <h1 className="text-3xl font-bold text-[#D4AF37] font-serif">
+                        <h1 className="text-3xl font-bold text-[var(--accent-primary)] font-serif">
                             {id ? "Editar Evento" : "Novo Evento"}
                         </h1>
                         <p className="text-[#B0A090]">{t("producer.producerevent.preenchaAsInformaesParaDivulgarNaAgendaC", `Preencha as informações para divulgar na agenda cultural.`)}</p>
@@ -128,7 +128,7 @@ export const ProducerEventForm: React.FC = () => {
 
                     {/* Basic Info */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
+                        <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold border-b border-[#463420] pb-2">
                             <Info size={18} /> Informações Básicas
                         </div>
 
@@ -139,8 +139,8 @@ export const ProducerEventForm: React.FC = () => {
                             onChange={handleChange}
                             required
                             placeholder="Ex: Festival de Jazz 2024"
-                            leftIcon={<AlignLeft size={18} className="text-[#D4AF37]" />}
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] h-12 text-lg font-bold"
+                            leftIcon={<AlignLeft size={18} className="text-[var(--accent-primary)]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] h-12 text-lg font-bold"
                         />
 
                         <Textarea
@@ -150,18 +150,18 @@ export const ProducerEventForm: React.FC = () => {
                             onChange={handleChange}
                             rows={5}
                             placeholder={t("producer.producerevent.descrevaOEventoAtraesEDetalhesImportante", `Descreva o evento, atrações e detalhes importantes...`)}
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                         />
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-[#B0A090] flex items-center gap-2">
-                                <Tag size={16} className="text-[#D4AF37]" /> Categoria
+                                <Tag size={16} className="text-[var(--accent-primary)]" /> Categoria
                             </label>
                             <select
                                 name="categoryId"
                                 value={formData.categoryId}
                                 onChange={handleChange}
-                                className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-3 text-[#EAE0D5] focus:border-[#D4AF37] outline-none transition-colors appearance-none"
+                                className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-3 text-[#EAE0D5] focus:border-[var(--accent-primary)] outline-none transition-colors appearance-none"
                             >
                                 <option value="" className="bg-[#2c1e10]">Selecione uma categoria (Opcional)</option>
                                 {categories.map(cat => (
@@ -173,7 +173,7 @@ export const ProducerEventForm: React.FC = () => {
 
                     {/* DateTime */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
+                        <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold border-b border-[#463420] pb-2">
                             <Calendar size={18} /> Data e Hora
                         </div>
 
@@ -186,7 +186,7 @@ export const ProducerEventForm: React.FC = () => {
                                     value={formData.startDate}
                                     onChange={handleChange}
                                     required
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] [color-scheme:dark]"
                                 />
                                 <Input
                                     label={t("producer.producerevent.horrioIncio", `Horário Início`)}
@@ -194,8 +194,8 @@ export const ProducerEventForm: React.FC = () => {
                                     type="time"
                                     value={formData.startTime}
                                     onChange={handleChange}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
-                                    leftIcon={<Clock size={18} className="text-[#D4AF37]" />}
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] [color-scheme:dark]"
+                                    leftIcon={<Clock size={18} className="text-[var(--accent-primary)]" />}
                                 />
                             </div>
                             <div className="space-y-4">
@@ -205,7 +205,7 @@ export const ProducerEventForm: React.FC = () => {
                                     type="date"
                                     value={formData.endDate}
                                     onChange={handleChange}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] [color-scheme:dark]"
                                 />
                                 <Input
                                     label={t("producer.producerevent.horrioFim", `Horário Fim`)}
@@ -213,8 +213,8 @@ export const ProducerEventForm: React.FC = () => {
                                     type="time"
                                     value={formData.endTime}
                                     onChange={handleChange}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37] [color-scheme:dark]"
-                                    leftIcon={<Clock size={18} className="text-[#D4AF37]" />}
+                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] [color-scheme:dark]"
+                                    leftIcon={<Clock size={18} className="text-[var(--accent-primary)]" />}
                                 />
                             </div>
                         </div>
@@ -222,7 +222,7 @@ export const ProducerEventForm: React.FC = () => {
 
                     {/* Location & Media */}
                     <div className="space-y-6">
-                        <div className="flex items-center gap-2 text-[#D4AF37] font-bold border-b border-[#463420] pb-2">
+                        <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold border-b border-[#463420] pb-2">
                             <MapPin size={18} /> Localização e Mídia
                         </div>
 
@@ -232,8 +232,8 @@ export const ProducerEventForm: React.FC = () => {
                             value={formData.location}
                             onChange={handleChange}
                             placeholder="Ex: Teatro Municipal - Sala 2"
-                            leftIcon={<MapPin size={18} className="text-[#D4AF37]" />}
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                            leftIcon={<MapPin size={18} className="text-[var(--accent-primary)]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                         />
 
                         <Input
@@ -242,8 +242,8 @@ export const ProducerEventForm: React.FC = () => {
                             value={formData.coverUrl}
                             onChange={handleChange}
                             placeholder="https://..."
-                            leftIcon={<ImageIcon size={18} className="text-[#D4AF37]" />}
-                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[#D4AF37]"
+                            leftIcon={<ImageIcon size={18} className="text-[var(--accent-primary)]" />}
+                            className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                         />
                         {formData.coverUrl && (
                             <div className="h-48 w-full rounded-xl overflow-hidden border border-[#463420]">
@@ -284,7 +284,7 @@ export const ProducerEventForm: React.FC = () => {
                             type="submit"
                             isLoading={saving}
                             leftIcon={<Save size={20} />}
-                            className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[#D4AF37]/20 border-none rounded-xl w-full md:w-auto"
+                            className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[var(--accent-primary)]/20 border-none rounded-xl w-full md:w-auto"
                         >
                             Salvar Evento
                         </Button>

@@ -49,7 +49,7 @@ export const AdminCategories: React.FC = () => {
           <h1 className="section-title">🏷 {t("admin.categories.title")}</h1>
 
         </div>
-        <Link to="/admin/categorias/nova" className="btn">
+        <Link to="/admin/categorias/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
           {t("admin.categories.new")}
         </Link>
       </div>
@@ -61,15 +61,15 @@ export const AdminCategories: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map(cat => (
-            <div key={cat.id} className="card relative group hover:border-[#d4af37] transition-all duration-300">
+            <div key={cat.id} className="card relative group hover:border-[var(--accent-primary)] transition-all duration-300">
               <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Link to={`/admin/categorias/${cat.id}`} className="p-2 text-[#d4af37] hover:bg-[#d4af37]/10 rounded-full">
+                <Link to={`/admin/categorias/${cat.id}`} className="p-2 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 rounded-full">
                   ✎
                 </Link>
               </div>
 
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full bg-[#d4af37]/10 flex items-center justify-center text-2xl border border-[#d4af37]/30">
+                <div className="w-12 h-12 rounded-full bg-[var(--accent-primary)]/10 flex items-center justify-center text-2xl border border-[var(--accent-primary)]/30">
                   🏷️
                 </div>
                 <div>
@@ -89,7 +89,7 @@ export const AdminCategories: React.FC = () => {
               <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--border-default)]">
                 <Link
                   to={`/admin/categorias/${cat.id}`}
-                  className="flex-1 text-center py-2 rounded bg-[#d4af37] text-[#1a1108] font-bold hover:brightness-110 transition-all"
+                  className="flex-1 text-center py-2 rounded bg-[var(--accent-primary)] text-[#1a1108] font-bold hover:brightness-110 transition-all"
                 >
                   {t("common.edit")}
                 </Link>
@@ -105,7 +105,7 @@ export const AdminCategories: React.FC = () => {
           {categories.length === 0 && (
             <div className="col-span-full text-center py-12 border border-dashed border-[var(--border-default)] rounded-xl bg-[var(--bg-root)]/50">
               <p className="text-[#8b7355] text-lg">{t("common.noData")}</p>
-              <Link to="/admin/categorias/nova" className="text-[#d4af37] hover:underline mt-2 inline-block">
+              <Link to="/admin/categorias/nova" className="text-[var(--accent-primary)] hover:underline mt-2 inline-block">
                 Criar primeira categoria
               </Link>
             </div>

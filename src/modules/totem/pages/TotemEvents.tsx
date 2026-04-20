@@ -67,7 +67,7 @@ export const TotemEvents: React.FC = () => {
                             gap: "1rem"
                         }}>
                             <div>
-                                <h3 style={{ margin: "0 0 0.5rem", fontSize: "1.4rem", color: "#d4af37" }}>{event.title}</h3>
+                                <h3 style={{ margin: "0 0 0.5rem", fontSize: "1.4rem", color: "var(--accent-primary)" }}>{event.title}</h3>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "rgba(255,255,255,0.6)", fontSize: "0.9rem" }}>
                                     <Clock size={16} />
                                     <span>{new Date(event.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -97,7 +97,7 @@ export const TotemEvents: React.FC = () => {
                                 style={{
                                     width: "100%",
                                     padding: "1rem",
-                                    background: "#3b82f6",
+                                    background: "var(--accent-primary)",
                                     color: "white",
                                     border: "none",
                                     borderRadius: "8px",
@@ -121,7 +121,7 @@ export const TotemEvents: React.FC = () => {
             <style>{`
                 .event-card:hover {
                     transform: translateY(-2px);
-                    border-color: #d4af37;
+                    border-color: var(--accent-primary);
                     transition: all 0.2s;
                 }
             `}</style>

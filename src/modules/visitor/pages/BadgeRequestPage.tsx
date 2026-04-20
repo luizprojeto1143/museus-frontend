@@ -67,13 +67,13 @@ export const BadgeRequestPage: React.FC = () => {
         <div className="p-6 pb-24 max-w-xl mx-auto min-h-screen relative">
             {/* AMBIENT BACKGROUND */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 blur-[120px] rounded-full" />
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 blur-[120px] rounded-full" />
             </div>
 
             <header className="mb-12 relative z-10">
-                <div className="bg-blue-500/10 w-fit p-4 rounded-3xl border border-blue-500/20 mb-6 shadow-xl shadow-blue-500/5">
-                    <BadgeCheck className="text-blue-500" size={40} />
+                <div className="bg-[var(--accent-primary)]/10 w-fit p-4 rounded-3xl border border-blue-500/20 mb-6 shadow-xl shadow-blue-500/5">
+                    <BadgeCheck className="text-[var(--accent-primary)]" size={40} />
                 </div>
                 <h1 className="text-4xl font-black text-white tracking-tighter mb-2 italic">Embaixador Real</h1>
                 <p className="text-slate-500 font-medium leading-relaxed max-w-sm">
@@ -126,14 +126,14 @@ export const BadgeRequestPage: React.FC = () => {
                     >
                         {/* LIGHT EFFECTS */}
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.15),transparent)] opacity-50" />
-                        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-500/10 rounded-full blur-[100px] group-hover:bg-blue-500/20 transition-colors" />
+                        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[var(--accent-primary)]/10 rounded-full blur-[100px] group-hover:bg-[var(--accent-primary)]/20 transition-colors" />
                         
                         <div className="flex justify-between items-start relative z-10">
                              <div className="flex flex-col">
                                 <span className="text-[8px] font-black text-blue-400 uppercase tracking-[0.4em] mb-1">Passaporte Oficial</span>
                                 <div className="font-black text-white text-lg tracking-tighter">QS <span className="opacity-50">CULTURA</span></div>
                              </div>
-                             <div className="bg-blue-500 rounded-full p-2 shadow-lg shadow-blue-500/20 border-2 border-white/10">
+                             <div className="bg-[var(--accent-primary)] rounded-full p-2 shadow-lg shadow-blue-500/20 border-2 border-white/10">
                                 <BadgeCheck className="text-white" size={24} />
                              </div>
                         </div>
@@ -172,7 +172,7 @@ export const BadgeRequestPage: React.FC = () => {
                         
                         <div className="pt-6">
                             <button 
-                                className="group w-full h-16 rounded-[24px] bg-white text-slate-950 hover:bg-blue-600 hover:text-white transition-all duration-300 shadow-2xl shadow-white/5 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50" 
+                                className="group w-full h-16 rounded-[24px] bg-white text-slate-950 hover:bg-[var(--accent-primary)] hover:text-white transition-all duration-300 shadow-2xl shadow-white/5 font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50" 
                                 type="submit" 
                                 disabled={submitting}
                             >

@@ -22,7 +22,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const UserIcon = L.divIcon({
     className: 'user-location-icon',
-    html: `<div style="background-color: #3b82f6; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>`,
+    html: `<div style="background-color: var(--accent-primary); width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>`,
     iconSize: [12, 12],
     iconAnchor: [6, 6]
 });
@@ -168,7 +168,7 @@ export const RouteMap: React.FC = () => {
                         <span>Passo {currentStopIndex + 1} de {route.stops.length}</span>
                     </div>
                     {userLocation && (
-                        <div className="flex items-center gap-1 text-[10px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full border border-blue-500/30">
+                        <div className="flex items-center gap-1 text-[10px] bg-[var(--accent-primary)]/20 text-blue-400 px-2 py-1 rounded-full border border-blue-500/30">
                             <LocateFixed size={10} /> GPS Ativo
                         </div>
                     )}

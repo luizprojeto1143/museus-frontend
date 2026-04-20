@@ -10,10 +10,10 @@ import "./AdminShared.css";
 
 
 const templates = [
-    { id: 'classic', name: 'Split Moderno', bg: 'linear-gradient(135deg, #1a1c22, #111827)', textColor: '#ffffff', accentColor: '#d4af37' },
+    { id: 'classic', name: 'Split Moderno', bg: 'linear-gradient(135deg, #1a1c22, #111827)', textColor: '#ffffff', accentColor: 'var(--accent-primary)' },
     { id: 'dark', name: 'Cyber Neon', bg: 'linear-gradient(135deg, #0a0b0d, #1a1c22)', textColor: '#ffffff', accentColor: '#a78bfa' },
-    { id: 'warm', name: 'Polaroid', bg: 'linear-gradient(135deg, #fdfbf7, #f4ede4)', textColor: '#4a2c1a', accentColor: '#d4af37' },
-    { id: 'modern', name: 'Capa Editorial', bg: 'linear-gradient(135deg, #1c1917, #0f0a06)', textColor: '#ffffff', accentColor: '#d4af37' }
+    { id: 'warm', name: 'Polaroid', bg: 'linear-gradient(135deg, #fdfbf7, #f4ede4)', textColor: '#4a2c1a', accentColor: 'var(--accent-primary)' },
+    { id: 'modern', name: 'Capa Editorial', bg: 'linear-gradient(135deg, #1c1917, #0f0a06)', textColor: '#ffffff', accentColor: 'var(--accent-primary)' }
 ];
 
 export const AdminInstagramCard: React.FC = () => {
@@ -217,7 +217,7 @@ export const AdminInstagramCard: React.FC = () => {
             const text = customText || selectedWork.description || '';
             if (text) drawText(text, 140, textY, 800, 42, '#4a2c1a', '28px "Georgia", serif');
 
-            ctx.fillStyle = '#d4af37';
+            ctx.fillStyle = 'var(--accent-primary)';
             ctx.fillRect(140, 1080 - 120, 800, 3);
             ctx.fillStyle = '#4a2c1a';
             ctx.font = 'bold 24px sans-serif';
@@ -269,7 +269,7 @@ export const AdminInstagramCard: React.FC = () => {
         toast.success("Card baixado! Pronto para postar no Instagram 📸");
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -281,9 +281,9 @@ export const AdminInstagramCard: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
                 {/* Controls */}
                 <div style={{ display: "grid", gap: "1rem" }}>
-                    <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                         <div>
-                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
+                            <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={selectedWork?.id || ''} onChange={e => setSelectedWork(works.find(w => w.id === e.target.value))} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione uma obra...</option>
                                 {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
@@ -291,7 +291,7 @@ export const AdminInstagramCard: React.FC = () => {
                         </div>
 
                         <div>
-                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Template</label>
+                            <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Template</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {templates.map(item => (
                                     <button key={item.id} onClick={() => setTemplate(item)} className={`p-3 rounded-xl border text-sm font-bold text-left transition-all ${template.id === item.id ? 'border-amber-500 bg-amber-500/10 text-amber-400' : 'border-white/10 text-gray-400 hover:bg-zinc-900/40 border border-gold/20/5'}`}>
@@ -303,7 +303,7 @@ export const AdminInstagramCard: React.FC = () => {
                         </div>
 
                         <div>
-                            <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Texto Customizado (opcional)</label>
+                            <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Texto Customizado (opcional)</label>
                             <textarea value={customText} onChange={e => setCustomText(e.target.value)} rows={3} placeholder={t("admin.instagramcard.deixeEmBrancoParaUsarADescrioDaObra", `Deixe em branco para usar a descrição da obra`)} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none resize-none focus:border-amber-500" />
                         </div>
 
@@ -315,7 +315,7 @@ export const AdminInstagramCard: React.FC = () => {
                 </div>
 
                 {/* Preview */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">{t("admin.instagramcard.prvia10801080", `Prévia 1080×1080`)}</p>
                     <canvas ref={canvasRef} style={{ width: '100%', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.1)' }} />
                 </div>

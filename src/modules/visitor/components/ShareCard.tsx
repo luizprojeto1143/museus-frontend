@@ -52,7 +52,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ work, onClose }) => {
                         style={{
                             background: work.imageUrl
                                 ? `url(${getFullUrl(work.imageUrl)}) center/cover`
-                                : "linear-gradient(135deg, #d4af37 0%, #1a1108 100%)"
+                                : "linear-gradient(135deg, var(--accent-primary) 0%, #1a1108 100%)"
                         }}
                     >
                         {!work.imageUrl && "🎨"}

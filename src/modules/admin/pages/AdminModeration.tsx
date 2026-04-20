@@ -44,7 +44,7 @@ export const AdminModeration: React.FC = () => {
         return true;
     });
 
-    if (loading && filteredReviews.length === 0) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading && filteredReviews.length === 0) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -64,7 +64,7 @@ export const AdminModeration: React.FC = () => {
                                 fontSize: "0.75rem",
                                 fontWeight: 700,
                                 transition: "all 0.2s",
-                                backgroundColor: statusFilter === f ? "#d4af37" : "rgba(255,255,255,0.05)",
+                                backgroundColor: statusFilter === f ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
                                 color: statusFilter === f ? "black" : "#94a3b8",
                                 border: "none",
                                 cursor: "pointer"
@@ -79,22 +79,22 @@ export const AdminModeration: React.FC = () => {
             {/* Stats */}
             {stats && (
                 <div className="grid grid-cols-4 gap-4">
-                    <div className="stat-card">
-                        <MessageSquare className="mx-auto text-blue-500 mb-1" size={20} />
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                        <MessageSquare className="mx-auto text-[var(--accent-primary)] mb-1" size={20} />
                         <p className="text-2xl font-black text-white">{stats.totalReviews}</p>
                         <p className="text-zinc-400 text-[10px] font-bold uppercase">Total</p>
                     </div>
-                    <div className="stat-card" style={{ borderColor: stats.pending > 0 ? "rgba(212,175,55,0.4)" : undefined }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ borderColor: stats.pending > 0 ? "rgba(212,175,55,0.4)" : undefined }}>
                         <AlertTriangle className="mx-auto text-amber-500 mb-1" size={20} />
                         <p className="text-2xl font-black text-amber-400">{stats.pending}</p>
                         <p className="text-zinc-400 text-[10px] font-bold uppercase">Pendentes</p>
                     </div>
-                    <div className="stat-card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                         <Check className="mx-auto text-green-500 mb-1" size={20} />
                         <p className="text-2xl font-black text-green-400">{stats.approved}</p>
                         <p className="text-zinc-400 text-[10px] font-bold uppercase">Aprovados</p>
                     </div>
-                    <div className="stat-card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                         <X className="mx-auto text-red-500 mb-1" size={20} />
                         <p className="text-2xl font-black text-red-400">{stats.flagged}</p>
                         <p className="text-zinc-400 text-[10px] font-bold uppercase">Rejeitados</p>
@@ -114,7 +114,7 @@ export const AdminModeration: React.FC = () => {
                         const mod = review.moderation;
                         const isModerated = mod && mod.isApproved !== null;
                         return (
-                            <div key={review.id} className="card" style={{ padding: "1.25rem", borderColor: !isModerated ? 'rgba(212,175,55,0.2)' : mod?.isApproved ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)' }}>
+                            <div key={review.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", borderColor: !isModerated ? 'rgba(212,175,55,0.2)' : mod?.isApproved ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)' }}>
                                 <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                                     <div style={{ flex: 1 }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>

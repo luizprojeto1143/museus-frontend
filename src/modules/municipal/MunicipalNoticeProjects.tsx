@@ -39,7 +39,7 @@ type Notice = {
 
 const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
     DRAFT: { label: "Rascunho", color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" },
-    SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+    SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
     UNDER_REVIEW: { label: "Em Análise", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
     APPROVED: { label: "Aprovado", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     REJECTED: { label: "Reprovado", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" },
@@ -89,7 +89,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
         return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
     };
 
-    if (loading) return <div className="p-20 text-center text-blue-600 font-bold">Carregando projetos consolidados...</div>;
+    if (loading) return <div className="p-20 text-center text-[var(--accent-primary)] font-bold">Carregando projetos consolidados...</div>;
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -144,7 +144,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                 <div key={project.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
                                     <div className="flex flex-col md:flex-row gap-6">
                                         <div className="flex md:flex-col items-center justify-center min-w-[80px] border-r border-slate-100 pr-6 gap-1">
-                                            <div className="text-blue-600 font-black text-2xl">
+                                            <div className="text-[var(--accent-primary)] font-black text-2xl">
                                                 {project.finalScore?.toFixed(1) || "--"}
                                             </div>
                                             <div className="text-[10px] text-slate-400 uppercase font-black tracking-tighter">Score</div>
@@ -161,11 +161,11 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                                     </span>
                                                 )}
                                             </div>
-                                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-[var(--accent-primary)] transition-colors">
                                                 {project.title}
                                             </h3>
                                             <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-400">
-                                                <div className="flex items-center gap-1.5"><Users size={12} className="text-blue-500" /> {project.proponent?.name}</div>
+                                                <div className="flex items-center gap-1.5"><Users size={12} className="text-[var(--accent-primary)]" /> {project.proponent?.name}</div>
                                                 <div className="flex items-center gap-1.5"><MapPin size={12} /> {project.targetRegion}</div>
                                                 <div className="flex items-center gap-1.5"><DollarSign size={12} /> {formatCurrency(project.requestedBudget)}</div>
                                             </div>
@@ -175,7 +175,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                             <Button
                                                 variant="ghost"
                                                 onClick={() => navigate(`/admin/projetos/${project.id}`)}
-                                                className="text-blue-600 font-bold hover:bg-blue-50 gap-2"
+                                                className="text-[var(--accent-primary)] font-bold hover:bg-blue-50 gap-2"
                                             >
                                                 Detalhes <ExternalLink size={16} />
                                             </Button>

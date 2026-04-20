@@ -39,14 +39,14 @@ export const SocialCheckinPage: React.FC = () => {
         finally { setPosting(false); }
     };
 
-    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: '#d4af37' }} /></div>;
+    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} /></div>;
 
     if (isGuest) {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
                 <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para fazer check-ins, interagir com o museu e ganhar recompensas virtuais!</p>
-                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
             </div>
         );
     }
@@ -54,7 +54,7 @@ export const SocialCheckinPage: React.FC = () => {
     return (
         <div style={{ padding: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <MapPin size={36} style={{ color: '#d4af37', margin: '0 auto 0.5rem' }} />
+                <MapPin size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 0.5rem' }} />
                 <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>Check-in</h1>
                 <p style={{ color: '#888', fontSize: '0.85rem' }}>{t("visitor.socialcheckinpage.marquePresenaECompartilheSuaVisita", `Marque presença e compartilhe sua visita!`)}</p>
             </div>
@@ -68,7 +68,7 @@ export const SocialCheckinPage: React.FC = () => {
                             <button key={e} onClick={() => setEmoji(e)} style={{ fontSize: '1.2rem', padding: '0.25rem 0.4rem', borderRadius: '0.5rem', border: 'none', background: emoji === e ? 'rgba(212,175,55,0.2)' : 'transparent', cursor: 'pointer', filter: emoji === e ? 'none' : 'grayscale(0.5)', transition: 'all 0.2s' }}>{e}</button>
                         ))}
                     </div>
-                    <button onClick={onPost} disabled={posting} style={{ background: 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '1rem', fontWeight: 800, fontSize: '0.85rem', cursor: posting ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <button onClick={onPost} disabled={posting} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', border: 'none', padding: '0.5rem 1.25rem', borderRadius: '1rem', fontWeight: 800, fontSize: '0.85rem', cursor: posting ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         {posting ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                         Check-in!
                     </button>

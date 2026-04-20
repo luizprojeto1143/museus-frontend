@@ -143,7 +143,7 @@ export const VisitorWardrobe: React.FC = () => {
     const getRarityStyle = (rarity: string) => {
         switch(rarity) {
             case "COMMON": return "border-white/5 bg-white/5";
-            case "RARE": return "border-blue-500/30 bg-blue-500/5 shadow-[0_0_20px_rgba(59,130,246,0.1)]";
+            case "RARE": return "border-blue-500/30 bg-[var(--accent-primary)]/5 shadow-[0_0_20px_rgba(59,130,246,0.1)]";
             case "EPIC": return "border-purple-500/30 bg-purple-500/5 shadow-[0_0_25px_rgba(168,85,247,0.1)]";
             case "LEGENDARY": return "border-yellow-500/40 bg-yellow-500/5 shadow-[0_0_35px_rgba(234,179,8,0.15)] ring-1 ring-yellow-500/20";
             case "EXCLUSIVE": return "border-green-500/30 bg-green-500/5 shadow-[0_0_20px_rgba(34,197,94,0.1)]";
@@ -155,14 +155,14 @@ export const VisitorWardrobe: React.FC = () => {
         <div className="p-6 max-w-2xl mx-auto pb-32 relative min-h-screen content-center">
             {/* AMBIENT BACKGROUND */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full" />
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--accent-primary)]/5 blur-[120px] rounded-full" />
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
             </div>
 
             <header className="mb-12 flex items-center justify-between sticky top-0 z-20 py-4 bg-slate-950/80 backdrop-blur-md -mx-6 px-6 border-b border-white/5">
                 <div>
                      <h1 className="text-3xl font-black text-white flex items-center gap-3">
-                        <User className="text-blue-500" size={32} /> Guarda-Roupa
+                        <User className="text-[var(--accent-primary)]" size={32} /> Guarda-Roupa
                      </h1>
                      <p className="text-slate-500 text-sm font-medium">Sua identidade cultural única</p>
                 </div>
@@ -179,7 +179,7 @@ export const VisitorWardrobe: React.FC = () => {
                         onClick={() => setSelectedCharId(profile.id)}
                         className={`flex-shrink-0 snap-center p-4 rounded-[32px] border-2 transition-all relative w-32
                             ${selectedCharId === profile.id 
-                                ? 'bg-blue-600/10 border-blue-500 shadow-xl shadow-blue-500/10' 
+                                ? 'bg-[var(--accent-primary)]/10 border-blue-500 shadow-xl shadow-blue-500/10' 
                                 : 'bg-white/5 border-white/5 hover:border-white/10'}
                         `}
                     >
@@ -243,7 +243,7 @@ export const VisitorWardrobe: React.FC = () => {
                         whileHover={{ y: -5 }}
                         onClick={() => currentChar?.equippedSkin && handleEquip("")}
                         className={`relative aspect-square rounded-3xl border transition-all duration-300 flex flex-col items-center justify-center p-4 group
-                            ${!currentChar?.equippedSkin ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' : 'border-white/5 bg-white/5 hover:border-white/20'}
+                            ${!currentChar?.equippedSkin ? 'border-blue-500 bg-[var(--accent-primary)]/10 ring-2 ring-blue-500/20' : 'border-white/5 bg-white/5 hover:border-white/20'}
                         `}
                     >
                          <img src={currentChar?.baseAvatarUrl || currentChar?.selectedCharacter?.imageUrl || '/default_avatar.png'} className="h-[75%] object-contain opacity-50 drop-shadow-lg rounded-full" alt="Padrão" />
@@ -263,7 +263,7 @@ export const VisitorWardrobe: React.FC = () => {
                             whileHover={{ y: -5 }}
                             onClick={() => !isEquipped && handleEquip(vs.skin.id)}
                             className={`relative aspect-square rounded-3xl border transition-all duration-300 flex flex-col items-center justify-center p-4 group
-                                ${isEquipped ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/20' : `${style} hover:border-white/20`}
+                                ${isEquipped ? 'border-blue-500 bg-[var(--accent-primary)]/10 ring-2 ring-blue-500/20' : `${style} hover:border-white/20`}
                             `}
                         >
                             <img src={vs.skin.imageUrl} className="h-[75%] object-contain drop-shadow-lg group-hover:scale-110 transition-transform" alt={vs.skin.name} />
@@ -273,7 +273,7 @@ export const VisitorWardrobe: React.FC = () => {
                             </div>
 
                             {isEquipped && (
-                                <div className="absolute top-2 right-2 bg-blue-500 rounded-full p-1.5 shadow-xl border-2 border-slate-950">
+                                <div className="absolute top-2 right-2 bg-[var(--accent-primary)] rounded-full p-1.5 shadow-xl border-2 border-slate-950">
                                     <Check size={12} className="text-white" />
                                 </div>
                             )}

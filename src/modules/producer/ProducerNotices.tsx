@@ -50,7 +50,7 @@ export const ProducerNotices: React.FC = () => {
 
     if (loading) return (
         <div className="flex justify-center py-20 animate-in fade-in duration-500">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#D4AF37]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--accent-primary)]"></div>
         </div>
     );
 
@@ -59,7 +59,7 @@ export const ProducerNotices: React.FC = () => {
             {/* Header */}
             <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif flex items-center gap-3">
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif flex items-center gap-3">
                         Editais Abertos
                     </h1>
                     <p className="text-[#B0A090]">Inscreva seus projetos e concorra a recursos disponibilizados.</p>
@@ -81,10 +81,10 @@ export const ProducerNotices: React.FC = () => {
                     notices.map(notice => (
                         <div
                             key={notice.id}
-                            className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] hover:border-[#D4AF37]/50 transition-all flex flex-col h-full group hover:-translate-y-1 shadow-lg shadow-black/20"
+                            className="bg-[#2c1e10] rounded-2xl p-6 border border-[#463420] hover:border-[var(--accent-primary)]/50 transition-all flex flex-col h-full group hover:-translate-y-1 shadow-lg shadow-black/20"
                         >
                             <div className="flex items-start justify-between mb-4">
-                                <div className="bg-[#D4AF37]/10 p-3 rounded-xl text-[#D4AF37]">
+                                <div className="bg-[var(--accent-primary)]/10 p-3 rounded-xl text-[var(--accent-primary)]">
                                     <FileText size={24} />
                                 </div>
                                 {notice.status === "INSCRIPTIONS_OPEN" ? (
@@ -92,7 +92,7 @@ export const ProducerNotices: React.FC = () => {
                                         Inscrições Abertas
                                     `)}</span>
                                 ) : notice.status === "RESULTS_PUBLISHED" ? (
-                                    <span className="bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-bold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/20">
+                                    <span className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-xs font-bold px-3 py-1 rounded-full uppercase border border-[var(--accent-primary)]/20">
                                         Resultados Publicados
                                     </span>
                                 ) : (
@@ -102,7 +102,7 @@ export const ProducerNotices: React.FC = () => {
                                 )}
                             </div>
 
-                            <h3 className="text-xl font-bold text-[#EAE0D5] mb-2 font-serif group-hover:text-[#D4AF37] transition-colors">
+                            <h3 className="text-xl font-bold text-[#EAE0D5] mb-2 font-serif group-hover:text-[var(--accent-primary)] transition-colors">
                                 {notice.title}
                             </h3>
 
@@ -118,7 +118,7 @@ export const ProducerNotices: React.FC = () => {
 
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {notice.culturalCategories?.map((cat, i) => (
-                                    <span key={i} className="bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#D4AF37]/20">
+                                    <span key={i} className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[var(--accent-primary)]/20">
                                         {cat}
                                     </span>
                                 ))}
@@ -134,7 +134,7 @@ export const ProducerNotices: React.FC = () => {
                                 {notice.maxPerProject && (
                                     <div className="flex justify-between items-center text-[#B0A090] pb-2 border-b border-[#463420]/30">
                                         <span>{t("producer.producernotices.mximoPorProjeto", `Máximo por projeto`)}</span>
-                                        <span className="text-[#D4AF37] font-bold">Até R$ {Number(notice.maxPerProject).toLocaleString()}</span>
+                                        <span className="text-[var(--accent-primary)] font-bold">Até R$ {Number(notice.maxPerProject).toLocaleString()}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between items-center text-[#B0A090]">
@@ -143,7 +143,7 @@ export const ProducerNotices: React.FC = () => {
                                 </div>
                                 <div className="flex justify-between items-center text-[#B0A090]">
                                     <span className="flex items-center gap-2"><Calendar size={14} /> Fim</span>
-                                    <span className="text-[#D4AF37] font-bold">{new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
+                                    <span className="text-[var(--accent-primary)] font-bold">{new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
                                 </div>
                             </div>
 
@@ -153,7 +153,7 @@ export const ProducerNotices: React.FC = () => {
                                         href={notice.documentUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="p-3 bg-black/30 text-[#D4AF37] hover:bg-black/50 rounded-xl transition-all border border-[#D4AF37]/20"
+                                        className="p-3 bg-black/30 text-[var(--accent-primary)] hover:bg-black/50 rounded-xl transition-all border border-[var(--accent-primary)]/20"
                                         title="Baixar Edital"
                                     >
                                         <Download size={18} />
@@ -162,14 +162,14 @@ export const ProducerNotices: React.FC = () => {
                                 {notice.status === "RESULTS_PUBLISHED" ? (
                                     <button
                                         onClick={() => navigate(`/producer/editais/${notice.id}/results`)}
-                                        className="flex-1 py-3 bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#D4AF37]/10"
+                                        className="flex-1 py-3 bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--accent-primary)]/10"
                                     >
                                         Ver Classificação <TrendingUp size={18} />
                                     </button>
                                 ) : notice.status === "INSCRIPTIONS_OPEN" && canSubmit ? (
                                     <button
                                         onClick={() => handleApply(notice.id)}
-                                        className="flex-1 py-3 bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#D4AF37]/10"
+                                        className="flex-1 py-3 bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--accent-primary)]/10"
                                     >
                                         Inscrever Projeto <ArrowRight size={18} />
                                     </button>

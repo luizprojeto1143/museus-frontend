@@ -37,7 +37,7 @@ export const AdminVolunteers: React.FC = () => {
         } catch (err: any) { toast.error(err.response?.data?.message || "Erro"); }
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -50,19 +50,19 @@ export const AdminVolunteers: React.FC = () => {
             </div>
 
             {showForm && (
-                <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>{t("admin.volunteers.cadastrarVoluntrio", `Cadastrar Voluntário`)}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Email</label><input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Telefone</label><input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Disponibilidade</label>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Email</label><input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Telefone</label><input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Disponibilidade</label>
                             <select value={form.availability} onChange={e => setForm({ ...form, availability: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione...</option><option value="manhã">{t("admin.volunteers.manh", `Manhã`)}</option><option value="tarde">Tarde</option><option value="integral">Integral</option><option value="fins de semana">Fins de semana</option>
                             </select>
                         </div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.volunteers.habilidadesSepararPorVrgula", `Habilidades (separar por vírgula)`)}</label><input value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} placeholder={t("admin.volunteers.recepoGuiaLibrasFotografia", `Recepção, Guia, Libras, Fotografia`)} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.volunteers.habilidadesSepararPorVrgula", `Habilidades (separar por vírgula)`)}</label><input value={form.skills} onChange={e => setForm({ ...form, skills: e.target.value })} placeholder={t("admin.volunteers.recepoGuiaLibrasFotografia", `Recepção, Guia, Libras, Fotografia`)} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                         <Button onClick={onSave}>Salvar</Button>
@@ -70,7 +70,7 @@ export const AdminVolunteers: React.FC = () => {
                 </div>
             )}
 
-            <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                         <tr><th className="px-6 py-3">{t("admin.volunteers.voluntrio", `Voluntário`)}</th><th className="px-6 py-3">Disponibilidade</th><th className="px-6 py-3">Habilidades</th><th className="px-6 py-3 text-center">Horas</th><th className="px-6 py-3 text-center">Turnos</th></tr>

@@ -89,27 +89,27 @@ export const AdminInternalUsers: React.FC = () => {
           <h1 className="section-title">{t("admin.internalusers.UsuriosInternos", `👤 Usuários Internos`)}</h1>
 
         </div>
-        <Link to="/admin/usuarios/novo" className="btn btn-primary">{t("admin.internalusers.NovoUsurio", `
+        <Link to="/admin/usuarios/novo" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">{t("admin.internalusers.NovoUsurio", `
           + Novo Usuário
         `)}</Link>
       </div>
 
       {/* Stats */}
       <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="stat-card">
-          <div className="stat-value">{users.length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.length}</div>
           <div className="stat-label">{t("admin.internalusers.totalDeUsurios", `Total de Usuários`)}</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{users.filter(u => u.role === "MASTER").length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.filter(u => u.role === "MASTER").length}</div>
           <div className="stat-label">Masters</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{users.filter(u => u.role === "ADMIN").length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.filter(u => u.role === "ADMIN").length}</div>
           <div className="stat-label">Admins</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{users.filter(u => u.active).length}</div>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.filter(u => u.active).length}</div>
           <div className="stat-label">Ativos</div>
         </div>
       </div>
@@ -117,13 +117,13 @@ export const AdminInternalUsers: React.FC = () => {
       {loading && <p>{t("admin.internalusers.carregandoUsurios", `Carregando usuários...`)}</p>}
 
       {!loading && users.length === 0 && (
-        <div className="card">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
           <p>{t("admin.internalusers.nenhumUsurioCadastradoAinda", `Nenhum usuário cadastrado ainda.`)}</p>
         </div>
       )}
 
       {!loading && users.length > 0 && (
-        <div className="card">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
           <table className="table">
             <thead>
               <tr>
@@ -147,8 +147,8 @@ export const AdminInternalUsers: React.FC = () => {
                         background: user.role === "MASTER"
                           ? "rgba(139, 92, 246, 0.1)"
                           : "rgba(59, 130, 246, 0.1)",
-                        color: user.role === "MASTER" ? "#8b5cf6" : "#3b82f6",
-                        borderColor: user.role === "MASTER" ? "#8b5cf6" : "#3b82f6"
+                        color: user.role === "MASTER" ? "#8b5cf6" : "var(--accent-primary)",
+                        borderColor: user.role === "MASTER" ? "#8b5cf6" : "var(--accent-primary)"
                       }}
                     >
                       {user.role}
@@ -175,14 +175,14 @@ export const AdminInternalUsers: React.FC = () => {
                     <div style={{ display: "flex", gap: "0.5rem" }}>
                       <button
                         onClick={() => handleToggleActive(user.id, user.active)}
-                        className="btn btn-secondary"
+                        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                         style={{ padding: "0.4rem 0.8rem", fontSize: "0.8rem" }}
                       >
                         {user.active ? "Desativar" : "Ativar"}
                       </button>
                       <button
                         onClick={() => handleResetPassword(user.id)}
-                        className="btn btn-secondary"
+                        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                         style={{ padding: "0.4rem 0.8rem", fontSize: "0.8rem" }}
                       >
                         Reset Senha
@@ -190,7 +190,7 @@ export const AdminInternalUsers: React.FC = () => {
                       {(isMaster || user.role !== "MASTER") && (
                         <button
                           onClick={() => handleDelete(user.id, user.role)}
-                          className="btn"
+                          className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                           style={{
                             padding: "0.4rem 0.8rem",
                             fontSize: "0.8rem",
@@ -212,7 +212,7 @@ export const AdminInternalUsers: React.FC = () => {
       )}
 
       {/* Permissões */}
-      <div className="card" style={{ marginTop: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginTop: "2rem" }}>
         <h2 className="card-title">{t("admin.internalusers.MatrizDePermisses", `🔐 Matriz de Permissões`)}</h2>
         <table className="table" style={{ marginTop: "1rem" }}>
           <thead>

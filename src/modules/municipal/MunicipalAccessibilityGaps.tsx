@@ -42,7 +42,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
     useEffect(() => { fetchData(); }, [fetchData]);
 
     if (loading) return (
-        <div className="flex justify-center p-20 animate-pulse text-blue-600 font-black">
+        <div className="flex justify-center p-20 animate-pulse text-[var(--accent-primary)] font-black">
             Analisando vazios de acessibilidade municipal...
         </div>
     );
@@ -61,7 +61,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                    <Building className="text-blue-500 mb-4" size={32} />
+                    <Building className="text-[var(--accent-primary)] mb-4" size={32} />
                     <div className="text-4xl font-black text-slate-900">{totalCount}</div>
                     <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Unidades Culturais</div>
                 </div>
@@ -71,10 +71,10 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
                     <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Com Acessibilidade</div>
                 </div>
                 <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm overflow-hidden relative group">
-                    <TrendingUp className="text-blue-600 mb-4" size={32} />
+                    <TrendingUp className="text-[var(--accent-primary)] mb-4" size={32} />
                     <div className="text-4xl font-black text-slate-900">{coverage}%</div>
                     <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Cobertura Municipal</div>
-                    <div className="absolute bottom-0 left-0 h-1 bg-blue-600 transition-all duration-1000" style={{ width: `${coverage}%` }}></div>
+                    <div className="absolute bottom-0 left-0 h-1 bg-[var(--accent-primary)] transition-all duration-1000" style={{ width: `${coverage}%` }}></div>
                 </div>
             </div>
 
@@ -99,9 +99,9 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
                                 </td>
                                 <td className="px-8 py-6">
                                    <div className="flex justify-center gap-1">
-                                       <span title="Libras" className={`w-2 h-2 rounded-full ${eq.hasLibras ? 'bg-blue-500' : 'bg-slate-200'}`} />
-                                       <span title="Audio" className={`w-2 h-2 rounded-full ${eq.hasAudioDescription ? 'bg-blue-500' : 'bg-slate-200'}`} />
-                                       <span title="Rampas" className={`w-2 h-2 rounded-full ${eq.hasRamps ? 'bg-blue-500' : 'bg-slate-200'}`} />
+                                       <span title="Libras" className={`w-2 h-2 rounded-full ${eq.hasLibras ? 'bg-[var(--accent-primary)]' : 'bg-slate-200'}`} />
+                                       <span title="Audio" className={`w-2 h-2 rounded-full ${eq.hasAudioDescription ? 'bg-[var(--accent-primary)]' : 'bg-slate-200'}`} />
+                                       <span title="Rampas" className={`w-2 h-2 rounded-full ${eq.hasRamps ? 'bg-[var(--accent-primary)]' : 'bg-slate-200'}`} />
                                    </div>
                                 </td>
                                 <td className="px-8 py-6">
@@ -124,7 +124,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
             {/* Matrix Section */}
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                    <ShieldCheck className="text-blue-600" size={28} />
+                    <ShieldCheck className="text-[var(--accent-primary)]" size={28} />
                     <h2 className="text-2xl font-black text-slate-800 tracking-tight">Matriz de Conformidade Legal</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

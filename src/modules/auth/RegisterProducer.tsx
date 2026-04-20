@@ -114,7 +114,7 @@ export const RegisterProducer: React.FC = () => {
                     <div style={{
                         width: "80px",
                         height: "80px",
-                        background: "linear-gradient(135deg, #d4af37 0%, #f5d769 100%)",
+                        background: "linear-gradient(135deg, var(--accent-primary) 0%, #f5d769 100%)",
                         borderRadius: "50%",
                         display: "flex",
                         alignItems: "center",
@@ -124,7 +124,7 @@ export const RegisterProducer: React.FC = () => {
                     }}>
                         <User size={40} color="#1a1108" />
                     </div>
-                    <h2 style={{ color: "#d4af37", marginBottom: "0.5rem", fontSize: "1.8rem", fontWeight: "bold" }}>
+                    <h2 style={{ color: "var(--accent-primary)", marginBottom: "0.5rem", fontSize: "1.8rem", fontWeight: "bold" }}>
                         🎬 Sou Produtor Cultural
                     </h2>
                     <p style={{ color: "#B0A090", fontSize: "0.95rem" }}>{t("auth.registerproducer.cadastreseParaSubmeterProjetosEGerenciar", `
@@ -138,7 +138,7 @@ export const RegisterProducer: React.FC = () => {
                         <div key={s} style={{
                             width: s === step ? "3rem" : "2rem",
                             height: "4px",
-                            background: s <= step ? "#d4af37" : "#334155",
+                            background: s <= step ? "var(--accent-primary)" : "#334155",
                             borderRadius: "2px",
                             transition: "all 0.3s"
                         }} />
@@ -266,7 +266,7 @@ export const RegisterProducer: React.FC = () => {
                                 borderRadius: "0.75rem",
                                 padding: "1rem"
                             }}>
-                                <label style={{ display: "block", color: "#d4af37", fontWeight: "600", marginBottom: "0.5rem" }}>
+                                <label style={{ display: "block", color: "var(--accent-primary)", fontWeight: "600", marginBottom: "0.5rem" }}>
                                     🏙️ Vincular a uma Cidade (opcional)
                                 </label>
                                 <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginBottom: "0.75rem" }}>{t("auth.registerproducer.aoVincularSeusProjetosApareceroNosRelatr", `
@@ -343,7 +343,7 @@ export const RegisterProducer: React.FC = () => {
                                 borderRadius: "0.75rem",
                                 padding: "1rem"
                             }}>
-                                <h4 style={{ color: "#3b82f6", marginBottom: "0.5rem" }}>Resumo do Cadastro</h4>
+                                <h4 style={{ color: "var(--accent-primary)", marginBottom: "0.5rem" }}>Resumo do Cadastro</h4>
                                 <div style={{ fontSize: "0.9rem", color: "#94a3b8" }}>
                                     <div><strong>Nome:</strong> {formData.name}</div>
                                     <div><strong>E-mail:</strong> {formData.email}</div>
@@ -371,7 +371,7 @@ export const RegisterProducer: React.FC = () => {
                     Já possui conta?{" "}
                     <span
                         onClick={() => navigate("/login")}
-                        style={{ color: "#d4af37", cursor: "pointer", textDecoration: "underline" }}
+                        style={{ color: "var(--accent-primary)", cursor: "pointer", textDecoration: "underline" }}
                     >
                         Fazer Login
                     </span>
@@ -406,7 +406,7 @@ const primaryButtonStyle: React.CSSProperties = {
     alignItems: "center",
     justifyContent: "center",
     gap: "0.5rem",
-    background: "linear-gradient(135deg, #d4af37 0%, #f5d769 100%)",
+    background: "linear-gradient(135deg, var(--accent-primary) 0%, #f5d769 100%)",
     color: "#1a1108",
     fontWeight: "bold",
     padding: "1rem",

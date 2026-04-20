@@ -17,7 +17,7 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
     email, 
     videoUrl, 
     logoUrl,
-    primaryColor = "#d4af37",
+    primaryColor = "var(--accent-primary)",
     theme = "dark",
     onComplete 
 }) => {

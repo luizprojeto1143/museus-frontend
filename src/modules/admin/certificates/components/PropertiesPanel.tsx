@@ -54,7 +54,7 @@ export const PropertiesPanel: React.FC = () => {
         title: {
             fontSize: '12px',
             fontWeight: 700,
-            color: '#d4af37',
+            color: 'var(--accent-primary)',
             textTransform: 'uppercase' as const,
             letterSpacing: '2px',
             display: 'flex',
@@ -64,7 +64,7 @@ export const PropertiesPanel: React.FC = () => {
         badge: {
             fontSize: '10px',
             background: 'rgba(212,175,55,0.2)',
-            color: '#d4af37',
+            color: 'var(--accent-primary)',
             padding: '4px 12px',
             borderRadius: '20px',
             fontWeight: 600,
@@ -207,7 +207,7 @@ export const PropertiesPanel: React.FC = () => {
             transition: 'all 0.2s ease',
         },
         alignBtnActive: {
-            background: 'linear-gradient(135deg, #d4af37 0%, #c4a030 100%)',
+            background: 'linear-gradient(135deg, var(--accent-primary) 0%, #c4a030 100%)',
             color: '#1a1108',
         },
         transformGrid: {
@@ -236,7 +236,7 @@ export const PropertiesPanel: React.FC = () => {
             textAlign: 'right' as const,
             fontSize: '12px',
             fontFamily: 'monospace',
-            color: '#d4af37',
+            color: 'var(--accent-primary)',
         },
     };
 
@@ -286,7 +286,7 @@ export const PropertiesPanel: React.FC = () => {
                     <button
                         onClick={duplicateSelected}
                         style={styles.actionBtn}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = '#d4af37'; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = 'var(--accent-primary)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a7a5a'; }}
                     >
                         <Copy size={18} />
@@ -295,7 +295,7 @@ export const PropertiesPanel: React.FC = () => {
                     <button
                         onClick={bringToFront}
                         style={styles.actionBtn}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = '#d4af37'; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = 'var(--accent-primary)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a7a5a'; }}
                     >
                         <ArrowUp size={18} />
@@ -304,7 +304,7 @@ export const PropertiesPanel: React.FC = () => {
                     <button
                         onClick={sendToBack}
                         style={styles.actionBtn}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = '#d4af37'; }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.color = 'var(--accent-primary)'; }}
                         onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8a7a5a'; }}
                     >
                         <ArrowDown size={18} />

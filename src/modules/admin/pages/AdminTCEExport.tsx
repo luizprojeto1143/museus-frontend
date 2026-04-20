@@ -52,7 +52,7 @@ export const AdminTCEExport: React.FC = () => {
         toast.success("Relatório exportado!");
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -73,7 +73,7 @@ export const AdminTCEExport: React.FC = () => {
             </div>
 
             {/* Preview */}
-            <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                 <div className="px-6 py-4 border-b border-white/5 flex items-center gap-2">
                     <FileText size={18} className="text-amber-500" />
                     <h2 className="card-title" style={{ margin: 0 }}>Prévia do Relatório — {year} Q{quarter}</h2>

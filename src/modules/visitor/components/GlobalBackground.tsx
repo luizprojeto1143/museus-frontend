@@ -7,8 +7,8 @@ interface GlobalBackgroundProps {
 }
 
 export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
-  primaryColor = "#d4af37",
-  secondaryColor = "#cd7f32",
+  primaryColor = "var(--accent-primary)",
+  secondaryColor = "var(--accent-secondary)",
   theme = "dark"
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -34,7 +34,7 @@ interface FinanceData {
 }
 
 // Premium dark mode colors for charts
-const COLORS = ['#d4af37', '#10b981', '#3b82f6', '#a855f7'];
+const COLORS = ['var(--accent-primary)', '#10b981', 'var(--accent-primary)', '#a855f7'];
 
 export const AdminFinance: React.FC = () => {
   const { t } = useTranslation();
@@ -198,7 +198,7 @@ export const AdminFinance: React.FC = () => {
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{t("admin.finance.doaes", `Doações`)}</span>
                         </div>
                         <div className="bg-zinc-900/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-white/5 hover:border-blue-500/30 transition-colors cursor-default">
-                            <Ticket size={20} className="text-blue-500 mb-2" />
+                            <Ticket size={20} className="text-[var(--accent-primary)] mb-2" />
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Ingressos</span>
                         </div>
                     </div>
@@ -241,10 +241,10 @@ export const AdminFinance: React.FC = () => {
                                     type="monotone"
                                     name="Loja"
                                     dataKey="loja"
-                                    stroke="#d4af37"
+                                    stroke="var(--accent-primary)"
                                     strokeWidth={3}
-                                    dot={{ r: 4, strokeWidth: 2, fill: '#18181b', stroke: '#d4af37' }}
-                                    activeDot={{ r: 6, fill: '#d4af37', stroke: '#fff', strokeWidth: 2 }}
+                                    dot={{ r: 4, strokeWidth: 2, fill: '#18181b', stroke: 'var(--accent-primary)' }}
+                                    activeDot={{ r: 6, fill: 'var(--accent-primary)', stroke: '#fff', strokeWidth: 2 }}
                                 />
                                 <Line
                                     type="monotone"

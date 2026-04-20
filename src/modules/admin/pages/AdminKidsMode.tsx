@@ -49,7 +49,7 @@ export const AdminKidsMode: React.FC = () => {
 
             {/* Preview */}
             <div className="grid grid-cols-2 gap-6">
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Smile size={20} className="text-amber-500" /> Prévia — Modo Normal</h2>
                     <div className="bg-black/30 rounded-xl p-4 space-y-2">
                         <p className="text-white text-sm font-medium">{t("admin.kidsmode.ttuloDaObra", `Título da Obra`)}</p>
@@ -57,7 +57,7 @@ export const AdminKidsMode: React.FC = () => {
                         <span className="text-[10px] text-zinc-300">★ 4.5 • Sala 3 • 1750</span>
                     </div>
                 </div>
-                <div className="card" style={{ border: "1px solid rgba(34,197,94,0.2)" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ border: "1px solid rgba(34,197,94,0.2)" }}>
                     <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Baby size={20} style={{ color: "#34d399" }} /> Prévia — Modo Criança</h2>
                     <div className="bg-black/30 rounded-xl p-4 space-y-2" style={{ fontSize: '18px' }}>
                         <p style={{ color: "white", fontWeight: 700, fontSize: '1.2em' }}>{t("admin.kidsmode.TtuloDaObra", `🎨 Título da Obra`)}</p>
@@ -68,12 +68,12 @@ export const AdminKidsMode: React.FC = () => {
             </div>
 
             {/* Configuration */}
-            <div className="card" style={{ display: "grid", gap: "1.5rem" }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1.5rem" }}>
                 <h2 className="card-title" style={{ margin: 0 }}>{t("admin.kidsmode.configuraes", `Configurações`)}</h2>
 
                 <div className="grid grid-cols-2 gap-6">
                     <div>
-                        <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.kidsmode.faixaEtria", `Faixa Etária`)}</label>
+                        <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.kidsmode.faixaEtria", `Faixa Etária`)}</label>
                         <div className="flex gap-2 items-center">
                             <input type="number" value={config.minAge} onChange={e => setConfig({ ...config, minAge: e.target.value })} className="w-20 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white text-sm outline-none text-center" />
                             <span style={{ color: "#64748b" }}>a</span>
@@ -82,7 +82,7 @@ export const AdminKidsMode: React.FC = () => {
                         </div>
                     </div>
                     <div>
-                        <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Tamanho da Fonte</label>
+                        <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Tamanho da Fonte</label>
                         <select value={config.fontSize} onChange={e => setConfig({ ...config, fontSize: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                             <option value="normal">Normal</option>
                             <option value="large">Grande</option>
@@ -110,7 +110,7 @@ export const AdminKidsMode: React.FC = () => {
                 </div>
 
                 <div>
-                    <label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Mensagem de Boas-Vindas</label>
+                    <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Mensagem de Boas-Vindas</label>
                     <textarea value={config.customWelcomeMessage} onChange={e => setConfig({ ...config, customWelcomeMessage: e.target.value })} rows={2} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm outline-none resize-none" />
                 </div>
 

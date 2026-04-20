@@ -109,7 +109,7 @@ export const CertificateCanvas: React.FC = () => {
             position: 'absolute' as const,
             inset: 0,
             pointerEvents: 'none' as const,
-            backgroundImage: 'radial-gradient(#d4af37 0.5px, transparent 0.5px)',
+            backgroundImage: 'radial-gradient(var(--accent-primary) 0.5px, transparent 0.5px)',
             backgroundSize: '32px 32px',
             opacity: 0.08,
         },

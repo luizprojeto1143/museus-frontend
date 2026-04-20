@@ -64,7 +64,7 @@ export const MasterDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-3">
-           <button className="h-14 px-8 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-xl shadow-white/5 active:scale-95">
+           <button className="h-14 px-8 rounded-2xl bg-white text-black font-black text-xs uppercase tracking-widest hover:bg-[var(--accent-primary)] hover:text-white transition-all duration-300 shadow-xl shadow-white/5 active:scale-95">
               Exportar Relatório
            </button>
         </div>
@@ -84,11 +84,11 @@ export const MasterDashboard: React.FC = () => {
               className="group relative p-10 rounded-[40px] bg-gradient-to-br from-slate-900 to-black border border-white/5 overflow-hidden border-l-blue-500/50 border-l-4 shadow-2xl shadow-blue-500/5"
             >
               <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                <Users size={120} className="text-blue-500" />
+                <Users size={120} className="text-[var(--accent-primary)]" />
               </div>
               
               <div className="relative z-10">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-8 border border-blue-500/20">
+                <div className="w-12 h-12 rounded-2xl bg-[var(--accent-primary)]/10 flex items-center justify-center mb-8 border border-blue-500/20">
                   <Users className="text-blue-400" size={24} />
                 </div>
                 <h3 className="text-slate-500 font-black text-xs uppercase tracking-widest mb-2">{t("master.dashboard.totalVisitors")}</h3>

@@ -82,7 +82,7 @@ export const AdminDashboard: React.FC = () => {
         {/* Skeleton Loader */}
         <div className="card-grid" style={{ marginBottom: "2rem" }}>
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="stat-card" style={{ minHeight: 90 }}>
+            <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ minHeight: 90 }}>
               <div style={{
                 width: "60%", height: 28, borderRadius: 6,
                 background: "linear-gradient(90deg, rgba(212,175,55,0.08) 25%, rgba(212,175,55,0.15) 50%, rgba(212,175,55,0.08) 75%)",
@@ -98,7 +98,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
           {[1, 2, 3].map(i => (
-            <div key={i} className="card" style={{ minHeight: 200 }}>
+            <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ minHeight: 200 }}>
               <div style={{ width: "50%", height: 20, borderRadius: 4, background: "rgba(212,175,55,0.1)", marginBottom: 16 }} />
               {[1, 2, 3].map(j => (
                 <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "0.75rem 0", borderBottom: "1px solid var(--border-subtle)" }}>
@@ -118,7 +118,7 @@ export const AdminDashboard: React.FC = () => {
     return (
       <div>
         <h1 className="section-title">{t("admin.dashboard.title")}</h1>
-        <div className="card" style={{
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{
           textAlign: "center", padding: "3rem 2rem",
           border: "1px solid rgba(239, 68, 68, 0.3)",
           background: "rgba(239, 68, 68, 0.05)"
@@ -131,7 +131,7 @@ export const AdminDashboard: React.FC = () => {
             Não foi possível carregar os dados do dashboard. Verifique sua conexão e tente novamente.
           `)}</p>
           <button
-            className="btn btn-primary"
+            className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
             onClick={() => { setLoading(true); loadDashboard(); }}
             aria-label="Tentar carregar dashboard novamente"
           >
@@ -169,11 +169,11 @@ export const AdminDashboard: React.FC = () => {
         className="relative group p-1 w-full rounded-[40px] bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 overflow-hidden shadow-2xl shadow-blue-500/10"
       >
         <div className="relative z-10 p-10 rounded-[39px] bg-black/40 backdrop-blur-3xl border border-white/5 flex flex-col md:flex-row items-center gap-10">
-           <div className="w-24 h-24 rounded-3xl bg-blue-500/20 flex items-center justify-center text-5xl shadow-inner border border-blue-500/30">
+           <div className="w-24 h-24 rounded-3xl bg-[var(--accent-primary)]/20 flex items-center justify-center text-5xl shadow-inner border border-blue-500/30">
               🚀
            </div>
            <div className="flex-1 text-center md:text-left">
-              <span className="bg-blue-500 text-white font-black text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
+              <span className="bg-[var(--accent-primary)] text-white font-black text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
                 ROADMAP MARÇO 2026
               </span>
               <h2 className="text-2xl font-black text-white tracking-tight">Cultura Viva Betim: Sistema Atualizado</h2>
@@ -182,7 +182,7 @@ export const AdminDashboard: React.FC = () => {
               </p>
            </div>
            <button 
-             className="px-10 h-14 rounded-2xl bg-blue-600 text-white font-black text-xs uppercase tracking-widest hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 active:scale-95 flex-shrink-0"
+             className="px-10 h-14 rounded-2xl bg-[var(--accent-primary)] text-white font-black text-xs uppercase tracking-widest hover:bg-[var(--accent-primary)] transition-all shadow-xl shadow-blue-600/20 active:scale-95 flex-shrink-0"
              onClick={() => window.location.href = "/admin/comunidade"}
            >
               Ver Roadmap
@@ -252,7 +252,7 @@ export const AdminDashboard: React.FC = () => {
               )}
            </section>
 
-           <section className="card border-blue-500/10 bg-blue-500/[0.03] p-8 rounded-[40px]">
+           <section className="card border-blue-500/10 bg-[var(--accent-primary)]/[0.03] p-8 rounded-[40px]">
               <h2 className="text-lg font-black text-blue-400 tracking-tight mb-6">📅 Próximas Reservas</h2>
               <div className="space-y-4">
                  {data.upcomingBookings?.slice(0, 3).map((booking) => (
@@ -286,7 +286,7 @@ export const AdminDashboard: React.FC = () => {
                             <span className="text-xs font-black text-slate-700">{idx + 1}</span>
                             <span className="text-slate-300 font-bold text-sm hover:text-white transition-colors cursor-pointer">{work.title}</span>
                          </div>
-                         <span className="text-[10px] font-black text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full">{work.visits} v</span>
+                         <span className="text-[10px] font-black text-blue-400 bg-[var(--accent-primary)]/10 px-3 py-1 rounded-full">{work.visits} v</span>
                       </div>
                     ))}
                  </div>
@@ -300,7 +300,7 @@ export const AdminDashboard: React.FC = () => {
                                <span className="text-white">{count}</span>
                             </div>
                             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                               <div className="h-full bg-blue-500" style={{ width: `${(count / Math.max(...Object.values(data.accessBySource))) * 100}%` }} />
+                               <div className="h-full bg-[var(--accent-primary)]" style={{ width: `${(count / Math.max(...Object.values(data.accessBySource))) * 100}%` }} />
                             </div>
                          </div>
                        ))}
@@ -315,7 +315,7 @@ export const AdminDashboard: React.FC = () => {
                  {data.visitsByDay.slice(-14).map((day, idx) => (
                    <div key={idx} className="flex-1 group relative flex flex-col items-center">
                       <div 
-                        className="w-full bg-white/10 group-hover:bg-blue-500 transition-all rounded-t-lg shadow-lg group-hover:shadow-blue-500/20" 
+                        className="w-full bg-white/10 group-hover:bg-[var(--accent-primary)] transition-all rounded-t-lg shadow-lg group-hover:shadow-blue-500/20" 
                         style={{ height: `${(day.count / Math.max(...data.visitsByDay.map(d => d.count))) * 100}%` }} 
                       />
                       <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white text-black text-[8px] font-black px-2 py-1 rounded whitespace-nowrap">

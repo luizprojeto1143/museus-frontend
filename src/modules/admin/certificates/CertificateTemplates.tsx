@@ -43,10 +43,10 @@ export const CertificateTemplates: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
                 <h1 className="section-title text-2xl">Modelos de Certificado</h1>
                 <div className="space-x-2">
-                    <button className="btn btn-secondary" onClick={() => navigate('/admin/certificates/rules')}>
+                    <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => navigate('/admin/certificates/rules')}>
                         🤖 Regras e Automação
                     </button>
-                    <button className="btn btn-primary" onClick={() => navigate('/admin/certificates/new')}>
+                    <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => navigate('/admin/certificates/new')}>
                         <Plus size={20} className="mr-2" /> Novo Modelo
                     </button>
                 </div>
@@ -88,7 +88,7 @@ export const CertificateTemplates: React.FC = () => {
                 {templates.length === 0 && (
                     <div className="col-span-3 text-center py-20 bg-[var(--bg-elevated)] rounded-lg border-2 border-dashed border-[var(--border-subtle)]">
                         <h3 className="text-xl text-[var(--fg-muted)] font-serif mb-4">Nenhum modelo criado ainda</h3>
-                        <button onClick={() => navigate('/admin/certificates/new')} className="btn btn-primary">
+                        <button onClick={() => navigate('/admin/certificates/new')} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                             Criar Primeiro Modelo
                         </button>
                     </div>

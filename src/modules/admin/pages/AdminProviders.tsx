@@ -54,7 +54,7 @@ export const AdminProviders: React.FC = () => {
                     <h1 className="section-title">👷 Prestadores de Acessibilidade</h1>
 
                 </div>
-                <Link to="/admin/prestadores/novo" className="btn">
+                <Link to="/admin/prestadores/novo" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                     + Novo Prestador
                 </Link>
             </div>
@@ -62,9 +62,9 @@ export const AdminProviders: React.FC = () => {
             {loading ? (
                 <p>Carregando...</p>
             ) : providers.length === 0 ? (
-                <div className="card" style={{ textAlign: "center", padding: "2rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "2rem" }}>
                     <p>Nenhum prestador cadastrado</p>
-                    <Link to="/admin/prestadores/novo" className="btn" style={{ marginTop: "1rem" }}>
+                    <Link to="/admin/prestadores/novo" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ marginTop: "1rem" }}>
                         Cadastrar primeiro prestador
                     </Link>
                 </div>
@@ -120,7 +120,7 @@ export const AdminProviders: React.FC = () => {
                                     </span>
                                 </td>
                                 <td style={{ textAlign: "right" }}>
-                                    <Link to={`/admin/prestadores/${provider.id}`} className="btn btn-secondary">
+                                    <Link to={`/admin/prestadores/${provider.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                                         Editar
                                     </Link>
                                     <button

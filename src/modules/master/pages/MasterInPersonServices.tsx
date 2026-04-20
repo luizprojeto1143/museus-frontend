@@ -308,7 +308,7 @@ export const MasterInPersonServices: React.FC = () => {
                                 id="active_toggle"
                                 checked={formData.active}
                                 onChange={e => setFormData({ ...formData, active: e.target.checked })}
-                                style={{ width: '1.2rem', height: '1.2rem', accentColor: '#3b82f6', cursor: 'pointer' }}
+                                style={{ width: '1.2rem', height: '1.2rem', accentColor: 'var(--accent-primary)', cursor: 'pointer' }}
                             />
                             <label htmlFor="active_toggle" style={{ cursor: 'pointer', color: '#e2e8f0', fontSize: '0.9rem' }}>{t("master.inpersonservices.ativoDisponvelParaAgendamento", `Ativo (Disponível para agendamento)`)}</label>
                         </div>

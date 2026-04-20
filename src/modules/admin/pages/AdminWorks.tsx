@@ -86,7 +86,7 @@ export const AdminWorks: React.FC = () => {
             }}
           />
         </div>
-        <Link to="/admin/obras/nova" className="btn" style={{ alignSelf: "flex-start" }}>
+        <Link to="/admin/obras/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ alignSelf: "flex-start" }}>
           + Nova {term.work}
         </Link>
       </div>
@@ -123,7 +123,7 @@ export const AdminWorks: React.FC = () => {
                         {work.published ? t("admin.works.status.published") : t("admin.works.status.draft")}
                       </span>
                       {work.vestigeActive && (
-                        <span className="chip" style={{ background: '#d4af37', color: 'black', marginLeft: '0.5rem' }}>
+                        <span className="chip" style={{ background: 'var(--accent-primary)', color: 'black', marginLeft: '0.5rem' }}>
                           {t('vestige.admin.vestigeMode', 'Vestígio')}
                         </span>
                       )}
@@ -132,8 +132,8 @@ export const AdminWorks: React.FC = () => {
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
                         {work.vestigeActive && (
                           <button 
-                            className="btn btn-secondary"
-                            style={{ borderColor: '#d4af37', color: '#d4af37' }}
+                            className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
+                            style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}
                             onClick={async () => {
                               if (window.confirm(t('vestige.admin.confirmExpire', 'Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas.'))) {
                                 try {
@@ -149,7 +149,7 @@ export const AdminWorks: React.FC = () => {
                             {t('vestige.admin.expireAction', 'Expirar')}
                           </button>
                         )}
-                        <Link to={`/admin/obras/${work.id}`} className="btn btn-secondary">
+                        <Link to={`/admin/obras/${work.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
                           {t("common.edit")}
                         </Link>
                       </div>
@@ -164,7 +164,7 @@ export const AdminWorks: React.FC = () => {
           {totalPages > 1 && (
             <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginTop: "1.5rem", alignItems: "center" }}>
               <button
-                className="btn btn-secondary"
+                className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                 disabled={page <= 1}
                 onClick={() => setPage(p => p - 1)}
               >
@@ -172,7 +172,7 @@ export const AdminWorks: React.FC = () => {
               </button>
               <span>Página {page} de {totalPages}</span>
               <button
-                className="btn btn-secondary"
+                className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                 disabled={page >= totalPages}
                 onClick={() => setPage(p => p + 1)}
               >

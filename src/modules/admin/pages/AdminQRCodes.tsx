@@ -107,13 +107,13 @@ export const AdminQRCodes: React.FC = () => {
           <h1 className="section-title">{t("admin.qrCodes.title")}</h1>
 
         </div>
-        <button className="btn" onClick={() => setShowForm(!showForm)}>
+        <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => setShowForm(!showForm)}>
           {showForm ? t("admin.qrCodes.cancel") : t("admin.qrCodes.new")}
         </button>
       </div>
 
       {showForm && (
-        <div className="card" style={{ maxWidth: 600, marginBottom: "2rem" }}>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ maxWidth: 600, marginBottom: "2rem" }}>
           <div className="form-group">
             <label htmlFor="type">{t("admin.qrCodes.labels.type")}</label>
             <select
@@ -157,24 +157,24 @@ export const AdminQRCodes: React.FC = () => {
             </div>
           )}
 
-          <button className="btn btn-primary" onClick={handleGenerate}>
+          <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handleGenerate}>
             {t("admin.qrCodes.generate")}
           </button>
         </div>
       )}
 
       {generatedValue && (
-        <div className="card" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
           <div ref={qrRef} style={{ padding: "1rem", background: "#fff", borderRadius: "8px" }}>
             <QRCodeCanvas value={generatedValue} size={256} level="H" />
           </div>
           <p style={{ fontFamily: "monospace", wordBreak: "break-all" }}>{generatedValue}</p>
 
           <div style={{ display: "flex", gap: "1rem" }}>
-            <button className="btn btn-secondary" onClick={handleDownload}>
+            <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handleDownload}>
               {t("admin.qrCodes.download")}
             </button>
-            <button className="btn btn-secondary" onClick={handlePrint}>
+            <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handlePrint}>
               {t("admin.qrCodes.print")}
             </button>
           </div>
@@ -182,7 +182,7 @@ export const AdminQRCodes: React.FC = () => {
       )}
 
       {/* Lista de QR Codes existentes (apenas visualização por enquanto) */}
-      <div className="card">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
         <h3 className="card-title" style={{ marginBottom: "1rem" }}>{t("admin.qrCodes.listTitle")}</h3>
         <table className="table">
           <thead>
@@ -201,7 +201,7 @@ export const AdminQRCodes: React.FC = () => {
                 <td>{qr.referenceId || "-"}</td>
                 <td style={{ textAlign: "right" }}>
                   <button
-                    className="btn btn-secondary"
+                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                     style={{ color: "#ef4444", borderColor: "#ef4444", padding: "0.25rem 0.5rem" }}
                     onClick={async () => {
                       if (confirm(t("common.confirmDelete"))) {

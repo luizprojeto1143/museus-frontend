@@ -98,7 +98,7 @@ export const AdminAIAssistant: React.FC = () => {
 
 
       {/* Instruções da IA */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">💬 {t("admin.aiAssistant.sections.prompt")}</h2>
         <p className="card-subtitle">
           {t("admin.aiAssistant.sections.promptSubtitle")}
@@ -145,7 +145,7 @@ export const AdminAIAssistant: React.FC = () => {
       </div>
 
       {/* Contexto Histórico */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">📚 {t("admin.aiAssistant.sections.context")}</h2>
         <div className="form-group">
           <label className="form-label">{t("admin.aiAssistant.labels.context")}</label>
@@ -159,7 +159,7 @@ export const AdminAIAssistant: React.FC = () => {
       </div>
 
       {/* Referências */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">🔗 {t("admin.aiAssistant.sections.references")}</h2>
         <p className="card-subtitle">
           {t("admin.aiAssistant.sections.referencesSubtitle")}
@@ -176,7 +176,7 @@ export const AdminAIAssistant: React.FC = () => {
       </div>
 
       {/* Parâmetros Avançados */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">⚙️ {t("admin.aiAssistant.sections.advanced")}</h2>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
@@ -215,7 +215,7 @@ export const AdminAIAssistant: React.FC = () => {
       </div>
 
       {/* Teste */}
-      <div className="card" style={{ marginBottom: "2rem" }}>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
         <h2 className="card-title">🧪 {t("admin.aiAssistant.sections.test")}</h2>
         <p className="card-subtitle">
           {t("admin.aiAssistant.sections.testSubtitle")}
@@ -234,7 +234,7 @@ export const AdminAIAssistant: React.FC = () => {
         <button
           onClick={handleTest}
           disabled={testing}
-          className="btn btn-secondary"
+          className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
           style={{ marginBottom: "1rem" }}
         >
           {testing ? t("admin.aiAssistant.buttons.testing") : `🧪 ${t("admin.aiAssistant.buttons.test")}`}
@@ -262,7 +262,7 @@ export const AdminAIAssistant: React.FC = () => {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="btn btn-primary"
+        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
         style={{ width: "100%", padding: "1rem", fontSize: "1rem" }}
       >
         {saving ? t("admin.aiAssistant.buttons.saving") : `💾 ${t("admin.aiAssistant.buttons.save")}`}

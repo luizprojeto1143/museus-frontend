@@ -126,7 +126,7 @@ export const AdminTreasureHunt: React.FC = () => {
             </header>
 
             {/* Lista de Pistas */}
-            <div className="card">
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                 {loading ? (
                     <p>{t("common.loading")}</p>
                 ) : clues.length === 0 ? (
@@ -174,7 +174,7 @@ export const AdminTreasureHunt: React.FC = () => {
                     background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center",
                     zIndex: 1000, backdropFilter: "blur(4px)"
                 }}>
-                    <div className="card" style={{ width: "95%", maxWidth: "600px", padding: "2.5rem", background: "rgba(20,12,8,0.95)", border: "1px solid var(--accent-gold)" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ width: "95%", maxWidth: "600px", padding: "2.5rem", background: "rgba(20,12,8,0.95)", border: "1px solid var(--accent-gold)" }}>
                         <h2 style={{ color: "var(--accent-gold)", marginBottom: "1.5rem", fontSize: "1.5rem" }}>
                             {editingClue ? "Editar Pista" : "Nova Pista"}
                         </h2>

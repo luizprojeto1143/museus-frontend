@@ -73,12 +73,12 @@ export const ProducerTickets: React.FC = () => {
         <div className="pb-16 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-[#D4AF37] mb-2 font-serif">{t("producer.tickets.title")}</h1>
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">{t("producer.tickets.title")}</h1>
                     <p className="text-[#B0A090]">{t("producer.tickets.subtitle")}</p>
                 </div>
                 <Button
                     onClick={() => setShowModal(true)}
-                    className="bg-[#D4AF37] text-[#1a1108] hover:bg-[#c5a028] font-bold shadow-lg shadow-[#D4AF37]/20 border-none px-6"
+                    className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] font-bold shadow-lg shadow-[var(--accent-primary)]/20 border-none px-6"
                     leftIcon={<Plus size={20} />}
                 >
                     {t("producer.tickets.newBatch")}
@@ -92,7 +92,7 @@ export const ProducerTickets: React.FC = () => {
                         <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-[#B0A090] hover:text-white">
                             <Plus className="rotate-45" size={24} />
                         </button>
-                        <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 font-serif">Novo Lote</h2>
+                        <h2 className="text-2xl font-bold text-[var(--accent-primary)] mb-6 font-serif">Novo Lote</h2>
                         <form onSubmit={handleCreateBatch} className="space-y-4">
                             <div>
                                 <label className="block text-sm text-[#B0A090] mb-1">Nome do Lote</label>
@@ -100,7 +100,7 @@ export const ProducerTickets: React.FC = () => {
                                     required
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                    className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[var(--accent-primary)] outline-none"
                                     placeholder="Ex: 1º Lote - Meia"
                                 />
                             </div>
@@ -113,7 +113,7 @@ export const ProducerTickets: React.FC = () => {
                                         step="0.01"
                                         value={formData.price}
                                         onChange={e => setFormData({ ...formData, price: e.target.value })}
-                                        className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                        className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[var(--accent-primary)] outline-none"
                                         placeholder="0.00"
                                     />
                                 </div>
@@ -124,7 +124,7 @@ export const ProducerTickets: React.FC = () => {
                                         type="number"
                                         value={formData.quantity}
                                         onChange={e => setFormData({ ...formData, quantity: e.target.value })}
-                                        className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                        className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[var(--accent-primary)] outline-none"
                                         placeholder="100"
                                     />
                                 </div>
@@ -135,7 +135,7 @@ export const ProducerTickets: React.FC = () => {
                                     required
                                     value={formData.eventId}
                                     onChange={e => setFormData({ ...formData, eventId: e.target.value })}
-                                    className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[#D4AF37] outline-none"
+                                    className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-2 text-white focus:border-[var(--accent-primary)] outline-none"
                                 >
                                     <option value="">Selecione um evento</option>
                                     {events.map(ev => (
@@ -145,7 +145,7 @@ export const ProducerTickets: React.FC = () => {
                             </div>
                             <Button
                                 type="submit"
-                                className="w-full bg-[#D4AF37] text-black font-bold h-12 mt-4"
+                                className="w-full bg-[var(--accent-primary)] text-black font-bold h-12 mt-4"
                             >
                                 Criar Lote
                             </Button>
@@ -156,7 +156,7 @@ export const ProducerTickets: React.FC = () => {
 
             {loading ? (
                 <div className="p-12 text-center text-[#B0A090]">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37] mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--accent-primary)] mx-auto mb-4"></div>
                     {t("producer.tickets.loading")}
                 </div>
             ) : tickets.length === 0 ? (
@@ -172,10 +172,10 @@ export const ProducerTickets: React.FC = () => {
             ) : (
                 <div className="grid gap-4">
                     {tickets.map(ticket => (
-                        <div key={ticket.id} className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-[#D4AF37]/50 transition-all shadow-lg shadow-black/20 group">
+                        <div key={ticket.id} className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-[var(--accent-primary)]/50 transition-all shadow-lg shadow-black/20 group">
 
                             <div className="flex items-center gap-6 w-full md:w-auto">
-                                <div className="bg-[#D4AF37]/10 p-4 rounded-2xl text-[#D4AF37] group-hover:scale-110 transition-transform">
+                                <div className="bg-[var(--accent-primary)]/10 p-4 rounded-2xl text-[var(--accent-primary)] group-hover:scale-110 transition-transform">
                                     <Ticket size={24} />
                                 </div>
                                 <div>
@@ -211,7 +211,7 @@ export const ProducerTickets: React.FC = () => {
 
                                 <div className="hidden md:block text-right">
                                     <div className="text-xs text-[#B0A090] uppercase tracking-wider mb-1">{t("producer.tickets.revenue")}</div>
-                                    <div className="text-xl font-bold text-[#D4AF37]">
+                                    <div className="text-xl font-bold text-[var(--accent-primary)]">
                                         R$ {(ticket.sold * Number(ticket.price)).toFixed(2)}
                                     </div>
                                 </div>

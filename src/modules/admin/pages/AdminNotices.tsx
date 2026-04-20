@@ -22,7 +22,7 @@ type Notice = {
 
 const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
     DRAFT: { label: "Rascunho", color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" },
-    PUBLISHED: { label: "Publicado", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+    PUBLISHED: { label: "Publicado", color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
     INSCRIPTIONS_OPEN: { label: "Inscrições Abertas", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     INSCRIPTIONS_CLOSED: { label: "Inscrições Encerradas", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
     EVALUATION: { label: "Em Avaliação", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
@@ -229,7 +229,7 @@ export const AdminNotices: React.FC = () => {
                                                         </div>
                                                         {notice.stats && Object.keys(notice.stats).length > 0 && (
                                                             <div className="flex gap-2 mt-1">
-                                                                {notice.stats.SUBMITTED > 0 && <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20">{notice.stats.SUBMITTED} Novos</span>}
+                                                                {notice.stats.SUBMITTED > 0 && <span className="text-[10px] bg-[var(--accent-primary)]/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20">{notice.stats.SUBMITTED} Novos</span>}
                                                                 {notice.stats.UNDER_REVIEW > 0 && <span className="text-[10px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20">{notice.stats.UNDER_REVIEW} Em Análise</span>}
                                                                 {notice.stats.APPROVED > 0 && <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20">{notice.stats.APPROVED} Aprovados</span>}
                                                             </div>

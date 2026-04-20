@@ -51,10 +51,10 @@ export const MunicipalReports: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="p-10 text-center animate-pulse text-blue-600">Compilando indicadores...</div>;
+    if (loading) return <div className="p-10 text-center animate-pulse text-[var(--accent-primary)]">Compilando indicadores...</div>;
 
     const reportCards = [
-        { title: "Resumo Executivo Mensal", icon: <FileText size={40} className="text-blue-600" />, desc: "Panorama consolidado de todos os equipamentos culturais.", date: "Gerado agora" },
+        { title: "Resumo Executivo Mensal", icon: <FileText size={40} className="text-[var(--accent-primary)]" />, desc: "Panorama consolidado de todos os equipamentos culturais.", date: "Gerado agora" },
         { title: "Relatório de Conformidade LBI", icon: <ShieldCheck size={40} className="text-emerald-600" />, desc: "Status legal perante a Lei Brasileira de Inclusão.", date: "Atualizado hoje" },
         { title: "Evolução do Impacto Público", icon: <TrendingUp size={40} className="text-purple-600" />, desc: "Análise histórica de público e engajamento.", date: "Dados em tempo real" }
     ];
@@ -71,7 +71,7 @@ export const MunicipalReports: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Left Column: Quick Stats */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-blue-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+                    <div className="bg-[var(--accent-primary)] rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
                         <div className="relative z-10">
                             <h3 className="text-sm font-black uppercase tracking-widest opacity-60 mb-6">{t("municipal.municipalreports.taxaDeAdeso", `Taxa de Adesão`)}</h3>
                             <div className="text-5xl font-black mb-2">{summary?.summary?.accessibilityPlanRate || 0}%</div>
@@ -92,7 +92,7 @@ export const MunicipalReports: React.FC = () => {
 
                     <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
                         <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
-                            <PieChart size={18} className="text-blue-600" /> Ações por Tipo
+                            <PieChart size={18} className="text-[var(--accent-primary)]" /> Ações por Tipo
                         </h4>
                         <div className="space-y-4">
                             {Object.entries(summary?.summary?.accessibilityByType || {}).map(([type, count]: [string, any]) => (
@@ -114,7 +114,7 @@ export const MunicipalReports: React.FC = () => {
                                     <div className="p-4 bg-slate-50 rounded-2xl w-fit group-hover:scale-110 transition-transform">
                                         {card.icon}
                                     </div>
-                                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{card.title}</h3>
+                                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-[var(--accent-primary)] transition-colors">{card.title}</h3>
                                     <p className="text-sm text-slate-500 leading-relaxed font-medium">{card.desc}</p>
                                 </div>
                                 <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
@@ -123,7 +123,7 @@ export const MunicipalReports: React.FC = () => {
                                     </div>
                                     <Button
                                         onClick={handleDownloadPDF}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold py-2 px-4 shadow-lg shadow-blue-600/20 flex items-center gap-2 text-xs"
+                                        className="bg-[var(--accent-primary)] hover:bg-blue-700 text-white rounded-xl font-bold py-2 px-4 shadow-lg shadow-blue-600/20 flex items-center gap-2 text-xs"
                                     >
                                         <Download size={14} /> PDF
                                     </Button>
@@ -132,7 +132,7 @@ export const MunicipalReports: React.FC = () => {
                         ))}
 
                         <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-2xl flex flex-col justify-center items-center text-center space-y-4">
-                            <BarChart3 size={48} className="text-blue-500 opacity-50 mb-2" />
+                            <BarChart3 size={48} className="text-[var(--accent-primary)] opacity-50 mb-2" />
                             <h3 className="text-xl font-bold">{t("municipal.municipalreports.relatrioDeTransparncia", `Relatório de Transparência`)}</h3>
                             <p className="text-sm text-slate-400">{t("municipal.municipalreports.exporteOsDadosBrutosParaOPortalDaTranspa", `Exporte os dados brutos para o Portal da Transparência Municipal.`)}</p>
                             <Button variant="outline" onClick={() => toast("Exportação CSV será disponibilizada na próxima versão da API.", { icon: "ℹ️" })} className="border-slate-700 text-white hover:bg-white/5 font-bold rounded-2xl">
@@ -171,7 +171,7 @@ export const MunicipalReports: React.FC = () => {
                             )}
                         </div>
                         <div className="px-8 pb-8 pt-2">
-                            <Button variant="ghost" className="text-blue-600 font-bold hover:bg-blue-50 w-full flex items-center justify-between" onClick={() => navigate('/municipal/compliance')}>
+                            <Button variant="ghost" className="text-[var(--accent-primary)] font-bold hover:bg-blue-50 w-full flex items-center justify-between" onClick={() => navigate('/municipal/compliance')}>
                                 Ver Detalhes da Conformidade <ArrowRight size={18} />
                             </Button>
                         </div>

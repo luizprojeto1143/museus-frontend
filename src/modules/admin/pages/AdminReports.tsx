@@ -177,7 +177,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
     }
 
     if (!data) {
-        return <div className="card">{t("admin.reports.erroAoCarregarDadosDoRelatrio", `Erro ao carregar dados do relatório`)}</div>;
+        return <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">{t("admin.reports.erroAoCarregarDadosDoRelatrio", `Erro ao carregar dados do relatório`)}</div>;
     }
 
     return (
@@ -204,7 +204,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
                         onChange={e => setDateRange({ ...dateRange, end: e.target.value })}
                         style={{ width: "auto" }}
                     />
-                    <button className="btn btn-primary" onClick={exportReport} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={exportReport} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <Download size={18} />
                         Exportar
                     </button>
@@ -213,27 +213,27 @@ Trabalhos realizados: ${data.providers.totalJobs}
 
             {/* Summary Cards */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
-                <div className="card" style={{ textAlign: "center", borderLeft: "4px solid #3b82f6" }}>
-                    <FileText size={32} color="#3b82f6" style={{ marginBottom: "0.5rem" }} />
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", borderLeft: "4px solid var(--accent-primary)" }}>
+                    <FileText size={32} color="var(--accent-primary)" style={{ marginBottom: "0.5rem" }} />
                     <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{data.notices.total}</div>
                     <div style={{ color: "var(--fg-muted)" }}>Editais</div>
                     <div style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>{formatCurrency(data.notices.totalBudget)}</div>
                 </div>
 
-                <div className="card" style={{ textAlign: "center", borderLeft: "4px solid #22c55e" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", borderLeft: "4px solid #22c55e" }}>
                     <Calendar size={32} color="#22c55e" style={{ marginBottom: "0.5rem" }} />
                     <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{data.projects.total}</div>
                     <div style={{ color: "var(--fg-muted)" }}>Projetos</div>
                     <div style={{ fontSize: "0.85rem", marginTop: "0.5rem" }}>{formatCurrency(data.projects.totalApproved)}</div>
                 </div>
 
-                <div className="card" style={{ textAlign: "center", borderLeft: "4px solid #8b5cf6" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", borderLeft: "4px solid #8b5cf6" }}>
                     <Users size={32} color="#8b5cf6" style={{ marginBottom: "0.5rem" }} />
                     <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{data.projects.totalAudience.toLocaleString("pt-BR")}</div>
                     <div style={{ color: "var(--fg-muted)" }}>{t("admin.reports.pblicoImpactado", `Público Impactado`)}</div>
                 </div>
 
-                <div className="card" style={{ textAlign: "center", borderLeft: "4px solid #f59e0b" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", borderLeft: "4px solid #f59e0b" }}>
                     <DollarSign size={32} color="#f59e0b" style={{ marginBottom: "0.5rem" }} />
                     <div style={{ fontSize: "2rem", fontWeight: "bold" }}>{formatCurrency(data.projects.totalRequested)}</div>
                     <div style={{ color: "var(--fg-muted)" }}>Investimento Solicitado</div>
@@ -243,7 +243,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
             {/* Detailed Sections */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
                 {/* Editais por Status */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h3 style={{ marginBottom: "1rem" }}>📋 Editais por Status</h3>
                     {Object.entries(data.notices.byStatus).length === 0 ? (
                         <p style={{ color: "var(--fg-muted)" }}>Nenhum edital cadastrado</p>
@@ -260,7 +260,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
                 </div>
 
                 {/* Projetos por Status */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h3 style={{ marginBottom: "1rem" }}>🎨 Projetos por Status</h3>
                     {Object.entries(data.projects.byStatus).length === 0 ? (
                         <p style={{ color: "var(--fg-muted)" }}>Nenhum projeto cadastrado</p>
@@ -277,7 +277,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
                 </div>
 
                 {/* Acessibilidade por Serviço */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h3 style={{ marginBottom: "1rem" }}>{t("admin.reports.AcessibilidadePorServio", `♿ Acessibilidade por Serviço`)}</h3>
                     {Object.entries(data.accessibility.byService).length === 0 ? (
                         <p style={{ color: "var(--fg-muted)" }}>{t("admin.reports.nenhumServioRegistrado", `Nenhum serviço registrado`)}</p>
@@ -294,7 +294,7 @@ Trabalhos realizados: ${data.providers.totalJobs}
                 </div>
 
                 {/* Prestadores */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h3 style={{ marginBottom: "1rem" }}>👷 Prestadores</h3>
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                         <div style={{ display: "flex", justifyContent: "space-between" }}>

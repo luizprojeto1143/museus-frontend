@@ -193,7 +193,7 @@ export const AdminShop: React.FC = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="card" style={{ cursor: "pointer", transition: "all 0.2s" }}
+                        className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ cursor: "pointer", transition: "all 0.2s" }}
                     >
                         <div className={`w-12 h-12 ${stat.bg} ${stat.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                             {stat.icon}
@@ -207,7 +207,7 @@ export const AdminShop: React.FC = () => {
             {activeView === 'products' ? (
                 <>
                     {/* Filters and Search */}
-                    <div className="card" style={{ marginBottom: "2rem", display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem", display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
                         <div className="relative flex-1 w-full">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={20} />
                             <input
@@ -243,7 +243,7 @@ export const AdminShop: React.FC = () => {
                             <p className="font-bold uppercase tracking-widest text-xs">Sincronizando estoque...</p>
                         </div>
                     ) : filteredProducts.length === 0 ? (
-                        <div className="card" style={{ textAlign: "center", padding: "6rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "6rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                             <Package size={60} className="mx-auto text-zinc-200 mb-6 opacity-20" />
                             <h3 className="text-xl font-bold text-white mb-2">Sem resultados para sua busca</h3>
                             <p style={{ color: "#64748b" }}>Tente ajustar seus filtros ou cadastre um novo produto.</p>
@@ -261,7 +261,7 @@ export const AdminShop: React.FC = () => {
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
-                                        className="card" style={{ position: "relative", overflow: "hidden", transition: "all 0.3s" }}
+                                        className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ position: "relative", overflow: "hidden", transition: "all 0.3s" }}
                                     >
                                         {/* Actions Overlay */}
                                         <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
@@ -337,13 +337,13 @@ export const AdminShop: React.FC = () => {
                 /* Orders Section */
                 <div style={{ display: "grid", gap: "1rem" }}>
                     {orders.length === 0 ? (
-                        <div className="card" style={{ textAlign: "center", padding: "6rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "6rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                             <DollarSign size={60} className="mx-auto text-zinc-200 mb-6 opacity-20" />
                             <h3 className="text-xl font-bold text-white mb-2">Nenhum pedido ainda</h3>
                             <p style={{ color: "#64748b" }}>{t("admin.shop.osPedidosDosClientesApareceroAqui", `Os pedidos dos clientes aparecerão aqui.`)}</p>
                         </div>
                     ) : (
-                        <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                             <table className="w-full text-left">
                                 <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                                     <tr>
@@ -388,7 +388,7 @@ export const AdminShop: React.FC = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest ${order.status === 'PAID' ? 'bg-green-500/10 text-green-400' :
-                                                        order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-400' :
+                                                        order.status === 'SHIPPED' ? 'bg-[var(--accent-primary)]/10 text-blue-400' :
                                                             order.status === 'DELIVERED' ? 'bg-emerald-500/10 text-emerald-400' :
                                                                 order.status === 'CANCELLED' ? 'bg-red-500/10 text-red-400' :
                                                                     'bg-amber-500/10 text-amber-500'
@@ -437,7 +437,7 @@ export const AdminShop: React.FC = () => {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="card" style={{ position: "relative", width: "100%", maxWidth: "42rem", borderRadius: "1.5rem", padding: "2rem", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 25px 50px rgba(0,0,0,0.5)" }}
+                            className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ position: "relative", width: "100%", maxWidth: "42rem", borderRadius: "1.5rem", padding: "2rem", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 25px 50px rgba(0,0,0,0.5)" }}
                         >
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">

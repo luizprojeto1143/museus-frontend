@@ -34,7 +34,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
     <div className="layout-wrapper">
       {/* AMBIENT BACKGROUND */}
       <div className="ambient-bg">
-        <div className="ambient-orb w-[600px] h-[600px] bg-blue-500/10 top-[-10%] left-[-10%]" />
+        <div className="ambient-orb w-[600px] h-[600px] bg-[var(--accent-primary)]/10 top-[-10%] left-[-10%]" />
         <div className="ambient-orb w-[500px] h-[500px] bg-purple-500/10 bottom-[-10%] right-[-10%]" />
       </div>
 
@@ -75,7 +75,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
               to={link.to}
               className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-sm transition-all duration-300 group ${
                 location.pathname === link.to 
-                ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5" 
+                ? "bg-[var(--accent-primary)]/10 text-blue-400 border border-blue-500/20 shadow-lg shadow-blue-500/5" 
                 : "text-slate-500 hover:text-white hover:bg-white/5"
               }`}
               onClick={() => setSidebarOpen(false)}
@@ -107,7 +107,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
           </button>
           
           <div className="ml-auto flex items-center gap-6">
-             <div className="bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
+             <div className="bg-[var(--accent-primary)]/10 border border-blue-500/20 px-4 py-1.5 rounded-full">
                 <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest leading-none">Master Hub</span>
              </div>
              <div className="w-10 h-10 rounded-full border border-white/10 bg-slate-900 flex items-center justify-center overflow-hidden">

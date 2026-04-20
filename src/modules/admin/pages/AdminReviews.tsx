@@ -146,8 +146,8 @@ export const AdminReviews: React.FC = () => {
                     style={{
                         background: "transparent",
                         border: "none",
-                        borderBottom: mode === "reviews" ? "2px solid #d4af37" : "none",
-                        color: mode === "reviews" ? "#d4af37" : "#aaa",
+                        borderBottom: mode === "reviews" ? "2px solid var(--accent-primary)" : "none",
+                        color: mode === "reviews" ? "var(--accent-primary)" : "#aaa",
                         fontSize: "1.1rem",
                         fontWeight: "bold",
                         padding: "0.5rem 1rem",
@@ -163,8 +163,8 @@ export const AdminReviews: React.FC = () => {
                     style={{
                         background: "transparent",
                         border: "none",
-                        borderBottom: mode === "guestbook" ? "2px solid #d4af37" : "none",
-                        color: mode === "guestbook" ? "#d4af37" : "#aaa",
+                        borderBottom: mode === "guestbook" ? "2px solid var(--accent-primary)" : "none",
+                        color: mode === "guestbook" ? "var(--accent-primary)" : "#aaa",
                         fontSize: "1.1rem",
                         fontWeight: "bold",
                         padding: "0.5rem 1rem",
@@ -294,7 +294,7 @@ export const AdminReviews: React.FC = () => {
                                         <button
                                             onClick={() => handleToggleVisibility(entry.id, entry.isVisible)}
                                             style={{
-                                                background: entry.isVisible ? "rgba(255,255,255,0.1)" : "#d4af37",
+                                                background: entry.isVisible ? "rgba(255,255,255,0.1)" : "var(--accent-primary)",
                                                 color: entry.isVisible ? "white" : "black",
                                                 border: "none", padding: "0.5rem", borderRadius: "0.5rem", cursor: "pointer"
                                             }}
@@ -334,7 +334,7 @@ export const AdminReviews: React.FC = () => {
                 
                 .filters-bar { display: flex; gap: 8px; margin-bottom: 20px; }
                 .filter-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #374151; border: none; border-radius: 8px; color: #9ca3af; cursor: pointer; transition: all 0.2s; }
-                .filter-btn.active { background: #d4af37; color: black; }
+                .filter-btn.active { background: var(--accent-primary); color: black; }
                 
                 .reviews-list { display: flex; flex-direction: column; gap: 16px; }
                 .review-card { background: #1f2937; border-radius: 12px; padding: 20px; border-left: 4px solid transparent; }

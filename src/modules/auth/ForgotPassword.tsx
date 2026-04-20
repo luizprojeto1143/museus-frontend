@@ -109,7 +109,7 @@ export const ForgotPassword: React.FC = () => {
                                     width: "100%",
                                     padding: "1rem",
                                     borderRadius: "0.5rem",
-                                    background: "#d4af37",
+                                    background: "var(--accent-primary)",
                                     color: "black",
                                     border: "none",
                                     fontWeight: "bold",

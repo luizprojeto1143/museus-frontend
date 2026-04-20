@@ -1,9 +1,12 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import {
     Package, Image, Calendar, Award,
     MessageSquare, Map, Search, Heart, Star,
     Ticket, Trophy
 } from 'lucide-react';
+import { cn } from '../../lib/cn';
+import { springs, fadeInUp, staggerContainer, staggerItem } from '../../lib/motion';
 
 type EmptyStateType =
     | 'works' | 'events' | 'tickets' | 'favorites'
@@ -80,7 +83,8 @@ const emptyStateConfigs: Record<EmptyStateType, { icon: React.ReactNode; title: 
 
 /**
  * Empty State Component
- * Beautiful empty states for lists and pages
+ * Beautiful empty states with floating icon animation,
+ * staggered entrance, and accent-color-aware styling.
  */
 export const EmptyState: React.FC<EmptyStateProps> = ({
     type = 'generic',
@@ -91,80 +95,75 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     const config = emptyStateConfigs[type];
 
     return (
-        <div className="empty-state">
-            <div className="empty-state-icon">
+        <motion.div
+            className={cn(
+                "flex flex-col items-center justify-center",
+                "py-12 px-6 text-center",
+                "bg-[var(--bg-surface)] rounded-[var(--radius-lg)]",
+                "border-2 border-dashed border-[var(--border-default)]"
+            )}
+            variants={staggerContainer(0.12, 0.05)}
+            initial="hidden"
+            animate="visible"
+        >
+            {/* Floating animated icon */}
+            <motion.div
+                className={cn(
+                    "w-24 h-24 rounded-full mb-5",
+                    "bg-[var(--accent-primary)]/10",
+                    "flex items-center justify-center",
+                    "text-[var(--accent-primary)]"
+                )}
+                variants={staggerItem}
+                animate={{
+                    y: [0, -8, 0],
+                }}
+                transition={{
+                    y: {
+                        repeat: Infinity,
+                        duration: 3,
+                        ease: "easeInOut",
+                    },
+                }}
+            >
                 {config.icon}
-            </div>
-            <h3 className="empty-state-title">
+            </motion.div>
+
+            {/* Title */}
+            <motion.h3
+                className="text-xl font-bold text-[var(--fg-main)] mb-2"
+                variants={staggerItem}
+            >
                 {title || config.title}
-            </h3>
-            <p className="empty-state-description">
+            </motion.h3>
+
+            {/* Description */}
+            <motion.p
+                className="text-sm text-[var(--fg-secondary)] max-w-[300px] leading-relaxed"
+                variants={staggerItem}
+            >
                 {description || config.description}
-            </p>
+            </motion.p>
+
+            {/* Optional action */}
             {action && (
-                <button
-                    className="empty-state-action"
+                <motion.button
+                    className={cn(
+                        "mt-6 px-6 py-3 rounded-[var(--radius-md)]",
+                        "bg-[var(--accent-primary)] text-[var(--fg-inverse)]",
+                        "font-semibold text-sm",
+                        "shadow-[var(--shadow-glow)]",
+                        "transition-transform"
+                    )}
+                    variants={staggerItem}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={springs.stiff}
                     onClick={action.onClick}
                 >
                     {action.label}
-                </button>
+                </motion.button>
             )}
-
-            <style>{`
-                .empty-state {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 48px 24px;
-                    text-align: center;
-                    background: var(--bg-card, #1f2937);
-                    border-radius: 20px;
-                    border: 2px dashed var(--border-color, #374151);
-                }
-                
-                .empty-state-icon {
-                    width: 100px;
-                    height: 100px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: var(--primary-color, #3b82f6);
-                    margin-bottom: 20px;
-                }
-                
-                .empty-state-title {
-                    margin: 0 0 8px;
-                    font-size: 1.25rem;
-                    color: var(--fg-main, #f3f4f6);
-                }
-                
-                .empty-state-description {
-                    margin: 0;
-                    color: var(--fg-muted, #9ca3af);
-                    max-width: 300px;
-                    line-height: 1.6;
-                }
-                
-                .empty-state-action {
-                    margin-top: 20px;
-                    padding: 12px 24px;
-                    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-                    color: white;
-                    border: none;
-                    border-radius: 12px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: transform 0.2s, box-shadow 0.2s;
-                }
-                
-                .empty-state-action:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-                }
-            `}</style>
-        </div>
+        </motion.div>
     );
 };

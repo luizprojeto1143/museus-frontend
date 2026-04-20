@@ -297,7 +297,7 @@ export const AdminEventForm: React.FC = () => {
       {isUploading && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="text-white text-center">
-            <div className="w-12 h-12 border-4 border-white/10 border-t-[#d4af37] rounded-full animate-spin mb-4 mx-auto"></div>
+            <div className="w-12 h-12 border-4 border-white/10 border-t-[var(--accent-primary)] rounded-full animate-spin mb-4 mx-auto"></div>
             <p>Enviando arquivo...</p>
           </div>
         </div>
@@ -347,7 +347,7 @@ export const AdminEventForm: React.FC = () => {
           top: '50%',
           left: 0,
           height: '2px',
-          background: '#d4af37',
+          background: 'var(--accent-primary)',
           zIndex: 0,
           transform: 'translateY(-50%)',
           width: `${(currentStep / (STEPS.length - 1)) * 100}%`,
@@ -367,10 +367,10 @@ export const AdminEventForm: React.FC = () => {
           let scale = '1';
 
           if (isActive) {
-            iconBg = '#d4af37';
-            iconBorder = '#d4af37';
+            iconBg = 'var(--accent-primary)';
+            iconBorder = 'var(--accent-primary)';
             iconColor = '#000000';
-            textColor = '#d4af37';
+            textColor = 'var(--accent-primary)';
             boxShadow = '0 0 20px rgba(212,175,55,0.4)';
             scale = '1.1';
           } else if (isCompleted) {
@@ -626,7 +626,7 @@ export const AdminEventForm: React.FC = () => {
 
                 {formData.format === 'PRESENTIAL' ? (
                   <div className="space-y-6">
-                    <div className="bg-[rgba(212,175,55,0.05)] p-6 rounded-2xl border border-[#d4af37]/20">
+                    <div className="bg-[rgba(212,175,55,0.05)] p-6 rounded-2xl border border-[var(--accent-primary)]/20">
                       <div className="form-group">
                         <label className="form-label flex items-center gap-2">
                           Reservar Espa�o F�sico
@@ -641,7 +641,7 @@ export const AdminEventForm: React.FC = () => {
                         </select>
                         <div className="flex items-start gap-2 mt-3 p-3 bg-black/20 rounded-lg">
                           <CheckCircle size={14} className="text-gold mt-0.5" />
-                          <p className="text-xs text-[#d4af37]/80">O sistema bloquear� automaticamente o hor�rio neste espa�o para evitar conflitos com outros eventos.</p>
+                          <p className="text-xs text-[var(--accent-primary)]/80">O sistema bloquear� automaticamente o hor�rio neste espa�o para evitar conflitos com outros eventos.</p>
                         </div>
                       </div>
                     </div>
@@ -720,7 +720,7 @@ export const AdminEventForm: React.FC = () => {
                   <h3 className="card-title">Lotes de Ingressos</h3>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                     onClick={() => setTickets([...tickets, { name: 'Novo Lote', type: 'FREE', price: 0, quantity: 100 }])}
                   >
                     <Plus size={16} /> Adicionar
@@ -804,7 +804,7 @@ export const AdminEventForm: React.FC = () => {
             {/* STEP 3: DIVULGA��O & REVIS�O */}
             {currentStep === 3 && (
               <div className="space-y-6">
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                   <h3 className="card-title mb-6">M�dia & Divulga��o</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="form-group">
@@ -834,16 +834,16 @@ export const AdminEventForm: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                   <h3 className="card-title mb-6">Visibilidade e Status</h3>
                   <div className="flex flex-col gap-4">
                     {/* Visibility */}
                     <div className="flex gap-4">
                       <button
                         onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PUBLIC" ? 'bg-blue-500/10 border-blue-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
+                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PUBLIC" ? 'bg-[var(--accent-primary)]/10 border-blue-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
                       >
-                        <Globe size={24} className={formData.visibility === "PUBLIC" ? 'text-blue-500' : 'text-zinc-400'} />
+                        <Globe size={24} className={formData.visibility === "PUBLIC" ? 'text-[var(--accent-primary)]' : 'text-zinc-400'} />
                         <div>
                           <div className="font-bold text-[#f5e6d3]">P�blico</div>
                           <div className="text-xs text-zinc-400">Vis�vel no app</div>
@@ -916,7 +916,7 @@ export const AdminEventForm: React.FC = () => {
           ) : (
             <Button
               onClick={nextStep}
-              className="btn btn-primary"
+              className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
               rightIcon={<ChevronRight size={18} />}
             >
               Pr�ximo

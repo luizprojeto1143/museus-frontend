@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
+import { Badge, Button, MagneticButton, Card, AnimateIn, PageLoader, ModelViewer } from "@/components/ui";
+import { pageVariants, staggerContainer, staggerItem } from "@/lib/motion";
 import "./WorkDetail.css";
 
 type WorkDetailData = {
@@ -35,6 +37,7 @@ type WorkDetailData = {
   audioUrl?: string | null;
   librasUrl?: string | null;
   videoUrl?: string | null;
+  modelUrl?: string | null;
   latitude?: number;
   longitude?: number;
   collectibleCards?: any[];
@@ -105,6 +108,7 @@ export const WorkDetail: React.FC = () => {
           audioUrl: getFullUrl(w.audioUrl),
           librasUrl: getFullUrl(w.librasUrl),
           videoUrl: getFullUrl(w.videoUrl),
+          modelUrl: getFullUrl(w.modelUrl),
           latitude: w.latitude,
           longitude: w.longitude,
           collectibleCards: w.collectibleCards || []
@@ -162,7 +166,7 @@ export const WorkDetail: React.FC = () => {
     } catch (err) { console.error(err); }
   };
 
-  if (loading) return <div className="work-loading"><div className="work-spinner" /></div>;
+  if (loading) return <PageLoader message="Preparando curadoria..." />;
 
   if (error || !work) return (
     <div className="work-error">
@@ -174,9 +178,10 @@ export const WorkDetail: React.FC = () => {
   return (
     <motion.div 
       className="work-detail-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
+      variants={pageVariants}
+      initial="initial"
+      animate="enter"
+      exit="exit"
       role="main"
       aria-busy={loading}
     >
@@ -189,7 +194,7 @@ export const WorkDetail: React.FC = () => {
       </Helmet>
 
       <header className="work-header-premium">
-        <span className="work-badge-premium">{work.category || 'Obra de Arte'}</span>
+        <Badge variant="glass" size="lg" className="mb-6">{work.category || 'Obra de Arte'}</Badge>
         <h1 className="work-title-premium">{work.title}</h1>
         <div className="work-meta-premium">
            <span className="text-gold-hi">{work.artist}</span>
@@ -216,11 +221,16 @@ export const WorkDetail: React.FC = () => {
         </div>
       </header>
 
-      {/* Hero Image */}
-      <section className="work-visual-section-premium">
-        <img src={work.imageUrl || ''} alt={work.title} className="work-hero-img-premium" />
+      {/* Hero Image / 3D Model */}
+      <section className="work-visual-section-premium relative">
+        {work.modelUrl ? (
+          <ModelViewer url={work.modelUrl} className="w-full h-[60vh] min-h-[400px] object-cover rounded-2xl overflow-hidden bg-black/50" />
+        ) : (
+          <img src={work.imageUrl || ''} alt={work.title} className="work-hero-img-premium" />
+        )}
+        
         {work.latitude && (
-          <button className="gallery-cta !absolute bottom-8 right-8" onClick={() => navigate(`/mapa?workId=${work.id}`)}>
+          <button className="gallery-cta !absolute bottom-8 right-8 z-10" onClick={() => navigate(`/mapa?workId=${work.id}`)}>
             <Map size={16} /> Ver no Mapa
           </button>
         )}
@@ -246,24 +256,30 @@ export const WorkDetail: React.FC = () => {
       {trailId && trailWorks.length > 0 && (
         <div className="progress-section-premium">
             <div className="flex justify-between items-center mb-4">
-               <button 
+               <Button 
+                 variant="glass"
+                 size="sm"
                  onClick={() => prevWorkId && navigateToWork(prevWorkId)}
-                 className={`action-btn-premium !rounded-xl !w-auto !px-4 gap-2 ${prevWorkId ? '' : 'opacity-20'}`}
+                 className={`${prevWorkId ? '' : 'opacity-20 pointer-events-none'}`}
                  disabled={!prevWorkId}
+                 leftIcon={<ChevronLeft size={16} />}
                >
-                 <ChevronLeft size={16} /> <span className="text-[10px] font-fm uppercase">Anterior</span>
-               </button>
+                 Anterior
+               </Button>
                <div className="text-center">
                   <span className="text-[10px] font-fm uppercase text-gold block">{trailTitle}</span>
                   <span className="text-lg font-fd">{currentIndex + 1} <small className="opacity-40">de</small> {trailWorks.length}</span>
                </div>
-               <button 
+               <Button 
+                 variant="glass"
+                 size="sm"
                  onClick={() => nextWorkId && navigateToWork(nextWorkId)}
-                 className={`action-btn-premium !rounded-xl !w-auto !px-4 gap-2 ${nextWorkId ? '' : 'opacity-20'}`}
+                 className={`${nextWorkId ? '' : 'opacity-20 pointer-events-none'}`}
                  disabled={!nextWorkId}
+                 rightIcon={<ChevronRight size={16} />}
                >
-                 <span className="text-[10px] font-fm uppercase">Próxima</span> <ChevronRight size={16} />
-               </button>
+                 Próxima
+               </Button>
             </div>
         </div>
       )}

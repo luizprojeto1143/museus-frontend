@@ -146,7 +146,7 @@ export const ProducerNoticeResults: React.FC = () => {
                 </div>
             </div>
 
-            <div className="mt-8 p-6 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex items-start gap-4">
+            <div className="mt-8 p-6 rounded-2xl bg-[var(--accent-primary)]/5 border border-blue-500/10 flex items-start gap-4">
                 <TrendingUp size={24} className="text-blue-400 shrink-0" />
                 <p className="text-xs text-blue-400/80 leading-relaxed">
                     <strong>Nota sobre o Ranking:</strong> A classificação final é composta pela média ponderada entre a análise técnica da Inteligência Artificial (critérios objetivos e aderência ao edital) e a avaliação do Comitê de Cultura (critérios subjetivos e mérito cultural).

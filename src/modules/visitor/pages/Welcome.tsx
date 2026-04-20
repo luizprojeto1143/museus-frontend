@@ -6,6 +6,7 @@ import { useTenant } from "../../auth/TenantContext";
 import { TenantLogo } from "../../../components/Branding/TenantLogo";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
 import { Smartphone, Eye, Lock } from "lucide-react";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 
 export const Welcome: React.FC = () => {
   const navigate = useNavigate();
@@ -14,8 +15,11 @@ export const Welcome: React.FC = () => {
   const tenant = useTenant();
 
   return (
-    <div className="welcome-container">
-      <div className="welcome-texture"></div>
+    <div className="welcome-container relative overflow-hidden">
+      <ParticleBackground />
+      <div className="welcome-texture absolute inset-0 z-10 pointer-events-none"></div>
+      
+      <div className="relative z-20 flex flex-col h-full">
 
       <div className="welcome-lang-switcher">
         <LanguageSwitcher />
@@ -70,6 +74,7 @@ export const Welcome: React.FC = () => {
       {/* Decorações discretas baseadas na cor primária */}
       <div className="welcome-decor top-left" style={{ opacity: 0.1, color: "var(--accent-primary)" }}>✦</div>
       <div className="welcome-decor bottom-right" style={{ opacity: 0.1, color: "var(--accent-primary)" }}>✦</div>
+      </div>
     </div>
   );
 };

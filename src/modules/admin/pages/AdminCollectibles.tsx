@@ -11,7 +11,7 @@ import "./AdminShared.css";
 
 const rarityConfig: Record<string, { label: string; color: string; bg: string; icon: React.ReactNode }> = {
     COMMON: { label: 'Comum', color: 'text-gray-400', bg: '0/10', icon: <Star size={14} /> },
-    RARE: { label: 'Raro', color: 'text-blue-400', bg: 'bg-blue-500/10', icon: <Zap size={14} /> },
+    RARE: { label: 'Raro', color: 'text-blue-400', bg: 'bg-[var(--accent-primary)]/10', icon: <Zap size={14} /> },
     EPIC: { label: 'Épico', color: 'text-purple-400', bg: 'bg-purple-500/10', icon: <Crown size={14} /> },
     LEGENDARY: { label: 'Lendário', color: 'text-amber-400', bg: 'bg-amber-500/10', icon: <Diamond size={14} /> }
 };
@@ -53,7 +53,7 @@ export const AdminCollectibles: React.FC = () => {
         } catch (err) { toast.error("Erro ao criar"); }
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -68,16 +68,16 @@ export const AdminCollectibles: React.FC = () => {
             {/* Stats */}
             {stats && (
                 <div className="card-grid">
-                    <div className="stat-card">
-                        <Sparkles style={{ margin: "0 auto 0.5rem", color: "#d4af37" }} size={24} />
-                        <p className="stat-value">{stats.totalCards}</p>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                        <Sparkles style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
+                        <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.totalCards}</p>
                         <p className="stat-label">Cards Criados</p>
                     </div>
-                    <div className="stat-card">
-                        <p className="stat-value" style={{ color: "#22c55e" }}>{stats.totalOwned}</p>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                        <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "#22c55e" }}>{stats.totalOwned}</p>
                         <p className="stat-label">Total Coletados</p>
                     </div>
-                    <div className="card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", marginBottom: "0.5rem" }}>Por Raridade</p>
                         {stats.byRarity?.map((r: any) => (
                             <div key={r.rarity} className="flex items-center justify-between text-sm">
@@ -90,27 +90,27 @@ export const AdminCollectibles: React.FC = () => {
             )}
 
             {showForm && (
-                <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>{t("admin.collectibles.novoCardColecionvel", `Novo Card Colecionável`)}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Raridade</label>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Raridade</label>
                             <select value={form.rarity} onChange={e => setForm({ ...form, rarity: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="COMMON">Comum</option><option value="RARE">Raro</option><option value="EPIC">{t("admin.collectibles.pico", `Épico`)}</option><option value="LEGENDARY">{t("admin.collectibles.lendrio", `Lendário`)}</option>
                             </select>
                         </div>
-                        <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra Vinculada</label>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra Vinculada</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Nenhuma</option>
                                 {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                            <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Unidades</label><input type="number" value={form.totalMinted} onChange={e => setForm({ ...form, totalMinted: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                            <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>XP Reward</label><input type="number" value={form.xpReward} onChange={e => setForm({ ...form, xpReward: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                            <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Unidades</label><input type="number" value={form.totalMinted} onChange={e => setForm({ ...form, totalMinted: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                            <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>XP Reward</label><input type="number" value={form.xpReward} onChange={e => setForm({ ...form, xpReward: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                         </div>
                     </div>
-                    <div><label style={{ display: "block", color: "#d4af37", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.collectibles.descrio", `Descrição`)}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
+                    <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.collectibles.descrio", `Descrição`)}</label><textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
                     <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
                         <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
                         <Button onClick={onSave}>Criar Card</Button>
@@ -123,7 +123,7 @@ export const AdminCollectibles: React.FC = () => {
                 {cards.map((card: any) => {
                     const r = rarityConfig[card.rarity] || rarityConfig.COMMON;
                     return (
-                        <div key={card.id} className="card" style={{ padding: "1.25rem", textAlign: "center" }}>
+                        <div key={card.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", textAlign: "center" }}>
                             {(card.imageUrl || card.work?.imageUrl) ? (
                                 <img src={getFullUrl(card.imageUrl || card.work?.imageUrl)} alt={card.title} style={{ width: "80px", height: "80px", borderRadius: "12px", margin: "0 auto 0.75rem", objectFit: "cover" }} />
                             ) : (

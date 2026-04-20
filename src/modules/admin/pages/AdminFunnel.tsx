@@ -29,10 +29,10 @@ export const AdminFunnel: React.FC = () => {
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     const icons = [<Users size={20} />, <QrCode size={20} />, <CalendarCheck size={20} />, <ShoppingBag size={20} />, <RefreshCw size={20} />];
-    const colors = ['bg-blue-500', 'bg-cyan-500', 'bg-amber-500', 'bg-green-500', 'bg-purple-500'];
+    const colors = ['bg-[var(--accent-primary)]', 'bg-cyan-500', 'bg-amber-500', 'bg-green-500', 'bg-purple-500'];
     const textColors = ['text-blue-400', 'text-cyan-400', 'text-amber-400', 'text-green-400', 'text-purple-400'];
 
     return (
@@ -79,7 +79,7 @@ export const AdminFunnel: React.FC = () => {
             </div>
 
             {funnel.length >= 2 && (
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h2 className="card-title">{t("admin.funnel.anlise", `Análise`)}</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div className="bg-black/30 rounded-xl p-4 text-center">

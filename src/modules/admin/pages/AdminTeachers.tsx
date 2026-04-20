@@ -43,7 +43,7 @@ export const AdminTeachers: React.FC = () => {
         } catch (err: any) { toast.error(err.response?.data?.message || "Erro"); }
     };
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
         <div style={{ display: "grid", gap: "2rem" }}>
@@ -66,7 +66,7 @@ export const AdminTeachers: React.FC = () => {
             </div>
 
             {showForm && (
-                <div className="card" style={{ display: "grid", gap: "1rem" }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>Cadastrar Professor</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         {(['name', 'email', 'phone', 'school', 'city', 'subject'] as const).map(field => (
@@ -84,7 +84,7 @@ export const AdminTeachers: React.FC = () => {
             )}
 
             {tab === 'teachers' && (
-                <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                     <table className="w-full text-left">
                         <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                             <tr><th className="px-6 py-3">Professor</th><th className="px-6 py-3">Escola</th><th className="px-6 py-3">Disciplina</th><th className="px-6 py-3 text-center">Visitas</th></tr>
@@ -106,12 +106,12 @@ export const AdminTeachers: React.FC = () => {
             {tab === 'visits' && (
                 <div style={{ display: "grid", gap: "0.75rem" }}>
                     {visits.length === 0 ? (
-                        <div className="card" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                             <Calendar size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                             <p style={{ color: "#64748b" }}>Nenhuma visita escolar agendada</p>
                         </div>
                     ) : visits.map((v: any) => (
-                        <div key={v.id} className="card" style={{ padding: "1.25rem" }}>
+                        <div key={v.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem" }}>
                             <div className="flex items-center justify-between">
                                 <div>
                                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>

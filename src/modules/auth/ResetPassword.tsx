@@ -80,7 +80,7 @@ export const ResetPasswordPage: React.FC = () => {
                         <p style={{ opacity: 0.7, marginBottom: "2rem", lineHeight: "1.6" }}>{t("auth.resetpassword.suaSenhaFoiAtualizadaComSucessoVocJPodeF", `
                             Sua senha foi atualizada com sucesso. Você já pode fazer login.
                         `)}</p>
-                        <Link to="/login" className="btn-primary" style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", display: "inline-block", textAlign: "center", textDecoration: "none", color: "black", fontWeight: "bold", background: "#d4af37" }}>
+                        <Link to="/login" className="btn-primary" style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", display: "inline-block", textAlign: "center", textDecoration: "none", color: "black", fontWeight: "bold", background: "var(--accent-primary)" }}>
                             Ir para Login
                         </Link>
                     </div>
@@ -172,7 +172,7 @@ export const ResetPasswordPage: React.FC = () => {
                                     width: "100%",
                                     padding: "1rem",
                                     borderRadius: "0.5rem",
-                                    background: "#d4af37",
+                                    background: "var(--accent-primary)",
                                     color: "black",
                                     border: "none",
                                     fontWeight: "bold",

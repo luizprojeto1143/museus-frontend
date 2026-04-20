@@ -39,7 +39,7 @@ export const GroupCheckout: React.FC = () => {
     return (
         <div style={{ padding: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
             <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <Users size={36} style={{ color: '#d4af37', margin: '0 auto 0.75rem' }} />
+                <Users size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 0.75rem' }} />
                 <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>Ingresso de Grupo</h1>
                 <p style={{ color: '#888', fontSize: '0.85rem' }}>Organize visitas em grupo com desconto</p>
             </div>
@@ -64,7 +64,7 @@ export const GroupCheckout: React.FC = () => {
                     <label style={{ display: 'block', color: '#aaa', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>Telefone</label>
                     <input value={form.contactPhone} onChange={e => setForm({ ...form, contactPhone: e.target.value })} placeholder="(00) 00000-0000" style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none' }} />
                 </div>
-                <button onClick={onSubmit} disabled={loading} style={{ marginTop: '0.5rem', width: '100%', background: loading ? '#555' : 'linear-gradient(135deg, #d4af37, #b8941e)', color: '#1a1108', border: 'none', padding: '1rem', borderRadius: '1rem', fontWeight: 800, fontSize: '0.95rem', cursor: loading ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <button onClick={onSubmit} disabled={loading} style={{ marginTop: '0.5rem', width: '100%', background: loading ? '#555' : 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', border: 'none', padding: '1rem', borderRadius: '1rem', fontWeight: 800, fontSize: '0.95rem', cursor: loading ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                     {loading ? <Loader2 size={18} className="animate-spin" /> : <ShoppingBag size={18} />}
                     {loading ? 'Enviando...' : 'Solicitar Ingressos'}
                 </button>

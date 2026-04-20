@@ -19,7 +19,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-    display: 'block', color: '#d4af37', fontSize: '0.7rem', fontWeight: 700,
+    display: 'block', color: 'var(--accent-primary)', fontSize: '0.7rem', fontWeight: 700,
     textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem'
 };
 
@@ -59,7 +59,7 @@ export const AdminHeritage: React.FC = () => {
 
     if (loading) return (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <Loader2 className="animate-spin" style={{ color: '#d4af37' }} />
+            <Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
     );
 
@@ -72,7 +72,7 @@ export const AdminHeritage: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setShowForm(true)}
-                    className="btn btn-primary"
+                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                     style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 >
                     <Plus size={16} /> Novo Registro
@@ -81,27 +81,27 @@ export const AdminHeritage: React.FC = () => {
 
             {/* Stats */}
             <div className="card-grid" style={{ marginBottom: '2rem' }}>
-                <div className="stat-card">
-                    <div className="stat-value">{items.length}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{items.length}</div>
                     <div className="stat-label">Total Registros</div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-value" style={{ color: '#34d399' }}>{items.filter(i => i.status === 'REGISTRADO').length}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: '#34d399' }}>{items.filter(i => i.status === 'REGISTRADO').length}</div>
                     <div className="stat-label">Registrados</div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-value" style={{ color: '#f59e0b' }}>{items.filter(i => i.status === 'EM_ESTUDO').length}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: '#f59e0b' }}>{items.filter(i => i.status === 'EM_ESTUDO').length}</div>
                     <div className="stat-label">Em Estudo</div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-value" style={{ color: '#60a5fa' }}>{new Set(items.map(i => i.category)).size}</div>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: '#60a5fa' }}>{new Set(items.map(i => i.category)).size}</div>
                     <div className="stat-label">Categorias</div>
                 </div>
             </div>
 
             {/* Form Modal */}
             {showForm && (
-                <div className="card" style={{ marginBottom: '1.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.02)' }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: '1.5rem', border: '1px solid rgba(212,175,55,0.2)', background: 'rgba(212,175,55,0.02)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <h2 className="card-title" style={{ margin: 0 }}>{t("admin.heritage.registrarPatrimnioImaterial", `Registrar Patrimônio Imaterial`)}</h2>
                         <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#888' }}><X size={20} /></button>
@@ -132,7 +132,7 @@ export const AdminHeritage: React.FC = () => {
                     </div>
                     <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
                         <button onClick={() => setShowForm(false)} className="btn btn-ghost">Cancelar</button>
-                        <button onClick={onSave} className="btn btn-primary">Registrar</button>
+                        <button onClick={onSave} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">Registrar</button>
                     </div>
                 </div>
             )}
@@ -141,7 +141,7 @@ export const AdminHeritage: React.FC = () => {
             {items.map((item: any) => {
                 const cat = categoryConfig[item.category] || categoryConfig.FESTEJO;
                 return (
-                    <div key={item.id} className="card" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>
+                    <div key={item.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
                             <div style={{
                                 width: '44px', height: '44px', borderRadius: '12px',
@@ -154,7 +154,7 @@ export const AdminHeritage: React.FC = () => {
                                     <h3 style={{ color: 'white', fontWeight: 700, fontSize: '0.95rem', margin: 0 }}>{item.title}</h3>
                                     <span className="badge" style={{
                                         background: item.status === 'REGISTRADO' ? 'rgba(34,197,94,0.1)' : 'rgba(212,175,55,0.1)',
-                                        color: item.status === 'REGISTRADO' ? '#22c55e' : '#d4af37',
+                                        color: item.status === 'REGISTRADO' ? '#22c55e' : 'var(--accent-primary)',
                                         fontSize: '0.65rem'
                                     }}>{item.status}</span>
                                 </div>
@@ -178,7 +178,7 @@ export const AdminHeritage: React.FC = () => {
             })}
 
             {items.length === 0 && (
-                <div className="card" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: 'center', padding: '4rem 2rem', border: '2px dashed rgba(212,175,55,0.15)' }}>
                     <Scroll size={48} style={{ margin: '0 auto 1rem', color: '#64748b', opacity: 0.3 }} />
                     <h3 style={{ color: 'white', fontWeight: 700, marginBottom: '0.5rem' }}>{t("admin.heritage.nenhumPatrimnioImaterialRegistrado", `Nenhum patrimônio imaterial registrado`)}</h3>
                     <p style={{ color: '#64748b', fontSize: '0.85rem' }}>{t("admin.heritage.cliqueEmNovoRegistroParaComear", `Clique em "Novo Registro" para começar`)}</p>

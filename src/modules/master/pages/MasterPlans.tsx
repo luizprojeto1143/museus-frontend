@@ -102,7 +102,7 @@ const MasterPlans: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {plans.map((plan) => (
                     <div key={plan.id} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden flex flex-col hover:ring-2 hover:ring-blue-500/50 transition-all">
-                        <div className="bg-blue-600/20 p-6 border-b border-white/5 relative">
+                        <div className="bg-[var(--accent-primary)]/20 p-6 border-b border-white/5 relative">
                             <div className="flex justify-between items-start">
                                 <h2 className="text-xl font-bold text-white">{plan.name}</h2>
                                 <Shield style={{ color: "#60a5fa" }} size={20} />
@@ -188,7 +188,7 @@ const FeatureRow: React.FC<{ label: string; value: string | number }> = ({ label
 );
 
 const FeatureBadge: React.FC<{ label: string }> = ({ label }) => (
-    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded text-[10px] font-bold uppercase tracking-wider">
+    <span className="px-2 py-0.5 bg-[var(--accent-primary)]/10 text-blue-400 border border-blue-500/20 rounded text-[10px] font-bold uppercase tracking-wider">
         {label}
     </span>
 );
@@ -395,9 +395,9 @@ const CheckboxField: React.FC<{ label: string; checked: boolean; onChange: (v: b
     <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`flex items-center gap-3 p-3 rounded-lg border transition-all text-left ${checked ? 'bg-blue-500/10 border-blue-500 text-blue-400' : 'bg-transparent border-white/10 text-slate-400 hover:border-white/20'}`}
+        className={`flex items-center gap-3 p-3 rounded-lg border transition-all text-left ${checked ? 'bg-[var(--accent-primary)]/10 border-blue-500 text-blue-400' : 'bg-transparent border-white/10 text-slate-400 hover:border-white/20'}`}
     >
-        <div className={`w-4 h-4 rounded border flex items-center justify-center ${checked ? 'bg-blue-500 border-blue-500' : 'border-white/20'}`}>
+        <div className={`w-4 h-4 rounded border flex items-center justify-center ${checked ? 'bg-[var(--accent-primary)] border-blue-500' : 'border-white/20'}`}>
             {checked && <CheckCircle2 size={12} className="text-white" />}
         </div>
         <span className="text-xs font-medium">{label}</span>

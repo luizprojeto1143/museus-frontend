@@ -100,7 +100,7 @@ export const TotemSearch: React.FC = () => {
                             right: "10px",
                             top: "10px",
                             bottom: "10px",
-                            background: "#d4af37",
+                            background: "var(--accent-primary)",
                             color: "#000",
                             border: "none",
                             borderRadius: "12px",
@@ -180,7 +180,7 @@ export const TotemSearch: React.FC = () => {
 
             <style>{`
                 input:focus {
-                    border-color: #d4af37 !important;
+                    border-color: var(--accent-primary) !important;
                 }
             `}</style>
         </div>

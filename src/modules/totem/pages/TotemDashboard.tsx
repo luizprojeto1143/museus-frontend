@@ -45,7 +45,7 @@ export const TotemDashboard: React.FC = () => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            color: "#d4af37"
+                            color: "var(--accent-primary)"
                         }}>
                             <QrCode size={40} />
                         </div>
@@ -81,7 +81,7 @@ export const TotemDashboard: React.FC = () => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            color: "#3b82f6"
+                            color: "var(--accent-primary)"
                         }}>
                             <Calendar size={40} />
                         </div>
@@ -131,7 +131,7 @@ export const TotemDashboard: React.FC = () => {
             <style>{`
                 .totem-card:hover {
                     transform: translateY(-5px);
-                    border-color: #d4af37 !important;
+                    border-color: var(--accent-primary) !important;
                     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
                 }
             `}</style>

@@ -40,7 +40,7 @@ export const AdminMunicipalGaps: React.FC = () => {
 
     if (loading) return (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <Loader2 className="animate-spin" style={{ color: '#d4af37' }} />
+            <Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
         </div>
     );
 
@@ -55,25 +55,25 @@ export const AdminMunicipalGaps: React.FC = () => {
                 <>
                     {/* Stats */}
                     <div className="card-grid" style={{ marginBottom: '2rem' }}>
-                        <div className="stat-card">
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                             <div style={{ marginBottom: '0.5rem' }}><Building size={20} style={{ color: '#60a5fa' }} /></div>
-                            <div className="stat-value">{data.totalEquipments}</div>
+                            <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{data.totalEquipments}</div>
                             <div className="stat-label">Equipamentos</div>
                         </div>
-                        <div className="stat-card">
-                            <div style={{ marginBottom: '0.5rem' }}><Calendar size={20} style={{ color: '#d4af37' }} /></div>
-                            <div className="stat-value">{data.totalEvents}</div>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
+                            <div style={{ marginBottom: '0.5rem' }}><Calendar size={20} style={{ color: 'var(--accent-primary)' }} /></div>
+                            <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{data.totalEvents}</div>
                             <div className="stat-label">Eventos Realizados</div>
                         </div>
-                        <div className="stat-card" style={{ borderColor: data.coverage < 50 ? 'rgba(239,68,68,0.2)' : 'rgba(212,175,55,0.2)' }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ borderColor: data.coverage < 50 ? 'rgba(239,68,68,0.2)' : 'rgba(212,175,55,0.2)' }}>
                             <div style={{ marginBottom: '0.5rem' }}><TrendingUp size={20} style={{ color: data.coverage >= 75 ? '#22c55e' : data.coverage >= 50 ? '#f59e0b' : '#ef4444' }} /></div>
-                            <div className="stat-value" style={{ color: data.coverage >= 75 ? '#22c55e' : data.coverage >= 50 ? '#f59e0b' : '#ef4444' }}>{data.coverage}%</div>
+                            <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: data.coverage >= 75 ? '#22c55e' : data.coverage >= 50 ? '#f59e0b' : '#ef4444' }}>{data.coverage}%</div>
                             <div className="stat-label">Cobertura Cultural</div>
                         </div>
                     </div>
 
                     {/* Coverage Progress */}
-                    <div className="card" style={{ marginBottom: '1.5rem' }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: '1.5rem' }}>
                         <h2 className="card-title">📊 Cobertura por Categoria</h2>
                         <div style={{ marginTop: '1rem' }}>
                             {data.allCategories.map((cat: string) => {
@@ -106,7 +106,7 @@ export const AdminMunicipalGaps: React.FC = () => {
 
                     {/* Gaps Alert */}
                     {data.gapCategories.length > 0 && data.gapCategories[0] !== 'Nenhum vazio identificado' && (
-                        <div className="card" style={{ border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.03)' }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ border: '1px solid rgba(239,68,68,0.2)', background: 'rgba(239,68,68,0.03)' }}>
                             <h3 className="card-title" style={{ color: '#f87171', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <AlertTriangle size={18} /> Vazios Identificados — Ação Recomendada
                             </h3>

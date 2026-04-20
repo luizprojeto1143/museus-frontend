@@ -127,10 +127,10 @@ export const AdminSpaceForm: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Basic Info Card */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <div className="flex items-center gap-3 mb-6 border-b border-[rgba(212,175,55,0.1)] pb-4">
                         <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
-                            <Layers className="text-[#d4af37]" size={24} />
+                            <Layers className="text-[var(--accent-primary)]" size={24} />
                         </div>
                         <h3 className="card-title mb-0">{t("admin.space.informaesBsicas", `Informações Básicas`)}</h3>
                     </div>
@@ -187,10 +187,10 @@ export const AdminSpaceForm: React.FC = () => {
                 </div>
 
                 {/* Resources Card */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <div className="flex items-center gap-3 mb-6 border-b border-[rgba(212,175,55,0.1)] pb-4">
                         <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
-                            <Box className="text-[#d4af37]" size={24} />
+                            <Box className="text-[var(--accent-primary)]" size={24} />
                         </div>
                         <h3 className="card-title mb-0">Recursos & Comodidades</h3>
                     </div>
@@ -204,13 +204,13 @@ export const AdminSpaceForm: React.FC = () => {
                                 className={`
                     p-4 rounded-xl border text-sm font-bold text-left transition-all flex flex-col gap-2 relative overflow-hidden
                     ${formData.resources.includes(res)
-                                        ? 'bg-[rgba(212,175,55,0.1)] border-[#d4af37] text-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.2)]'
+                                        ? 'bg-[rgba(212,175,55,0.1)] border-[var(--accent-primary)] text-[var(--accent-primary)] shadow-[0_0_10px_rgba(212,175,55,0.2)]'
                                         : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.1)] text-gray-400 hover:border-[rgba(212,175,55,0.3)]'
                                     }
                  `}
                             >
                                 {formData.resources.includes(res) && (
-                                    <div className="absolute top-2 right-2 text-[#d4af37]">
+                                    <div className="absolute top-2 right-2 text-[var(--accent-primary)]">
                                         <CheckCircle size={14} />
                                     </div>
                                 )}
@@ -221,10 +221,10 @@ export const AdminSpaceForm: React.FC = () => {
                 </div>
 
                 {/* Settings Card */}
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <div className="flex items-center gap-3 mb-6 border-b border-[rgba(212,175,55,0.1)] pb-4">
                         <div className="p-2 rounded-xl bg-[rgba(212,175,55,0.1)]">
-                            <Monitor className="text-[#d4af37]" size={24} />
+                            <Monitor className="text-[var(--accent-primary)]" size={24} />
                         </div>
                         <h3 className="card-title mb-0">{t("admin.space.configuraes", `Configurações`)}</h3>
                     </div>

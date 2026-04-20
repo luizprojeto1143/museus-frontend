@@ -38,7 +38,7 @@ export const DashboardSalesWidget: React.FC = () => {
 
             <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
                 <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                    <div className="p-2 bg-blue-100 text-[var(--accent-primary)] rounded-lg">
                         <Ticket className="w-5 h-5" />
                     </div>
                     <span className="text-sm font-medium text-gray-500">Ingressos Vendidos</span>

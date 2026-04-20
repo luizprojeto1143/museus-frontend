@@ -114,7 +114,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           transform: "translateX(-50%)",
           width: "80%",
           height: "2px",
-          background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
+          background: "linear-gradient(90deg, transparent, var(--accent-primary), transparent)"
         }} />
 
         <h2 className="text-2xl font-bold text-[var(--accent-gold)] text-center mb-6" style={{ fontFamily: "Georgia, serif" }}>
@@ -143,7 +143,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
               width: "120px",
               height: "120px",
               borderRadius: "50%",
-              border: "3px solid #d4af37",
+              border: "3px solid var(--accent-primary)",
               overflow: "hidden",
               cursor: "pointer",
               background: photoPreview
@@ -193,7 +193,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             fontSize: "0.9rem",
             display: "block",
             marginBottom: "0.4rem",
-            color: "#d4af37",
+            color: "var(--accent-primary)",
             fontFamily: "serif"
           }}>
             {t("auth.register.name")} *
@@ -221,7 +221,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             fontSize: "0.9rem",
             display: "block",
             marginBottom: "0.4rem",
-            color: "#d4af37",
+            color: "var(--accent-primary)",
             fontFamily: "serif"
           }}>
             {t("auth.register.email")} *
@@ -248,7 +248,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             fontSize: "0.9rem",
             display: "block",
             marginBottom: "0.4rem",
-            color: "#d4af37",
+            color: "var(--accent-primary)",
             fontFamily: "serif"
           }}>
             {t("auth.register.password")} *
@@ -275,7 +275,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             fontSize: "0.9rem",
             display: "block",
             marginBottom: "0.4rem",
-            color: "#d4af37",
+            color: "var(--accent-primary)",
             fontFamily: "serif"
           }}>
             {t("auth.register.confirmPassword")} *
@@ -302,7 +302,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             fontSize: "0.9rem",
             display: "block",
             marginBottom: "0.4rem",
-            color: "#d4af37",
+            color: "var(--accent-primary)",
             fontFamily: "serif"
           }}>
             Idade *
@@ -335,7 +335,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                   width: "44px",
                   height: "24px",
                   borderRadius: "12px",
-                  background: isTeacher ? "#d4af37" : "rgba(255,255,255,0.1)",
+                  background: isTeacher ? "var(--accent-primary)" : "rgba(255,255,255,0.1)",
                   position: "relative",
                   cursor: "pointer",
                   transition: "background 0.3s",
@@ -378,7 +378,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                 <button
                   type="button"
                   onClick={() => setShowTermsModal(true)}
-                  style={{ background: "none", border: "none", padding: 0, color: "#d4af37", textDecoration: "underline", cursor: "pointer", fontWeight: "bold" }}
+                  style={{ background: "none", border: "none", padding: 0, color: "var(--accent-primary)", textDecoration: "underline", cursor: "pointer", fontWeight: "bold" }}
                 >
                   Termos de Uso
                 </button>
@@ -401,12 +401,12 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           )}
 
           <button
-            className="btn"
+            className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
             type="submit"
             disabled={isSubmitting}
             style={{
               width: "100%",
-              background: "linear-gradient(135deg, #d4af37, #b8941f)",
+              background: "linear-gradient(135deg, var(--accent-primary), var(--accent-primary))",
               color: "#1a1108",
               fontWeight: "bold",
               fontSize: "1rem",
@@ -430,7 +430,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
               <span
                 onClick={() => navigate("/login")}
                 style={{
-                  color: "#d4af37",
+                  color: "var(--accent-primary)",
                   cursor: "pointer",
                   textDecoration: "underline",
                   fontWeight: "bold",
@@ -450,7 +450,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             transform: "translateX(-50%)",
             width: "80%",
             height: "2px",
-            background: "linear-gradient(90deg, transparent, #d4af37, transparent)"
+            background: "linear-gradient(90deg, transparent, var(--accent-primary), transparent)"
           }} />
         </form>
 
@@ -462,18 +462,18 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem"
           }}>
             <div style={{
-              background: "#1a1108", border: "1px solid #d4af37", borderRadius: "0.5rem",
+              background: "#1a1108", border: "1px solid var(--accent-primary)", borderRadius: "0.5rem",
               width: "100%", maxWidth: "600px", maxHeight: "80vh", display: "flex", flexDirection: "column"
             }}>
               <div style={{ padding: "1rem", borderBottom: "1px solid #333", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h3 style={{ color: "#d4af37", margin: 0 }}>Termos de Uso</h3>
+                <h3 style={{ color: "var(--accent-primary)", margin: 0 }}>Termos de Uso</h3>
                 <button type="button" onClick={() => setShowTermsModal(false)} style={{ background: "none", border: "none", color: "#fff", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
               </div>
               <div style={{ padding: "1rem", overflowY: "auto", color: "#ddd", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
                 {termsText || "Termos de uso padrão da plataforma..."}
                 {privacyText && (
                   <>
-                    <h4 style={{ color: "#d4af37", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade", `Política de Privacidade`)}</h4>
+                    <h4 style={{ color: "var(--accent-primary)", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade", `Política de Privacidade`)}</h4>
                     {privacyText}
                   </>
                 )}
@@ -482,7 +482,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                 <button
                   type="button"
                   onClick={() => { setTermsAccepted(true); setShowTermsModal(false); }}
-                  style={{ background: "#d4af37", color: "#000", border: "none", padding: "0.5rem 1rem", borderRadius: "0.25rem", fontWeight: "bold", cursor: "pointer" }}
+                  style={{ background: "var(--accent-primary)", color: "#000", border: "none", padding: "0.5rem 1rem", borderRadius: "0.25rem", fontWeight: "bold", cursor: "pointer" }}
                 >
                   Aceitar e Fechar
                 </button>

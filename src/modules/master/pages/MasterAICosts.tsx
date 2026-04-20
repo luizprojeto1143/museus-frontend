@@ -50,7 +50,7 @@ export const MasterAICosts: React.FC = () => {
         fetchReport();
     }, [fetchReport]);
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "#d4af37" }} /></div>;
+    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
     if (!report) return <div className="text-center text-gray-500 py-20">{t("master.aicosts.nenhumDadoDisponvel", `Nenhum dado dispon�vel.`)}</div>;
 
     const monthNames = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
@@ -58,7 +58,7 @@ export const MasterAICosts: React.FC = () => {
 
     const summaryCards = [
         { label: "Custo Total", value: `R$ ${report.summary.totalCost.toFixed(2).replace('.', ',')}`, icon: <DollarSign size={20} />, color: "text-green-500 bg-green-500/10" },
-        { label: "Total An�lises", value: report.summary.totalAnalyses.toLocaleString("pt-BR"), icon: <BarChart3 size={20} />, color: "text-blue-500 bg-blue-500/10" },
+        { label: "Total An�lises", value: report.summary.totalAnalyses.toLocaleString("pt-BR"), icon: <BarChart3 size={20} />, color: "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10" },
         { label: "Total Tokens", value: report.summary.totalTokens.toLocaleString("pt-BR"), icon: <Cpu size={20} />, color: "text-purple-500 bg-purple-500/10" },
         { label: "Tenants Ativos", value: report.summary.activeTenants, icon: <Building2 size={20} />, color: "text-amber-500 bg-amber-500/10" }
     ];
@@ -74,7 +74,7 @@ export const MasterAICosts: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {summaryCards.map((s, i) => (
-                    <div key={i} className="card">
+                    <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${s.color}`}>{s.icon}</div>
                         <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">{s.label}</p>
                         <p className="text-2xl font-black text-white">{s.value}</p>
@@ -87,7 +87,7 @@ export const MasterAICosts: React.FC = () => {
                 <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                     <BarChart3 size={20} style={{ color: "#60a5fa" }} /> Top Consumidores
                 </h2>
-                <div className="card" style={{ overflow: "hidden", padding: 0 }}>
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                     <table className="w-full text-left">
                         <thead className="bg-black/40 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
                             <tr>
@@ -127,7 +127,7 @@ export const MasterAICosts: React.FC = () => {
                     </h2>
                     <div style={{ display: "grid", gap: "0.75rem" }}>
                         {report.nearLimitTenants.map(item => (
-                            <div key={item.tenantId} className="card" style={{ padding: "1.25rem", borderColor: "rgba(212,175,55,0.2)" }}>
+                            <div key={item.tenantId} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", borderColor: "rgba(212,175,55,0.2)" }}>
                                 <div className="flex justify-between items-center mb-3">
                                     <span style={{ color: "white", fontWeight: 700 }}>{item.tenantName}</span>
                                     <span className={`text-sm font-black ${item.percentUsed >= 95 ? 'text-red-400' : 'text-amber-400'}`}>

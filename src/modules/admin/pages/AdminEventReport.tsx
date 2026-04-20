@@ -127,7 +127,7 @@ export const AdminEventReport: React.FC = () => {
                 {/* Key Metrics */}
                 <div className="grid grid-cols-4 gap-6 print:grid-cols-4">
                     <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                        <p className="text-sm text-blue-600 font-medium mb-1">Inscritos</p>
+                        <p className="text-sm text-[var(--accent-primary)] font-medium mb-1">Inscritos</p>
                         <p className="text-3xl font-bold text-blue-900">{stats.totalRegistrations}</p>
                     </div>
                     <div className="p-4 bg-green-50 rounded-lg border border-green-100">
@@ -157,7 +157,7 @@ export const AdminEventReport: React.FC = () => {
             {survey.questionsCount > 0 && (
                 <div className="bg-zinc-900/40 p-8 rounded-xl shadow-md shadow-black/20 border border-white/10 mb-6 print:break-inside-avoid">
                     <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-blue-600" />
+                        <TrendingUp className="w-5 h-5 text-[var(--accent-primary)]" />
                         Resultados da Pesquisa
                         <span className="text-sm font-normal text-zinc-400 ml-2">({survey.uniqueRespondents} respondentes)</span>
                     </h2>
@@ -187,7 +187,7 @@ export const AdminEventReport: React.FC = () => {
                                                     <span className="w-4 font-bold text-zinc-300">{key}</span>
                                                     <div className="flex-1 h-3 bg-zinc-800 rounded-full overflow-hidden">
                                                         <div
-                                                            className="h-full bg-blue-500"
+                                                            className="h-full bg-[var(--accent-primary)]"
                                                             style={{ width: `${(count / q.totalResponses) * 100}%` }}
                                                         />
                                                     </div>

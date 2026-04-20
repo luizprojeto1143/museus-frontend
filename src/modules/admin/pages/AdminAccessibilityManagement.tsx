@@ -31,7 +31,7 @@ const serviceLabels: Record<string, string> = {
 
 const statusLabels: Record<string, { label: string; color: string }> = {
     PENDING: { label: "Pendente", color: "#6b7280" },
-    APPROVED: { label: "Aprovado", color: "#3b82f6" },
+    APPROVED: { label: "Aprovado", color: "var(--accent-primary)" },
     IN_PROGRESS: { label: "Em Andamento", color: "#f59e0b" },
     DELIVERED: { label: "Entregue", color: "#8b5cf6" },
     VALIDATED: { label: "Validado", color: "#10b981" },
@@ -108,20 +108,20 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         {dashboard.byStatus.map(s => {
                             const info = statusLabels[s.status] || { label: s.status, color: "#6b7280" };
                             return (
-                                <div key={s.status} className="card" style={{ textAlign: "center" }}>
+                                <div key={s.status} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center" }}>
                                     <div style={{ fontSize: "2rem", fontWeight: "bold", color: info.color }}>{s._count}</div>
                                     <div style={{ fontSize: "0.85rem", color: "var(--fg-muted)" }}>{info.label}</div>
                                 </div>
                             );
                         })}
-                        <div className="card" style={{ textAlign: "center", background: "var(--accent)" }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", background: "var(--accent)" }}>
                             <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#fff" }}>{totalByStatus}</div>
                             <div style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.8)" }}>Total</div>
                         </div>
                     </div>
 
                     {/* By Service Type */}
-                    <div className="card" style={{ marginBottom: "2rem" }}>
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
                         <h3 style={{ marginBottom: "1rem" }}>{t("admin.accessibilitymanagement.porTipoDeServio", `Por Tipo de Serviço`)}</h3>
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                             {dashboard.byService.map(s => (
@@ -134,12 +134,12 @@ export const AdminAccessibilityManagement: React.FC = () => {
                     </div>
 
                     {/* Recent Executions */}
-                    <div className="card">
+                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <div className="flex justify-between items-center mb-4">
                             <h3>{t("admin.accessibilitymanagement.solicitaesRecentesServios", `Solicitações Recentes (Serviços)`)}</h3>
                             <button
                                 onClick={() => window.location.href = '/admin/acessibilidade/novo'}
-                                className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition-colors"
+                                className="text-xs bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)] text-white px-3 py-1 rounded-lg transition-colors"
                             >
                                 + Nova Solicitação
                             </button>
@@ -182,7 +182,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
             )}
 
             {activeTab === "REQUESTS" && (
-                <div className="card">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                     <h3 className="mb-4 text-purple-400">{t("admin.accessibilitymanagement.solicitaesDeContedoParaObrasMaster", `Solicitações de Conteúdo para Obras (Master)`)}</h3>
                     <p className="text-sm text-zinc-500 mb-6">{t("admin.accessibilitymanagement.acompanheAquiOsPedidosDeLibrasEAudiodesc", `
                         Acompanhe aqui os pedidos de Libras e Audiodescrição feitos diretamente no cadastro de obras para a equipe Master.
