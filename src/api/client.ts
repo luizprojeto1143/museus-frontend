@@ -35,7 +35,19 @@ export const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
 
 // Automatically attached cookies will be sent due to withCredentials: true.
 // We no longer read tokens from localStorage for security reasons.
+// Attached Bearer token from localStorage for reliability across domains.
 api.interceptors.request.use((config) => {
+  try {
+    const raw = window.localStorage.getItem("museus_auth_v1");
+    if (raw) {
+      const stored = JSON.parse(raw);
+      if (stored.token) {
+        config.headers.Authorization = `Bearer ${stored.token}`;
+      }
+    }
+  } catch (e) {
+    // Fail silently on storage errors
+  }
   return config;
 });
 

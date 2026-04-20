@@ -14,7 +14,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: "prompt",
+      selfDestroying: true, // Força a destruição do Service Worker antigo
+      registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
         name: "Cultura Viva - Museus",
