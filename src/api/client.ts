@@ -11,7 +11,7 @@ if (!baseURL) {
 export const api = axios.create({
   baseURL,
   withCredentials: true,
-  timeout: 15000,
+  timeout: 20000,
 });
 
 // ─── Retry exponencial ─────────────────────────────────────────────
