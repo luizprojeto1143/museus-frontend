@@ -198,7 +198,7 @@ export const VisitorRPG: React.FC = () => {
                             <button
                                 key={char.id}
                                 onClick={() => setActiveChar(char)}
-                                className={`flex-shrink-0 p-3 rounded-2xl border transition-all ${activeChar?.id === char.id ? 'bg-yellow-600/10 border-yellow-600' : 'bg-black/20 border-white/5'}`}
+                                className={`flex-shrink-0 p-3 rounded-2xl border-2 transition-all ${activeChar?.id === char.id ? 'bg-yellow-600/20 border-yellow-600 shadow-[0_0_15px_rgba(212,175,55,0.3)]' : 'bg-white/5 border-white/10 opacity-70 hover:opacity-100'}`}
                             >
                                 <img src={char.displayAvatarUrl || '/default_avatar.png'} className="w-10 h-10 object-contain rounded-full" alt={char.characterName} />
                             </button>

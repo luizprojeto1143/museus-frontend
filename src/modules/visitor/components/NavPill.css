@@ -28,6 +28,7 @@
   padding: 10px 20px;
   border-radius: 100px;
   color: var(--muted);
+  opacity: 0.8;
   text-decoration: none;
   font-family: var(--fm);
   font-size: 11px;
@@ -41,7 +42,8 @@
 
 .nav-p-item:hover {
   color: var(--cream);
-  background: var(--faint);
+  background: var(--bg-surface-hover);
+  opacity: 1;
 }
 
 .nav-p-item.active {
