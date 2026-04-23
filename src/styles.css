@@ -787,9 +787,9 @@ a:hover {
   position: absolute;
   right: 1rem;
   /* Align inside sidebar padding */
-  top: 35px;
-  /* Center in header height (70px) */
-  transform: translateY(-50%);
+  top: 15px;
+  /* Move higher to avoid icons in Slim mode */
+  transform: translateY(0);
   z-index: 60;
   border: 1px solid var(--border-subtle);
 }

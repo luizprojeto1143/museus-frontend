@@ -253,7 +253,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar mt-2">
+        <nav className={`flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar ${isCollapsed ? 'mt-10' : 'mt-2'}`}>
           {visibleGroups.map((group) => {
             const open = isGroupOpen(group);
             
