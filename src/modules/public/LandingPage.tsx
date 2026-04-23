@@ -14,7 +14,8 @@ import {
     ChevronDown, 
     Zap,
     Users,
-    Activity
+    Activity,
+    Mail
 } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 import { useTenant } from "../auth/TenantContext";
