@@ -47,6 +47,12 @@ export const SelectMuseum: React.FC = () => {
   const isRegisterMode = searchParams.get("mode") === "register";
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState("ALL");
+  const [selectedLandmark, setSelectedLandmark] = useState<Equipamento | null>(null);
+  const { userLocation } = useGeoFencing();
 
   // Load Tenants & Handle Auto-selection
   useEffect(() => {
