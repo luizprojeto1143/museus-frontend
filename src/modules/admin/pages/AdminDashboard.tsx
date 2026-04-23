@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2, Users, Star, Layout } from "lucide-react";
@@ -49,6 +49,7 @@ type UpcomingEvent = {
 export const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
+  const navigate = useNavigate();
   const isCityMode = useIsCityMode();
   const [data, setData] = useState<DashboardData | null>(null);
   const [upcomingEvents, setUpcomingEvents] = useState<UpcomingEvent[]>([]);
@@ -158,13 +159,13 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-3">
-           <Button
-             variant="glass"
-             className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
-             onClick={() => window.location.href = "/admin/config"}
-           >
-              Configurar Espaço
-           </Button>
+            <Button
+              variant="glass"
+              className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
+              onClick={() => navigate("/admin/configuracoes")}
+            >
+               Configurar Espaço
+            </Button>
         </div>
       </header>
 
@@ -187,12 +188,12 @@ export const AdminDashboard: React.FC = () => {
                 Implementamos quizes, rotas dinâmicas e certificados automáticos para elevar o engajamento do seu público.
               </p>
            </div>
-           <button 
-             className="px-10 h-14 rounded-2xl bg-[var(--accent-primary)] text-white font-black text-xs uppercase tracking-widest hover:bg-[var(--accent-primary)] transition-all shadow-xl shadow-blue-600/20 active:scale-95 flex-shrink-0"
-             onClick={() => window.location.href = "/admin/comunidade"}
-           >
-              Ver Roadmap
-           </button>
+            <button 
+              className="px-10 h-14 rounded-2xl bg-[var(--accent-primary)] text-white font-black text-xs uppercase tracking-widest hover:bg-[var(--accent-primary)] transition-all shadow-xl shadow-blue-600/20 active:scale-95 flex-shrink-0"
+              onClick={() => navigate("/admin/comunidade")}
+            >
+               Ver Roadmap
+            </button>
         </div>
       </motion.div>
 
@@ -238,9 +239,9 @@ export const AdminDashboard: React.FC = () => {
            <section className="card border-white/5 bg-black/20 p-8 rounded-[40px]">
               <div className="flex justify-between items-center mb-8">
                  <h2 className="text-lg font-black text-white tracking-tight">🎨 Agenda Cultural</h2>
-                 <button className="p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10" onClick={() => window.location.href = "/admin/eventos"}>
+                  <button className="p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10" onClick={() => navigate("/admin/eventos")}>
                     <ChevronRight size={16} className="text-slate-400" />
-                 </button>
+                  </button>
               </div>
 
               {upcomingEvents.length > 0 ? (
