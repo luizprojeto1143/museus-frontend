@@ -223,12 +223,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Sidebar - PREMIUM INSTITUTIONAL */}
       <aside className={`layout-sidebar bg-black/60 backdrop-blur-3xl border-r border-white/5 ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <button
-          className="sidebar-collapse-toggle bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-white"
+          className={`sidebar-collapse-toggle bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 text-white ${isCollapsed ? 'left-1/2 -translate-x-1/2 rotate-180' : 'right-4'}`}
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? "Expandir" : "Recolher"}
           aria-label={isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
         >
-          {isCollapsed ? "»" : "«"}
+          «
         </button>
         
         <div className="p-6 border-b border-white/5">
@@ -319,10 +319,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/5 bg-black/20">
-          <div className="mb-4 flex justify-center">
-            <LanguageSwitcher style={{ position: "static" }} className="sidebar-lang-switcher" />
-          </div>
+        <div className="p-4 border-t border-white/5 bg-black/20 flex flex-col items-center">
+          {!isCollapsed && (
+            <div className="mb-4 flex justify-center w-full">
+              <LanguageSwitcher style={{ position: "static" }} className="sidebar-lang-switcher" />
+            </div>
+          )}
           <button
             onClick={logout}
             className="w-full h-11 rounded-xl bg-red-500/5 border border-red-500/10 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-all duration-300 flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest group"

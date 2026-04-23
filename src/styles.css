@@ -631,23 +631,19 @@ a:hover {
 }
 
 .layout-sidebar.collapsed {
-  width: 0 !important;
-  min-width: 0 !important;
-  border-right: none;
-  /* Hide border when fully collapsed */
-  overflow: visible;
-  /* Allow button to float outside */
-  padding: 0 !important;
-  flex-basis: 0 !important;
+  width: 80px !important;
+  min-width: 80px !important;
+  border-right: 1px solid var(--border-subtle);
+  overflow: hidden;
 }
 
 .layout-sidebar.collapsed .app-title,
 .layout-sidebar.collapsed .app-subtitle,
-.layout-sidebar.collapsed .app-brand,
-.layout-sidebar.collapsed .sidebar-content,
-.layout-sidebar.collapsed .sidebar-footer,
-.layout-sidebar.collapsed .sidebar-header {
-  /* Hide all internal content completely */
+.layout-sidebar.collapsed .sidebar-group-header span:first-child,
+.layout-sidebar.collapsed .sidebar-group-chevron,
+.layout-sidebar.collapsed .nav-item span:not(:first-child),
+.layout-sidebar.collapsed .report-button span:not(:first-child),
+.layout-sidebar.collapsed .sidebar-lang-switcher {
   display: none !important;
 }
 
@@ -804,29 +800,7 @@ a:hover {
   border-color: var(--accent-gold);
 }
 
-/* When collapsed, move button outside */
-.layout-sidebar.collapsed .sidebar-collapse-toggle {
-  right: -36px;
-  /* Move outside + gap */
-  top: 35px;
-  width: 28px;
-  height: 36px;
-  /* Slightly taller for easy clicking */
-  border-radius: 0 8px 8px 0;
-  background: var(--accent-primary);
-  color: var(--bg-page);
-  border: 1px solid var(--border-subtle);
-  border-left: none;
-  transform: translateY(-50%) rotate(180deg);
-  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.2);
-}
-
-.layout-sidebar.collapsed .sidebar-collapse-toggle:hover {
-  background: var(--accent-primary-hover);
-  color: var(--bg-page);
-  width: 32px;
-  /* Expand slightly on hover */
-}
+/* Custom styles removed for slim mode compatibility */
 
 /* MAIN AREA */
 .layout-main {
