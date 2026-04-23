@@ -2,6 +2,8 @@ import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../../modules/auth/AuthContext";
+import { Button, AnimateIn, Badge, Card } from "../../../components/ui";
+import { FileText, Rocket, LayoutDashboard, Calendar, Accessibility, Folder } from "lucide-react";
 import "./SecretaryDashboard.css"; // Import the new styles
 
 type DashboardData = {
@@ -90,15 +92,17 @@ const SecretaryDashboard: React.FC = () => {
 
     return (
         <div className="secretary-dashboard">
-            {/* Header */}
-            <div className="sec-header">
+            <div className="sec-header flex justify-between items-center mb-8 bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-xl">
                 <div className="sec-title">
-                    <h1>Painel da Secretaria</h1>
-                    <p>{t("admin.secretarydashboard.visoExecutivaDaGestoCulturalMunicipal", `Visão executiva da gestão cultural municipal`)}</p>
+                    <div className="flex items-center gap-3 mb-2">
+                        <LayoutDashboard className="text-gold-400" size={24} />
+                        <h1 className="text-2xl font-black uppercase tracking-tighter text-white m-0">Painel de Controle</h1>
+                    </div>
+                    <p className="text-gray-400 text-sm">{t("admin.secretarydashboard.visoExecutivaDaGestoCulturalMunicipal", `Gestão estratégica de conteúdo, engajamento e logística institucional.`)}</p>
                 </div>
-                <button onClick={downloadPdf} className="sec-btn-export">
-                    <span>📄</span> Exportar Relatório PDF
-                </button>
+                <Button onClick={downloadPdf} variant="primary" leftIcon={<FileText size={18} />}>
+                    Exportar Relatório PDF
+                </Button>
             </div>
 
             {/* KPI Cards */}
@@ -130,28 +134,23 @@ const SecretaryDashboard: React.FC = () => {
             </div>
 
             {/* ROADMAP 2026 ANNOUNCEMENT */}
-            <div className="sec-card" style={{
-                background: "linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.05))",
-                border: "1px solid rgba(59, 130, 246, 0.3)",
-                borderRadius: "1rem",
-                padding: "1.5rem",
-                marginBottom: "2rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "1.5rem",
-                gridColumn: "1 / -1",
-                marginTop: "1rem"
-            }}>
-                <div style={{ fontSize: "3rem" }}>🚀</div>
-                <div style={{ flex: 1 }}>
-                    <span className="sec-badge sec-badge-info" style={{ marginBottom: "0.5rem", display: "inline-block" }}>
-                        ROADMAP 2026 DISPONÍVEL
-                    </span>
-                    <h2 style={{ fontSize: "1.4rem", fontWeight: "800", marginBottom: "0.25rem", color: "var(--sec-primary)" }}>Gestão Cultural Betim Ampliada</h2>
-                    <p style={{ color: "var(--sec-text-muted)", fontSize: "0.9rem" }}>
+            <div className="relative overflow-hidden bg-gradient-to-r from-blue-600/20 to-purple-600/10 border border-blue-500/30 rounded-3xl p-8 mb-8 flex items-center gap-8 group">
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                    <Rocket size={120} className="text-white" />
+                </div>
+                <div className="text-5xl animate-bounce">🚀</div>
+                <div className="flex-1 relative z-10">
+                    <Badge variant="primary" className="mb-4 bg-blue-500 border-none text-white font-black italic">
+                        ROADMAP MARÇO 2026
+                    </Badge>
+                    <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Inovação e Expansão Cultura Viva</h2>
+                    <p className="text-gray-400 text-sm max-w-2xl leading-relaxed">
                         Novas ferramentas de engajamento (Comunidade e Quizzes) e infraestrutura (Timelines Arquitetônicas) agora integradas ao portal.
                     </p>
                 </div>
+                <Button variant="outline" className="relative z-10 border-white/20 text-white hover:bg-white/10 uppercase font-black tracking-tighter">
+                    Ver Detalhes
+                </Button>
             </div>
 
             {/* Alerts */}

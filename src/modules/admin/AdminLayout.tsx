@@ -208,9 +208,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`} style={themeStyles}>
       {/* AMBIENT BACKGROUND - ADAPTIVE */}
-      <div className="ambient-bg">
-        <div className={`ambient-orb w-[600px] h-[600px] ${isCityMode ? 'bg-[var(--accent-primary)]/10' : 'bg-gold-500/10'} top-[-5%] left-[-5%]`} />
-        <div className={`ambient-orb w-[500px] h-[500px] ${isCityMode ? 'bg-indigo-600/10' : 'bg-bronze-500/10'} bottom-[-5%] right-[-5%]`} />
+      <div className="ambient-bg fixed inset-0 pointer-events-none">
+        <div className={`ambient-orb w-[600px] h-[600px] bg-gold-400/5 top-[-10%] left-[-10%] blur-[120px]`} />
+        <div className={`ambient-orb w-[500px] h-[500px] bg-accent-secondary/5 bottom-[-10%] right-[-10%] blur-[120px]`} />
       </div>
 
       {/* Mobile Overlay */}
@@ -221,9 +221,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       />
 
       {/* Sidebar - PREMIUM INSTITUTIONAL */}
-      <aside className={`layout-sidebar premium-glass ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
+      <aside className={`layout-sidebar bg-black/60 backdrop-blur-3xl border-r border-white/5 ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <button
-          className="sidebar-collapse-toggle bg-white/5 border-white/10 hover:bg-white/10 transition-colors"
+          className="sidebar-collapse-toggle bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-white"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? "Expandir" : "Recolher"}
           aria-label={isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
@@ -265,8 +265,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                   to={link.to}
                   className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-xs transition-all duration-300 group ${
                     location.pathname === link.to 
-                    ? `bg-white/10 text-white border border-white/10 shadow-lg` 
-                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                    ? `bg-gold-400/10 text-gold-400 border border-gold-400/20 shadow-[0_0_20px_rgba(212,175,55,0.1)]` 
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
                   }`}
                   onClick={() => setSidebarOpen(false)}
                   title={isCollapsed ? link.label : ""}
@@ -300,8 +300,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                         to={link.to}
                         className={`flex items-center gap-4 p-3 rounded-xl font-bold text-[11px] transition-all duration-300 group ${
                           location.pathname === link.to 
-                          ? `bg-white/10 text-white border border-white/10` 
-                          : "text-slate-500 hover:text-white hover:bg-white/5"
+                          ? `bg-gold-400/10 text-gold-400 border border-gold-400/20` 
+                          : "text-gray-500 hover:text-white hover:bg-white/5"
                         }`}
                         onClick={() => setSidebarOpen(false)}
                         title={isCollapsed ? link.label : ""}

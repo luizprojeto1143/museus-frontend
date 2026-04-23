@@ -703,15 +703,13 @@ a:hover {
 
 /* City Mode Layout Fixes */
 .city-mode.layout-wrapper {
-  background-color: #f8fafc !important;
-  /* Force light background on wrapper */
-  background: #f8fafc !important;
+  background-color: var(--bg-page) !important;
+  background: var(--bg-page) !important;
 }
 
 .city-mode.layout-wrapper .layout-main {
-  background-color: #f8fafc !important;
-  /* Force light background on main area */
-  background: #f8fafc !important;
+  background-color: var(--bg-page) !important;
+  background: var(--bg-page) !important;
   min-height: 100vh;
 }
 
@@ -847,7 +845,7 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  background: rgba(26, 17, 8, 0.8);
+  background: rgba(5, 5, 12, 0.8);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
   z-index: 40;
