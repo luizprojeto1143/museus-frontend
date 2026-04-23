@@ -782,22 +782,29 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  right: -16px;
+  top: 45px;
   width: 32px;
   height: 32px;
-  position: absolute;
-  right: 1rem;
-  /* Align inside sidebar padding */
-  top: 15px;
-  /* Move higher to avoid icons in Slim mode */
-  transform: translateY(0);
-  z-index: 60;
-  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: var(--bg-page);
+  border: 4px solid #05050c; /* Matches the deep black background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  font-weight: black;
+  font-size: 1.2rem;
 }
 
 .sidebar-collapse-toggle:hover {
-  color: var(--accent-gold);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent-gold);
+  transform: scale(1.1) translateY(0);
+  background: white;
+  color: black;
 }
 
 /* Custom styles removed for slim mode compatibility */

@@ -223,12 +223,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       {/* Sidebar - PREMIUM INSTITUTIONAL */}
       <aside className={`layout-sidebar bg-black/60 backdrop-blur-3xl border-r border-white/5 ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
         <button
-          className={`sidebar-collapse-toggle bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 text-white ${isCollapsed ? 'left-1/2 -translate-x-1/2 rotate-180' : 'right-4'}`}
+          className="sidebar-collapse-toggle"
           onClick={() => setCollapsed(!isCollapsed)}
           title={isCollapsed ? "Expandir" : "Recolher"}
           aria-label={isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
         >
-          «
+          {isCollapsed ? "»" : "«"}
         </button>
         
         <div className="p-6 border-b border-white/5">
@@ -253,7 +253,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           </div>
         </div>
 
-        <nav className={`flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar ${isCollapsed ? 'mt-10' : 'mt-2'}`}>
+        <nav className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar mt-2">
           {visibleGroups.map((group) => {
             const open = isGroupOpen(group);
             
