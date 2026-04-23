@@ -324,21 +324,22 @@ export const SelectMuseum: React.FC = () => {
                   </div>
 
                   <div className="p-8 flex-1 flex flex-col">
-                    <h3 className="text-2xl font-bold mb-4 tracking-tight group-hover:text-[var(--accent-primary)] transition-colors">{equip.nome}</h3>
+                    <h3 className="text-2xl font-bold mb-3 tracking-tight text-white group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
                     <div className="flex gap-3 mb-6">
-                      <Badge variant="outline" className="opacity-60">
+                      <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
                         <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : "Explore"}
                       </Badge>
-                      <Badge variant="outline" className="opacity-60 border-yellow-500/30 text-yellow-500/80">
+                      <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5">
                         <Star size={12} className="mr-1 fill-current" /> 4.9
                       </Badge>
                     </div>
-                    <p className="text-gray-400 text-sm leading-relaxed line-clamp-3 mb-8 flex-1">
-                      {equip.endereco || "Betim - MG"}
+                    <p className="text-gray-300 text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
+                      {equip.endereco || "Localização não informada • Minas Gerais"}
                     </p>
                     <Button 
-                      className="w-full group-hover:shadow-[0_0_30px_rgba(212,175,55,0.2)]"
-                      rightIcon={<ArrowRight size={18} />}
+                      variant="primary"
+                      className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base"
+                      rightIcon={<ArrowRight size={20} />}
                     >
                       Entrar no Local
                     </Button>

@@ -19,9 +19,9 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)]",
+          "bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-white/20 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:brightness-110 active:scale-95",
         secondary:
-          "bg-[var(--glass-bg-light)] text-white border-[var(--border-default)] backdrop-blur-sm",
+          "bg-[var(--glass-bg-light)] text-white border-[var(--border-default)] backdrop-blur-sm hover:bg-white/10",
         outline:
           "bg-transparent text-[var(--accent-primary)] border-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--fg-inverse)]",
         ghost:
