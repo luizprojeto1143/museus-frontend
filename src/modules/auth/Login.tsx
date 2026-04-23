@@ -59,16 +59,16 @@ export const Login: React.FC = () => {
     }
   };
   return (
-    <div className="login-page min-h-screen flex items-center justify-center p-4 bg-bg-page relative overflow-hidden">
+    <div className="login-page min-h-screen w-full flex items-center justify-center p-4 bg-bg-page relative overflow-hidden">
       <ParticleBackground />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-page/80 pointer-events-none"></div>
       
       <LanguageSwitcher absolute={true} />
 
-      <AnimateIn variant="fadeUp" className="w-full max-w-md relative z-10">
+      <AnimateIn variant="fadeUp" className="w-full max-w-[440px] relative z-10 flex flex-col items-center">
         <form
           onSubmit={handleSubmit}
-          className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-10 shadow-2xl relative overflow-hidden group transition-all duration-500 hover:border-white/20"
+          className="w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-10 shadow-2xl relative overflow-hidden group transition-all duration-500 hover:border-white/20"
         >
           {/* Subtle Glow Effect */}
           <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold-400/5 blur-3xl rounded-full pointer-events-none group-hover:bg-gold-400/10 transition-all duration-700"></div>
@@ -106,7 +106,7 @@ export const Login: React.FC = () => {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="seu@email.com"
-                  className="w-100 bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
                 />
               </div>
             </div>
@@ -128,7 +128,7 @@ export const Login: React.FC = () => {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-100 bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
                 />
               </div>
             </div>
@@ -145,7 +145,7 @@ export const Login: React.FC = () => {
               type="submit"
               variant="primary"
               size="lg"
-              className="w-100 py-4 font-black shadow-xl shadow-gold-500/20"
+              className="w-full py-4 font-black shadow-xl shadow-gold-500/20"
               isLoading={isSubmitting}
               rightIcon={<ArrowRight size={20} />}
             >
