@@ -79,7 +79,7 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
             setTheme(prev => ({
                 ...prev,
                 primaryColor: isOldBranding ? "var(--color-gold-400)" : tenant.primaryColor,
-                secondaryColor: isOldBranding ? "var(--color-neutral-950)" : tenant.secondaryColor,
+                secondaryColor: isOldBranding ? "#cd7f32" : tenant.secondaryColor,
                 theme: (localMode as "light" | "dark") || (tenant.theme as "light" | "dark") || "dark",
                 historicalFont: true 
             }));

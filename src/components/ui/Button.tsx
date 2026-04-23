@@ -19,15 +19,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-white/20 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:brightness-110 active:scale-95",
+          "bg-accent-primary text-fg-inverse border-white/20 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:brightness-110 active:scale-95",
         secondary:
           "bg-[var(--glass-bg-light)] text-white border-[var(--border-default)] backdrop-blur-sm hover:bg-white/10",
         outline:
-          "bg-transparent text-[var(--accent-primary)] border-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--fg-inverse)]",
+          "bg-transparent text-accent-primary border-accent-primary hover:bg-accent-primary hover:text-fg-inverse",
         ghost:
-          "bg-transparent text-[var(--fg-secondary)] border-transparent hover:bg-[var(--bg-surface-hover)] hover:text-[var(--fg-main)]",
+          "bg-transparent text-fg-secondary border-transparent hover:bg-[var(--bg-surface-hover)] hover:text-fg-main",
         glass:
-          "bg-[var(--glass-bg)] text-[var(--fg-main)] border-[var(--glass-border)] backdrop-blur-[28px] shadow-[var(--shadow-premium)]",
+          "bg-[var(--glass-bg)] text-fg-main border-[var(--glass-border)] backdrop-blur-[28px] shadow-[var(--shadow-premium)] hover:bg-white/10",
         danger:
           "bg-red-600 text-white border-transparent hover:bg-red-700",
       },

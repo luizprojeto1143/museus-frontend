@@ -184,7 +184,7 @@ export const SelectMuseum: React.FC = () => {
       <nav className="pulse-top-bar flex justify-between items-center px-8 py-6 sticky top-0 z-[100] backdrop-blur-xl bg-[var(--bg-overlay)] border-b border-[var(--border-subtle)]">
         <div className="pulse-brand flex items-center gap-3 font-black text-xl tracking-tighter">
           <Zap size={24} className="text-[var(--accent-primary)] animate-pulse" />
-          <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Pulse Hub</span>
+          <span className="bg-gradient-to-r from-white to-gold-300 bg-clip-text text-transparent">Pulse Hub</span>
         </div>
         <div className="pulse-top-actions flex items-center gap-4">
           {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
@@ -197,7 +197,7 @@ export const SelectMuseum: React.FC = () => {
         <AnimateIn variant="fadeUp">
           <div className="pulse-hero-content max-w-4xl mx-auto">
             <h1 className="text-[clamp(3rem,8vw,5rem)] font-black leading-[0.95] tracking-tighter mb-6">
-              O Pulso da <span className="bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent italic">Cultura</span>
+              O Pulso da <span className="bg-gradient-to-r from-gold-400 to-accent-secondary bg-clip-text text-transparent italic">Cultura</span>
             </h1>
             <p className="text-xl text-[var(--fg-secondary)] max-w-lg mx-auto mb-12 leading-relaxed">
               Descubra monumentos históricos e museus em tempo real.
@@ -214,7 +214,7 @@ export const SelectMuseum: React.FC = () => {
                     placeholder="Qual história você quer viver?"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-gray-500"
+                    className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-gray-400 font-medium"
                   />
                 </div>
               </div>
