@@ -197,9 +197,9 @@ export const SelectMuseum: React.FC = () => {
         <AnimateIn variant="fadeUp">
           <div className="pulse-hero-content max-w-4xl mx-auto">
             <h1 className="text-[clamp(3rem,8vw,5rem)] font-black leading-[0.95] tracking-tighter mb-6">
-              O Pulso da <span className="bg-gradient-to-r from-gold-400 to-accent-secondary bg-clip-text text-transparent italic">Cultura</span>
+              O Pulso da <span className="bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent italic drop-shadow-sm">Cultura</span>
             </h1>
-            <p className="text-xl text-[var(--fg-secondary)] max-w-lg mx-auto mb-12 leading-relaxed">
+            <p className="text-xl text-white/90 max-w-lg mx-auto mb-12 leading-relaxed">
               Descubra monumentos históricos e museus em tempo real.
             </p>
 
@@ -214,7 +214,7 @@ export const SelectMuseum: React.FC = () => {
                     placeholder="Qual história você quer viver?"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-gray-400 font-medium"
+                    className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-white/50 font-medium"
                   />
                 </div>
               </div>

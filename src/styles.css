@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 @theme {
-  --color-accent-primary: var(--accent-primary);
-  --color-accent-secondary: var(--accent-secondary);
-  --color-bg-page: var(--bg-page);
-  --color-fg-main: var(--fg-main);
-  --color-fg-inverse: var(--fg-inverse);
+  --color-accent-primary: #d4af37;
+  --color-accent-secondary: #cd7f32;
+  --color-bg-page: #05050c;
+  --color-fg-main: #ffffff;
+  --color-fg-secondary: #e5e7eb;
+  --color-fg-inverse: #ffffff;
+  --color-gold-300: #fde68a;
   --color-gold-400: #d4af37;
   --color-gold-500: #b8941f;
   --radius-md: 18px;
@@ -30,12 +32,12 @@
   /* --- Semantic Variables (Dark Mode Default) --- */
   --bg-page: var(--color-neutral-950);
   --bg-surface: #101018;
-  --bg-surface-hover: #1c1c28;
-  --bg-overlay: rgba(5, 5, 12, 0.9);
+  --bg-surface-hover: #1e1e2a;
+  --bg-overlay: rgba(5, 5, 12, 0.95);
 
-  --fg-main: #f5e6d3;
-  --fg-secondary: rgba(245, 230, 211, 0.9);
-  --fg-inverse: #05050c;
+  --fg-main: #ffffff;
+  --fg-secondary: #e5e7eb;
+  --fg-inverse: #ffffff;
   --text-primary: #ffffff;
   
   --accent-primary: var(--color-gold-400);
