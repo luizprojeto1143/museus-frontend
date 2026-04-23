@@ -27,11 +27,11 @@
     gap: 1.5rem;
     margin-bottom: 3rem;
     padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(42, 24, 16, 0.8));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.8));
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-md);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 .admin-wizard-title {
@@ -185,7 +185,7 @@
 .admin-form-container select:focus {
     border-color: var(--accent-gold) !important;
     box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
-    background: rgba(20, 12, 8, 0.8) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
     outline: none !important;
 }
 
@@ -678,7 +678,7 @@
 }
 
 .admin-modal {
-    background: #1a1a1a;
+    background: #0a0a12;
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 2rem;
     border-radius: 1rem;
