@@ -4,6 +4,14 @@ import { useAuth } from "./AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 
+import { 
+  Button, 
+  AnimateIn, 
+  ParticleBackground,
+  Badge
+} from "@/components/ui";
+import { Zap, Mail, Lock, ArrowRight } from "lucide-react";
+
 export const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -50,136 +58,115 @@ export const Login: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+  return (
+    <div className="login-page min-h-screen flex items-center justify-center p-4 bg-bg-page relative overflow-hidden">
+      <ParticleBackground />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-page/80 pointer-events-none"></div>
+      
+      <LanguageSwitcher absolute={true} />
 
-  return (
-    <div className="app-shell" style={{
-      justifyContent: "center",
-      alignItems: "center",
-      position: "relative",
-      background: "radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.05), transparent 70%), linear-gradient(180deg, #1a1108 0%, #0f0a05 100%)",
-      fontFamily: "'Georgia', serif"
-    }}>
-      <LanguageSwitcher />
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          width: "100%",
-          maxWidth: 400,
-          padding: "2.5rem",
-          borderRadius: "1.5rem",
-          border: "1px solid #463420",
-          background: "linear-gradient(145deg, rgba(44, 30, 16, 0.95), rgba(26, 17, 8, 0.98))",
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 1px rgba(212, 175, 55, 0.2)"
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-          <img src="/logo-culturaviva.jpg" alt="Logo" style={{ width: 60, height: 60, borderRadius: "50%", marginBottom: "1rem", border: "2px solid var(--accent-primary)" }} />
-          <h1 style={{ margin: 0, fontSize: "1.8rem", color: "var(--accent-primary)", textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
-            {t("auth.login.title")}
-          </h1>
-          <p style={{ color: "#8b7355", marginTop: "0.5rem", fontSize: "0.95rem" }}>
-            {t("welcome.subtitle")}
-          </p>
-        </div>
-
-        <div style={{ marginBottom: "1.25rem" }}>
-          <label style={{ fontSize: "0.9rem", display: "block", marginBottom: "0.5rem", color: "#EAE0D5" }}>
-            {t("auth.login.email")}
-          </label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "0.85rem 1rem",
-              borderRadius: "0.75rem",
-              border: "1px solid #463420",
-              background: "rgba(0, 0, 0, 0.3)",
-              color: "#EAE0D5",
-              fontSize: "1rem",
-              outline: "none",
-              transition: "border-color 0.3s"
-            }}
-            onFocus={(e) => e.target.style.borderColor = "var(--accent-primary)"}
-            onBlur={(e) => e.target.style.borderColor = "#463420"}
-          />
-        </div>
-
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label style={{ fontSize: "0.9rem", display: "block", marginBottom: "0.5rem", color: "#EAE0D5" }}>
-            {t("auth.login.password")}
-          </label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "0.85rem 1rem",
-              borderRadius: "0.75rem",
-              border: "1px solid #463420",
-              background: "rgba(0, 0, 0, 0.3)",
-              color: "#EAE0D5",
-              fontSize: "1rem",
-              outline: "none",
-              transition: "border-color 0.3s"
-            }}
-            onFocus={(e) => e.target.style.borderColor = "var(--accent-primary)"}
-            onBlur={(e) => e.target.style.borderColor = "#463420"}
-          />
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
-          <Link to="/forgot-password" style={{ color: 'var(--accent-primary)', fontSize: '0.9rem', textDecoration: 'none', opacity: 0.8 }}>Esqueceu a senha?</Link>
-        </div>
-
-        {import.meta.env.VITE_DEMO_MODE === "true" && (
-          <p style={{ fontSize: "0.8rem", color: "#8b7355", marginBottom: "1rem", background: "rgba(212, 175, 55, 0.05)", padding: "0.5rem", borderRadius: "0.5rem" }}>
-            <strong>Modo Demo:</strong> use qualquer e-mail.
-          </p>
-        )}
-
-        {error && (
-          <p style={{ color: "#ef4444", fontSize: "0.9rem", marginBottom: "1rem", padding: "0.75rem", background: "rgba(239, 68, 68, 0.1)", borderRadius: "0.5rem", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
-            {error}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          style={{
-            width: "100%",
-            padding: "1rem",
-            background: "linear-gradient(135deg, var(--accent-primary) 0%, #b8860b 100%)",
-            color: "#1a1108",
-            border: "none",
-            borderRadius: "0.75rem",
-            fontSize: "1rem",
-            fontWeight: "bold",
-            cursor: isSubmitting ? "wait" : "pointer",
-            opacity: isSubmitting ? 0.7 : 1,
-            boxShadow: "0 4px 15px rgba(212, 175, 55, 0.3)"
-          }}
+      <AnimateIn variant="fadeUp" className="w-full max-w-md relative z-10">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-10 shadow-2xl relative overflow-hidden group transition-all duration-500 hover:border-white/20"
         >
-          {isSubmitting ? t("common.loading") : t("auth.login.submit")}
-        </button>
+          {/* Subtle Glow Effect */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-gold-400/5 blur-3xl rounded-full pointer-events-none group-hover:bg-gold-400/10 transition-all duration-700"></div>
 
-        <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-          <p style={{ fontSize: "0.95rem", color: "#8b7355" }}>
-            {t("auth.login.noAccount")}{" "}
-            <span
-              style={{ color: "var(--accent-primary)", cursor: "pointer", textDecoration: "underline", fontWeight: "bold" }}
-              onClick={() => navigate("/select-museum?mode=register")}
+          <div className="text-center mb-10">
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gold-400/20 blur-xl rounded-full animate-pulse"></div>
+                <img 
+                  src="/logo-culturaviva.jpg" 
+                  alt="Logo" 
+                  className="w-16 h-16 rounded-full border-2 border-gold-400 relative z-10 object-cover shadow-lg" 
+                />
+              </div>
+            </div>
+            
+            <h1 className="text-3xl font-black tracking-tighter text-white mb-2 uppercase">
+              Pulse <span className="text-gold-400 italic">Auth</span>
+            </h1>
+            <p className="text-gray-400 text-sm font-medium">
+              Sua jornada cultural começa aqui
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">
+                E-mail
+              </label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-gold-400 transition-colors" size={18} />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  className="w-100 bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <label className="text-xs font-black uppercase tracking-widest text-gray-500">
+                  Senha
+                </label>
+                <Link to="/forgot-password" size="sm" className="text-xs text-gold-400/80 hover:text-gold-400 transition-colors font-bold uppercase tracking-tighter">
+                  Esqueceu a senha?
+                </Link>
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-gold-400 transition-colors" size={18} />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-100 bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
+                />
+              </div>
+            </div>
+
+            {error && (
+              <AnimateIn variant="scaleUp">
+                <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-sm font-bold text-center">
+                  {error}
+                </div>
+              </AnimateIn>
+            )}
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              className="w-100 py-4 font-black shadow-xl shadow-gold-500/20"
+              isLoading={isSubmitting}
+              rightIcon={<ArrowRight size={20} />}
             >
-              {t("auth.register.submit")}
-            </span>
-          </p>
-        </div>
-      </form>
+              Entrar
+            </Button>
+          </div>
+
+          <div className="mt-10 text-center">
+            <p className="text-gray-500 text-sm font-medium">
+              Não possui uma conta?{" "}
+              <button
+                type="button"
+                className="text-gold-400 font-black uppercase tracking-tighter hover:underline px-2"
+                onClick={() => navigate("/select-museum?mode=register")}
+              >
+                Cadastre-se agora
+              </button>
+            </p>
+          </div>
+        </form>
+      </AnimateIn>
     </div>
   );
 };
