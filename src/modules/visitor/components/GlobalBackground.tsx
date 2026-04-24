@@ -4,12 +4,14 @@ interface GlobalBackgroundProps {
   primaryColor?: string;
   secondaryColor?: string;
   theme?: "light" | "dark";
+  imageUrl?: string;
 }
 
 export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
   primaryColor = "var(--accent-primary)",
   secondaryColor = "var(--accent-secondary)",
-  theme = "dark"
+  theme = "dark",
+  imageUrl
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -33,6 +35,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
     resize();
 
     const hexToRgb = (hex: string) => {
+      if (!hex || !hex.startsWith('#')) return [0, 0, 0];
       const r = parseInt(hex.slice(1, 3), 16) / 255;
       const g = parseInt(hex.slice(3, 5), 16) / 255;
       const b = parseInt(hex.slice(5, 7), 16) / 255;
@@ -66,30 +69,17 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
         
         float pulse = 0.5 + 0.5 * sin(u_time * 0.3);
         
-        // Se for tema claro, usamos um fundo quase branco e misturamos as cores de forma muito sutil
-        // Se for escuro, mantemos a base escura
+        // Se houver imagem de fundo, deixamos o WebGL mais transparente ou escurecido
+        // Se for tema claro, usamos um fundo quase branco
         ${theme === 'light' ? `
           gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
         ` : `
           vec3 finalColor = mix(colorA, colorB, uv.y * pulse + dist * 0.1);
-          finalColor *= 0.12; 
+          finalColor *= ${imageUrl ? '0.08' : '0.12'}; 
           gl_FragColor = vec4(finalColor, 1.0);
         `}
       }
     `;
-
-    const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
-      const shader = gl.createShader(type);
-      if (!shader) return null;
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
-      return shader;
-    };
 
     const vs = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     const fs = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
@@ -140,6 +130,19 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
     };
     animationFrameId = requestAnimationFrame(render);
 
+    function createShader(gl: WebGLRenderingContext, type: number, source: string) {
+        const shader = gl.createShader(type);
+        if (!shader) return null;
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error(gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -149,22 +152,41 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
       gl.deleteShader(fs);
       gl.deleteBuffer(positionBuffer);
     };
-  }, [primaryColor, secondaryColor, theme]);
+  }, [primaryColor, secondaryColor, theme, imageUrl]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="global-background-canvas"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: -1,
-        pointerEvents: "none",
-        display: "block"
-      }}
-    />
+    <>
+      {imageUrl && (
+        <div 
+          className="global-background-image"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            zIndex: -2,
+            backgroundImage: `url(${imageUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.4
+          }}
+        />
+      )}
+      <canvas
+        ref={canvasRef}
+        className="global-background-canvas"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+          pointerEvents: "none",
+          display: "block"
+        }}
+      />
+    </>
   );
 };

@@ -178,6 +178,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         primaryColor={settings?.primaryColor} 
         secondaryColor={settings?.secondaryColor} 
         theme={(settings?.theme as "light" | "dark") || "dark"}
+        imageUrl={settings?.bannerUrl}
       />
 
       {/* Moldura de Tela (Frame Overlay) */}

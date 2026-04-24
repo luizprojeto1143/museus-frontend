@@ -80,6 +80,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
         }
     };
 
+    if (!isOpen) {
         return (
             <button 
                 onClick={() => setIsOpen(true)} 
@@ -90,8 +91,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
                 <Bot size={28} />
             </button>
         );
-
-    return (
+    }
         <div className="ai-chat-window">
             {/* Header */}
             <div className="ai-chat-header">
