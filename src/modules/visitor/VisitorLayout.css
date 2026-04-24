@@ -84,7 +84,7 @@
 #visitor-layout.layout-wrapper {
     display: block;
     min-height: 100vh;
-    background-color: var(--bg-page);
+    background: transparent;
     color: var(--fg-main);
     width: 100%;
     font-family: var(--font-body);

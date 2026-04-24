@@ -99,6 +99,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             primaryColor: equip.corPrimaria || equip.tenant?.primaryColor || "var(--accent-primary)",
             secondaryColor: equip.corSecundaria || equip.tenant?.secondaryColor || "var(--accent-secondary)",
             logoUrl: equip.logoUrl || equip.tenant?.logoUrl,
+            bannerUrl: equip.bannerUrl || equip.tenant?.bannerUrl,
+            frameUrl: equip.frameUrl || equip.tenant?.frameUrl,
             welcomeVideoUrl: equip.welcomeVideoUrl || equip.tenant?.welcomeVideoUrl,
             theme: equip.theme || equip.tenant?.theme || "dark",
             historicalFont: equip.historicalFont !== undefined ? equip.historicalFont : equip.tenant?.historicalFont,
