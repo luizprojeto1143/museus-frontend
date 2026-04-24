@@ -92,6 +92,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({ workContext }) => {
             </button>
         );
     }
+    return (
         <div className="ai-chat-window">
             {/* Header */}
             <div className="ai-chat-header">
