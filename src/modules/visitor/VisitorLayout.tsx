@@ -111,19 +111,26 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             theme: (mergedSettings.theme as "light" | "dark") || "dark",
             historicalFont: mergedSettings.historicalFont
           });
-        } else if (tenantId) {
-          const res = await api.get(`/tenants/${tenantId}/settings`);
-          const tenantSettings = res.data;
-          setSettings(tenantSettings);
-          setSpaceTheme({
-            primaryColor: tenantSettings.primaryColor,
-            secondaryColor: tenantSettings.secondaryColor,
-            theme: (tenantSettings.theme as "light" | "dark") || "dark",
-            historicalFont: tenantSettings.historicalFont
-          });
+        } else if (tenantId && tenantId !== "undefined" && tenantId !== "null") {
+          try {
+            const res = await api.get(`/tenants/${tenantId}/settings`);
+            const tenantSettings = res.data;
+            setSettings(tenantSettings);
+            setSpaceTheme({
+              primaryColor: tenantSettings.primaryColor || "var(--accent-primary)",
+              secondaryColor: tenantSettings.secondaryColor || "var(--accent-secondary)",
+              theme: (tenantSettings.theme as "light" | "dark") || "dark",
+              historicalFont: tenantSettings.historicalFont
+            });
+          } catch (apiErr: any) {
+            if (apiErr.response?.status !== 404) {
+               console.warn("Could not load tenant settings", apiErr);
+            }
+          }
         }
       } catch (err) {
-        console.error("Error loading settings", err);
+        // Silently skip if it's just a non-existent public equipamento or tenant
+        // console.debug("Settings not loaded", err);
       }
     };
 

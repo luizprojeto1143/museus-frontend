@@ -98,6 +98,7 @@
   "welcome": {
     "title": "Cultura Viva",
     "subtitle": "Sua jornada cultural começa aqui",
+    "guest": "Entrar como Visitante",
     "selectTenantAlert": "Selecione um museu!",
     "errorSave": "Erro ao salvar conquista",
     "errorUpload": "Erro ao fazer upload da imagem",
@@ -173,7 +174,8 @@
       "welcome": "Olá! Sou o guia virtual do museu. Pergunte-me sobre obras, horários ou curiosidades!",
       "askAboutWork": "Me fale sobre esta obra...",
       "askAnything": "Pergunte qualquer coisa...",
-      "placeholder": "Digite sua pergunta aqui..."
+      "placeholder": "Digite sua pergunta aqui...",
+      "openChat": "Abrir chat com guia virtual"
     },
     "sidebar": {
       "home": "Início",

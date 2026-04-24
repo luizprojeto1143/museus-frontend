@@ -136,7 +136,7 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (refreshError) {
-        console.error("Session expired or refresh failed", refreshError);
+        console.warn("Session expired or refresh failed", refreshError.message);
         isRefreshing = false;
         refreshSubscribers = []; // clear queue
         
@@ -158,13 +158,14 @@ api.interceptors.response.use(
       }
     }
 
-    console.error("❌ API Error:", {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      message: error.message
-      // Data removed from logs to avoid sensitive leakage
-    });
+    if (error.response?.status !== 401 && error.response?.status !== 404) {
+      console.error("❌ API Error:", {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        message: error.message
+      });
+    }
 
     // Show user-friendly toast for API errors
     const errorMessage = error.response?.data?.message || error.message || "Erro de conexão";
