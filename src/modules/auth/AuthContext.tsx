@@ -303,6 +303,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       } catch (e) {
         // Not authenticated or error, clear storage
         console.log("Session restore failed, treating as guest/logged out.");
+        dispatch({ type: "LOGOUT" });
         window.localStorage.removeItem(STORAGE_KEY);
       } finally {
         setIsRestoring(false);

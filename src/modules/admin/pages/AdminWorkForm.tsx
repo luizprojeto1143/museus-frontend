@@ -126,16 +126,25 @@ export const AdminWorkForm: React.FC = () => {
         setEquipamentoId(data.equipamentoId || "");
 
         // Load translations if available in backend
-        if (data?.metadata?.translations) {
-          const trans = typeof data.metadata === 'string' ? JSON.parse(data.metadata).translations : data.metadata.translations;
-          if (trans?.en) {
-            setTitleEn(trans.en.title || "");
-            setDescriptionEn(trans.en.description || "");
+        // Load translations if available in backend
+        try {
+          if (data?.metadata) {
+            const meta = typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata;
+            const trans = meta?.translations;
+            
+            if (trans) {
+              if (trans.en) {
+                setTitleEn(trans.en.title || "");
+                setDescriptionEn(trans.en.description || "");
+              }
+              if (trans.es) {
+                setTitleEs(trans.es.title || "");
+                setDescriptionEs(trans.es.description || "");
+              }
+            }
           }
-          if (trans?.es) {
-            setTitleEs(trans.es.title || "");
-            setDescriptionEs(trans.es.description || "");
-          }
+        } catch (err) {
+          console.warn("Could not parse metadata translations", err);
         }
 
         setRadius(data.radius || 5);

@@ -529,7 +529,11 @@ export const AdminMuseumSettings: React.FC = () => {
                   >
                     <div className="absolute top-0 left-0 right-0 h-24 opacity-30" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
                     <div className="relative z-10 text-center py-4">
-                      <img src={settings.logoUrl || "https://via.placeholder.com/80"} className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-white/10 shadow-md object-cover" />
+                      {settings.logoUrl ? (
+                        <img src={settings.logoUrl} className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-white/10 shadow-md object-cover" />
+                      ) : (
+                        <div className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-white/10 shadow-md bg-black/20 flex items-center justify-center text-xl">🏛️</div>
+                      )}
                       <h4 className="text-sm font-black mb-1 line-clamp-1" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h4>
                       <div className="w-full h-[1px] opacity-20 my-3" style={{ backgroundColor: settings.secondaryColor }}></div>
                       <div className="space-y-2 mt-4">
@@ -620,7 +624,11 @@ export const AdminMuseumSettings: React.FC = () => {
                     <div className="w-8 h-8 rounded-full bg-black/10"></div>
                     <div className="w-16 h-4 bg-black/20 rounded-full"></div>
                   </div>
-                  <img src={settings.logoUrl || "https://via.placeholder.com/100"} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
+                  {settings.logoUrl ? (
+                    <img src={settings.logoUrl} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg bg-black/20 flex items-center justify-center text-4xl">🏛️</div>
+                  )}
                   <h3 className="text-xl font-black mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h3>
                   <p className="text-[10px] opacity-60 mb-8 line-clamp-3 leading-relaxed italic">{settings.mission || "Sua missão aparecerá aqui para os visitantes..."}</p>
                   <div className="space-y-3">

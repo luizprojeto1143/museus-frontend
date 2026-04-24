@@ -78,7 +78,7 @@ export const AdminTranslations: React.FC = () => {
                     <Languages style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
                     <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{data?.languages?.length || 0}</p>
                     <p className="stat-label">Idiomas</p>
-                    {data?.languages && <div className="flex gap-1 justify-center mt-2 flex-wrap">
+                    {data?.languages && Array.isArray(data.languages) && <div className="flex gap-1 justify-center mt-2 flex-wrap">
                         {data.languages.map((l: string) => {
                             const lang = languageOptions.find(o => o.code === l);
                             return <span key={l} className="text-lg">{lang?.flag || l}</span>;
