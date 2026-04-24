@@ -527,6 +527,16 @@ export const AdminMuseumSettings: React.FC = () => {
                       fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
                     }}
                   >
+                    {settings.bannerUrl && (
+                      <div 
+                        className="absolute inset-0 opacity-40" 
+                        style={{ 
+                          backgroundImage: `url(${settings.bannerUrl})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center'
+                        }} 
+                      />
+                    )}
                     <div className="absolute top-0 left-0 right-0 h-24 opacity-30" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
                     <div className="relative z-10 text-center py-4">
                       {settings.logoUrl ? (
@@ -618,6 +628,16 @@ export const AdminMuseumSettings: React.FC = () => {
                   fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
                 }}
               >
+                {settings.bannerUrl && (
+                  <div 
+                    className="absolute inset-0 opacity-20" 
+                    style={{ 
+                      backgroundImage: `url(${settings.bannerUrl})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }} 
+                  />
+                )}
                 <div className="absolute top-0 left-0 right-0 h-40 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
                 <div className="relative z-10 text-center">
                   <div className="flex justify-between items-center mb-8 px-2">
