@@ -79,8 +79,13 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // C1: Hybrid Refresh — send token in body to bypass cookie blocks, but keep withCredentials:true for safety.
+        // C1: Hybrid Refresh — send token in body to bypass cookie blocks
         const storedRefreshToken = localStorage.getItem("museus_refresh_token");
+        
+        if (!storedRefreshToken) {
+          throw new Error("No refresh token available");
+        }
+
         const { data } = await axios.post(baseURL + "/auth/refresh", { 
           refreshToken: storedRefreshToken 
         }, { withCredentials: true });
