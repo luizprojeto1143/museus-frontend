@@ -631,10 +631,15 @@ a:hover {
 }
 
 .layout-sidebar.collapsed {
-  width: 80px !important;
-  min-width: 80px !important;
-  border-right: 1px solid var(--border-subtle);
-  overflow: hidden;
+  width: 0 !important;
+  min-width: 0 !important;
+  border-right: none !important;
+  overflow: visible !important; /* Permite que o botão de toggle continue visível */
+}
+
+
+.layout-sidebar.collapsed > *:not(.sidebar-collapse-toggle) {
+  display: none !important;
 }
 
 .layout-sidebar.collapsed .app-title,
@@ -782,14 +787,15 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  right: -16px;
-  top: 45px;
-  width: 32px;
-  height: 32px;
+  right: -20px; /* Ajustado para ficar melhor na borda quando o menu sumir */
+  top: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--accent-primary);
-  color: var(--bg-page);
-  border: 4px solid #05050c; /* Matches the deep black background */
+  color: var(--color-neutral-950);
+  border: 4px solid var(--bg-page);
+
   display: flex;
   align-items: center;
   justify-content: center;
