@@ -40,7 +40,7 @@ export const Passport: React.FC = () => {
   const navigate = useNavigate();
   const { stats, currentLevel, nextLevel, progressToNextLevel, refreshGamification } = useGamification();
   const { name, email, tenantId, isGuest, userId } = useAuth();
-  const visitorId = userId || email; // userId (UUID) preferencial, fallback para email
+  const visitorId = userId; // L3 Fix: Must be UUID for backend query
   
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);

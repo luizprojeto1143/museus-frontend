@@ -93,7 +93,7 @@ export const AdminWorkForm: React.FC = () => {
   const [latitude, setLatitude] = useState<number | string>("");
   const [longitude, setLongitude] = useState<number | string>("");
   const [captureRadius, setCaptureRadius] = useState(15);
-  const [vestigeType, setVestigeType] = useState("PIONEER");
+  const [vestigeType, setVestigeType] = useState("WORK"); // L4 Fix: Default should be type, not rarity
   const [vestigeExpiresAt, setVestigeExpiresAt] = useState("");
   const [vestigeImageUrl, setVestigeImageUrl] = useState("");
 
@@ -161,7 +161,7 @@ export const AdminWorkForm: React.FC = () => {
         setLatitude(data.latitude || "");
         setLongitude(data.longitude || "");
         setCaptureRadius(data.captureRadiusM || 15);
-        setVestigeType(data.vestigeType || "PIONEER");
+        setVestigeType(data.vestigeType || "WORK");
         if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
         setVestigeImageUrl(data.vestigeImageUrl || "");
       }).catch(err => {

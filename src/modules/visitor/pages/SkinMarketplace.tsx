@@ -32,18 +32,18 @@ export const SkinMarketplace: React.FC = () => {
             try {
                 const profileRes = await api.get("/visitors/me");
                 const vid = profileRes.data.id;
+                const currentXp = profileRes.data.xp || 0;
+                
                 if (!vid) {
                     setLoading(false);
                     return;
                 }
                 setVisitorId(vid);
+                setVisitorXp(currentXp);
 
-                const [skinsRes, visitorRes] = await Promise.all([
-                    api.get(`/marketplace?visitorId=${vid}`),
-                    api.get(`/visitors/${vid}`)
-                ]);
+                // L8 Fix: profileRes already contains XP, only need marketplace now
+                const skinsRes = await api.get(`/marketplace?visitorId=${vid}`);
                 setSkins(skinsRes.data);
-                setVisitorXp(visitorRes.data.xp);
             } catch (err) {
                 console.error(err);
                 addToast("Erro ao carregar marketplace", "error");

@@ -161,22 +161,61 @@ export const MasterSkinManager: React.FC = () => {
                             </Select>
                         </div>
 
-                        <Input 
-                            label="URL da Imagem / Spritesheet" 
-                            value={skinForm.imageUrl} 
-                            onChange={e => setSkinForm({...skinForm, imageUrl: e.target.value})} 
-                            required
-                        />
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Imagem / Spritesheet</label>
+                            <div className="flex gap-4">
+                                <Input 
+                                    className="flex-1"
+                                    placeholder="URL da Imagem..." 
+                                    value={skinForm.imageUrl} 
+                                    onChange={e => setSkinForm({...skinForm, imageUrl: e.target.value})} 
+                                    required
+                                />
+                                <div className="relative">
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        className="hidden" 
+                                        id="skin-upload" 
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            
+                                            const formData = new FormData();
+                                            formData.append("file", file);
+                                            
+                                            try {
+                                                addToast("Fazendo upload...", "info");
+                                                const res = await api.post("/upload", formData, {
+                                                    headers: { "Content-Type": "multipart/form-data" }
+                                                });
+                                                setSkinForm({ ...skinForm, imageUrl: res.data.url });
+                                                addToast("Upload concluído!", "success");
+                                            } catch (err) {
+                                                addToast("Erro no upload", "error");
+                                            }
+                                        }}
+                                    />
+                                    <Button 
+                                        type="button" 
+                                        variant="outline" 
+                                        onClick={() => document.getElementById('skin-upload')?.click()}
+                                    >
+                                        Upload
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
 
                         <textarea 
-                            className="master-input-group textarea" 
+                            className="master-input-group textarea mt-4" 
                             placeholder="Descrição..." 
                             value={skinForm.description} 
                             onChange={e => setSkinForm({...skinForm, description: e.target.value})} 
                             rows={3} 
                         />
 
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 mt-6">
                             <Button type="submit">{editingId ? "Atualizar" : "Salvar"}</Button>
                             <Button variant="outline" onClick={resetForms}>Cancelar</Button>
                         </div>

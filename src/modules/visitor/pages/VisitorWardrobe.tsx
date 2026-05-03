@@ -82,7 +82,16 @@ export const VisitorWardrobe: React.FC = () => {
     useEffect(() => {
         if (!generatingSkin) return;
 
+        let attempts = 0;
         const interval = setInterval(async () => {
+            attempts++;
+            if (attempts > 30) { // 2 minutes (30 * 4s)
+                clearInterval(interval);
+                setGeneratingSkin(null);
+                addToast("Tempo de geração esgotado. Tente novamente mais tarde.", "error");
+                return;
+            }
+
             try {
                 const res = await api.get(`/rpg/skin-status/${generatingSkin}`);
                 if (res.data.status !== 'GENERATING') {
@@ -92,6 +101,8 @@ export const VisitorWardrobe: React.FC = () => {
                         // Refresh to get the new generatedAvatarUrl
                         const skinsRes = await api.get(`/visitors/${visitorId}/skins`);
                         setOwnedSkins(skinsRes.data);
+                    } else if (res.data.status === 'ERROR') {
+                        addToast("Erro na geração da IA pela skin.", "error");
                     }
                 }
             } catch (err) {
@@ -101,6 +112,18 @@ export const VisitorWardrobe: React.FC = () => {
 
         return () => clearInterval(interval);
     }, [generatingSkin, visitorId, addToast]);
+
+    const handleRetryAvatar = async () => {
+        try {
+            await api.post("/rpg/retry-avatar");
+            addToast("Status resetado. Você pode tentar gerar novamente!", "success");
+            // Refresh character data
+            const rpgRes = await api.get("/rpg/me");
+            setCharacters(rpgRes.data.characters);
+        } catch (err) {
+            addToast("Erro ao resetar status", "error");
+        }
+    };
 
     const handleEquip = async (skinId: string) => {
         if (!selectedCharId) return;
@@ -226,10 +249,23 @@ export const VisitorWardrobe: React.FC = () => {
                 </div>
                 
                 {currentChar && (
-                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-white/10 px-6 py-2 rounded-full shadow-2xl backdrop-blur-xl z-30">
-                        <span className="text-white font-bold text-[10px] uppercase tracking-[0.2em]">
-                            {currentChar.equippedSkin?.name || "Skin Padrão"}
-                        </span>
+                    <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-30">
+                        <div className="bg-slate-900 border border-white/10 px-6 py-2 rounded-full shadow-2xl backdrop-blur-xl">
+                            <span className="text-white font-bold text-[10px] uppercase tracking-[0.2em]">
+                                {currentChar.equippedSkin?.name || "Skin Padrão"}
+                            </span>
+                        </div>
+                        
+                        {currentChar.avatarStatus === 'ERROR' && (
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="bg-red-500/10 border-red-500/20 text-red-400 text-[10px] h-8 px-4 rounded-full"
+                                onClick={handleRetryAvatar}
+                            >
+                                Tentar IA Novamente
+                            </Button>
+                        )}
                     </div>
                 )}
             </div>

@@ -96,17 +96,34 @@ export const BadgeRequestPage: React.FC = () => {
                      </p>
                      
                      <div className="bg-black/20 rounded-2xl p-4 border border-white/5 mb-8">
-                        <div className="flex justify-between items-end mb-2">
-                             <span className="text-[10px] font-black text-slate-500 uppercase">Seu Progresso Atual</span>
-                             <span className="text-sm font-black text-white">{visitorData?.xp?.toLocaleString()} / 100.000</span>
-                        </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                             <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${Math.min(100, ((visitorData?.xp || 0) / 100000) * 100)}%` }}
-                                className="h-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" 
-                             />
-                        </div>
+                        {(() => {
+                            const xp = visitorData?.xp || 0;
+                            let targetXp = 100000;
+                            let tierName = "Bronze";
+                            
+                            if (xp >= 1000000) { targetXp = 1000000; tierName = "Platina"; }
+                            else if (xp >= 500000) { targetXp = 1000000; tierName = "Platina"; } // Next is Platina
+                            else if (xp >= 250000) { targetXp = 500000; tierName = "Ouro"; } // Next is Ouro
+                            else if (xp >= 100000) { targetXp = 250000; tierName = "Prata"; } // Next is Prata
+                            
+                            const progress = Math.min(100, (xp / targetXp) * 100);
+                            
+                            return (
+                                <>
+                                    <div className="flex justify-between items-end mb-2">
+                                         <span className="text-[10px] font-black text-slate-500 uppercase">Rumo ao Embaixador {tierName}</span>
+                                         <span className="text-sm font-black text-white">{xp.toLocaleString()} / {targetXp.toLocaleString()}</span>
+                                    </div>
+                                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                         <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${progress}%` }}
+                                            className="h-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" 
+                                         />
+                                    </div>
+                                </>
+                            );
+                        })()}
                      </div>
 
                      <button 
@@ -146,7 +163,15 @@ export const BadgeRequestPage: React.FC = () => {
                             <div className="flex flex-col">
                                 <h2 className="text-2xl font-black text-white tracking-tight leading-none mb-1">{visitorData?.name || "Visitante"}</h2>
                                 <div className="flex items-center gap-2">
-                                    <span className="text-blue-400 font-black text-[10px] uppercase tracking-widest">Embaixador Lvl {Math.floor((visitorData?.xp || 0) / 10000)}</span>
+                                    <span className="text-blue-400 font-black text-[10px] uppercase tracking-widest">
+                                        {(() => {
+                                            const xp = visitorData?.xp || 0;
+                                            if (xp >= 1000000) return "Embaixador Platina";
+                                            if (xp >= 500000) return "Embaixador Ouro";
+                                            if (xp >= 250000) return "Embaixador Prata";
+                                            return "Embaixador Bronze";
+                                        })()}
+                                    </span>
                                     <div className="w-1 h-1 rounded-full bg-white/20" />
                                     <span className="text-slate-500 font-bold text-[10px] uppercase tracking-widest">Verificado</span>
                                 </div>

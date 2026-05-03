@@ -155,8 +155,8 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             }
 
             if (tenantId) {
-                // Load works with coordinates
-                const worksRes = await api.get(`/works?tenantId=${tenantId}`);
+                // L2 Fix: Load ONLY works that are marked as vestiges to avoid museum-wide alerts
+                const worksRes = await api.get(`/works?tenantId=${tenantId}&vestigeActive=true`);
                 const worksArray = Array.isArray(worksRes.data)
                     ? worksRes.data
                     : (worksRes.data?.data || worksRes.data?.works || []);

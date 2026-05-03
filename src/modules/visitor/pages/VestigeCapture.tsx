@@ -99,15 +99,16 @@ export const VestigeCapture: React.FC = () => {
 
   const inRange = currentDistance !== null && work?.captureRadiusM && currentDistance <= work.captureRadiusM;
 
-  if (captureResult) {
+  // I4: Handle GPS denied or unavailable
+  if (!userLocation && !loading) {
     return (
-      <div className="vestige-capture-overlay success-screen">
-        <div className="success-content">
-          <div className="success-icon">🏆</div>
-          <h2>{t('vestige.capture.success', 'VESTÍGIO COLETADO!')}</h2>
-          <p>{t('vestige.capture.successMessage', 'Você encontrou um pedaço da história sob seus pés.')}</p>
-          <button className="finish-btn" onClick={() => navigate('/visitor/map')}>
-            {t('vestige.capture.backToMap', 'Voltar ao Mapa')}
+      <div className="vestige-capture-overlay error-screen">
+        <div className="error-content">
+          <AlertCircle size={64} className="text-red-500 mb-4" />
+          <h2>{t('vestige.capture.gpsRequired', 'GPS Necessário')}</h2>
+          <p>{t('vestige.capture.gpsMessage', 'Para capturar vestígios, você precisa habilitar a localização no seu navegador e estar no local da obra.')}</p>
+          <button className="finish-btn" onClick={() => navigate(-1)}>
+            {t('common.back', 'Voltar')}
           </button>
         </div>
       </div>
