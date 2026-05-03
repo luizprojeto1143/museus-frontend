@@ -189,7 +189,7 @@ export const AdminUploads: React.FC = () => {
           { label: t("admin.uploads.stats.images"), value: files.filter(f => f.type.startsWith("image")).length, icon: ImageIcon, color: 'gold' },
           { label: "Acervo 3D", value: files.filter(f => f.type.toLowerCase().includes("model") || f.filename.endsWith(".glb")).length, icon: Box, color: 'green' },
         ].map((stat, i) => (
-          <Card key={i} hover="premium" className="p-8 border-white/5 bg-black/20 flex flex-col items-center text-center">
+          <Card key={i} animated glow className="p-8 border-white/5 bg-black/20 flex flex-col items-center text-center">
             <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
               <stat.icon size={20} className="text-slate-400" />
             </div>
@@ -234,7 +234,7 @@ export const AdminUploads: React.FC = () => {
 
       {!loading && filteredFiles.length > 0 && (
         <motion.div 
-            variants={staggerContainer}
+            variants={staggerContainer(0.1, 0.2)}
             initial="initial"
             animate="animate"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8"
@@ -245,7 +245,7 @@ export const AdminUploads: React.FC = () => {
 
             return (
               <motion.div key={file.id} variants={staggerItem}>
-                <Card hover="premium" className="h-full flex flex-col group overflow-hidden border-white/5 bg-white/5">
+                <Card animated glow className="h-full flex flex-col group overflow-hidden border-white/5 bg-white/5">
                   <div className="relative h-48 overflow-hidden bg-slate-900 flex items-center justify-center">
                     {isImg ? (
                         <img src={file.url} alt={file.filename} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />

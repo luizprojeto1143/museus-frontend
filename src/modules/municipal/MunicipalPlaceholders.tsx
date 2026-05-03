@@ -37,7 +37,7 @@ export const MunicipalEquipments: React.FC = () => {
         fetchEquipments();
     }, [fetchEquipments]);
 
-    if (loading) return <PageLoader message="Mapeando equipamentos..." />;
+    if (loading) return <PageLoader label="Mapeando equipamentos..." />;
 
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
@@ -78,7 +78,7 @@ export const MunicipalEquipments: React.FC = () => {
                 >
                     {equipments.map(eq => (
                         <motion.div key={eq.id} variants={staggerItem}>
-                            <Card hover="premium" className="h-full flex flex-col p-8 border-white/5 bg-white/5">
+                            <Card animated glow className="h-full flex flex-col p-8 border-white/5 bg-white/5">
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="p-4 bg-amber-500/10 text-amber-500 rounded-2xl border border-amber-500/20">
                                         <Building2 size={24} />
@@ -141,7 +141,7 @@ export const MunicipalProjects: React.FC = () => {
         fetchData();
     }, [fetchData]);
 
-    if (loading) return <PageLoader message="Sincronizando editais..." />;
+    if (loading) return <PageLoader label="Sincronizando editais..." />;
 
     const statusLabels: Record<string, { label: string; className: string }> = {
         DRAFT: { label: "Rascunho", className: "bg-white/10 text-slate-500 border-white/5" },
@@ -192,7 +192,7 @@ export const MunicipalProjects: React.FC = () => {
                     {notices.filter(n => n.status !== 'DRAFT').map(notice => (
                         <Card 
                             key={notice.id} 
-                            hover="premium" 
+                            animated glow 
                             className="p-6 bg-white/5 border-white/5 flex justify-between items-center cursor-pointer"
                             onClick={() => navigate(`/admin/editais/${notice.id}`)}
                         >
@@ -280,7 +280,7 @@ export const MunicipalCompliance: React.FC = () => {
         fetchCompliance();
     }, [fetchCompliance]);
 
-    if (loading) return <PageLoader message="Auditando conformidade..." />;
+    if (loading) return <PageLoader label="Auditando conformidade..." />;
 
     return (
         <div className="space-y-12 animate-in fade-in duration-700">
@@ -371,7 +371,7 @@ export const MunicipalSettings: React.FC = () => {
         setSettings((prev: any) => ({ ...prev, [field]: value }));
     };
 
-    if (loading) return <PageLoader message="Carregando preferências..." />;
+    if (loading) return <PageLoader label="Carregando preferências..." />;
 
     const TextInput = ({ label, field, placeholder, icon }: { label: string; field: string; placeholder?: string; icon?: React.ReactNode }) => (
         <div className="space-y-2">

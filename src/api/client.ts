@@ -33,53 +33,23 @@ axiosRetry(api, {
 
 export const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
 
-// Automatically attached cookies will be sent due to withCredentials: true.
-// We no longer read tokens from localStorage for security reasons.
-// Attached Bearer token from localStorage for reliability across domains.
-api.interceptors.request.use((config) => {
-  try {
-    const raw = window.localStorage.getItem("museus_auth_v1");
-    if (raw) {
-      const stored = JSON.parse(raw);
-      if (stored.token) {
-        config.headers.Authorization = `Bearer ${stored.token}`;
-      }
-    }
-  } catch (e) {
-    // Fail silently on storage errors
-  }
-  return config;
-});
+// C1: Auth is handled exclusively via httpOnly cookies (set by the backend).
+// withCredentials:true ensures they are sent on every cross-origin request.
+// DO NOT add any localStorage read here — that is the XSS attack surface we are eliminating.
 
 // Log API URL for debugging
 // Log API URL for debugging (Removed for production)
 // console.debug(`🔌 API Client Initialized with baseURL: ${baseURL}`);
 
 
-interface StoredAuth {
-  token: string;
-  refreshToken: string;
-  role: string;
-  tenantId: string | null;
-  tenantType: "MUSEUM" | "PRODUCER" | null;
-  email: string | null;
-  name: string | null;
-}
-
-// Variables for Refresh Token Race Condition Fix
+// C1: Token Refresh — cookie-based, no localStorage.
+// The browser sends the httpOnly refresh-token cookie automatically.
+// We do NOT read or write any token to localStorage.
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: Array<() => void> = [];
 
-// Helper to push requests to queue while refreshing
-const subscribeTokenRefresh = (cb: (token: string) => void) => {
-  refreshSubscribers.push(cb);
-};
-
-// Helper to resolve all pending requests
-const onRerefreshed = (token: string) => {
-  refreshSubscribers.forEach(cb => cb(token));
-  refreshSubscribers = [];
-};
+const subscribeTokenRefresh = (cb: () => void) => refreshSubscribers.push(cb);
+const onRefreshDone = () => { refreshSubscribers.forEach(cb => cb()); refreshSubscribers = []; };
 
 // Global Error Handler for API & Token Refresh Logic
 api.interceptors.response.use(
@@ -87,15 +57,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Se erro for 401 e ainda não tentamos retry
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // Queue the request until refresh is done
+        // Queue this request until the ongoing refresh resolves
         return new Promise(resolve => {
-          subscribeTokenRefresh((newToken: string) => {
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            resolve(api(originalRequest));
-          });
+          subscribeTokenRefresh(() => resolve(api(originalRequest)));
         });
       }
 
@@ -103,57 +69,30 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const raw = window.localStorage.getItem("museus_auth_v1");
-        if (!raw) throw new Error("No token stored");
+        // C1: The refresh-token httpOnly cookie is sent automatically — no body needed.
+        await axios.post(baseURL + "/auth/refresh", {}, { withCredentials: true });
 
-        const stored = JSON.parse(raw) as StoredAuth;
-        const refreshToken = stored.refreshToken;
-
-        if (!refreshToken) throw new Error("No refresh token");
-
-        // Tentar renovar token (usar axios limpo para evitar loop)
-        const response = await axios.post(baseURL + "/auth/refresh", { refreshToken });
-
-        if (response.status === 200) {
-          const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-          // Atualizar Storage
-          const updatedStorage: StoredAuth = {
-            ...stored,
-            token: accessToken,
-            refreshToken: newRefreshToken
-          };
-          window.localStorage.setItem("museus_auth_v1", JSON.stringify(updatedStorage));
-
-          // Resume blocked requests
-          isRefreshing = false;
-          onRerefreshed(accessToken);
-
-          // Atualizar Header da requisição original
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
-          // Re-executar requisição original
-          return api(originalRequest);
-        }
-      } catch (refreshError) {
-        console.warn("Session expired or refresh failed", refreshError.message);
         isRefreshing = false;
-        refreshSubscribers = []; // clear queue
-        
-        // Remove potentially invalid token
-        window.localStorage.removeItem("museus_auth_v1");
+        onRefreshDone();
 
-        // 🛑 BREAK LOOP: Só redireciona se não estivermos já em uma rota pública
+        // Retry the original request — the new access-token cookie is now set
+        return api(originalRequest);
+      } catch (refreshError) {
+        console.warn("[API] Session expired or refresh failed.");
+        isRefreshing = false;
+        refreshSubscribers = [];
+
         const publicRoutes = ["/login", "/welcome", "/register", "/", "/select-museum"];
         const currentPath = window.location.pathname;
-        
-        const isPublicRoute = publicRoutes.includes(currentPath) || currentPath.startsWith("/verify/") || currentPath.startsWith("/p/");
+        const isPublicRoute = publicRoutes.includes(currentPath)
+          || currentPath.startsWith("/verify/")
+          || currentPath.startsWith("/p/");
 
         if (!isPublicRoute && !originalRequest.url?.includes("/auth/me")) {
-          console.warn("[API] Redirecting to login to clear session loop.");
+          console.warn("[API] Redirecting to login.");
           window.location.href = "/login";
         }
-        
+
         return Promise.reject(refreshError);
       }
     }

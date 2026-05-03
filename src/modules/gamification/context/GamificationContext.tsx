@@ -30,7 +30,7 @@ const getAuthFromStorage = (): { email: string | null; tenantId: string | null; 
             return {
                 email: parsed.email ?? null,
                 tenantId: parsed.tenantId ?? null,
-                isAuthenticated: !!parsed.token
+                isAuthenticated: !!parsed.userId
             };
         }
     } catch {

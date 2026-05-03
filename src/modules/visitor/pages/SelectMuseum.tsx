@@ -35,6 +35,7 @@ interface Equipamento {
   cidade?: string;
   missao?: string;
   descricao?: string;
+  address?: string;
   // Computed client-side
   distance?: number;
 }
@@ -254,8 +255,7 @@ export const SelectMuseum: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {nearestEquipamentos.map(e => (
                 <Card 
-                  key={e.id} 
-                  hover="premium" 
+                  animated
                   className="p-6 cursor-pointer border-blue-500/10 group bg-blue-500/5 backdrop-blur-md"
                   onClick={() => handleSelect(e)}
                 >
@@ -307,7 +307,7 @@ export const SelectMuseum: React.FC = () => {
             {filteredAndSortedEquipamentos.map(equip => (
               <motion.div key={equip.id} variants={staggerItem}>
                 <Card
-                  hover="premium"
+                  animated glow
                   className="h-full flex flex-col group cursor-pointer overflow-hidden border-white/5"
                   onClick={() => handleSelect(equip)}
                 >

@@ -170,7 +170,7 @@ export const LandingPage: React.FC = () => {
                 </motion.div>
                 
                 <motion.div 
-                    variants={staggerContainer}
+                    variants={staggerContainer(0.1, 0.2)}
                     initial="initial"
                     animate="animate"
                     className="relative z-20 max-w-5xl"

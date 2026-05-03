@@ -14,7 +14,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      selfDestroying: true, // Força a destruição do Service Worker antigo
+      selfDestroying: false, // Permite a atualização do Service Worker em vez de destruí-lo
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
@@ -168,7 +168,9 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-ui': ['lucide-react', 'framer-motion'],
           'vendor-maps': ['leaflet', 'react-leaflet'],
-          'vendor-utils': ['axios', 'i18next', 'react-i18next']
+          'vendor-utils': ['axios', 'i18next', 'react-i18next'],
+          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+          'vendor-tf': ['@tensorflow/tfjs', '@tensorflow-models/mobilenet', '@tensorflow-models/knn-classifier']
         }
       }
     },

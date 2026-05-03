@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../../modules/auth/AuthContext";
-import { Button, AnimateIn, Badge, Card } from "../../../components/ui";
+import { Button, AnimateIn, Badge, Card as UICard } from "../../../components/ui";
 import { FileText, Rocket, LayoutDashboard, Calendar, Accessibility, Folder } from "lucide-react";
 import "./SecretaryDashboard.css"; // Import the new styles
 
@@ -107,25 +107,25 @@ const SecretaryDashboard: React.FC = () => {
 
             {/* KPI Cards */}
             <div className="sec-grid-cards">
-                <Card
+                <UICard
                     title="Equipamentos"
                     value={data.cards.totalEquipments}
                     icon="🏛️"
                     color="var(--accent-primary)"
                 />
-                <Card
+                <UICard
                     title="Projetos Ativos"
                     value={data.cards.activeProjects}
                     icon="📁"
                     color="#10b981"
                 />
-                <Card
+                <UICard
                     title="Acessibilidade"
                     value={data.cards.pendingAccessibility}
                     icon="♿"
                     color="#f59e0b"
                 />
-                <Card
+                <UICard
                     title="Eventos"
                     value={data.cards.totalEvents}
                     icon="📅"
@@ -140,7 +140,7 @@ const SecretaryDashboard: React.FC = () => {
                 </div>
                 <div className="text-5xl animate-bounce">🚀</div>
                 <div className="flex-1 relative z-10">
-                    <Badge variant="primary" className="mb-4 bg-blue-500 border-none text-white font-black italic">
+                    <Badge variant="info" className="mb-4 bg-blue-500 border-none text-white font-black italic">
                         ROADMAP MARÇO 2026
                     </Badge>
                     <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-tighter">Inovação e Expansão Cultura Viva</h2>

@@ -166,7 +166,7 @@ export const WorkDetail: React.FC = () => {
     } catch (err) { console.error(err); }
   };
 
-  if (loading) return <PageLoader message="Preparando curadoria..." />;
+  if (loading) return <PageLoader label="Preparando curadoria..." />;
 
   if (error || !work) return (
     <div className="work-error">

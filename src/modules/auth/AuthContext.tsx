@@ -10,8 +10,6 @@ export type Role = "visitor" | "admin" | "master" | "producer";
 
 // ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
-  token: string;
-  refreshToken: string;
   role: Role;
   tenantId: string | null;
   equipamentoId: string | null;
@@ -24,8 +22,6 @@ interface StoredAuth {
 }
 
 interface AuthState {
-  token: string | null;
-  refreshToken: string | null;
   role: Role | null;
   tenantId: string | null;
   equipamentoId: string | null;
@@ -47,8 +43,6 @@ interface AuthContextValue extends AuthState {
   enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => void;
   logout: () => void;
   updateSession: (
-    newToken: string,
-    newRefreshToken: string,
     newRole: string,
     newTenantId: string | null,
     newName?: string | null,
@@ -65,8 +59,6 @@ type AuthAction =
 
 // ─── Reducer ──────────────────────────────────────────────────────
 const EMPTY_STATE: AuthState = {
-  token: null,
-  refreshToken: null,
   role: null,
   tenantId: null,
   equipamentoId: null,
@@ -100,8 +92,6 @@ function readStoredAuth(): AuthState {
     if (!raw) return EMPTY_STATE;
     const parsed = JSON.parse(raw) as Partial<StoredAuth>;
     return {
-      token: parsed.token ?? null,
-      refreshToken: parsed.refreshToken ?? null,
       role: parsed.role ?? null,
       tenantId: parsed.tenantId ?? null,
       equipamentoId: parsed.equipamentoId ?? null,
@@ -120,8 +110,6 @@ function readStoredAuth(): AuthState {
 function persistAuth(state: AuthState): void {
   try {
     const toStore: StoredAuth = {
-      token: state.token ?? "",
-      refreshToken: state.refreshToken ?? "",
       role: state.role ?? "visitor",
       tenantId: state.tenantId,
       equipamentoId: state.equipamentoId,
@@ -173,8 +161,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (!token) throw new Error("Token não recebido do backend");
 
       const newState: AuthState = {
-        token,
-        refreshToken: data.refreshToken ?? "",
         role: mapRole(data.role ?? ""),
         tenantId: data.tenantId ?? null,
         equipamentoId: data.equipamentoId ?? null,
@@ -200,15 +186,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const simulatedTenantType = email.includes("producer") ? "PRODUCER" : "MUSEUM";
 
       const newState: AuthState = {
-        token: "demo-access-token",
-        refreshToken: "demo-refresh-token",
         role: simulatedRole,
         tenantId: null,
         equipamentoId: null,
         tenantType: simulatedTenantType,
         email,
         name: "Usuário Demo",
-        userId: null,
+        userId: "demo-user-id",
         hasProviderProfile: false,
         isGuest: false,
       };
@@ -235,15 +219,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // ─── Guest ────────────────────────────────────────────────────
   const enterAsGuest = (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => {
     const newState: AuthState = {
-      token: "guest-anonymous-token",
-      refreshToken: "",
       role: "visitor",
       tenantId: selectedTenantId ?? null,
       equipamentoId: selectedEquipamentoId ?? null,
       tenantType: "MUSEUM",
       email: null,
       name: "Visitante",
-      userId: null,
+      userId: "guest-id",
       hasProviderProfile: false,
       isGuest: true,
     };
@@ -254,16 +236,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // ─── Update Session ───────────────────────────────────────────
   const updateSession = (
-    newToken: string,
-    newRefreshToken: string,
     newRole: string,
     newTenantId: string | null,
     newName?: string | null,
     newEquipamentoId?: string | null
   ) => {
     const partial: Partial<AuthState> = {
-      token: newToken,
-      refreshToken: newRefreshToken,
       role: mapRole(newRole),
       tenantId: newTenantId,
       equipamentoId: newEquipamentoId ?? null,
@@ -286,8 +264,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (res.data) {
           const user = res.data;
           const restoredState: AuthState = {
-            token: "valid-session", // Placeholder to indicate authenticated
-            refreshToken: "managed-by-cookies",
             role: mapRole(user.role),
             tenantId: user.tenantId,
             equipamentoId: user.equipamentoId,
@@ -319,7 +295,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const contextValue: AuthContextValue = {
     ...state,
-    isAuthenticated: !!state.token,
+    isAuthenticated: !!state.userId,
     login,
     enterAsGuest,
     logout,

@@ -200,7 +200,7 @@ export const AdminDashboard: React.FC = () => {
 
       {/* INDICADORES PRINCIPAIS - DENSE GRID */}
       <motion.div 
-        variants={staggerContainer}
+        variants={staggerContainer(0.1, 0.2)}
         initial="initial"
         animate="animate"
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
@@ -213,7 +213,7 @@ export const AdminDashboard: React.FC = () => {
         ].map((stat, i) => (
           <motion.div key={i} variants={staggerItem}>
             <Card
-              hover="premium"
+              animated glow
               className="p-8 border-white/5 bg-black/20 group hover:border-white/20 transition-all"
             >
               <div className="flex justify-between items-start mb-6">

@@ -58,18 +58,9 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
         try {
             const textToSpeech = `Esta é a obra ${title}. ${artist ? `Criada por ${artist}.` : ""} ${t('visitor.audioGuide.defaultDescription', 'Aproveite para observar os detalhes e a composição desta peça.')}`;
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/ai/tts`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                },
-                body: JSON.stringify({ text: textToSpeech })
-            });
-
-            if (!response.ok) throw new Error("TTS Failed");
-
-            const blob = await response.blob();
+            const response = await api.post("/ai/tts", { text: textToSpeech }, { responseType: 'blob' });
+            
+            const blob = response.data;
             const url = URL.createObjectURL(blob);
             setGeneratedAudioUrl(url);
 

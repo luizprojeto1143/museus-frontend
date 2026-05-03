@@ -134,7 +134,7 @@ export const Login: React.FC = () => {
             </div>
 
             {error && (
-              <AnimateIn variant="scaleUp">
+              <AnimateIn variant="scaleIn">
                 <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-sm font-bold text-center">
                   {error}
                 </div>
