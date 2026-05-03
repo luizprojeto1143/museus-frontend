@@ -47,12 +47,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const term = useTerminology();
 
   useEffect(() => {
-    if (tenantId) {
+    if (tenantId && role !== 'master') {
       api.get(`/tenants/${tenantId}/settings`)
         .then(res => setFeatures(res.data))
         .catch(err => console.error("Error loading tenant features", err));
     }
-  }, [tenantId]);
+  }, [tenantId, role]);
 
   const themeStyles = features ? {
     "--accent-primary": features.primaryColor || (isCityMode ? "var(--accent-primary)" : "var(--accent-primary)"),

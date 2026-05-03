@@ -36,15 +36,19 @@ export const TenantsList: React.FC = () => {
   }, [t, addToast]);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm(t("master.tenants.startDeleteConfirm", "Tem certeza? Isso apagará TODO o museu e seus dados permanentemente."))) return;
+    const tenant = tenants.find(t => t.id === id);
+    if (!tenant) return;
+
+    if (!window.confirm(`Tem certeza? Isso apagará o museu "${tenant.name}" e TODOS os seus dados PERMANENTEMENTE do banco de dados.`)) return;
 
     try {
-      await api.delete(`/tenants/${id}`);
+      // MASTER: Forçando Hard Delete para evitar "museus fantasmas"
+      await api.delete(`/tenants/${id}?hard=true&confirm=${tenant.slug}`);
       setTenants(prev => prev.filter(x => x.id !== id));
-      addToast("Museu deletado com sucesso.", "success");
+      addToast("Museu e dados apagados permanentemente.", "success");
     } catch (err) {
       console.error(err);
-      addToast("Erro ao deletar.", "error");
+      addToast("Erro ao deletar permanentemente.", "error");
     }
   };
 
