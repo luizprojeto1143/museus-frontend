@@ -14,6 +14,16 @@ export const api = axios.create({
   timeout: 20000,
 });
 
+// C1: Request Interceptor — fallback to headers if cookies are blocked
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("museus_access_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+
 // ─── Retry exponencial ─────────────────────────────────────────────
 // Tenta até 3x com delay crescente (1s → 2s → 4s)
 // Apenas para erros de rede e 5xx. Nunca para 4xx.
@@ -69,13 +79,23 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // C1: The refresh-token httpOnly cookie is sent automatically — no body needed.
-        await axios.post(baseURL + "/auth/refresh", {}, { withCredentials: true });
+        // C1: Hybrid Refresh — send token in body to bypass cookie blocks, but keep withCredentials:true for safety.
+        const storedRefreshToken = localStorage.getItem("museus_refresh_token");
+        const { data } = await axios.post(baseURL + "/auth/refresh", { 
+          refreshToken: storedRefreshToken 
+        }, { withCredentials: true });
+
+        if (data.accessToken) {
+          localStorage.setItem("museus_access_token", data.accessToken);
+        }
+        if (data.refreshToken) {
+          localStorage.setItem("museus_refresh_token", data.refreshToken);
+        }
 
         isRefreshing = false;
         onRefreshDone();
 
-        // Retry the original request — the new access-token cookie is now set
+        // Retry the original request
         return api(originalRequest);
       } catch (refreshError) {
         console.warn("[API] Session expired or refresh failed.");

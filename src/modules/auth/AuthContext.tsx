@@ -175,6 +175,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       dispatch({ type: "LOGIN", payload: newState });
       persistAuth(newState);
 
+      // C1: Store tokens for hybrid authentication fallback
+      if (data.accessToken) localStorage.setItem("museus_access_token", data.accessToken);
+      if (data.refreshToken) localStorage.setItem("museus_refresh_token", data.refreshToken);
+
+
       return {
         role: newState.role!,
         tenantType: newState.tenantType,
@@ -214,6 +219,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     dispatch({ type: "LOGOUT" });
     window.localStorage.removeItem(STORAGE_KEY);
+    window.localStorage.removeItem("museus_access_token");
+    window.localStorage.removeItem("museus_refresh_token");
+
   };
 
   // ─── Guest ────────────────────────────────────────────────────
@@ -281,6 +289,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         console.log("Session restore failed, treating as guest/logged out.");
         dispatch({ type: "LOGOUT" });
         window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem("museus_access_token");
+        window.localStorage.removeItem("museus_refresh_token");
+
       } finally {
         setIsRestoring(false);
       }
