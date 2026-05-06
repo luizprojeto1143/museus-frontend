@@ -11,7 +11,7 @@ if (!baseURL) {
 export const api = axios.create({
   baseURL,
   withCredentials: true,
-  timeout: 20000,
+  timeout: 120000, // 120 seconds for large media uploads
 });
 
 // C1: Request Interceptor — fallback to headers if cookies are blocked
