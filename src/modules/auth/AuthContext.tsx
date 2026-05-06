@@ -144,9 +144,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // ─── Login ────────────────────────────────────────────────────
   const login: AuthContextValue["login"] = async ({ email, password }) => {
     if (!isDemoMode && baseURL) {
-      const res = await api.post("/auth/login", { email, password });
-      
-      const data = res.data as {
+      try {
+        const res = await api.post("/auth/login", { email, password });
+        const data = res.data as {
         accessToken?: string;
         refreshToken?: string;
         role?: string;
@@ -180,13 +180,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (data.refreshToken) localStorage.setItem("museus_refresh_token", data.refreshToken);
 
 
-      return {
-        role: newState.role!,
-        tenantType: newState.tenantType,
-        hasProviderProfile: newState.hasProviderProfile,
-      };
-    } else {
-      // Modo demo
+      return { role: newState.role!, tenantType: newState.tenantType, hasProviderProfile: newState.hasProviderProfile };
+    } catch (err: any) {
+      const message = err.response?.data?.message || err.message || "Erro de conexão";
+      throw new Error(message);
+    }
+  } else {
+    // Modo demo
       const simulatedRole: Role = email.includes("master") ? "master" : "admin";
       const simulatedTenantType = email.includes("producer") ? "PRODUCER" : "MUSEUM";
 
