@@ -58,6 +58,11 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
       return;
     }
 
+    if (password.length < 6) {
+      setError(t("auth.errors.passwordShort", "A senha deve ter no mínimo 6 caracteres."));
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError(t("auth.errors.passwordMismatch", "As senhas não conferem."));
       return;
