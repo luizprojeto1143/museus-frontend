@@ -1,10 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { cn } from "../lib/cn";
 
 interface LanguageSwitcherProps {
     style?: React.CSSProperties;
     className?: string;
-    absolute?: boolean; // New prop to control absolute positioning
+    absolute?: boolean;
 }
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, className, absolute = true }) => {
@@ -16,70 +17,40 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
 
     const currentLang = i18n.language.split("-")[0]; // pt-BR -> pt
 
+    const languages = [
+        { code: "pt-BR", label: "PT", flag: "🇧🇷", title: "Português" },
+        { code: "en", label: "EN", flag: "🇺🇸", title: "English" },
+        { code: "es", label: "ES", flag: "🇪🇸", title: "Español" },
+    ];
+
     return (
         <div
-            className={className}
-            style={{
-                position: absolute ? "absolute" : "relative",
-                top: absolute ? "1rem" : undefined,
-                right: absolute ? "1rem" : undefined,
-                zIndex: 10,
-                display: "flex",
-                gap: "0.4rem",
-                flexWrap: "nowrap",
-                justifyContent: "center",
-                alignItems: "center",
-                ...style
-            }}
+            className={cn(
+                "flex items-center gap-1.5 p-1 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md z-[100]",
+                absolute && "absolute top-6 right-6",
+                className
+            )}
+            style={style}
         >
-            <button
-                onClick={() => changeLanguage("pt-BR")}
-                style={{
-                    background: currentLang === "pt" ? "rgba(212, 175, 55, 0.2)" : "transparent",
-                    border: "1px solid #d4af37",
-                    color: "#d4af37",
-                    padding: "0.3rem 0.6rem",
-                    borderRadius: "0.4rem",
-                    cursor: "pointer",
-                    fontSize: "0.8rem",
-                    transition: "all 0.2s"
-                }}
-                title="Português"
-            >
-                🇧🇷 PT
-            </button>
-            <button
-                onClick={() => changeLanguage("en")}
-                style={{
-                    background: currentLang === "en" ? "rgba(212, 175, 55, 0.2)" : "transparent",
-                    border: "1px solid #d4af37",
-                    color: "#d4af37",
-                    padding: "0.3rem 0.6rem",
-                    borderRadius: "0.4rem",
-                    cursor: "pointer",
-                    fontSize: "0.8rem",
-                    transition: "all 0.2s"
-                }}
-                title="English"
-            >
-                🇺🇸 EN
-            </button>
-            <button
-                onClick={() => changeLanguage("es")}
-                style={{
-                    background: currentLang === "es" ? "rgba(212, 175, 55, 0.2)" : "transparent",
-                    border: "1px solid #d4af37",
-                    color: "#d4af37",
-                    padding: "0.3rem 0.6rem",
-                    borderRadius: "0.4rem",
-                    cursor: "pointer",
-                    fontSize: "0.8rem",
-                    transition: "all 0.2s"
-                }}
-                title="Español"
-            >
-                🇪🇸 ES
-            </button>
+            {languages.map((lang) => {
+                const isActive = i18n.language.startsWith(lang.code.split("-")[0]);
+                return (
+                    <button
+                        key={lang.code}
+                        onClick={() => changeLanguage(lang.code)}
+                        className={cn(
+                            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all duration-300 text-[10px] font-bold tracking-widest uppercase",
+                            isActive 
+                                ? "bg-[var(--accent-primary)] text-black shadow-[0_0_15px_rgba(212,175,55,0.3)]" 
+                                : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                        )}
+                        title={lang.title}
+                    >
+                        <span>{lang.flag}</span>
+                        <span className="hidden sm:inline">{lang.label}</span>
+                    </button>
+                );
+            })}
         </div>
     );
 };

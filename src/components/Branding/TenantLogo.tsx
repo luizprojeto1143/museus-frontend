@@ -23,22 +23,25 @@ export const TenantLogo: React.FC<TenantLogoProps> = ({
 
     const primaryColor = tenant?.primaryColor || "var(--accent-primary)";
     
-    // Fallback Icon/Abstrct Logo if no URL is provided
+    // Fallback Icon/Abstract Logo if no URL is provided
     const renderFallback = () => (
         <div 
             style={{ 
                 width: size, 
                 height: size, 
-                borderRadius: "50%", 
-                background: `linear-gradient(135deg, ${primaryColor}, transparent)`,
+                borderRadius: "32%", 
+                background: `radial-gradient(circle at 30% 30%, ${primaryColor}55, transparent), linear-gradient(135deg, #1a1a2e, #0a0a0e)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${primaryColor}`,
-                boxShadow: `0 0 15px ${primaryColor}44`
+                border: `1px solid ${primaryColor}33`,
+                boxShadow: `0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px ${primaryColor}11`,
+                position: "relative",
+                overflow: "hidden"
             }}
         >
-            <Layout size={size * 0.6} color={primaryColor} />
+            <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
+            <Layout size={size * 0.5} color={primaryColor} className="drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]" />
         </div>
     );
 
