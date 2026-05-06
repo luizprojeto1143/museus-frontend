@@ -74,6 +74,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   type SidebarLink = { to: string; label: string; icon: string; show: boolean };
   type SidebarGroup = { label: string; links: SidebarLink[]; showGroup?: boolean };
 
+  const sidebarGroups: SidebarGroup[] = [
     {
       label: t("admin.sidebar.painel", "Painel"),
       links: [
