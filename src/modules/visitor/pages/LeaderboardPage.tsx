@@ -22,11 +22,16 @@ export const LeaderboardPage: React.FC = () => {
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);
     const [loading, setLoading] = useState(true);
+    const [rankingType, setRankingType] = useState<"MUSEUM" | "CITY">("MUSEUM");
 
     const fetchLeaderboard = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get("/leaderboard");
+            const url = rankingType === "CITY" && cityId 
+                ? `/leaderboard/city/${cityId}` 
+                : "/leaderboard";
+                
+            const res = await api.get(url);
             if (res.data.ranking) {
                 setEntries(res.data.ranking);
                 setMyRank(res.data.myRank);
@@ -38,7 +43,7 @@ export const LeaderboardPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [rankingType, cityId]);
 
     useEffect(() => {
         fetchLeaderboard();
@@ -106,8 +111,32 @@ export const LeaderboardPage: React.FC = () => {
         <div className="leaderboard-container">
             <header className="leaderboard-header-premium">
                 <span className="leaderboard-badge">Panteão dos Exploradores</span>
-                <h1 className="leaderboard-title-premium">Ranking Global</h1>
-                <p className="hero-subtitle-premium">Os heróis da cultura que mais desbravaram os segredos do nosso acervo e acumularam o maior legado.</p>
+                <h1 className="leaderboard-title-premium">
+                    {rankingType === "CITY" ? "Ranking Municipal" : "Ranking do Museu"}
+                </h1>
+                <p className="hero-subtitle-premium">
+                    {rankingType === "CITY" 
+                        ? "Os maiores exploradores de todos os museus da cidade unidos em um só legado."
+                        : "Os heróis da cultura que mais desbravaram os segredos do nosso acervo."}
+                </p>
+
+                {/* Ranking Toggle */}
+                {cityId && (
+                    <div className="ranking-toggle-container">
+                        <button 
+                            className={`toggle-btn ${rankingType === "MUSEUM" ? "active" : ""}`}
+                            onClick={() => setRankingType("MUSEUM")}
+                        >
+                            Este Museu
+                        </button>
+                        <button 
+                            className={`toggle-btn ${rankingType === "CITY" ? "active" : ""}`}
+                            onClick={() => setRankingType("CITY")}
+                        >
+                            Minha Cidade
+                        </button>
+                    </div>
+                )}
             </header>
 
             {isGuest ? (
@@ -128,13 +157,13 @@ export const LeaderboardPage: React.FC = () => {
                     <div className="my-rank-info-premium">
                         <div className="my-rank-number-premium">#{myRank.rank}</div>
                         <div className="my-rank-labels-premium">
-                            <span className="my-rank-top-label">Sua Posição Heroica</span>
+                            <span className="my-rank-top-label">Sua Posição {rankingType === "CITY" ? "na Cidade" : "no Museu"}</span>
                             <span className="my-rank-user-name">{myRank.name} (Você)</span>
                         </div>
                     </div>
                     <div className="my-rank-xp-premium">
                         <div className="my-rank-xp-val">{myRank.xp}</div>
-                        <span className="my-rank-top-label">XP TOTAL acumularo</span>
+                        <span className="my-rank-top-label">XP TOTAL acumulado</span>
                     </div>
                 </div>
             )}

@@ -33,6 +33,7 @@ interface Equipamento {
   horarios?: any;
   endereco?: string;
   cidade?: string;
+  cityId?: string | null;
   missao?: string;
   descricao?: string;
   address?: string;
@@ -152,7 +153,7 @@ export const SelectMuseum: React.FC = () => {
         const baseUrl = import.meta.env.VITE_API_URL as string;
         // Reutilizamos switch-tenant mas agora focando em equipamento contextualmente se necessario,
         // ou apenas atualizamos localmente o ID
-        updateSession(token, "", role || "visitor", equip.tenantId, name, equip.id);
+        updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
         navigate("/home");
         return;
       } catch (err) {
@@ -165,7 +166,7 @@ export const SelectMuseum: React.FC = () => {
       return;
     }
 
-    enterAsGuest(equip.tenantId, equip.id);
+    enterAsGuest(equip.tenantId, equip.id, equip.cityId || null);
     navigate("/home");
   };
 
@@ -404,7 +405,7 @@ export const SelectMuseum: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                     className="flex-1 h-14 text-lg font-bold"
-                    onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id); navigate("/home"); }}
+                    onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null); navigate("/home"); }}
                     rightIcon={<Zap size={20} />}
                 >
                   Entrar no Espaço

@@ -16,7 +16,7 @@ import { NavigationModal } from "../../../components/navigation/NavigationModal"
 import { useTerminology } from "../../../hooks/useTerminology";
 import { 
   Compass, Share2, Star, Volume2, VolumeX, ChevronLeft, 
-  ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles 
+  ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles, Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
@@ -208,6 +208,13 @@ export const WorkDetail: React.FC = () => {
            </div>
            
            <div className="work-actions-premium !mt-0">
+              <button 
+                onClick={() => navigate(`/vestigios/capturar/${work.id}`)}
+                className="action-btn-premium !bg-gold/20 !text-gold hover:!bg-gold hover:!text-bg border border-gold/30"
+                title="Capturar Vestígio"
+              >
+                <Shield size={18} />
+              </button>
               <button 
                 onClick={toggleFavorite} 
                 className={`action-btn-premium ${isFavorite ? 'active' : ''}`}

@@ -19,6 +19,7 @@ interface StoredAuth {
   userId: string | null;
   hasProviderProfile: boolean;
   isGuest?: boolean;
+  cityId?: string | null;
 }
 
 interface AuthState {
@@ -31,6 +32,7 @@ interface AuthState {
   userId: string | null;
   hasProviderProfile: boolean;
   isGuest: boolean;
+  cityId: string | null;
 }
 
 interface AuthContextValue extends AuthState {
@@ -46,7 +48,8 @@ interface AuthContextValue extends AuthState {
     newRole: string,
     newTenantId: string | null,
     newName?: string | null,
-    newEquipamentoId?: string | null
+    newEquipamentoId?: string | null,
+    newCityId?: string | null
   ) => void;
   isRestoring: boolean;
 }
@@ -68,6 +71,7 @@ const EMPTY_STATE: AuthState = {
   userId: null,
   hasProviderProfile: false,
   isGuest: false,
+  cityId: null,
 };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
@@ -101,6 +105,7 @@ function readStoredAuth(): AuthState {
       userId: parsed.userId ?? null,
       hasProviderProfile: parsed.hasProviderProfile ?? false,
       isGuest: parsed.isGuest ?? false,
+      cityId: parsed.cityId ?? null,
     };
   } catch {
     return EMPTY_STATE;
@@ -119,6 +124,7 @@ function persistAuth(state: AuthState): void {
       userId: state.userId,
       hasProviderProfile: state.hasProviderProfile,
       isGuest: state.isGuest,
+      cityId: state.cityId,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   } catch {
@@ -170,6 +176,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         userId: data.user?.id ?? null,
         hasProviderProfile: data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false,
         isGuest: false,
+        cityId: (data as any).cityId ?? (data.user as any)?.cityId ?? null,
       };
 
       dispatch({ type: "LOGIN", payload: newState });
@@ -236,6 +243,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       userId: "guest-id",
       hasProviderProfile: false,
       isGuest: true,
+      cityId: null,
     };
 
     dispatch({ type: "LOGIN", payload: newState });
@@ -247,12 +255,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     newRole: string,
     newTenantId: string | null,
     newName?: string | null,
-    newEquipamentoId?: string | null
+    newEquipamentoId?: string | null,
+    newCityId?: string | null
   ) => {
     const partial: Partial<AuthState> = {
       role: mapRole(newRole),
       tenantId: newTenantId,
       equipamentoId: newEquipamentoId ?? null,
+      cityId: newCityId ?? null,
       ...(newName !== undefined ? { name: newName ?? null } : {}),
     };
 
@@ -281,6 +291,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             userId: user.id,
             hasProviderProfile: user.hasProviderProfile,
             isGuest: false,
+            cityId: user.cityId || null,
           };
           dispatch({ type: "LOGIN", payload: restoredState });
         }
