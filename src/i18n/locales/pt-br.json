@@ -2647,7 +2647,16 @@
       "vestigeImageUrl": "URL da Imagem do Vestígio (Opcional)",
       "expireAction": "Expirar Agora",
       "confirmExpire": "Deseja expirar este vestígio? Todos os selos coletados se tornarão relíquias definitivas.",
-      "vestigeDescription": "Torna este ponto capturável via GPS pelos visitantes"
+      "vestigeDescription": "Torna este ponto capturável via GPS pelos visitantes",
+      "vestigeTypeLabel": "Tipo de Vestígio (Contexto)",
+      "type": {
+        "work": "Obra de Arte (Padrão)",
+        "streetArt": "Arte Urbana / Grafite",
+        "installation": "Instalação / Monumento",
+        "event": "Evento Temporário"
+      },
+      "vestigeImageUrlPlaceholder": "URL da imagem específica para o radar",
+      "tip": "Dica: Ao ativar o Modo Vestígio, a obra aparecerá no Radar do Mapa para os visitantes."
     },
     "capture": {
       "title": "Captura de Vestígio",
