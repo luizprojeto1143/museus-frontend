@@ -35,7 +35,7 @@ interface TenantFeatures {
 }
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { logout, name: userName, tenantId } = useAuth();
+  const { logout, name: userName, tenantId, role } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
   const [isCollapsed, setCollapsed] = useState(false);
