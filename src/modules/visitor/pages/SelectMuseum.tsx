@@ -76,7 +76,7 @@ export const SelectMuseum: React.FC = () => {
     setErrorMsg(null);
     try {
       const baseUrl = import.meta.env.VITE_API_URL as string;
-      const res = await fetch(baseUrl + "/tenants/public");
+      const res = await fetch(baseUrl + "/equipamentos/public");
       
       if (!res.ok) {
         throw new Error(`Servidor respondeu com erro ${res.status}`);

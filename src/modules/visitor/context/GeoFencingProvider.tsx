@@ -133,19 +133,19 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
         try {
             if (isCityMode) {
-                // City Mode: Load all museums/tenants with coordinates
-                const tenantsRes = await api.get("/tenants/public");
-                const tenants = Array.isArray(tenantsRes.data) ? tenantsRes.data : [];
+                // City Mode: Load all cultural equipments with coordinates
+                const equipRes = await api.get("/equipamentos/public");
+                const equipments = Array.isArray(equipRes.data) ? equipRes.data : [];
 
-                tenants.forEach((item: { id: string; name: string; latitude?: number; longitude?: number; logoUrl?: string | null }) => {
-                    if (typeof item.latitude === 'number' && typeof item.longitude === 'number') {
+                equipments.forEach((item: { id: string; nome: string; lat?: number; lng?: number; logoUrl?: string | null }) => {
+                    if (typeof item.lat === 'number' && typeof item.lng === 'number') {
                         points.push({
-                            id: `tenant-${item.id}`,
+                            id: `equip-${item.id}`,
                             type: 'museum',
-                            title: item.name,
-                            subtitle: 'Museu',
-                            latitude: item.latitude,
-                            longitude: item.longitude,
+                            title: item.nome,
+                            subtitle: 'Equipamento Cultural',
+                            latitude: item.lat,
+                            longitude: item.lng,
                             radius: 100,
                             imageUrl: item.logoUrl || undefined,
                             url: `/select-museum?select=${item.id}`
