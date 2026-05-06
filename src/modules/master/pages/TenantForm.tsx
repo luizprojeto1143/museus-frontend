@@ -64,6 +64,11 @@ export const TenantForm: React.FC = () => {
   const [featureEditais, setFeatureEditais] = useState(false);
   const [featureMinigames, setFeatureMinigames] = useState(false);
   const [featureProviders, setFeatureProviders] = useState(false);
+  const [featureTickets, setFeatureTickets] = useState(false);
+  const [featureProjects, setFeatureProjects] = useState(false);
+  const [featureAccessibilityMgmt, setFeatureAccessibilityMgmt] = useState(false);
+  const [featureInstitutionalReports, setFeatureInstitutionalReports] = useState(false);
+  const [featureEditaisSubmission, setFeatureEditaisSubmission] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -97,6 +102,11 @@ export const TenantForm: React.FC = () => {
       setFeatureEditais(data.featureEditais ?? false);
       setFeatureMinigames(data.featureMinigames ?? false);
       setFeatureProviders(data.featureProviders ?? false);
+      setFeatureTickets(data.featureTickets ?? false);
+      setFeatureProjects(data.featureProjects ?? false);
+      setFeatureAccessibilityMgmt(data.featureAccessibilityMgmt ?? false);
+      setFeatureInstitutionalReports(data.featureInstitutionalReports ?? false);
+      setFeatureEditaisSubmission(data.featureEditaisSubmission ?? false);
 
       setTermsOfUse(data.termsOfUse || "");
       setPrivacyPolicy(data.privacyPolicy || "");
@@ -206,6 +216,11 @@ export const TenantForm: React.FC = () => {
       featureEditais?: boolean;
       featureMinigames?: boolean;
       featureProviders?: boolean;
+      featureTickets?: boolean;
+      featureProjects?: boolean;
+      featureAccessibilityMgmt?: boolean;
+      featureInstitutionalReports?: boolean;
+      featureEditaisSubmission?: boolean;
 
       termsOfUse?: string;
       privacyPolicy?: string;
@@ -236,6 +251,11 @@ export const TenantForm: React.FC = () => {
       featureEditais,
       featureMinigames,
       featureProviders,
+      featureTickets,
+      featureProjects,
+      featureAccessibilityMgmt,
+      featureInstitutionalReports,
+      featureEditaisSubmission,
 
       termsOfUse,
       privacyPolicy
@@ -292,21 +312,30 @@ export const TenantForm: React.FC = () => {
       ]
     },
     {
-      title: "Serviços e Eventos",
+      title: "Gestão Municipal e Editais",
       items: [
-        { label: "Eventos", state: featureEvents, setter: setFeatureEvents },
         { label: "Editais (Gestão)", state: featureEditais, setter: setFeatureEditais, premium: true },
+        { label: "Submissão de Editais", state: featureEditaisSubmission, setter: setFeatureEditaisSubmission, premium: true },
+        { label: "Gestão de Projetos", state: featureProjects, setter: setFeatureProjects, premium: true },
         { label: "Prestadores", state: featureProviders, setter: setFeatureProviders, premium: true },
-        { label: "Certificados", state: featureCertificates, setter: setFeatureCertificates },
-        { label: "Acessibilidade", state: featureAccessibility, setter: setFeatureAccessibility },
+        { label: "Relatórios Institucionais", state: featureInstitutionalReports, setter: setFeatureInstitutionalReports, premium: true },
+        { label: "Acessibilidade Pública", state: featureAccessibilityMgmt, setter: setFeatureAccessibilityMgmt, premium: true },
       ]
     },
     {
-      title: "Premium / Monetização",
+      title: "Serviços e Monetização",
       items: [
-        { label: "Chat IA", state: featureChatAI, setter: setFeatureChatAI, premium: true },
+        { label: "Venda de Ingressos", state: featureTickets, setter: setFeatureTickets, premium: true },
         { label: "Loja Virtual", state: featureShop, setter: setFeatureShop, premium: true },
         { label: "Doações", state: featureDonations, setter: setFeatureDonations, premium: true },
+        { label: "Chat IA", state: featureChatAI, setter: setFeatureChatAI, premium: true },
+      ]
+    },
+    {
+      title: "Recursos de Unidade",
+      items: [
+        { label: "Certificados", state: featureCertificates, setter: setFeatureCertificates },
+        { label: "Acessibilidade Unidade", state: featureAccessibility, setter: setFeatureAccessibility },
       ]
     }
   ];
