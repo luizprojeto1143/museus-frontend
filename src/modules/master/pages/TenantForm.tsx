@@ -70,6 +70,19 @@ export const TenantForm: React.FC = () => {
   const [featureInstitutionalReports, setFeatureInstitutionalReports] = useState(false);
   const [featureEditaisSubmission, setFeatureEditaisSubmission] = useState(false);
 
+  // Group Level Flags (Sidebar Sections)
+  const [featureGroupContent, setFeatureGroupContent] = useState(true);
+  const [featureGroupEvents, setFeatureGroupEvents] = useState(true);
+  const [featureGroupEngagement, setFeatureGroupEngagement] = useState(true);
+  const [featureGroupGamification, setFeatureGroupGamification] = useState(true);
+  const [featureGroupInstitutional, setFeatureGroupInstitutional] = useState(true);
+  const [featureGroupTools, setFeatureGroupTools] = useState(true);
+  const [featureGroupAnalytics, setFeatureGroupAnalytics] = useState(true);
+  const [featureGroupSocial, setFeatureGroupSocial] = useState(true);
+  const [featureGroupPreservation, setFeatureGroupPreservation] = useState(true);
+  const [featureGroupAI, setFeatureGroupAI] = useState(true);
+  const [featureGroupRoadmap, setFeatureGroupRoadmap] = useState(true);
+
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -107,6 +120,19 @@ export const TenantForm: React.FC = () => {
       setFeatureAccessibilityMgmt(data.featureAccessibilityMgmt ?? false);
       setFeatureInstitutionalReports(data.featureInstitutionalReports ?? false);
       setFeatureEditaisSubmission(data.featureEditaisSubmission ?? false);
+
+      // Group Level Flags
+      setFeatureGroupContent(data.featureGroupContent ?? true);
+      setFeatureGroupEvents(data.featureGroupEvents ?? true);
+      setFeatureGroupEngagement(data.featureGroupEngagement ?? true);
+      setFeatureGroupGamification(data.featureGroupGamification ?? true);
+      setFeatureGroupInstitutional(data.featureGroupInstitutional ?? true);
+      setFeatureGroupTools(data.featureGroupTools ?? true);
+      setFeatureGroupAnalytics(data.featureGroupAnalytics ?? true);
+      setFeatureGroupSocial(data.featureGroupSocial ?? true);
+      setFeatureGroupPreservation(data.featureGroupPreservation ?? true);
+      setFeatureGroupAI(data.featureGroupAI ?? true);
+      setFeatureGroupRoadmap(data.featureGroupRoadmap ?? true);
 
       setTermsOfUse(data.termsOfUse || "");
       setPrivacyPolicy(data.privacyPolicy || "");
@@ -221,6 +247,17 @@ export const TenantForm: React.FC = () => {
       featureAccessibilityMgmt?: boolean;
       featureInstitutionalReports?: boolean;
       featureEditaisSubmission?: boolean;
+      featureGroupContent?: boolean;
+      featureGroupEvents?: boolean;
+      featureGroupEngagement?: boolean;
+      featureGroupGamification?: boolean;
+      featureGroupInstitutional?: boolean;
+      featureGroupTools?: boolean;
+      featureGroupAnalytics?: boolean;
+      featureGroupSocial?: boolean;
+      featureGroupPreservation?: boolean;
+      featureGroupAI?: boolean;
+      featureGroupRoadmap?: boolean;
 
       termsOfUse?: string;
       privacyPolicy?: string;
@@ -256,6 +293,17 @@ export const TenantForm: React.FC = () => {
       featureAccessibilityMgmt,
       featureInstitutionalReports,
       featureEditaisSubmission,
+      featureGroupContent,
+      featureGroupEvents,
+      featureGroupEngagement,
+      featureGroupGamification,
+      featureGroupInstitutional,
+      featureGroupTools,
+      featureGroupAnalytics,
+      featureGroupSocial,
+      featureGroupPreservation,
+      featureGroupAI,
+      featureGroupRoadmap,
 
       termsOfUse,
       privacyPolicy
@@ -336,6 +384,22 @@ export const TenantForm: React.FC = () => {
       items: [
         { label: "Certificados", state: featureCertificates, setter: setFeatureCertificates },
         { label: "Acessibilidade Unidade", state: featureAccessibility, setter: setFeatureAccessibility },
+      ]
+    },
+    {
+      title: "Visibilidade de Módulos (Sidebar)",
+      items: [
+        { label: "Menu: Conteúdo", state: featureGroupContent, setter: setFeatureGroupContent },
+        { label: "Menu: Eventos", state: featureGroupEvents, setter: setFeatureGroupEvents },
+        { label: "Menu: Visitantes", state: featureGroupEngagement, setter: setFeatureGroupEngagement },
+        { label: "Menu: Gamificação", state: featureGroupGamification, setter: setFeatureGroupGamification },
+        { label: "Menu: Institucional", state: featureGroupInstitutional, setter: setFeatureGroupInstitutional },
+        { label: "Menu: Ferramentas", state: featureGroupTools, setter: setFeatureGroupTools },
+        { label: "Menu: Analytics", state: featureGroupAnalytics, setter: setFeatureGroupAnalytics },
+        { label: "Menu: Educação/Social", state: featureGroupSocial, setter: setFeatureGroupSocial },
+        { label: "Menu: Preservação", state: featureGroupPreservation, setter: setFeatureGroupPreservation },
+        { label: "Menu: IA/Marketing", state: featureGroupAI, setter: setFeatureGroupAI },
+        { label: "Menu: Roadmap 2026", state: featureGroupRoadmap, setter: setFeatureGroupRoadmap },
       ]
     }
   ];

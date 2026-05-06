@@ -29,6 +29,18 @@ interface TenantFeatures {
   featureAccessibilityMgmt: boolean;
   featureProviders: boolean;
   featureInstitutionalReports: boolean;
+  // Menu Groups
+  featureGroupContent: boolean;
+  featureGroupEvents: boolean;
+  featureGroupEngagement: boolean;
+  featureGroupGamification: boolean;
+  featureGroupInstitutional: boolean;
+  featureGroupTools: boolean;
+  featureGroupAnalytics: boolean;
+  featureGroupSocial: boolean;
+  featureGroupPreservation: boolean;
+  featureGroupAI: boolean;
+  featureGroupRoadmap: boolean;
   // Hierarchy
   type: string;
   parentId: string | null;
@@ -60,14 +72,14 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   } as React.CSSProperties : {};
 
   type SidebarLink = { to: string; label: string; icon: string; show: boolean };
-  type SidebarGroup = { label: string; links: SidebarLink[] };
+  type SidebarGroup = { label: string; links: SidebarLink[]; showGroup?: boolean };
 
-  const sidebarGroups: SidebarGroup[] = [
     {
       label: t("admin.sidebar.painel", "Painel"),
       links: [
         { to: "/admin", label: isCityMode ? "Secretaria de Cultura" : t("admin.sidebar.dashboard"), icon: "📊", show: true },
-      ]
+      ],
+      showGroup: true
     },
     {
       label: t("admin.sidebar.conteDo", "Conteúdo"),
@@ -76,7 +88,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/trilhas", label: term.trails, icon: isCityMode ? "🗺️" : "🧭", show: features?.featureTrails ?? true },
         { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️", show: true },
         { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupContent ?? true
     },
     {
       label: t("admin.sidebar.eventosEspaOs", "Eventos & Espaços"),
@@ -87,7 +100,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/espacos", label: t("admin.sidebar.gestODeEspaOs", "Gestão de Espaços"), icon: "🏢", show: true },
         { to: "/admin/calendario", label: t("admin.sidebar.agenda", "Agenda"), icon: "📅", show: true },
         { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "🎓", show: features?.featureCertificates ?? true },
-      ]
+      ],
+      showGroup: features?.featureGroupEvents ?? true
     },
     {
       label: t("admin.sidebar.visitantesEngajamento", "Visitantes & Engajamento"),
@@ -95,7 +109,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "👥", show: true },
         { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐", show: (features?.featureReviews || features?.featureGuestbook) ?? true },
         { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "🛒", show: features?.featureShop ?? true },
-      ]
+      ],
+      showGroup: features?.featureGroupEngagement ?? true
     },
     {
       label: t("admin.sidebar.gamificaO", "Gamificação"),
@@ -106,7 +121,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/cupons", label: t("admin.sidebar.cuponsERecompensas", "Cupons e Recompensas"), icon: "🎟️", show: features?.featureGamification ?? true },
         { to: "/admin/colecao", label: t("admin.sidebar.cardsColecionVeis", "Cards Colecionáveis"), icon: "✨", show: features?.featureGamification ?? true },
         { to: "/admin/battle", label: t("admin.sidebar.batalhaDeMuseus", "Batalha de Museus"), icon: "⚔️", show: features?.featureGamification ?? true },
-      ]
+      ],
+      showGroup: features?.featureGroupGamification ?? true
     },
     {
       label: isCityMode ? t("admin.sidebar.gestOMunicipal", "Gestão Municipal") : t("admin.sidebar.gestOInstitucional", "Gestão Institucional"),
@@ -118,7 +134,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/acessibilidade-gestao", label: t("admin.sidebar.gestOAcessibilidade", "Gestão Acessibilidade"), icon: "♿", show: features?.featureAccessibilityMgmt ?? false },
         { to: "/admin/relatorios", label: t("admin.sidebar.relatRiosInstitucionais", "Relatórios Institucionais"), icon: "📊", show: features?.featureInstitutionalReports ?? false },
         { to: "/admin/equipamentos", label: t("admin.sidebar.equipamentosCulturais", "Equipamentos Culturais"), icon: "🏛️", show: (features?.type === "CITY" || features?.type === "SECRETARIA") ?? false },
-      ]
+      ],
+      showGroup: features?.featureGroupInstitutional ?? true
     },
     {
       label: t("admin.sidebar.ferramentasConfig", "Ferramentas & Config"),
@@ -131,7 +148,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "💰", show: true },
         { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "🤝", show: true },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupTools ?? true
     },
     {
       label: t("admin.sidebar.analyticsAvanAdo", "Analytics Avançado"),
@@ -142,7 +160,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/heatmap", label: t("admin.sidebar.mapaDeCalor", "Mapa de Calor"), icon: "🔥", show: true },
         { to: "/admin/funil", label: t("admin.sidebar.funilDeConversO", "Funil de Conversão"), icon: "📉", show: true },
         { to: "/admin/moderacao", label: t("admin.sidebar.moderaO", "Moderação"), icon: "🛡️", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupAnalytics ?? true
     },
     {
       label: t("admin.sidebar.educaOSocial", "Educação & Social"),
@@ -152,7 +171,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/modo-crianca", label: t("admin.sidebar.modoCrianA", "Modo Criança"), icon: "👶", show: true },
         { to: "/admin/assinaturas", label: t("admin.sidebar.amigoDoMuseu", "Amigo do Museu"), icon: "💎", show: true },
         { to: "/admin/patrocinios", label: t("admin.sidebar.patrocNios", "Patrocínios"), icon: "🤝", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupSocial ?? true
     },
     {
       label: t("admin.sidebar.municipalAvanAdo", "Gestão e Preservação"),
@@ -164,7 +184,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/calendario-municipal", label: t("admin.sidebar.calendRioCultural", "Calendário Cultural"), icon: "🗓️", show: true },
         { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Relatórios Externos"), icon: "📄", show: true },
         { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Impacto Territorial"), icon: "🗺️", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupPreservation ?? true
     },
     {
       label: t("admin.sidebar.iAMarketing", "IA & Marketing"),
@@ -172,7 +193,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/ia-descricoes", label: t("admin.sidebar.iADescriEs", "IA Descrições"), icon: "🪄", show: true },
         { to: "/admin/instagram", label: t("admin.sidebar.cardInstagram", "Card Instagram"), icon: "📸", show: true },
         { to: "/admin/traducoes", label: t("admin.sidebar.traduEs", "Traduções"), icon: "🌍", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupAI ?? true
     },
     {
       label: "Roadmap 2026",
@@ -182,12 +204,14 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/timelines", label: "Linhas do Tempo", icon: "🕒", show: true },
         { to: "/admin/submissoes", label: "Curadoria de Obras", icon: "📥", show: true },
         { to: "/admin/familia", label: "Memória Familiar", icon: "🌳", show: true },
-      ]
+      ],
+      showGroup: features?.featureGroupRoadmap ?? true
     }
   ];
 
-  // Filter groups to only show groups with at least one visible link
+  // Filter groups based on Master Admin flags and child links
   const visibleGroups = sidebarGroups
+    .filter(g => g.showGroup !== false) // Check if the entire group is disabled
     .map(g => ({ ...g, links: g.links.filter(l => l.show) }))
     .filter(g => g.links.length > 0);
 
