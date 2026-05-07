@@ -27,6 +27,7 @@ const AdminAIAssistant = React.lazy(() => import("../modules/admin/pages/AdminAI
 const AdminAnalytics = React.lazy(() => import("../modules/admin/pages/AdminAnalytics").then(m => ({ default: m.AdminAnalytics })));
 const AdminUploads = React.lazy(() => import("../modules/admin/pages/AdminUploads").then(m => ({ default: m.AdminUploads })));
 const AdminInternalUsers = React.lazy(() => import("../modules/admin/pages/AdminInternalUsers").then(m => ({ default: m.AdminInternalUsers })));
+const AdminCollaboratorForm = React.lazy(() => import("../modules/admin/pages/AdminCollaboratorForm").then(m => ({ default: m.AdminCollaboratorForm })));
 const AdminCertificates = React.lazy(() => import("../modules/admin/certificates").then(m => ({ default: m.AdminCertificates })));
 const AdminReviews = React.lazy(() => import("../modules/admin/pages/AdminReviews").then(m => ({ default: m.AdminReviews })));
 const AdminShop = React.lazy(() => import("../modules/admin/pages/AdminShop").then(m => ({ default: m.AdminShop })));
@@ -96,7 +97,7 @@ type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
 /** Helper to wrap admin page with layout + role guard */
 const ar = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
-    <RequireRole allowed={["admin"]}>
+    <RequireRole allowed={["admin", "collaborator"]}>
         <AdminLayout>
             <Component />
         </AdminLayout>
@@ -144,6 +145,8 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/analytics" element={ar(AdminAnalytics, RequireRole)} />
             <Route path="/admin/uploads" element={ar(AdminUploads, RequireRole)} />
             <Route path="/admin/usuarios" element={ar(AdminInternalUsers, RequireRole)} />
+            <Route path="/admin/usuarios/novo" element={ar(AdminCollaboratorForm, RequireRole)} />
+            <Route path="/admin/usuarios/:id" element={ar(AdminCollaboratorForm, RequireRole)} />
             <Route path="/admin/reviews" element={ar(AdminReviews, RequireRole)} />
             <Route path="/admin/loja" element={ar(AdminShop, RequireRole)} />
             <Route path="/admin/scanner-treinamento" element={ar(AdminScannerTrainer, RequireRole)} />

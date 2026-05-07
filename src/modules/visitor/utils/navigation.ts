@@ -14,6 +14,8 @@ export const getVisitorLinks = (t: any, term: any, isCityMode: boolean): NavLink
   { to: "/obras", label: term.works, icon: isCityMode ? "🏛️" : "🎨", feature: "featureWorks" },
   { to: "/trilhas", label: term.trails, icon: "🗺️", feature: "featureTrails" },
     { to: "/mapa", label: _t("visitor.sidebar.map", "Mapa"), icon: "📍", feature: null },
+    { to: "/agenda", label: "Agenda Cultural", icon: "🎟️", feature: null },
+    { to: "/meus-ingressos", label: "Meus Ingressos", icon: "🎫", feature: null },
     { to: "/eventos", label: _t("visitor.sidebar.events"), icon: "📅", feature: "featureEvents" },
     { to: "/desafios", label: _t("visitor.sidebar.challenges", "Desafios"), icon: "🎯", feature: "featureGamification" },
     { to: "/loja", label: _t("visitor.sidebar.shop", "Loja"), icon: "🛒", feature: "featureShop" },

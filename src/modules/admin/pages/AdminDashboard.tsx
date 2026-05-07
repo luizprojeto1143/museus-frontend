@@ -152,11 +152,11 @@ export const AdminDashboard: React.FC = () => {
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div>
           <Badge variant="outline" className={`${isCityMode ? 'text-blue-400 border-blue-400/30' : 'text-gold-400 border-gold-400/30'} mb-4`}>
-            Command Center
+            {t("admin.dashboard.commandCenter")}
           </Badge>
           <h1 className="premium-title text-5xl font-black tracking-tighter">{t("admin.dashboard.title")}</h1>
           <p className="text-slate-400 font-medium mt-4 max-w-lg leading-relaxed">
-            Gestão estratégica de conteúdo, engajamento e logística institucional.
+            {t("admin.dashboard.strategicDesc")}
           </p>
         </div>
         <div className="flex gap-3">
@@ -165,7 +165,7 @@ export const AdminDashboard: React.FC = () => {
               className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
               onClick={() => navigate("/admin/configuracoes")}
             >
-               Configurar Espaço
+               {t("admin.dashboard.configSpace")}
             </Button>
         </div>
       </header>
@@ -182,18 +182,18 @@ export const AdminDashboard: React.FC = () => {
            </div>
            <div className="flex-1 text-center md:text-left">
               <span className="bg-[var(--accent-primary)] text-white font-black text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block">
-                ROADMAP MARÇO 2026
+                ROADMAP 2026
               </span>
-              <h2 className="text-2xl font-black text-white tracking-tight">Cultura Viva Betim: Sistema Atualizado</h2>
+              <h2 className="text-2xl font-black text-white tracking-tight">{t("admin.dashboard.roadmap.title")}</h2>
               <p className="text-slate-400 font-medium text-sm mt-2 max-w-2xl leading-relaxed">
-                Implementamos quizes, rotas dinâmicas e certificados automáticos para elevar o engajamento do seu público.
+                {t("admin.dashboard.roadmap.desc")}
               </p>
            </div>
             <button 
               className="px-10 h-14 rounded-2xl bg-[var(--accent-primary)] text-white font-black text-xs uppercase tracking-widest hover:bg-[var(--accent-primary)] transition-all shadow-xl shadow-blue-600/20 active:scale-95 flex-shrink-0"
               onClick={() => navigate("/admin/comunidade")}
             >
-               Ver Roadmap
+               {t("admin.dashboard.roadmap.button")}
             </button>
         </div>
       </motion.div>
@@ -239,7 +239,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-1 space-y-8">
            <section className="card border-white/5 bg-black/20 p-8 rounded-[40px]">
               <div className="flex justify-between items-center mb-8">
-                 <h2 className="text-lg font-black text-white tracking-tight">🎨 Agenda Cultural</h2>
+                 <h2 className="text-lg font-black text-white tracking-tight">{t("admin.dashboard.sections.agenda")}</h2>
                   <button className="p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10" onClick={() => navigate("/admin/eventos")}>
                     <ChevronRight size={16} className="text-slate-400" />
                   </button>
@@ -264,24 +264,24 @@ export const AdminDashboard: React.FC = () => {
                    ))}
                 </div>
               ) : (
-                <p className="text-slate-500 text-xs font-medium italic">Sem eventos próximos.</p>
+                <p className="text-slate-500 text-xs font-medium italic">{t("admin.dashboard.sections.noEvents")}</p>
               )}
            </section>
 
            <section className="card border-blue-500/10 bg-[var(--accent-primary)]/[0.03] p-8 rounded-[40px]">
-              <h2 className="text-lg font-black text-blue-400 tracking-tight mb-6">📅 Próximas Reservas</h2>
+              <h2 className="text-lg font-black text-blue-400 tracking-tight mb-6">{t("admin.dashboard.sections.bookings")}</h2>
               <div className="space-y-4">
                  {data.upcomingBookings?.slice(0, 3).map((booking) => (
-                   <div key={booking.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-blue-400/70 mb-2">
-                         <span>{new Date(booking.startTime).toLocaleDateString()}</span>
-                         <span>{new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      </div>
-                      <h4 className="text-white font-bold text-xs">{booking.purpose}</h4>
-                      <p className="text-slate-500 text-[10px] mt-1">{booking.space.name}</p>
-                   </div>
+                    <div key={booking.id} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                       <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-blue-400/70 mb-2">
+                          <span>{new Date(booking.startTime).toLocaleDateString()}</span>
+                          <span>{new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                       </div>
+                       <h4 className="text-white font-bold text-xs">{booking.purpose}</h4>
+                       <p className="text-slate-500 text-[10px] mt-1">{booking.space.name}</p>
+                    </div>
                  ))}
-                 {!data.upcomingBookings?.length && <p className="text-slate-600 text-xs italic">Sem reservas agendadas.</p>}
+                 {!data.upcomingBookings?.length && <p className="text-slate-600 text-xs italic">{t("admin.dashboard.sections.noBookings")}</p>}
               </div>
            </section>
         </div>
@@ -290,12 +290,12 @@ export const AdminDashboard: React.FC = () => {
         <div className="xl:col-span-2 space-y-8">
            <div className="card p-0 overflow-hidden border-white/5 bg-black/20 rounded-[40px]">
               <div className="p-10 border-b border-white/5 flex items-center justify-between">
-                 <h2 className="text-xl font-black text-white tracking-tight">🖼 Top Obras & Engajamento</h2>
+                 <h2 className="text-xl font-black text-white tracking-tight">{t("admin.dashboard.sections.engagement")}</h2>
                  <BarChart2 className="text-slate-600" size={20} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2">
                  <div className="p-10 space-y-6">
-                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Acervo Mais Visitado</h3>
+                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{t("admin.dashboard.sections.mostVisited")}</h3>
                     {data.topWorks.map((work, idx) => (
                       <div key={work.id} className="flex items-center justify-between group">
                          <div className="flex items-center gap-4">
@@ -307,7 +307,7 @@ export const AdminDashboard: React.FC = () => {
                     ))}
                  </div>
                  <div className="p-10 bg-white/[0.01] space-y-6 border-l border-white/5">
-                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Acesso por Origem</h3>
+                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">{t("admin.dashboard.sections.accessBySource")}</h3>
                     <div className="space-y-6">
                        {Object.entries(data.accessBySource).map(([source, count]) => (
                          <div key={source} className="space-y-2">
@@ -326,7 +326,7 @@ export const AdminDashboard: React.FC = () => {
            </div>
 
            <div className="card p-10 border-white/5 bg-black/20 rounded-[40px]">
-              <h2 className="text-lg font-black text-white tracking-tight mb-8">📈 Crescimento Mensal</h2>
+              <h2 className="text-lg font-black text-white tracking-tight mb-8">{t("admin.dashboard.sections.growth")}</h2>
               <div className="flex items-end gap-2 h-48">
                  {data.visitsByDay.slice(-14).map((day, idx) => (
                    <div key={idx} className="flex-1 group relative flex flex-col items-center">

@@ -133,12 +133,28 @@
       "submit": "Cadastrar",
       "hasAccount": "Já tem uma conta? Entre",
       "polticaDePrivacidade": "Política de Privacidade",
-      "mnimo6Caracteres": "Mínimo 6 caracteres"
+      "mnimo6Caracteres": "Mínimo 6 caracteres",
+      "age": "Idade",
+      "placeholders": {
+        "name": "Digite seu nome",
+        "email": "seu@email.com",
+        "confirmPassword": "Digite a senha novamente",
+        "age": "Digite sua idade"
+      },
+      "isTeacher": "Sou Professor(a)",
+      "isTeacherDesc": "Ativa recursos educativos e agendamento de visitas escolares",
+      "acceptTerms": "Li e aceito os",
+      "termsOfUse": "Termos de Uso",
+      "photo": {
+        "added": "Foto adicionada ✓",
+        "clickToAdd": "Clique para adicionar foto (opcional)"
+      }
     },
     "errors": {
       "generic": "Erro interno ao realizar cadastro. Tente novamente mais tarde.",
       "termsRequired": "Você precisa aceitar os termos.",
       "passwordMismatch": "As senhas não conferem.",
+      "passwordShort": "A senha deve ter no mínimo 6 caracteres.",
       "registerFailed": "Falha no cadastro. Verifique os dados."
     },
     "forgotpassword": {
@@ -229,7 +245,7 @@
     },
     "home": {
       "badge": "Bem-vindo",
-      "subtitle": "Explore a história e a cultura dos nossos museus.",
+      "subtitle": "Explore o patrimônio cultural através de uma jornada digital imersiva, onde a história e a inovação se encontram.",
       "startTrail": "Começar Trilha",
       "viewMap": "Ver Mapa",
       "featuredArtworks": "Obras em Destaque",
@@ -248,7 +264,26 @@
       "viewTrails": "Ver Trilhas",
       "completeTrail": "Trilha Completa",
       "completeTrailDesc": "Conheça todo o acervo em detalhes.",
-      "chooseTrail": "Escolher Trilha"
+      "chooseTrail": "Escolher Trilha",
+      "hero": {
+        "cityBadge": "Secretaria Municipal de Cultura"
+      },
+      "bento": {
+        "scanner": { "label": "Scanner Inteligente", "title": "Decifrar Obra" },
+        "map": { "label": "Cartografia Digital", "title": "Explorar Mapa" },
+        "events": { "label": "Efemérides", "title": "Eventos" },
+        "trails": { "label": "Roteiros Históricos", "title": "Trilhas" },
+        "rpg": { "label": "Selo de Embaixador", "title": "Minha Jornada RPG" },
+        "challenges": { "label": "Provas de Saber", "title": "Desafios" },
+        "ranking": { "label": "Hall da Fama", "title": "Ranking" }
+      },
+      "gallery": {
+        "badge": "Galeria de Destaques",
+        "title": "Obras Selecionadas",
+        "unknownArtist": "Artista Desconhecido",
+        "descriptionFallback": "Uma peça fundamental do nosso acervo, representando a riqueza artística e o legado histórico preservado neste equipamento.",
+        "cta": "Explorar Detalhes"
+      }
     },
     "scan": {
       "title": "Escanear QR Code",
@@ -300,7 +335,36 @@
       "loading": "Carregando museus...",
       "errorLoading": "Falha ao carregar lista de museus.",
       "noMuseums": "Nenhum museu encontrado.",
-      "adminHint": "Dica: Cadastre um museu no painel Master para começar."
+      "adminHint": "Dica: Cadastre um museu no painel Master para começar.",
+      "hubTitle": "Pulse Hub",
+      "radarTitle": "O Pulso da Cultura",
+      "radarSubtitle": "Descubra monumentos históricos e museus em tempo real.",
+      "searchPlaceholder": "Qual história você quer viver?",
+      "filters": {
+        "all": "Todos",
+        "museu": "Museus",
+        "teatro": "Teatros",
+        "centro_cultural": "Centros"
+      },
+      "proximityTitle": "Próximo a Você",
+      "resultsTitle": "Resultados para \"{{term}}\"",
+      "exploreAll": "Explorar Tudo",
+      "foundCount": "{{count}} equipamentos encontrados",
+      "connectionError": {
+        "title": "Conexão em Restauração",
+        "message": "O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!",
+        "retry": "Tentar Reconectar"
+      },
+      "enterLocation": "Entrar no Local",
+      "emptyState": "Nenhum equipamento encontrado neste setor.",
+      "modal": {
+        "historyTitle": "História & Missão",
+        "historyFallback": "Este local é um marco da cultura local, preservando memórias e histórias que moldaram a identidade da região.",
+        "enter": "Entrar no Espaço",
+        "directions": "Como Chegar",
+        "visitationFree": "Visitação Livre",
+        "acceptAndClose": "Aceitar e Fechar"
+      }
     },
     "favorites": {
       "title": "Seus Favoritos",
@@ -798,6 +862,24 @@
     },
     "dashboard": {
       "title": "Painel de Controle",
+      "commandCenter": "Command Center",
+      "strategicDesc": "Gestão estratégica de conteúdo, engajamento e logística institucional.",
+      "configSpace": "Configurar Espaço",
+      "roadmap": {
+        "title": "Cultura Viva Betim: Sistema Atualizado",
+        "desc": "Implementamos quizes, rotas dinâmicas e certificados automáticos para elevar o engajamento do seu público.",
+        "button": "Ver Roadmap"
+      },
+      "sections": {
+        "agenda": "🎨 Agenda Cultural",
+        "noEvents": "Sem eventos próximos.",
+        "bookings": "📅 Próximas Reservas",
+        "noBookings": "Sem reservas agendadas.",
+        "engagement": "🖼 Top Obras & Engajamento",
+        "mostVisited": "Acervo Mais Visitado",
+        "accessBySource": "Acesso por Origem",
+        "growth": "📈 Crescimento Mensal"
+      },
       "subtitle": "Visão geral do museu",
       "select": "Selecione...",
       "loading": "Carregando...",

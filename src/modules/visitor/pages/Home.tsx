@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
@@ -8,9 +9,8 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { BentoSkeleton, WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
-import { staggerContainer, staggerItem, fadeInUp, pageVariants, durations } from "@/lib/motion";
-import { Badge, Card, AnimateIn, AnimatedCounter, PageLoader } from "@/components/ui";
-import { cn } from "@/lib/cn";
+import { pageVariants, staggerItem } from "@/lib/motion";
+import { Badge, AnimateIn, PageLoader } from "@/components/ui";
 import "./Home.css";
 
 interface FeaturedWork {
@@ -24,6 +24,7 @@ interface FeaturedWork {
 
 
 export const Home: React.FC = () => {
+  const { t } = useTranslation();
   const { tenantId, equipamentoId, role } = useAuth();
   const navigate = useNavigate();
   const isCityMode = useIsCityMode();
@@ -89,25 +90,22 @@ export const Home: React.FC = () => {
       aria-busy={loading}
     >
       <Helmet>
-        <title>{museumName || tenant?.name || "Cultura Viva"} | Portal do Visitante</title>
-        <meta name="description" content={`Bem-vindo ao ${museumName || tenant?.name || "Cultura Viva"}. Explore nosso acervo digital e experiências interativas.`} />
-        <meta property="og:title" content={museumName || tenant?.name || "Cultura Viva"} />
-        <meta property="og:description" content="Uma jornada cultural imersiva te espera." />
-        {tenant?.logoUrl && <meta property="og:image" content={tenant.logoUrl} />}
+        <title>{museumName || tenant?.name || "Cultura Viva"} | {t("visitor.profile.title")}</title>
+        <meta name="description" content={t("visitor.home.subtitle")} />
       </Helmet>
 
       {/* ═══ HERO SECTION ═══════════════ */}
       <motion.section variants={staggerItem} className="home-hero-premium">
         {isCityMode && (
           <Badge variant="glass" size="lg" className="mb-4 text-[var(--accent-primary)]">
-            Secretaria Municipal de Cultura
+            {t("visitor.home.hero.cityBadge")}
           </Badge>
         )}
         <h1 className="hero-title-premium">
           {museumName || tenant?.name || "Cultura Viva"}
         </h1>
         <p className="hero-subtitle-premium" style={{ opacity: 0.85 }}>
-          Explore o patrimônio cultural através de uma jornada digital imersiva, onde a história e a inovação se encontram.
+          {t("visitor.home.subtitle")}
         </p>
       </motion.section>
 
@@ -119,8 +117,8 @@ export const Home: React.FC = () => {
           <Link to="/scanner" className="bento-card large">
             <div className="bento-icon">📷</div>
             <div className="bento-info">
-              <span className="bento-label">Scanner Inteligente</span>
-              <span className="bento-title">Decifrar Obra</span>
+              <span className="bento-label">{t("visitor.home.bento.scanner.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.scanner.title")}</span>
             </div>
             <div className="bento-bg" style={{ background: 'linear-gradient(45deg, var(--gold), transparent)' }}></div>
           </Link>
@@ -128,32 +126,40 @@ export const Home: React.FC = () => {
           <Link to="/mapa" className="bento-card tall">
             <div className="bento-icon">📍</div>
             <div className="bento-info">
-              <span className="bento-label">Cartografia Digital</span>
-              <span className="bento-title">Explorar Mapa</span>
+              <span className="bento-label">{t("visitor.home.bento.map.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.map.title")}</span>
+            </div>
+          </Link>
+
+          <Link to="/agenda" className="bento-card">
+            <div className="bento-icon">🎟️</div>
+            <div className="bento-info">
+              <span className="bento-label">Global</span>
+              <span className="bento-title">Agenda Cultural</span>
             </div>
           </Link>
 
           <Link to="/eventos" className="bento-card">
             <div className="bento-icon">📅</div>
             <div className="bento-info">
-              <span className="bento-label">Efemérides</span>
-              <span className="bento-title">Eventos</span>
+              <span className="bento-label">{t("visitor.home.bento.events.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.events.title")}</span>
             </div>
           </Link>
 
           <Link to="/trilhas" className="bento-card">
             <div className="bento-icon">🧭</div>
             <div className="bento-info">
-              <span className="bento-label">Roteiros Históricos</span>
-              <span className="bento-title">Trilhas</span>
+              <span className="bento-label">{t("visitor.home.bento.trails.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.trails.title")}</span>
             </div>
           </Link>
 
           <Link to="/rpg" className="bento-card large">
             <div className="bento-icon">⚔️</div>
             <div className="bento-info">
-              <span className="bento-label">Selo de Embaixador</span>
-              <span className="bento-title">Minha Jornada RPG</span>
+              <span className="bento-label">{t("visitor.home.bento.rpg.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.rpg.title")}</span>
             </div>
             <div className="bento-bg" style={{ background: 'linear-gradient(-45deg, var(--gold), transparent)' }}></div>
           </Link>
@@ -161,16 +167,16 @@ export const Home: React.FC = () => {
           <Link to="/desafios" className="bento-card">
             <div className="bento-icon">🎯</div>
             <div className="bento-info">
-              <span className="bento-label">Provas de Saber</span>
-              <span className="bento-title">Desafios</span>
+              <span className="bento-label">{t("visitor.home.bento.challenges.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.challenges.title")}</span>
             </div>
           </Link>
 
           <Link to="/ranking" className="bento-card">
             <div className="bento-icon">🏆</div>
             <div className="bento-info">
-              <span className="bento-label">Hall da Fama</span>
-              <span className="bento-title">Ranking</span>
+              <span className="bento-label">{t("visitor.home.bento.ranking.label")}</span>
+              <span className="bento-title">{t("visitor.home.bento.ranking.title")}</span>
             </div>
           </Link>
         </section>
@@ -180,8 +186,8 @@ export const Home: React.FC = () => {
       <AnimateIn variant="fadeUp" delay={0.1}>
         <section className="gallery-section">
           <div className="section-header">
-            <Badge variant="outline" className="mb-3">Galeria de Destaques</Badge>
-            <h2 className="text-3xl font-[var(--font-heading)] font-bold text-[var(--fg-main)]">Obras Selecionadas</h2>
+            <Badge variant="outline" className="mb-3">{t("visitor.home.gallery.badge")}</Badge>
+            <h2 className="text-3xl font-[var(--font-heading)] font-bold text-[var(--fg-main)]">{t("visitor.home.gallery.title")}</h2>
           </div>
 
         {loading ? (
@@ -200,13 +206,13 @@ export const Home: React.FC = () => {
                     <img src={getFullUrl(work.imageUrl || '')} alt={work.title} className="gallery-img" />
                   </div>
                   <div className="gallery-info">
-                    <span className="gallery-artist">{work.artist || 'Artista Desconhecido'}</span>
+                    <span className="gallery-artist">{work.artist || t("visitor.home.gallery.unknownArtist")}</span>
                     <h3 className="gallery-title">{work.title}</h3>
                     <p className="gallery-desc">
-                      Uma peça fundamental do nosso acervo, representando a riqueza artística e o legado histórico preservado neste equipamento.
+                      {t("visitor.home.gallery.descriptionFallback")}
                     </p>
                     <span className="gallery-cta">
-                      Explorar Detalhes <ArrowRight size={14} />
+                      {t("visitor.home.gallery.cta")} <ArrowRight size={14} />
                     </span>
                   </div>
                 </article>

@@ -107,6 +107,14 @@
     width: 100%;
     max-width: 1200px;
     padding: 0 24px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .layout-content-premium {
+        padding: 0 20px;
+        padding-bottom: 220px; /* Safe area for NavPill + HUD */
+    }
 }
 
 .guest-banner-premium {
@@ -390,22 +398,25 @@
     }
 
     .layout-header {
-        padding: 0 1.5rem;
-        background: var(--bg-primary);
-        backdrop-filter: blur(12px);
+        top: 0.5rem;
+        left: 0.5rem;
+        right: 0.5rem;
+        height: 56px;
+        border-radius: 16px;
     }
 
-    .layout-content {
-        padding: 1rem;
-        padding-bottom: 240px; /* Space for NavPill + HUD */
+    .header-logo {
+        width: 28px;
+        height: 28px;
     }
 
     .app-title {
-        font-size: 0.9rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 120px;
+        font-size: 0.85rem;
+        max-width: 140px;
+    }
+
+    .layout-main-premium {
+        padding-top: 80px;
     }
 }
 

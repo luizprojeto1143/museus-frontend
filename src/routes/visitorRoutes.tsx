@@ -3,6 +3,9 @@ import { Route, Navigate } from "react-router-dom";
 import { VisitorLayout } from "../modules/visitor/VisitorLayout";
 import { Role } from "../modules/auth/AuthContext";
 
+const CulturalAgenda = React.lazy(() => import("../modules/visitor/pages/CulturalAgenda").then(m => ({ default: m.CulturalAgenda })));
+const MyTickets = React.lazy(() => import("../modules/visitor/pages/MyTickets").then(m => ({ default: m.MyTickets })));
+
 // Lazy Loaded AI Components
 const VisualScannerPage = React.lazy(() => import("../modules/visitor/pages/VisualScannerPage").then(module => ({ default: module.VisualScannerPage })));
 const ScannerHub = React.lazy(() => import("../modules/visitor/pages/ScannerHub").then(module => ({ default: module.ScannerHub })));
@@ -72,6 +75,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/trilhas" element={vr(TrailsList, RequireRole)} />
             <Route path="/trilhas/:id" element={vr(TrailDetail, RequireRole)} />
             <Route path="/mapa" element={vr(MapView, RequireRole)} />
+            <Route path="/agenda" element={vr(CulturalAgenda, RequireRole)} />
+            <Route path="/meus-ingressos" element={vr(MyTickets, RequireRole)} />
             <Route path="/eventos" element={vr(EventsList, RequireRole)} />
             <Route path="/eventos/:id" element={vr(EventDetail, RequireRole)} />
             <Route path="/eventos/:id/pesquisa" element={vr(EventSurveyPage, RequireRole)} />

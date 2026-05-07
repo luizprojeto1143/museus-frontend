@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { api, baseURL, isDemoMode } from "../../api/client";
 
-export type Role = "visitor" | "admin" | "master" | "producer";
+export type Role = "visitor" | "admin" | "master" | "producer" | "collaborator";
 
 // ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
@@ -20,6 +20,7 @@ interface StoredAuth {
   hasProviderProfile: boolean;
   isGuest?: boolean;
   cityId?: string | null;
+  permissions?: Record<string, boolean> | null;
 }
 
 interface AuthState {
@@ -33,6 +34,7 @@ interface AuthState {
   hasProviderProfile: boolean;
   isGuest: boolean;
   cityId: string | null;
+  permissions: Record<string, boolean> | null;
 }
 
 interface AuthContextValue extends AuthState {
@@ -72,6 +74,7 @@ const EMPTY_STATE: AuthState = {
   hasProviderProfile: false,
   isGuest: false,
   cityId: null,
+  permissions: null,
 };
 
 function authReducer(state: AuthState, action: AuthAction): AuthState {
@@ -106,6 +109,7 @@ function readStoredAuth(): AuthState {
       hasProviderProfile: parsed.hasProviderProfile ?? false,
       isGuest: parsed.isGuest ?? false,
       cityId: parsed.cityId ?? null,
+      permissions: parsed.permissions ?? null,
     };
   } catch {
     return EMPTY_STATE;
@@ -125,6 +129,7 @@ function persistAuth(state: AuthState): void {
       hasProviderProfile: state.hasProviderProfile,
       isGuest: state.isGuest,
       cityId: state.cityId,
+      permissions: state.permissions,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   } catch {
@@ -137,6 +142,7 @@ function mapRole(raw: string): Role {
   if (upper === "master") return "master";
   if (upper === "admin") return "admin";
   if (upper === "producer") return "producer";
+  if (upper === "collaborator") return "collaborator";
   return "visitor";
 }
 
@@ -177,6 +183,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         hasProviderProfile: data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false,
         isGuest: false,
         cityId: (data as any).cityId ?? (data.user as any)?.cityId ?? null,
+        permissions: (data as any).permissions ?? (data.user as any)?.permissions ?? null,
       };
 
       dispatch({ type: "LOGIN", payload: newState });
@@ -292,6 +299,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             hasProviderProfile: user.hasProviderProfile,
             isGuest: false,
             cityId: user.cityId || null,
+            permissions: user.permissions || null,
           };
           dispatch({ type: "LOGIN", payload: restoredState });
         }

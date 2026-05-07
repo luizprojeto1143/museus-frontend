@@ -47,7 +47,7 @@ interface TenantFeatures {
 }
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { logout, name: userName, tenantId, role } = useAuth();
+  const { logout, name: userName, tenantId, role, permissions } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
   const [isCollapsed, setCollapsed] = useState(false);
@@ -71,8 +71,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     "--accent-secondary": features.secondaryColor || (isCityMode ? "#0ea5e9" : "var(--accent-secondary)"),
   } as React.CSSProperties : {};
 
-  type SidebarLink = { to: string; label: string; icon: string; show: boolean };
-  type SidebarGroup = { label: string; links: SidebarLink[]; showGroup?: boolean };
+  const hasPermission = (flag?: string) => {
+    if (role === 'master' || role === 'admin') return true;
+    if (!flag) return false; // Collaborators need explicit flags for most things
+    return !!permissions?.[flag];
+  };
 
   const sidebarGroups: SidebarGroup[] = [
     {
@@ -85,31 +88,31 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.conteDo", "Conteúdo"),
       links: [
-        { to: "/admin/obras", label: term.works, icon: isCityMode ? "🏛️" : "🖼️", show: features?.featureWorks ?? true },
-        { to: "/admin/trilhas", label: term.trails, icon: isCityMode ? "🗺️" : "🧭", show: features?.featureTrails ?? true },
-        { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️", show: true },
-        { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂", show: true },
+        { to: "/admin/obras", label: term.works, icon: isCityMode ? "🏛️" : "🖼️", show: (features?.featureWorks ?? true) && hasPermission("manage_works") },
+        { to: "/admin/trilhas", label: term.trails, icon: isCityMode ? "🗺️" : "🧭", show: (features?.featureTrails ?? true) && hasPermission("manage_trails") },
+        { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "🏷️", show: hasPermission("manage_works") },
+        { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "📂", show: hasPermission("manage_works") },
       ],
       showGroup: features?.featureGroupContent ?? true
     },
     {
       label: t("admin.sidebar.eventosEspaOs", "Eventos & Espaços"),
       links: [
-        { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: features?.featureEvents ?? true },
-        { to: "/admin/verificar-ingressos", label: t("admin.sidebar.verificarIngressos", "Verificar Ingressos"), icon: "🎫", show: features?.featureEvents ?? true },
-        { to: "/admin/scanner", label: t("admin.sidebar.scannerPortaria", "Scanner (Portaria)"), icon: "📱", show: features?.featureEvents ?? true },
-        { to: "/admin/espacos", label: t("admin.sidebar.gestODeEspaOs", "Gestão de Espaços"), icon: "🏢", show: true },
-        { to: "/admin/calendario", label: t("admin.sidebar.agenda", "Agenda"), icon: "📅", show: true },
-        { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "🎓", show: features?.featureCertificates ?? true },
+        { to: "/admin/eventos", label: t("admin.sidebar.events"), icon: "🎭", show: (features?.featureEvents ?? true) && hasPermission("manage_events") },
+        { to: "/admin/verificar-ingressos", label: t("admin.sidebar.verificarIngressos", "Verificar Ingressos"), icon: "🎫", show: (features?.featureEvents ?? true) && hasPermission("manage_scanner") },
+        { to: "/admin/scanner", label: t("admin.sidebar.scannerPortaria", "Scanner (Portaria)"), icon: "📱", show: (features?.featureEvents ?? true) && hasPermission("manage_scanner") },
+        { to: "/admin/espacos", label: t("admin.sidebar.gestODeEspaOs", "Gestão de Espaços"), icon: "🏢", show: hasPermission("manage_events") },
+        { to: "/admin/calendario", label: t("admin.sidebar.agenda", "Agenda"), icon: "📅", show: hasPermission("manage_events") },
+        { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "🎓", show: (features?.featureCertificates ?? true) && hasPermission("manage_events") },
       ],
       showGroup: features?.featureGroupEvents ?? true
     },
     {
       label: t("admin.sidebar.visitantesEngajamento", "Visitantes & Engajamento"),
       links: [
-        { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "👥", show: true },
-        { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐", show: (features?.featureReviews || features?.featureGuestbook) ?? true },
-        { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "🛒", show: features?.featureShop ?? true },
+        { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "👥", show: hasPermission("view_analytics") },
+        { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "⭐", show: ((features?.featureReviews || features?.featureGuestbook) ?? true) && hasPermission("manage_guestbook") },
+        { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "🛒", show: (features?.featureShop ?? true) && hasPermission("manage_shop") },
       ],
       showGroup: features?.featureGroupEngagement ?? true
     },
@@ -141,26 +144,27 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.ferramentasConfig", "Ferramentas & Config"),
       links: [
-        { to: "/admin/ia", label: t("admin.sidebar.ai", "Assistente IA"), icon: "🤖", show: features?.featureChatAI ?? true },
-        { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈", show: true },
-        { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: features?.featureQRCodes ?? true },
-        { to: "/admin/mapa-editor", label: t("admin.sidebar.mapaDePinos", "Mapa de Pinos"), icon: "📍", show: true },
-        { to: "/admin/notificacoes", label: t("admin.sidebar.notificaEsPush", "Notificações Push"), icon: "🔔", show: true },
-        { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "💰", show: true },
-        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "🤝", show: true },
-        { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: true },
+        { to: "/admin/ia", label: t("admin.sidebar.ai", "Assistente IA"), icon: "🤖", show: (features?.featureChatAI ?? true) && hasPermission("manage_chat_ai") },
+        { to: "/admin/analytics", label: t("admin.sidebar.analytics", "Analytics"), icon: "📈", show: hasPermission("view_analytics") },
+        { to: "/admin/scanner-treinamento", label: t("admin.sidebar.scanner", "Scanner IA"), icon: "👁️", show: (features?.featureQRCodes ?? true) && hasPermission("manage_chat_ai") },
+        { to: "/admin/mapa-editor", label: t("admin.sidebar.mapaDePinos", "Mapa de Pinos"), icon: "📍", show: hasPermission("manage_works") },
+        { to: "/admin/notificacoes", label: t("admin.sidebar.notificaEsPush", "Notificações Push"), icon: "🔔", show: hasPermission("manage_events") },
+        { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "💰", show: hasPermission("view_analytics") },
+        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "🤝", show: role === 'admin' },
+        { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "⚙️", show: role === 'admin' },
+        { to: "/admin/usuarios", label: "Equipe", icon: "👥", show: role === 'admin' },
       ],
       showGroup: features?.featureGroupTools ?? true
     },
     {
       label: t("admin.sidebar.analyticsAvanAdo", "Analytics Avançado"),
       links: [
-        { to: "/admin/notas-curador", label: t("admin.sidebar.notasDoCurador", "Notas do Curador"), icon: "📝", show: true },
-        { to: "/admin/nps", label: t("admin.sidebar.nPS", "NPS"), icon: "💯", show: true },
-        { to: "/admin/sentimento", label: t("admin.sidebar.sentimento", "Sentimento"), icon: "😊", show: true },
-        { to: "/admin/heatmap", label: t("admin.sidebar.mapaDeCalor", "Mapa de Calor"), icon: "🔥", show: true },
-        { to: "/admin/funil", label: t("admin.sidebar.funilDeConversO", "Funil de Conversão"), icon: "📉", show: true },
-        { to: "/admin/moderacao", label: t("admin.sidebar.moderaO", "Moderação"), icon: "🛡️", show: true },
+        { to: "/admin/notas-curador", label: t("admin.sidebar.notasDoCurador", "Notas do Curador"), icon: "📝", show: hasPermission("view_analytics") },
+        { to: "/admin/nps", label: t("admin.sidebar.nPS", "NPS"), icon: "💯", show: hasPermission("view_analytics") },
+        { to: "/admin/sentimento", label: t("admin.sidebar.sentimento", "Sentimento"), icon: "😊", show: hasPermission("view_analytics") },
+        { to: "/admin/heatmap", label: t("admin.sidebar.mapaDeCalor", "Mapa de Calor"), icon: "🔥", show: hasPermission("view_analytics") },
+        { to: "/admin/funil", label: t("admin.sidebar.funilDeConversO", "Funil de Conversão"), icon: "📉", show: hasPermission("view_analytics") },
+        { to: "/admin/moderacao", label: t("admin.sidebar.moderaO", "Moderação"), icon: "🛡️", show: hasPermission("manage_guestbook") },
       ],
       showGroup: features?.featureGroupAnalytics ?? true
     },

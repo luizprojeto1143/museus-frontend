@@ -3,16 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { Shield, UserPlus, ShieldCheck, UserX, Key, Settings } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface InternalUser {
   id: string;
   name: string;
   email: string;
-  role: "MASTER" | "ADMIN";
+  role: "MASTER" | "ADMIN" | "COLLABORATOR";
   tenantId: string | null;
   createdAt: string;
   lastLogin: string | null;
   active: boolean;
+  permissions?: Record<string, boolean>;
 }
 
 export const AdminInternalUsers: React.FC = () => {
@@ -22,17 +25,14 @@ export const AdminInternalUsers: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const isMaster = currentUserRole === "master";
 
-
-
   const loadUsers = React.useCallback(async () => {
     try {
       const endpoint = isMaster ? "/users" : `/users?tenantId=${tenantId}`;
       const res = await api.get(endpoint);
       const usersData = res.data as InternalUser[];
-      // Show MASTER and ADMIN users (internal users only)
       setUsers(usersData);
     } catch {
-      console.error("Erro ao carregar usuários");
+      toast.error("Erro ao carregar usuários");
     } finally {
       setLoading(false);
     }
@@ -44,31 +44,32 @@ export const AdminInternalUsers: React.FC = () => {
 
   const handleToggleActive = async (userId: string, currentStatus: boolean) => {
     try {
-      await api.patch(`/users/${userId}`, { active: !currentStatus });
+      await api.put(`/users/${userId}`, { active: !currentStatus });
+      toast.success(currentStatus ? "Usuário desativado" : "Usuário ativado");
       loadUsers();
     } catch {
-      alert("Erro ao atualizar usuário");
+      toast.error("Erro ao atualizar usuário");
     }
   };
 
   const handleResetPassword = async (userId: string) => {
-    const newPassword = prompt("Digite a nova senha:");
+    const newPassword = prompt("Digite a nova senha (mínimo 6 caracteres):");
     if (!newPassword || newPassword.length < 6) {
-      alert("Senha deve ter pelo menos 6 caracteres");
+      if (newPassword) toast.error("Senha muito curta");
       return;
     }
 
     try {
-      await api.post(`/users/${userId}/reset-password`, { newPassword });
-      alert("Senha redefinida com sucesso!");
+      await api.put(`/users/${userId}`, { password: newPassword });
+      toast.success("Senha redefinida com sucesso!");
     } catch {
-      alert("Erro ao redefinir senha");
+      toast.error("Erro ao redefinir senha");
     }
   };
 
   const handleDelete = async (userId: string, userRole: string) => {
     if (userRole === "MASTER" && !isMaster) {
-      alert("Apenas MASTER pode remover outros MASTER");
+      toast.error("Apenas MASTER pode remover outros MASTER");
       return;
     }
 
@@ -76,132 +77,117 @@ export const AdminInternalUsers: React.FC = () => {
 
     try {
       await api.delete(`/users/${userId}`);
+      toast.success("Usuário excluído");
       loadUsers();
     } catch {
-      alert("Erro ao excluir usuário");
+      toast.error("Erro ao excluir usuário");
     }
   };
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="section-title">{t("admin.internalusers.UsuriosInternos", `👤 Usuários Internos`)}</h1>
-
+          <h1 className="section-title flex items-center gap-3">
+             <Shield className="text-gold" /> Equipe do Museu
+          </h1>
+          <p className="text-muted text-sm">Gerencie acessos e permissões dos funcionários e administradores.</p>
         </div>
-        <Link to="/admin/usuarios/novo" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">{t("admin.internalusers.NovoUsurio", `
-          + Novo Usuário
-        `)}</Link>
+        <Link to="/admin/usuarios/novo" className="btn btn-primary">
+          <UserPlus size={18} /> Novo Colaborador
+        </Link>
       </div>
 
-      {/* Stats */}
-      <div className="card-grid" style={{ marginBottom: "2rem" }}>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.length}</div>
-          <div className="stat-label">{t("admin.internalusers.totalDeUsurios", `Total de Usuários`)}</div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <div className="stat-card">
+          <span className="stat-value">{users.length}</span>
+          <span className="stat-label">Total de Usuários</span>
         </div>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.filter(u => u.role === "MASTER").length}</div>
-          <div className="stat-label">Masters</div>
+        <div className="stat-card">
+          <span className="stat-value">{users.filter(u => u.role === "COLLABORATOR").length}</span>
+          <span className="stat-label">Colaboradores</span>
         </div>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.filter(u => u.role === "ADMIN").length}</div>
-          <div className="stat-label">Admins</div>
+        <div className="stat-card">
+          <span className="stat-value">{users.filter(u => u.role === "ADMIN").length}</span>
+          <span className="stat-label">Administradores</span>
         </div>
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-          <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{users.filter(u => u.active).length}</div>
-          <div className="stat-label">Ativos</div>
+        <div className="stat-card">
+          <span className="stat-value text-green-500">{users.filter(u => u.active).length}</span>
+          <span className="stat-label">Ativos</span>
         </div>
       </div>
 
-      {loading && <p>{t("admin.internalusers.carregandoUsurios", `Carregando usuários...`)}</p>}
-
-      {!loading && users.length === 0 && (
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
-          <p>{t("admin.internalusers.nenhumUsurioCadastradoAinda", `Nenhum usuário cadastrado ainda.`)}</p>
-        </div>
-      )}
-
-      {!loading && users.length > 0 && (
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
+      {loading ? (
+        <div className="text-center py-20 opacity-50">Carregando usuários...</div>
+      ) : (
+        <div className="table-container">
           <table className="table">
             <thead>
               <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Role</th>
+                <th>Nome / Email</th>
+                <th>Cargo</th>
+                <th>Permissões (Flags)</th>
                 <th>Status</th>
-                <th>{t("admin.internalusers.ltimoLogin", `Último Login`)}</th>
-                <th>{t("admin.internalusers.aes", `Ações`)}</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
                 <tr key={user.id}>
-                  <td style={{ fontWeight: 600 }}>{user.name}</td>
-                  <td>{user.email}</td>
                   <td>
-                    <span
-                      className="badge"
-                      style={{
-                        background: user.role === "MASTER"
-                          ? "rgba(139, 92, 246, 0.1)"
-                          : "rgba(59, 130, 246, 0.1)",
-                        color: user.role === "MASTER" ? "#8b5cf6" : "var(--accent-primary)",
-                        borderColor: user.role === "MASTER" ? "#8b5cf6" : "var(--accent-primary)"
-                      }}
-                    >
+                    <div className="flex flex-col">
+                      <span className="font-bold text-white">{user.name}</span>
+                      <span className="text-[10px] text-muted">{user.email}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`px-2 py-1 rounded text-[10px] font-black uppercase ${
+                      user.role === 'MASTER' ? 'bg-purple-500/20 text-purple-400' :
+                      user.role === 'ADMIN' ? 'bg-blue-500/20 text-blue-400' :
+                      'bg-green-500/20 text-green-400'
+                    }`}>
                       {user.role}
                     </span>
                   </td>
                   <td>
-                    <span
-                      className="chip"
-                      style={{
-                        background: user.active ? "rgba(34, 197, 94, 0.1)" : "rgba(239, 68, 68, 0.1)",
-                        color: user.active ? "#22c55e" : "#ef4444",
-                        borderColor: user.active ? "#22c55e" : "#ef4444"
-                      }}
-                    >
-                      {user.active ? "Ativo" : "Inativo"}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: "0.85rem" }}>
-                    {user.lastLogin
-                      ? new Date(user.lastLogin).toLocaleDateString()
-                      : "Nunca"}
+                    <div className="flex flex-wrap gap-1 max-w-[250px]">
+                      {user.role === "COLLABORATOR" && user.permissions ? (
+                        Object.entries(user.permissions)
+                          .filter(([_, val]) => val)
+                          .map(([key]) => (
+                            <span key={key} className="text-[9px] bg-white/5 text-muted px-2 py-0.5 rounded">
+                              {key.replace("manage_", "").replace("view_", "")}
+                            </span>
+                          ))
+                      ) : (
+                        <span className="text-[10px] text-gold/60">Acesso Total</span>
+                      )}
+                      {user.role === "COLLABORATOR" && (!user.permissions || Object.values(user.permissions).every(v => !v)) && (
+                        <span className="text-[10px] text-red-500/60">Sem Permissões</span>
+                      )}
+                    </div>
                   </td>
                   <td>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <button
-                        onClick={() => handleToggleActive(user.id, user.active)}
-                        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                        style={{ padding: "0.4rem 0.8rem", fontSize: "0.8rem" }}
-                      >
-                        {user.active ? "Desativar" : "Ativar"}
+                    <div className={`flex items-center gap-2 text-[10px] ${user.active ? 'text-green-500' : 'text-red-500'}`}>
+                      <div className={`w-1.5 h-1.5 rounded-full ${user.active ? 'bg-green-500' : 'bg-red-500'}`} />
+                      {user.active ? "Ativo" : "Inativo"}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="flex gap-2">
+                      <Link to={`/admin/usuarios/${user.id}`} className="p-2 hover:bg-white/5 rounded-lg text-gold transition-colors" title="Editar">
+                        <Settings size={16} />
+                      </Link>
+                      <button onClick={() => handleResetPassword(user.id)} className="p-2 hover:bg-white/5 rounded-lg text-muted transition-colors" title="Reset Senha">
+                        <Key size={16} />
                       </button>
-                      <button
-                        onClick={() => handleResetPassword(user.id)}
-                        className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                        style={{ padding: "0.4rem 0.8rem", fontSize: "0.8rem" }}
+                      <button 
+                        onClick={() => handleToggleActive(user.id, user.active)} 
+                        className={`p-2 hover:bg-white/5 rounded-lg transition-colors ${user.active ? 'text-red-400' : 'text-green-400'}`}
+                        title={user.active ? "Desativar" : "Ativar"}
                       >
-                        Reset Senha
+                        {user.active ? <UserX size={16} /> : <ShieldCheck size={16} />}
                       </button>
-                      {(isMaster || user.role !== "MASTER") && (
-                        <button
-                          onClick={() => handleDelete(user.id, user.role)}
-                          className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                          style={{
-                            padding: "0.4rem 0.8rem",
-                            fontSize: "0.8rem",
-                            background: "rgba(239, 68, 68, 0.1)",
-                            color: "#ef4444",
-                            border: "1px solid #ef4444"
-                          }}
-                        >
-                          Excluir
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>
@@ -210,57 +196,6 @@ export const AdminInternalUsers: React.FC = () => {
           </table>
         </div>
       )}
-
-      {/* Permissões */}
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginTop: "2rem" }}>
-        <h2 className="card-title">{t("admin.internalusers.MatrizDePermisses", `🔐 Matriz de Permissões`)}</h2>
-        <table className="table" style={{ marginTop: "1rem" }}>
-          <thead>
-            <tr>
-              <th>{t("admin.internalusers.funo", `Função`)}</th>
-              <th>MASTER</th>
-              <th>ADMIN</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Gerenciar Obras/Trilhas/Eventos</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-            </tr>
-            <tr>
-              <td>Ver Visitantes e Analytics</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-            </tr>
-            <tr>
-              <td>Configurar IA e Tema</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-            </tr>
-            <tr>
-              <td>{t("admin.internalusers.gerenciarUsuriosInternos", `Gerenciar Usuários Internos`)}</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#f59e0b" }}>Parcial</td>
-            </tr>
-            <tr>
-              <td>Criar/Excluir Tenants</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#ef4444" }}>✗</td>
-            </tr>
-            <tr>
-              <td>Reset Total do Museu</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#ef4444" }}>✗</td>
-            </tr>
-            <tr>
-              <td>Backup e Logs do Sistema</td>
-              <td style={{ color: "#22c55e" }}>✓</td>
-              <td style={{ color: "#ef4444" }}>✗</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 };

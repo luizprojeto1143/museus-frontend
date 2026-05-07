@@ -125,19 +125,35 @@
     "register": {
       "title": "Crea tu cuenta",
       "name": "Nombre",
-      "email": "Correo",
+      "email": "Correo electrónico",
       "password": "Contraseña",
       "confirmPassword": "Confirmar contraseña",
       "submit": "Registrarse",
-      "hasAccount": "¿Ya tienes cuenta? Entra",
-      "polticaDePrivacidade": "política de privacidad",
-      "mnimo6Caracteres": "Mínimo 6 caracteres"
+      "hasAccount": "¿Ya tienes una cuenta? Entrar",
+      "polticaDePrivacidade": "Política de Privacidad",
+      "mnimo6Caracteres": "Mínimo 6 caracteres",
+      "age": "Edad",
+      "placeholders": {
+        "name": "Ingresa tu nombre",
+        "email": "tu@email.com",
+        "confirmPassword": "Ingresa la contraseña nuevamente",
+        "age": "Ingresa tu edad"
+      },
+      "isTeacher": "Soy Profesor(a)",
+      "isTeacherDesc": "Activa recursos educativos y programación de visitas escolares",
+      "acceptTerms": "Leí e acepto los",
+      "termsOfUse": "Términos de Uso",
+      "photo": {
+        "added": "Foto añadida ✓",
+        "clickToAdd": "Haz clic para añadir foto (opcional)"
+      }
     },
     "errors": {
-      "generic": "Error interno al registrarse. Inténtelo de nuevo más tarde.",
+      "generic": "Error interno durante el registro. Inténtalo de nuevo más tarde.",
       "termsRequired": "Debes aceptar los términos.",
       "passwordMismatch": "Las contraseñas no coinciden.",
-      "registerFailed": "El registro falló. Comprueba los datos."
+      "passwordShort": "La contraseña debe tener al menos 6 caracteres.",
+      "registerFailed": "Error en el registro. Verifica tus datos."
     },
     "forgotpassword": {
       "VocReceberAsInstruesDeRecupera": ", recibirá instrucciones de recuperación en poco tiempo.",
@@ -208,27 +224,45 @@
     },
     "home": {
       "badge": "Bienvenido",
-      "title": "Hola, {{name}}",
-      "subtitle": "Explora la historia y la cultura de nuestros museos.",
-      "startTrail": "Comenzar Ruta",
-      "viewMap": "Ver mapa",
+      "subtitle": "Explore el patrimonio cultural a través de un viaje digital inmersivo, donde la historia y la innovación se encuentran.",
+      "startTrail": "Comenzar Recorrido",
+      "viewMap": "Ver Mapa",
       "featuredArtworks": "Obras Destacadas",
-      "featuredSubtitle": "Descubre algunas de las piezas más icónicas de nuestra colección.",
+      "featuredSubtitle": "Descubra algunas de las piezas más icónicas de nossa colección.",
       "exampleArtwork": "Obra de Ejemplo",
       "guestArtist": "Artista Invitado",
-      "painting": "Cuadro",
+      "painting": "Pintura",
       "accessible": "Accesible",
-      "exampleDisclaimer": "* Imagen meramente ilustrativa.",
+      "exampleDisclaimer": "* Imagen solo con fines ilustrativos.",
       "viewDetails": "Ver Detalles",
-      "recommendedTrails": "Rutas Recomendadas",
-      "trailsSubtitle": "Itinerarios seleccionados para que aproveches al máximo tu visita.",
-      "quickTrail": "Ruta Rápida",
-      "quickTrailDesc": "Ideal para quien tiene poco tiempo.",
+      "recommendedTrails": "Recorridos Recomendados",
+      "trailsSubtitle": "Rutas seleccionadas para que aproveche al máximo.",
+      "quickTrail": "Recorrido Rápido",
+      "quickTrailDesc": "Ideal para quienes tienen poco tiempo.",
       "museumSuggestion": "Sugerencia del Museo",
-      "viewTrails": "Ver Rutas",
-      "completeTrail": "Ruta Completa",
-      "completeTrailDesc": "Conoce toda la colección en detalle.",
-      "chooseTrail": "Elegir Ruta"
+      "viewTrails": "Ver Recorridos",
+      "completeTrail": "Recorrido Completo",
+      "completeTrailDesc": "Conozca toda la colección en detalle.",
+      "chooseTrail": "Elegir Recorrido",
+      "hero": {
+        "cityBadge": "Secretaría Municipal de Cultura"
+      },
+      "bento": {
+        "scanner": { "label": "Escáner Inteligente", "title": "Descifrar Obra" },
+        "map": { "label": "Cartografía Digital", "title": "Explorar Mapa" },
+        "events": { "label": "Efemérides", "title": "Eventos" },
+        "trails": { "label": "Rutas Históricas", "title": "Recorridos" },
+        "rpg": { "label": "Sello de Embajador", "title": "Mi Jornada RPG" },
+        "challenges": { "label": "Misiones de Saber", "title": "Desafíos" },
+        "ranking": { "label": "Salón de la Fama", "title": "Ranking" }
+      },
+      "gallery": {
+        "badge": "Galería de Destacados",
+        "title": "Obras Seleccionadas",
+        "unknownArtist": "Artista Desconocido",
+        "descriptionFallback": "Una pieza fundamental de nuestra colección, que representa la riqueza artística y el legado histórico preservado en esta instalación.",
+        "cta": "Explorar Detalles"
+      }
     },
     "scan": {
       "title": "Escanear código QR",
@@ -265,12 +299,41 @@
       "viewDetails": "Ver Detalles"
     },
     "selectMuseum": {
-      "title": "Selecciona el Museo",
-      "subtitle": "Elige el museo que deseas visitar",
+      "title": "Seleccione el Museo",
+      "subtitle": "Elija o museo que desea visitar",
       "loading": "Cargando museos...",
       "errorLoading": "Error al cargar la lista de museos.",
       "noMuseums": "No se encontraron museos.",
-      "adminHint": "Consejo: Registra un museo en el panel Master para comenzar."
+      "adminHint": "Sugerencia: Registre un museo en el panel Maestro para comenzar.",
+      "hubTitle": "Pulse Hub",
+      "radarTitle": "El Pulso de la Cultura",
+      "radarSubtitle": "Descubra monumentos históricos y museos en tiempo real.",
+      "searchPlaceholder": "¿Qué historia quieres vivir?",
+      "filters": {
+        "all": "Todos",
+        "museu": "Museos",
+        "teatro": "Teatros",
+        "centro_cultural": "Centros"
+      },
+      "proximityTitle": "Cerca de Ti",
+      "resultsTitle": "Resultados para \"{{term}}\"",
+      "exploreAll": "Explorar Todo",
+      "foundCount": "{{count}} instalaciones encontradas",
+      "connectionError": {
+        "title": "Conexión en Restauración",
+        "message": "El servidor está temporalmente fuera de servicio. ¡Estamos restableciendo la conexión!",
+        "retry": "Intentar Reconectar"
+      },
+      "enterLocation": "Entrar al Local",
+      "emptyState": "No se encontraron instalaciones en este sector.",
+      "modal": {
+        "historyTitle": "Historia & Misión",
+        "historyFallback": "Este sitio es um hito de la cultura local, preservando memorias e historias que moldearon la identidad de la región.",
+        "enter": "Entrar al Espacio",
+        "directions": "Cómo Llegar",
+        "visitationFree": "Visitación Libre",
+        "acceptAndClose": "Aceptar y Cerrar"
+      }
     },
     "favorites": {
       "title": "Tus Favoritos",

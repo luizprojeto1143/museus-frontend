@@ -189,7 +189,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           color: "#8b7355",
           marginBottom: "1.5rem"
         }}>
-          {photoPreview ? "Foto adicionada ✓" : "Clique para adicionar foto (opcional)"}
+          {photoPreview ? t("auth.register.photo.added") : t("auth.register.photo.clickToAdd")}
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -208,7 +208,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             required
             value={name}
             onChange={e => setName(e.target.value)}
-            placeholder="Digite seu nome"
+            placeholder={t("auth.register.placeholders.name")}
             style={{
               width: "100%",
               marginBottom: "1.2rem",
@@ -236,7 +236,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             required
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="seu@email.com"
+            placeholder={t("auth.register.placeholders.email")}
             style={{
               width: "100%",
               marginBottom: "1.2rem",
@@ -263,7 +263,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             required
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder={t("auth.register.mnimo6Caracteres", `Mínimo 6 caracteres`)}
+            placeholder={t("auth.register.mnimo6Caracteres")}
             style={{
               width: "100%",
               marginBottom: "1.2rem",
@@ -290,7 +290,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             required
             value={confirmPassword}
             onChange={e => setConfirmPassword(e.target.value)}
-            placeholder="Digite a senha novamente"
+            placeholder={t("auth.register.placeholders.confirmPassword")}
             style={{
               width: "100%",
               marginBottom: "1.2rem",
@@ -310,7 +310,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             color: "var(--accent-primary)",
             fontFamily: "serif"
           }}>
-            Idade *
+            {t("auth.register.age")} *
           </label>
           <input
             type="number"
@@ -319,7 +319,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
             max="120"
             value={age}
             onChange={e => setAge(e.target.value)}
-            placeholder="Digite sua idade"
+            placeholder={t("auth.register.placeholders.age")}
             style={{
               width: "100%",
               marginBottom: "1.5rem",
@@ -361,9 +361,9 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                 }} />
               </div>
               <span>
-                🎓 Sou Professor(a)
+                🎓 {t("auth.register.isTeacher")}
                 <span style={{ display: "block", fontSize: "0.7rem", color: "#8b7355", marginTop: "2px" }}>
-                  Ativa recursos educativos e agendamento de visitas escolares
+                  {t("auth.register.isTeacherDesc")}
                 </span>
               </span>
             </label>
@@ -379,13 +379,13 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                 style={{ marginTop: "0.2rem" }}
               />
               <span>
-                Li e aceito os{" "}
+                {t("auth.register.acceptTerms")}{" "}
                 <button
                   type="button"
                   onClick={() => setShowTermsModal(true)}
                   style={{ background: "none", border: "none", padding: 0, color: "var(--accent-primary)", textDecoration: "underline", cursor: "pointer", fontWeight: "bold" }}
                 >
-                  Termos de Uso
+                  {t("auth.register.termsOfUse")}
                 </button>
               </span>
             </label>
@@ -406,24 +406,25 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
           )}
 
           <button
-            className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
+            className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-all cursor-pointer border text-[13px] px-5 py-2.5 rounded-[var(--radius-md)] active:scale-95"
             type="submit"
             disabled={isSubmitting}
             style={{
               width: "100%",
-              background: "linear-gradient(135deg, var(--accent-primary), var(--accent-primary))",
-              color: "#1a1108",
-              fontWeight: "bold",
+              background: "linear-gradient(135deg, var(--accent-primary) 0%, #b8941f 100%)",
+              color: "white",
+              fontWeight: "900",
               fontSize: "1rem",
-              padding: "0.9rem",
+              padding: "1rem",
               border: "none",
-              borderRadius: "0.6rem",
+              borderRadius: "0.75rem",
               cursor: isSubmitting ? "not-allowed" : "pointer",
               opacity: isSubmitting ? 0.7 : 1,
-              boxShadow: "0 4px 16px rgba(212,175,55,0.4)",
-              fontFamily: "serif",
+              boxShadow: "0 10px 25px rgba(212,175,55,0.25), inset 0 1px 0 rgba(255,255,255,0.2)",
+              fontFamily: "var(--font-body)",
               textTransform: "uppercase",
-              letterSpacing: "1px"
+              letterSpacing: "1.5px",
+              textShadow: "0 1px 2px rgba(0,0,0,0.3)"
             }}
           >
             {isSubmitting ? t("common.loading") : t("auth.register.submit")}
@@ -442,7 +443,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                   marginLeft: "0.5rem"
                 }}
               >
-                {t("auth.login.submit")}
+                {t("auth.auth.login.submit")}
               </span>
             </p>
           </div>
@@ -471,14 +472,14 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
               width: "100%", maxWidth: "600px", maxHeight: "80vh", display: "flex", flexDirection: "column"
             }}>
               <div style={{ padding: "1rem", borderBottom: "1px solid #333", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h3 style={{ color: "var(--accent-primary)", margin: 0 }}>Termos de Uso</h3>
+                <h3 style={{ color: "var(--accent-primary)", margin: 0 }}>{t("auth.register.termsOfUse")}</h3>
                 <button type="button" onClick={() => setShowTermsModal(false)} style={{ background: "none", border: "none", color: "#fff", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
               </div>
               <div style={{ padding: "1rem", overflowY: "auto", color: "#ddd", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
                 {termsText || "Termos de uso padrão da plataforma..."}
                 {privacyText && (
                   <>
-                    <h4 style={{ color: "var(--accent-primary)", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade", `Política de Privacidade`)}</h4>
+                    <h4 style={{ color: "var(--accent-primary)", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade")}</h4>
                     {privacyText}
                   </>
                 )}
@@ -489,7 +490,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                   onClick={() => { setTermsAccepted(true); setShowTermsModal(false); }}
                   style={{ background: "var(--accent-primary)", color: "#000", border: "none", padding: "0.5rem 1rem", borderRadius: "0.25rem", fontWeight: "bold", cursor: "pointer" }}
                 >
-                  Aceitar e Fechar
+                  {t("visitor.selectMuseum.modal.acceptAndClose")}
                 </button>
               </div>
             </div>

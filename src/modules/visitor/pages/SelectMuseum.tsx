@@ -186,7 +186,7 @@ export const SelectMuseum: React.FC = () => {
       <nav className="pulse-top-bar flex justify-between items-center px-8 py-6 sticky top-0 z-[100] backdrop-blur-xl bg-[var(--bg-overlay)] border-b border-[var(--border-subtle)]">
         <div className="pulse-brand flex items-center gap-3 font-black text-xl tracking-tighter">
           <Zap size={24} className="text-[var(--accent-primary)] animate-pulse" />
-          <span className="bg-gradient-to-r from-white to-gold-300 bg-clip-text text-transparent">Pulse Hub</span>
+          <span className="bg-gradient-to-r from-white to-gold-300 bg-clip-text text-transparent">{t("visitor.selectMuseum.hubTitle")}</span>
         </div>
         <div className="pulse-top-actions flex items-center gap-4">
           {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
@@ -199,10 +199,10 @@ export const SelectMuseum: React.FC = () => {
         <AnimateIn variant="fadeUp">
           <div className="pulse-hero-content max-w-4xl mx-auto">
             <h1 className="text-[clamp(3rem,8vw,5rem)] font-black leading-[0.95] tracking-tighter mb-6">
-              O Pulso da <span className="bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent italic drop-shadow-sm">Cultura</span>
+              {t("visitor.selectMuseum.radarTitle").split(" ").slice(0, -1).join(" ")} <span className="bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent italic drop-shadow-sm">{t("visitor.selectMuseum.radarTitle").split(" ").pop()}</span>
             </h1>
             <p className="text-xl text-white/90 max-w-lg mx-auto mb-12 leading-relaxed">
-              Descubra monumentos históricos e museus em tempo real.
+              {t("visitor.selectMuseum.radarSubtitle")}
             </p>
 
             {/* SMART SEARCH */}
@@ -213,7 +213,7 @@ export const SelectMuseum: React.FC = () => {
                   <Search className="text-[var(--accent-primary)] mr-4" size={24} />
                   <input
                     type="text"
-                    placeholder="Qual história você quer viver?"
+                    placeholder={t("visitor.selectMuseum.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-white/50 font-medium"
@@ -224,10 +224,10 @@ export const SelectMuseum: React.FC = () => {
               {/* QUICK ACTIONS */}
               <div className="pulse-filters flex flex-wrap justify-center gap-3">
                 {[
-                  { id: "ALL", label: "Todos", icon: <Compass size={16} /> },
-                  { id: "museu", label: "Museus", icon: <Theater size={16} /> },
-                  { id: "teatro", label: "Teatros", icon: <Landmark size={16} /> },
-                  { id: "centro_cultural", label: "Centros", icon: <Navigation size={16} /> }
+                  { id: "ALL", label: t("visitor.selectMuseum.filters.all"), icon: <Compass size={16} /> },
+                  { id: "museu", label: t("visitor.selectMuseum.filters.museu"), icon: <Theater size={16} /> },
+                  { id: "teatro", label: t("visitor.selectMuseum.filters.teatro"), icon: <Landmark size={16} /> },
+                  { id: "centro_cultural", label: t("visitor.selectMuseum.filters.centro_cultural"), icon: <Navigation size={16} /> }
                 ].map(f => (
                   <Button
                     key={f.id}
@@ -251,7 +251,7 @@ export const SelectMuseum: React.FC = () => {
         <section className="px-8 py-12 max-w-7xl mx-auto relative z-10">
           <AnimateIn variant="fadeUp">
             <h2 className="text-sm font-black uppercase tracking-[0.2em] text-gray-500 mb-8 flex items-center gap-3">
-              <Navigation size={18} className="text-blue-400 animate-pulse" /> Próximo a Você
+              <Navigation size={18} className="text-blue-400 animate-pulse" /> {t("visitor.selectMuseum.proximityTitle")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {nearestEquipamentos.map(e => (
@@ -280,17 +280,17 @@ export const SelectMuseum: React.FC = () => {
       <main className="px-8 py-20 max-w-7xl mx-auto relative z-10">
         <div className="flex justify-between items-end mb-12 border-b border-[var(--border-subtle)] pb-8">
           <div>
-            <h2 className="text-3xl font-black tracking-tighter mb-2">{searchTerm ? `Resultados para "${searchTerm}"` : "Explorar Tudo"}</h2>
-            <p className="text-gray-500 font-medium">{filteredAndSortedEquipamentos.length} equipamentos encontrados</p>
+            <h2 className="text-3xl font-black tracking-tighter mb-2">{searchTerm ? t("visitor.selectMuseum.resultsTitle", { term: searchTerm }) : t("visitor.selectMuseum.exploreAll")}</h2>
+            <p className="text-gray-500 font-medium">{t("visitor.selectMuseum.foundCount", { count: filteredAndSortedEquipamentos.length })}</p>
           </div>
         </div>
 
         {errorMsg && (
           <div className="p-12 mb-12 bg-red-400/5 border border-red-400/20 rounded-3xl text-center">
              <Info className="mx-auto mb-4 text-red-400" size={48} />
-             <h3 className="text-xl font-bold mb-2">Conexão em Restauração</h3>
-             <p className="text-gray-400">{errorMsg}</p>
-             <Button variant="outline" className="mt-6 border-red-400/30 text-red-400" onClick={() => loadEquipamentos()}>Tentar Reconectar</Button>
+             <h3 className="text-xl font-bold mb-2">{t("visitor.selectMuseum.connectionError.title")}</h3>
+             <p className="text-gray-400">{t("visitor.selectMuseum.connectionError.message")}</p>
+             <Button variant="outline" className="mt-6 border-red-400/30 text-red-400" onClick={() => loadEquipamentos()}>{t("visitor.selectMuseum.connectionError.retry")}</Button>
           </div>
         )}
 
@@ -328,7 +328,7 @@ export const SelectMuseum: React.FC = () => {
                     <h3 className="text-2xl font-bold mb-3 tracking-tight text-white group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
                     <div className="flex gap-3 mb-6">
                       <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
-                        <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : "Explore"}
+                        <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}
                       </Badge>
                       <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5">
                         <Star size={12} className="mr-1 fill-current" /> 4.9
@@ -342,7 +342,7 @@ export const SelectMuseum: React.FC = () => {
                       className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base"
                       rightIcon={<ArrowRight size={20} />}
                     >
-                      Entrar no Local
+                      {t("visitor.selectMuseum.enterLocation")}
                     </Button>
                   </div>
                 </Card>
@@ -354,7 +354,7 @@ export const SelectMuseum: React.FC = () => {
         {filteredAndSortedEquipamentos.length === 0 && !loading && (
           <div className="pulse-empty">
             <Compass size={64} strokeWidth={1} className="opacity-20 mb-4" />
-            <p>Nenhum equipamento encontrado neste setor.</p>
+            <p>{t("visitor.selectMuseum.emptyState")}</p>
           </div>
         )}
       </main>
@@ -390,14 +390,14 @@ export const SelectMuseum: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-4 text-gray-400">
                     <Clock size={20} className="text-[var(--accent-primary)]" />
-                    <span className="font-medium">{selectedLandmark.horarios?.seg || "Visitação Livre"}</span>
+                    <span className="font-medium">{selectedLandmark.horarios?.seg || t("visitor.selectMuseum.modal.visitationFree")}</span>
                   </div>
                 </div>
                 
                 <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
-                  <h3 className="text-sm font-black uppercase tracking-widest text-[var(--accent-primary)] mb-3">História & Missão</h3>
+                  <h3 className="text-sm font-black uppercase tracking-widest text-[var(--accent-primary)] mb-3">{t("visitor.selectMuseum.modal.historyTitle")}</h3>
                   <p className="text-gray-300 text-sm leading-relaxed italic">
-                    {selectedLandmark.missao || selectedLandmark.descricao || "Este local é um marco da cultura local, preservando memórias e histórias que moldaram a identidade da região."}
+                    {selectedLandmark.missao || selectedLandmark.descricao || t("visitor.selectMuseum.modal.historyFallback")}
                   </p>
                 </div>
               </div>
@@ -408,7 +408,7 @@ export const SelectMuseum: React.FC = () => {
                     onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null); navigate("/home"); }}
                     rightIcon={<Zap size={20} />}
                 >
-                  Entrar no Espaço
+                  {t("visitor.selectMuseum.modal.enter")}
                 </Button>
                 <Button
                     variant="outline"
@@ -416,7 +416,7 @@ export const SelectMuseum: React.FC = () => {
                     onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.lat},${selectedLandmark.lng}`, '_blank')}
                     rightIcon={<Navigation size={20} />}
                 >
-                  Como Chegar
+                  {t("visitor.selectMuseum.modal.directions")}
                 </Button>
               </div>
             </div>

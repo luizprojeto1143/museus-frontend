@@ -1,0 +1,325 @@
+/* CulturalAgenda.css */
+.agenda-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.agenda-header-cinematic {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+}
+
+.agenda-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: var(--gold-glow, rgba(212, 175, 55, 0.1));
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 100px;
+    color: var(--gold, #d4af37);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.agenda-title-cinematic {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-family: var(--font-heading);
+    font-weight: 900;
+    line-height: 0.9;
+    background: linear-gradient(to bottom, #fff 30%, rgba(255,255,255,0.5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    letter-spacing: -0.04em;
+}
+
+/* City Filter */
+.city-filter-container {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    margin-bottom: 3rem;
+    scrollbar-width: none;
+}
+
+.city-filter-container::-webkit-scrollbar {
+    display: none;
+}
+
+.city-pill {
+    padding: 0.8rem 1.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.city-pill.active {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: #fff;
+    box-shadow: 0 10px 20px -5px rgba(var(--accent-primary-rgb), 0.4);
+    transform: translateY(-2px);
+}
+
+/* Agenda Cards */
+.agenda-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+.agenda-date-group {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .agenda-date-group {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+.agenda-date-sidebar {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    text-align: right;
+}
+
+.date-day {
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--gold);
+}
+
+.date-month {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+}
+
+.agenda-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.agenda-card-premium {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    color: inherit;
+}
+
+.agenda-card-premium:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--gold-400);
+    transform: translateX(10px);
+}
+
+.card-visual {
+    position: relative;
+    height: 100%;
+    min-height: 150px;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-cover: cover;
+}
+
+.card-content {
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-museum-tag {
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.card-meta {
+    display: flex;
+    gap: 1.5rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-actions {
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.btn-ticket {
+    background: #fff;
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.btn-ticket:hover {
+    background: var(--gold);
+    color: #000;
+    transform: scale(1.05);
+}
+
+@media (max-width: 900px) {
+    .agenda-card-premium {
+        grid-template-columns: 1fr;
+    }
+    .card-visual {
+        height: 200px;
+    }
+    .card-actions {
+        padding-top: 0;
+    }
+}
+
+/* My Tickets Styles */
+.tickets-container {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.ticket-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-card::before, .ticket-card::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: var(--bg-main);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ticket-card::before { left: -20px; border-right: 1px solid rgba(255,255,255,0.1); }
+.ticket-card::after { right: -20px; border-left: 1px solid rgba(255,255,255,0.1); }
+
+.ticket-main {
+    padding: 2rem;
+    flex: 1;
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.ticket-id {
+    font-family: monospace;
+    color: var(--gold);
+    font-size: 0.75rem;
+}
+
+.ticket-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.status-confirmed { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.status-checked { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.status-pending { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+
+.ticket-body h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.ticket-footer {
+    padding: 1.5rem 2rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-qr {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ticket-empty {
+    text-align: center;
+    padding: 5rem 0;
+    opacity: 0.5;
+}

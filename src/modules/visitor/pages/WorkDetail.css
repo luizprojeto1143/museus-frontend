@@ -164,3 +164,10 @@
     grid-template-columns: 1fr;
   }
 }
+@media (max-width: 768px) {
+  .work-detail-container { gap: 40px; }
+  .work-title-premium { font-size: 38px; }
+  .work-hero-img-premium { max-height: 50vh; }
+  .work-body-premium { font-size: 16px; line-height: 1.7; padding: 0 10px; }
+  .work-header-premium { text-align: center; }
+}

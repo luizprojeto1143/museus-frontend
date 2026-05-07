@@ -56,6 +56,7 @@ type EventDetailType = {
   type?: string;
   instructor?: string;
   materials?: string;
+  confirmedCount?: number;
 };
 
 export const EventDetail: React.FC = () => {
@@ -216,14 +217,50 @@ export const EventDetail: React.FC = () => {
            <button 
              onClick={toggleFavorite}
              className={`action-btn-premium ${isFavorite ? 'active' : ''}`}
+             title="Favoritar"
            >
              <Star size={18} fill={isFavorite ? "currentColor" : "none"} />
            </button>
            
-           <button className="action-btn-premium">
+           <button 
+             onClick={() => {
+               const startDate = new Date(event.startDate);
+               const start = startDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+               
+               let end = start;
+               if (event.endDate) {
+                   end = new Date(event.endDate).toISOString().replace(/-|:|\.\d\d\d/g, "");
+               } else {
+                   // Fallback: 2 hours duration
+                   const fallbackEnd = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+                   end = fallbackEnd.toISOString().replace(/-|:|\.\d\d\d/g, "");
+               }
+
+               const title = encodeURIComponent(event.title);
+               const loc = encodeURIComponent(event.location || event.tenant?.name || "");
+               const details = encodeURIComponent("Ingresso pelo Cultura Viva.");
+               window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${details}&location=${loc}`, '_blank');
+             }}
+             className="action-btn-premium"
+             title="Adicionar ao Google Agenda"
+           >
+              <Calendar size={18} />
+           </button>
+
+           <button className="action-btn-premium" title="Compartilhar">
               <Share2 size={18} />
            </button>
         </div>
+
+        {event.confirmedCount && event.confirmedCount > 0 ? (
+          <div className="mt-4 flex items-center gap-2 text-sm text-gold-hi font-fb bg-white/5 inline-flex px-3 py-1.5 rounded-full border border-white/10">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+            </span>
+            🔥 {event.confirmedCount} pessoas já garantiram presença!
+          </div>
+        ) : null}
       </div>
 
       <div className="px-10">

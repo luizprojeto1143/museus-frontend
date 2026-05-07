@@ -128,16 +128,32 @@
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Confirm password",
-      "submit": "Register",
-      "hasAccount": "Have an account? Login",
+      "submit": "Sign Up",
+      "hasAccount": "Already have an account? Sign in",
       "polticaDePrivacidade": "Privacy Policy",
-      "mnimo6Caracteres": "Minimum 6 characters"
+      "mnimo6Caracteres": "Minimum 6 characters",
+      "age": "Age",
+      "placeholders": {
+        "name": "Enter your name",
+        "email": "your@email.com",
+        "confirmPassword": "Enter password again",
+        "age": "Enter your age"
+      },
+      "isTeacher": "I am a Teacher",
+      "isTeacherDesc": "Activates educational resources and school visit scheduling",
+      "acceptTerms": "I read and accept the",
+      "termsOfUse": "Terms of Use",
+      "photo": {
+        "added": "Photo added ✓",
+        "clickToAdd": "Click to add photo (optional)"
+      }
     },
     "errors": {
-      "generic": "Internal error during registration. Please try again later.",
-      "termsRequired": "You must accept the terms.",
-      "passwordMismatch": "Passwords don't match.",
-      "registerFailed": "Registration failed. Check the data."
+      "generic": "Internal error during registration. Try again later.",
+      "termsRequired": "You need to accept the terms.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordShort": "Password must be at least 6 characters.",
+      "registerFailed": "Registration failed. Check your data."
     },
     "forgotpassword": {
       "VocReceberAsInstruesDeRecupera": ", you will receive recovery instructions in no time.",
@@ -209,26 +225,45 @@
     "home": {
       "badge": "Welcome",
       "title": "Hello, {{name}}",
-      "subtitle": "Explore the history and culture of our museums.",
+      "subtitle": "Explore cultural heritage through an immersive digital journey, where history and innovation meet.",
       "startTrail": "Start Trail",
       "viewMap": "View Map",
-      "featuredArtworks": "Featured Artworks",
+      "featuredArtworks": "Featured Works",
       "featuredSubtitle": "Discover some of the most iconic pieces in our collection.",
       "exampleArtwork": "Example Artwork",
       "guestArtist": "Guest Artist",
       "painting": "Painting",
       "accessible": "Accessible",
-      "exampleDisclaimer": "* Image for illustration purposes only.",
+      "exampleDisclaimer": "* Image for illustrative purposes only.",
       "viewDetails": "View Details",
       "recommendedTrails": "Recommended Trails",
-      "trailsSubtitle": "Curated itineraries for you to make the most of your visit.",
+      "trailsSubtitle": "Curated routes for you to make the most of it.",
       "quickTrail": "Quick Trail",
-      "quickTrailDesc": "Ideal for those short on time.",
+      "quickTrailDesc": "Ideal for those with little time.",
       "museumSuggestion": "Museum Suggestion",
       "viewTrails": "View Trails",
       "completeTrail": "Complete Trail",
-      "completeTrailDesc": "Discover the entire collection in detail.",
-      "chooseTrail": "Choose Trail"
+      "completeTrailDesc": "Get to know the entire collection in detail.",
+      "chooseTrail": "Choose Trail",
+      "hero": {
+        "cityBadge": "Municipal Secretary of Culture"
+      },
+      "bento": {
+        "scanner": { "label": "Smart Scanner", "title": "Decode Artwork" },
+        "map": { "label": "Digital Cartography", "title": "Explore Map" },
+        "events": { "label": "Ephemerides", "title": "Events" },
+        "trails": { "label": "Historical Routes", "title": "Trails" },
+        "rpg": { "label": "Ambassador Seal", "title": "My RPG Journey" },
+        "challenges": { "label": "Knowledge Quests", "title": "Challenges" },
+        "ranking": { "label": "Hall of Fame", "title": "Ranking" }
+      },
+      "gallery": {
+        "badge": "Highlights Gallery",
+        "title": "Selected Works",
+        "unknownArtist": "Unknown Artist",
+        "descriptionFallback": "A fundamental piece of our collection, representing the artistic richness and historical legacy preserved in this facility.",
+        "cta": "Explore Details"
+      }
     },
     "scan": {
       "title": "Scan QR Code",
@@ -270,7 +305,36 @@
       "loading": "Loading museums...",
       "errorLoading": "Failed to load museum list.",
       "noMuseums": "No museums found.",
-      "adminHint": "Tip: Register a museum in the Master panel to start."
+      "adminHint": "Tip: Register a museum in the Master panel to get started.",
+      "hubTitle": "Pulse Hub",
+      "radarTitle": "The Pulse of Culture",
+      "radarSubtitle": "Discover historical monuments and museums in real time.",
+      "searchPlaceholder": "What story do you want to live?",
+      "filters": {
+        "all": "All",
+        "museu": "Museums",
+        "teatro": "Theaters",
+        "centro_cultural": "Centers"
+      },
+      "proximityTitle": "Near You",
+      "resultsTitle": "Results for \"{{term}}\"",
+      "exploreAll": "Explore All",
+      "foundCount": "{{count}} facilities found",
+      "connectionError": {
+        "title": "Connection Restoring",
+        "message": "The server is temporarily down. We are re-establishing the connection!",
+        "retry": "Try Reconnect"
+      },
+      "enterLocation": "Enter Location",
+      "emptyState": "No facilities found in this sector.",
+      "modal": {
+        "historyTitle": "History & Mission",
+        "historyFallback": "This site is a landmark of local culture, preserving memories and stories that shaped the region's identity.",
+        "enter": "Enter Space",
+        "directions": "Get Directions",
+        "visitationFree": "Free Visitation",
+        "acceptAndClose": "Accept and Close"
+      }
     },
     "favorites": {
       "title": "Your Favorites",
