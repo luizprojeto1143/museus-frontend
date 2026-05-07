@@ -104,12 +104,19 @@
 
 .pulse-gradient {
     color: var(--accent-primary);
-    background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: 900;
     display: inline-block;
-    padding-right: 0.1em;
+    position: relative;
+    text-shadow: 0 0 20px rgba(var(--accent-primary-rgb), 0.2);
+}
+
+@supports (-webkit-background-clip: text) {
+    .pulse-gradient {
+        background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
 .pulse-subtitle {
@@ -131,15 +138,15 @@
 
 .pulse-search-container {
     position: relative;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
+    background: var(--bg-surface);
+    border: 2px solid var(--accent-primary);
     border-radius: 32px;
     padding: 0.5rem 1.5rem;
     display: flex;
     align-items: center;
     backdrop-filter: blur(10px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(var(--accent-primary-rgb), 0.1);
 }
 
 .pulse-search-container:focus-within {
