@@ -8,7 +8,7 @@
   --color-fg-secondary: var(--fg-secondary);
   --color-fg-inverse: var(--fg-inverse);
   --color-gold-300: #fde68a;
-  --color-gold-400: var(--accent-primary);
+  --color-gold-400: #d4af37;
   --color-gold-500: #b8941f;
   --color-gold-600: #927011;
   --radius-md: 18px;
@@ -137,10 +137,10 @@
 
 :root[data-theme="light"] {
   /* --- Backgrounds --- */
-  --bg-page:         #f4f5f7;
+  --bg-page:         #f8f9fa;
   --bg-surface:      #ffffff;
-  --bg-surface-hover:#f0f2f5;
-  --bg-overlay:      rgba(255, 255, 255, 0.92);
+  --bg-surface-hover:#e9ecef;
+  --bg-overlay:      rgba(255, 255, 255, 0.95);
 
   /* --- Foregrounds --- */
   --fg-main:         #0f172a;

@@ -259,11 +259,11 @@ export const SelectMuseum: React.FC = () => {
               {nearestEquipamentos.map(e => (
                 <Card 
                   animated
-                  className="p-6 cursor-pointer border-blue-500/10 group bg-blue-500/5 backdrop-blur-md"
+                  className="p-6 cursor-pointer border-[var(--accent-primary)]/10 group bg-[var(--accent-primary)]/5 backdrop-blur-md"
                   onClick={() => handleSelect(e)}
                 >
                   <div className="flex items-center gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center font-mono font-bold text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                    <div className="w-14 h-14 rounded-2xl bg-[var(--accent-primary)]/10 flex items-center justify-center font-mono font-bold text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 group-hover:scale-110 transition-transform">
                       {formatDistance(e.distance)}
                     </div>
                     <div>
