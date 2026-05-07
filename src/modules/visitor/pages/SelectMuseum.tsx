@@ -392,7 +392,7 @@ export const SelectMuseum: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-4 text-[var(--fg-secondary)]">
                     <Clock size={20} className="text-[var(--accent-primary)]" />
-                    <span className="font-medium">{selectedLandmark.horarios?.seg || t(\"visitor.selectMuseum.modal.visitationFree\")}</span>
+                    <span className="font-medium">{selectedLandmark.horarios?.seg || t("visitor.selectMuseum.modal.visitationFree")}</span>
                   </div>
                 </div>
                 
