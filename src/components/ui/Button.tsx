@@ -19,7 +19,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-gold-solid text-white border-white/40 shadow-[0_0_25px_rgba(212,175,55,0.5)] hover:brightness-110 active:scale-95 z-10",
+          "bg-gold-solid text-white border-white/40 shadow-[var(--shadow-glow)] hover:brightness-110 active:scale-95 z-10",
         secondary:
           "bg-[var(--glass-bg-light)] text-white border-[var(--border-default)] backdrop-blur-sm hover:bg-white/10",
         outline:
