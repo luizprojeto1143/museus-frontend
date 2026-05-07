@@ -18,20 +18,34 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
   const { logout } = useAuth();
 
   // Categories structure
+  const explocacaoPaths = ['/home', '/obras', '/trilhas', '/mapa', '/eventos', '/scanner', '/agenda'];
+  const jornadaPaths = ['/rpg', '/perfil', '/colecao', '/meus-certificados', '/meus-ingressos'];
+  const socialPaths = ['/desafios', '/ranking', '/loja', '/favoritos', '/chat'];
+
   const categories = [
     {
       title: 'Exploração',
-      items: links.filter(l => ['/home', '/obras', '/trilhas', '/mapa', '/eventos', '/scanner'].includes(l.to))
+      items: links.filter(l => explocacaoPaths.includes(l.to))
     },
     {
       title: 'Minha Jornada',
-      items: links.filter(l => ['/rpg', '/perfil', '/colecao', '/meus-certificados'].includes(l.to))
+      items: links.filter(l => jornadaPaths.includes(l.to))
     },
     {
       title: 'Social & Mais',
-      items: links.filter(l => ['/desafios', '/ranking', '/loja', '/favoritos', '/chat'].includes(l.to))
+      items: links.filter(l => socialPaths.includes(l.to))
     }
   ];
+
+  // Add any leftover links that are not explicitly categorized
+  const categorizedPaths = [...explocacaoPaths, ...jornadaPaths, ...socialPaths];
+  const uncategorizedLinks = links.filter(l => !categorizedPaths.includes(l.to));
+  if (uncategorizedLinks.length > 0) {
+      categories.push({
+          title: 'Outros',
+          items: uncategorizedLinks
+      });
+  }
 
   const handleSwitchMuseum = () => {
     onClose();
