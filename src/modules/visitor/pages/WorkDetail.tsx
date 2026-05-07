@@ -243,6 +243,7 @@ export const WorkDetail: React.FC = () => {
         )}
       </section>
 
+      {treasureFound && (
         <motion.div 
           className="treasure-notification"
           initial={{ y: 20, opacity: 0 }}
@@ -256,6 +257,7 @@ export const WorkDetail: React.FC = () => {
              </div>
           </div>
         </motion.div>
+      )}
 
       {/* Trail Navigation */}
       {trailId && trailWorks.length > 0 && (

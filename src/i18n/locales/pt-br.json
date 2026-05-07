@@ -245,6 +245,7 @@
     },
     "home": {
       "badge": "Bem-vindo",
+      "explore": "Explorar Acervo",
       "subtitle": "Explore o patrimônio cultural através de uma jornada digital imersiva, onde a história e a inovação se encontram.",
       "startTrail": "Começar Trilha",
       "viewMap": "Ver Mapa",
@@ -638,6 +639,7 @@
       "ms": "/mês"
     },
     "profile": {
+      "title": "Meu Perfil",
       "encerrarSessoNesteDispositivo": "Encerrar sessão neste dispositivo",
       "vocAindaNoTemIngressos": "Você ainda não tem ingressos.",
       "vocAindaNoFezNenhumPedido": "Você ainda não fez nenhum pedido.",
