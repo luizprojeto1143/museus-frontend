@@ -26,7 +26,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
     return (
         <div
             className={cn(
-                "flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface-hover)] border border-[var(--border-subtle)] backdrop-blur-md z-[100]",
+                "flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface-hover)] border-2 border-[var(--accent-primary)]/30 backdrop-blur-md z-[100]",
                 absolute && "absolute top-6 right-6",
                 className
             )}
