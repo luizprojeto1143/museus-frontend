@@ -27,7 +27,7 @@ const buttonVariants = cva(
         ghost:
           "bg-transparent text-fg-secondary border-transparent hover:bg-[var(--bg-surface-hover)] hover:text-fg-main",
         glass:
-          "bg-[var(--glass-bg)] text-fg-main border-[var(--glass-border)] backdrop-blur-[28px] shadow-[var(--shadow-premium)] hover:bg-white/10",
+          "bg-[var(--glass-bg)] text-[var(--fg-main)] border-[var(--glass-border)] backdrop-blur-[28px] shadow-[var(--shadow-premium)] hover:bg-[var(--bg-surface-hover)]",
         danger:
           "bg-red-600 text-white border-transparent hover:bg-red-700",
       },

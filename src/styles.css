@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Syne:wght@400;500;700;800&family=DM+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 @theme {
-  --color-accent-primary: #d4af37;
-  --color-accent-secondary: #cd7f32;
-  --color-bg-page: #05050c;
-  --color-fg-main: #ffffff;
-  --color-fg-secondary: #e5e7eb;
-  --color-fg-inverse: #ffffff;
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-bg-page: var(--bg-page);
+  --color-fg-main: var(--fg-main);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-inverse: var(--fg-inverse);
   --color-gold-300: #fde68a;
-  --color-gold-400: #d4af37;
+  --color-gold-400: var(--accent-primary);
   --color-gold-500: #b8941f;
   --color-gold-600: #927011;
   --radius-md: 18px;
@@ -172,11 +172,11 @@
   /* --- Glass & Surfaces --- */
   --surface:            #ffffff;
   --faint:              rgba(0, 0, 0, 0.04);
-  --glass-bg:           rgba(255, 255, 255, 0.75);
+  --glass-bg:           rgba(255, 255, 255, 0.4);
   --glass-blur:         blur(28px);
-  --glass-border:       rgba(0, 0, 0, 0.1);
-  --glass-bg-light:     rgba(255, 255, 255, 0.9);
-  --glass-border-light: rgba(0, 0, 0, 0.08);
+  --glass-border:       rgba(0, 0, 0, 0.08);
+  --glass-bg-light:     rgba(255, 255, 255, 0.6);
+  --glass-border-light: rgba(0, 0, 0, 0.05);
 
   color-scheme: light;
 }

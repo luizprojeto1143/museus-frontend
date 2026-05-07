@@ -103,10 +103,12 @@
 }
 
 .pulse-gradient {
+    color: var(--accent-primary);
     background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    display: inline-block;
 }
 
 .pulse-subtitle {
@@ -155,6 +157,10 @@
     outline: none;
 }
 
+.pulse-search-input::placeholder {
+    color: var(--fg-tertiary);
+}
+
 .pulse-filters {
     display: flex;
     gap: 0.75rem;
@@ -168,9 +174,9 @@
     gap: 0.5rem;
     padding: 0.6rem 1.25rem;
     border-radius: 99px;
-    background: var(--surface);
+    background: var(--bg-surface);
     border: 1.5px solid var(--border);
-    color: var(--fg-secondary);
+    color: var(--fg-main);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
