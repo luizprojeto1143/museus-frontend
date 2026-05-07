@@ -99,8 +99,8 @@ export const CulturalAgenda: React.FC = () => {
           <Sparkles size={14} className="inline mr-2" />
           Agenda Cultural Unificada
         </motion.div>
-        <h1 className="agenda-title-cinematic">Pulso da Cidade</h1>
-        <p className="hero-subtitle-premium max-w-2xl mx-auto">
+        <h1 className="agenda-title-cinematic">Pulso da <span className="accent">Cidade</span></h1>
+        <p className="agenda-subtitle">
           Explore as melhores experiências culturais concentradas em um só lugar. Escolha sua cidade e garanta seu lugar na história.
         </p>
       </header>
