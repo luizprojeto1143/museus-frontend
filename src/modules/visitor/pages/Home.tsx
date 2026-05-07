@@ -104,7 +104,7 @@ export const Home: React.FC = () => {
         <h1 className="hero-title-premium">
           {museumName || tenant?.name || "Cultura Viva"}
         </h1>
-        <p className="hero-subtitle-premium" style={{ opacity: 0.85 }}>
+        <p className="hero-subtitle-premium">
           {t("visitor.home.subtitle")}
         </p>
       </motion.section>
@@ -120,7 +120,7 @@ export const Home: React.FC = () => {
               <span className="bento-label">{t("visitor.home.bento.scanner.label")}</span>
               <span className="bento-title">{t("visitor.home.bento.scanner.title")}</span>
             </div>
-            <div className="bento-bg" style={{ background: 'linear-gradient(45deg, var(--gold), transparent)' }}></div>
+            <div className="bento-bg bento-gold-gradient"></div>
           </Link>
           
           <Link to="/mapa" className="bento-card tall">
@@ -161,7 +161,7 @@ export const Home: React.FC = () => {
               <span className="bento-label">{t("visitor.home.bento.rpg.label")}</span>
               <span className="bento-title">{t("visitor.home.bento.rpg.title")}</span>
             </div>
-            <div className="bento-bg" style={{ background: 'linear-gradient(-45deg, var(--gold), transparent)' }}></div>
+            <div className="bento-bg bento-gold-gradient-rev"></div>
           </Link>
 
           <Link to="/desafios" className="bento-card">

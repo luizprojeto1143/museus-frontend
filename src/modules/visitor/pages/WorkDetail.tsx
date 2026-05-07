@@ -197,20 +197,20 @@ export const WorkDetail: React.FC = () => {
         <Badge variant="glass" size="lg" className="mb-6">{work.category || 'Obra de Arte'}</Badge>
         <h1 className="work-title-premium">{work.title}</h1>
         <div className="work-meta-premium">
-           <span className="text-gold-hi">{work.artist}</span>
+           <span className="text-[var(--accent-gold)]">{work.artist}</span>
            {work.year && <span className="opacity-40">• {work.year}</span>}
         </div>
         
         <div className="flex items-center gap-6 mt-4">
-           <div className="flex items-center gap-2 text-[10px] font-fm uppercase text-muted">
-              <MapPin size={12} className="text-gold" />
+           <div className="flex items-center gap-2 text-[10px] font-fm uppercase text-[var(--fg-tertiary)]">
+              <MapPin size={12} className="text-[var(--accent-primary)]" />
               {work.room || 'Auditório'} • {work.floor || 'Térreo'}
            </div>
            
            <div className="work-actions-premium !mt-0">
               <button 
                 onClick={() => navigate(`/vestigios/capturar/${work.id}`)}
-                className="action-btn-premium !bg-gold/20 !text-gold hover:!bg-gold hover:!text-bg border border-gold/30"
+                className="action-btn-premium !bg-[var(--accent-gold)]/20 !text-[var(--accent-gold)] hover:!bg-[var(--accent-gold)] hover:!text-[var(--bg-main)] border border-[var(--accent-gold)]/30"
                 title="Capturar Vestígio"
               >
                 <Shield size={18} />
@@ -243,7 +243,6 @@ export const WorkDetail: React.FC = () => {
         )}
       </section>
 
-      {treasureFound && (
         <motion.div 
           className="treasure-notification"
           initial={{ y: 20, opacity: 0 }}
@@ -252,12 +251,11 @@ export const WorkDetail: React.FC = () => {
           <div className="flex items-center gap-4">
              <span className="text-2xl">✨</span>
              <div className="flex flex-col">
-                <strong className="text-sm font-fd text-white">Relíquia Descoberta</strong>
-                <span className="text-[10px] font-fm uppercase text-gold">+{treasureFound.xp} XP de Legado</span>
+                <strong className="text-sm font-fd text-[var(--fg-main)]">Relíquia Descoberta</strong>
+                <span className="text-[10px] font-fm uppercase text-[var(--accent-primary)]">+{treasureFound.xp} XP de Legado</span>
              </div>
           </div>
         </motion.div>
-      )}
 
       {/* Trail Navigation */}
       {trailId && trailWorks.length > 0 && (
@@ -307,34 +305,34 @@ export const WorkDetail: React.FC = () => {
             </button>
 
             {/* AI Widget */}
-            <div className="mt-20 border-t border-border pt-20">
+            <div className="mt-20 border-t border-[var(--border-subtle)] pt-20">
                <div className="flex items-center gap-3 mb-6">
-                  <MessageCircle className="text-gold" />
-                  <h2 className="text-2xl font-fd text-white">Diálogo com o Acervo</h2>
+                  <MessageCircle className="text-[var(--accent-primary)]" />
+                  <h2 className="text-2xl font-fd text-[var(--fg-main)]">Diálogo com o Acervo</h2>
                </div>
-               <p className="text-muted text-sm mb-10">Dúvidas sobre a técnica ou simbolismo? Nossa IA está pronta para aprofundar seu conhecimento sobre esta obra.</p>
+               <p className="text-[var(--fg-secondary)] text-sm mb-10">Dúvidas sobre a técnica ou simbolismo? Nossa IA está pronta para aprofundar seu conhecimento sobre esta obra.</p>
                <AiChatWidget workContext={{ title: work.title, artist: work.artist, description: work.description || "" }} />
             </div>
          </main>
 
          <aside className="work-sidebar-premium">
             {work.collectibleCards && work.collectibleCards.length > 0 && (
-                <div className="sidebar-card-premium !bg-gold/5 !border-gold/20">
+                <div className="sidebar-card-premium !bg-[var(--accent-primary)]/5 !border-[var(--accent-primary)]/20">
                    <div className="flex items-center gap-2 mb-2">
-                       <Sparkles size={14} className="text-gold" />
-                       <span className="sidebar-label-premium !text-gold !mb-0">Card Colecionável</span>
+                       <Sparkles size={14} className="text-[var(--accent-primary)]" />
+                       <span className="sidebar-label-premium !text-[var(--accent-primary)] !mb-0">Card Colecionável</span>
                    </div>
                    {work.collectibleCards.map((card: any) => (
-                       <div key={card.id} className="mt-4 p-4 rounded-xl bg-black/40 border border-white/5 text-center">
-                           <div className="w-20 h-24 mx-auto mb-3 rounded-lg overflow-hidden border-2 border-gold/30">
+                       <div key={card.id} className="mt-4 p-4 rounded-xl bg-[var(--bg-surface-hover)] border border-[var(--border-subtle)] text-center">
+                           <div className="w-20 h-24 mx-auto mb-3 rounded-lg overflow-hidden border-2 border-[var(--accent-primary)]/30">
                                <img src={getFullUrl(card.imageUrl || work.imageUrl)} alt={card.title} className="w-full h-full object-cover" />
                            </div>
-                           <h4 className="text-white text-xs font-black uppercase tracking-widest">{card.title}</h4>
+                           <h4 className="text-[var(--fg-main)] text-xs font-black uppercase tracking-widest">{card.title}</h4>
                            <div className="flex items-center justify-center gap-2 mt-2">
-                               <span className="text-[8px] font-black text-gold bg-gold/10 px-2 py-0.5 rounded uppercase">{card.rarity}</span>
-                               <span className="text-[8px] font-black text-white/40 uppercase">+{card.xpReward} XP</span>
+                               <span className="text-[8px] font-black text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-2 py-0.5 rounded uppercase">{card.rarity}</span>
+                               <span className="text-[8px] font-black text-[var(--fg-main)]/40 uppercase">+{card.xpReward} XP</span>
                            </div>
-                           <p className="text-[9px] text-muted mt-3 leading-relaxed">Escanei o QR Code desta obra para adicionar este card ao seu Grimório!</p>
+                           <p className="text-[9px] text-[var(--fg-tertiary)] mt-3 leading-relaxed">Escanei o QR Code desta obra para adicionar este card ao seu Grimório!</p>
                        </div>
                    ))}
                 </div>
