@@ -9,6 +9,7 @@ import {
   Zap, Navigation, X, 
   Clock, Landmark, Theater 
 } from "lucide-react";
+import { ThemeToggle } from "../components/ThemeToggle";
 import "./SelectMuseum.css";
 import { useGeoFencing } from "../../visitor/context/GeoFencingProvider";
 import { 
@@ -191,6 +192,7 @@ export const SelectMuseum: React.FC = () => {
         <div className="pulse-top-actions flex items-center gap-4">
           {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
           <LanguageSwitcher absolute={false} />
+          <ThemeToggle />
         </div>
       </nav>
 
