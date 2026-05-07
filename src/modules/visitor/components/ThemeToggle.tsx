@@ -12,10 +12,11 @@ export const ThemeToggle: React.FC = () => {
             onClick={toggleTheme}
             className="theme-toggle-btn"
             aria-label={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+            title={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
             style={{
-                background: "rgba(255, 255, 255, 0.05)",
+                background: "var(--faint)",
                 backdropFilter: "blur(10px)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                border: "1px solid var(--border)",
                 borderRadius: "50%",
                 width: "40px",
                 height: "40px",
@@ -25,33 +26,34 @@ export const ThemeToggle: React.FC = () => {
                 cursor: "pointer",
                 position: "relative",
                 overflow: "hidden",
-                color: "var(--accent-primary)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                transition: "all 0.3s ease"
+                color: "var(--gold)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                transition: "all 0.3s ease",
+                flexShrink: 0
             }}
         >
             <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                     key={theme.theme}
-                    initial={{ y: 20, opacity: 0, rotate: -45 }}
+                    initial={{ y: 16, opacity: 0, rotate: -30 }}
                     animate={{ y: 0, opacity: 1, rotate: 0 }}
-                    exit={{ y: -20, opacity: 0, rotate: 45 }}
+                    exit={{ y: -16, opacity: 0, rotate: 30 }}
                     transition={{ duration: 0.2 }}
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}
                 >
                     {isDark ? (
-                        <Sun size={20} fill="currentColor" opacity={0.2} />
+                        <Sun size={18} />
                     ) : (
-                        <Moon size={20} fill="currentColor" opacity={0.2} />
+                        <Moon size={18} />
                     )}
                 </motion.div>
             </AnimatePresence>
-            
+
             <style>{`
                 .theme-toggle-btn:hover {
-                    background: rgba(255, 255, 255, 0.1);
+                    background: var(--gold-dim) !important;
+                    border-color: var(--gold) !important;
                     transform: scale(1.1);
-                    border-color: var(--accent-primary);
                 }
                 .theme-toggle-btn:active {
                     transform: scale(0.95);

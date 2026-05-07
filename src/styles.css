@@ -136,26 +136,78 @@
 }
 
 :root[data-theme="light"] {
-  --bg-page: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-hover: #f1f5f9;
-  --bg-overlay: rgba(255, 255, 255, 0.85);
+  /* --- Backgrounds --- */
+  --bg-page:         #f4f5f7;
+  --bg-surface:      #ffffff;
+  --bg-surface-hover:#f0f2f5;
+  --bg-overlay:      rgba(255, 255, 255, 0.92);
 
-  --fg-main: #0f172a;
-  --fg-secondary: #475569;
-  --fg-inverse: #ffffff;
-  --text-primary: #0f172a;
+  /* --- Foregrounds --- */
+  --fg-main:         #0f172a;
+  --fg-secondary:    #374151;
+  --fg-tertiary:     #6b7280;
+  --fg-inverse:      #ffffff;
+  --text-primary:    #0f172a;
+  --muted:           #6b7280;
+  --cream:           #6b5010;
 
-  --accent-primary: #b8941f; /* Slightly darker gold for readability on white */
-  --border-subtle: rgba(0, 0, 0, 0.05);
-  --border-default: rgba(0, 0, 0, 0.1);
-  --shadow-glow: 0 0 25px rgba(184, 148, 31, 0.15);
-  --shadow-surface: 0 4px 20px rgba(15, 23, 42, 0.08);
+  /* --- Accents --- */
+  --accent-primary:     #b8941f;   /* darker gold for contrast on white */
+  --accent-primary-rgb: 184, 148, 31;
+  --accent-secondary:   #a0600a;
+  --gold:               #b8941f;
+  --gold-hi:            #7a5c00;
+  --gold-dim:           rgba(184, 148, 31, 0.15);
+  --gold-glow:          rgba(184, 148, 31, 0.35);
+
+  /* --- Borders & Shadows --- */
+  --border:             rgba(0, 0, 0, 0.12);
+  --border-subtle:      rgba(0, 0, 0, 0.06);
+  --border-default:     rgba(0, 0, 0, 0.12);
+  --border-strong:      rgba(0, 0, 0, 0.25);
+  --shadow-glow:        0 0 25px rgba(184, 148, 31, 0.15);
+  --shadow-surface:     0 4px 20px rgba(15, 23, 42, 0.08);
+  --shadow-premium:     0 16px 40px -8px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255,255,255,0.8);
+
+  /* --- Glass & Surfaces --- */
+  --surface:            #ffffff;
+  --faint:              rgba(0, 0, 0, 0.04);
+  --glass-bg:           rgba(255, 255, 255, 0.75);
+  --glass-blur:         blur(28px);
+  --glass-border:       rgba(0, 0, 0, 0.1);
+  --glass-bg-light:     rgba(255, 255, 255, 0.9);
+  --glass-border-light: rgba(0, 0, 0, 0.08);
 
   color-scheme: light;
 }
 
 /* --- Premium Utilities --- */
+/* --- Global Theme Application --- */
+html, body {
+  background-color: var(--bg-page);
+  color: var(--fg-main);
+  transition: background-color 0.35s ease, color 0.35s ease;
+  min-height: 100vh;
+}
+
+#root {
+  background-color: var(--bg-page);
+  color: var(--fg-main);
+  min-height: 100vh;
+}
+
+/* Smooth theme transitions on all common elements */
+*,
+*::before,
+*::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+/* Exclude motion elements from transition fighting */
+[data-framer-name], .framer-motion {
+  transition: none !important;
+}
+
 .premium-glass {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
