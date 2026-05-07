@@ -180,13 +180,13 @@ export const SelectMuseum: React.FC = () => {
     <div className="discovery-page pulse-hub bg-[var(--bg-page)] min-h-screen relative overflow-x-hidden">
       {/* 🔮 PULSE BACKGROUND ELEMENTS */}
       <ParticleBackground />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--bg-page)]/80 pointer-events-none"></div>
+      {/* Vignette effect to fade out the edges and highlight center */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_0%,_var(--bg-page)_80%)]" />
 
       {/* HEADER TOP BAR */}
       <nav className="pulse-top-bar flex justify-between items-center px-8 py-6 sticky top-0 z-[100] backdrop-blur-xl bg-[var(--bg-overlay)] border-b border-[var(--border-subtle)]">
         <div className="pulse-brand flex items-center gap-3 font-black text-xl tracking-tighter">
-          <Zap size={24} className="text-[var(--accent-primary)] animate-pulse" />
-          <span className="bg-gradient-to-r from-white to-gold-300 bg-clip-text text-transparent">{t("visitor.selectMuseum.hubTitle")}</span>
+          <span className="text-[var(--fg-main)]">{t("visitor.selectMuseum.hubTitle")}</span>
         </div>
         <div className="pulse-top-actions flex items-center gap-4">
           {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
@@ -198,10 +198,10 @@ export const SelectMuseum: React.FC = () => {
       <header className="pulse-hero py-24 px-8 text-center relative z-10">
         <AnimateIn variant="fadeUp">
           <div className="pulse-hero-content max-w-4xl mx-auto">
-            <h1 className="text-[clamp(3rem,8vw,5rem)] font-black leading-[0.95] tracking-tighter mb-6">
-              {t("visitor.selectMuseum.radarTitle").split(" ").slice(0, -1).join(" ")} <span className="bg-gradient-to-r from-gold-400 to-gold-600 bg-clip-text text-transparent italic drop-shadow-sm">{t("visitor.selectMuseum.radarTitle").split(" ").pop()}</span>
+            <h1 className="pulse-title">
+              {t("visitor.selectMuseum.radarTitle").split(" ").slice(0, -1).join(" ")} <span className="pulse-gradient italic drop-shadow-sm">{t("visitor.selectMuseum.radarTitle").split(" ").pop()}</span>
             </h1>
-            <p className="text-xl text-white/90 max-w-lg mx-auto mb-12 leading-relaxed">
+            <p className="pulse-subtitle">
               {t("visitor.selectMuseum.radarSubtitle")}
             </p>
 
@@ -209,14 +209,14 @@ export const SelectMuseum: React.FC = () => {
             <div className="pulse-search-wrapper max-w-2xl mx-auto space-y-8">
               <div className="relative group transition-all duration-500">
                 <div className="absolute inset-0 bg-[var(--accent-primary)]/10 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
-                <div className="relative flex items-center bg-[var(--bg-surface-hover)] border border-[var(--border-default)] rounded-full px-6 py-2 backdrop-blur-md group-focus-within:border-[var(--accent-primary)] transition-all">
+                <div className="pulse-search-container">
                   <Search className="text-[var(--accent-primary)] mr-4" size={24} />
                   <input
                     type="text"
                     placeholder={t("visitor.selectMuseum.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="flex-1 bg-transparent border-none py-4 text-lg text-white outline-none placeholder:text-white/50 font-medium"
+                    className="pulse-search-input"
                   />
                 </div>
               </div>
@@ -250,8 +250,8 @@ export const SelectMuseum: React.FC = () => {
       {userLocation && nearestEquipamentos.length > 0 && !searchTerm && (
         <section className="px-8 py-12 max-w-7xl mx-auto relative z-10">
           <AnimateIn variant="fadeUp">
-            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-gray-500 mb-8 flex items-center gap-3">
-              <Navigation size={18} className="text-blue-400 animate-pulse" /> {t("visitor.selectMuseum.proximityTitle")}
+            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-[var(--fg-tertiary)] mb-8 flex items-center gap-3">
+              <Navigation size={18} className="text-[var(--accent-primary)] animate-pulse" /> {t("visitor.selectMuseum.proximityTitle")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {nearestEquipamentos.map(e => (
@@ -265,8 +265,8 @@ export const SelectMuseum: React.FC = () => {
                       {formatDistance(e.distance)}
                     </div>
                     <div>
-                      <h4 className="font-bold text-white mb-1">{e.nome}</h4>
-                      <span className="text-xs uppercase tracking-widest text-gray-500">{e.tipo}</span>
+                      <h4 className="font-bold text-[var(--fg-main)] mb-1">{e.nome}</h4>
+                      <span className="text-xs uppercase tracking-widest text-[var(--fg-tertiary)]">{e.tipo}</span>
                     </div>
                   </div>
                 </Card>
@@ -281,7 +281,7 @@ export const SelectMuseum: React.FC = () => {
         <div className="flex justify-between items-end mb-12 border-b border-[var(--border-subtle)] pb-8">
           <div>
             <h2 className="text-3xl font-black tracking-tighter mb-2">{searchTerm ? t("visitor.selectMuseum.resultsTitle", { term: searchTerm }) : t("visitor.selectMuseum.exploreAll")}</h2>
-            <p className="text-gray-500 font-medium">{t("visitor.selectMuseum.foundCount", { count: filteredAndSortedEquipamentos.length })}</p>
+            <p className="text-[var(--fg-tertiary)] font-medium">{t("visitor.selectMuseum.foundCount", { count: filteredAndSortedEquipamentos.length })}</p>
           </div>
         </div>
 
@@ -289,7 +289,7 @@ export const SelectMuseum: React.FC = () => {
           <div className="p-12 mb-12 bg-red-400/5 border border-red-400/20 rounded-3xl text-center">
              <Info className="mx-auto mb-4 text-red-400" size={48} />
              <h3 className="text-xl font-bold mb-2">{t("visitor.selectMuseum.connectionError.title")}</h3>
-             <p className="text-gray-400">{t("visitor.selectMuseum.connectionError.message")}</p>
+             <p className="text-[var(--fg-tertiary)]">{t("visitor.selectMuseum.connectionError.message")}</p>
              <Button variant="outline" className="mt-6 border-red-400/30 text-red-400" onClick={() => loadEquipamentos()}>{t("visitor.selectMuseum.connectionError.retry")}</Button>
           </div>
         )}
@@ -325,7 +325,7 @@ export const SelectMuseum: React.FC = () => {
                   </div>
 
                   <div className="p-8 flex-1 flex flex-col">
-                    <h3 className="text-2xl font-bold mb-3 tracking-tight text-white group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
+                    <h3 className="text-2xl font-bold mb-3 tracking-tight text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
                     <div className="flex gap-3 mb-6">
                       <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
                         <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}
@@ -334,7 +334,7 @@ export const SelectMuseum: React.FC = () => {
                         <Star size={12} className="mr-1 fill-current" /> 4.9
                       </Badge>
                     </div>
-                    <p className="text-gray-300 text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
+                    <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
                       {equip.endereco || "Localização não informada • Minas Gerais"}
                     </p>
                     <Button 
@@ -374,29 +374,29 @@ export const SelectMuseum: React.FC = () => {
             
             <div className="relative h-80">
               <img src={selectedLandmark.fotoCapaUrl || ""} alt={selectedLandmark.nome} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-page)] via-transparent to-transparent"></div>
               <div className="absolute bottom-10 left-10">
                 <Badge className="bg-[var(--accent-primary)] text-black mb-4 font-black">{selectedLandmark.tipo.toUpperCase()}</Badge>
-                <h2 className="text-5xl font-black tracking-tighter text-white">{selectedLandmark.nome}</h2>
+                <h2 className="text-5xl font-black tracking-tighter text-[var(--fg-main)]">{selectedLandmark.nome}</h2>
               </div>
             </div>
 
             <div className="p-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4 text-gray-400">
+                  <div className="flex items-center gap-4 text-[var(--fg-secondary)]">
                     <MapPin size={20} className="text-[var(--accent-primary)]" />
                     <span className="font-medium">{selectedLandmark.endereco}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-gray-400">
+                  <div className="flex items-center gap-4 text-[var(--fg-secondary)]">
                     <Clock size={20} className="text-[var(--accent-primary)]" />
-                    <span className="font-medium">{selectedLandmark.horarios?.seg || t("visitor.selectMuseum.modal.visitationFree")}</span>
+                    <span className="font-medium">{selectedLandmark.horarios?.seg || t(\"visitor.selectMuseum.modal.visitationFree\")}</span>
                   </div>
                 </div>
                 
-                <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+                <div className="bg-[var(--bg-surface-hover)] p-6 rounded-2xl border border-[var(--border-subtle)]">
                   <h3 className="text-sm font-black uppercase tracking-widest text-[var(--accent-primary)] mb-3">{t("visitor.selectMuseum.modal.historyTitle")}</h3>
-                  <p className="text-gray-300 text-sm leading-relaxed italic">
+                  <p className="text-[var(--fg-secondary)] text-sm leading-relaxed italic">
                     {selectedLandmark.missao || selectedLandmark.descricao || t("visitor.selectMuseum.modal.historyFallback")}
                   </p>
                 </div>

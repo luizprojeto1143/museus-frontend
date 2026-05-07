@@ -203,7 +203,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #6b7280;
+    color: var(--fg-tertiary);
     margin-bottom: 2rem;
     display: flex;
     align-items: center;
@@ -441,14 +441,15 @@
 }
 
 .landmark-modal-card {
-    background: #0f172a;
+    background: var(--bg-surface);
     width: 100%;
     max-width: 900px;
     border-radius: 32px;
     overflow: hidden;
     position: relative;
-    border: 1px solid var(--pulse-glass-border);
+    border: 1.5px solid var(--border);
     animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.4);
 }
 
 .landmark-close {
@@ -485,7 +486,7 @@
     left: 0;
     right: 0;
     padding: 4rem 2rem 2rem;
-    background: linear-gradient(to top, #0f172a, transparent);
+    background: linear-gradient(to top, var(--bg-surface), transparent);
 }
 
 .landmark-tag {
@@ -516,7 +517,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    color: #9ca3af;
+    color: var(--fg-secondary);
 }
 
 .landmark-story h3 {
@@ -528,7 +529,7 @@
 .landmark-story p {
     font-size: 1.125rem;
     line-height: 1.7;
-    color: #d1d5db;
+    color: var(--fg-secondary);
 }
 
 .landmark-actions {
@@ -554,8 +555,8 @@
 
 .landmark-btn-secondary {
     background: transparent;
-    border: 1px solid var(--pulse-glass-border);
-    color: #fff;
+    border: 1.5px solid var(--border);
+    color: var(--fg-main);
     padding: 1.25rem;
     border-radius: 16px;
     font-weight: 800;

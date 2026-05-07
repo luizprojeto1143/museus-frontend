@@ -66,7 +66,7 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
         <ParticleCloud color={color} count={count} />
       </Canvas>
       {/* Vignette effect to fade out the edges and highlight center */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_0%,_var(--bg-main)_80%)]" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_0%,_var(--bg-page)_80%)]" />
     </div>
   );
 };
