@@ -103,7 +103,7 @@
 }
 
 .pulse-gradient {
-    color: var(--accent-primary);
+    color: var(--accent-primary) !important;
     font-weight: 800;
     display: inline-block;
     position: relative;

@@ -26,7 +26,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
     return (
         <div
             className={cn(
-                "flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface-hover)] border-2 border-[var(--accent-primary)]/30 backdrop-blur-md z-[100]",
+                "flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--accent-primary)]/40 shadow-sm backdrop-blur-md z-[100]",
                 absolute && "absolute top-6 right-6",
                 className
             )}
@@ -41,8 +41,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
                         className={cn(
                             "flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all duration-300 text-[10px] font-bold tracking-widest uppercase",
                             isActive 
-                                ? "bg-[var(--accent-primary)] text-[var(--fg-inverse)] shadow-[var(--shadow-glow)]" 
-                                : "text-[var(--fg-tertiary)] hover:text-[var(--fg-main)] hover:bg-[var(--bg-surface-hover)]"
+                                ? "bg-[var(--accent-primary)] text-black shadow-sm" 
+                                : "text-[var(--fg-main)] hover:bg-[var(--bg-surface-hover)]"
                         )}
                         title={lang.title}
                     >
