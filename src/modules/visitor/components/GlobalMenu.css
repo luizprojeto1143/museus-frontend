@@ -65,6 +65,10 @@
   transition: all 0.3s;
 }
 
+.menu-close-btn svg {
+  pointer-events: none;
+}
+
 .menu-close-btn:hover {
   background: rgba(239, 68, 68, 0.1);
   border-color: rgba(239, 68, 68, 0.2);
@@ -196,6 +200,7 @@
 .action-icon {
   opacity: 0.7;
   transition: all 0.3s;
+  pointer-events: none;
 }
 
 .action-item:hover .action-icon {
