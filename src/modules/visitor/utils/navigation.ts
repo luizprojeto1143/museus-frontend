@@ -27,5 +27,7 @@ export const getVisitorLinks = (t: any, term: any, isCityMode: boolean): NavLink
     { to: "/rpg", label: "Meu Personagem", icon: "🗡️", feature: "featureGamification" },
     { to: "/colecao", label: "Colecionáveis", icon: "✨", feature: "featureGamification" },
     { to: "/meus-certificados", label: "Meus Certificados", icon: "🏅", feature: "featureCertificates" },
+    { to: "/cracha", label: "Crachá Real", icon: "🛡️", feature: null },
+    { to: "/professor", label: "Portal do Professor", icon: "🎓", feature: "teacherOnly" },
   ];
 };

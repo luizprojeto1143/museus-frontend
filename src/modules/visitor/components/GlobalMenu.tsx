@@ -17,29 +17,36 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
   const navigate = useNavigate();
   const { logout } = useAuth();
 
+  // Close menu automatically when path changes (more robust than onClick)
+  React.useEffect(() => {
+    if (isOpen) {
+      onClose();
+    }
+  }, [currentPath]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Categories structure
-  const explocacaoPaths = ['/home', '/obras', '/trilhas', '/mapa', '/eventos', '/scanner', '/agenda'];
-  const jornadaPaths = ['/rpg', '/perfil', '/colecao', '/meus-certificados', '/meus-ingressos'];
-  const socialPaths = ['/desafios', '/ranking', '/loja', '/favoritos', '/chat'];
+  const exploracaoPaths = ['/home', '/obras', '/trilhas', '/mapa', '/eventos', '/scanner', '/agenda'];
+  const jornadaPaths = ['/rpg', '/perfil', '/colecao', '/meus-certificados', '/meus-ingressos', '/cracha', '/wardrobe', '/meus-certificados'];
+  const socialPaths = ['/desafios', '/ranking', '/loja', '/favoritos', '/chat', '/comunidade', '/marketplace'];
 
   const categories = [
     {
       title: 'Exploração',
-      items: links.filter(l => explocacaoPaths.includes(l.to))
+      items: links.filter(l => exploracaoPaths.some(p => l.to.startsWith(p)))
     },
     {
       title: 'Minha Jornada',
-      items: links.filter(l => jornadaPaths.includes(l.to))
+      items: links.filter(l => jornadaPaths.some(p => l.to.startsWith(p)))
     },
     {
       title: 'Social & Mais',
-      items: links.filter(l => socialPaths.includes(l.to))
+      items: links.filter(l => socialPaths.some(p => l.to.startsWith(p)))
     }
   ];
 
   // Add any leftover links that are not explicitly categorized
-  const categorizedPaths = [...explocacaoPaths, ...jornadaPaths, ...socialPaths];
-  const uncategorizedLinks = links.filter(l => !categorizedPaths.includes(l.to));
+  const categorizedPaths = [...exploracaoPaths, ...jornadaPaths, ...socialPaths];
+  const uncategorizedLinks = links.filter(l => !categorizedPaths.some(p => l.to.startsWith(p)));
   if (uncategorizedLinks.length > 0) {
       categories.push({
           title: 'Outros',
@@ -48,12 +55,10 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
   }
 
   const handleSwitchMuseum = () => {
-    onClose();
     navigate('/select-museum');
   };
 
   const handleLogout = () => {
-    onClose();
     logout();
   };
 
@@ -87,23 +92,24 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
 
             <div className="menu-content">
               {categories.map((cat, idx) => (
-                <div key={idx} className="menu-category">
-                  <h3 className="category-title">{cat.title}</h3>
-                  <div className="category-items">
-                    {cat.items.map((item) => (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className={`menu-item ${currentPath === item.to ? 'active' : ''}`}
-                        onClick={onClose}
-                      >
-                        <span className="item-icon">{item.icon}</span>
-                        <span className="item-label">{item.label}</span>
-                        <ChevronRight className="item-chevron" size={16} />
-                      </Link>
-                    ))}
+                cat.items.length > 0 && (
+                  <div key={idx} className="menu-category">
+                    <h3 className="category-title">{cat.title}</h3>
+                    <div className="category-items">
+                      {cat.items.map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className={`menu-item ${currentPath === item.to ? 'active' : ''}`}
+                        >
+                          <span className="item-icon">{item.icon}</span>
+                          <span className="item-label">{item.label}</span>
+                          <ChevronRight className="item-chevron" size={16} />
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )
               ))}
 
               <div className="menu-separator" />
