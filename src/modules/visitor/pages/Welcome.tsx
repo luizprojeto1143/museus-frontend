@@ -73,12 +73,12 @@ export const Welcome: React.FC = () => {
             transition={{ delay: 0.8 }}
           >
             <Button
-              onClick={() => navigate("/select-museum")}
+              onClick={() => navigate("/login")}
               size="lg"
               className="w-full h-18 md:h-20 text-lg md:text-xl tracking-[0.2em] font-black rounded-3xl shadow-[0_20px_50px_rgba(212,175,55,0.15)] border border-white/10 active:scale-95"
               rightIcon={<Smartphone size={24} />}
             >
-              {t("welcome.explore")}
+              {isAuthenticated ? "ENTRAR NO PAINEL" : "EXPLORAR / LOGIN"}
             </Button>
           </motion.div>
 

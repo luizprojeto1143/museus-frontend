@@ -112,7 +112,7 @@ export const LandingPage: React.FC = () => {
 
                 <div className="hidden lg:flex items-center gap-6">
                     <button 
-                        onClick={() => navigate("/welcome")}
+                        onClick={() => navigate("/select-museum")}
                         className="text-xs font-bold uppercase tracking-widest border-b border-[var(--accent-primary)]/30 pb-1 hover:border-[var(--accent-primary)] transition-all"
                     >
                         {t("public.landingpage.iniciarVisitaApp", "Iniciar Visita (App)")}
@@ -154,7 +154,7 @@ export const LandingPage: React.FC = () => {
                             </button>
                         ))}
                         <hr className="border-white/5 my-4" />
-                        <Button size="lg" onClick={() => navigate("/welcome")}>Iniciar Visita</Button>
+                        <Button size="lg" onClick={() => navigate("/select-museum")}>Iniciar Visita</Button>
                         <Button variant="outline" size="lg" onClick={() => navigate("/login")}>Entrar no Painel</Button>
                     </motion.div>
                 )}
@@ -194,7 +194,7 @@ export const LandingPage: React.FC = () => {
                     <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                         <Button
                             size="lg"
-                            onClick={() => navigate("/welcome")}
+                            onClick={() => navigate("/select-museum")}
                             rightIcon={<ArrowRight size={20} />}
                             className="h-16 px-10 text-lg shadow-[0_20px_50px_rgba(212,175,55,0.2)] rounded-2xl"
                         >
