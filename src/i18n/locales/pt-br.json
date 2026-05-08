@@ -103,7 +103,8 @@
     "errorSave": "Erro ao salvar conquista",
     "errorUpload": "Erro ao fazer upload da imagem",
     "explore": "Explorar",
-    "login": "Login"
+    "login": "Login",
+    "firstTime": "Bem-vindo ao Cultura Viva, {{name}}!"
   },
   "uploads": {
     "title": "Galeria de Mídia",
@@ -202,6 +203,9 @@
     }
   },
   "visitor": {
+    "layout": {
+      "guest_banner": "Você está em modo visitante. Crie uma conta para salvar seu progresso!"
+    },
     "ai": {
       "chatTitle": "Chat IA",
       "welcome": "Olá! Sou o guia virtual do museu. Pergunte-me sobre obras, horários ou curiosidades!",
