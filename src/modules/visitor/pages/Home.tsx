@@ -65,6 +65,9 @@ export const Home: React.FC = () => {
     } else if (tenantId && !equipamentoId) {
       // Se estamos num tenant mas sem equipamento, vai para selecao
       navigate("/select-museum");
+    } else if (!tenantId) {
+      // Sem tenant, volta para o início (Landing Page)
+      navigate("/", { replace: true });
     }
   }, [tenantId, equipamentoId, navigate]);
 

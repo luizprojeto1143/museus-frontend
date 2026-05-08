@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 import { useTenant } from "../auth/TenantContext";
+import { useAuth } from "../auth/AuthContext";
 import { TenantLogo } from "../../components/Branding/TenantLogo";
 import { 
     Badge, 
@@ -35,6 +36,7 @@ export const LandingPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const tenant = useTenant();
+    const { logout, isAuthenticated } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
@@ -113,7 +115,10 @@ export const LandingPage: React.FC = () => {
                 <div className="hidden lg:flex items-center gap-6">
                     <Button
                         size="sm"
-                        onClick={() => navigate("/login")}
+                        onClick={async () => {
+                            await logout();
+                            navigate("/login");
+                        }}
                         className="px-8 shadow-[0_0_20px_rgba(212,175,55,0.2)]"
                     >
                         {t("public.landingpage.entrar", "Entrar")}
@@ -148,7 +153,10 @@ export const LandingPage: React.FC = () => {
                             </button>
                         ))}
                         <hr className="border-white/5 my-4" />
-                        <Button variant="outline" size="lg" onClick={() => navigate("/login")}>Entrar no Painel</Button>
+                        <Button variant="outline" size="lg" onClick={async () => {
+                            await logout();
+                            navigate("/login");
+                        }}>Entrar no Painel</Button>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -187,7 +195,10 @@ export const LandingPage: React.FC = () => {
                     <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                         <Button
                             size="lg"
-                            onClick={() => navigate("/login")}
+                            onClick={async () => {
+                                await logout();
+                                navigate("/login");
+                            }}
                             rightIcon={<ArrowRight size={20} />}
                             className="h-16 px-10 text-lg shadow-[0_20px_50px_rgba(212,175,55,0.2)] rounded-2xl"
                         >
