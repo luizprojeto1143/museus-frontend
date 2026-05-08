@@ -195,7 +195,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
 
                     {!isAuthenticated && (
                         <p className="mt-4 text-center text-[10px] text-slate-500 font-bold uppercase tracking-widest opacity-60">
-                           {t("visitor.checkoutmodal.vocPrecisarFazerLoginParaConcluir", `Login necessário para concluir`)}
+                           {t("visitor.checkoutmodal.login_required")}
                         </p>
                     )}
                 </div>

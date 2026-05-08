@@ -66,7 +66,7 @@ export const Favorites: React.FC = () => {
         <div className="favorites-empty" style={{ border: '1px dashed rgba(212,175,55,0.4)', background: 'rgba(212,175,55,0.05)' }}>
           <span className="favorites-empty-icon">💎</span>
           <h3 style={{ color: 'var(--primary-color)' }}>Recurso Exclusivo</h3>
-          <p>{t("visitor.favorites.crieSuaContaNoMuseuParaSalvarSuasObrasTr", `Crie sua conta no museu para salvar suas obras, trilhas e eventos favoritos na nuvem e acessá-los de qualquer dispositivo.`)}</p>
+          <p>{t("visitor.favorites.guest_prompt")}</p>
           <Link to="/register" className="favorites-explore-btn" style={{ marginTop: '1rem', background: 'var(--primary-color)', color: '#1a1108' }}>
             Criar Minha Conta
           </Link>

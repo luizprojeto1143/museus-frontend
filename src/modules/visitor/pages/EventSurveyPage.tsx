@@ -107,19 +107,6 @@ export const EventSurveyPage: React.FC = () => {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4">
-                <div className="bg-white/5 border border-white/10 p-10 rounded-2xl shadow-2xl max-w-md w-full text-center animate-fadeIn">
-                    <div className="bg-green-500/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle className="w-10 h-10 text-green-500" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-white mb-2">Obrigado!</h2>
-                    <p className="text-slate-400 mb-8 leading-relaxed">{t("visitor.eventsurveypage.suasRespostasForamEnviadasComSucessoENos", `Suas respostas foram enviadas com sucesso e nos ajudarão a melhorar cada vez mais.`)}</p>
-                    <Button onClick={() => navigate('/')} className="w-full py-4 text-lg">
-                        Voltar para o Início
-                    </Button>
-                </div>
-            </div>
-        );
     }
 
     if (questions.length === 0) {

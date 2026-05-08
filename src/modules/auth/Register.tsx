@@ -443,7 +443,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
                   marginLeft: "0.5rem"
                 }}
               >
-                {t("auth.auth.login.submit")}
+                {t("auth.login.submit")}
               </span>
             </p>
           </div>

@@ -72,9 +72,7 @@ export const ChallengesPage: React.FC = () => {
                 <div className="challenges-empty" style={{ marginTop: "2rem", background: "rgba(212, 175, 55, 0.05)", border: "1px dashed var(--accent-primary)", padding: "4rem 2rem" }}>
                     <Target size={48} className="text-gold mb-4" />
                     <h2 className="text-xl font-bold text-gold">{t("visitor.challengespage.desafiosECaasAoTesouro", `Desafios e Caças ao Tesouro`)}</h2>
-                    <p className="max-w-md mx-auto mb-6 text-secondary" style={{ opacity: 0.8 }}>{t("visitor.challengespage.completeMissesInterativasECaasAoTesouroP", `
-                        Complete missões interativas e caças ao tesouro pelo museu para ganhar XP e subir no ranking. Crie sua conta para registrar seu progresso!
-                    `)}</p>
+                    <p className="max-w-md mx-auto mb-6 text-secondary" style={{ opacity: 0.8 }}>{t("visitor.challengespage.guest_prompt")}</p>
                     <button
                         onClick={() => navigate("/register")}
                         className="hunt-start-btn"

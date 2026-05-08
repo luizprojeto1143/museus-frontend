@@ -50,19 +50,6 @@ export const SocialCheckinPage: React.FC = () => {
             </div>
         );
     }
-
-    return (
-        <div style={{ padding: '1.5rem', maxWidth: '500px', margin: '0 auto' }}>
-            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <MapPin size={36} style={{ color: 'var(--accent-primary)', margin: '0 auto 0.5rem' }} />
-                <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'white' }}>Check-in</h1>
-                <p style={{ color: '#888', fontSize: '0.85rem' }}>{t("visitor.socialcheckinpage.marquePresenaECompartilheSuaVisita", `Marque presença e compartilhe sua visita!`)}</p>
-            </div>
-
-            {/* Post form */}
-            <div style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.25rem', padding: '1.25rem', marginBottom: '1.5rem' }}>
-                <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="O que achou da visita? (opcional)" rows={2} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '0.75rem', padding: '0.75rem 1rem', color: 'white', fontSize: '0.9rem', outline: 'none', resize: 'none', marginBottom: '0.75rem' }} />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', flex: 1 }}>
                         {emojiOptions.map(e => (
                             <button key={e} onClick={() => setEmoji(e)} style={{ fontSize: '1.2rem', padding: '0.25rem 0.4rem', borderRadius: '0.5rem', border: 'none', background: emoji === e ? 'rgba(212,175,55,0.2)' : 'transparent', cursor: 'pointer', filter: emoji === e ? 'none' : 'grayscale(0.5)', transition: 'all 0.2s' }}>{e}</button>
