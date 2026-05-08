@@ -7,7 +7,8 @@ import {
   MapPin, Search, Compass, 
   ArrowRight, Star, Info, 
   Zap, Navigation, X, 
-  Clock, Landmark, Theater 
+  Clock, Landmark, Theater,
+  Calendar, Sparkles, Map as MapIcon
 } from "lucide-react";
 import { ThemeToggle } from "../components/ThemeToggle";
 import "./SelectMuseum.css";
@@ -42,6 +43,17 @@ interface Equipamento {
   distance?: number;
 }
 
+interface Evento {
+  id: string;
+  title: string;
+  category: string;
+  startDate: string;
+  coverImage?: string;
+  tenantName?: string;
+  location?: string;
+  equipamentoNome?: string;
+}
+
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -55,12 +67,15 @@ export const SelectMuseum: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("ALL");
   const [selectedLandmark, setSelectedLandmark] = useState<Equipamento | null>(null);
+  const [events, setEvents] = useState<Evento[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
   const { userLocation } = useGeoFencing();
 
   // Load Tenants & Handle Auto-selection
   useEffect(() => {
     async function init() {
       await loadEquipamentos();
+      await loadEvents();
     }
     init();
   }, []);
@@ -96,6 +111,22 @@ export const SelectMuseum: React.FC = () => {
       setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadEvents = async () => {
+    setLoadingEvents(true);
+    try {
+      const baseUrl = import.meta.env.VITE_API_URL as string;
+      const res = await fetch(baseUrl + "/events/public");
+      if (res.ok) {
+        const data = await res.json();
+        setEvents(Array.isArray(data) ? data : []);
+      }
+    } catch (err) {
+      console.error("Error loading events", err);
+    } finally {
+      setLoadingEvents(false);
     }
   };
 
@@ -229,7 +260,8 @@ export const SelectMuseum: React.FC = () => {
                   { id: "ALL", label: t("visitor.selectMuseum.filters.all"), icon: <Compass size={16} /> },
                   { id: "museu", label: t("visitor.selectMuseum.filters.museu"), icon: <Theater size={16} /> },
                   { id: "teatro", label: t("visitor.selectMuseum.filters.teatro"), icon: <Landmark size={16} /> },
-                  { id: "centro_cultural", label: t("visitor.selectMuseum.filters.centro_cultural"), icon: <Navigation size={16} /> }
+                  { id: "centro_cultural", label: t("visitor.selectMuseum.filters.centro_cultural"), icon: <Navigation size={16} /> },
+                  { id: "EVENTOS", label: "Agenda Cultural", icon: <Calendar size={16} /> }
                 ].map(f => (
                   <Button
                     key={f.id}
@@ -246,6 +278,59 @@ export const SelectMuseum: React.FC = () => {
             </div>
           </div>
         </AnimateIn>
+
+        {/* 🎫 CULTURAL AGENDA SLIDER */}
+        {!searchTerm && activeFilter !== "EVENTOS" && events.length > 0 && (
+          <AnimateIn variant="fadeUp" className="mt-16 w-full max-w-7xl mx-auto overflow-hidden">
+            <div className="flex items-center justify-between mb-8 px-4">
+              <h2 className="text-xl font-bold flex items-center gap-3">
+                <Sparkles className="text-gold-400" size={20} /> 
+                Agenda Cultural
+              </h2>
+              <Button variant="ghost" size="sm" onClick={() => setActiveFilter("EVENTOS")} className="text-gold-400 hover:text-gold-300">
+                Ver Tudo
+              </Button>
+            </div>
+            
+            <div className="flex gap-6 overflow-x-auto pb-8 px-4 snap-x no-scrollbar">
+              {events.slice(0, 8).map(event => (
+                <motion.div 
+                  key={event.id}
+                  whileHover={{ y: -10 }}
+                  className="flex-shrink-0 w-80 snap-start"
+                >
+                  <Card 
+                    className="h-full border-white/5 bg-white/5 backdrop-blur-md overflow-hidden cursor-pointer group"
+                    onClick={() => navigate(`/events`)}
+                  >
+                    <div className="relative h-44">
+                      <img 
+                        src={event.coverImage || "https://images.unsplash.com/photo-1514525253361-bee8718a7439?q=80&w=800&auto=format&fit=crop"} 
+                        alt={event.title} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute top-4 left-4 bg-gold-400 text-black text-[10px] font-black px-2 py-1 rounded uppercase">
+                        {event.category}
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h4 className="font-bold text-white line-clamp-1 mb-2 group-hover:text-gold-400 transition-colors">
+                        {event.title}
+                      </h4>
+                      <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <Calendar size={12} className="text-gold-400" />
+                        {new Date(event.startDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                        <span className="opacity-30">•</span>
+                        <MapIcon size={12} className="text-gold-400" />
+                        {event.equipamentoNome || "Espaço Cultural"}
+                      </div>
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </AnimateIn>
+        )}
       </header>
 
       {/* PROXIMITY RADAR (If location active) */}
@@ -282,8 +367,12 @@ export const SelectMuseum: React.FC = () => {
       <main className="px-8 py-20 max-w-7xl mx-auto relative z-10">
         <div className="flex justify-between items-end mb-12 border-b border-[var(--border-subtle)] pb-8">
           <div>
-            <h2 className="text-3xl font-black tracking-tighter mb-2">{searchTerm ? t("visitor.selectMuseum.resultsTitle", { term: searchTerm }) : t("visitor.selectMuseum.exploreAll")}</h2>
-            <p className="text-[var(--fg-tertiary)] font-medium">{t("visitor.selectMuseum.foundCount", { count: filteredAndSortedEquipamentos.length })}</p>
+            <h2 className="text-3xl font-black tracking-tighter mb-2">
+              {activeFilter === "EVENTOS" ? "Toda a Programação" : searchTerm ? t("visitor.selectMuseum.resultsTitle", { term: searchTerm }) : t("visitor.selectMuseum.exploreAll")}
+            </h2>
+            <p className="text-[var(--fg-tertiary)] font-medium">
+              {activeFilter === "EVENTOS" ? `${events.length} eventos encontrados` : t("visitor.selectMuseum.foundCount", { count: filteredAndSortedEquipamentos.length })}
+            </p>
           </div>
         </div>
 
@@ -300,6 +389,55 @@ export const SelectMuseum: React.FC = () => {
           <div className="flex flex-col items-center justify-center py-20 opacity-50">
             <div className="w-12 h-12 border-t-2 border-[var(--accent-primary)] rounded-full animate-spin"></div>
           </div>
+        ) : activeFilter === "EVENTOS" ? (
+          <motion.div 
+            variants={staggerContainer}
+            initial="initial"
+            animate="animate"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {events.map(event => (
+              <motion.div key={event.id} variants={staggerItem}>
+                <Card
+                  animated glow
+                  className="h-full flex flex-col group cursor-pointer overflow-hidden border-white/5"
+                  onClick={() => navigate(`/events`)}
+                >
+                  <div className="relative h-60 overflow-hidden">
+                    <img
+                      src={event.coverImage || "https://images.unsplash.com/photo-1514525253361-bee8718a7439?q=80&w=800&auto=format&fit=crop"}
+                      alt={event.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <Badge className="absolute top-4 left-4 bg-black/60 shadow-xl" variant="glass">
+                      <Calendar size={12} className="mr-2" />
+                      {event.category}
+                    </Badge>
+                  </div>
+
+                  <div className="p-8 flex-1 flex flex-col">
+                    <h3 className="text-2xl font-bold mb-3 tracking-tight text-[var(--fg-main)] group-hover:text-gold-400 transition-colors line-clamp-1">{event.title}</h3>
+                    <div className="flex gap-3 mb-6">
+                      <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
+                        <Clock size={12} className="mr-1" /> 
+                        {new Date(event.startDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
+                      </Badge>
+                    </div>
+                    <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
+                      {event.equipamentoNome || "Espaço Cultural de Betim"} • {event.location || "Presencial"}
+                    </p>
+                    <Button 
+                      variant="primary"
+                      className="w-full py-6 text-base"
+                      rightIcon={<ArrowRight size={20} />}
+                    >
+                      Ver Detalhes do Evento
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
         ) : (
           <motion.div 
             variants={staggerContainer}

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
 import { AchievementModal } from "../components/AchievementModal";
+import { useAuth } from "../../auth/AuthContext";
 
 interface GamificationContextType {
     stats: UserStats;
@@ -18,32 +19,13 @@ interface GamificationContextType {
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
 
-const STORAGE_KEY = "cultura_viva_gamification";
-const AUTH_STORAGE_KEY = "museus_auth_v1";
-
-// Helper to safely get auth data from localStorage
-const getAuthFromStorage = (): { email: string | null; tenantId: string | null; isAuthenticated: boolean } => {
-    try {
-        const stored = window.localStorage.getItem(AUTH_STORAGE_KEY);
-        if (stored) {
-            const parsed = JSON.parse(stored);
-            return {
-                email: parsed.email ?? null,
-                tenantId: parsed.tenantId ?? null,
-                isAuthenticated: !!parsed.userId
-            };
-        }
-    } catch {
-        // Ignore parse errors
-    }
-    return { email: null, tenantId: null, isAuthenticated: false };
-};
+// No more manual getAuthFromStorage helper needed
 
 import { useToast } from "../../../contexts/ToastContext";
 
 export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { addToast } = useToast();
-    const [authState, setAuthState] = useState(getAuthFromStorage);
+    const { isAuthenticated, email, tenantId } = useAuth();
     const [loading, setLoading] = useState(false);
     const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,23 +48,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         };
     });
 
-    // Listen for storage changes to update auth state
-    useEffect(() => {
-        const handleStorageChange = (e: StorageEvent) => {
-            // Only update if it's our auth key
-            if (e.key === AUTH_STORAGE_KEY || !e.key) {
-                setAuthState(getAuthFromStorage());
-            }
-        };
-
-        window.addEventListener("storage", handleStorageChange);
-
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-        };
-    }, []);
-
-    const { isAuthenticated, email, tenantId } = authState;
+    // useEffect for storage events removed as we use useAuth now
 
     const getCurrentLevelInfo = useCallback((xp: number) => {
         return LEVELS.slice().reverse().find((l) => xp >= l.minXp) || LEVELS[0];

@@ -20,6 +20,20 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // C2: Ensure x-tenant-id is ALWAYS sent for multi-tenant isolation
+  try {
+    const rawAuth = localStorage.getItem("museus_auth_v1");
+    if (rawAuth) {
+      const parsed = JSON.parse(rawAuth);
+      if (parsed.tenantId) {
+        config.headers["x-tenant-id"] = parsed.tenantId;
+      }
+    }
+  } catch (e) {
+    // Silent catch for parsing errors
+  }
+
   return config;
 });
 
