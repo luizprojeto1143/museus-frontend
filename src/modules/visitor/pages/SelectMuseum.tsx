@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
+import { api } from "../../../api/client";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
 import { 
   MapPin, Search, Compass, 
@@ -92,20 +93,8 @@ export const SelectMuseum: React.FC = () => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const baseUrl = import.meta.env.VITE_API_URL as string;
-      const res = await fetch(baseUrl + "/equipamentos/public");
-      
-      if (!res.ok) {
-        throw new Error(`Servidor respondeu com erro ${res.status}`);
-      }
-
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setEquipamentos(data);
-      } else {
-        console.error("Data is not an array", data);
-        setEquipamentos([]);
-      }
+      const res = await api.get("/equipamentos/public");
+      setEquipamentos(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error loading equipments", err);
       setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
@@ -117,18 +106,15 @@ export const SelectMuseum: React.FC = () => {
   const loadEvents = async () => {
     setLoadingEvents(true);
     try {
-      const baseUrl = import.meta.env.VITE_API_URL as string;
-      const res = await fetch(baseUrl + "/events/public");
-      if (res.ok) {
-        const data = await res.json();
-        setEvents(Array.isArray(data) ? data : []);
-      }
+      const res = await api.get("/events/public");
+      setEvents(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error loading events", err);
     } finally {
       setLoadingEvents(false);
     }
   };
+
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371;

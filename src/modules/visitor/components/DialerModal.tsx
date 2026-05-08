@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
+import { api } from "../../../api/client";
 import "./DialerModal.css";
 
 interface DialerModalProps {
@@ -44,18 +45,8 @@ export const DialerModal: React.FC<DialerModalProps> = ({ isOpen, onClose }) => 
         setError(null);
 
         try {
-            const baseUrl = import.meta.env.VITE_API_URL as string;
-            // Usar a rota pública de QR
-            const res = await fetch(`${baseUrl}/qr/${code}`);
-
-            if (!res.ok) {
-                if (res.status === 404) {
-                    throw new Error(t("visitor.dialer.notFound", "Código não encontrado"));
-                }
-                throw new Error(t("common.error"));
-            }
-
-            const data = await res.json();
+            const res = await api.get(`/qr/${code}`);
+            const data = res.data;
 
             // Verificar se pertence ao tenant atual (opcional, mas bom para segurança)
             if (tenantId && data.tenantId !== tenantId) {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
+import { api } from "../../../api/client";
 import { UserPen, X } from "lucide-react";
 import "./EditProfileModal.css";
 
@@ -23,35 +24,20 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
         setLoading(true);
 
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || "";
-            const response = await fetch(`${baseUrl}/visitors/me`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    email,
-                    tenantId,
-                    name: newName,
-                    newEmail: newEmail
-                })
+            const res = await api.put("/visitors/me", {
+                email,
+                tenantId,
+                name: newName,
+                newEmail: newEmail
             });
 
-            if (response.ok) {
-                if (token && role) {
-                    updateSession(token, role, tenantId ?? "", newName);
-
-                    const user = JSON.parse(localStorage.getItem("user") || "{}");
-                    user.email = newEmail;
-                    localStorage.setItem("user", JSON.stringify(user));
-
+            if (res.status === 200) {
+                if (role) {
+                    updateSession(role, tenantId ?? "", newName);
                     if (email !== newEmail) {
                         window.location.reload();
                     }
                 }
-            } else {
-                console.error("Failed to update profile");
             }
         } catch (error) {
             console.error("Error updating profile", error);
