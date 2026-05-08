@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 const emojiOptions = ['🏛️', '🎨', '✨', '📸', '🎭', '🎶', '❤️', '🔥', '🌟', '👀'];
 
 export const SocialCheckinPage: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId, isGuest } = useAuth();
     const navigate = useNavigate();
     const [checkins, setCheckins] = useState<any[]>([]);
@@ -50,6 +50,22 @@ export const SocialCheckinPage: React.FC = () => {
             </div>
         );
     }
+
+    return (
+        <div style={{ padding: '1.25rem' }}>
+            <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: 900, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <MapPin size={20} style={{ color: 'var(--accent-primary)' }} /> {t("visitor.socialcheckinpage.muralDoMuseu", `Mural do Museu`)}
+            </h2>
+
+            {/* Form */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '1.5rem', padding: '1rem', marginBottom: '2rem' }}>
+                <textarea
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    placeholder={t("visitor.socialcheckinpage.digaAlgoSobreSuaVisita", `Diga algo sobre sua visita...`)}
+                    style={{ width: '100%', background: 'transparent', border: 'none', color: 'white', fontSize: '0.9rem', outline: 'none', resize: 'none', minHeight: '60px', padding: '0.5rem' }}
+                />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1rem' }}>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', flex: 1 }}>
                         {emojiOptions.map(e => (
                             <button key={e} onClick={() => setEmoji(e)} style={{ fontSize: '1.2rem', padding: '0.25rem 0.4rem', borderRadius: '0.5rem', border: 'none', background: emoji === e ? 'rgba(212,175,55,0.2)' : 'transparent', cursor: 'pointer', filter: emoji === e ? 'none' : 'grayscale(0.5)', transition: 'all 0.2s' }}>{e}</button>
