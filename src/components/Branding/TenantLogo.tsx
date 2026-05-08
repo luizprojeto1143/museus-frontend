@@ -30,18 +30,28 @@ export const TenantLogo: React.FC<TenantLogoProps> = ({
                 width: size, 
                 height: size, 
                 borderRadius: "32%", 
-                background: `radial-gradient(circle at 30% 30%, ${primaryColor}55, transparent), linear-gradient(135deg, #1a1a2e, #0a0a0e)`,
+                background: `radial-gradient(circle at 30% 30%, ${primaryColor}44, transparent), linear-gradient(135deg, #0a0a14, #050508)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${primaryColor}33`,
-                boxShadow: `0 10px 30px rgba(0,0,0,0.5), inset 0 0 15px ${primaryColor}11`,
+                border: `1px solid ${primaryColor}44`,
+                boxShadow: `0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px ${primaryColor}22`,
                 position: "relative",
                 overflow: "hidden"
             }}
         >
-            <div className="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
-            <Layout size={size * 0.5} color={primaryColor} className="drop-shadow-[0_0_8px_rgba(212,175,55,0.4)]" />
+            <div className="absolute inset-0 opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
+            <div 
+                style={{ 
+                    color: primaryColor,
+                    filter: "drop-shadow(0 0 10px var(--accent-primary))",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}
+            >
+                <Layout size={size * 0.5} strokeWidth={1.5} />
+            </div>
         </div>
     );
 

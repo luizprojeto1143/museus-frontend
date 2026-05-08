@@ -45,7 +45,7 @@ interface Equipamento {
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, token, updateSession, isGuest, enterAsGuest, role, name } = useAuth();
+  const { isAuthenticated, updateSession, isGuest, enterAsGuest, role, name } = useAuth();
   const [searchParams] = useSearchParams();
   const isRegisterMode = searchParams.get("mode") === "register";
 
@@ -149,7 +149,7 @@ export const SelectMuseum: React.FC = () => {
 
   const handleSelect = async (equip: Equipamento) => {
     // Se logado, atualiza sessao
-    if (isAuthenticated && token && !isGuest) {
+    if (isAuthenticated && !isGuest) {
       try {
         const baseUrl = import.meta.env.VITE_API_URL as string;
         // Reutilizamos switch-tenant mas agora focando em equipamento contextualmente se necessario,
