@@ -16,7 +16,7 @@ interface SurveyQuestion {
 }
 
 export const EventSurveyPage: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const { isAuthenticated, email: authEmail } = useAuth();
     const navigate = useNavigate();
@@ -107,6 +107,19 @@ export const EventSurveyPage: React.FC = () => {
 
     if (success) {
         return (
+            <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center p-4">
+                <div className="bg-white/5 border border-white/10 p-10 rounded-2xl shadow-2xl max-w-md w-full text-center">
+                    <div className="bg-green-500/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CheckCircle className="w-10 h-10 text-green-500" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-2">Obrigado!</h2>
+                    <p className="text-slate-400 mb-8 leading-relaxed">{t("success")}</p>
+                    <Button onClick={() => navigate('/')} className="w-full py-4 text-lg">
+                        Voltar para o Início
+                    </Button>
+                </div>
+            </div>
+        );
     }
 
     if (questions.length === 0) {
@@ -223,7 +236,7 @@ export const EventSurveyPage: React.FC = () => {
                                 disabled={submitting}
                                 className="w-full py-6 text-xl rounded-2xl shadow-2xl shadow-blue-500/20"
                                 leftIcon={<Send size={22} />}
-                            >
+                              >
                                 {submitting ? 'Enviando...' : 'Enviar Avaliação'}
                             </Button>
                         </div>
