@@ -33,9 +33,11 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // Initialize with fallback but check localStorage first
     const getInitialTheme = (): ThemeSettings => {
         const localMode = localStorage.getItem("visitor_theme_mode") as "light" | "dark" | null;
+        // Default to dark for cinematic experience
+        const initialMode = localMode || "dark";
         return {
             ...defaultTheme,
-            theme: localMode || defaultTheme.theme
+            theme: initialMode
         };
     };
 

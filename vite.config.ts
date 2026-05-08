@@ -18,8 +18,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "pwa-192x192.png", "pwa-512x512.png"],
       manifest: {
-        name: "Cultura Viva - Museus",
-        short_name: "Cultura Viva",
+        name: "Cultura viva",
+        short_name: "Cultura viva",
         description: "Explore museus e cidades históricas com experiências interativas",
         theme_color: "#1a1108",
         background_color: "#1a1108",

@@ -102,7 +102,10 @@ export const Home: React.FC = () => {
           </Badge>
         )}
         <h1 className="hero-title-premium">
-          {museumName || tenant?.name || "Cultura Viva"}
+          {t("visitor.home.patrimonio")} <br />
+          <span className="text-[var(--accent-primary)] italic lowercase font-medium tracking-normal block ml-4 md:ml-12">
+            {t("visitor.home.vivo")}
+          </span>
         </h1>
         <p className="hero-subtitle-premium">
           {t("visitor.home.subtitle")}

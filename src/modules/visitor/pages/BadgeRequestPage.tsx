@@ -64,7 +64,7 @@ export const BadgeRequestPage: React.FC = () => {
     const hasMinXp = (visitorData?.xp || 0) >= 100000;
 
     return (
-        <div className="p-6 pb-24 max-w-xl mx-auto min-h-screen relative">
+        <div className="badge-request-container p-6 pb-24 max-w-xl mx-auto min-h-screen relative">
             {/* AMBIENT BACKGROUND */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--accent-primary)]/5 blur-[120px] rounded-full" />

@@ -1,6 +1,6 @@
 .nav-pill-canvas {
   position: fixed;
-  bottom: 120px; /* Elevated to clear HUD */
+  bottom: calc(120px + env(safe-area-inset-bottom)); /* Elevated to clear HUD */
   left: 1rem;
   right: 1rem;
   display: flex;
@@ -59,7 +59,7 @@
 @media (max-width: 640px) {
   .nav-pill-canvas {
     top: auto;
-    bottom: 90px; /* Above HUD */
+    bottom: calc(90px + env(safe-area-inset-bottom)); /* Above HUD */
   }
   
   .nav-p-label {

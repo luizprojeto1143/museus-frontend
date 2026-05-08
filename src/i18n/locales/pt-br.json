@@ -163,6 +163,25 @@
       "VocReceberAsInstruesDeRecuperaoEmInstant": ", você receberá as instruções de recuperação em instantes.",
       "digiteSeuEmailParaReceberAsInstruesDeRed": "Digite seu e-mail para receber as instruções de redefinição."
     },
+    "landingpage": {
+      "nav": {
+        "solucoes": "Soluções",
+        "acessibilidade": "Acessibilidade",
+        "casos": "Casos de Sucesso",
+        "contato": "Contato"
+      },
+      "iniciarVisitaApp": "Iniciar Visita (App)",
+      "entrar": "Entrar",
+      "tag": "Plataforma de Gestão Cultural 4.0",
+      "heroTitleGold": "em Experiência Viva.",
+      "heroDesc": "A solução completa para digitalizar museus, centros culturais e cidades históricas. Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo em tempo real.",
+      "ctaPrimary": "Iniciar Jornada",
+      "ctaSecondary": "Ver Soluções",
+      "solucoesTitle": "Cultura Impulsionada por Dados",
+      "solucoesDesc": "Integramos o mundo físico ao digital através de um ecossistema completo de ferramentas administrativas e de engajamento.",
+      "rouanetTitle": "Democratize o Acesso com a Lei Rouanet",
+      "rouanetDesc": "Nossa plataforma garante 100% de conformidade com a IN MinC 01/2023, automatizando a aprovação de contas com suítes nativas de acessibilidade."
+    },
     "registerproducer": {
       "cadastreseParaSubmeterProjetos": "Cadastre-se para submeter projetos e gerenciar sua produção cultural",
       "DadosBsicos": "📋 Dados Básicos",
@@ -246,6 +265,8 @@
     "home": {
       "badge": "Bem-vindo",
       "explore": "Explorar Acervo",
+      "patrimonio": "Cultura",
+      "vivo": "viva",
       "subtitle": "Explore o patrimônio cultural através de uma jornada digital imersiva, onde a história e a inovação se encontram.",
       "startTrail": "Começar Trilha",
       "viewMap": "Ver Mapa",

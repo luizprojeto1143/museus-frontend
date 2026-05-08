@@ -208,6 +208,19 @@ html, body {
   transition: none !important;
 }
 
+/* App-like behavior additions */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+}
+
 .premium-glass {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -237,6 +250,75 @@ html, body {
 
 .fluid-transition {
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* --- Universal Visitor Responsiveness Foundation --- */
+.workslist-container,
+.trails-container,
+.events-container,
+.profile-container,
+.rpg-container,
+.challenges-container,
+.agenda-container,
+.favorites-container,
+.passport-container,
+.scanner-container,
+.achievements-container,
+.timeline-container,
+.scheduling-container,
+.souvenir-container,
+.membership-container,
+.marketplace-container,
+.community-feed-container,
+.home-container,
+.badge-request-container,
+.leaderboard-container,
+.shop-container,
+.guestbook-container,
+.smart-itinerary-wizard,
+.smart-itinerary-result,
+.comparator-container,
+.collectibles-container,
+.teacher-portal-container,
+.architectural-timeline,
+.route-map-container,
+.family-timeline,
+.certificates-container,
+.wardrobe-container,
+.badge-tracking-container,
+.vestige-capture-container,
+.survey-container,
+.visual-scanner-container {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding-bottom: calc(200px + env(safe-area-inset-bottom)) !important;
+  padding-left: env(safe-area-inset-left, 16px) !important;
+  padding-right: env(safe-area-inset-right, 16px) !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+  .workslist-grid-premium,
+  .trails-grid-premium,
+  .gallery-grid,
+  .card-grid,
+  .actions-grid-premium,
+  .shop-grid,
+  .marketplace-grid,
+  .achievements-grid,
+  .podium-container-premium {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 16px !important;
+  }
+  
+  /* Special fix for podium on mobile to avoid horizontal scroll */
+  .podium-container-premium {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 24px !important;
+  }
 }
 
 /* --- Municipal / Secretary Blue Theme Variant --- */
@@ -306,6 +388,25 @@ body {
   position: relative;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  
+  /* Safe area handling for PWA */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+
+  /* Prevent pulling to refresh on mobile browsers */
+  overscroll-behavior-y: contain;
+
+  /* App-like text behavior */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* Allow text selection only where necessary */
+input, textarea, [contenteditable="true"], .selectable {
+  user-select: text;
 }
 
 /* ═══ GRAIN OVERLAY ═══════════════ */

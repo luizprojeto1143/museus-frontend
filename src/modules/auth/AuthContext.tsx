@@ -303,14 +303,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           };
           dispatch({ type: "LOGIN", payload: restoredState });
         }
-      } catch (e) {
+      } catch (e: any) {
         // Not authenticated or error, clear storage
-        console.log("Session restore failed, treating as guest/logged out.");
+        if (e.response?.status !== 401) {
+          console.log("Session restore failed, treating as guest/logged out.");
+        }
         dispatch({ type: "LOGOUT" });
         window.localStorage.removeItem(STORAGE_KEY);
         window.localStorage.removeItem("museus_access_token");
         window.localStorage.removeItem("museus_refresh_token");
-
       } finally {
         setIsRestoring(false);
       }

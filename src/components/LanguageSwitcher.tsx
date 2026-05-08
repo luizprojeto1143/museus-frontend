@@ -26,11 +26,17 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
     return (
         <div
             className={cn(
-                "flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--accent-primary)]/40 shadow-sm backdrop-blur-md z-[100]",
+                "flex items-center gap-1.5 p-1 rounded-2xl",
                 absolute && "absolute top-6 right-6",
                 className
             )}
-            style={style}
+            style={{
+                ...style,
+                background: "var(--bg-surface)",
+                border: "2px solid var(--accent-primary)",
+                borderRadius: "40px",
+                padding: "0.25rem 1rem",
+            }}
         >
             {languages.map((lang) => {
                 const isActive = i18n.language.startsWith(lang.code.split("-")[0]);
@@ -39,15 +45,15 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
                         key={lang.code}
                         onClick={() => changeLanguage(lang.code)}
                         className={cn(
-                            "flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all duration-300 text-[10px] font-bold tracking-widest uppercase",
+                            "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 text-[10px] font-black tracking-[0.2em] uppercase",
                             isActive 
-                                ? "bg-[var(--accent-primary)] text-black shadow-sm" 
-                                : "text-[var(--fg-main)] hover:bg-[var(--bg-surface-hover)]"
+                                ? "bg-[var(--accent-primary)] text-black shadow-[0_4px_12px_rgba(212,175,55,0.3)]" 
+                                : "text-[var(--fg-main)] hover:bg-white/5 opacity-60 hover:opacity-100"
                         )}
                         title={lang.title}
                     >
-                        <span>{lang.flag}</span>
-                        <span className="hidden sm:inline">{lang.label}</span>
+                        <span className="text-base">{lang.flag}</span>
+                        <span className="hidden xs:inline">{lang.label}</span>
                     </button>
                 );
             })}

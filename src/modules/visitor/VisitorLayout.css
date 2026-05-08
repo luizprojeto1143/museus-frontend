@@ -12,7 +12,7 @@
 
 .layout-header {
     position: fixed;
-    top: 1rem;
+    top: calc(1rem + env(safe-area-inset-top));
     left: 1rem;
     right: 1rem;
     height: 64px;
@@ -93,7 +93,7 @@
 
 .layout-main-premium {
     width: 100%;
-    padding-top: 100px;
+    padding-top: calc(100px + env(safe-area-inset-top));
     padding-bottom: 60px;
     min-height: 100vh;
     position: relative;
@@ -112,8 +112,8 @@
 
 @media (max-width: 768px) {
     .layout-content-premium {
-        padding: 0 20px;
-        padding-bottom: 220px; /* Safe area for NavPill + HUD */
+        padding: 0 16px;
+        padding-bottom: clamp(180px, 25vh, 220px); /* Responsive safe area for NavPill + HUD */
     }
 }
 

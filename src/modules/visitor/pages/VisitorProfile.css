@@ -2,8 +2,8 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px;
-  padding-bottom: 180px;
+  padding: 20px;
+  padding-bottom: calc(180px + env(safe-area-inset-bottom));
 }
 
 /* ═══ HUD CARD ═══════════════ */
@@ -244,4 +244,13 @@
 .fav-mini-row:hover {
   border-color: var(--gold);
   background: var(--gold-dim);
+}
+
+@media (max-width: 768px) {
+  .profile-card-premium { padding: 30px; }
+  .profile-hero-premium { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+  .profile-name-premium { font-size: 36px; }
+  .tabs-premium { gap: 20px; overflow-x: auto; white-space: nowrap; padding-bottom: 5px; }
+  .tabs-premium::-webkit-scrollbar { display: none; }
+  .actions-grid-premium { grid-template-columns: 1fr; }
 }
