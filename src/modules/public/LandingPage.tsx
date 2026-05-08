@@ -111,12 +111,6 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 <div className="hidden lg:flex items-center gap-6">
-                    <button 
-                        onClick={() => navigate("/select-museum")}
-                        className="text-xs font-bold uppercase tracking-widest border-b border-[var(--accent-primary)]/30 pb-1 hover:border-[var(--accent-primary)] transition-all"
-                    >
-                        {t("public.landingpage.iniciarVisitaApp", "Iniciar Visita (App)")}
-                    </button>
                     <Button
                         size="sm"
                         onClick={() => navigate("/login")}
@@ -154,7 +148,6 @@ export const LandingPage: React.FC = () => {
                             </button>
                         ))}
                         <hr className="border-white/5 my-4" />
-                        <Button size="lg" onClick={() => navigate("/select-museum")}>Iniciar Visita</Button>
                         <Button variant="outline" size="lg" onClick={() => navigate("/login")}>Entrar no Painel</Button>
                     </motion.div>
                 )}
@@ -194,11 +187,11 @@ export const LandingPage: React.FC = () => {
                     <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                         <Button
                             size="lg"
-                            onClick={() => navigate("/select-museum")}
+                            onClick={() => navigate("/login")}
                             rightIcon={<ArrowRight size={20} />}
                             className="h-16 px-10 text-lg shadow-[0_20px_50px_rgba(212,175,55,0.2)] rounded-2xl"
                         >
-                            {t("public.landingpage.ctaPrimary", "Iniciar Jornada")}
+                            {t("public.landingpage.entrar", "Entrar")}
                         </Button>
 
                         <button
@@ -323,10 +316,10 @@ export const LandingPage: React.FC = () => {
                             <div className="absolute -inset-10 bg-[var(--accent-primary)]/10 blur-[100px] rounded-full animate-pulse" />
                             <div className="relative p-1 bg-gradient-to-br from-white/10 to-transparent rounded-[50px] shadow-2xl">
                                 <div className="p-12 lg:p-16 bg-[#0a0a14] rounded-[48px] border border-white/5 text-center">
-                                    <Badge variant="glass" className="mb-8">Consul-Tech Cultural</Badge>
-                                    <h3 className="text-3xl font-heading font-bold mb-6 text-white">Suporte na Produção de Conteúdo</h3>
+                                    <Badge variant="glass" className="mb-8">{t("public.landingpage.complianceBadge", "Consul-Tech Cultural")}</Badge>
+                                    <h3 className="text-3xl font-heading font-bold mb-6 text-white">{t("public.landingpage.suporteTitle", "Suporte na Produção de Conteúdo")}</h3>
                                     <p className="text-[#f5e6d3]/60 mb-12 text-lg">
-                                        Oferecemos a produção completa de vídeos de Libras e Áudio-guias profissionais para o seu museu.
+                                        {t("public.landingpage.suporteDesc", "Oferecemos a produção completa de vídeos de Libras e Áudio-guias profissionais para o seu museu.")}
                                     </p>
                                     <Button 
                                         variant="outline" 
@@ -334,7 +327,7 @@ export const LandingPage: React.FC = () => {
                                         className="w-full h-16 text-lg border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black"
                                         onClick={() => scrollToSection("contato")}
                                     >
-                                        Agendar Consultoria
+                                        {t("public.landingpage.suporteCTA", "Agendar Consultoria")}
                                     </Button>
                                     <div className="mt-10 flex flex-col gap-4 text-xs tracking-widest opacity-30 font-bold uppercase">
                                         <div className="flex items-center justify-center gap-3">
@@ -353,8 +346,8 @@ export const LandingPage: React.FC = () => {
             <section id="contato" className="py-40 px-6 max-w-4xl mx-auto">
                 <AnimateIn variant="fadeUp">
                     <div className="text-center mb-20">
-                        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-white">Pronto para digitalizar?</h2>
-                        <p className="text-[#f5e6d3]/50 text-lg">Tire suas dúvidas sobre implantação, planos e prazos de produção.</p>
+                        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-white">{t("public.landingpage.contatoTitle", "Pronto para digitalizar?")}</h2>
+                        <p className="text-[#f5e6d3]/50 text-lg">{t("public.landingpage.contatoDesc", "Tire suas dúvidas sobre implantação, planos e prazos de produção.")}</p>
                     </div>
                 </AnimateIn>
                 <div className="p-10 md:p-16 bg-white/[0.02] border border-white/5 rounded-[50px] backdrop-blur-3xl shadow-glow">
@@ -365,9 +358,9 @@ export const LandingPage: React.FC = () => {
             {/* CTA FINAL - MASSIVO */}
             <section className="py-40 px-6 text-center border-t border-white/5 relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat">
                 <AnimateIn variant="scaleIn">
-                    <h2 className="text-5xl md:text-8xl font-heading font-black mb-12 text-white leading-none">A Revolução <br /> é agora.</h2>
+                    <h2 className="text-5xl md:text-8xl font-heading font-black mb-12 text-white leading-none">{t("public.landingpage.ctaFinalTitle", "A Revolução é agora.")}</h2>
                     <p className="max-w-2xl mx-auto mb-16 text-xl text-[#f5e6d3]/50 leading-relaxed italic">
-                        "Tecnologia não é sobre substituir a história, mas sobre garantir que ela nunca seja esquecida."
+                        {t("public.landingpage.ctaFinalDesc", "\"Tecnologia não é sobre substituir a história, mas sobre garantir que ela nunca seja esquecida.\"")}
                     </p>
                     <div className="flex flex-col md:flex-row justify-center gap-8">
                         <Button
@@ -375,7 +368,7 @@ export const LandingPage: React.FC = () => {
                             className="h-20 px-20 text-2xl font-black rounded-3xl"
                             onClick={() => scrollToSection("contato")}
                         >
-                            Criar Espaço Digital
+                            {t("public.landingpage.ctaFinalBtn", "Criar Espaço Digital")}
                         </Button>
                     </div>
                 </AnimateIn>
@@ -390,8 +383,7 @@ export const LandingPage: React.FC = () => {
                             Cultura Viva
                         </div>
                         <p className="text-[#f5e6d3]/40 text-sm leading-relaxed mb-10">
-                            Líder nacional em digitalização de patrimônio histórico 4.0. <br />
-                            Acessibilidade, Gamificação e Gestão de Dados para Instituições de Excelência.
+                            {t("public.landingpage.footerDesc", "Líder nacional em digitalização de patrimônio histórico 4.0. Acessibilidade, Gamificação e Gestão de Dados para Instituições de Excelência.")}
                         </p>
                         <div className="flex gap-4">
                             <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-[var(--accent-primary)] hover:text-black transition-colors cursor-pointer"><Users size={18} /></div>
@@ -420,7 +412,7 @@ export const LandingPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-20 text-[10px] uppercase font-bold tracking-widest text-center md:text-left">
-                    <span>&copy; {new Date().getFullYear()} Cultura Viva Tecnologia. Todos os direitos reservados.</span>
+                    <span>{t("public.landingpage.footerCopyright", { year: new Date().getFullYear(), defaultValue: `&copy; ${new Date().getFullYear()} Cultura Viva Tecnologia. Todos os direitos reservados.` })}</span>
                     <span>Selo de Acessibilidade Digital W3C Platinum</span>
                 </div>
             </footer>

@@ -202,6 +202,38 @@
       "suaSenhaFoiAtualizadaComSucessoVocJPodeF": "Sua senha foi atualizada com sucesso. Você já pode fazer login."
     }
   },
+  "public": {
+    "landingpage": {
+      "nav": {
+        "solucoes": "Soluções",
+        "acessibilidade": "Acessibilidade",
+        "casos": "Casos",
+        "contato": "Contato"
+      },
+      "tag": "Plataforma de Gestão Cultural 4.0",
+      "heroTitleGold": "em Experiência Viva.",
+      "heroDesc": "A solução completa para digitalizar museus, centros culturais e cidades históricas. Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo em tempo real.",
+      "ctaPrimary": "Iniciar Jornada",
+      "ctaSecondary": "Ver Soluções",
+      "solucoesTitle": "Cultura Impulsionada por Dados",
+      "solucoesDesc": "Integramos o mundo físico ao digital através de um ecossistema completo de ferramentas administrativas e de engajamento.",
+      "rouanetTitle": "Democratize o Acesso com a Lei Rouanet",
+      "rouanetDesc": "Nossa plataforma garante 100% de conformidade com a IN MinC 01/2023, automatizando a aprovação de contas com suítes nativas de acessibilidade.",
+      "iniciarVisitaApp": "Iniciar Visita (App)",
+      "entrar": "Entrar",
+      "complianceBadge": "Consul-Tech Cultural",
+      "suporteTitle": "Suporte na Produção de Conteúdo",
+      "suporteDesc": "Oferecemos a produção completa de vídeos de Libras e Áudio-guias profissionais para o seu museu.",
+      "suporteCTA": "Agendar Consultoria",
+      "contatoTitle": "Pronto para digitalizar?",
+      "contatoDesc": "Tire suas dúvidas sobre implantação, planos e prazos de produção.",
+      "ctaFinalTitle": "A Revolução é agora.",
+      "ctaFinalDesc": "\"Tecnologia não é sobre substituir a história, mas sobre garantir que ela nunca seja esquecida.\"",
+      "ctaFinalBtn": "Criar Espaço Digital",
+      "footerDesc": "Líder nacional em digitalização de patrimônio histórico 4.0. Acessibilidade, Gamificação e Gestão de Dados para Instituições de Excelência.",
+      "footerCopyright": "&copy; {{year}} Cultura Viva Tecnologia. Todos os direitos reservados."
+    }
+  },
   "visitor": {
     "layout": {
       "guest_banner": "Você está em modo visitante. Crie uma conta para salvar seu progresso!"

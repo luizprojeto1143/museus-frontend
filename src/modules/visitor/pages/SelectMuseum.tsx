@@ -106,8 +106,8 @@ export const SelectMuseum: React.FC = () => {
   const loadEvents = async () => {
     setLoadingEvents(true);
     try {
-      const res = await api.get("/events/public");
-      setEvents(Array.isArray(res.data) ? res.data : []);
+      const res = await api.get("/events?discovery=true");
+      setEvents(Array.isArray(res.data.data) ? res.data.data : []);
     } catch (err) {
       console.error("Error loading events", err);
     } finally {
