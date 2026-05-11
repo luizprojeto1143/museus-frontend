@@ -181,7 +181,11 @@ export const MasterBadgeQueue: React.FC = () => {
                                                     <Truck size={18} />
                                                 </button>
                                             )}
-                                            <button className="p-3 hover:bg-white/10 text-slate-400 rounded-[14px] transition-all border border-transparent hover:border-white/10" title="Baixar Arte" onClick={() => window.open(req.pdfUrl)}>
+                                            <button 
+                                                className="p-3 hover:bg-white/10 text-slate-400 rounded-[14px] transition-all border border-transparent hover:border-white/10" 
+                                                title="Baixar Arte" 
+                                                onClick={() => window.open(`${import.meta.env.VITE_API_URL}/badges/${req.id}/print`)}
+                                            >
                                                 <Download size={18} />
                                             </button>
                                         </div>
@@ -243,7 +247,10 @@ export const MasterBadgeQueue: React.FC = () => {
                             </div>
 
                             <div className="mt-10 flex gap-4">
-                                <Button className="flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-widest" onClick={() => window.open(previewBadge.pdfUrl)}>
+                                <Button 
+                                    className="flex-1 h-14 rounded-2xl font-black text-xs uppercase tracking-widest" 
+                                    onClick={() => window.open(`${import.meta.env.VITE_API_URL}/badges/${previewBadge.id}/print`)}
+                                >
                                     Download arte
                                 </Button>
                             </div>

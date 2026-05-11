@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import {
     MessageSquare,
@@ -6,19 +5,23 @@ import {
     Clock,
     DollarSign,
     CheckCircle,
-    Calendar
+    CreditCard,
+    ShieldCheck,
+    TrendingUp,
+    Banknote,
+    ExternalLink
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
 import { useNavigate } from "react-router-dom";
 
 export const ProviderDashboard: React.FC = () => {
-  const { t } = useTranslation();
     const { name } = useAuth();
     const navigate = useNavigate();
     const [stats, setStats] = useState<any>(null);
     const [activities, setActivities] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [onboardingLoading, setOnboardingLoading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,6 +40,28 @@ export const ProviderDashboard: React.FC = () => {
         };
         fetchData();
     }, []);
+
+    const handleStripeOnboarding = async () => {
+        try {
+            setOnboardingLoading(true);
+            const { data } = await api.get("/stripe/onboarding-link");
+            window.location.href = data.url;
+        } catch (err) {
+            console.error("Error generating onboarding link", err);
+            alert("Erro ao conectar com o Stripe. Tente novamente.");
+        } finally {
+            setOnboardingLoading(false);
+        }
+    };
+
+    const handleStripeDashboard = async () => {
+        try {
+            const { data } = await api.get("/stripe/dashboard-link");
+            window.open(data.url, "_blank");
+        } catch (err) {
+            console.error("Error generating dashboard link", err);
+        }
+    };
 
     const statCards = [
         { label: "Orçamentos Pendentes", value: stats?.pendingQuotes ?? "0", icon: <Clock size={24} />, color: "text-orange-400", bg: "bg-orange-400/10" },
@@ -136,21 +161,77 @@ export const ProviderDashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Info Card */}
+                {/* Payments & Subscription */}
                 <div className="space-y-6">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Calendar size={20} className="text-[#9f7aea]" /> Lembretes
+                        <Banknote size={20} className="text-[#9f7aea]" /> Configuração de Pagamentos
                     </h2>
-                    <div className="bg-[#1a0f2c] p-6 rounded-2xl border border-[#3b2164] border-dashed">
-                        <p className="text-[#b794f4] text-sm leading-relaxed">{t("provider.providerdashboard.mantenhaSeuPerfilAtualizadoParaAtrairMai", `
-                            Mantenha seu perfil atualizado para atrair mais produtores culturais. O tempo médio de resposta influencia seu ranking na plataforma.
-                        `)}</p>
-                        <button
-                            onClick={() => navigate("/provider/profile")}
-                            className="w-full mt-4 bg-white/5 border border-white/10 text-white font-bold py-2 rounded-lg hover:bg-white/10 transition-all text-xs"
-                        >
-                            Editar Meu Perfil
-                        </button>
+
+                    <div className="bg-[#1a0f2c] p-6 rounded-[32px] border border-[#3b2164] relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <p className="text-[#b794f4] text-sm mb-6 leading-relaxed">
+                                Para receber pagamentos dos produtores culturais, você precisa configurar sua conta no Stripe Connect.
+                            </p>
+                            
+                            {stats?.hasStripeConnect ? (
+                                <button
+                                    onClick={handleStripeDashboard}
+                                    className="w-full bg-[#1a0f2c] border-2 border-[#9f7aea] text-white font-bold py-3 rounded-xl hover:bg-[#9f7aea]/10 transition-all text-sm flex items-center justify-center gap-2"
+                                >
+                                    Ver Painel Financeiro <ExternalLink size={16} />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleStripeOnboarding}
+                                    disabled={onboardingLoading}
+                                    className="w-full bg-[#9f7aea] text-white font-bold py-3 rounded-xl hover:bg-[#805ad5] transition-all text-sm shadow-lg shadow-[#9f7aea]/20 flex items-center justify-center gap-2"
+                                >
+                                    {onboardingLoading ? "Carregando..." : "Configurar Recebimentos"} <ArrowUpRight size={16} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <CreditCard size={20} className="text-[#9f7aea]" /> Assinatura
+                    </h2>
+                    
+                    <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a0f2c] p-6 rounded-[32px] border border-[#9f7aea]/30 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
+                            <ShieldCheck size={80} />
+                        </div>
+                        
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 text-[#b794f4] text-xs font-bold uppercase tracking-widest mb-4">
+                                <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">Ativa</span>
+                                <span>Plano Mensal Elite</span>
+                            </div>
+                            <div className="text-3xl font-black text-white mb-1">R$ 50,00</div>
+                            <div className="text-[#b794f4] text-xs mb-6">Próxima renovação: 12/06/2026</div>
+                            
+                            <button className="w-full bg-white/5 border border-white/10 text-white font-bold py-3 rounded-xl hover:bg-white/10 transition-all text-sm">
+                                Gerenciar Assinatura
+                            </button>
+                        </div>
+                    </div>
+
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <TrendingUp size={20} className="text-[#9f7aea]" /> Visibilidade
+                    </h2>
+                    <div className="bg-[#1a0f2c] p-6 rounded-2xl border border-[#3b2164]">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="text-sm text-[#b794f4]">Visualizações do Perfil</div>
+                            <div className="text-green-400 text-xs font-bold flex items-center gap-1">
+                                +12% <ArrowUpRight size={12} />
+                            </div>
+                        </div>
+                        <div className="h-2 w-full bg-black/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-[#9f7aea] to-[#b794f4] w-[65%]" />
+                        </div>
+                        <div className="mt-4 flex justify-between items-end">
+                            <div className="text-2xl font-bold text-white">428</div>
+                            <div className="text-[10px] text-[#b794f4] uppercase tracking-widest">Este mês</div>
+                        </div>
                     </div>
                 </div>
             </div>

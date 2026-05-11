@@ -20,6 +20,7 @@ registerGSAPPlugins();
 const Login = React.lazy(() => import("./modules/auth/Login").then(m => ({ default: m.Login })));
 const RegisterWrapper = React.lazy(() => import("./modules/auth/RegisterWrapper").then(m => ({ default: m.RegisterWrapper })));
 const RegisterProducer = React.lazy(() => import("./modules/auth/RegisterProducer").then(m => ({ default: m.RegisterProducer })));
+const RegisterProvider = React.lazy(() => import("./modules/auth/RegisterProvider").then(m => ({ default: m.RegisterProvider })));
 const ForgotPassword = React.lazy(() => import("./modules/auth/ForgotPassword").then(m => ({ default: m.ForgotPassword })));
 const ResetPasswordPage = React.lazy(() => import("./modules/auth/ResetPassword").then(m => ({ default: m.ResetPasswordPage })));
 
@@ -133,6 +134,7 @@ const App: React.FC = () => {
                   <Route path="/select-museum" element={<SelectMuseum />} />
                   <Route path="/verify/:code" element={<CertificateValidator />} />
                   <Route path="/sou-produtor" element={<RegisterProducer />} />
+                  <Route path="/sou-prestador" element={<RegisterProvider />} />
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
                   <Route path="/register" element={<RegisterWrapper />} />
                   <Route path="/login" element={<Login />} />

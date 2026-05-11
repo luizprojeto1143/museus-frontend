@@ -1,5 +1,5 @@
 import React from "react";
-import { DollarSign, Ticket, Calendar, TrendingUp, Plus, ExternalLink, BarChart3, AlertCircle, Briefcase, Rocket } from "lucide-react";
+import { DollarSign, Ticket, Calendar, TrendingUp, Plus, ExternalLink, BarChart3, AlertCircle, Briefcase, Rocket, Sparkles, ListChecks, ArrowRight, Wand2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -13,6 +13,12 @@ export const ProducerDashboard: React.FC = () => {
 
     const { tenantId } = useAuth();
     const [loading, setLoading] = React.useState(true);
+    const [openNotices, setOpenNotices] = React.useState<any[]>([]);
+    const [projectSummary, setProjectSummary] = React.useState({
+        drafts: 0,
+        submitted: 0,
+        approved: 0
+    });
     const [stats, setStats] = React.useState({
         ticketsSold: 0,
         revenue: "R$ 0,00",
@@ -28,14 +34,29 @@ export const ProducerDashboard: React.FC = () => {
 
         const fetchData = async () => {
             try {
-                const [salesRes, eventsRes] = await Promise.all([
+                const [salesRes, eventsRes, noticesRes, projectsRes] = await Promise.all([
                     api.get("/analytics/sales-summary"),
-                    api.get("/events")
+                    api.get("/events"),
+                    api.get("/notices/public"),
+                    api.get("/projects")
                 ]);
 
+                // Sales & Metrics
                 const sold = salesRes.data.ticketsSold || 0;
                 const rev = salesRes.data.totalRevenue || 0;
                 const raised = salesRes.data.raisedAmount || 0;
+
+                // Notices (Recent & Active)
+                const notices = (noticesRes.data.data ? noticesRes.data.data : noticesRes.data) as any[];
+                setOpenNotices(notices.filter(n => new Date(n.inscriptionEnd) >= new Date()).slice(0, 3));
+
+                // Projects Summary
+                const projects = (projectsRes.data.data ? projectsRes.data.data : projectsRes.data) as any[];
+                setProjectSummary({
+                    drafts: projects.filter(p => p.status === 'DRAFT').length,
+                    submitted: projects.filter(p => p.status === 'SUBMITTED' || p.status === 'UNDER_REVIEW').length,
+                    approved: projects.filter(p => p.status === 'APPROVED' || p.status === 'IN_EXECUTION').length,
+                });
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const allEvents = (eventsRes.data.data ? eventsRes.data.data : eventsRes.data) as any[];
@@ -89,7 +110,7 @@ export const ProducerDashboard: React.FC = () => {
         fetchData();
     }, [tenantId]);
 
-    const isNewProducer = !loading && stats.activeEvents === 0 && nextEvents.length === 0;
+    const isNewProducer = !loading && stats.activeEvents === 0 && nextEvents.length === 0 && projectSummary.drafts === 0;
 
     // Loading skeleton
     if (loading) {
@@ -109,187 +130,177 @@ export const ProducerDashboard: React.FC = () => {
     }
 
     return (
-        <div>
+        <div className="producer-dashboard-container animate-in fade-in duration-500">
             {/* Header */}
-            <div className="producer-dashboard-header">
-                <h1 className="section-title">
-                    <Rocket className="inline-block mr-2 text-[var(--accent-primary)]" size={28} />
-                    {t("producer.dashboard.title")}
-                </h1>
-                <p className="section-subtitle">{t("producer.dashboard.subtitle")}</p>
-            </div>
-
-            {/* New Producer Onboarding CTA */}
-            {isNewProducer && (
-                <div className="card onboarding-card">
-                    <Rocket size={48} className="onboarding-icon" />
-                    <h2 className="onboarding-title">
-                        Bem-vindo ao Cultura Viva!
-                    </h2>
-                    <p className="onboarding-text">{t("producer.producerdashboard.comeceCriandoSeuPrimeiroEventoParaAtrair", `
-                        Comece criando seu primeiro evento para atrair visitantes e vender ingressos. Em poucos passos, seu espaço cultural estará no mapa!
-                    `)}</p>
-                    <div className="onboarding-actions">
-                        <button className="btn btn-primary btn-lg" onClick={() => navigate("/producer/events/new")}>
-                            <Plus size={18} /> Criar Primeiro Evento
-                        </button>
-                        <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-transparent text-[var(--accent-primary)] border-[var(--accent-primary)] hover:bg-[var(--accent-primary)] hover:text-[var(--fg-inverse)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => navigate("/producer/profile")}>
-                            Completar Perfil
+            <div className="producer-dashboard-header mb-8">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-[#EAE0D5] font-serif">
+                            <Rocket className="inline-block mr-3 text-[var(--accent-primary)]" size={32} />
+                            {t("producer.dashboard.title")}
+                        </h1>
+                        <p className="text-[#B0A090] mt-1">{t("producer.dashboard.subtitle")}</p>
+                    </div>
+                    <div className="flex gap-3">
+                        <button 
+                            onClick={() => navigate("/producer/projects/new")}
+                            className="bg-[var(--accent-primary)] text-black px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[var(--accent-primary)]/20"
+                        >
+                            <Plus size={18} /> Nova Proposta
                         </button>
                     </div>
                 </div>
-            )}
+            </div>
+
+            {/* PIPELINE & OPPORTUNITIES ROW */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {/* PROJECT PIPELINE */}
+                <div className="lg:col-span-2 bg-[#2c1e10] border border-[#463420] rounded-3xl p-6 shadow-xl">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
+                            <ListChecks className="text-[var(--accent-primary)]" /> Seu Fluxo de Projetos
+                        </h2>
+                        <button onClick={() => navigate("/producer/projects")} className="text-xs text-[var(--accent-primary)] font-bold uppercase hover:underline">Ver Todos</button>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="bg-black/20 rounded-2xl p-4 border border-[#463420]/50 text-center">
+                            <div className="text-2xl font-bold text-[#EAE0D5] mb-1">{projectSummary.drafts}</div>
+                            <div className="text-[10px] text-[#B0A090] font-bold uppercase tracking-wider">Rascunhos</div>
+                        </div>
+                        <div className="bg-[var(--accent-primary)]/10 rounded-2xl p-4 border border-[var(--accent-primary)]/20 text-center">
+                            <div className="text-2xl font-bold text-blue-400 mb-1">{projectSummary.submitted}</div>
+                            <div className="text-[10px] text-blue-400/70 font-bold uppercase tracking-wider">Em Análise</div>
+                        </div>
+                        <div className="bg-green-500/10 rounded-2xl p-4 border border-green-500/20 text-center">
+                            <div className="text-2xl font-bold text-green-400 mb-1">{projectSummary.approved}</div>
+                            <div className="text-[10px] text-green-400/70 font-bold uppercase tracking-wider">Aprovados</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* AI TIP BOX */}
+                <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] border border-[var(--accent-primary)]/30 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-center">
+                    <div className="absolute -right-4 -top-4 text-[var(--accent-primary)] opacity-10">
+                        <Wand2 size={120} />
+                    </div>
+                    <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-sm mb-2">
+                        <Sparkles size={16} /> Dica Pro
+                    </div>
+                    <p className="text-sm text-[#B0A090] leading-relaxed relative z-10">
+                        Sabia que você pode usar o <strong>Ajudante IA</strong> dentro dos seus projetos para alinhar o texto com as exigências de cada edital?
+                    </p>
+                </div>
+            </div>
 
             {/* METRICS GRID */}
-            <div className="card-grid" style={{ marginBottom: "2rem" }}>
-                {/* Receita */}
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <div className="flex justify-between items-start mb-3">
-                        <span className="stat-label">{t("producer.dashboard.metrics.revenue")}</span>
-                        <div className="metric-icon-box metric-icon-revenue">
-                            <DollarSign size={18} />
-                        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {/* Metric Cards (same as before but refreshed) */}
+                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">{t("producer.dashboard.metrics.revenue")}</span>
+                        <DollarSign size={16} className="text-emerald-500" />
                     </div>
-                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.revenue}</div>
-                    {stats.revenueGrowth !== null && (
-                        <div className={`growth-indicator ${stats.revenueGrowth >= 0 ? "growth-up" : "growth-down"}`}>
-                            <TrendingUp size={14} style={stats.revenueGrowth < 0 ? { transform: "rotate(180deg)" } : undefined} />
-                            <span>{stats.revenueGrowth >= 0 ? "+" : ""}{stats.revenueGrowth}% {t("producer.dashboard.metrics.vsLastMonth")}</span>
-                        </div>
-                    )}
+                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.revenue}</div>
                 </div>
 
-                {/* Ingressos Vendidos */}
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <div className="flex justify-between items-start mb-3">
-                        <span className="stat-label">{t("producer.dashboard.metrics.ticketsSold")}</span>
-                        <div className="metric-icon-box metric-icon-tickets">
-                            <Ticket size={18} />
-                        </div>
+                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">{t("producer.dashboard.metrics.ticketsSold")}</span>
+                        <Ticket size={16} className="text-blue-500" />
                     </div>
-                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.ticketsSold}</div>
-                    <span className="text-[0.75rem] text-[var(--fg-tertiary)]">{t("producer.dashboard.metrics.accumulated")}</span>
+                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.ticketsSold}</div>
                 </div>
 
-                {/* Eventos Ativos */}
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <div className="flex justify-between items-start mb-3">
-                        <span className="stat-label">{t("producer.dashboard.metrics.activeEvents")}</span>
-                        <div className="metric-icon-box metric-icon-events">
-                            <Calendar size={18} />
-                        </div>
+                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">{t("producer.dashboard.metrics.activeEvents")}</span>
+                        <Calendar size={16} className="text-[var(--accent-primary)]" />
                     </div>
-                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.activeEvents}</div>
-                    <button onClick={() => navigate("/producer/events/new")} className="create-event-link">
-                        <Plus size={14} /> {t("producer.dashboard.metrics.createNew")}
-                    </button>
+                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.activeEvents}</div>
                 </div>
 
-                {/* Valor Captado */}
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <div className="flex justify-between items-start mb-3">
-                        <span className="stat-label">{t("producer.dashboard.metrics.raisedAmount", "Valor Captado")}</span>
-                        <div className="metric-icon-box metric-icon-raised">
-                            <BarChart3 size={18} />
-                        </div>
+                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
+                    <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">Valor Captado</span>
+                        <BarChart3 size={16} className="text-purple-500" />
                     </div>
-                    <div className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{stats.raisedAmount}</div>
-                    <span className="text-[0.75rem] text-[var(--fg-tertiary)]">{t("producer.dashboard.metrics.approvedProjects", "Em projetos aprovados")}</span>
+                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.raisedAmount}</div>
                 </div>
             </div>
 
-            {/* EVENTS & SERVICES */}
-            <div className="event-grid-container">
-                {/* Próximos Eventos */}
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ gridColumn: nextEvents.length > 0 ? "span 2" : undefined }}>
-                    <div className="card-header-flex">
-                        <h2 className="card-title" style={{ margin: 0 }}>📅 {t("producer.dashboard.nextEvents.title")}</h2>
-                        <button onClick={() => navigate("/producer/events")} className="btn btn-ghost text-[0.85rem]">
-                            {t("producer.dashboard.nextEvents.viewAll")}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* PRÓXIMOS EVENTOS */}
+                <div className="lg:col-span-2 space-y-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
+                            <Calendar className="text-[var(--accent-primary)]" /> {t("producer.dashboard.nextEvents.title")}
+                        </h2>
+                        <button onClick={() => navigate("/producer/events")} className="text-xs text-[#B0A090] hover:text-[var(--accent-primary)] font-bold flex items-center gap-1 transition-colors">
+                            Ver Agenda <ArrowRight size={14} />
                         </button>
                     </div>
 
-                    <div className="event-list">
+                    <div className="space-y-3">
                         {nextEvents.length > 0 ? nextEvents.map(evt => (
-                            <div key={evt.id} className="agenda-card-mini group" onClick={() => navigate(`/producer/events/${evt.id}`)}>
-                                <div className="card-time-strip-mini">
-                                    <span className="strip-hour-mini">
-                                        {evt.time || "00:00"}
-                                    </span>
-                                    <span className="strip-label-mini">{t("producer.producerdashboard.incio", `Início`)}</span>
-                                </div>
-
-                                <div className="card-main-mini">
-                                    <h3 className="card-title-mini group-hover:text-gold transition-colors">{evt.name}</h3>
-                                    <div className="card-meta-mini">
-                                        <div className="meta-item-mini">
-                                            <Calendar size={12} className="text-gold/50" />
-                                            <span>{evt.date}</span>
-                                        </div>
-                                        <div className="meta-item-mini">
-                                            <Ticket size={12} className="text-gold/50" />
-                                            <span>{evt.sales}</span>
+                            <div key={evt.id} className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-4 flex items-center justify-between group hover:bg-[#3d2b17] transition-all cursor-pointer" onClick={() => navigate(`/producer/events/${evt.id}`)}>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-black/20 flex flex-col items-center justify-center border border-[#463420]">
+                                        <span className="text-[10px] font-bold text-[var(--accent-primary)] uppercase">{evt.date.split('/')[1]}</span>
+                                        <span className="text-lg font-bold text-[#EAE0D5] leading-none">{evt.date.split('/')[0]}</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-[#EAE0D5] group-hover:text-[var(--accent-primary)] transition-colors">{evt.name}</h3>
+                                        <div className="flex items-center gap-3 text-xs text-[#B0A090] mt-1">
+                                            <span className="flex items-center gap-1"><Ticket size={12} /> {evt.sales}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="p-4 flex items-center">
-                                    <button
-                                        className="p-2 bg-white/5 hover:bg-gold/10 text-zinc-400 hover:text-gold rounded-xl transition-all"
-                                        onClick={(e) => { e.stopPropagation(); navigate(`/producer/events/${evt.id}`); }}
-                                    >
-                                        <Briefcase size={18} />
-                                    </button>
-                                </div>
+                                <ArrowRight size={18} className="text-[#463420] group-hover:text-[var(--accent-primary)] transition-all" />
                             </div>
                         )) : (
-                            <div className="empty-events-state">
-                                <Calendar size={32} className="mb-2 opacity-50 inline-block" />
-                                <p className="mb-4">Nenhum evento agendado. Crie seu primeiro evento!</p>
-                                <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => navigate("/producer/events/new")}>
-                                    <Plus size={16} /> Criar Evento
+                            <div className="bg-[#2c1e10]/50 border border-dashed border-[#463420] rounded-3xl p-12 text-center">
+                                <Calendar size={40} className="mx-auto mb-4 text-[#463420]" />
+                                <p className="text-[#B0A090] mb-4">Nenhum evento próximo. Que tal criar um agora?</p>
+                                <button onClick={() => navigate("/producer/events/new")} className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 px-6 py-2 rounded-xl font-bold hover:bg-[var(--accent-primary)] hover:text-black transition-all">
+                                    Criar Evento
                                 </button>
                             </div>
-                        )}
-
-                        {nextEvents.length > 0 && (
-                            <button onClick={() => navigate("/producer/events/new")} className="btn btn-outline create-event-dashed-btn">
-                                <Plus size={18} /> {t("producer.dashboard.nextEvents.create", "Novo Evento")}
-                            </button>
                         )}
                     </div>
                 </div>
 
-                {/* Sidebar Cards */}
-                <div className="sidebar-cards-stack">
-                    {/* Lei de Incentivo */}
-                    <div className="card lbi-card">
-                        <div className="lbi-card-bg-icon">
-                            <Briefcase size={80} />
-                        </div>
-                        <h3 className="lbi-title">
-                            <AlertCircle size={18} /> {t("producer.dashboard.services.lbiTitle")}
-                        </h3>
-                        <p className="lbi-description">
-                            {t("producer.dashboard.services.lbiText")}
-                        </p>
-                        <button className="btn btn-primary w-full relative z-10" onClick={() => navigate("/producer/services")}>
-                            {t("producer.dashboard.services.hire")}
+                {/* OPPORTUNITIES HUB (NOTICES) */}
+                <div className="space-y-4">
+                    <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
+                        <Sparkles className="text-[var(--accent-primary)]" /> Editais Abertos
+                    </h2>
+                    <div className="space-y-3">
+                        {openNotices.length > 0 ? openNotices.map(notice => (
+                            <div key={notice.id} className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/50 transition-all">
+                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-2 tracking-widest">Oportunidade</div>
+                                <h3 className="font-bold text-[#EAE0D5] mb-2 line-clamp-2">{notice.title}</h3>
+                                <div className="flex items-center justify-between text-xs text-[#B0A090] mb-4">
+                                    <span className="flex items-center gap-1"><Calendar size={12} /> Até {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
+                                    <span className="text-[var(--accent-primary)] font-bold">R$ {Number(notice.maxPerProject).toLocaleString()}</span>
+                                </div>
+                                <button 
+                                    onClick={() => navigate(`/producer/projects/new?noticeId=${notice.id}`)}
+                                    className="w-full bg-white/5 hover:bg-[var(--accent-primary)] hover:text-black border border-white/10 transition-all py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2"
+                                >
+                                    Inscrever Projeto <ArrowRight size={14} />
+                                </button>
+                            </div>
+                        )) : (
+                            <div className="bg-[#2c1e10]/30 border border-[#463420] rounded-2xl p-6 text-center italic text-[#B0A090] text-sm">
+                                Nenhum edital aberto no momento.
+                            </div>
+                        )}
+                        <button 
+                            onClick={() => navigate("/producer/notices")}
+                            className="w-full py-3 text-[#B0A090] hover:text-[var(--accent-primary)] transition-colors text-sm font-bold border border-dashed border-[#463420] rounded-2xl"
+                        >
+                            Ver Todos os Editais
                         </button>
-                    </div>
-
-                    {/* Relatórios */}
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
-                        <h3 className="card-title mb-4">📊 {t("producer.dashboard.services.reports")}</h3>
-                        <div className="report-button-list">
-                            <button className="report-button">
-                                <span>{t("producer.dashboard.services.minc")}</span>
-                                <ExternalLink size={14} />
-                            </button>
-                            <button className="report-button">
-                                <span>{t("producer.dashboard.services.participants")}</span>
-                                <ExternalLink size={14} />
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>

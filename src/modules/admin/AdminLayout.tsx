@@ -47,7 +47,7 @@ interface TenantFeatures {
 }
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { logout, name: userName, tenantId, role, permissions } = useAuth();
+  const { logout, name: userName, tenantId, role, hasPermission } = useAuth();
   const location = useLocation();
   const { t } = useTranslation();
   const [isCollapsed, setCollapsed] = useState(false);
@@ -70,12 +70,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     "--accent-primary": features.primaryColor || (isCityMode ? "var(--accent-primary)" : "var(--accent-primary)"),
     "--accent-secondary": features.secondaryColor || (isCityMode ? "#0ea5e9" : "var(--accent-secondary)"),
   } as React.CSSProperties : {};
-
-  const hasPermission = (flag?: string) => {
-    if (role === 'master' || role === 'admin') return true;
-    if (!flag) return false; // Collaborators need explicit flags for most things
-    return !!permissions?.[flag];
-  };
 
   const sidebarGroups: SidebarGroup[] = [
     {

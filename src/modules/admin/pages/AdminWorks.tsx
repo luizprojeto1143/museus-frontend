@@ -17,7 +17,7 @@ type AdminWorkItem = {
 
 export const AdminWorks: React.FC = () => {
   const { t } = useTranslation();
-  const { tenantId } = useAuth();
+  const { tenantId, hasPermission } = useAuth();
   const term = useTerminology();
 
   const [works, setWorks] = useState<AdminWorkItem[]>([]);
@@ -86,9 +86,11 @@ export const AdminWorks: React.FC = () => {
             }}
           />
         </div>
-        <Link to="/admin/obras/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ alignSelf: "flex-start" }}>
-          + Nova {term.work}
-        </Link>
+        {hasPermission("manage_works") && (
+          <Link to="/admin/obras/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" style={{ alignSelf: "flex-start" }}>
+            + Nova {term.work}
+          </Link>
+        )}
       </div>
 
       {loading ? (
@@ -130,7 +132,7 @@ export const AdminWorks: React.FC = () => {
                     </td>
                     <td style={{ textAlign: "right" }}>
                       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                        {work.vestigeActive && (
+                        {work.vestigeActive && hasPermission("manage_works") && (
                           <button 
                             className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                             style={{ borderColor: 'var(--accent-primary)', color: 'var(--accent-primary)' }}
@@ -149,9 +151,15 @@ export const AdminWorks: React.FC = () => {
                             {t('vestige.admin.expireAction', 'Expirar')}
                           </button>
                         )}
-                        <Link to={`/admin/obras/${work.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
-                          {t("common.edit")}
-                        </Link>
+                        {hasPermission("manage_works") ? (
+                          <Link to={`/admin/obras/${work.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
+                            {t("common.edit")}
+                          </Link>
+                        ) : (
+                          <Link to={`/admin/obras/${work.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
+                             Visualizar
+                          </Link>
+                        )}
                       </div>
                     </td>
                   </tr>

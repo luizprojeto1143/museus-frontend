@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
+import { DollarSign, ShieldCheck, CheckCircle, CreditCard, ExternalLink } from "lucide-react";
 import "./AdminShared.css";
 
 
@@ -12,6 +13,7 @@ type Execution = {
     requestedAt: string;
     project?: { id: string; title: string };
     provider?: { id: string; name: string };
+    approvedBudget?: number;
 };
 
 type DashboardData = {
@@ -39,10 +41,10 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 };
 
 export const AdminAccessibilityManagement: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-    const [workRequests, setWorkRequests] = useState<any[]>([]); // New state for Master Requests
+    const [workRequests, setWorkRequests] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"EXECUTIONS" | "REQUESTS">("EXECUTIONS");
 
@@ -53,7 +55,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
             try {
                 const [dashRes, reqRes] = await Promise.all([
                     api.get("/accessibility-execution/dashboard", { params: { tenantId } }),
-                    api.get("/accessibility") // Fetch Master Requests
+                    api.get("/accessibility")
                 ]);
                 setDashboard(dashRes.data);
                 setWorkRequests(reqRes.data);
@@ -75,11 +77,9 @@ export const AdminAccessibilityManagement: React.FC = () => {
     return (
         <div>
             <div style={{ marginBottom: "2rem" }}>
-                <h1 className="section-title">{t("admin.accessibilitymanagement.GestoDeAcessibilidade", `♿ Gestão de Acessibilidade`)}</h1>
-
+                <h1 className="section-title">♿ Gestão de Acessibilidade</h1>
             </div>
 
-            {/* TABS */}
             <div className="flex gap-4 border-b border-white/10 mb-6">
                 <button
                     onClick={() => setActiveTab("EXECUTIONS")}
@@ -97,13 +97,12 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         : "border-transparent text-zinc-500 hover:text-white"
                         }`}
                 >
-                    Fábrica de Conteúdo (Master/Obras)
+                    Fábrica de Conteúdo
                 </button>
             </div>
 
             {activeTab === "EXECUTIONS" && (
                 <>
-                    {/* Stats Cards */}
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
                         {dashboard.byStatus.map(s => {
                             const info = statusLabels[s.status] || { label: s.status, color: "#6b7280" };
@@ -120,9 +119,8 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* By Service Type */}
                     <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: "2rem" }}>
-                        <h3 style={{ marginBottom: "1rem" }}>{t("admin.accessibilitymanagement.porTipoDeServio", `Por Tipo de Serviço`)}</h3>
+                        <h3 style={{ marginBottom: "1rem" }}>Por Tipo de Serviço</h3>
                         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
                             {dashboard.byService.map(s => (
                                 <div key={s.serviceType} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -133,10 +131,9 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Recent Executions */}
                     <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <div className="flex justify-between items-center mb-4">
-                            <h3>{t("admin.accessibilitymanagement.solicitaesRecentesServios", `Solicitações Recentes (Serviços)`)}</h3>
+                            <h3>Solicitações Recentes (Serviços)</h3>
                             <button
                                 onClick={() => window.location.href = '/admin/acessibilidade/novo'}
                                 className="text-xs bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)] text-white px-3 py-1 rounded-lg transition-colors"
@@ -147,17 +144,18 @@ export const AdminAccessibilityManagement: React.FC = () => {
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>{t("admin.accessibilitymanagement.servio", `Serviço`)}</th>
+                                    <th>Serviço</th>
                                     <th>Projeto</th>
                                     <th>Prestador</th>
                                     <th>Status</th>
                                     <th>Data</th>
+                                    <th style={{ textAlign: "right" }}>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {dashboard.recentExecutions.length === 0 ? (
                                     <tr>
-                                        <td colSpan={5} className="text-center py-4 text-zinc-400">{t("admin.accessibilitymanagement.nenhumaExecuoEncontrada", `Nenhuma execução encontrada.`)}</td>
+                                        <td colSpan={6} className="text-center py-4 text-zinc-400">Nenhuma execução encontrada.</td>
                                     </tr>
                                 ) : dashboard.recentExecutions.map(exec => {
                                     const info = statusLabels[exec.status] || { label: exec.status, color: "#6b7280" };
@@ -172,6 +170,32 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                                 </span>
                                             </td>
                                             <td>{new Date(exec.requestedAt).toLocaleDateString("pt-BR")}</td>
+                                            <td style={{ textAlign: "right" }}>
+                                                <div className="flex flex-col items-end gap-1">
+                                                    {exec.status === "VALIDATED" && (
+                                                        <button
+                                                            onClick={async () => {
+                                                                try {
+                                                                    const res = await api.post(`/accessibility-execution/${exec.id}/pay`);
+                                                                    window.location.href = res.data.checkoutUrl;
+                                                                } catch (err: any) {
+                                                                    console.error("Erro ao pagar", err);
+                                                                    alert(err.response?.data?.message || "Erro ao processar pagamento.");
+                                                                }
+                                                            }}
+                                                            className="text-[10px] uppercase font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded transition-colors flex items-center gap-2"
+                                                        >
+                                                            <DollarSign size={12} /> Pagar Agora
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        onClick={() => window.location.href = `/admin/acessibilidade/${exec.id}`}
+                                                        className="text-[10px] uppercase font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded transition-colors"
+                                                    >
+                                                        Detalhes
+                                                    </button>
+                                                </div>
+                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -183,11 +207,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
 
             {activeTab === "REQUESTS" && (
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
-                    <h3 className="mb-4 text-purple-400">{t("admin.accessibilitymanagement.solicitaesDeContedoParaObrasMaster", `Solicitações de Conteúdo para Obras (Master)`)}</h3>
-                    <p className="text-sm text-zinc-500 mb-6">{t("admin.accessibilitymanagement.acompanheAquiOsPedidosDeLibrasEAudiodesc", `
-                        Acompanhe aqui os pedidos de Libras e Audiodescrição feitos diretamente no cadastro de obras para a equipe Master.
-                    `)}</p>
-
+                    <h3 className="mb-4 text-purple-400">Solicitações de Conteúdo (Master)</h3>
                     <table className="table">
                         <thead>
                             <tr>
@@ -195,42 +215,29 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                 <th>Tipo</th>
                                 <th>Status</th>
                                 <th>Solicitado em</th>
-                                <th>Notas Master</th>
                             </tr>
                         </thead>
                         <tbody>
                             {workRequests.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center py-8 text-zinc-400">
-                                        Nenhuma solicitação encontrada.<br />
-                                        <span className="text-xs">Para solicitar, vá em <b>Acervo &gt; Editar Obra &gt; Acessibilidade Master</b>.</span>
-                                    </td>
+                                    <td colSpan={4} className="text-center py-8 text-zinc-400">Nenhuma solicitação encontrada.</td>
                                 </tr>
                             ) : workRequests.map((req: any) => (
                                 <tr key={req.id}>
                                     <td className="font-bold text-white">{req.work?.title || "Obra removida"}</td>
+                                    <td>{req.type}</td>
                                     <td>
-                                        <span className="text-xs font-mono bg-zinc-900/40 border border-gold/20/5 px-2 py-1 rounded">
-                                            {req.type === 'BOTH' ? 'LIBRAS + ÁUDIO' : req.type}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`chip ${req.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400' :
-                                            req.status === 'PENDING' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700'
-                                            }`}>
-                                            {req.status === 'COMPLETED' ? 'CONCLUÍDO' :
-                                                req.status === 'PENDING' ? 'PENDENTE' : req.status}
+                                        <span className={`chip ${req.status === 'COMPLETED' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                            {req.status}
                                         </span>
                                     </td>
                                     <td>{new Date(req.createdAt).toLocaleDateString("pt-BR")}</td>
-                                    <td className="text-sm text-zinc-500 max-w-xs truncate">{req.masterNotes || "-"}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 };

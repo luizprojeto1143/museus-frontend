@@ -44,7 +44,7 @@ interface AuthContextValue extends AuthState {
     tenantType: "MUSEUM" | "PRODUCER" | null;
     hasProviderProfile: boolean;
   }>;
-  enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => void;
+  enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null, selectedCityId?: string | null) => void;
   logout: () => void;
   updateSession: (
     newRole: string,
@@ -54,6 +54,7 @@ interface AuthContextValue extends AuthState {
     newCityId?: string | null
   ) => void;
   isRestoring: boolean;
+  hasPermission: (flag?: string) => boolean;
 }
 
 // ─── Actions ──────────────────────────────────────────────────────
@@ -239,7 +240,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // ─── Guest ────────────────────────────────────────────────────
-  const enterAsGuest = (selectedTenantId?: string | null, selectedEquipamentoId?: string | null) => {
+  const enterAsGuest = (selectedTenantId?: string | null, selectedEquipamentoId?: string | null, selectedCityId?: string | null) => {
     const newState: AuthState = {
       role: "visitor",
       tenantId: selectedTenantId ?? null,
@@ -250,7 +251,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       userId: "guest-id",
       hasProviderProfile: false,
       isGuest: true,
-      cityId: null,
+      cityId: selectedCityId ?? null,
     };
 
     dispatch({ type: "LOGIN", payload: newState });
@@ -324,6 +325,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
+  const hasPermission = (flag?: string) => {
+    if (state.role === 'master' || state.role === 'admin') return true;
+    if (!flag) return false;
+    return !!state.permissions?.[flag];
+  };
+
   const contextValue: AuthContextValue = {
     ...state,
     isAuthenticated: !!state.userId,
@@ -331,7 +338,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     enterAsGuest,
     logout,
     updateSession,
-    isRestoring
+    isRestoring,
+    hasPermission
   };
 
   return (

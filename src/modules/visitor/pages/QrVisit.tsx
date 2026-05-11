@@ -20,7 +20,7 @@ export const QrVisit: React.FC = () => {
   const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
-  const { email, updateSession, token, role, name } = useAuth();
+  const { email, updateSession, token, role, name, isAuthenticated } = useAuth();
 
   const [data, setData] = useState<QRCodeData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,8 +72,8 @@ export const QrVisit: React.FC = () => {
     } else if (data.type === "TENANT" && data.referenceId) {
       navigate(`/?select=${data.referenceId}`);
     } else if (data.type === "EQUIPAMENTO" && data.referenceId) {
-      if (token) {
-        updateSession(token, "", role || "visitor", data.tenantId, name, data.referenceId);
+      if (isAuthenticated) {
+        updateSession(role || "visitor", data.tenantId, name, data.referenceId);
       }
       navigate("/home");
     }

@@ -48,6 +48,7 @@ interface MuseumSettings {
   frameUrl?: string;
   bannerUrl?: string;
   capacityPerHour?: number;
+  stripeConnectId?: string;
   asaasWalletId?: string;
 }
 
@@ -87,6 +88,7 @@ export const AdminMuseumSettings: React.FC = () => {
     welcomeVideoUrl: "",
     frameUrl: "",
     bannerUrl: "",
+    stripeConnectId: "",
     asaasWalletId: "",
   });
 
@@ -134,6 +136,27 @@ export const AdminMuseumSettings: React.FC = () => {
       alert(t("admin.museumsettings.error"));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleStripeOnboarding = async () => {
+    try {
+      const { data } = await api.get(`/stripe/onboarding-link?type=MUSEUM&id=${tenantId}`);
+      window.location.href = data.url;
+    } catch (err) {
+      console.error("Error generating onboarding link", err);
+      alert("Erro ao conectar com o Stripe. Tente novamente.");
+    }
+  };
+  
+  const handleStripeDashboard = async () => {
+    try {
+      const { data } = await api.get(`/stripe/dashboard-link?type=MUSEUM&id=${tenantId}`);
+      window.open(data.url, '_blank');
+    } catch (err) {
+      console.error("Error generating dashboard link", err);
+      // Fallback to static if dynamic fails
+      window.open('https://dashboard.stripe.com', '_blank');
     }
   };
 
@@ -571,46 +594,55 @@ export const AdminMuseumSettings: React.FC = () => {
 
             <div className="space-y-6">
               <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)] text-sm text-[#c9b58c] flex gap-3 items-start leading-relaxed">
-                <HelpCircle size={32} className="text-[var(--accent-primary)] shrink-0" />
+                <ShieldCheck size={32} className="text-[var(--accent-primary)] shrink-0" />
                 <p>
-                  Para receber pagamentos diretamente em sua conta, você deve configurar o seu <strong>Wallet ID</strong> do Asaas.
-                  O sistema realizará um split automático: <strong>{t("admin.museumsettings.95ParaVoc", `95% para você`)}</strong> e 5% de taxa da plataforma.
+                  Para receber pagamentos diretamente em sua conta (ingressos, doações e loja), você deve configurar sua conta no <strong>Stripe Connect</strong>.
+                  O sistema realizará um split automático: <strong>95% para o museu</strong> e 5% de taxa da plataforma.
                 </p>
               </div>
 
               <div className="visitor-input-group">
                 <label className="flex items-center gap-2">
-                  ID da Carteira Asaas (Wallet ID)
-                  <div className="group relative">
-                    <HelpCircle size={14} className="text-[var(--accent-primary)] cursor-help" />
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-2 bg-black border border-[var(--accent-primary)] rounded-lg text-[10px] invisible group-hover:visible shadow-xl z-50">{t("admin.museumsettings.vocEncontraEsteIdNoMenuConfiguraesGtWebh", `
-                      Você encontra este ID no menu "Configurações &gt; Webhooks &gt; Token de Autenticação" ou entrando em contato com o suporte Asaas.
-                    `)}</div>
-                  </div>
+                  Status da Conta Stripe
                 </label>
-                <input
-                  className="visitor-input font-mono"
-                  value={settings.asaasWalletId || ""}
-                  onChange={(e) => setSettings({ ...settings, asaasWalletId: e.target.value })}
-                  placeholder="ex: wall_123456789..."
-                />
+                <div className="p-6 bg-black/40 rounded-2xl border border-dashed border-[var(--border-default)] flex flex-col items-center justify-center text-center">
+                  {settings.stripeConnectId ? (
+                    <>
+                      <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-3">
+                        <CheckCircle size={24} />
+                      </div>
+                      <h4 className="text-white font-bold">Conta Conectada</h4>
+                      <p className="text-xs text-[#c9b58c] mt-1 mb-4">Sua conta está pronta para receber pagamentos.</p>
+                      <Button onClick={handleStripeDashboard} className="btn-ghost-gold text-xs">
+                        Acessar Painel Stripe
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-12 h-12 bg-white/5 text-[var(--accent-primary)] rounded-full flex items-center justify-center mb-3">
+                        <CreditCard size={24} />
+                      </div>
+                      <h4 className="text-white font-bold">Nenhuma conta vinculada</h4>
+                      <p className="text-xs text-[#c9b58c] mt-1 mb-6">Conecte sua conta bancária para habilitar vendas e doações.</p>
+                      <Button onClick={handleStripeOnboarding} className="btn-primary-gold px-8">
+                        Conectar com Stripe
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">{t("admin.museumsettings.comissoPlataforma", `Comissão Plataforma`)}</h4>
+                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">Taxa Plataforma</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">5%</p>
-                  <p className="text-[10px] opacity-60">{t("admin.museumsettings.retidosNaTransao", `Retidos na transação`)}</p>
+                  <p className="text-[10px] opacity-60">Retidos na transação</p>
                 </div>
                 <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">Seu Recebimento</h4>
+                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">Seu Repasse</h4>
                   <p className="text-2xl font-black text-[#EAE0D5]">95%</p>
-                  <p className="text-[10px] opacity-60">Direto na sua carteira</p>
+                  <p className="text-[10px] opacity-60">Direto na sua conta bancária</p>
                 </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-yellow-900/10 border border-yellow-700/30 text-xs text-yellow-200/70">
-                <strong>{t("admin.museumsettings.ateno", `Atenção:`)}</strong> Certifique-se de que o Wallet ID está correto. Transferências para IDs incorretos não podem ser estornadas automaticamente.
               </div>
             </div>
           </div>

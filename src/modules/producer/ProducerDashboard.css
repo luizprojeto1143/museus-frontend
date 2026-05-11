@@ -251,3 +251,36 @@
     background: rgba(212, 175, 55, 0.05);
     color: var(--accent-primary);
 }
+
+/* NEW FUNDING STYLES */
+.pipeline-stat-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.pipeline-stat-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.notice-opportunity-card {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(0, 0, 0, 0.4));
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 20px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-tip-card {
+    background: linear-gradient(135deg, #1a1108, #2c1e10);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 24px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}

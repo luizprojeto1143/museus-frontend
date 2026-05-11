@@ -6,9 +6,11 @@ import { api } from "../../api/client";
 interface RegisterProps {
   tenantId: string;
   tenantName: string;
+  cityId?: string;
+  equipamentoId?: string;
 }
 
-export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
+export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId, equipamentoId }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [name, setName] = useState("");
@@ -74,6 +76,8 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName }) => {
       // Register User
       await api.post("/auth/register", {
         tenantId,
+        cityId,
+        equipamentoId,
         name,
         email,
         password,

@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { api } from "../../../api/client";
-import { Heart, Calendar, Users, Music, Play, Pause } from "lucide-react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
+import { Heart, Calendar, Users, Music, Play, Pause, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { api } from "../../../api/client";
+import { getFullUrl } from "../../../utils/url";
+import { PageLoader, Button, Badge } from "@/components/ui";
 import "./FamilyTimeline.css";
 
 interface FamilyEvent {
@@ -26,61 +30,110 @@ interface FamilyProfile {
 
 export const FamilyTimeline: React.FC = () => {
     const { profileId } = useParams<{ profileId: string }>();
+    const navigate = useNavigate();
+    const { t } = useTranslation();
     const [profile, setProfile] = useState<FamilyProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
+    const fetchProfile = useCallback(async () => {
+        if (!profileId) return;
+        setLoading(true);
+        try {
+            const res = await api.get(`/roadmap-family/profiles/${profileId}`);
+            setProfile(res.data);
+        } catch (err) {
+            console.error("Erro ao carregar perfil familiar:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, [profileId]);
+
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const res = await api.get(`/roadmap-family/profiles/${profileId}`);
-                setProfile(res.data);
-            } catch (err) {
-                console.error("Erro ao carregar perfil familiar:", err);
-            } finally {
-                setLoading(false);
+        fetchProfile();
+
+        // Cleanup function for audio memory
+        return () => {
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.src = "";
+                audioRef.current.load();
             }
         };
-        fetchProfile();
-    }, [profileId]);
+    }, [fetchProfile]);
 
     const toggleAudio = () => {
         if (!audioRef.current) return;
         if (isPlaying) {
             audioRef.current.pause();
         } else {
-            audioRef.current.play();
+            audioRef.current.play().catch(e => {
+                console.warn("Erro ao reproduzir áudio:", e);
+                setIsPlaying(false);
+            });
         }
-        setIsPlaying(!isPlaying);
     };
 
-    if (loading) return null;
-    if (!profile) return <div className="text-center py-20">Perfil não encontrado</div>;
+    if (loading) return <PageLoader label={t("family.loading", "Recuperando memórias...")} />;
+    
+    if (!profile) return (
+        <div className="family-error-container">
+            <h2 className="text-2xl font-bold mb-4">{t("family.notFound", "Legado Familiar não encontrado")}</h2>
+            <Button onClick={() => navigate(-1)} variant="outline">
+                <ChevronLeft className="mr-2" /> {t("common.back", "Voltar")}
+            </Button>
+        </div>
+    );
 
     return (
         <div className="family-timeline-container">
+            <Helmet>
+                <title>{t("family.seoTitle", { family: profile.familyName })} | Cultura Viva</title>
+                <meta name="description" content={profile.description?.substring(0, 160)} />
+            </Helmet>
+
             <motion.header
                 className="family-hero"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                style={{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), #000), url(${profile.coverImageUrl})` }}
+                style={{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), #000), url(${getFullUrl(profile.coverImageUrl)})` }}
             >
+                <Button 
+                    className="back-btn-floating" 
+                    variant="glass" 
+                    onClick={() => navigate(-1)}
+                >
+                    <ChevronLeft size={20} />
+                </Button>
+
                 <div className="hero-content">
+                    <Badge variant="glass" className="mb-4 text-gold">{t("family.heritage", "Memória Familiar")}</Badge>
                     <motion.h1
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.2 }}
                     >
-                        Família {profile.familyName}
+                        {t("family.name", { family: profile.familyName })}
                     </motion.h1>
-                    <p>{profile.description}</p>
+                    <p className="hero-desc">{profile.description}</p>
 
                     {profile.audioUrl && (
-                        <div className="audio-player-mini" onClick={toggleAudio}>
-                            <audio ref={audioRef} src={profile.audioUrl} onEnded={() => setIsPlaying(false)} />
-                            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-                            <span>{isPlaying ? "Ouvindo narrativa..." : "Ouvir história da família"}</span>
+                        <div className={`audio-player-mini ${isPlaying ? 'active' : ''}`} onClick={toggleAudio}>
+                            <audio 
+                                ref={audioRef} 
+                                src={getFullUrl(profile.audioUrl)} 
+                                onPlay={() => setIsPlaying(true)}
+                                onPause={() => setIsPlaying(false)}
+                                onEnded={() => setIsPlaying(false)} 
+                            />
+                            <div className="audio-icon-wrapper">
+                                {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+                            </div>
+                            <div className="audio-labels">
+                                <span className="audio-status">{isPlaying ? t("family.audioPlaying", "Ouvindo legado...") : t("family.audioListen", "História Narrada")}</span>
+                                <span className="audio-cta">{isPlaying ? t("family.audioPause", "Pausar") : t("family.audioPlay", "Tocar")}</span>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -91,24 +144,29 @@ export const FamilyTimeline: React.FC = () => {
                     <motion.div
                         key={event.id}
                         className={`timeline-node ${idx % 2 === 0 ? "left" : "right"}`}
-                        initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6, delay: 0.1 }}
                     >
                         <div className="node-connector">
                             <div className="node-dot"><Calendar size={14} /></div>
                         </div>
 
-                        <div className="node-card glass">
+                        <div className="node-card glass-card">
                             <span className="node-year">{event.year}</span>
-                            <h3>{event.title}</h3>
-                            {event.imageUrl && <img src={event.imageUrl} alt={event.title} className="node-image" />}
-                            <p>{event.description}</p>
+                            <h3 className="node-title">{event.title}</h3>
+                            {event.imageUrl && (
+                                <div className="node-image-wrapper">
+                                    <img src={getFullUrl(event.imageUrl)} alt={event.title} className="node-image" loading="lazy" />
+                                </div>
+                            )}
+                            <p className="node-desc">{event.description}</p>
 
                             {event.people && event.people.length > 0 && (
                                 <div className="node-footer">
-                                    <Users size={12} className="mr-1" />
-                                    {event.people.join(", ")}
+                                    <Users size={12} className="mr-2 text-gold" />
+                                    <span>{event.people.join(", ")}</span>
                                 </div>
                             )}
                         </div>
@@ -117,12 +175,17 @@ export const FamilyTimeline: React.FC = () => {
             </div>
 
             <footer className="family-footer">
-                <Heart size={24} className="text-red-500 mb-4" />
-                <p>Preservando a memória de quem construiu nossa história.</p>
+                <motion.div 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                >
+                    <Heart size={32} className="text-red-500 mb-6" fill="currentColor" />
+                    <p className="max-w-xs mx-auto text-sm italic">
+                        {t("family.footerMsg", "Preservando a memória daqueles que pavimentaram o caminho para o nosso presente.")}
+                    </p>
+                </motion.div>
             </footer>
         </div>
     );
 };
-
-// Internal ref for audio
-import { useRef } from "react";

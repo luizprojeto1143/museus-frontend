@@ -97,8 +97,8 @@ export const ScannerPage: React.FC = () => {
             if (work.equipamentoId && work.equipamentoId !== equipamentoId) {
                 const change = window.confirm(`Esta obra pertence ao espaço "${work.equipamento?.nome || 'outro local'}". Deseja entrar neste espaço para ver os detalhes?`);
                 if (change) {
-                    if (isAuthenticated && token) {
-                        updateSession(token, "", role || "visitor", work.tenantId, name, work.equipamentoId);
+                    if (isAuthenticated) {
+                        updateSession(role || "visitor", work.tenantId, name, work.equipamentoId);
                     } else {
                         enterAsGuest(work.tenantId, work.equipamentoId);
                     }
@@ -110,9 +110,9 @@ export const ScannerPage: React.FC = () => {
             }
             
             if (decodedText.includes("/qr/")) {
-                navigate(`/qr/${workId}`);
+                navigate(`/qr/${workId}?scan=true`);
             } else {
-                navigate(`/obras/${workId}`);
+                navigate(`/obras/${workId}?scan=true`);
             }
         } catch (err) {
             console.error("Erro ao validar obra", err);
@@ -172,7 +172,7 @@ export const ScannerPage: React.FC = () => {
                             <div className="absolute bottom-0 right-0 w-4 h-4 border-b-4 border-r-4 border-gold -mb-1 -mr-1"></div>
                         </div>
                         <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm animate-pulse">
-                            {validating ? "Validando Localização..." : t("visitor.scannerpage.procurandoCdigo", "Procurando código...")}
+                            {validating ? "Validando Obra..." : t("visitor.scannerpage.procurandoCdigo", "Procurando código...")}
                         </div>
                     </div>
                 )}

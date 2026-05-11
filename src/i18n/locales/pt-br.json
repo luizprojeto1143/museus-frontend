@@ -498,6 +498,18 @@
       "guest_prompt": "Cada obra visitada e cada desafio concluído rende uma medalha exclusiva. Crie sua conta para começar sua coleção!",
       "start_collection": "Começar minha Coleção"
     },
+    "family": {
+      "loading": "Recuperando memórias...",
+      "notFound": "Legado Familiar não encontrado",
+      "heritage": "Memória Familiar",
+      "seoTitle": "Família {{family}}",
+      "name": "Família {{family}}",
+      "audioPlaying": "Ouvindo legado...",
+      "audioListen": "História Narrada",
+      "audioPause": "Pausar",
+      "audioPlay": "Tocar",
+      "footerMsg": "Preservando a memória daqueles que pavimentaram o caminho para o nosso presente."
+    },
     "visualScanner": {
       "title": "Reconhecimento Visual",
       "loadingModel": "Carregando modelo de IA...",
@@ -2738,16 +2750,26 @@
     },
     "capture": {
       "title": "Captura de Vestígio",
-      "syncing": "Sincronizando Satélites GPS...",
+      "syncing": "Sincronizando...",
+      "validating": "Validando QR Code...",
+      "qrValidated": "QR Validado",
+      "authStatus": "Autenticação Digital",
+      "authorized": "COLETA AUTORIZADA",
+      "captured": "CONQUISTADO!",
+      "rank": "Ordem #",
+      "viewPassport": "Ver Passaporte",
       "failed": "Falha na Captura",
       "success": "Vestígio Coletado!",
       "radarStatus": "Status do Radar",
       "inRange": "ALVO EM ALCANCE",
       "outOfRange": "FORA DE ALCANCE",
       "scan": "Escanear Área",
-      "collect": "Coletar Vestígio",
-      "backToMap": "Voltar ao Mapa"
+      "collect": "Reivindicar Vestígio",
+      "backToMap": "Voltar ao Mapa",
+      "readyToCollect": "Pronto para Coleta"
     },
+    "detected": "Vestígio Detectado",
+    "unlockMessage": "Escaneamento validado. Reivindique sua recompensa!",
     "passport": {
       "exploration": "Sua Jornada de Exploração",
       "relics": "Relíquias Definitivas",

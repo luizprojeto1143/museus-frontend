@@ -7,10 +7,11 @@ import "@tensorflow/tfjs-backend-cpu";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
+import { XCircle } from "lucide-react";
 
 export const AdminScannerTrainer: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId } = useAuth(); // Assuming admin is scoped to tenant
+    const { tenantId, hasPermission } = useAuth(); // Assuming admin is scoped to tenant
     const videoRef = useRef<HTMLVideoElement>(null);
     const [classifier, setClassifier] = useState<knnClassifier.KNNClassifier | null>(null);
     const [net, setNet] = useState<mobilenet.MobileNet | null>(null);
@@ -19,6 +20,16 @@ export const AdminScannerTrainer: React.FC = () => {
     const [selectedWorkId, setSelectedWorkId] = useState<string>("");
     const [exampleCounts, setExampleCounts] = useState<Record<string, number>>({});
     const [training, setTraining] = useState(false);
+
+    if (!hasPermission("manage_chat_ai")) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+          <XCircle size={64} className="text-red-500 mb-6 opacity-20" />
+          <h2 className="text-2xl font-black text-white mb-2">Treinamento Visual Restrito</h2>
+          <p className="text-zinc-500 max-w-sm">Você não possui a flag <strong>manage_chat_ai</strong> necessária para treinar a inteligência visual do scanner.</p>
+        </div>
+      );
+    }
 
     const startCamera = useCallback(async () => {
         if (videoRef.current) {

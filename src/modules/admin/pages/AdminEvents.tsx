@@ -22,7 +22,7 @@ type AdminEventItem = {
 
 export const AdminEvents: React.FC = () => {
   const { t } = useTranslation();
-  const { tenantId } = useAuth();
+  const { tenantId, hasPermission } = useAuth();
   const term = useTerminology();
   const navigate = useNavigate();
   const [events, setEvents] = useState<AdminEventItem[]>([]);
@@ -93,11 +93,13 @@ export const AdminEvents: React.FC = () => {
             Gerencie toda a programação cultural.
           `)}</p>
         </div>
-        <Link to="/admin/eventos/novo">
-          <Button className="bg-gold text-black hover:bg-gold/90 font-bold shadow-lg shadow-gold/10 border-none">
-            <Plus size={18} className="mr-2" /> Novo {term.event}
-          </Button>
-        </Link>
+        {hasPermission("manage_events") && (
+          <Link to="/admin/eventos/novo">
+            <Button className="bg-gold text-black hover:bg-gold/90 font-bold shadow-lg shadow-gold/10 border-none">
+              <Plus size={18} className="mr-2" /> Novo {term.event}
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Filters */}
@@ -181,19 +183,22 @@ export const AdminEvents: React.FC = () => {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 self-end md:self-center">
-                      <button
-                        onClick={() => navigate(`/admin/eventos/${ev.id}/dashboard`)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-zinc-400 hover:text-gold hover:bg-gold/10 rounded-2xl transition-all"
-                      >
-                        <BarChart2 size={18} />
-                        <span className="hidden lg:inline">{t("admin.events.relatrio", `Relatório`)}</span>
-                      </button>
+                      {hasPermission("view_analytics") && (
+                        <button
+                          onClick={() => navigate(`/admin/eventos/${ev.id}/dashboard`)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-zinc-400 hover:text-gold hover:bg-gold/10 rounded-2xl transition-all"
+                        >
+                          <BarChart2 size={18} />
+                          <span className="hidden lg:inline">{t("admin.events.relatrio", `Relatório`)}</span>
+                        </button>
+                      )}
+                      
                       <button
                         onClick={() => navigate(`/admin/eventos/${ev.id}`)}
                         className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-all border border-white/5"
                       >
                         <Edit size={18} />
-                        <span className="hidden lg:inline">Editar</span>
+                        <span className="hidden lg:inline">{hasPermission("manage_events") ? "Editar" : "Visualizar"}</span>
                       </button>
                     </div>
                   </div>

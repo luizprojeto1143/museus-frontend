@@ -6,7 +6,7 @@ import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
     PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { DollarSign, TrendingUp, CreditCard, ShoppingBag, Heart, Ticket, Loader2, ArrowUpRight, PieChart as PieChartIcon } from 'lucide-react';
+import { DollarSign, TrendingUp, CreditCard, ShoppingBag, Heart, Ticket, ArrowUpRight, PieChart as PieChartIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface FinanceSummary {
@@ -33,11 +33,10 @@ interface FinanceData {
     dailyRevenue: DailyRevenue[];
 }
 
-// Premium dark mode colors for charts
 const COLORS = ['var(--accent-primary)', '#10b981', 'var(--accent-primary)', '#a855f7'];
 
 export const AdminFinance: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [data, setData] = useState<FinanceData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -88,16 +87,16 @@ export const AdminFinance: React.FC = () => {
     return (
         <div className="admin-finance p-4 md:p-8 max-w-6xl mx-auto space-y-8 animate-fadeIn pb-24">
 
-            {/* Header section matching premium style */}
+            {/* Header section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
                 <div>
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 flex items-center gap-3">
                         <DollarSign className="text-gold" size={32} />
                         Dashboard Financeiro
                     </h1>
-                    <p className="text-zinc-400 text-sm font-medium mt-1">{t("admin.finance.visoConsolidadaDasReceitasProcessadasLoc", `
-                        Visão consolidada das receitas processadas localmente e via Asaas.
-                    `)}</p>
+                    <p className="text-zinc-400 text-sm font-medium mt-1">
+                        Visão consolidada das receitas processadas pelo Stripe Connect.
+                    </p>
                 </div>
                 <div className="bg-gold/10 border border-gold/20 px-4 py-2 rounded-xl text-gold text-sm font-bold flex items-center gap-2 shadow-md shadow-black/20 shadow-gold/5 backdrop-blur-sm">
                     <TrendingUp size={16} />
@@ -112,7 +111,7 @@ export const AdminFinance: React.FC = () => {
                         <CreditCard size={16} className="text-zinc-500" /> Receita Bruta
                     </div>
                     <div className="text-3xl font-black text-white">{formatCurrency(data.summary.grossTotal)}</div>
-                    <p className="text-[11px] text-zinc-500 mt-2 font-medium">{t("admin.finance.somaDeTodasAsVendasEDoaes", `Soma de todas as vendas e doações`)}</p>
+                    <p className="text-[11px] text-zinc-500 mt-2 font-medium">Soma de todas as vendas e doações</p>
                 </div>
 
                 <div className="bg-zinc-900/40 hover:bg-zinc-900/60 transition-colors rounded-3xl p-6 border border-white/5 flex flex-col justify-center">
@@ -127,9 +126,9 @@ export const AdminFinance: React.FC = () => {
                     <div className="absolute top-0 right-0 p-6 opacity-5 text-gold group-hover:scale-110 group-hover:opacity-10 transition-all duration-500">
                         <DollarSign size={100} />
                     </div>
-                    <div className="text-gold/80 font-bold text-xs uppercase tracking-wider flex items-center gap-2 mb-3 relative z-10">{t("admin.finance.receitaLquidaEstimadaMuseu", `
+                    <div className="text-gold/80 font-bold text-xs uppercase tracking-wider flex items-center gap-2 mb-3 relative z-10">
                         Receita Líquida Estimada (Museu)
-                    `)}</div>
+                    </div>
                     <div className="text-5xl font-black text-gold relative z-10 drop-shadow-md">
                         {formatCurrency(data.summary.netTotal)}
                     </div>
@@ -138,7 +137,7 @@ export const AdminFinance: React.FC = () => {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
                         </span>
-                        Repassado para sua Asaas Wallet
+                        Repassado para sua conta Stripe Connect
                     </div>
                 </div>
             </div>
@@ -207,7 +206,7 @@ export const AdminFinance: React.FC = () => {
                 {/* Gráfico 7 Dias */}
                 <div className="bg-zinc-900/40 rounded-3xl p-6 border border-white/5 lg:col-span-2 flex flex-col">
                     <h2 className="text-lg font-bold text-white mb-6 border-b border-white/5 pb-4 flex items-center justify-between">
-                        <span>{t("admin.finance.receitaDiriaLtimos7Dias", `Receita Diária (Últimos 7 dias)`)}</span>
+                        <span>Receita Diária (Últimos 7 dias)</span>
                         <ArrowUpRight size={18} className="text-zinc-500" />
                     </h2>
                     <div className="flex-1 w-full min-h-[350px]">
@@ -260,8 +259,6 @@ export const AdminFinance: React.FC = () => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };
-

@@ -6,7 +6,8 @@ import { useAuth } from "../auth/AuthContext";
 import {
     ArrowLeft, Save, FileText, Send, Upload, Trash2, Download, Paperclip,
     Trophy, Rocket, AlertCircle, CheckCircle2, History, Banknote,
-    Accessibility, Calendar, ListChecks, Info
+    Accessibility, Calendar, ListChecks, Info, Wand2, Sparkles, Calculator,
+    Share2, QrCode, ExternalLink, X, Ticket
 } from "lucide-react";
 import { useToast } from "../../contexts/ToastContext";
 import { Button, Input, Textarea } from "../../components/ui";
@@ -64,9 +65,12 @@ export const ProducerProjectForm: React.FC = () => {
             description: ""
         },
         reviewNotes: "",
-        reviewedAt: null as string | null
+        reviewedAt: null as string | null,
+        eventId: null as string | null
     });
 
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [publishedEventData, setPublishedEventData] = useState<any>(null);
     const [notice, setNotice] = useState<any>(null);
 
     useEffect(() => {
@@ -137,6 +141,33 @@ export const ProducerProjectForm: React.FC = () => {
         }
     };
 
+    const handleAiAssist = async (field: "summary" | "description" | "justification") => {
+        if (!formData.title) {
+            addToast("Dê um título ao projeto para que a IA possa entender o contexto.", "warning");
+            return;
+        }
+
+        setSaving(true);
+        try {
+            const res = await api.post("/ai/refine-proposal", {
+                field,
+                projectTitle: formData.title,
+                projectCurrentText: formData[field],
+                noticeObjectives: notice?.objectives,
+                noticeRequirements: notice?.requirements
+            });
+
+            if (res.data.response) {
+                setFormData(prev => ({ ...prev, [field]: res.data.response }));
+                addToast("Texto refinado pela IA!", "success");
+            }
+        } catch (err) {
+            addToast("O assistente de IA está ocupado agora. Tente novamente em breve.", "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleSubmitProject = async () => {
         if (!id) return;
 
@@ -163,13 +194,15 @@ export const ProducerProjectForm: React.FC = () => {
 
     const handlePublish = async () => {
         if (!id) return;
-        if (!window.confirm("Publicar na Agenda Cultural?")) return;
+        if (!window.confirm("Isso tornará o projeto um evento público na Agenda Cultural. Confirmar?")) return;
 
         setSaving(true);
         try {
-            await api.post(`/projects/${id}/publish-event`);
-            addToast("Publicado na agenda!", "success");
-            navigate("/producer/events");
+            const res = await api.post(`/projects/${id}/publish-event`);
+            addToast("Publicado na agenda com sucesso!", "success");
+            setPublishedEventData(res.data);
+            setShowShareModal(true);
+            setFormData(prev => ({ ...prev, status: "IN_EXECUTION", eventId: res.data.eventId }));
         } catch (err: any) {
             addToast("Erro ao publicar.", "error");
         } finally {
@@ -358,14 +391,39 @@ export const ProducerProjectForm: React.FC = () => {
                         </button>
                     </div>
 
+                    {/* SUBMISSION CHECKLIST */}
+                    <div className="bg-[#2c1e10]/50 rounded-2xl p-5 border border-[#463420] backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-[#EAE0D5] font-bold text-sm mb-4">
+                            <ListChecks size={16} className="text-[var(--accent-primary)]" /> Checklist de Envio
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 text-xs">
+                                {formData.title ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
+                                <span className={formData.title ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Título do Projeto</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs">
+                                {formData.description.length > 50 ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
+                                <span className={formData.description.length > 50 ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Descrição Detalhada</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs">
+                                {formData.requestedBudget ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
+                                <span className={formData.requestedBudget ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Orçamento Definido</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs">
+                                {formData.accessibilityPlan.hasPlan ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
+                                <span className={formData.accessibilityPlan.hasPlan ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Plano de Acessibilidade</span>
+                            </div>
+                        </div>
+                    </div>
+
                     {/* TIPS CARD */}
                     <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] rounded-2xl p-5 border border-[#463420]">
                         <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-sm mb-3">
-                            <Rocket size={16} /> Dica do Mentor
+                            <Sparkles size={16} /> Dica de Ouro
                         </div>
-                        <p className="text-xs text-[#B0A090] leading-relaxed">{t("producer.producerproject.projetosComDescriesDetalhadasEOramentosR", `
-                            Projetos com descrições detalhadas e orçamentos realistas têm 40% mais chance de aprovação rápida.
-                        `)}</p>
+                        <p className="text-xs text-[#B0A090] leading-relaxed">
+                            Use o <strong>Ajudante IA</strong> nos campos de descrição para alinhar seu texto automaticamente com os objetivos deste edital.
+                        </p>
                     </div>
                 </div>
 
@@ -396,16 +454,20 @@ export const ProducerProjectForm: React.FC = () => {
                                     </div>
 
                                     {notice && (
-                                        <>
-                                            <div className="p-4 bg-black/20 rounded-xl border border-[#463420]/50">
-                                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-1">Objetivos do Edital</div>
-                                                <div className="text-xs text-[#B0A090] line-clamp-3">{notice.objectives || 'Não informados'}</div>
+                                        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="p-4 bg-[var(--accent-primary)]/5 rounded-2xl border border-[var(--accent-primary)]/10">
+                                                <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-[10px] uppercase mb-2 tracking-wider">
+                                                    <Info size={12} /> Objetivos do Edital
+                                                </div>
+                                                <div className="text-xs text-[#B0A090] leading-relaxed line-clamp-4">{notice.objectives || 'Não informados'}</div>
                                             </div>
-                                            <div className="p-4 bg-black/20 rounded-xl border border-[#463420]/50">
-                                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-1">Requisitos do Edital</div>
-                                                <div className="text-xs text-[#B0A090] line-clamp-3">{notice.requirements || 'Não informados'}</div>
+                                            <div className="p-4 bg-[var(--accent-primary)]/5 rounded-2xl border border-[var(--accent-primary)]/10">
+                                                <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-[10px] uppercase mb-2 tracking-wider">
+                                                    <ListChecks size={12} /> Requisitos do Edital
+                                                </div>
+                                                <div className="text-xs text-[#B0A090] leading-relaxed line-clamp-4">{notice.requirements || 'Não informados'}</div>
                                             </div>
-                                        </>
+                                        </div>
                                     )}
                                 </div>
 
@@ -431,38 +493,77 @@ export const ProducerProjectForm: React.FC = () => {
                                     />
                                 </div>
 
-                                <Textarea
-                                    label="Resumo (Pitch de Elevador)"
-                                    name="summary"
-                                    value={formData.summary}
-                                    onChange={handleChange}
-                                    rows={3}
-                                    maxLength={200}
-                                    disabled={readOnly}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
-                                    placeholder={t("producer.producerproject.vendaSeuPeixeEmAt200Caracteres", `Venda seu peixe em até 200 caracteres...`)}
-                                />
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-sm font-bold text-[#B0A090]">Resumo (Pitch de Elevador)</label>
+                                        {!readOnly && (
+                                            <button 
+                                                onClick={() => handleAiAssist("summary")}
+                                                className="text-[10px] flex items-center gap-1 text-[var(--accent-primary)] hover:opacity-80 font-bold uppercase"
+                                                disabled={saving}
+                                            >
+                                                <Wand2 size={12} /> Ajudante IA
+                                            </button>
+                                        )}
+                                    </div>
+                                    <Textarea
+                                        name="summary"
+                                        value={formData.summary}
+                                        onChange={handleChange}
+                                        rows={3}
+                                        maxLength={200}
+                                        disabled={readOnly}
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
+                                        placeholder={t("producer.producerproject.vendaSeuPeixeEmAt200Caracteres", `Venda seu peixe em até 200 caracteres...`)}
+                                    />
+                                </div>
 
-                                <Textarea
-                                    label={t("producer.producerproject.descrioCompleta", `Descrição Completa`)}
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    rows={8}
-                                    disabled={readOnly}
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
-                                />
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-sm font-bold text-[#B0A090]">{t("producer.producerproject.descrioCompleta", `Descrição Completa`)}</label>
+                                        {!readOnly && (
+                                            <button 
+                                                onClick={() => handleAiAssist("description")}
+                                                className="text-[10px] flex items-center gap-1 text-[var(--accent-primary)] hover:opacity-80 font-bold uppercase"
+                                                disabled={saving}
+                                            >
+                                                <Wand2 size={12} /> Ajudante IA
+                                            </button>
+                                        )}
+                                    </div>
+                                    <Textarea
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleChange}
+                                        rows={8}
+                                        disabled={readOnly}
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
+                                    />
+                                </div>
 
-                                <Textarea
-                                    label="Justificativa"
-                                    name="justification"
-                                    value={formData.justification}
-                                    onChange={handleChange}
-                                    rows={5}
-                                    disabled={readOnly}
-                                    placeholder="Por que este projeto deve receber o recurso?"
-                                    className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
-                                />
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-sm font-bold text-[#B0A090]">Justificativa</label>
+                                        {!readOnly && (
+                                            <button 
+                                                onClick={() => handleAiAssist("justification")}
+                                                className="text-[10px] flex items-center gap-1 text-[var(--accent-primary)] hover:opacity-80 font-bold uppercase"
+                                                disabled={saving}
+                                            >
+                                                <Wand2 size={12} /> Ajudante IA
+                                            </button>
+                                        )}
+                                    </div>
+                                    <Textarea
+                                        name="justification"
+                                        value={formData.justification}
+                                        onChange={handleChange}
+                                        rows={5}
+                                        disabled={readOnly}
+                                        placeholder="Por que este projeto deve receber o recurso?"
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
+                                    />
+                                </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <Input
@@ -497,7 +598,7 @@ export const ProducerProjectForm: React.FC = () => {
                                                 Submeter ao Edital
                                             </Button>
                                         )}
-                                        {isEdit && formData.status !== "IN_EXECUTION" && formData.status !== "DRAFT" && (
+                                        {isEdit && formData.status === "APPROVED" && (
                                             <Button
                                                 onClick={handlePublish}
                                                 disabled={saving}
@@ -505,7 +606,7 @@ export const ProducerProjectForm: React.FC = () => {
                                                 className="border-[var(--accent-primary)] text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10"
                                                 leftIcon={<Rocket size={16} />}
                                             >
-                                                Publicar na Agenda
+                                                Ativar e Publicar na Agenda
                                             </Button>
                                         )}
                                         <Button
@@ -761,6 +862,94 @@ export const ProducerProjectForm: React.FC = () => {
                     )}
                 </div>
             </div>
+
+            {/* SHARE & ACTIVATE HUB MODAL */}
+            {showShareModal && publishedEventData && (
+                <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#2c1e10] border border-[var(--accent-primary)]/40 rounded-[40px] max-w-lg w-full p-8 shadow-2xl shadow-[var(--accent-primary)]/10 relative overflow-hidden">
+                        {/* Decorative Background */}
+                        <div className="absolute -right-12 -top-12 text-[var(--accent-primary)] opacity-5 rotate-12">
+                            <Rocket size={240} />
+                        </div>
+
+                        <button 
+                            onClick={() => setShowShareModal(false)}
+                            className="absolute right-6 top-6 p-2 hover:bg-white/5 rounded-full text-[#B0A090] transition-all"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        <div className="text-center mb-8 relative z-10">
+                            <div className="w-20 h-20 bg-gradient-to-br from-[var(--accent-primary)] to-[#b39025] rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-[var(--accent-primary)]/20">
+                                <Rocket className="text-[#1a1108]" size={40} />
+                            </div>
+                            <h2 className="text-2xl font-bold text-[#EAE0D5] font-serif mb-2">Evento Ativado!</h2>
+                            <p className="text-[#B0A090] text-sm">Seu projeto agora faz parte da Agenda Cultural oficial da cidade.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 mb-8 relative z-10">
+                            {/* QR CODE PREVIEW */}
+                            <div className="bg-black/30 rounded-3xl p-6 flex items-center gap-6 border border-[#463420]">
+                                <div className="bg-white p-2 rounded-xl shrink-0">
+                                    {/* Mock QR Code for Demo - In production we'd use a real lib or Google Charts API */}
+                                    <img 
+                                        src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://cultura.viva/events/${publishedEventData.eventId}`} 
+                                        alt="QR Code" 
+                                        className="w-20 h-20"
+                                    />
+                                </div>
+                                <div>
+                                    <h4 className="text-[#EAE0D5] font-bold text-sm mb-1">Seu QR Code de Divulgação</h4>
+                                    <p className="text-[10px] text-[#B0A090] mb-3 uppercase font-bold tracking-wider">Acesso rápido para visitantes</p>
+                                    <button 
+                                        className="text-xs text-[var(--accent-primary)] font-bold flex items-center gap-1 hover:underline"
+                                        onClick={() => window.open(`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://cultura.viva/events/${publishedEventData.eventId}`, '_blank')}
+                                    >
+                                        <Download size={14} /> Baixar em Alta Resolução
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* QUICK ACTIONS */}
+                            <div className="grid grid-cols-2 gap-3">
+                                <button 
+                                    onClick={() => navigate(`/producer/events/${publishedEventData.eventId}`)}
+                                    className="flex flex-col items-center justify-center gap-2 p-4 bg-white/5 hover:bg-[var(--accent-primary)] hover:text-black rounded-2xl border border-white/10 transition-all group"
+                                >
+                                    <Ticket className="group-hover:scale-110 transition-transform" />
+                                    <span className="text-[10px] font-bold uppercase">Gerenciar Ingressos</span>
+                                </button>
+                                <button 
+                                    onClick={() => window.open(`/visitor/event/${publishedEventData.eventId}?tenant=${publishedEventData.slug}`, '_blank')}
+                                    className="flex flex-col items-center justify-center gap-2 p-4 bg-white/5 hover:bg-[var(--accent-primary)] hover:text-black rounded-2xl border border-white/10 transition-all group"
+                                >
+                                    <ExternalLink className="group-hover:scale-110 transition-transform" />
+                                    <span className="text-[10px] font-bold uppercase">Ver na Agenda</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3 relative z-10">
+                            <button 
+                                onClick={() => {
+                                    const text = encodeURIComponent(`Confira meu novo evento cultural: ${formData.title}! Veja mais em: https://cultura.viva/events/${publishedEventData.eventId}`);
+                                    window.open(`https://wa.me/?text=${text}`, '_blank');
+                                }}
+                                className="w-full flex items-center justify-center gap-3 py-4 bg-[#25D366] text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg"
+                            >
+                                <Share2 size={20} /> Compartilhar no WhatsApp
+                            </button>
+                            <Button 
+                                variant="ghost" 
+                                className="w-full text-[#B0A090] hover:text-[#EAE0D5] text-sm"
+                                onClick={() => setShowShareModal(false)}
+                            >
+                                Fechar agora e continuar editando
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

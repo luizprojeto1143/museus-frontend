@@ -13,7 +13,7 @@ export const AdminTrails: React.FC = () => {
   };
 
   const { t } = useTranslation();
-  const { tenantId } = useAuth();
+  const { tenantId, hasPermission } = useAuth();
   const [trails, setTrails] = useState<AdminTrailItem[]>([]);
 
   const fetchTrails = React.useCallback(() => {
@@ -62,9 +62,11 @@ export const AdminTrails: React.FC = () => {
           <h1 className="section-title">{t("admin.trails.title")}</h1>
 
         </div>
-        <Link to="/admin/trilhas/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
-          {t("admin.trails.new")}
-        </Link>
+        {hasPermission("manage_trails") && (
+          <Link to="/admin/trilhas/nova" className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
+            {t("admin.trails.new")}
+          </Link>
+        )}
       </div>
 
       <table className="table">
@@ -85,16 +87,24 @@ export const AdminTrails: React.FC = () => {
                 <span className="chip">{trail.active ? t("admin.trails.status.active") : t("admin.trails.status.inactive")}</span>
               </td>
               <td style={{ textAlign: "right", display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
-                <Link to={`/admin/trilhas/${trail.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
-                  {t("common.edit")}
-                </Link>
-                <button
-                  className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-red-600 text-[var(--fg-main)] border-transparent hover:bg-red-700 text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                  onClick={() => handleDelete(trail.id, trail.name)}
-                  style={{ backgroundColor: "#dc3545", color: "white", border: "none" }}
-                >
-                  {t("common.delete") || "Excluir"}
-                </button>
+                {hasPermission("manage_trails") ? (
+                  <>
+                    <Link to={`/admin/trilhas/${trail.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
+                      {t("common.edit")}
+                    </Link>
+                    <button
+                      className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-red-600 text-[var(--fg-main)] border-transparent hover:bg-red-700 text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
+                      onClick={() => handleDelete(trail.id, trail.name)}
+                      style={{ backgroundColor: "#dc3545", color: "white", border: "none" }}
+                    >
+                      {t("common.delete") || "Excluir"}
+                    </button>
+                  </>
+                ) : (
+                  <Link to={`/admin/trilhas/${trail.id}`} className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]">
+                    Visualizar
+                  </Link>
+                )}
               </td>
             </tr>
           ))}

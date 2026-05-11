@@ -17,7 +17,7 @@ type LeaderboardEntry = {
 
 export const LeaderboardPage: React.FC = () => {
     const { t } = useTranslation();
-    const { isGuest } = useAuth();
+    const { isGuest, cityId } = useAuth();
     const navigate = useNavigate();
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [myRank, setMyRank] = useState<LeaderboardEntry | null>(null);

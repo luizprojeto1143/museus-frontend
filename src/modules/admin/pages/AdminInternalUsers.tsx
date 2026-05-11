@@ -10,7 +10,7 @@ interface InternalUser {
   id: string;
   name: string;
   email: string;
-  role: "MASTER" | "ADMIN" | "COLLABORATOR";
+  role: "MASTER" | "ADMIN" | "COLLABORATOR" | "PRODUCER";
   tenantId: string | null;
   createdAt: string;
   lastLogin: string | null;
@@ -94,7 +94,7 @@ export const AdminInternalUsers: React.FC = () => {
           <p className="text-muted text-sm">Gerencie acessos e permissões dos funcionários e administradores.</p>
         </div>
         <Link to="/admin/usuarios/novo" className="btn btn-primary">
-          <UserPlus size={18} /> Novo Colaborador
+          <UserPlus size={18} /> Novo Integrante
         </Link>
       </div>
 
@@ -104,8 +104,8 @@ export const AdminInternalUsers: React.FC = () => {
           <span className="stat-label">Total de Usuários</span>
         </div>
         <div className="stat-card">
-          <span className="stat-value">{users.filter(u => u.role === "COLLABORATOR").length}</span>
-          <span className="stat-label">Colaboradores</span>
+          <span className="stat-value">{users.filter(u => u.role === "COLLABORATOR" || u.role === "PRODUCER").length}</span>
+          <span className="stat-label">Equipe Operacional</span>
         </div>
         <div className="stat-card">
           <span className="stat-value">{users.filter(u => u.role === "ADMIN").length}</span>
@@ -144,6 +144,7 @@ export const AdminInternalUsers: React.FC = () => {
                     <span className={`px-2 py-1 rounded text-[10px] font-black uppercase ${
                       user.role === 'MASTER' ? 'bg-purple-500/20 text-purple-400' :
                       user.role === 'ADMIN' ? 'bg-blue-500/20 text-blue-400' :
+                      user.role === 'PRODUCER' ? 'bg-orange-500/20 text-orange-400' :
                       'bg-green-500/20 text-green-400'
                     }`}>
                       {user.role}
@@ -151,7 +152,7 @@ export const AdminInternalUsers: React.FC = () => {
                   </td>
                   <td>
                     <div className="flex flex-wrap gap-1 max-w-[250px]">
-                      {user.role === "COLLABORATOR" && user.permissions ? (
+                      {(user.role === "COLLABORATOR" || user.role === "PRODUCER") && user.permissions ? (
                         Object.entries(user.permissions)
                           .filter(([_, val]) => val)
                           .map(([key]) => (
@@ -160,10 +161,9 @@ export const AdminInternalUsers: React.FC = () => {
                             </span>
                           ))
                       ) : (
-                        <span className="text-[10px] text-gold/60">Acesso Total</span>
-                      )}
-                      {user.role === "COLLABORATOR" && (!user.permissions || Object.values(user.permissions).every(v => !v)) && (
-                        <span className="text-[10px] text-red-500/60">Sem Permissões</span>
+                        <span className="text-[10px] text-gold/60">
+                          {user.role === "ADMIN" || user.role === "MASTER" ? "Acesso Total" : "Sem Permissões"}
+                        </span>
                       )}
                     </div>
                   </td>

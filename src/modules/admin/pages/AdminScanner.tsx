@@ -4,6 +4,7 @@ import { Html5QrcodeScanner, Html5QrcodeScanType } from 'html5-qrcode';
 import { api } from '../../../api/client';
 import { ShieldCheck, XCircle, AlertTriangle, QrCode, Ticket, User, RefreshCw, Smartphone } from 'lucide-react';
 import { Button } from '../../../components/ui';
+import { useAuth } from '../../auth/AuthContext';
 
 type ScanResult = {
     valid: boolean;
@@ -17,11 +18,22 @@ type ScanResult = {
 
 export const AdminScanner: React.FC = () => {
   const { t } = useTranslation();
+  const { hasPermission } = useAuth();
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
     const [isScanning, setIsScanning] = useState(true);
     const [loading, setLoading] = useState(false);
     const [manualCode, setManualCode] = useState("");
     const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+
+    if (!hasPermission("manage_scanner")) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+          <XCircle size={64} className="text-red-500 mb-6 opacity-20" />
+          <h2 className="text-2xl font-black text-white mb-2">Acesso Restrito</h2>
+          <p className="text-zinc-500 max-w-sm">Você não possui a flag de permissão <strong>manage_scanner</strong> necessária para operar o validador.</p>
+        </div>
+      );
+    }
 
     useEffect(() => {
         // Initialize Scanner only once when component mounts and scanning is active

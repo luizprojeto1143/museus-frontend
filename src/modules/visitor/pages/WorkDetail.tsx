@@ -16,7 +16,7 @@ import { NavigationModal } from "../../../components/navigation/NavigationModal"
 import { useTerminology } from "../../../hooks/useTerminology";
 import { 
   Compass, Share2, Star, Volume2, VolumeX, ChevronLeft, 
-  ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles, Shield
+  ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles, Shield, Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
@@ -210,7 +210,7 @@ export const WorkDetail: React.FC = () => {
            <div className="work-actions-premium !mt-0">
               <button 
                 onClick={() => navigate(`/vestigios/capturar/${work.id}`)}
-                className="action-btn-premium !bg-[var(--accent-gold)]/20 !text-[var(--accent-gold)] hover:!bg-[var(--accent-gold)] hover:!text-[var(--bg-main)] border border-[var(--accent-gold)]/30"
+                className={`action-btn-premium ${searchParams.get('scan') === 'true' ? 'animate-pulse !bg-[var(--accent-gold)] !text-[var(--bg-main)] shadow-[0_0_20px_rgba(212,175,55,0.5)]' : '!bg-[var(--accent-gold)]/20 !text-[var(--accent-gold)] border border-[var(--accent-gold)]/30'}`}
                 title="Capturar Vestígio"
               >
                 <Shield size={18} />
@@ -226,6 +226,29 @@ export const WorkDetail: React.FC = () => {
               </button>
            </div>
         </div>
+
+        {searchParams.get('scan') === 'true' && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 p-3 rounded-xl bg-[var(--accent-gold)]/10 border border-[var(--accent-gold)]/30 flex items-center gap-3"
+          >
+            <div className="w-8 h-8 rounded-full bg-[var(--accent-gold)] flex items-center justify-center text-black">
+               <Zap size={16} fill="currentColor" />
+            </div>
+            <div className="flex flex-col">
+               <span className="text-xs font-black uppercase text-[var(--accent-gold)]">{t('vestige.detected', 'Vestígio Detectado')}</span>
+               <span className="text-[10px] text-[var(--fg-tertiary)]">{t('vestige.unlockMessage', 'Escaneamento validado. Reivindique sua recompensa!')}</span>
+            </div>
+            <Button 
+              size="sm" 
+              className="ml-auto bg-[var(--accent-gold)] text-black font-black text-[9px]"
+              onClick={() => navigate(`/vestigios/capturar/${work.id}`)}
+            >
+               {t('common.collect', 'Coletar')}
+            </Button>
+          </motion.div>
+        )}
       </header>
 
       {/* Hero Image / 3D Model */}

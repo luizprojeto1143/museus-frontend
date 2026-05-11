@@ -15,7 +15,9 @@ import {
     Zap,
     Users,
     Activity,
-    Mail
+    Mail,
+    Trophy,
+    Landmark
 } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 import { useTenant } from "../auth/TenantContext";
@@ -100,7 +102,7 @@ export const LandingPage: React.FC = () => {
 
                 {/* Desktop Menu */}
                 <div className="hidden lg:flex items-center gap-10 text-sm font-bold tracking-widest uppercase">
-                    {["solucoes", "acessibilidade", "casos", "contato"].map((item) => (
+                    {["editais", "prestadores", "solucoes", "acessibilidade", "casos", "contato"].map((item) => (
                         <button 
                             key={item}
                             onClick={() => scrollToSection(item)} 
@@ -143,7 +145,7 @@ export const LandingPage: React.FC = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed inset-0 bg-[#05050c] z-[999] flex flex-col p-12 pt-32 gap-8 text-2xl font-heading"
                     >
-                        {["solucoes", "acessibilidade", "casos", "contato"].map((item) => (
+                        {["editais", "solucoes", "acessibilidade", "casos", "contato"].map((item) => (
                             <button 
                                 key={item}
                                 onClick={() => scrollToSection(item)} 
@@ -199,21 +201,20 @@ export const LandingPage: React.FC = () => {
                                 await logout();
                                 navigate("/login");
                             }}
-                            rightIcon={<ArrowRight size={20} />}
                             className="h-16 px-10 text-lg shadow-[0_20px_50px_rgba(212,175,55,0.2)] rounded-2xl"
                         >
-                            {t("public.landingpage.entrar", "Entrar")}
+                            {t("public.landingpage.entrar", "Entrar no Painel")}
                         </Button>
 
-                        <button
-                            onClick={() => scrollToSection("solucoes")}
-                            className="group flex items-center gap-3 text-sm font-bold uppercase tracking-widest hover:text-[var(--accent-primary)] transition-all"
+                        <Button
+                            size="lg"
+                            variant="outline"
+                            onClick={() => navigate("/sou-produtor")}
+                            leftIcon={<Trophy size={20} className="text-[var(--accent-primary)]" />}
+                            className="h-16 px-10 text-lg border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black rounded-2xl shadow-lg"
                         >
-                            <span className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[var(--accent-primary)] transition-all">
-                                <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" />
-                            </span>
-                            {t("public.landingpage.ctaSecondary", "Ver Soluções")}
-                        </button>
+                            Sou Agente Cultural
+                        </Button>
                     </motion.div>
                 </motion.div>
 
@@ -241,6 +242,144 @@ export const LandingPage: React.FC = () => {
                     </div>
                 </motion.div>
             </header>
+
+            {/* SEÇÃO FOMENTO & EDITAIS - HUB DO AGENTE */}
+            <section id="editais" className="py-32 px-6 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto">
+                    <AnimateIn variant="fadeUp">
+                        <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+                            <div className="max-w-2xl">
+                                <Badge variant="outline" className="mb-6 uppercase tracking-[0.3em] font-bold border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">Fomento Cultural</Badge>
+                                <h2 className="text-4xl md:text-6xl font-heading font-bold text-white">Onde o Talento encontra <br /><span className="text-[var(--accent-primary)]">as Oportunidades.</span></h2>
+                            </div>
+                            <p className="text-[#f5e6d3]/60 max-w-md text-lg leading-relaxed border-l border-[var(--accent-primary)]/30 pl-8">
+                                Simplificamos a jornada do Agente Cultural. Da descoberta do edital à execução do evento, tudo em um único lugar.
+                            </p>
+                        </div>
+                    </AnimateIn>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                icon: <Trophy size={32} />,
+                                title: "Exploração de Editais",
+                                desc: "Acesse uma curadoria inteligente de editais municipais e estaduais prontos para receber sua proposta."
+                            },
+                            {
+                                icon: <Landmark size={32} />,
+                                title: "Portfólio Digital",
+                                desc: "Armazene seus documentos e portfólio em um cofre seguro para reutilizar em qualquer submissão."
+                            },
+                            {
+                                icon: <Zap size={32} />,
+                                title: "Execução em Tempo Real",
+                                desc: "Transforme projetos aprovados em eventos vivos na agenda da cidade com bilheteria e check-in nativos."
+                            }
+                        ].map((item, i) => (
+                            <div key={i} className="p-8 bg-gradient-to-b from-white/5 to-transparent border border-white/10 rounded-[32px] hover:border-[var(--accent-primary)]/40 transition-all group">
+                                <div className="w-14 h-14 bg-[var(--accent-primary)]/10 rounded-2xl flex items-center justify-center text-[var(--accent-primary)] mb-6 group-hover:scale-110 transition-transform">
+                                    {item.icon}
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
+                                <p className="text-[#f5e6d3]/40 text-sm leading-relaxed">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <AnimateIn variant="scaleIn" delay={0.3}>
+                        <div className="mt-16 p-1 bg-gradient-to-r from-transparent via-[var(--accent-primary)]/20 to-transparent rounded-[32px]">
+                            <div className="bg-[#0a0a14] rounded-[31px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5">
+                                <div>
+                                    <h3 className="text-2xl font-bold text-white mb-2">Pronto para captar recursos?</h3>
+                                    <p className="text-[#f5e6d3]/50">Crie seu perfil de Agente Cultural e comece hoje mesmo.</p>
+                                </div>
+                                <Button 
+                                    onClick={() => navigate("/sou-produtor")}
+                                    className="h-16 px-12 text-lg rounded-2xl whitespace-nowrap"
+                                >
+                                    Criar Perfil de Agente
+                                </Button>
+                            </div>
+                        </div>
+                    </AnimateIn>
+                </div>
+            </section>
+
+            {/* SEÇÃO PRESTADORES - ECOSSISTEMA DE SERVIÇOS */}
+            <section id="prestadores" className="py-32 px-6 bg-gradient-to-b from-[#1a0f2c]/40 to-transparent relative overflow-hidden border-y border-white/5">
+                <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-[#9f7aea]/10 blur-[120px] rounded-full" />
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    <AnimateIn variant="fadeRight">
+                        <div>
+                            <Badge variant="outline" className="mb-6 border-[#9f7aea]/40 text-[#9f7aea] font-bold uppercase tracking-widest">Trabalhe na Cultura</Badge>
+                            <h2 className="text-4xl md:text-6xl font-heading font-black text-white mb-8 leading-tight">
+                                Seja um Prestador <br />
+                                <span className="text-[#9f7aea]">de Elite.</span>
+                            </h2>
+                            <p className="text-xl text-[#b794f4] mb-10 leading-relaxed">
+                                Ofereça seus serviços de som, luz, acessibilidade ou produção para os projetos mais importantes da cidade. 
+                                Nossa rede conecta quem faz com quem precisa de excelência.
+                            </p>
+                            
+                            <div className="space-y-6 mb-12">
+                                <div className="flex gap-4">
+                                    <div className="w-12 h-12 bg-[#9f7aea]/10 rounded-2xl flex items-center justify-center text-[#9f7aea] shrink-0 border border-[#9f7aea]/20">
+                                        <Briefcase size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-bold text-white">Vitrine Exclusiva</h4>
+                                        <p className="text-[#b794f4]/60 text-sm">Seu perfil visível para todos os Agentes Culturais aprovados em editais.</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="w-12 h-12 bg-[#9f7aea]/10 rounded-2xl flex items-center justify-center text-[#9f7aea] shrink-0 border border-[#9f7aea]/20">
+                                        <Zap size={24} />
+                                    </div>
+                                    <div>
+                                        <h4 className="text-lg font-bold text-white">Contratação Simplificada</h4>
+                                        <p className="text-[#b794f4]/60 text-sm">Receba solicitações de orçamento e gerencie sua agenda em um só lugar.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-between gap-4">
+                                <div>
+                                    <div className="text-[10px] uppercase tracking-widest text-[#9f7aea] font-bold mb-1">Investimento Mensal</div>
+                                    <div className="text-2xl font-black text-white">R$ 50,00</div>
+                                </div>
+                                <Button 
+                                    onClick={() => navigate("/sou-prestador")}
+                                    className="bg-[#9f7aea] hover:bg-[#805ad5] text-white font-bold h-14 px-8 rounded-2xl"
+                                >
+                                    Quero me Cadastrar
+                                </Button>
+                            </div>
+                        </div>
+                    </AnimateIn>
+
+                    <AnimateIn variant="fadeLeft">
+                        <div className="relative">
+                             <div className="absolute -inset-4 bg-[#9f7aea]/20 blur-3xl rounded-full opacity-50" />
+                             <img 
+                                src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1000&auto=format&fit=crop" 
+                                alt="Service Provider" 
+                                className="relative rounded-[40px] border border-white/10 shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
+                             />
+                             <div className="absolute -bottom-6 -right-6 bg-[#0a0a14] border border-[#3b2164] p-6 rounded-3xl shadow-2xl animate-bounce-slow">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center">
+                                        <CheckCircle size={20} />
+                                    </div>
+                                    <div>
+                                        <div className="text-xs text-[#b794f4] uppercase font-bold">Novo Orçamento</div>
+                                        <div className="text-white font-bold">Solicitação Recebida!</div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </AnimateIn>
+                </div>
+            </section>
 
             {/* SEÇÃO SOLUÇÕES - GRID PREMIUM */}
             <section id="solucoes" className="py-32 px-6 max-w-7xl mx-auto">

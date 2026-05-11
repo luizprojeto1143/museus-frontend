@@ -15,7 +15,7 @@ interface ChatPersona {
 
 export const AdminAIAssistant: React.FC = () => {
   const { t } = useTranslation();
-  const { tenantId } = useAuth();
+  const { tenantId, hasPermission } = useAuth();
   const [persona, setPersona] = useState<ChatPersona>({
     systemPrompt: "",
     tone: "formal-educativo",
@@ -25,6 +25,18 @@ export const AdminAIAssistant: React.FC = () => {
     temperature: 0.7,
     maxTokens: 500
   });
+
+  if (!hasPermission("manage_chat_ai")) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
+          <XCircle size={40} className="text-red-500 opacity-50" />
+        </div>
+        <h2 className="text-2xl font-black text-white mb-2">Treinamento Restrito</h2>
+        <p className="text-zinc-500 max-w-sm">Apenas usuários com a flag <strong>manage_chat_ai</strong> podem configurar a base de conhecimento da IA.</p>
+      </div>
+    );
+  }
   const [testMessage, setTestMessage] = useState("");
   const [testResponse, setTestResponse] = useState("");
   const [testing, setTesting] = useState(false);

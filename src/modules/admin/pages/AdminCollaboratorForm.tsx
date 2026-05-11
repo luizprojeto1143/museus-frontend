@@ -30,6 +30,7 @@ export const AdminCollaboratorForm: React.FC = () => {
     name: "",
     email: "",
     password: "",
+    role: "COLLABORATOR" as "COLLABORATOR" | "PRODUCER",
     permissions: {} as Record<string, boolean>
   });
 
@@ -41,11 +42,12 @@ export const AdminCollaboratorForm: React.FC = () => {
           setFormData({
             name: res.data.name,
             email: res.data.email,
-            password: "", // Don't show password
+            password: "", 
+            role: res.data.role || "COLLABORATOR",
             permissions: res.data.permissions || {}
           });
         })
-        .catch(() => toast.error("Erro ao carregar colaborador"))
+        .catch(() => toast.error("Erro ao carregar usuário"))
         .finally(() => setLoading(false));
     }
   }, [id, isEdit]);
@@ -57,21 +59,20 @@ export const AdminCollaboratorForm: React.FC = () => {
     try {
       const payload = {
         ...formData,
-        role: "COLLABORATOR",
         tenantId: tenantId
       };
 
       if (isEdit) {
         if (!payload.password) delete (payload as any).password;
         await api.put(`/users/${id}`, payload);
-        toast.success("Colaborador atualizado!");
+        toast.success("Usuário atualizado!");
       } else {
         await api.post("/users", payload);
-        toast.success("Colaborador criado com sucesso!");
+        toast.success("Usuário criado com sucesso!");
       }
       navigate("/admin/usuarios");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Erro ao salvar colaborador");
+      toast.error(err.response?.data?.message || "Erro ao salvar usuário");
     } finally {
       setLoading(false);
     }
@@ -91,10 +92,10 @@ export const AdminCollaboratorForm: React.FC = () => {
     <div className="max-w-4xl mx-auto p-6">
       <header className="mb-10">
         <h1 className="section-title">
-          {isEdit ? "Editar Colaborador" : "Novo Colaborador do Museu"}
+          {isEdit ? "Editar Integrante da Equipe" : "Novo Integrante da Equipe"}
         </h1>
         <p className="text-muted text-sm">
-          Defina as credenciais e o nível de acesso para este funcionário.
+          Defina as credenciais, o cargo e o nível de acesso para este membro do museu.
         </p>
       </header>
 
@@ -116,6 +117,18 @@ export const AdminCollaboratorForm: React.FC = () => {
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ex: João Silva"
                 />
+              </div>
+
+              <div>
+                <label className="sidebar-label-premium">Cargo / Função</label>
+                <select 
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-gold outline-none transition-all"
+                  value={formData.role}
+                  onChange={e => setFormData({ ...formData, role: e.target.value as any })}
+                >
+                  <option value="COLLABORATOR">Colaborador (Equipe Interna)</option>
+                  <option value="PRODUCER">Produtor Cultural (Exposições/Eventos)</option>
+                </select>
               </div>
 
               <div>
