@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "./AuthContext";
 import { api } from "../../api/client";
 import { User, Building2, Mail, Phone, Globe, Lock, ArrowRight, Check } from "lucide-react";
 
@@ -13,6 +14,7 @@ interface City {
 export const RegisterProducer: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const { login } = useAuth();
 
     const [formData, setFormData] = useState({
         name: "",
@@ -68,8 +70,12 @@ export const RegisterProducer: React.FC = () => {
                 role: "PRODUCER",
                 parentTenantId: selectedCity || null // Optional city link
             });
-            alert("Cadastro realizado com sucesso! Faça login para continuar.");
-            navigate("/login");
+            alert("Cadastro realizado com sucesso! Entrando no sistema...");
+            
+            // Auto-login
+            await login({ email: formData.email, password: formData.password });
+            
+            navigate("/producer");
         } catch (err: any) {
             console.error(err);
             setError(err.response?.data?.message || "Erro ao realizar cadastro");

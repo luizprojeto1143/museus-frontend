@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "./AuthContext";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
 import { 
@@ -14,6 +15,7 @@ export const RegisterProvider: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { addToast } = useToast();
+    const { login } = useAuth();
     const [loading, setLoading] = useState(false);
     
     const [formData, setFormData] = useState({
@@ -52,7 +54,11 @@ export const RegisterProvider: React.FC = () => {
                 }, 1500);
             } else {
                 addToast("Cadastro realizado! Bem-vindo à rede de prestadores.", "success");
-                navigate("/login");
+                
+                // Auto-login
+                await login({ email: formData.email, password: formData.password });
+                
+                navigate("/provider");
             }
         } catch (err: any) {
             addToast(err.response?.data?.message || "Erro ao realizar cadastro.", "error");
