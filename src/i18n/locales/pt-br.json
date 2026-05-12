@@ -2713,23 +2713,7 @@
       "descrioProfissionalCurrculoResumido": "Descrição Profissional / Currículo resumido"
     }
   },
-      "sistemaDeXpConquistasENveisQueTransforma": "Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora. Aumente a retenção e o interesse do público jovem com desafios interativos.",
-      "semNecessidadeDeDownloadNasLojasSeusVisi": "Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia através de QR Codes inteligentes espalhados pelo acervo.",
-      "mapasInterativosRoteirosSugeridosPorIaEI": "Mapas interativos, roteiros sugeridos por IA e integração com a economia local. Conecte seu museu ao ecossistema da cidade.",
-      "garantaAAprovaoDaSuaPrestaoDeContasNossa": "Garanta a aprovação da sua prestação de contas. Nossa plataforma já vem com a suíte técnica exigida, e oferecemos a produção de conteúdo como serviço.",
-      "narraoDescritivaParaDeficientesVisuais": "Narração descritiva para deficientes visuais",
-      "nossaEquipeDeEspecialistasProduzOsVdeosD": "Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.",
-      "tireSuasDvidasSobreALeiRouanetPlanosEImp": "Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.",
-      "junteseAosMuseusEProjetosCulturaisQueJEs": "Junte-se aos museus e projetos culturais que já estão no futuro. Crie seu espaço agora mesmo.",
-      "emExperinciaViva": "em Experiência Viva."
-    },
-    "contact": {
-      "nossaEquipeEntrarEmContatoEmBreve": "Nossa equipe entrará em contato em breve.",
-      "adequaoLeiRouanetLbi": "Adequação Lei Rouanet (LBI)",
-      "planosEPreos": "Planos e Preços",
-      "suporteTcnico": "Suporte Técnico"
-    }
-  },
+
   "totem": {
     "totemdashboard": {
       "escanearQrCodeParaEntradaRpida": "Escanear QR Code para entrada rápida",
@@ -2801,7 +2785,9 @@
       "emptyVestiges": "Nenhum vestígio coletado neste museu ainda.",
       "relicDescription": "Vestígios capturados tornam-se relíquias permanentes quando expiram.",
       "totalRelics": "Total de Relíquias"
-    },
-  }
+    }
+  },
+  "gamification": {
+    "xpAccumulated": "{{xp}} XP acumulados"
   }
 }
