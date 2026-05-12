@@ -147,7 +147,7 @@ export const RegisterProvider: React.FC = () => {
                                 name="serviceType"
                                 value={formData.serviceType}
                                 onChange={handleChange}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-[#9f7aea]/50 transition-all outline-none"
+                                className="w-full bg-[#0a0a14] border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-[#9f7aea]/50 transition-all outline-none"
                             >
                                 <option value="LIBRAS">Intérprete de Libras</option>
                                 <option value="AUDIO_DESCRIPTION">Audiodescrição</option>

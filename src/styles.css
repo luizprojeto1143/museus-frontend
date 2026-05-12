@@ -409,6 +409,21 @@ input, textarea, [contenteditable="true"], .selectable {
   user-select: text;
 }
 
+/* --- Global Elite Select/Dropdown Fix --- */
+select, option {
+  background-color: #0a0a14 !important;
+  color: #ffffff !important;
+  color-scheme: dark;
+}
+
+select {
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: var(--accent-primary) !important;
+}
+
 /* ═══ GRAIN OVERLAY ═══════════════ */
 body::after {
   content: '';
