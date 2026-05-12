@@ -233,7 +233,77 @@
       "ctaFinalDesc": "\"Tecnologia não é sobre substituir a história, mas sobre garantir que ela nunca seja esquecida.\"",
       "ctaFinalBtn": "Criar Espaço Digital",
       "footerDesc": "Líder nacional em digitalização de patrimônio histórico 4.0. Acessibilidade, Gamificação e Gestão de Dados para Instituições de Excelência.",
-      "footerCopyright": "&copy; {{year}} Cultura Viva Tecnologia. Todos os direitos reservados."
+      "footerCopyright": "&copy; {{year}} Cultura Viva Tecnologia. Todos os direitos reservados.",
+      "solues": "Soluções",
+      "benefcios": "Benefícios",
+      "plataformaDeGestoCultural40": "PLATAFORMA DE GESTÃO CULTURAL 4.0",
+      "aSoluoCompletaParaDigitalizarM": "A solução completa para digitalizar museus e cidades históricas.\r\n                    Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo.",
+      "conhecerSolues": "Conhecer Soluções",
+      "tecnologiaAServioDaCultura": "Tecnologia a Serviço da Cultura",
+      "tudoOQueVocPrecisaParaModerniz": "Tudo o que você precisa para modernizar sua instituição.",
+      "gamificaoReal": "Gamificação Real",
+      "sistemaDeXpConquistasENveisQue": "Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora.\r\n                            Aumente a retenção e o interesse do público jovem com desafios interativos.",
+      "semNecessidadeDeDownloadNasLoj": "Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia\r\n                            através de QR Codes inteligentes espalhados pelo acervo.",
+      "mapasInterativosRoteirosSugeri": "Mapas interativos, roteiros sugeridos por IA e integração com a economia local.\r\n                            Conecte seu museu ao ecossistema da cidade.",
+      "garantaAAprovaoDaSuaPrestaoDeC": "Garanta a aprovação da sua prestação de contas. Nossa plataforma já vem com a suíte técnica exigida, e oferecemos a produção de conteúdo como serviço.",
+      "librasLnguaDeSinais": "Libras (Língua de Sinais)",
+      "janelaDeVdeoIntegradaAoPlayer": "Janela de vídeo integrada ao player",
+      "audiodescrio": "Audiodescrição",
+      "narraoDescritivaParaDeficiente": "Narração descritiva para deficientes visuais",
+      "relatriosAutomticos": "Relatórios Automáticos",
+      "nossaEquipeDeEspecialistasProd": "Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.",
+      "aprovaoNasContasDaRouanet": "Aprovação nas contas da Rouanet",
+      "museuDisponvelNoDigital": "Museu disponível no digital",
+      "tireSuasDvidasSobreALeiRouanet": "Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.",
+      "comeceSuaTransformaoDigital": "Comece sua Transformação Digital",
+      "junteseAosMuseusEProjetosCultu": "Junte-se aos museus e projetos culturais que já estão no futuro.\r\n                    Crie seu espaço agora mesmo.",
+      "reaDoCliente": "Área do Cliente",
+      "navegaoPrincipal": "Navegação Principal",
+      "aSoluoCompletaParaDigitalizarMuseusECida": "A solução completa para digitalizar museus e cidades históricas. Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo.",
+      "tudoOQueVocPrecisaParaModernizarSuaInsti": "Tudo o que você precisa para modernizar sua instituição.",
+      "sistemaDeXpConquistasENveisQueTransforma": "Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora. Aumente a retenção e o interesse do público jovem com desafios interativos.",
+      "semNecessidadeDeDownloadNasLojasSeusVisi": "Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia através de QR Codes inteligentes espalhados pelo acervo.",
+      "mapasInterativosRoteirosSugeridosPorIaEI": "Mapas interativos, roteiros sugeridos por IA e integração com a economia local. Conecte seu museu ao ecossistema da cidade.",
+      "garantaAAprovaoDaSuaPrestaoDeContasNossa": "Garanta a aprovação da sua prestação de contas. Nossa plataforma já vem com a suíte técnica exigida, e oferecemos a produção de conteúdo como serviço.",
+      "narraoDescritivaParaDeficientesVisuais": "Narração descritiva para deficientes visuais",
+      "nossaEquipeDeEspecialistasProduzOsVdeosD": "Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.",
+      "tireSuasDvidasSobreALeiRouanetPlanosEImp": "Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.",
+      "junteseAosMuseusEProjetosCulturaisQueJEs": "Junte-se aos museus e projetos culturais que já estão no futuro. Crie seu espaço agora mesmo.",
+      "emExperinciaViva": "em Experiência Viva."
+    },
+    "certificatevalidator": {
+      "certificadoVlido": "Certificado Válido",
+      "certificadoInvlido": "Certificado Inválido",
+      "oCdigoFornecidoNoFoiEncontrado": "O código fornecido não foi encontrado ou foi revogado.",
+      "erroNaVerificao": "Erro na Verificação",
+      "dataDeEmisso": "Data de Emissão",
+      "cdigoDeAutenticidade": "Código de Autenticidade",
+      "oCdigoFornecidoNoFoiEncontradoOuFoiRevog": "O código fornecido não foi encontrado ou foi revogado.",
+      "title": "Verificação de Certificado",
+      "subtitle": "Valide a autenticidade de certificados emitidos",
+      "placeholder": "Digite o código do certificado...",
+      "verify": "Verificar",
+      "valid": "Certificado Válido",
+      "invalid": "Certificado Inválido",
+      "issuedTo": "Emitido para",
+      "issueDate": "Data de Emissão",
+      "course": "Evento/Atividade"
+    },
+    "contactform": {
+      "nossaEquipeEntrarEmContatoEmBr": "Nossa equipe entrará em contato em breve.",
+      "adequaoLeiRouanetLbi": "Adequação Lei Rouanet (LBI)",
+      "planosEPreos": "Planos e Preços",
+      "suporteTcnico": "Suporte Técnico"
+    },
+    "globalevents": {
+      "exploreEventosExposiesEOficina": "Explore eventos, exposições e oficinas em todos os nossos museus parceiros.",
+      "exploreEventosExposiesEOficinasEmTodosOs": "Explore eventos, exposições e oficinas em todos os nossos museus parceiros."
+    },
+    "contact": {
+      "nossaEquipeEntrarEmContatoEmBreve": "Nossa equipe entrará em contato em breve.",
+      "adequaoLeiRouanetLbi": "Adequação Lei Rouanet (LBI)",
+      "planosEPreos": "Planos e Preços",
+      "suporteTcnico": "Suporte Técnico"
     }
   },
   "visitor": {
@@ -703,7 +773,7 @@
     },
     "workcomparator": {
       "descrio": "Descrição",
-      "estiloPerodoETcnica": "estilo, período e técnica.",
+      "estiloPerodoEtcnica": "estilo, período e técnica.",
       "perodo": "Período",
       "tcnica": "Técnica",
       "dimenses": "Dimensões"
@@ -1533,7 +1603,7 @@
     "grouptickets": {
       "gerencieSolicitaesDeIngressosP": "Gerencie solicitações de ingressos para grupos e escolas",
       "totalSolicitaes": "Total Solicitações",
-      "nenhumaSolicitaoDeGrupo": "Nenhuma solicitação de grupo",
+      "nenhumaSolicitaoDeGrupo": "Nenhum pedido de grupo",
       "solicitaesDeIngressosEmGrupoAp": "Solicitações de ingressos em grupo aparecerão aqui",
       "gerencieSolicitaesDeIngressosParaGruposE": "Gerencie solicitações de ingressos para grupos e escolas",
       "solicitaesDeIngressosEmGrupoApareceroAqu": "Solicitações de ingressos em grupo aparecerão aqui"
@@ -2643,54 +2713,6 @@
       "descrioProfissionalCurrculoResumido": "Descrição Profissional / Currículo resumido"
     }
   },
-  "public": {
-    "certificatevalidator": {
-      "certificadoVlido": "Certificado Válido",
-      "certificadoInvlido": "Certificado Inválido",
-      "oCdigoFornecidoNoFoiEncontrado": "O código fornecido não foi encontrado ou foi revogado.",
-      "erroNaVerificao": "Erro na Verificação",
-      "dataDeEmisso": "Data de Emissão",
-      "cdigoDeAutenticidade": "Código de Autenticidade",
-      "oCdigoFornecidoNoFoiEncontradoOuFoiRevog": "O código fornecido não foi encontrado ou foi revogado."
-    },
-    "contactform": {
-      "nossaEquipeEntrarEmContatoEmBr": "Nossa equipe entrará em contato em breve.",
-      "adequaoLeiRouanetLbi": "Adequação Lei Rouanet (LBI)",
-      "planosEPreos": "Planos e Preços",
-      "suporteTcnico": "Suporte Técnico"
-    },
-    "globalevents": {
-      "exploreEventosExposiesEOficina": "Explore eventos, exposições e oficinas em todos os nossos museus parceiros.",
-      "exploreEventosExposiesEOficinasEmTodosOs": "Explore eventos, exposições e oficinas em todos os nossos museus parceiros."
-    },
-    "landingpage": {
-      "solues": "Soluções",
-      "benefcios": "Benefícios",
-      "plataformaDeGestoCultural40": "PLATAFORMA DE GESTÃO CULTURAL 4.0",
-      "aSoluoCompletaParaDigitalizarM": "A solução completa para digitalizar museus e cidades históricas.\r\n                    Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo.",
-      "conhecerSolues": "Conhecer Soluções",
-      "tecnologiaAServioDaCultura": "Tecnologia a Serviço da Cultura",
-      "tudoOQueVocPrecisaParaModerniz": "Tudo o que você precisa para modernizar sua instituição.",
-      "gamificaoReal": "Gamificação Real",
-      "sistemaDeXpConquistasENveisQue": "Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora.\r\n                            Aumente a retenção e o interesse do público jovem com desafios interativos.",
-      "semNecessidadeDeDownloadNasLoj": "Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia\r\n                            através de QR Codes inteligentes espalhados pelo acervo.",
-      "mapasInterativosRoteirosSugeri": "Mapas interativos, roteiros sugeridos por IA e integração com a economia local.\r\n                            Conecte seu museu ao ecossistema da cidade.",
-      "garantaAAprovaoDaSuaPrestaoDeC": "Garanta a aprovação da sua prestação de contas. Nossa plataforma já vem com a suíte técnica exigida, e oferecemos a produção de conteúdo como serviço.",
-      "librasLnguaDeSinais": "Libras (Língua de Sinais)",
-      "janelaDeVdeoIntegradaAoPlayer": "Janela de vídeo integrada ao player",
-      "audiodescrio": "Audiodescrição",
-      "narraoDescritivaParaDeficiente": "Narração descritiva para deficientes visuais",
-      "relatriosAutomticos": "Relatórios Automáticos",
-      "nossaEquipeDeEspecialistasProd": "Nossa equipe de especialistas produz os vídeos de Libras e os áudios de descrição para o seu acervo.",
-      "aprovaoNasContasDaRouanet": "Aprovação nas contas da Rouanet",
-      "museuDisponvelNoDigital": "Museu disponível no digital",
-      "tireSuasDvidasSobreALeiRouanet": "Tire suas dúvidas sobre a Lei Rouanet, Planos e Implementação.",
-      "comeceSuaTransformaoDigital": "Comece sua Transformação Digital",
-      "junteseAosMuseusEProjetosCultu": "Junte-se aos museus e projetos culturais que já estão no futuro.\r\n                    Crie seu espaço agora mesmo.",
-      "reaDoCliente": "Área do Cliente",
-      "navegaoPrincipal": "Navegação Principal",
-      "aSoluoCompletaParaDigitalizarMuseusECida": "A solução completa para digitalizar museus e cidades históricas. Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo.",
-      "tudoOQueVocPrecisaParaModernizarSuaInsti": "Tudo o que você precisa para modernizar sua instituição.",
       "sistemaDeXpConquistasENveisQueTransforma": "Sistema de XP, conquistas e níveis que transforma a visitação em uma jornada engajadora. Aumente a retenção e o interesse do público jovem com desafios interativos.",
       "semNecessidadeDeDownloadNasLojasSeusVisi": "Sem necessidade de download nas lojas. Seus visitantes acessam instantaneamente o guia multimídia através de QR Codes inteligentes espalhados pelo acervo.",
       "mapasInterativosRoteirosSugeridosPorIaEI": "Mapas interativos, roteiros sugeridos por IA e integração com a economia local. Conecte seu museu ao ecossistema da cidade.",
@@ -2780,18 +2802,6 @@
       "relicDescription": "Vestígios capturados tornam-se relíquias permanentes quando expiram.",
       "totalRelics": "Total de Relíquias"
     },
-    "public": {
-      "certificatevalidator": {
-        "title": "Verificação de Certificado",
-        "subtitle": "Valide a autenticidade de certificados emitidos",
-        "placeholder": "Digite o código do certificado...",
-        "verify": "Verificar",
-        "valid": "Certificado Válido",
-        "invalid": "Certificado Inválido",
-        "issuedTo": "Emitido para",
-        "issueDate": "Data de Emissão",
-        "course": "Evento/Atividade"
-      }
-    }
+  }
   }
 }

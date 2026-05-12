@@ -149,7 +149,7 @@ export const RegisterProvider: React.FC = () => {
                                 onChange={handleChange}
                                 className="w-full bg-[#0a0a14] border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-[#9f7aea]/50 transition-all outline-none"
                             >
-                                <option value="LIBRAS">Intérprete de Libras</option>
+                                <option value="LIBRAS_INTERPRETATION">Intérprete de Libras</option>
                                 <option value="AUDIO_DESCRIPTION">Audiodescrição</option>
                                 <option value="CAPTIONING">Legendagem / Transcrição</option>
                                 <option value="BRAILLE">Acessibilidade Física / Braille</option>
