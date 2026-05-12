@@ -1,15 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../api/client";
 import { useAuth } from "../auth/AuthContext";
-import { useToast } from "../../contexts/ToastContext";
-import { Button } from "../../components/ui";
+import { 
+    Button, 
+    Card, 
+    Badge, 
+    AnimateIn 
+} from "@/components/ui";
 import {
-    ArrowLeft, FileText, Calendar, Users, Sparkles,
-    ExternalLink, MapPin, DollarSign, Download, Share,
-    Filter, SortAsc, TrendingUp
+    ArrowLeft, 
+    FileText, 
+    Calendar, 
+    Users, 
+    Sparkles,
+    ExternalLink, 
+    MapPin, 
+    DollarSign, 
+    Download, 
+    Share,
+    Filter, 
+    SortAsc, 
+    TrendingUp,
+    Search,
+    ChevronRight,
+    AlertCircle,
+    CheckCircle2,
+    Activity,
+    Target
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 type Project = {
     id: string;
@@ -38,14 +60,14 @@ type Notice = {
 };
 
 const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    DRAFT: { label: "Rascunho", color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" },
-    SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
-    UNDER_REVIEW: { label: "Em Análise", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+    DRAFT: { label: "Rascunho", color: "text-slate-400", bg: "bg-white/5", border: "border-white/5" },
+    SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+    UNDER_REVIEW: { label: "Em Análise", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
     APPROVED: { label: "Aprovado", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-    REJECTED: { label: "Reprovado", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" },
-    IN_EXECUTION: { label: "Em Execução", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+    REJECTED: { label: "Reprovado", color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20" },
+    IN_EXECUTION: { label: "Em Execução", color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },
     COMPLETED: { label: "Concluído", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
-    CANCELED: { label: "Cancelado", color: "text-zinc-500", bg: "bg-zinc-500/10", border: "border-zinc-500/20" }
+    CANCELED: { label: "Cancelado", color: "text-slate-600", bg: "bg-white/5", border: "border-white/5" }
 };
 
 export const MunicipalNoticeProjects: React.FC = () => {
@@ -53,139 +75,209 @@ export const MunicipalNoticeProjects: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
-    const { addToast } = useToast();
 
     const [notice, setNotice] = useState<Notice | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
 
     const [statusFilter, setStatusFilter] = useState("ALL");
-    const [sortBy, setSortBy] = useState("score");
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const fetchAll = () => {
+    const fetchData = useCallback(async () => {
         if (!tenantId) return;
 
-        setLoading(true);
-        const projectsUrl = id ? `/projects?noticeId=${id}&tenantId=${tenantId}` : `/projects?tenantId=${tenantId}&consolidated=true`;
-        
-        const promises = [api.get(projectsUrl)];
-        if (id) promises.push(api.get(`/notices/${id}`));
+        try {
+            setLoading(true);
+            const projectsUrl = id ? `/projects?noticeId=${id}&tenantId=${tenantId}` : `/projects?tenantId=${tenantId}&consolidated=true`;
+            
+            const promises = [api.get(projectsUrl)];
+            if (id) promises.push(api.get(`/notices/${id}`));
 
-        Promise.all(promises).then(([projectsRes, noticeRes]) => {
+            const [projectsRes, noticeRes] = await Promise.all(promises);
             setProjects(projectsRes.data);
             if (noticeRes) setNotice(noticeRes.data);
-        }).catch(err => {
+        } catch (err) {
             console.error(err);
-            addToast("Erro ao carregar projetos", "error");
-        }).finally(() => setLoading(false));
-    };
+            toast.error("Erro ao carregar pipeline de projetos.");
+        } finally {
+            setLoading(false);
+        }
+    }, [id, tenantId]);
 
     useEffect(() => {
-        fetchAll();
-    }, [id, tenantId]);
+        fetchData();
+    }, [fetchData]);
+
+    const filteredProjects = useMemo(() => {
+        return projects.filter(p => {
+            const matchesStatus = statusFilter === "ALL" || p.status === statusFilter;
+            const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 p.proponent?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+            return matchesStatus && matchesSearch;
+        }).sort((a, b) => (b.finalScore || 0) - (a.finalScore || 0));
+    }, [projects, statusFilter, searchTerm]);
 
     const formatCurrency = (value?: number) => {
         if (!value) return "-";
         return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
     };
 
-    if (loading) return <div className="p-20 text-center text-[var(--accent-primary)] font-bold">Carregando projetos consolidados...</div>;
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+            <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Sincronizando Projetos...</p>
+        </div>
+    );
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" onClick={() => navigate(-1)} className="rounded-full w-10 h-10 p-0 hover:bg-slate-100">
-                        <ArrowLeft size={20} className="text-slate-600" />
+        <AnimateIn className="space-y-12 pb-32">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+                <div className="flex items-center gap-6">
+                    <Button 
+                        variant="glass" 
+                        onClick={() => navigate(-1)} 
+                        className="rounded-2xl w-14 h-14 p-0 border-white/5 hover:bg-white/10"
+                    >
+                        <ArrowLeft size={24} className="text-white" />
                     </Button>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                            {id ? "Projetos do Edital" : "Panorama de Projetos Municipais"}
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                            <Badge variant="glass" className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">
+                                <Activity size={12} className="mr-1.5" /> Pipeline Municipal
+                            </Badge>
+                        </div>
+                        <h1 className="text-4xl font-black text-white tracking-tighter leading-none">
+                            {id ? "Projetos do Edital" : "Panorama de Projetos"}
                         </h1>
-                        <p className="text-sm text-slate-500 font-medium">
-                            {notice?.title || "Visão consolidada de todas as unidades culturais"}
+                        <p className="text-slate-500 font-medium">
+                            {notice?.title || "Visão estratégica consolidada de todas as unidades."}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex gap-3">
-                    <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2 shadow-sm">
-                        <Filter size={14} className="text-slate-400" />
-                        <select
-                            className="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
-                            value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option value="ALL">Todos Status</option>
-                            <option value="SUBMITTED">Novos</option>
-                            <option value="UNDER_REVIEW">Em Análise</option>
-                            <option value="APPROVED">Aprovados</option>
-                        </select>
+                <div className="flex flex-wrap gap-4">
+                    <div className="relative group w-full md:w-64">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-400 transition-colors" size={18} />
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            placeholder="Buscar projeto ou proponente..."
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-xs text-white focus:outline-none focus:border-emerald-500/50 transition-all placeholder:text-slate-600"
+                        />
                     </div>
-                    <Button variant="outline" className="gap-2 font-bold px-4 border-slate-200 text-slate-600">
-                        <Download size={16} /> Exportar CSV
+                    
+                    <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-xl">
+                        {["ALL", "SUBMITTED", "UNDER_REVIEW", "APPROVED"].map(val => (
+                            <button
+                                key={val}
+                                onClick={() => setStatusFilter(val)}
+                                className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                                    statusFilter === val 
+                                    ? 'bg-emerald-600 text-white shadow-lg' 
+                                    : 'text-slate-500 hover:text-slate-300'
+                                }`}
+                            >
+                                {val === "ALL" ? "Todos" : val === "SUBMITTED" ? "Novos" : val === "UNDER_REVIEW" ? "Análise" : "Aprovados"}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    <Button variant="glass" className="h-12 px-6 rounded-xl border-white/5 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-white">
+                        <Download size={16} className="mr-2" /> CSV
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
-                {projects.length === 0 ? (
-                    <div className="py-20 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                        <Users className="mx-auto mb-4 text-slate-200" size={48} />
-                        <h3 className="text-lg font-bold text-slate-400 font-mono tracking-tight uppercase">Nenhum projeto encontrado</h3>
-                    </div>
+            {/* Projects List */}
+            <div className="space-y-6">
+                {filteredProjects.length === 0 ? (
+                    <Card className="py-32 text-center bg-white/[0.02] border-white/5 rounded-[48px] border-dashed">
+                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <FileText size={40} className="text-slate-700" />
+                        </div>
+                        <h3 className="text-xl font-black text-slate-600 uppercase tracking-widest">Nenhum projeto identificado</h3>
+                        <p className="text-slate-500 text-sm mt-2">Ajuste os filtros para visualizar outros registros.</p>
+                    </Card>
                 ) : (
-                    projects
-                        .filter(p => statusFilter === "ALL" || p.status === statusFilter)
-                        .sort((a, b) => (b.finalScore || 0) - (a.finalScore || 0))
-                        .map(project => {
-                            const statusInfo = statusLabels[project.status] || statusLabels.DRAFT;
-                            return (
-                                <div key={project.id} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all group">
-                                    <div className="flex flex-col md:flex-row gap-6">
-                                        <div className="flex md:flex-col items-center justify-center min-w-[80px] border-r border-slate-100 pr-6 gap-1">
-                                            <div className="text-[var(--accent-primary)] font-black text-2xl">
-                                                {project.finalScore?.toFixed(1) || "--"}
+                    filteredProjects.map((project, idx) => {
+                        const statusInfo = statusLabels[project.status] || statusLabels.DRAFT;
+                        const score = project.finalScore || 0;
+                        const scoreColor = score >= 8 ? 'text-emerald-400' : score >= 5 ? 'text-amber-400' : 'text-rose-500';
+
+                        return (
+                            <motion.div
+                                key={project.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                            >
+                                <Card className="p-0 bg-white/[0.02] border-white/5 rounded-[32px] group hover:bg-white/[0.04] transition-all overflow-hidden border-l-4" style={{ borderLeftColor: statusInfo.color.replace('text-', '') }}>
+                                    <div className="flex flex-col lg:flex-row items-stretch">
+                                        {/* Score Section */}
+                                        <div className="p-8 flex lg:flex-col items-center justify-center min-w-[140px] bg-white/[0.01] border-r border-white/5 gap-2 group-hover:bg-white/[0.03] transition-colors">
+                                            <div className={`font-black text-4xl tracking-tighter ${scoreColor}`}>
+                                                {score.toFixed(1)}
                                             </div>
-                                            <div className="text-[10px] text-slate-400 uppercase font-black tracking-tighter">Score</div>
+                                            <div className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">Score Global</div>
+                                            <div className="mt-2 w-12 h-1 bg-white/5 rounded-full overflow-hidden">
+                                                <div className={`h-full ${scoreColor.replace('text-', 'bg-')} transition-all duration-1000`} style={{ width: `${score * 10}%` }} />
+                                            </div>
                                         </div>
 
-                                        <div className="flex-1 space-y-3">
-                                            <div className="flex items-center gap-2">
-                                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${statusInfo.bg} ${statusInfo.color} ${statusInfo.border}`}>
+                                        {/* Content Section */}
+                                        <div className="flex-1 p-8 space-y-5">
+                                            <div className="flex flex-wrap items-center gap-3">
+                                                <Badge variant="glass" className={`${statusInfo.bg} ${statusInfo.color} border-${statusInfo.color.replace('text-', '')}/20 uppercase text-[8px] font-black tracking-widest px-3 py-1`}>
                                                     {statusInfo.label}
-                                                </span>
-                                                {project.tenant && (
-                                                    <span className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                                                        {project.tenant.name}
-                                                    </span>
+                                                </Badge>
+                                                {project.culturalCategory && (
+                                                    <Badge variant="glass" className="bg-white/5 text-slate-500 border-white/5 uppercase text-[8px] font-black tracking-widest px-3 py-1">
+                                                        {project.culturalCategory}
+                                                    </Badge>
+                                                )}
+                                                {project.aiAnalysis && (
+                                                    <Badge className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20 uppercase text-[8px] font-black flex items-center gap-1.5 px-3 py-1">
+                                                        <Sparkles size={10} /> IA Analisado
+                                                    </Badge>
                                                 )}
                                             </div>
-                                            <h3 className="text-lg font-bold text-slate-900 group-hover:text-[var(--accent-primary)] transition-colors">
-                                                {project.title}
-                                            </h3>
-                                            <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-400">
-                                                <div className="flex items-center gap-1.5"><Users size={12} className="text-[var(--accent-primary)]" /> {project.proponent?.name}</div>
-                                                <div className="flex items-center gap-1.5"><MapPin size={12} /> {project.targetRegion}</div>
-                                                <div className="flex items-center gap-1.5"><DollarSign size={12} /> {formatCurrency(project.requestedBudget)}</div>
+                                            
+                                            <div className="space-y-1">
+                                                <h3 className="text-2xl font-black text-white group-hover:text-emerald-400 transition-colors tracking-tight">
+                                                    {project.title}
+                                                </h3>
+                                                <div className="flex flex-wrap items-center gap-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
+                                                    <div className="flex items-center gap-2 group-hover:text-slate-300 transition-colors">
+                                                        <Users size={14} className="text-emerald-500" /> {project.proponent?.name || "Proponente Desconhecido"}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 group-hover:text-slate-300 transition-colors">
+                                                        <MapPin size={14} className="text-emerald-500" /> {project.targetRegion || "Região Municipal"}
+                                                    </div>
+                                                    <div className="flex items-center gap-2 group-hover:text-slate-300 transition-colors font-black text-white/60">
+                                                        <Target size={14} className="text-emerald-500" /> {formatCurrency(project.requestedBudget)}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center">
+                                        {/* Actions Section */}
+                                        <div className="p-8 flex items-center justify-end bg-white/[0.01] border-l border-white/5 min-w-[180px]">
                                             <Button
-                                                variant="ghost"
-                                                onClick={() => navigate(`/admin/projetos/${project.id}`)}
-                                                className="text-[var(--accent-primary)] font-bold hover:bg-blue-50 gap-2"
+                                                onClick={() => navigate(`/municipal/projects/${project.id}`)}
+                                                className="h-12 w-full lg:w-auto px-6 rounded-2xl bg-white/5 text-white font-black uppercase text-[10px] tracking-widest hover:bg-emerald-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-2"
                                             >
-                                                Detalhes <ExternalLink size={16} />
+                                                Avaliar <ChevronRight size={16} />
                                             </Button>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })
+                                </Card>
+                            </motion.div>
+                        );
+                    })
                 )}
             </div>
-        </div>
+        </AnimateIn>
     );
 };

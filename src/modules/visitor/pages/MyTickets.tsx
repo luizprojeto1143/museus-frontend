@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Ticket, Calendar, MapPin, QrCode, Clock, Info, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Badge, Button, Card, PageLoader } from "@/components/ui";
+import { useAuth } from "../../auth/AuthContext";
 import "./CulturalAgenda.css"; // Reuse some styles
 
 interface Registration {
@@ -16,6 +17,7 @@ interface Registration {
     id: string;
     title: string;
     startDate: string;
+    endDate?: string;
     location?: string;
     tenant: { name: string };
   };
@@ -26,16 +28,21 @@ interface Registration {
 }
 
 export const MyTickets: React.FC = () => {
+  const { isGuest } = useAuth();
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState<Registration | null>(null);
 
   useEffect(() => {
+    if (isGuest) {
+      setLoading(false);
+      return;
+    }
     api.get("/registrations/my-registrations")
       .then(res => setRegistrations(res.data))
       .catch(err => console.error("Error fetching tickets", err))
       .finally(() => setLoading(false));
-  }, []);
+  }, [isGuest]);
 
   if (loading) return <PageLoader />;
 
@@ -107,7 +114,7 @@ export const MyTickets: React.FC = () => {
               exit={{ scale: 0.9, y: 20 }}
               onClick={e => e.stopPropagation()}
             >
-              <Badge variant="gold" className="mb-6">Ingresso Digital</Badge>
+              <Badge variant="info" className="mb-6">Ingresso Digital</Badge>
               <h3 className="text-2xl font-bold mb-2">{selectedTicket.event.title}</h3>
               <p className="text-muted text-sm mb-8">{selectedTicket.ticket.name}</p>
               

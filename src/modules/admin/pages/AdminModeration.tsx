@@ -2,12 +2,35 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, Shield, Check, X, AlertTriangle, MessageSquare } from "lucide-react";
+import { 
+  Shield, 
+  Check, 
+  X, 
+  AlertTriangle, 
+  MessageSquare, 
+  Search, 
+  Filter,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Sparkles,
+  User,
+  Star
+} from "lucide-react";
+import { 
+  Card, 
+  Button, 
+  Badge, 
+  AnimateIn, 
+  AnimatedCounter 
+} from "@/components/ui";
 import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const AdminModeration: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
+    
     const [reviews, setReviews] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -22,53 +45,72 @@ export const AdminModeration: React.FC = () => {
             ]);
             setReviews(r.data);
             setStats(s.data);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
-        finally { setLoading(false); }
+        } catch (error) { 
+            console.error(error); 
+            toast.error("Erro ao carregar dados de moderação."); 
+        } finally { 
+            setLoading(false); 
+        }
     }, [tenantId]);
 
-    useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
+    useEffect(() => { 
+        if (tenantId) fetchData(); 
+    }, [tenantId, fetchData]);
 
     const onModerate = async (reviewId: string, isApproved: boolean, flagReason?: string) => {
+        const loadingToast = toast.loading(isApproved ? "Aprovando avaliação..." : "Rejeitando avaliação...");
         try {
             await api.post(`/moderation/${reviewId}`, { isApproved, flagReason });
-            toast.success(isApproved ? "Aprovada!" : "Rejeitada!");
+            toast.success(isApproved ? "Avaliação publicada!" : "Avaliação ocultada.", { id: loadingToast });
             fetchData();
-        } catch (err) { toast.error("Erro ao moderar"); }
+        } catch (err) { 
+            toast.error("Erro ao processar moderação.", { id: loadingToast }); 
+        }
     };
 
     const filteredReviews = reviews.filter(r => {
         if (statusFilter === 'ALL') return true;
-        if (statusFilter === 'PENDING') return !r.moderation;
+        if (statusFilter === 'PENDING') return !r.moderation || r.moderation.isApproved === null;
         if (statusFilter === 'APPROVED') return r.moderation?.isApproved === true;
         if (statusFilter === 'REJECTED') return r.moderation?.isApproved === false;
         return true;
     });
 
-    if (loading && filteredReviews.length === 0) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
+    const getAiConfidenceColor = (score: number) => {
+        if (score > 0.8) return 'text-green-400';
+        if (score > 0.5) return 'text-amber-400';
+        return 'text-red-400';
+    };
+
+    const getAiConfidenceBg = (score: number) => {
+        if (score > 0.8) return 'bg-green-500/10 border-green-500/20';
+        if (score > 0.5) return 'bg-amber-500/10 border-amber-500/20';
+        return 'bg-red-500/10 border-red-500/20';
+    };
 
     return (
-        <div style={{ display: "grid", gap: "2rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.moderation.moderaoDeAvaliaes", `Moderação de Avaliações`)}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.moderation.reviseEModereAvaliaesDos Visitantes", `Revise e modere avaliações dos visitantes`)}</p>
+        <AnimateIn className="space-y-8 pb-32 max-w-6xl mx-auto">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-black text-white tracking-tighter flex items-center gap-3">
+                        <Shield className="text-gold-400" size={32} />
+                        Central de <span className="text-gold-400">Moderação AI</span>
+                    </h1>
+                    <p className="text-slate-400 font-medium">Revise e controle a qualidade das interações dos visitantes.</p>
                 </div>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
+
+                {/* Filter Tabs */}
+                <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-xl">
                     {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map(f => (
                         <button
                             key={f}
                             onClick={() => setStatusFilter(f)}
-                            style={{
-                                padding: "0.25rem 0.75rem",
-                                borderRadius: "0.5rem",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                                transition: "all 0.2s",
-                                backgroundColor: statusFilter === f ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
-                                color: statusFilter === f ? "black" : "#94a3b8",
-                                border: "none",
-                                cursor: "pointer"
-                            }}
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                statusFilter === f 
+                                ? 'bg-gold-400 text-slate-950 shadow-lg' 
+                                : 'text-slate-500 hover:text-white'
+                            }`}
                         >
                             {f === 'ALL' ? 'Tudo' : f === 'PENDING' ? 'Pendentes' : f === 'APPROVED' ? 'Aprovados' : 'Rejeitados'}
                         </button>
@@ -76,98 +118,206 @@ export const AdminModeration: React.FC = () => {
                 </div>
             </div>
 
-            {/* Stats */}
+            {/* Stats Dashboard */}
             {stats && (
-                <div className="grid grid-cols-4 gap-4">
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                        <MessageSquare className="mx-auto text-[var(--accent-primary)] mb-1" size={20} />
-                        <p className="text-2xl font-black text-white">{stats.totalReviews}</p>
-                        <p className="text-zinc-400 text-[10px] font-bold uppercase">Total</p>
-                    </div>
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4" style={{ borderColor: stats.pending > 0 ? "rgba(212,175,55,0.4)" : undefined }}>
-                        <AlertTriangle className="mx-auto text-amber-500 mb-1" size={20} />
-                        <p className="text-2xl font-black text-amber-400">{stats.pending}</p>
-                        <p className="text-zinc-400 text-[10px] font-bold uppercase">Pendentes</p>
-                    </div>
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                        <Check className="mx-auto text-green-500 mb-1" size={20} />
-                        <p className="text-2xl font-black text-green-400">{stats.approved}</p>
-                        <p className="text-zinc-400 text-[10px] font-bold uppercase">Aprovados</p>
-                    </div>
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                        <X className="mx-auto text-red-500 mb-1" size={20} />
-                        <p className="text-2xl font-black text-red-400">{stats.flagged}</p>
-                        <p className="text-zinc-400 text-[10px] font-bold uppercase">Rejeitados</p>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Card className="bg-white/[0.02] border-white/5 p-6 rounded-[32px] group hover:bg-white/[0.04] transition-all">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 group-hover:text-white transition-colors">
+                                <MessageSquare size={20} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Total</p>
+                                <div className="text-2xl font-black text-white leading-none mt-1">
+                                    <AnimatedCounter value={stats.totalReviews} />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <Card className={`bg-white/[0.02] border-white/5 p-6 rounded-[32px] group transition-all ${stats.pending > 0 ? 'border-amber-500/20 bg-amber-500/5' : ''}`}>
+                        <div className="flex items-center gap-4">
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${stats.pending > 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-white/5 text-slate-400'}`}>
+                                <AlertTriangle size={20} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Pendentes</p>
+                                <div className={`text-2xl font-black leading-none mt-1 ${stats.pending > 0 ? 'text-amber-400' : 'text-white'}`}>
+                                    <AnimatedCounter value={stats.pending} />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <Card className="bg-white/[0.02] border-white/5 p-6 rounded-[32px] group hover:bg-white/[0.04] transition-all">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-400">
+                                <Check size={20} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Aprovados</p>
+                                <div className="text-2xl font-black text-green-400 leading-none mt-1">
+                                    <AnimatedCounter value={stats.approved} />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <Card className="bg-white/[0.02] border-white/5 p-6 rounded-[32px] group hover:bg-white/[0.04] transition-all">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-400">
+                                <X size={20} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Rejeitados</p>
+                                <div className="text-2xl font-black text-red-400 leading-none mt-1">
+                                    <AnimatedCounter value={stats.flagged} />
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
                 </div>
             )}
 
-            {/* Reviews */}
-            <div style={{ display: "grid", gap: "0.75rem" }}>
-                {filteredReviews.length === 0 ? (
-                    <div className="card text-center" style={{ padding: "3rem" }}>
-                        <Shield style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} size={40} />
-                        <p style={{ color: "#94a3b8" }}>Nenhuma avaliação encontrada com este filtro.</p>
+            {/* Content List */}
+            <div className="space-y-4">
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-50">
+                        <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Processando Inteligência...</span>
                     </div>
+                ) : filteredReviews.length === 0 ? (
+                    <Card className="p-20 text-center bg-white/[0.02] border-white/5 rounded-[40px]">
+                        <Shield className="mx-auto text-slate-800 mb-6" size={64} />
+                        <h3 className="text-xl font-bold text-white">Tudo em Ordem</h3>
+                        <p className="text-slate-500 mt-2 max-w-xs mx-auto text-sm">Nenhuma avaliação encontrada com os filtros selecionados.</p>
+                    </Card>
                 ) : (
-                    filteredReviews.map((review: any) => {
-                        const mod = review.moderation;
-                        const isModerated = mod && mod.isApproved !== null;
-                        return (
-                            <div key={review.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", borderColor: !isModerated ? 'rgba(212,175,55,0.2)' : mod?.isApproved ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)' }}>
-                                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-                                            <span style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{review.work?.title}</span>
-                                            <span className={`text-xs font-bold ${review.rating >= 4 ? 'text-green-400' : review.rating >= 3 ? 'text-amber-400' : 'text-red-400'}`}>★ {review.rating}</span>
-                                            {isModerated ? (
-                                                <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold ${mod.isApproved ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                                                    {mod.isApproved ? 'APROVADA' : mod.flagReason || 'REJEITADA'}
-                                                </span>
-                                            ) : (
-                                                <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md font-bold">AGUARDANDO MODERAÇÃO</span>
-                                            )}
-                                            
-                                            {mod?.aiScore !== undefined && mod.aiScore !== null && (
-                                                <div style={{ display: "flex", alignItems: "center", gap: "4px" }} title={mod.aiReason || "Confiança da IA"}>
-                                                    <Shield size={12} className={mod.aiScore > 0.8 ? "text-green-500" : mod.aiScore > 0.5 ? "text-amber-500" : "text-red-500"} />
-                                                    <span style={{ fontSize: "10px", color: "#94a3b8" }}>{Math.round(mod.aiScore * 100)}% Confiança IA</span>
+                    <AnimatePresence mode="popLayout">
+                        {filteredReviews.map((review) => {
+                            const mod = review.moderation;
+                            const isModerated = mod && mod.isApproved !== null;
+                            const aiConfidence = mod?.aiScore ?? 0;
+                            
+                            return (
+                                <motion.div
+                                    key={review.id}
+                                    layout
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Card className={`p-8 bg-white/[0.02] border-white/5 rounded-[32px] relative overflow-hidden transition-all group ${
+                                        !isModerated ? 'border-gold-400/20' : 
+                                        mod.isApproved ? 'border-green-500/10' : 'border-red-500/10'
+                                    }`}>
+                                        <div className="flex flex-col lg:flex-row gap-8 items-start">
+                                            {/* AI Insights Sidebar */}
+                                            <div className="w-full lg:w-48 shrink-0 space-y-4">
+                                                <div className={`p-4 rounded-2xl border backdrop-blur-md transition-all ${getAiConfidenceBg(aiConfidence)}`}>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Sparkles size={14} className={getAiConfidenceColor(aiConfidence)} />
+                                                        <span className="text-[9px] font-black uppercase tracking-widest text-white/60">Análise AI</span>
+                                                    </div>
+                                                    <div className={`text-2xl font-black tracking-tighter ${getAiConfidenceColor(aiConfidence)}`}>
+                                                        {Math.round(aiConfidence * 100)}%
+                                                    </div>
+                                                    <p className="text-[8px] font-bold text-slate-500 uppercase mt-1">Índice de Confiança</p>
                                                 </div>
-                                            )}
+
+                                                <div className="flex flex-col gap-2">
+                                                    {isModerated ? (
+                                                        <Badge className={`w-full justify-center py-2 text-[8px] font-black uppercase tracking-widest ${
+                                                            mod.isApproved ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'
+                                                        }`}>
+                                                            {mod.isApproved ? 'Publicado' : mod.flagReason || 'Ocultado'}
+                                                        </Badge>
+                                                    ) : (
+                                                        <Badge className="w-full justify-center py-2 text-[8px] font-black uppercase tracking-widest bg-gold-400/10 text-gold-400 border-gold-400/20">
+                                                            Aguardando
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Review Content */}
+                                            <div className="flex-1 space-y-4 min-w-0">
+                                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                                    <div className="space-y-1 min-w-0">
+                                                        <div className="flex items-center gap-3">
+                                                            <h4 className="text-xl font-bold text-white truncate">{review.work?.title || "Obra Desconhecida"}</h4>
+                                                            <div className="flex items-center gap-1 text-gold-400 px-2 py-0.5 bg-gold-400/10 rounded-lg text-xs font-black">
+                                                                <Star size={12} fill="currentColor" />
+                                                                {review.rating}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <User size={12} className="text-slate-600" />
+                                                                {review.visitor?.name || "Anônimo"}
+                                                            </div>
+                                                            <span className="text-slate-800">•</span>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Clock size={12} className="text-slate-600" />
+                                                                {new Date(review.createdAt).toLocaleDateString("pt-BR")}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {!isModerated && (
+                                                        <div className="flex gap-2">
+                                                            <Button 
+                                                                onClick={() => onModerate(review.id, false, 'SPAM')}
+                                                                variant="glass"
+                                                                className="h-12 w-12 rounded-xl p-0 border-red-500/20 text-red-400 hover:bg-red-500/20"
+                                                            >
+                                                                <X size={20} />
+                                                            </Button>
+                                                            <Button 
+                                                                onClick={() => onModerate(review.id, true)}
+                                                                className="h-12 px-6 rounded-xl bg-green-500 text-slate-950 font-black uppercase tracking-widest text-[10px]"
+                                                                leftIcon={<Check size={16} />}
+                                                            >
+                                                                Aprovar
+                                                            </Button>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <div className="relative">
+                                                    {review.comment ? (
+                                                        <div className="p-6 bg-black/20 rounded-[24px] border border-white/5 text-slate-300 italic leading-relaxed text-sm">
+                                                            "{review.comment}"
+                                                        </div>
+                                                    ) : (
+                                                        <div className="text-slate-600 text-xs italic">Avaliação sem comentário escrito.</div>
+                                                    )}
+                                                </div>
+
+                                                {mod?.aiReason && (
+                                                    <div className="flex items-start gap-3 p-4 bg-gold-400/5 rounded-2xl border border-gold-400/10">
+                                                        <AlertTriangle size={14} className="text-gold-400 shrink-0 mt-0.5" />
+                                                        <div className="space-y-1">
+                                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gold-400/60">Parecer da Inteligência</p>
+                                                            <p className="text-[11px] text-slate-400 font-medium italic">{mod.aiReason}</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                        {review.comment && <p className="text-gray-200 text-sm mb-1 leading-relaxed">{review.comment}</p>}
-                                        <p className="text-zinc-400 text-[10px] font-medium uppercase tracking-wider">{review.visitor?.name || 'Visitante Anônimo'} • {new Date(review.createdAt).toLocaleDateString("pt-BR")} às {new Date(review.createdAt).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</p>
-                                        
-                                        {mod?.aiReason && !isModerated && (
-                                            <p style={{ fontSize: "10px", color: "#fbbf24", marginTop: "4px", fontStyle: "italic" }}>
-                                                Analise da IA: {mod.aiReason}
-                                            </p>
+
+                                        {/* Background Glow */}
+                                        {!isModerated && (
+                                            <div className="absolute -right-20 -top-20 w-40 h-40 bg-gold-400/5 rounded-full blur-3xl pointer-events-none group-hover:bg-gold-400/10 transition-all" />
                                         )}
-                                    </div>
-                                    {!isModerated && (
-                                        <div className="flex gap-2 shrink-0 ml-4">
-                                            <button 
-                                                onClick={() => onModerate(review.id, false, 'SPAM')} 
-                                                className="p-2.5 bg-red-500/10 hover:bg-red-500/20 rounded-xl text-red-400 transition-all border border-red-500/20"
-                                                title="Rejeitar como Spam/Ofensivo"
-                                            >
-                                                <X size={18} />
-                                            </button>
-                                            <button 
-                                                onClick={() => onModerate(review.id, true)} 
-                                                className="p-2.5 bg-green-500/10 hover:bg-green-500/20 rounded-xl text-green-400 transition-all border border-green-500/20"
-                                                title="Aprovar Comentário"
-                                            >
-                                                <Check size={18} />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        );
-                    })
+                                    </Card>
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
                 )}
             </div>
-        </div>
+        </AnimateIn>
     );
 };

@@ -39,7 +39,7 @@ interface OwnedSkin {
 
 export const VisitorWardrobe: React.FC = () => {
     const { addToast } = useToast();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isGuest } = useAuth();
     const [characters, setCharacters] = useState<CharacterProfile[]>([]);
     const [ownedSkins, setOwnedSkins] = useState<OwnedSkin[]>([]);
     const [selectedCharId, setSelectedCharId] = useState<string | null>(null);
@@ -50,6 +50,10 @@ export const VisitorWardrobe: React.FC = () => {
 
     useEffect(() => {
         const loadData = async () => {
+            if (isGuest) {
+                setLoading(false);
+                return;
+            }
             try {
                 const [rpgRes, profileRes] = await Promise.all([
                     api.get("/rpg/me"),
@@ -75,8 +79,9 @@ export const VisitorWardrobe: React.FC = () => {
                 setLoading(false);
             }
         };
-        if (isAuthenticated) loadData();
-    }, [isAuthenticated]);
+        if (isAuthenticated && !isGuest) loadData();
+        else if (isGuest) setLoading(false);
+    }, [isAuthenticated, isGuest]);
 
     // Polling for skin generation
     useEffect(() => {
@@ -182,17 +187,37 @@ export const VisitorWardrobe: React.FC = () => {
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-500/5 blur-[120px] rounded-full" />
             </div>
 
-            <header className="mb-12 flex items-center justify-between sticky top-0 z-20 py-4 bg-slate-950/80 backdrop-blur-md -mx-6 px-6 border-b border-white/5">
-                <div>
-                     <h1 className="text-3xl font-black text-white flex items-center gap-3">
-                        <User className="text-[var(--accent-primary)]" size={32} /> Guarda-Roupa
-                     </h1>
-                     <p className="text-slate-500 text-sm font-medium">Sua identidade cultural única</p>
+            {isGuest && (
+                <div className="relative z-50 flex flex-col items-center justify-center py-40 text-center">
+                    <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10">
+                        <User size={48} className="text-slate-700" />
+                    </div>
+                    <h2 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">Acesso Restrito</h2>
+                    <p className="text-slate-500 text-sm max-w-xs mx-auto mb-10 leading-relaxed">
+                        Crie uma conta gratuita para desbravar o RPG, conquistar skins exclusivas e personalizar sua identidade cultural.
+                    </p>
+                    <button 
+                        onClick={() => window.location.href='/register'}
+                        className="w-full max-w-xs py-4 bg-[var(--accent-primary)] text-slate-950 font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-amber-500/20 active:scale-95 transition-all"
+                    >
+                        Criar Perfil Heróico
+                    </button>
                 </div>
-                <div className="bg-gradient-to-tr from-blue-500/10 to-purple-500/10 p-3 rounded-[24px] border border-white/10 shadow-lg">
-                     <LayoutGrid className="text-white" size={24} />
-                </div>
-            </header>
+            )}
+
+            {!isGuest && (
+                <>
+                <header className="flex items-center justify-between mb-12 relative z-10">
+                    <div>
+                         <h1 className="text-3xl font-black text-white flex items-center gap-3">
+                            <User className="text-[var(--accent-primary)]" size={32} /> Guarda-Roupa
+                         </h1>
+                         <p className="text-slate-500 text-sm font-medium">Sua identidade cultural única</p>
+                    </div>
+                    <div className="bg-gradient-to-tr from-blue-500/10 to-purple-500/10 p-3 rounded-[24px] border border-white/10 shadow-lg">
+                         <LayoutGrid className="text-white" size={24} />
+                    </div>
+                </header>
 
             {/* CHARACTER SELECTOR CAROUSEL */}
             <div className="flex gap-4 overflow-x-auto pb-8 mb-8 no-scrollbar snap-x">
@@ -331,6 +356,8 @@ export const VisitorWardrobe: React.FC = () => {
                     </div>
                 )}
             </div>
-        </div>
-    );
+            </>
+        )}
+    </div>
+);
 };

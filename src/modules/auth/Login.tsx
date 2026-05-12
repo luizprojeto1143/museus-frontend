@@ -116,7 +116,7 @@ export const Login: React.FC = () => {
                 <label className="text-xs font-black uppercase tracking-widest text-gray-500">
                   Senha
                 </label>
-                <Link to="/forgot-password" size="sm" className="text-xs text-gold-400/80 hover:text-gold-400 transition-colors font-bold uppercase tracking-tighter">
+                <Link to="/forgot-password" className="text-xs text-gold-400/80 hover:text-gold-400 transition-colors font-bold uppercase tracking-tighter">
                   Esqueceu a senha?
                 </Link>
               </div>

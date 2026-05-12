@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
@@ -14,8 +14,14 @@ import {
     ExternalLink,
     ChevronRight,
     Search,
-    TrendingUp
+    TrendingUp,
+    Zap,
+    X,
+    Bell,
+    Globe
 } from "lucide-react";
+import { Badge, Button } from "@/components/ui";
+import { motion, AnimatePresence } from "framer-motion";
 
 export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { t } = useTranslation();
@@ -24,83 +30,106 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const links = [
-        { to: "/municipal", label: "Dashboard Executivo", icon: <LayoutDashboard size={20} /> },
-        { to: "/municipal/equipments", label: "Equipamentos Culturais", icon: <Building2 size={20} /> },
-        { to: "/municipal/projects", label: "Gestão de Projetos", icon: <FileText size={20} /> },
-        { to: "/municipal/reports", label: "Relatórios de Impacto", icon: <BarChart3 size={20} /> },
-        { to: "/municipal/compliance", label: "Conformidade Legal", icon: <ShieldCheck size={20} /> },
-        { to: "/municipal/ppa", label: "Metas PPA", icon: <TrendingUp size={20} /> },
-        { to: "/municipal/settings", label: "Configurações da Cidade", icon: <Settings size={20} /> },
+        { to: "/municipal", label: "Dashboard Executivo", icon: <LayoutDashboard size={18} /> },
+        { to: "/municipal/equipments", label: "Equipamentos Culturais", icon: <Building2 size={18} /> },
+        { to: "/municipal/projects", label: "Gestão de Projetos", icon: <FileText size={18} /> },
+        { to: "/municipal/reports", label: "Relatórios de Impacto", icon: <BarChart3 size={18} /> },
+        { to: "/municipal/compliance", label: "Conformidade Legal", icon: <ShieldCheck size={18} /> },
+        { to: "/municipal/ppa", label: "Metas PPA", icon: <TrendingUp size={18} /> },
+        { to: "/municipal/settings", label: "Configurações da Cidade", icon: <Settings size={18} /> },
     ];
 
     return (
-        <div className="municipal-theme flex min-h-screen bg-[var(--bg-page)] text-[var(--fg-main)] w-full font-sans">
+        <div className="flex min-h-screen bg-[#020617] text-slate-200 w-full font-sans selection:bg-emerald-500/30">
             {/* Mobile Overlay */}
-            <div
-                className={`fixed inset-0 bg-[var(--bg-overlay)] z-[900] transition-opacity duration-300 backdrop-blur-sm ${isSidebarOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
-                onClick={() => setSidebarOpen(false)}
-                aria-label="Fechar menu"
-                aria-hidden={!isSidebarOpen}
-            />
+            <AnimatePresence>
+                {isSidebarOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/80 z-[900] backdrop-blur-md md:hidden"
+                        onClick={() => setSidebarOpen(false)}
+                    />
+                )}
+            </AnimatePresence>
 
             {/* Sidebar */}
             <aside
                 className={`
-                    fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--bg-sidebar)] text-slate-300
-                    flex flex-col z-[1000] transition-transform duration-300 shadow-2xl
+                    fixed top-0 left-0 bottom-0 w-[280px] bg-[#0f172a] border-r border-white/5 
+                    flex flex-col z-[1000] transition-all duration-500 ease-in-out
                     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
                 `}
             >
-                <div className="p-8 border-b border-slate-800 flex flex-col gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[var(--accent-primary)] text-[var(--fg-inverse)] rounded-lg flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/20">
+                <div className="p-8 border-b border-white/5 flex flex-col gap-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-[0_0_30px_rgba(16,185,129,0.2)] shrink-0 border border-emerald-400/20">
                             M
                         </div>
-                        <div>
-                            <div className="text-white font-bold text-sm tracking-tight uppercase">{t("municipal.municipallayout.mduloMunicipal", `Módulo Municipal`)}</div>
-                            <div className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{t("municipal.municipallayout.gestoPblica", `Gestão Pública`)}</div>
+                        <div className="min-w-0">
+                            <div className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] leading-none mb-1">
+                                Secretaria
+                            </div>
+                            <div className="text-sm text-white font-bold truncate">
+                                Portal Municipal
+                            </div>
                         </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Jurisdição Ativa</span>
                     </div>
                 </div>
 
-                <div className="flex-1 p-4 flex flex-col gap-1 overflow-y-auto">
-                    <div className="px-4 mb-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Menu Principal</div>
+                <nav className="flex-1 p-6 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar">
+                    <div className="px-4 mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                        Gestão Governamental
+                    </div>
                     {links.map(link => (
                         <Link
                             key={link.to}
                             to={link.to}
                             className={`
-                                flex items-center px-4 py-3 rounded-xl transition-all group relative
-                                ${location.pathname === link.to
-                                    ? "bg-[var(--accent-primary)] text-[var(--fg-inverse)] shadow-lg shadow-blue-600/20"
-                                    : "hover:bg-slate-800 hover:text-white"}
+                                flex items-center px-5 py-4 rounded-2xl transition-all duration-300 group relative
+                                ${location.pathname === link.to 
+                                    ? "bg-emerald-600/10 text-white font-bold" 
+                                    : "text-slate-500 hover:bg-white/5 hover:text-slate-200"}
                             `}
                             onClick={() => setSidebarOpen(false)}
                         >
-                            <span className="mr-3">{link.icon}</span>
-                            <span className="font-semibold text-sm">{link.label}</span>
+                            <span className={`mr-4 transition-transform duration-300 ${location.pathname === link.to ? "text-emerald-400 scale-110" : "group-hover:scale-110"}`}>
+                                {link.icon}
+                            </span>
+                            <span className="text-sm tracking-tight">{link.label}</span>
+                            
                             {location.pathname === link.to && (
-                                <ChevronRight size={14} className="ml-auto opacity-50" />
+                                <motion.div 
+                                    layoutId="activeTabSec"
+                                    className="absolute left-0 w-1 h-6 bg-emerald-500 rounded-full"
+                                />
                             )}
+                            
+                            <ChevronRight size={14} className={`ml-auto opacity-0 group-hover:opacity-100 transition-all ${location.pathname === link.to ? 'opacity-100' : ''}`} />
                         </Link>
                     ))}
-                </div>
+                </nav>
 
-                <div className="p-6 border-t border-slate-800 bg-slate-900/50">
-                    <div className="flex items-center gap-3 mb-6 px-2">
-                        <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-300 border border-slate-600">
+                <div className="p-6 border-t border-white/5 space-y-4">
+                    <div className="flex items-center gap-3 px-4 py-2">
+                        <div className="w-8 h-8 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-[10px] font-black text-slate-400">
                             {name?.slice(0, 2).toUpperCase()}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-xs font-bold text-white truncate">{name}</div>
-                            <div className="text-[9px] text-slate-500 uppercase font-black">{t("municipal.municipallayout.secretrioa", `Secretário(a)`)}</div>
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-bold text-white truncate">{name}</p>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Secretário(a)</p>
                         </div>
                     </div>
 
                     <button
                         onClick={logout}
-                        className="flex items-center justify-center w-full px-4 py-3 text-sm text-slate-400 border border-slate-700 rounded-xl hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/5 transition-all gap-2 font-bold"
-                        aria-label={t("municipal.municipallayout.encerrarSesso", `Encerrar sessão`)}
+                        className="flex items-center justify-center w-full px-5 py-4 text-slate-400 bg-white/5 border border-white/5 rounded-2xl hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all duration-300 gap-3 font-black text-[10px] uppercase tracking-widest"
                     >
                         <LogOut size={16} /> Encerrar Sessão
                     </button>
@@ -108,41 +137,47 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-[280px] min-h-screen flex flex-col w-full">
-                <header className="h-20 px-4 md:px-10 flex items-center justify-between bg-[var(--bg-surface)] border-b border-[var(--border-default)] sticky top-0 z-40">
-                    <div className="flex items-center gap-4">
-                        <button className="md:hidden text-[var(--fg-secondary)] p-2 hover:bg-[var(--bg-surface-hover)] rounded-lg" onClick={() => setSidebarOpen(true)} aria-label={t("municipal.municipallayout.abrirMenuDeNavegao", `Abrir menu de navegação`)}>
-                            <Menu size={24} />
+            <main className="flex-1 md:ml-[280px] min-h-screen flex flex-col w-full transition-all duration-300">
+                <header className="h-20 px-6 md:px-12 flex items-center justify-between bg-[#020617]/80 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-[800]">
+                    <div className="flex items-center gap-6">
+                        <button className="md:hidden w-10 h-10 flex items-center justify-center text-emerald-400 bg-emerald-400/10 rounded-xl" onClick={() => setSidebarOpen(true)}>
+                            <Menu size={20} />
                         </button>
-                        <div className="hidden lg:flex items-center gap-3 bg-[var(--bg-surface-hover)] px-4 py-2 rounded-xl w-80">
-                            <Search size={18} className="text-[var(--fg-tertiary)]" />
+                        
+                        <div className="hidden lg:flex items-center gap-4 bg-white/5 px-6 py-2.5 rounded-2xl border border-white/5 w-96 group focus-within:border-emerald-500/30 transition-all">
+                            <Search size={18} className="text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Buscar processos, leis ou unidades..."
-                                className="bg-transparent border-none text-sm focus:outline-none w-full placeholder:text-[var(--fg-tertiary)]"
-                                aria-label="Buscar processos, leis ou unidades"
+                                placeholder="Buscar processos ou leis..."
+                                className="bg-transparent border-none text-sm text-white focus:outline-none w-full placeholder:text-slate-600 font-medium"
                             />
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <div className="hidden sm:flex flex-col items-end">
-                            <span className="text-[10px] font-black text-[var(--fg-tertiary)] uppercase tracking-widest">Status do Sistema</span>
-                            <span className="text-xs font-bold text-emerald-600 flex items-center gap-1.5">
-                                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                Em conformidade (LBI)
-                            </span>
-                        </div>
+                         <div className="hidden sm:flex flex-col items-end">
+                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">Status de Gestão</span>
+                             <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                                 <Globe size={12} />
+                                 Em conformidade (LBI)
+                             </span>
+                         </div>
+                         <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center relative hover:bg-white/10 transition-colors cursor-pointer group">
+                             <Bell size={20} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                             <div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border-2 border-[#020617]" />
+                         </div>
                     </div>
                 </header>
 
-                <div className="flex-1 p-4 md:p-10 w-full max-w-7xl mx-auto">
+                <div className="flex-1 p-6 md:p-12 w-full max-w-[1600px] mx-auto overflow-x-hidden">
                     {children}
                 </div>
 
-                <footer className="p-8 text-center text-[10px] text-[var(--fg-tertiary)] uppercase tracking-[0.2em] font-medium">{t("municipal.municipallayout.2024PlataformaCulturaVivaGestoDeImpactoM", `
-                    © 2024 Plataforma Cultura Viva • Gestão de Impacto Municipal
-                `)}</footer>
+                <footer className="p-12 text-center">
+                    <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">
+                        © 2024 Plataforma Cultura Viva • Monitoramento de Impacto Municipal
+                    </p>
+                </footer>
             </main>
         </div>
     );

@@ -3,6 +3,30 @@
   display: flex;
   flex-direction: column;
   gap: 80px;
+  position: relative;
+}
+
+.personal-greeting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.greeting-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--fg-secondary);
+  opacity: 0.7;
+}
+
+.greeting-name {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  color: var(--accent-primary);
+  margin-top: 4px;
 }
 
 /* ═══ HERO SECTION ═══════════════ */
@@ -56,26 +80,43 @@
 }
 
 .bento-card {
-  background: var(--bg-surface);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--accent-primary);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 30px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.5s var(--easing-premium);
   overflow: hidden;
   position: relative;
   text-decoration: none;
-  box-shadow: 0 10px 40px rgba(212, 175, 55, 0.1);
+  box-shadow: var(--shadow-surface);
+}
+
+.bento-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .bento-card:hover {
-  background: var(--bg-surface-hover);
+  background: rgba(255, 255, 255, 0.12);
   border-color: var(--accent-primary);
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-premium);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.bento-card:hover::before {
+  opacity: 1;
 }
 
 .bento-card.large { grid-column: span 2; }

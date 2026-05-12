@@ -152,79 +152,94 @@ export const ProducerDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* PIPELINE & OPPORTUNITIES ROW */}
+            {/* PIPELINE & AI COMMAND CENTER ROW */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 {/* PROJECT PIPELINE */}
-                <div className="lg:col-span-2 bg-[#2c1e10] border border-[#463420] rounded-3xl p-6 shadow-xl">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
-                            <ListChecks className="text-[var(--accent-primary)]" /> Seu Fluxo de Projetos
-                        </h2>
-                        <button onClick={() => navigate("/producer/projects")} className="text-xs text-[var(--accent-primary)] font-bold uppercase hover:underline">Ver Todos</button>
+                <div className="lg:col-span-2 premium-glass p-8 rounded-[40px] glow-hover">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 className="text-2xl font-black text-white flex items-center gap-3 italic">
+                                <ListChecks className="text-[var(--accent-primary)]" size={28} /> Pipeline de Projetos
+                            </h2>
+                            <p className="text-[10px] text-[#B0A090] uppercase tracking-widest mt-1">Gestão de propostas e editais</p>
+                        </div>
+                        <button onClick={() => navigate("/producer/projects")} className="btn-secondary text-[10px] px-4 py-2">Explorar Tudo</button>
                     </div>
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-black/20 rounded-2xl p-4 border border-[#463420]/50 text-center">
-                            <div className="text-2xl font-bold text-[#EAE0D5] mb-1">{projectSummary.drafts}</div>
-                            <div className="text-[10px] text-[#B0A090] font-bold uppercase tracking-wider">Rascunhos</div>
+                    <div className="grid grid-cols-3 gap-6">
+                        <div className="bg-white/5 rounded-3xl p-6 border border-white/5 flex flex-col items-center group hover:bg-white/10 transition-all cursor-pointer" onClick={() => navigate("/producer/projects?status=DRAFT")}>
+                            <div className="text-4xl font-black text-white mb-1 group-hover:scale-110 transition-transform">{projectSummary.drafts}</div>
+                            <div className="text-[9px] text-[#B0A090] font-black uppercase tracking-tighter">Rascunhos</div>
                         </div>
-                        <div className="bg-[var(--accent-primary)]/10 rounded-2xl p-4 border border-[var(--accent-primary)]/20 text-center">
-                            <div className="text-2xl font-bold text-blue-400 mb-1">{projectSummary.submitted}</div>
-                            <div className="text-[10px] text-blue-400/70 font-bold uppercase tracking-wider">Em Análise</div>
+                        <div className="bg-[var(--accent-primary)]/5 rounded-3xl p-6 border border-[var(--accent-primary)]/20 flex flex-col items-center group hover:bg-[var(--accent-primary)]/10 transition-all cursor-pointer" onClick={() => navigate("/producer/projects?status=SUBMITTED")}>
+                            <div className="text-4xl font-black text-[var(--accent-primary)] mb-1 group-hover:scale-110 transition-transform">{projectSummary.submitted}</div>
+                            <div className="text-[9px] text-[var(--accent-primary)] font-black uppercase tracking-tighter">Em Análise</div>
                         </div>
-                        <div className="bg-green-500/10 rounded-2xl p-4 border border-green-500/20 text-center">
-                            <div className="text-2xl font-bold text-green-400 mb-1">{projectSummary.approved}</div>
-                            <div className="text-[10px] text-green-400/70 font-bold uppercase tracking-wider">Aprovados</div>
+                        <div className="bg-green-500/5 rounded-3xl p-6 border border-green-500/20 flex flex-col items-center group hover:bg-green-500/10 transition-all cursor-pointer" onClick={() => navigate("/producer/projects?status=APPROVED")}>
+                            <div className="text-4xl font-black text-green-400 mb-1 group-hover:scale-110 transition-transform">{projectSummary.approved}</div>
+                            <div className="text-[9px] text-green-400/70 font-black uppercase tracking-tighter">Aprovados</div>
                         </div>
                     </div>
                 </div>
 
-                {/* AI TIP BOX */}
-                <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] border border-[var(--accent-primary)]/30 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-center">
-                    <div className="absolute -right-4 -top-4 text-[var(--accent-primary)] opacity-10">
-                        <Wand2 size={120} />
+                {/* AI COMMAND CENTER */}
+                <div className="premium-glass p-8 rounded-[40px] border-[var(--accent-primary)]/30 relative overflow-hidden flex flex-col justify-between group">
+                    <div className="absolute -right-8 -top-8 text-[var(--accent-primary)] opacity-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
+                        <Wand2 size={160} />
                     </div>
-                    <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-sm mb-2">
-                        <Sparkles size={16} /> Dica Pro
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2 text-[var(--accent-primary)] font-black text-xs uppercase tracking-widest mb-4">
+                            <Sparkles size={16} /> AI Command Center
+                        </div>
+                        <p className="text-sm text-[#EAE0D5] font-medium leading-relaxed mb-6">
+                            "Analisei seus rascunhos. O projeto <strong>'{projectSummary.drafts > 0 ? "..." : "Novo Projeto"}'</strong> tem 85% de aderência ao edital da Lei Paulo Gustavo."
+                        </p>
                     </div>
-                    <p className="text-sm text-[#B0A090] leading-relaxed relative z-10">
-                        Sabia que você pode usar o <strong>Ajudante IA</strong> dentro dos seus projetos para alinhar o texto com as exigências de cada edital?
-                    </p>
+                    <button className="btn-primary w-full text-[10px] font-black italic relative z-10">
+                        Otimizar Propostas agora
+                    </button>
                 </div>
             </div>
 
             {/* METRICS GRID */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {/* Metric Cards (same as before but refreshed) */}
-                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">{t("producer.dashboard.metrics.revenue")}</span>
-                        <DollarSign size={16} className="text-emerald-500" />
+                <div className="premium-glass p-6 rounded-3xl glow-hover">
+                    <div className="flex justify-between items-start mb-4">
+                        <span className="text-[10px] font-black text-[#B0A090] uppercase tracking-widest">{t("producer.dashboard.metrics.revenue")}</span>
+                        <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
+                            <DollarSign size={18} />
+                        </div>
                     </div>
-                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.revenue}</div>
+                    <div className="text-3xl font-black text-white">{stats.revenue}</div>
                 </div>
 
-                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">{t("producer.dashboard.metrics.ticketsSold")}</span>
-                        <Ticket size={16} className="text-blue-500" />
+                <div className="premium-glass p-6 rounded-3xl glow-hover">
+                    <div className="flex justify-between items-start mb-4">
+                        <span className="text-[10px] font-black text-[#B0A090] uppercase tracking-widest">{t("producer.dashboard.metrics.ticketsSold")}</span>
+                        <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+                            <Ticket size={18} />
+                        </div>
                     </div>
-                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.ticketsSold}</div>
+                    <div className="text-3xl font-black text-white">{stats.ticketsSold}</div>
                 </div>
 
-                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">{t("producer.dashboard.metrics.activeEvents")}</span>
-                        <Calendar size={16} className="text-[var(--accent-primary)]" />
+                <div className="premium-glass p-6 rounded-3xl glow-hover">
+                    <div className="flex justify-between items-start mb-4">
+                        <span className="text-[10px] font-black text-[#B0A090] uppercase tracking-widest">{t("producer.dashboard.metrics.activeEvents")}</span>
+                        <div className="p-2 bg-[var(--accent-primary)]/10 rounded-lg text-[var(--accent-primary)]">
+                            <Calendar size={18} />
+                        </div>
                     </div>
-                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.activeEvents}</div>
+                    <div className="text-3xl font-black text-white">{stats.activeEvents}</div>
                 </div>
 
-                <div className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/30 transition-all">
-                    <div className="flex justify-between items-start mb-2">
-                        <span className="text-xs font-bold text-[#B0A090] uppercase tracking-wider">Valor Captado</span>
-                        <BarChart3 size={16} className="text-purple-500" />
+                <div className="premium-glass p-6 rounded-3xl glow-hover">
+                    <div className="flex justify-between items-start mb-4">
+                        <span className="text-[10px] font-black text-[#B0A090] uppercase tracking-widest">Valor Captado</span>
+                        <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500">
+                            <BarChart3 size={18} />
+                        </div>
                     </div>
-                    <div className="text-2xl font-bold text-[#EAE0D5]">{stats.raisedAmount}</div>
+                    <div className="text-3xl font-black text-white">{stats.raisedAmount}</div>
                 </div>
             </div>
 

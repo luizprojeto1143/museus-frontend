@@ -14,10 +14,8 @@ import { ProviderSettings } from "../modules/provider/ProviderSettings";
 import { MunicipalLayout } from "../modules/municipal/MunicipalLayout";
 import { MunicipalDashboard } from "../modules/municipal/MunicipalDashboard";
 import { MunicipalReports } from "../modules/municipal/MunicipalReports";
-import {
-    MunicipalEquipments,
-    MunicipalSettings
-} from "../modules/municipal/MunicipalPlaceholders";
+import { MunicipalEquipments } from "../modules/municipal/MunicipalEquipments";
+import { MunicipalSettings } from "../modules/municipal/MunicipalSettings";
 import { MunicipalNoticeProjects } from "../modules/municipal/MunicipalNoticeProjects";
 import { MunicipalAccessibilityGaps } from "../modules/municipal/MunicipalAccessibilityGaps";
 import { MunicipalPPA } from "../modules/municipal/MunicipalPPA";

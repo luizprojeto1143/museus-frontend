@@ -6,14 +6,14 @@ import React, {
 } from "react";
 import { api, baseURL, isDemoMode } from "../../api/client";
 
-export type Role = "visitor" | "admin" | "master" | "producer" | "collaborator";
+export type Role = "visitor" | "admin" | "master" | "producer" | "collaborator" | "theater";
 
 // ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
   role: Role;
   tenantId: string | null;
   equipamentoId: string | null;
-  tenantType: "MUSEUM" | "PRODUCER" | null;
+  tenantType: "MUSEUM" | "PRODUCER" | "THEATER" | null;
   email: string | null;
   name: string | null;
   userId: string | null;
@@ -27,7 +27,7 @@ interface AuthState {
   role: Role | null;
   tenantId: string | null;
   equipamentoId: string | null;
-  tenantType: "MUSEUM" | "PRODUCER" | null;
+  tenantType: "MUSEUM" | "PRODUCER" | "THEATER" | null;
   email: string | null;
   name: string | null;
   userId: string | null;
@@ -41,7 +41,7 @@ interface AuthContextValue extends AuthState {
   isAuthenticated: boolean;
   login: (params: { email: string; password: string }) => Promise<{
     role: Role;
-    tenantType: "MUSEUM" | "PRODUCER" | null;
+    tenantType: "MUSEUM" | "PRODUCER" | "THEATER" | null;
     hasProviderProfile: boolean;
   }>;
   enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null, selectedCityId?: string | null) => void;
@@ -144,6 +144,7 @@ function mapRole(raw: string): Role {
   if (upper === "admin") return "admin";
   if (upper === "producer") return "producer";
   if (upper === "collaborator") return "collaborator";
+  if (upper === "theater") return "theater";
   return "visitor";
 }
 
@@ -215,6 +216,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         userId: "demo-user-id",
         hasProviderProfile: false,
         isGuest: false,
+        cityId: null,
+        permissions: null
       };
 
       dispatch({ type: "LOGIN", payload: newState });
@@ -252,6 +255,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       hasProviderProfile: false,
       isGuest: true,
       cityId: selectedCityId ?? null,
+      permissions: null
     };
 
     dispatch({ type: "LOGIN", payload: newState });

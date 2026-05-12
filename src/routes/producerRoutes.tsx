@@ -21,10 +21,19 @@ const ProducerNoticeResults = React.lazy(() => import("../modules/producer/Produ
 const ProducerDocuments = React.lazy(() => import("../modules/producer/ProducerDocuments").then(m => ({ default: m.ProducerDocuments })));
 const ProducerProviders = React.lazy(() => import("../modules/producer/ProducerProviders").then(m => ({ default: m.ProducerProviders })));
 
-// Reused admin components for museum features
-import { AdminWorks } from "../modules/admin/pages/AdminWorks";
-import { AdminWorkForm } from "../modules/admin/pages/AdminWorkForm";
-import { AdminAchievements } from "../modules/admin/pages/AdminAchievements";
+// Theater pages
+const TheaterDashboard = React.lazy(() => import("../modules/theater/pages/TheaterDashboard").then(m => ({ default: m.TheaterDashboard })));
+const TheaterCast = React.lazy(() => import("../modules/theater/pages/TheaterCast").then(m => ({ default: m.TheaterCast })));
+const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/TheaterCueMaster").then(m => ({ default: m.TheaterCueMaster })));
+const TheaterSeatEditor = React.lazy(() => import("../modules/theater/pages/TheaterSeatEditor").then(m => ({ default: m.TheaterSeatEditor })));
+const TheaterPlaybill = React.lazy(() => import("../modules/theater/pages/TheaterPlaybill").then(m => ({ default: m.TheaterPlaybill })));
+const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
+const TheaterBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterBoxOffice").then(m => ({ default: m.TheaterBoxOffice })));
+
+// Reused admin components for museum features (converted to lazy)
+const AdminWorks = React.lazy(() => import("../modules/admin/pages/AdminWorks").then(m => ({ default: m.AdminWorks })));
+const AdminWorkForm = React.lazy(() => import("../modules/admin/pages/AdminWorkForm").then(m => ({ default: m.AdminWorkForm })));
+const AdminAchievements = React.lazy(() => import("../modules/admin/pages/AdminAchievements").then(m => ({ default: m.AdminAchievements })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -61,6 +70,16 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/inbox" element={pr(ProducerInbox, RequireRole)} />
             <Route path="/producer/audience" element={pr(ProducerAudience, RequireRole)} />
             <Route path="/producer/reports" element={pr(ProducerReports, RequireRole)} />
+
+            {/* Theater Module */}
+            <Route path="/producer/theater" element={pr(TheaterDashboard, RequireRole)} />
+            <Route path="/producer/theater/cast" element={pr(TheaterCast, RequireRole)} />
+            <Route path="/producer/theater/cue/:id" element={pr(TheaterCueMaster, RequireRole)} />
+            <Route path="/producer/theater/seats" element={pr(TheaterSeatEditor, RequireRole)} />
+            <Route path="/producer/theater/playbill" element={pr(TheaterPlaybill, RequireRole)} />
+            <Route path="/producer/theater/subscriptions" element={pr(TheaterSubscriptions, RequireRole)} />
+            <Route path="/producer/theater/box-office" element={pr(TheaterBoxOffice, RequireRole)} />
+
             <Route path="/producer/*" element={pr(ProducerDashboard, RequireRole)} />
         </>
     );

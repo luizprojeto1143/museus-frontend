@@ -18,6 +18,7 @@ interface GamificationContextType {
 }
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
+const STORAGE_KEY = "msv_gamification_stats";
 
 // No more manual getAuthFromStorage helper needed
 

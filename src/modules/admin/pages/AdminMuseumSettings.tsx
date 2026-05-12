@@ -2,15 +2,50 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Input, Button, Textarea, Select } from "../../../components/ui";
-import {
-  Settings, Building2, MapPin, Clock, Phone, Mail, Globe,
-  Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon,
-  Plus, Edit, Trash2, Palette, Save, Smartphone, CreditCard, HelpCircle
+import { 
+  Settings, 
+  Building2, 
+  MapPin, 
+  Clock, 
+  Phone, 
+  Mail, 
+  Globe,
+  Volume2, 
+  Upload, 
+  Headphones, 
+  Video, 
+  Map as MapIcon, 
+  Image as ImageIcon,
+  Plus, 
+  Edit, 
+  Trash2, 
+  Palette, 
+  Save, 
+  Smartphone, 
+  CreditCard, 
+  HelpCircle,
+  ArrowUpRight, 
+  ShieldCheck, 
+  CheckCircle,
+  Eye,
+  Camera,
+  Layout,
+  Music,
+  Share2,
+  Route,
+  XCircle
 } from "lucide-react";
-import "./AdminMuseumSettings.css";
+import { 
+  Card, 
+  Button, 
+  Input, 
+  Badge, 
+  AnimateIn,
+  AnimatedCounter 
+} from "@/components/ui";
+import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Interface definitions kept same...
 interface FloorPlan {
   id: string;
   name: string;
@@ -18,8 +53,8 @@ interface FloorPlan {
   imageUrl: string;
   order: number;
 }
+
 interface MuseumSettings {
-  // 2.1 Dados do Museu
   name: string;
   mission: string;
   address: string;
@@ -30,19 +65,13 @@ interface MuseumSettings {
   logoUrl: string;
   coverImageUrl: string;
   appIconUrl: string;
-
-  // 2.3 Mapa
   mapImageUrl: string;
   latitude: number | null;
   longitude: number | null;
-
-  // 2.2 Cores e Tema
   primaryColor: string;
   secondaryColor: string;
   theme: "light" | "dark";
   historicalFont: boolean;
-
-  // Welcome Media
   welcomeAudioUrl?: string;
   welcomeVideoUrl?: string;
   frameUrl?: string;
@@ -56,13 +85,10 @@ export const AdminMuseumSettings: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
 
-  // Refs
   const logoInputRef = useRef<HTMLInputElement>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const iconInputRef = useRef<HTMLInputElement>(null);
-  const mapInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const frameInputRef = useRef<HTMLInputElement>(null);
+  const mapInputRef = useRef<HTMLInputElement>(null);
   const floorPlanInputRef = useRef<HTMLInputElement>(null);
 
   const [settings, setSettings] = useState<MuseumSettings>({
@@ -80,8 +106,8 @@ export const AdminMuseumSettings: React.FC = () => {
     mapImageUrl: "",
     latitude: -20.385574,
     longitude: -43.503578,
-    primaryColor: "var(--accent-primary)",
-    secondaryColor: "var(--accent-secondary)",
+    primaryColor: "#d4af37",
+    secondaryColor: "#463420",
     theme: "dark",
     historicalFont: true,
     welcomeAudioUrl: "",
@@ -92,14 +118,13 @@ export const AdminMuseumSettings: React.FC = () => {
     asaasWalletId: "",
   });
 
-  // State
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [floorPlans, setFloorPlans] = useState<FloorPlan[]>([]);
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [editingFloorPlan, setEditingFloorPlan] = useState<FloorPlan | null>(null);
   const [newFloorPlan, setNewFloorPlan] = useState({ name: "", floor: 0, imageUrl: "" });
-  const [activeTab, setActiveTab] = useState<"dados" | "multimidia" | "mapa" | "visual" | "preview" | "financeiro">("dados");
+  const [activeTab, setActiveTab] = useState<string>("dados");
 
   const loadFloorPlans = React.useCallback(async () => {
     if (!tenantId) return;
@@ -114,7 +139,7 @@ export const AdminMuseumSettings: React.FC = () => {
   const loadSettings = React.useCallback(async () => {
     try {
       const res = await api.get(`/tenants/${tenantId}/settings`);
-      setSettings(res.data);
+      if (res.data) setSettings(res.data);
     } catch {
       console.error("Erro ao carregar configurações");
     } finally {
@@ -131,74 +156,56 @@ export const AdminMuseumSettings: React.FC = () => {
     setSaving(true);
     try {
       await api.put(`/tenants/${tenantId}/settings`, settings);
-      alert(t("admin.museumsettings.success"));
+      toast.success("Configurações salvas com sucesso!");
     } catch {
-      alert(t("admin.museumsettings.error"));
+      toast.error("Erro ao salvar configurações.");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleStripeOnboarding = async () => {
-    try {
-      const { data } = await api.get(`/stripe/onboarding-link?type=MUSEUM&id=${tenantId}`);
-      window.location.href = data.url;
-    } catch (err) {
-      console.error("Error generating onboarding link", err);
-      alert("Erro ao conectar com o Stripe. Tente novamente.");
-    }
-  };
-  
-  const handleStripeDashboard = async () => {
-    try {
-      const { data } = await api.get(`/stripe/dashboard-link?type=MUSEUM&id=${tenantId}`);
-      window.open(data.url, '_blank');
-    } catch (err) {
-      console.error("Error generating dashboard link", err);
-      // Fallback to static if dynamic fails
-      window.open('https://dashboard.stripe.com', '_blank');
     }
   };
 
   const handleFileUpload = async (field: keyof MuseumSettings, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-
+    const loadingToast = toast.loading("Enviando imagem...");
     try {
       const res = await api.post("/upload/image", formData);
-      setSettings({ ...settings, [field]: res.data.url });
+      setSettings(prev => ({ ...prev, [field]: res.data.url }));
+      toast.success("Imagem enviada!", { id: loadingToast });
     } catch {
-      alert(t("common.error"));
+      toast.error("Erro no upload.", { id: loadingToast });
     }
   };
 
   const handleWelcomeAudioUpload = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
+    const loadingToast = toast.loading("Enviando áudio...");
     try {
       const res = await api.post("/upload/audio", formData);
       setSettings(prev => ({ ...prev, welcomeAudioUrl: res.data.url }));
-      alert("Áudio enviado com sucesso!");
+      toast.success("Áudio enviado!", { id: loadingToast });
     } catch {
-      alert(t("common.error"));
+      toast.error("Erro no upload do áudio.", { id: loadingToast });
     }
   };
 
-  // Floor Plan CRUD
   const handleFloorPlanImageUpload = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
+    const loadingToast = toast.loading("Enviando planta...");
     try {
       const res = await api.post("/upload/image", formData);
-      setNewFloorPlan({ ...newFloorPlan, imageUrl: res.data.url });
+      setNewFloorPlan(prev => ({ ...prev, imageUrl: res.data.url }));
+      toast.success("Planta enviada!", { id: loadingToast });
     } catch {
-      alert(t("common.error"));
+      toast.error("Erro no upload.", { id: loadingToast });
     }
   };
 
   const handleSaveFloorPlan = async () => {
     if (!newFloorPlan.name || !newFloorPlan.imageUrl) {
-      alert("Nome e imagem são obrigatórios");
+      toast.error("Nome e imagem são obrigatórios");
       return;
     }
     try {
@@ -211,9 +218,9 @@ export const AdminMuseumSettings: React.FC = () => {
       setEditingFloorPlan(null);
       setNewFloorPlan({ name: "", floor: 0, imageUrl: "" });
       loadFloorPlans();
+      toast.success("Andar salvo!");
     } catch (err) {
-      alert("Erro ao salvar planta");
-      console.error(err);
+      toast.error("Erro ao salvar andar");
     }
   };
 
@@ -222,548 +229,564 @@ export const AdminMuseumSettings: React.FC = () => {
     try {
       await api.delete(`/floor-plans/${id}`);
       loadFloorPlans();
+      toast.success("Planta excluída");
     } catch (err) {
-      alert("Erro ao excluir planta");
-      console.error(err);
+      toast.error("Erro ao excluir planta");
     }
   };
 
-  const openEditFloorPlan = (plan: FloorPlan) => {
-    setEditingFloorPlan(plan);
-    setNewFloorPlan({ name: plan.name, floor: plan.floor, imageUrl: plan.imageUrl });
-    setShowFloorPlanModal(true);
-  };
-
   if (loading) {
-    return <p>{t("common.loading")}</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <div className="w-12 h-12 border-4 border-gold-400 border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 font-bold animate-pulse uppercase tracking-widest text-[10px]">Carregando Configurações...</p>
+      </div>
+    );
   }
 
   const tabs = [
-    { id: "dados" as const, label: "Dados", icon: <Building2 size={16} /> },
-    { id: "multimidia" as const, label: "Multimídia", icon: <Volume2 size={16} /> },
-    { id: "mapa" as const, label: "Mapas", icon: <MapIcon size={16} /> },
-    { id: "visual" as const, label: "Visual", icon: <Palette size={16} /> },
-    { id: "financeiro" as const, label: "Financeiro", icon: <CreditCard size={16} /> },
-    { id: "preview" as const, label: "Preview", icon: <ImageIcon size={16} /> },
+    { id: "dados", label: "Geral", icon: <Building2 size={18} /> },
+    { id: "multimidia", label: "Multimídia", icon: <Volume2 size={18} /> },
+    { id: "mapas", label: "Mapas", icon: <MapIcon size={18} /> },
+    { id: "identidade", label: "Visual", icon: <Palette size={18} /> },
+    { id: "financeiro", label: "Financeiro", icon: <CreditCard size={18} /> },
   ];
 
   return (
-    <div className="visitor-theme-container max-w-5xl mx-auto px-4 pt-8">
-      <div className="mb-6">
-        <h1 className="visitor-theme-title flex items-center gap-3">
-          <Settings size={32} /> Configurações do Museu
-        </h1>
-        <p className="visitor-theme-subtitle">
-          Personalize a identidade visual e dados institucionais com estilo.
-        </p>
+    <AnimateIn className="space-y-8 pb-32 max-w-6xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h1 className="text-4xl font-black text-white tracking-tighter flex items-center gap-3">
+             <Settings className="text-gold-400" size={32} />
+             Configurações Institucionais
+          </h1>
+          <p className="text-slate-400 font-medium">Personalize a identidade e os dados centrais do seu museu.</p>
+        </div>
+
+        <Button 
+          onClick={handleSave} 
+          isLoading={saving}
+          className="h-14 px-10 rounded-2xl bg-gold-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-gold-400/20"
+          leftIcon={<Save size={20} />}
+        >
+          Salvar Alterações
+        </Button>
       </div>
 
-      {/* TAB BAR */}
-      <div className="settings-tab-bar">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            className={`settings-tab ${activeTab === tab.id ? "active" : ""}`}
-            onClick={() => setActiveTab(tab.id)}
-            aria-selected={activeTab === tab.id}
-            role="tab"
-          >
-            {tab.icon}
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* TAB CONTENT */}
-      <div style={{ marginTop: "1.5rem" }}>
-
-        {activeTab === "dados" && (
-          <div className="visitor-card">
-            <div className="visitor-card-header">
-              <Building2 className="text-[var(--accent-primary)]" size={24} />
-              <h2 className="visitor-card-title">Dados Institucionais</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="visitor-input-group">
-                <label>Nome do Museu *</label>
-                <input className="visitor-input" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} placeholder={t("admin.museumsettings.exMuseuHistrico", `Ex: Museu Histórico`)} />
-              </div>
-              <div className="visitor-input-group">
-                <label>{t("admin.museumsettings.missoDescrio", `Missão / Descrição`)}</label>
-                <textarea className="visitor-input" rows={3} value={settings.mission} onChange={(e) => setSettings({ ...settings, mission: e.target.value })} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="visitor-input-group">
-                  <label>{t("admin.museumsettings.endereo", `Endereço`)}</label>
-                  <input className="visitor-input" value={settings.address} onChange={(e) => setSettings({ ...settings, address: e.target.value })} />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="visitor-input-group">
-                    <label>{t("admin.museumsettings.horrio", `Horário`)}</label>
-                    <input className="visitor-input" value={settings.openingHours} onChange={(e) => setSettings({ ...settings, openingHours: e.target.value })} />
-                  </div>
-                  <div className="visitor-input-group">
-                    <label>Capacidade (Pessoas/Hora)</label>
-                    <input type="number" className="visitor-input" value={settings.capacityPerHour || 50} onChange={(e) => setSettings({ ...settings, capacityPerHour: parseInt(e.target.value) || 50 })} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="visitor-input-group">
-                    <label>WhatsApp</label>
-                    <input className="visitor-input" value={settings.whatsapp} onChange={(e) => setSettings({ ...settings, whatsapp: e.target.value })} />
-                  </div>
-                  <div className="visitor-input-group">
-                    <label>Email</label>
-                    <input className="visitor-input" value={settings.email} onChange={(e) => setSettings({ ...settings, email: e.target.value })} />
-                  </div>
-                  <div className="visitor-input-group">
-                    <label>Website</label>
-                    <input className="visitor-input" value={settings.website} onChange={(e) => setSettings({ ...settings, website: e.target.value })} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "multimidia" && (
-          <div className="visitor-card">
-            <div className="visitor-card-header">
-              <Volume2 className="text-[var(--accent-primary)]" size={24} />
-              <h2 className="visitor-card-title">{t("admin.museumsettings.boasvindasMultimdia", `Boas-vindas Multimídia`)}</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <label className="text-[#c9b58c] text-sm font-bold">{t("admin.museumsettings.udioDeNarrao", `Áudio de Narração`)}</label>
-                <div
-                  onClick={() => document.getElementById('welcome-audio-upload')?.click()}
-                  className="upload-area"
-                  role="button"
-                  aria-label={t("admin.museumsettings.fazerUploadDeUdioDeBoasvindas", `Fazer upload de áudio de boas-vindas`)}
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && document.getElementById('welcome-audio-upload')?.click()}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Navigation & Forms */}
+        <div className="lg:col-span-8 space-y-8">
+           {/* Tab Bar */}
+           <div className="flex bg-white/5 p-1.5 rounded-3xl border border-white/5 backdrop-blur-xl overflow-x-auto no-scrollbar">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-gold-400 text-slate-950 shadow-lg' : 'text-slate-500 hover:text-white'}`}
                 >
-                  <Upload size={24} className="mx-auto text-[var(--accent-primary)] mb-2" />
-                  <span className="text-xs text-[#c9b58c]">{t("admin.museumsettings.enviarUdioMp3", `Enviar Áudio (MP3)`)}</span>
-                  <input id="welcome-audio-upload" type="file" accept="audio/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])} />
-                </div>
-                {settings.welcomeAudioUrl && (
-                  <div className="floor-plan-item">
-                    <Headphones size={18} className="text-[var(--accent-primary)]" aria-hidden="true" />
-                    <span className="text-sm text-[#EAE0D5] flex-1">{t("admin.museumsettings.udioConfigurado", `Áudio Configurado`)}</span>
-                    <audio controls src={settings.welcomeAudioUrl} className="h-6 w-24" aria-label={t("admin.museumsettings.playerDeUdioDeBoasvindas", `Player de áudio de boas-vindas`)} />
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
+           </div>
+
+           <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {activeTab === "dados" && (
+                  <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
+                     <div className="flex items-center gap-4 text-white">
+                        <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                           <Building2 size={24} />
+                        </div>
+                        <div>
+                           <h2 className="text-xl font-bold">Informações do Museu</h2>
+                           <p className="text-xs text-slate-500">Dados públicos exibidos para os visitantes.</p>
+                        </div>
+                     </div>
+
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Nome Oficial</label>
+                           <input 
+                              className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all"
+                              value={settings.name}
+                              onChange={e => setSettings({...settings, name: e.target.value})}
+                              placeholder="Ex: Museu Nacional de Arte"
+                           />
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Email de Contato</label>
+                           <input 
+                              className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all"
+                              value={settings.email}
+                              onChange={e => setSettings({...settings, email: e.target.value})}
+                              placeholder="contato@museu.org"
+                           />
+                        </div>
+                        <div className="col-span-full space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Missão & Descrição</label>
+                           <textarea 
+                              className="w-full p-6 bg-white/5 border border-white/5 rounded-[32px] text-white outline-none focus:border-gold-400/50 transition-all min-h-[120px]"
+                              value={settings.mission}
+                              onChange={e => setSettings({...settings, mission: e.target.value})}
+                              placeholder="Fale um pouco sobre a história e propósito do museu..."
+                           />
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Endereço Físico</label>
+                           <input 
+                              className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all"
+                              value={settings.address}
+                              onChange={e => setSettings({...settings, address: e.target.value})}
+                           />
+                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Horário de Funcionamento</label>
+                           <input 
+                              className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all"
+                              value={settings.openingHours}
+                              onChange={e => setSettings({...settings, openingHours: e.target.value})}
+                           />
+                        </div>
+                     </div>
+                  </Card>
+                )}
+
+                {activeTab === "identidade" && (
+                  <div className="space-y-8">
+                     <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
+                        <div className="flex items-center gap-4 text-white">
+                           <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                              <Palette size={24} />
+                           </div>
+                           <div>
+                              <h2 className="text-xl font-bold">Branding & Cores</h2>
+                              <p className="text-xs text-slate-500">Defina o DNA visual do seu portal.</p>
+                           </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                           <div className="space-y-4">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Logomarca Principal</label>
+                              <div 
+                                onClick={() => logoInputRef.current?.click()}
+                                className="aspect-square rounded-[32px] bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer group hover:border-gold-400/50 transition-all overflow-hidden"
+                              >
+                                 {settings.logoUrl ? (
+                                    <img src={settings.logoUrl} className="w-full h-full object-contain p-8" />
+                                 ) : (
+                                    <Upload size={32} className="text-slate-700 group-hover:text-gold-400 transition-colors" />
+                                 )}
+                                 <input ref={logoInputRef} type="file" className="hidden" onChange={e => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])} />
+                              </div>
+                           </div>
+
+                           <div className="md:col-span-2 space-y-6">
+                              <div className="grid grid-cols-2 gap-4">
+                                 <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Cor Primária</label>
+                                    <div className="flex items-center gap-3">
+                                       <input type="color" value={settings.primaryColor} onChange={e => setSettings({...settings, primaryColor: e.target.value})} className="w-14 h-14 rounded-2xl bg-transparent border border-white/10 p-1 cursor-pointer" />
+                                       <input className="flex-1 h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" value={settings.primaryColor} onChange={e => setSettings({...settings, primaryColor: e.target.value})} />
+                                    </div>
+                                 </div>
+                                 <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Cor Secundária</label>
+                                    <div className="flex items-center gap-3">
+                                       <input type="color" value={settings.secondaryColor} onChange={e => setSettings({...settings, secondaryColor: e.target.value})} className="w-14 h-14 rounded-2xl bg-transparent border border-white/10 p-1 cursor-pointer" />
+                                       <input className="flex-1 h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" value={settings.secondaryColor} onChange={e => setSettings({...settings, secondaryColor: e.target.value})} />
+                                    </div>
+                                 </div>
+                              </div>
+
+                              <div className="p-6 bg-black/40 rounded-[32px] border border-white/5 space-y-4">
+                                 <div className="flex items-center justify-between">
+                                    <div>
+                                       <p className="text-sm font-bold text-white">Fonte Histórica</p>
+                                       <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">Ativar tipografia serifada premium</p>
+                                    </div>
+                                    <button 
+                                       onClick={() => setSettings({...settings, historicalFont: !settings.historicalFont})}
+                                       className={`w-12 h-6 rounded-full relative transition-all ${settings.historicalFont ? 'bg-gold-400' : 'bg-slate-800'}`}
+                                    >
+                                       <div className={`absolute top-1 w-4 h-4 bg-slate-950 rounded-full transition-all ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
+                                    </button>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </Card>
+
+                     <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
+                        <div className="flex items-center gap-4 text-white">
+                           <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                              <ImageIcon size={24} />
+                           </div>
+                           <div>
+                              <h2 className="text-xl font-bold">Imagens de Ambientação</h2>
+                              <p className="text-xs text-slate-500">Fundos e molduras do portal do visitante.</p>
+                           </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <div className="space-y-4">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Fundo do Portal</label>
+                              <div 
+                                onClick={() => bannerInputRef.current?.click()}
+                                className="h-40 rounded-[32px] bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer group hover:border-gold-400/50 transition-all overflow-hidden"
+                              >
+                                 {settings.bannerUrl ? (
+                                    <img src={settings.bannerUrl} className="w-full h-full object-cover" />
+                                 ) : (
+                                    <div className="text-center space-y-2">
+                                       <Camera size={24} className="mx-auto text-slate-700 group-hover:text-gold-400 transition-colors" />
+                                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 block">Enviar Background</span>
+                                    </div>
+                                 )}
+                                 <input ref={bannerInputRef} type="file" className="hidden" onChange={e => e.target.files?.[0] && handleFileUpload("bannerUrl", e.target.files[0])} />
+                              </div>
+                           </div>
+                           <div className="space-y-4">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Moldura Decorativa</label>
+                              <div 
+                                onClick={() => frameInputRef.current?.click()}
+                                className="h-40 rounded-[32px] bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer group hover:border-gold-400/50 transition-all overflow-hidden"
+                              >
+                                 {settings.frameUrl ? (
+                                    <img src={settings.frameUrl} className="w-full h-full object-contain p-4" />
+                                 ) : (
+                                    <div className="text-center space-y-2">
+                                       <Layout size={24} className="mx-auto text-slate-700 group-hover:text-gold-400 transition-colors" />
+                                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-600 block">Enviar Moldura</span>
+                                    </div>
+                                 )}
+                                 <input ref={frameInputRef} type="file" className="hidden" onChange={e => e.target.files?.[0] && handleFileUpload("frameUrl", e.target.files[0])} />
+                              </div>
+                           </div>
+                        </div>
+                     </Card>
                   </div>
                 )}
-              </div>
-              <div className="space-y-3">
-                <div className="visitor-input-group">
-                  <label>{t("admin.museumsettings.vdeoDeApresentaoUrl", `Vídeo de Apresentação (URL)`)}</label>
-                  <input className="visitor-input" value={settings.welcomeVideoUrl || ""} onChange={(e) => setSettings({ ...settings, welcomeVideoUrl: e.target.value })} placeholder="https://..." />
-                </div>
-                <div className="aspect-video bg-black/40 rounded-lg flex items-center justify-center border border-[var(--border-default)]">
-                  {settings.welcomeVideoUrl ? (
-                    <video src={settings.welcomeVideoUrl} controls className="w-full h-full rounded-lg" />
-                  ) : (
-                    <Video size={32} className="text-[#463420]" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {activeTab === "mapa" && (
-          <div className="visitor-card">
-            <div className="visitor-card-header justify-between">
-              <div className="flex items-center gap-3">
-                <MapIcon className="text-[var(--accent-primary)]" size={24} />
-                <h2 className="visitor-card-title">{t("admin.museumsettings.plantasELocalizao", `Plantas e Localização`)}</h2>
-              </div>
-              <button onClick={() => setShowFloorPlanModal(true)} className="btn-ghost-gold px-3 py-1 rounded-full text-xs font-bold">
-                + Adicionar Andar
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <label className="text-[#c9b58c] text-sm font-bold">Mapa Outdoor</label>
-                <div
-                  onClick={() => mapInputRef.current?.click()}
-                  className="aspect-[4/3] upload-area relative overflow-hidden p-0 flex items-center justify-center"
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Fazer upload do mapa outdoor"
-                  onKeyDown={(e) => e.key === 'Enter' && mapInputRef.current?.click()}
-                >
-                  {settings.mapImageUrl ? (
-                    <img src={settings.mapImageUrl} className="w-full h-full object-cover" alt="Mapa outdoor atual" />
-                  ) : (
-                    <div className="text-center p-4">
-                      <ImageIcon size={32} className="mx-auto mb-2 text-[var(--accent-primary)]" aria-hidden="true" />
-                      <span className="text-xs text-[#c9b58c]">Enviar Mapa Geral</span>
+                {activeTab === "multimidia" && (
+                  <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
+                     <div className="flex items-center gap-4 text-white">
+                        <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                           <Music size={24} />
+                        </div>
+                        <div>
+                           <h2 className="text-xl font-bold">Experiência Imersiva</h2>
+                           <p className="text-xs text-slate-500">Narração e vídeos de boas-vindas.</p>
+                        </div>
+                     </div>
+
+                     <div className="space-y-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                           <div className="space-y-4">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Áudio de Introdução</label>
+                              <div className="p-6 bg-black/40 rounded-[32px] border border-white/5 space-y-6">
+                                 {settings.welcomeAudioUrl ? (
+                                    <div className="space-y-4">
+                                       <div className="flex items-center gap-3 text-gold-400">
+                                          <Headphones size={20} />
+                                          <span className="text-xs font-bold truncate">Áudio configurado</span>
+                                       </div>
+                                       <audio controls src={settings.welcomeAudioUrl} className="w-full h-10 opacity-60" />
+                                       <Button variant="glass" className="w-full h-12 rounded-xl text-red-400 border-red-400/10" onClick={() => setSettings({...settings, welcomeAudioUrl: ""})}>
+                                          Remover Áudio
+                                       </Button>
+                                    </div>
+                                 ) : (
+                                    <div 
+                                       onClick={() => document.getElementById('audio-upload')?.click()}
+                                       className="py-12 border-2 border-dashed border-white/5 rounded-[24px] flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-gold-400/30 transition-all"
+                                    >
+                                       <Upload size={32} className="text-slate-800" />
+                                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Enviar Áudio (MP3)</span>
+                                       <input id="audio-upload" type="file" className="hidden" accept="audio/*" onChange={e => e.target.files?.[0] && handleWelcomeAudioUpload(e.target.files[0])} />
+                                    </div>
+                                 )}
+                              </div>
+                           </div>
+
+                           <div className="space-y-4">
+                              <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Vídeo de Boas-Vindas (URL)</label>
+                              <input 
+                                 className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all mb-4"
+                                 value={settings.welcomeVideoUrl}
+                                 onChange={e => setSettings({...settings, welcomeVideoUrl: e.target.value})}
+                                 placeholder="URL do vídeo (ex: Youtube, Vimeo, Mp4...)"
+                              />
+                              <div className="aspect-video bg-black/40 rounded-[32px] border border-white/5 flex items-center justify-center overflow-hidden">
+                                 {settings.welcomeVideoUrl ? (
+                                    <video src={settings.welcomeVideoUrl} controls className="w-full h-full object-cover" />
+                                 ) : (
+                                    <Video size={32} className="text-slate-800" />
+                                 )}
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </Card>
+                )}
+
+                {activeTab === "mapas" && (
+                  <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
+                     <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 text-white">
+                           <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                              <MapIcon size={24} />
+                           </div>
+                           <div>
+                              <h2 className="text-xl font-bold">Plantas e Orientação</h2>
+                              <p className="text-xs text-slate-500">Navegação indoor e localização geográfica.</p>
+                           </div>
+                        </div>
+                        <Button variant="glass" className="rounded-xl h-10 px-4" onClick={() => setShowFloorPlanModal(true)}>
+                           <Plus size={16} className="mr-2" /> Novo Andar
+                        </Button>
+                     </div>
+
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Localização (Coordenadas)</label>
+                           <div className="grid grid-cols-2 gap-4">
+                              <input type="number" step="any" placeholder="Latitude" value={settings.latitude ?? ""} onChange={e => setSettings({...settings, latitude: parseFloat(e.target.value)})} className="h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" />
+                              <input type="number" step="any" placeholder="Longitude" value={settings.longitude ?? ""} onChange={e => setSettings({...settings, longitude: parseFloat(e.target.value)})} className="h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" />
+                           </div>
+                           <div className="h-40 rounded-[32px] bg-slate-900 overflow-hidden relative border border-white/5">
+                              <div className="absolute inset-0 flex items-center justify-center text-slate-800">
+                                 <MapPin size={32} />
+                              </div>
+                           </div>
+                        </div>
+
+                        <div className="space-y-4">
+                           <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Andares Registrados</label>
+                           <div className="space-y-3">
+                              {floorPlans.map(plan => (
+                                 <div key={plan.id} className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center gap-4 group">
+                                    <div className="w-12 h-12 rounded-xl bg-slate-800 overflow-hidden border border-white/10">
+                                       <img src={plan.imageUrl} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="flex-1">
+                                       <h5 className="text-sm font-bold text-white">{plan.name}</h5>
+                                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Nível {plan.floor}</span>
+                                    </div>
+                                    <button onClick={() => handleDeleteFloorPlan(plan.id)} className="p-2 text-slate-700 hover:text-red-500 transition-colors">
+                                       <Trash2 size={16} />
+                                    </button>
+                                 </div>
+                              ))}
+                              {floorPlans.length === 0 && (
+                                 <p className="text-center py-8 text-slate-600 text-xs italic">Nenhuma planta cadastrada.</p>
+                              )}
+                           </div>
+                        </div>
+                     </div>
+                  </Card>
+                )}
+
+                {activeTab === "financeiro" && (
+                  <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
+                     <div className="flex items-center gap-4 text-white">
+                        <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                           <CreditCard size={24} />
+                        </div>
+                        <div>
+                           <h2 className="text-xl font-bold">Gateway de Pagamentos</h2>
+                           <p className="text-xs text-slate-500">Gerencie ingressos e doações diretamente.</p>
+                        </div>
+                     </div>
+
+                     <div className="p-8 bg-gradient-to-br from-gold-400/10 to-transparent rounded-[32px] border border-gold-400/20 space-y-6">
+                        <div className="flex items-start gap-4">
+                           <ShieldCheck className="text-gold-400 mt-1" size={24} />
+                           <div>
+                              <h4 className="text-white font-bold">Stripe Connect Habilitado</h4>
+                              <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+                                 Sua conta está integrada ao Stripe. Todos os recebíveis de ingressos e doações são processados com split automático e caem direto na sua conta bancária.
+                              </p>
+                           </div>
+                        </div>
+
+                        <div className="flex flex-col items-center justify-center py-10 bg-black/20 rounded-[24px] border border-white/5">
+                           {settings.stripeConnectId ? (
+                              <div className="text-center space-y-4">
+                                 <div className="w-16 h-16 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mx-auto mb-2">
+                                    <CheckCircle size={32} />
+                                 </div>
+                                 <h5 className="text-lg font-black text-white italic">ID: {settings.stripeConnectId}</h5>
+                                 <Badge className="bg-green-500/10 text-green-400 border-green-500/20">OPERACIONAL</Badge>
+                                 <div className="pt-4">
+                                    <Button variant="glass" className="rounded-xl border-white/5">Acessar Dashboard Stripe</Button>
+                                 </div>
+                              </div>
+                           ) : (
+                              <div className="text-center space-y-4 max-w-xs">
+                                 <CreditCard className="text-slate-700 mx-auto" size={48} />
+                                 <p className="text-sm text-slate-400">Conecte sua conta bancária para começar a receber pagamentos online.</p>
+                                 <Button className="w-full bg-gold-400 text-slate-950 font-black rounded-xl h-12">CONECTAR AGORA</Button>
+                              </div>
+                           )}
+                        </div>
+                     </div>
+                  </Card>
+                )}
+              </motion.div>
+           </AnimatePresence>
+        </div>
+
+        {/* Live Preview Column */}
+        <div className="lg:col-span-4 sticky top-8">
+           <div className="text-center mb-6">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gold-400">Live Preview</span>
+              <p className="text-xs text-slate-500 mt-1">Simulação em tempo real do portal do visitante.</p>
+           </div>
+
+           <div 
+              className="relative mx-auto w-[280px] h-[580px] bg-slate-950 rounded-[50px] border-[12px] border-slate-900 shadow-[0_0_100px_rgba(212,175,55,0.1)] overflow-hidden transition-all duration-500"
+              style={{
+                fontFamily: settings.historicalFont ? 'Georgia, serif' : 'inherit'
+              }}
+           >
+              {/* Device UI */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-3xl z-50"></div>
+              
+              {/* Content Preview */}
+              <div className="h-full overflow-hidden flex flex-col">
+                 <div className="h-40 relative overflow-hidden bg-slate-900 flex-shrink-0">
+                    {settings.bannerUrl ? (
+                       <img src={settings.bannerUrl} className="w-full h-full object-cover opacity-60" />
+                    ) : (
+                       <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-950" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-slate-950" />
+                    
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                       <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-3 overflow-hidden flex items-center justify-center shadow-2xl">
+                          {settings.logoUrl ? (
+                             <img src={settings.logoUrl} className="w-full h-full object-contain p-2" />
+                          ) : (
+                             <Building2 className="text-white/40" size={24} />
+                          )}
+                       </div>
+                       <h3 className="text-white font-black text-sm tracking-tight leading-none" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h3>
                     </div>
-                  )}
-                  <input ref={mapInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("mapImageUrl", e.target.files[0])} />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <input type="number" step="any" className="visitor-input" placeholder="Lat" value={settings.latitude ?? ""} onChange={(e) => setSettings({ ...settings, latitude: e.target.value === "" ? null : parseFloat(e.target.value) })} />
-                  <input type="number" step="any" className="visitor-input" placeholder="Lng" value={settings.longitude ?? ""} onChange={(e) => setSettings({ ...settings, longitude: e.target.value === "" ? null : parseFloat(e.target.value) })} />
-                </div>
+                 </div>
+
+                 <div className="flex-1 p-6 space-y-4 bg-slate-950">
+                    <div className="h-32 rounded-3xl bg-white/[0.03] border border-white/5 flex flex-col items-center justify-center p-4 text-center space-y-2">
+                       <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Nossa Missão</p>
+                       <p className="text-[10px] text-slate-400 line-clamp-3 leading-relaxed italic">"{settings.mission || "Sua descrição institucional aparecerá aqui..."}"</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                       <div className="h-24 rounded-3xl bg-white/[0.03] border border-white/5 flex flex-col items-center justify-center p-3 text-center space-y-1">
+                          <ImageIcon className="text-slate-800" size={16} />
+                          <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Obras</span>
+                       </div>
+                       <div className="h-24 rounded-3xl bg-white/[0.03] border border-white/5 flex flex-col items-center justify-center p-3 text-center space-y-1">
+                          <Route className="text-slate-800" size={16} />
+                          <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">Trilhas</span>
+                       </div>
+                    </div>
+
+                    <div className="space-y-2 pt-2">
+                       <div className="h-11 rounded-2xl flex items-center justify-center text-[10px] font-black uppercase tracking-widest shadow-lg shadow-gold-400/10" style={{ backgroundColor: settings.primaryColor, color: '#000' }}>
+                          <Smartphone size={12} className="mr-2" /> Explorar Acervo
+                       </div>
+                       <div className="h-11 rounded-2xl border flex items-center justify-center text-[10px] font-black uppercase tracking-widest" style={{ borderColor: settings.secondaryColor, color: settings.secondaryColor }}>
+                          Mapa Interativo
+                       </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* Reflection Overlays */}
+              <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/[0.03] via-transparent to-transparent"></div>
+              <div className="absolute top-10 right-4 w-[2px] h-20 bg-white/[0.05] rounded-full blur-[1px]"></div>
+           </div>
+
+           <div className="mt-8 p-6 bg-gold-400/5 rounded-[32px] border border-gold-400/10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-gold-400/20 flex items-center justify-center text-gold-400 shrink-0">
+                 <HelpCircle size={20} />
               </div>
               <div>
-                <label className="text-[#c9b58c] text-sm font-bold mb-3 block">Andares Indoor</label>
-                <div className="space-y-2">
-                  {floorPlans.map(plan => (
-                    <div key={plan.id} className="floor-plan-item">
-                      <img src={plan.imageUrl} className="floor-plan-image" />
-                      <div className="flex-1">
-                        <div className="text-[var(--accent-primary)] font-bold">{plan.name}</div>
-                        <div className="text-xs opacity-70">Andar {plan.floor}</div>
-                      </div>
-                      <button onClick={() => handleDeleteFloorPlan(plan.id)} className="text-red-400 p-2"><Trash2 size={16} /></button>
-                    </div>
-                  ))}
-                  {floorPlans.length === 0 && <p className="text-xs opacity-50 text-center py-4">Nenhum andar cadastrado.</p>}
-                </div>
+                 <p className="text-xs font-bold text-white mb-1">Dica de Design</p>
+                 <p className="text-[10px] text-slate-500 leading-relaxed">
+                    Use imagens de fundo com baixo contraste para garantir a legibilidade do texto e destaque para a sua logomarca.
+                 </p>
               </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "visual" && (
-          <div className="visitor-card">
-            <div className="visitor-card-header">
-              <Palette className="text-[var(--accent-primary)]" size={24} />
-              <h2 className="visitor-card-title">Identidade Visual</h2>
-            </div>
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <div className="space-y-6">
-                  <div className="flex flex-col items-center p-6 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                    <div
-                      onClick={() => logoInputRef.current?.click()}
-                      className="w-24 h-24 rounded-full border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[var(--accent-primary)] transition-colors bg-black/20"
-                      role="button"
-                      tabIndex={0}
-                      aria-label="Fazer upload da logomarca"
-                      onKeyDown={(e) => e.key === 'Enter' && logoInputRef.current?.click()}
-                    >
-                      {settings.logoUrl ? (
-                        <img src={settings.logoUrl} className="w-full h-full object-cover" alt="Logomarca atual" />
-                      ) : (
-                        <Upload size={24} className="text-[var(--accent-primary)]" aria-hidden="true" />
-                      )}
-                      <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("logoUrl", e.target.files[0])} />
-                    </div>
-                    <p className="text-xs text-[#c9b58c] mt-2 font-bold uppercase tracking-wider">Logomarca</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col items-center p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
-                      <div
-                        onClick={() => bannerInputRef.current?.click()}
-                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[var(--accent-primary)] transition-colors"
-                      >
-                        {settings.bannerUrl ? (
-                          <img src={settings.bannerUrl} className="w-full h-full object-cover" alt="Fundo atual" />
-                        ) : (
-                          <Upload size={20} className="text-[var(--accent-primary)]" />
-                        )}
-                        <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("bannerUrl", e.target.files[0])} />
-                      </div>
-                      <p className="text-[10px] text-[#c9b58c] mt-2 font-bold uppercase tracking-widest">Fundo do Portal</p>
-                    </div>
-
-                    <div className="flex flex-col items-center p-4 bg-black/20 rounded-xl border border-[var(--border-default)]">
-                      <div
-                        onClick={() => frameInputRef.current?.click()}
-                        className="w-full h-20 rounded-lg border-2 border-dashed border-[var(--border-default)] flex items-center justify-center cursor-pointer overflow-hidden hover:border-[var(--accent-primary)] transition-colors"
-                      >
-                        {settings.frameUrl ? (
-                          <img src={settings.frameUrl} className="w-full h-full object-cover" alt="Moldura atual" />
-                        ) : (
-                          <Upload size={20} className="text-[var(--accent-primary)]" />
-                        )}
-                        <input ref={frameInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFileUpload("frameUrl", e.target.files[0])} />
-                      </div>
-                      <p className="text-[10px] text-[#c9b58c] mt-2 font-bold uppercase tracking-widest">Moldura Decorativa</p>
-                    </div>
-                  </div>
-
-                  <div className="visitor-input-group">
-                    <label>{t("admin.museumsettings.corPrimriaDestaquesEBotes", `Cor Primária (Destaques e Botões)`)}</label>
-                    <div className="flex gap-3">
-                      <input type="color" className="w-14 h-12 bg-transparent border border-[var(--border-default)] rounded-lg cursor-pointer p-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
-                      <input className="visitor-input flex-1" value={settings.primaryColor} onChange={e => setSettings({ ...settings, primaryColor: e.target.value })} />
-                    </div>
-                  </div>
-
-                  <div className="visitor-input-group">
-                    <label>{t("admin.museumsettings.corSecundriaBordasEDetalhes", `Cor Secundária (Bordas e Detalhes)`)}</label>
-                    <div className="flex gap-3">
-                      <input type="color" className="w-14 h-12 bg-transparent border border-[var(--border-default)] rounded-lg cursor-pointer p-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
-                      <input className="visitor-input flex-1" value={settings.secondaryColor} onChange={e => setSettings({ ...settings, secondaryColor: e.target.value })} />
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)] space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-[#EAE0D5] text-sm font-bold block">Tema Escuro</span>
-                        <span className="text-[10px] text-[#c9b58c]">Recomendado para museus</span>
-                      </div>
-                      <div
-                        onClick={() => setSettings({ ...settings, theme: settings.theme === 'dark' ? 'light' : 'dark' })}
-                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.theme === 'dark' ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}`}
-                        role="switch"
-                        aria-checked={settings.theme === 'dark'}
-                        aria-label="Alternar tema escuro"
-                      >
-                        <div className={`absolute top-1 w-4 h-4 bg-[var(--bg-root)] rounded-full transition-transform ${settings.theme === 'dark' ? 'left-7' : 'left-1'}`} />
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-[#EAE0D5] text-sm font-bold block">{t("admin.museumsettings.fonteHistrica", `Fonte Histórica`)}</span>
-                        <span className="text-[10px] text-[#c9b58c]">Estilo Serifado Premium</span>
-                      </div>
-                      <div
-                        onClick={() => setSettings({ ...settings, historicalFont: !settings.historicalFont })}
-                        className={`w-12 h-6 rounded-full cursor-pointer relative transition-colors ${settings.historicalFont ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}`}
-                        role="switch"
-                        aria-checked={settings.historicalFont}
-                        aria-label={t("admin.museumsettings.alternarFonteHistrica", `Alternar fonte histórica`)}
-                      >
-                        <div className={`absolute top-1 w-4 h-4 bg-[var(--bg-root)] rounded-full transition-transform ${settings.historicalFont ? 'left-7' : 'left-1'}`} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* LIVE PREVIEW COLUMN */}
-                <div className="hidden lg:block sticky top-8">
-                  <p className="text-[10px] text-[#c9b58c] mb-2 uppercase font-black tracking-widest text-center">{t("admin.museumsettings.visualizaoEmTempoReal", `Visualização em Tempo Real`)}</p>
-                  <div
-                    className="rounded-[2.5rem] border-[8px] border-[#2c1e10] p-4 shadow-2xl relative overflow-hidden aspect-[9/16] w-[260px] mx-auto transition-all duration-500"
-                    style={{
-                      backgroundColor: (settings.theme || 'dark') === 'dark' ? '#121212' : '#ffffff',
-                      color: (settings.theme || 'dark') === 'dark' ? '#ffffff' : '#121212',
-                      fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
-                    }}
-                  >
-                    {settings.bannerUrl && (
-                      <div 
-                        className="absolute inset-0 opacity-40" 
-                        style={{ 
-                          backgroundImage: `url(${settings.bannerUrl})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center'
-                        }} 
-                      />
-                    )}
-                    <div className="absolute top-0 left-0 right-0 h-24 opacity-30" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
-                    <div className="relative z-10 text-center py-4">
-                      {settings.logoUrl ? (
-                        <img src={settings.logoUrl} className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-white/10 shadow-md object-cover" />
-                      ) : (
-                        <div className="w-16 h-16 rounded-full mx-auto mb-3 border-2 border-white/10 shadow-md bg-black/20 flex items-center justify-center text-xl">🏛️</div>
-                      )}
-                      <h4 className="text-sm font-black mb-1 line-clamp-1" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h4>
-                      <div className="w-full h-[1px] opacity-20 my-3" style={{ backgroundColor: settings.secondaryColor }}></div>
-                      <div className="space-y-2 mt-4">
-                        <div className="h-8 w-full rounded-lg flex items-center justify-center text-[10px] font-bold" style={{ background: settings.primaryColor, color: '#000' }}>EXPLORAR</div>
-                        <div className="h-8 w-full rounded-lg border flex items-center justify-center text-[10px] font-bold" style={{ borderColor: settings.secondaryColor, color: settings.secondaryColor }}>MAPA</div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 mt-4">
-                        <div className="aspect-square rounded-lg bg-black/10 border border-white/5"></div>
-                        <div className="aspect-square rounded-lg bg-black/10 border border-white/5"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "financeiro" && (
-          <div className="visitor-card">
-            <div className="visitor-card-header">
-              <CreditCard className="text-[var(--accent-primary)]" size={24} />
-              <h2 className="visitor-card-title">{t("admin.museumsettings.configuraesFinanceiras", `Configurações Financeiras`)}</h2>
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-4 bg-black/20 rounded-xl border border-[var(--border-default)] text-sm text-[#c9b58c] flex gap-3 items-start leading-relaxed">
-                <ShieldCheck size={32} className="text-[var(--accent-primary)] shrink-0" />
-                <p>
-                  Para receber pagamentos diretamente em sua conta (ingressos, doações e loja), você deve configurar sua conta no <strong>Stripe Connect</strong>.
-                  O sistema realizará um split automático: <strong>95% para o museu</strong> e 5% de taxa da plataforma.
-                </p>
-              </div>
-
-              <div className="visitor-input-group">
-                <label className="flex items-center gap-2">
-                  Status da Conta Stripe
-                </label>
-                <div className="p-6 bg-black/40 rounded-2xl border border-dashed border-[var(--border-default)] flex flex-col items-center justify-center text-center">
-                  {settings.stripeConnectId ? (
-                    <>
-                      <div className="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mb-3">
-                        <CheckCircle size={24} />
-                      </div>
-                      <h4 className="text-white font-bold">Conta Conectada</h4>
-                      <p className="text-xs text-[#c9b58c] mt-1 mb-4">Sua conta está pronta para receber pagamentos.</p>
-                      <Button onClick={handleStripeDashboard} className="btn-ghost-gold text-xs">
-                        Acessar Painel Stripe
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-12 h-12 bg-white/5 text-[var(--accent-primary)] rounded-full flex items-center justify-center mb-3">
-                        <CreditCard size={24} />
-                      </div>
-                      <h4 className="text-white font-bold">Nenhuma conta vinculada</h4>
-                      <p className="text-xs text-[#c9b58c] mt-1 mb-6">Conecte sua conta bancária para habilitar vendas e doações.</p>
-                      <Button onClick={handleStripeOnboarding} className="btn-primary-gold px-8">
-                        Conectar com Stripe
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">Taxa Plataforma</h4>
-                  <p className="text-2xl font-black text-[#EAE0D5]">5%</p>
-                  <p className="text-[10px] opacity-60">Retidos na transação</p>
-                </div>
-                <div className="p-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)]">
-                  <h4 className="text-[var(--accent-primary)] text-xs font-bold uppercase mb-2">Seu Repasse</h4>
-                  <p className="text-2xl font-black text-[#EAE0D5]">95%</p>
-                  <p className="text-[10px] opacity-60">Direto na sua conta bancária</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "preview" && (
-          <div className="visitor-card">
-            <h2 className="visitor-card-title" style={{ marginBottom: "1.5rem" }}>{t("admin.museumsettings.simulaoCompleta", `Simulação Completa`)}</h2>
-            <div className="flex justify-center py-8">
-              <div
-                className="rounded-[3rem] border-[12px] border-[#2c1e10] p-6 relative overflow-hidden shadow-2xl transition-all duration-300 w-full max-w-[320px] aspect-[9/19]"
-                style={{
-                  backgroundColor: (settings.theme || 'dark') === 'dark' ? '#121212' : '#ffffff',
-                  color: (settings.theme || 'dark') === 'dark' ? '#ffffff' : '#121212',
-                  fontFamily: settings.historicalFont ? 'Georgia, serif' : 'sans-serif'
-                }}
-              >
-                {settings.bannerUrl && (
-                  <div 
-                    className="absolute inset-0 opacity-20" 
-                    style={{ 
-                      backgroundImage: `url(${settings.bannerUrl})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }} 
-                  />
-                )}
-                <div className="absolute top-0 left-0 right-0 h-40 opacity-20" style={{ background: `linear-gradient(to bottom, ${settings.primaryColor}, transparent)` }}></div>
-                <div className="relative z-10 text-center">
-                  <div className="flex justify-between items-center mb-8 px-2">
-                    <div className="w-8 h-8 rounded-full bg-black/10"></div>
-                    <div className="w-16 h-4 bg-black/20 rounded-full"></div>
-                  </div>
-                  {settings.logoUrl ? (
-                    <img src={settings.logoUrl} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg object-cover" />
-                  ) : (
-                    <div className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white/10 shadow-lg bg-black/20 flex items-center justify-center text-4xl">🏛️</div>
-                  )}
-                  <h3 className="text-xl font-black mb-2" style={{ color: settings.primaryColor }}>{settings.name || "Seu Museu"}</h3>
-                  <p className="text-[10px] opacity-60 mb-8 line-clamp-3 leading-relaxed italic">{settings.mission || "Sua missão aparecerá aqui para os visitantes..."}</p>
-                  <div className="space-y-3">
-                    <div className="w-full py-4 rounded-2xl font-black text-xs shadow-lg flex items-center justify-center gap-2" style={{ background: settings.primaryColor, color: '#000' }}>
-                      <Smartphone size={14} /> EXPLORAR ACERVO
-                    </div>
-                    <div className="w-full py-4 rounded-2xl font-black text-xs border-2 flex items-center justify-center gap-2" style={{ borderColor: settings.secondaryColor, color: settings.secondaryColor }}>
-                      <MapIcon size={14} /> MAPA INTERATIVO
-                    </div>
-                  </div>
-                  <div className="mt-8 grid grid-cols-3 gap-2">
-                    <div className="h-1 bg-current opacity-20 rounded"></div>
-                  </div>
-                  
-                  <div className="mt-8 pt-4 border-t border-white/5">
-                    <p className="text-[8px] uppercase tracking-widest opacity-40 mb-3">Preview da Animação</p>
-                    <div className="aspect-[16/9] bg-slate-900 rounded-xl overflow-hidden relative group cursor-pointer" onClick={() => setActiveTab("preview")}>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                            <div className="w-8 h-8 rounded-full border-2 border-dashed border-white/20 mb-2 flex items-center justify-center">
-                                {settings.logoUrl ? <img src={settings.logoUrl} className="w-6 h-6 object-contain" /> : "🏛️"}
-                            </div>
-                            <div className="w-20 h-1 rounded-full mb-1" style={{ background: `linear-gradient(to right, ${settings.primaryColor}, #fff)` }}></div>
-                            <div className="w-12 h-1 bg-white/10 rounded-full"></div>
-                        </div>
-                        <div className="absolute inset-x-0 bottom-0 p-1 bg-black/60 text-[6px] text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            CLIQUE PARA VER ANIMAÇÃO COMPLETA
-                        </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-
-      {/* ACTION BAR */}
-      <div className="admin-wizard-footer">
-        <div className="admin-wizard-footer-inner justify-end">
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-[#c9b58c] font-medium">{t("admin.museumsettings.alteraesNoSalvas", `
-              Alterações não salvas
-            `)}</span>
-            <Button
-              onClick={handleSave}
-              isLoading={saving}
-              className="btn-primary-gold px-8 py-3 rounded-xl"
-              leftIcon={<Save size={18} />}
-            >
-              Salvar Configurações
-            </Button>
-          </div>
+           </div>
         </div>
       </div>
 
-      {showFloorPlanModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm" style={{ fontFamily: 'serif' }}>
-          <div className="visitor-card w-full max-w-md bg-[var(--bg-card)] m-0">
-            <h3 className="visitor-card-title mb-6">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
-            <div className="space-y-4">
-              <input className="visitor-input" placeholder={t("admin.museumsettings.nomeExTrreo", `Nome (Ex: Térreo)`)} value={newFloorPlan.name} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, name: e.target.value })} />
-              <input className="visitor-input" type="number" placeholder="Ordem" value={newFloorPlan.floor} onChange={(e) => setNewFloorPlan({ ...newFloorPlan, floor: parseInt(e.target.value) || 0 })} />
-              <div
-                onClick={() => floorPlanInputRef.current?.click()}
-                className="upload-area"
-                role="button"
-                tabIndex={0}
-                aria-label="Fazer upload da imagem do andar"
-                onKeyDown={(e) => e.key === 'Enter' && floorPlanInputRef.current?.click()}
-              >
-                <span className="text-xs text-[#c9b58c]">{newFloorPlan.imageUrl ? "Trocar Imagem" : "Escolher Imagem"}</span>
-                <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowFloorPlanModal(false)} className="btn-ghost-gold flex-1 py-3 rounded-lg">Cancelar</button>
-              <button onClick={handleSaveFloorPlan} className="btn-primary-gold flex-1 py-3 rounded-lg">Salvar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Floor Plan Modal */}
+      <AnimatePresence>
+         {showFloorPlanModal && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+               <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                  onClick={() => setShowFloorPlanModal(false)}
+               />
+               <motion.div
+                  initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                  className="relative w-full max-w-lg bg-slate-950 border border-white/5 rounded-[40px] p-8 shadow-2xl overflow-hidden"
+               >
+                  <div className="flex items-center justify-between mb-8">
+                     <h3 className="text-2xl font-black text-white tracking-tight">{editingFloorPlan ? "Editar" : "Novo"} Andar</h3>
+                     <button onClick={() => setShowFloorPlanModal(false)} className="p-2 text-slate-500 hover:text-white"><XCircle size={24} /></button>
+                  </div>
 
-    </div>
+                  <div className="space-y-6">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Nome do Andar</label>
+                        <input className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" value={newFloorPlan.name} onChange={e => setNewFloorPlan({...newFloorPlan, name: e.target.value})} placeholder="Ex: Térreo, 1º Andar..." />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Nível/Ordem</label>
+                        <input type="number" className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" value={newFloorPlan.floor} onChange={e => setNewFloorPlan({...newFloorPlan, floor: parseInt(e.target.value) || 0})} />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Planta do Andar</label>
+                        <div 
+                           onClick={() => floorPlanInputRef.current?.click()}
+                           className="aspect-video rounded-[32px] bg-white/5 border-2 border-dashed border-white/10 flex items-center justify-center cursor-pointer group hover:border-gold-400/50 transition-all overflow-hidden"
+                        >
+                           {newFloorPlan.imageUrl ? (
+                              <img src={newFloorPlan.imageUrl} className="w-full h-full object-cover" />
+                           ) : (
+                              <div className="text-center space-y-2">
+                                 <Upload size={32} className="mx-auto text-slate-800 group-hover:text-gold-400" />
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Enviar Imagem da Planta</span>
+                              </div>
+                           )}
+                           <input ref={floorPlanInputRef} type="file" className="hidden" onChange={e => e.target.files?.[0] && handleFloorPlanImageUpload(e.target.files[0])} />
+                        </div>
+                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-10">
+                     <Button variant="glass" className="h-14 rounded-2xl" onClick={() => setShowFloorPlanModal(false)}>Cancelar</Button>
+                     <Button className="h-14 rounded-2xl bg-gold-400 text-slate-950 font-black" onClick={handleSaveFloorPlan}>Salvar Andar</Button>
+                  </div>
+               </motion.div>
+            </div>
+         )}
+      </AnimatePresence>
+    </AnimateIn>
   );
 };

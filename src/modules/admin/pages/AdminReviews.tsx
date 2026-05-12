@@ -1,8 +1,33 @@
-import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
-import { Star, CheckCircle, XCircle, User, Clock, Filter, MessageCircle, BookOpen, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from "react-i18next";
+import { 
+  Star, 
+  CheckCircle, 
+  XCircle, 
+  User, 
+  Clock, 
+  Filter, 
+  MessageCircle, 
+  BookOpen, 
+  Eye, 
+  EyeOff,
+  Trash2,
+  Check,
+  ShieldCheck,
+  Flame,
+  ThumbsUp,
+  MessageSquare
+} from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
+import { 
+  Card, 
+  Button, 
+  Badge, 
+  AnimateIn 
+} from "@/components/ui";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 interface Review {
     id: string;
@@ -32,7 +57,7 @@ interface GuestbookEntry {
 type TabMode = 'reviews' | 'guestbook';
 
 export const AdminReviews: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [mode, setMode] = useState<TabMode>('reviews');
 
@@ -42,7 +67,6 @@ export const AdminReviews: React.FC = () => {
 
     // Guestbook State
     const [guestbook, setGuestbook] = useState<GuestbookEntry[]>([]);
-
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -59,6 +83,7 @@ export const AdminReviews: React.FC = () => {
             setReviews(res.data.reviews || []);
         } catch (error) {
             console.error('Error fetching reviews:', error);
+            toast.error("Erro ao carregar avaliações");
         } finally {
             setLoading(false);
         }
@@ -72,38 +97,40 @@ export const AdminReviews: React.FC = () => {
             setGuestbook(res.data);
         } catch (error) {
             console.error('Error fetching guestbook:', error);
+            toast.error("Erro ao carregar livro de visitas");
         } finally {
             setLoading(false);
         }
     };
 
-    // Review Actions
     const handleApproveReview = async (id: string) => {
         try {
             await api.patch(`/reviews/${id}/approve`);
             setReviews(prev => prev.map(r => r.id === id ? { ...r, approved: true } : r));
+            toast.success("Avaliação aprovada!");
         } catch (error) {
-            alert('Erro ao aprovar');
+            toast.error("Erro ao aprovar avaliação");
         }
     };
 
     const handleDeleteReview = async (id: string) => {
-        if (!confirm('Excluir avaliação?')) return;
+        if (!confirm('Deseja realmente excluir esta avaliação?')) return;
         try {
             await api.delete(`/reviews/${id}`);
             setReviews(prev => prev.filter(r => r.id !== id));
+            toast.success("Avaliação excluída");
         } catch (error) {
-            alert('Erro ao excluir');
+            toast.error("Erro ao excluir");
         }
     };
 
-    // Guestbook Actions
     const handleToggleVisibility = async (id: string, currentStatus: boolean) => {
         try {
             await api.patch(`/guestbook/${id}/visibility`, { isVisible: !currentStatus });
             setGuestbook(prev => prev.map(g => g.id === id ? { ...g, isVisible: !currentStatus } : g));
+            toast.success(currentStatus ? "Mensagem ocultada" : "Mensagem visível");
         } catch (error) {
-            alert('Erro ao atualizar');
+            toast.error("Erro ao atualizar visibilidade");
         }
     };
 
@@ -112,251 +139,204 @@ export const AdminReviews: React.FC = () => {
         try {
             await api.delete(`/guestbook/${id}`);
             setGuestbook(prev => prev.filter(g => g.id !== id));
+            toast.success("Mensagem excluída");
         } catch (error) {
-            alert('Erro ao excluir');
+            toast.error("Erro ao excluir");
         }
     };
 
     const renderStars = (rating: number) => {
-        return Array.from({ length: 5 }).map((_, i) => (
-            <Star
-                key={i}
-                size={16}
-                fill={i < rating ? '#fbbf24' : 'none'}
-                color={i < rating ? '#fbbf24' : '#6b7280'}
-            />
-        ));
+        return (
+            <div className="flex gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                        key={i}
+                        size={14}
+                        className={i < rating ? 'text-gold-400 fill-gold-400' : 'text-slate-700'}
+                    />
+                ))}
+            </div>
+        );
     };
 
     const pendingCount = reviews.filter(r => !r.approved).length;
 
     return (
-        <div className="admin-reviews-page">
-            <header className="page-header">
-                <div>
-                    <h1>{t("admin.reviews.CentralDeModerao", `🛡️ Central de Moderação`)}</h1>
-                    <p className="subtitle">{t("admin.reviews.gerencieAvaliaesEMensagensDaComunidade", `Gerencie avaliações e mensagens da comunidade`)}</p>
+        <AnimateIn className="space-y-8 pb-20">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-black text-white tracking-tighter flex items-center gap-3">
+                        <ShieldCheck className="text-gold-400" size={32} />
+                        Central de Moderação
+                    </h1>
+                    <p className="text-slate-400 font-medium">Garanta a qualidade e o sentimento positivo da sua comunidade.</p>
                 </div>
-            </header>
 
-            {/* Mode Tabs */}
-            <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "1rem" }}>
-                <button
-                    onClick={() => setMode('reviews')}
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        borderBottom: mode === "reviews" ? "2px solid var(--accent-primary)" : "none",
-                        color: mode === "reviews" ? "var(--accent-primary)" : "#aaa",
-                        fontSize: "1.1rem",
-                        fontWeight: "bold",
-                        padding: "0.5rem 1rem",
-                        cursor: "pointer",
-                        display: "flex",
-                        gap: "0.5rem"
-                    }}
-                >
-                    <Star size={18} /> Avaliações {pendingCount > 0 && <span className='badge-count'>{pendingCount}</span>}
-                </button>
-                <button
-                    onClick={() => setMode('guestbook')}
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        borderBottom: mode === "guestbook" ? "2px solid var(--accent-primary)" : "none",
-                        color: mode === "guestbook" ? "var(--accent-primary)" : "#aaa",
-                        fontSize: "1.1rem",
-                        fontWeight: "bold",
-                        padding: "0.5rem 1rem",
-                        cursor: "pointer",
-                        display: "flex",
-                        gap: "0.5rem"
-                    }}
-                >
-                    <BookOpen size={18} /> Livro de Visitas
-                </button>
+                <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-xl">
+                    <button
+                        onClick={() => setMode('reviews')}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${mode === 'reviews' ? 'bg-gold-400 text-slate-950 shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        <Star size={16} /> Avaliações
+                        {pendingCount > 0 && <span className="ml-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-[10px]">{pendingCount}</span>}
+                    </button>
+                    <button
+                        onClick={() => setMode('guestbook')}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${mode === 'guestbook' ? 'bg-gold-400 text-slate-950 shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                        <BookOpen size={16} /> Livro de Visitas
+                    </button>
+                </div>
             </div>
 
-            {mode === 'reviews' && (
-                <>
-                    {/* Filters */}
-                    <div className="filters-bar">
-                        <button
-                            className={`filter-btn ${reviewFilter === 'pending' ? 'active' : ''}`}
-                            onClick={() => setReviewFilter('pending')}
-                        >
-                            <Clock size={16} /> Pendentes
-                        </button>
-                        <button
-                            className={`filter-btn ${reviewFilter === 'approved' ? 'active' : ''}`}
-                            onClick={() => setReviewFilter('approved')}
-                        >
-                            <CheckCircle size={16} /> Aprovadas
-                        </button>
-                        <button
-                            className={`filter-btn ${reviewFilter === 'all' ? 'active' : ''}`}
-                            onClick={() => setReviewFilter('all')}
-                        >
-                            <Filter size={16} /> Todas
-                        </button>
-                    </div>
+            <AnimatePresence mode="wait">
+                {mode === 'reviews' ? (
+                    <motion.div
+                        key="reviews"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="space-y-8"
+                    >
+                        {/* Filters */}
+                        <div className="flex items-center gap-3">
+                            {(['pending', 'approved', 'all'] as const).map((filter) => (
+                                <button
+                                    key={filter}
+                                    onClick={() => setReviewFilter(filter)}
+                                    className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${reviewFilter === filter ? 'bg-white/10 text-white border-white/20' : 'text-slate-500 border-white/5 hover:border-white/10'}`}
+                                >
+                                    {filter === 'pending' ? 'Pendentes' : filter === 'approved' ? 'Aprovadas' : 'Todas'}
+                                </button>
+                            ))}
+                        </div>
 
-                    {/* Reviews List */}
-                    <div className="reviews-list">
+                        {/* List */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {loading ? (
+                                Array.from({ length: 4 }).map((_, i) => (
+                                    <Card key={i} className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] h-[200px] animate-pulse" />
+                                ))
+                            ) : reviews.length === 0 ? (
+                                <div className="col-span-full py-20 text-center space-y-4">
+                                    <MessageSquare className="mx-auto text-slate-800" size={48} />
+                                    <p className="text-slate-500 font-medium">Nenhuma avaliação encontrada.</p>
+                                </div>
+                            ) : (
+                                reviews.map((review) => (
+                                    <Card key={review.id} className={`p-8 bg-white/[0.02] border-white/5 rounded-[32px] hover:border-white/10 transition-all flex flex-col justify-between ${!review.approved ? 'border-l-4 border-l-gold-400' : ''}`}>
+                                        <div>
+                                            <div className="flex items-center justify-between mb-6">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden border border-white/5">
+                                                        {review.visitor.photoUrl ? <img src={review.visitor.photoUrl} className="w-full h-full object-cover" /> : <User size={18} className="text-slate-500" />}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-white font-bold text-sm">{review.visitor.name}</h4>
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{new Date(review.createdAt).toLocaleDateString()}</span>
+                                                    </div>
+                                                </div>
+                                                {renderStars(review.rating)}
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <Badge className="bg-white/5 text-slate-400 border-white/10 mb-2">
+                                                    {review.work ? `📷 ${review.work.title}` : review.event ? `🎭 ${review.event.title}` : 'Geral'}
+                                                </Badge>
+                                                <p className="text-slate-300 text-sm italic leading-relaxed">
+                                                    "{review.comment || "Sem comentário."}"
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-end gap-3 pt-6 mt-auto border-t border-white/5">
+                                            {!review.approved && (
+                                                <Button 
+                                                    variant="primary" 
+                                                    onClick={() => handleApproveReview(review.id)}
+                                                    className="h-10 px-6 rounded-xl bg-gold-400 text-slate-950 hover:bg-gold-500"
+                                                >
+                                                    <Check size={16} className="mr-2" /> Aprovar
+                                                </Button>
+                                            )}
+                                            <Button 
+                                                variant="glass" 
+                                                onClick={() => handleDeleteReview(review.id)}
+                                                className="h-10 w-10 p-0 rounded-xl border-white/5 hover:bg-red-500/10 hover:text-red-500"
+                                            >
+                                                <Trash2 size={16} />
+                                            </Button>
+                                            {review.approved && (
+                                                <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Aprovada</Badge>
+                                            )}
+                                        </div>
+                                    </Card>
+                                ))
+                            )}
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="guestbook"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
                         {loading ? (
-                            <div className="loading-state">{t("admin.reviews.carregandoAvaliaes", `Carregando avaliações...`)}</div>
-                        ) : reviews.length === 0 ? (
-                            <div className="empty-state">
-                                <MessageCircle size={48} />
-                                <h3>Nenhuma avaliação {reviewFilter === 'pending' ? 'pendente' : ''}</h3>
+                            Array.from({ length: 6 }).map((_, i) => (
+                                <Card key={i} className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] h-[220px] animate-pulse" />
+                            ))
+                        ) : guestbook.length === 0 ? (
+                            <div className="col-span-full py-20 text-center space-y-4">
+                                <BookOpen className="mx-auto text-slate-800" size={48} />
+                                <p className="text-slate-500 font-medium">O livro de visitas está vazio.</p>
                             </div>
                         ) : (
-                            reviews.map(review => (
-                                <div key={review.id} className={`review-card ${review.approved ? 'approved' : 'pending'}`}>
-                                    <div className="review-header">
-                                        <div className="visitor-info">
-                                            <div className="visitor-avatar">
-                                                {review.visitor.photoUrl ? (
-                                                    <img src={review.visitor.photoUrl} alt="" />
-                                                ) : (
-                                                    <User size={20} />
-                                                )}
-                                            </div>
-                                            <div>
-                                                <span className="visitor-name">{review.visitor.name}</span>
-                                                <span className="review-date">
-                                                    {new Date(review.createdAt).toLocaleDateString('pt-BR')}
-                                                </span>
+                            guestbook.map((entry) => (
+                                <Card key={entry.id} className={`p-8 bg-white/[0.02] border-white/5 rounded-[32px] flex flex-col justify-between transition-all ${!entry.isVisible ? 'opacity-60 grayscale' : 'hover:border-white/10'}`}>
+                                    <div>
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden border border-white/5">
+                                                    {entry.visitor.photoUrl ? <img src={entry.visitor.photoUrl} className="w-full h-full object-cover" /> : <User size={18} className="text-slate-500" />}
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-white font-bold text-sm">{entry.visitor.name}</h4>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{new Date(entry.createdAt).toLocaleDateString()}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="review-rating">
-                                            {renderStars(review.rating)}
-                                        </div>
+                                        <p className="text-white font-serif italic text-lg leading-relaxed">
+                                            "{entry.message}"
+                                        </p>
                                     </div>
 
-                                    <div className="review-target">
-                                        {review.work ? `📷 ${review.work.title}` : review.event ? `🎭 ${review.event.title}` : ''}
+                                    <div className="flex items-center justify-end gap-3 pt-6 mt-8 border-t border-white/5">
+                                        <Button 
+                                            variant="glass" 
+                                            onClick={() => handleToggleVisibility(entry.id, entry.isVisible)}
+                                            className={`h-10 px-4 rounded-xl border-white/5 ${!entry.isVisible ? 'bg-gold-400 text-slate-950' : 'hover:bg-white/10'}`}
+                                            title={entry.isVisible ? "Ocultar do público" : "Exibir no público"}
+                                        >
+                                            {entry.isVisible ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
+                                            {entry.isVisible ? "Ocultar" : "Exibir"}
+                                        </Button>
+                                        <Button 
+                                            variant="glass" 
+                                            onClick={() => handleDeleteGuestbook(entry.id)}
+                                            className="h-10 w-10 p-0 rounded-xl border-white/5 hover:bg-red-500/10 hover:text-red-500"
+                                        >
+                                            <Trash2 size={16} />
+                                        </Button>
                                     </div>
-
-                                    {review.comment && (
-                                        <p className="review-comment">"{review.comment}"</p>
-                                    )}
-
-                                    <div className="review-actions">
-                                        {!review.approved && (
-                                            <button className="approve-btn" onClick={() => handleApproveReview(review.id)}>
-                                                <CheckCircle size={16} /> Aprovar
-                                            </button>
-                                        )}
-                                        <button className="delete-btn" onClick={() => handleDeleteReview(review.id)}>
-                                            <XCircle size={16} /> Excluir
-                                        </button>
-                                        {review.approved && (
-                                            <span className="approved-badge">✓ Publicada</span>
-                                        )}
-                                    </div>
-                                </div>
+                                </Card>
                             ))
                         )}
-                    </div>
-                </>
-            )}
-
-            {mode === 'guestbook' && (
-                <div className="guestbook-list" style={{ display: 'grid', gap: '1rem' }}>
-                    {loading ? (
-                        <div className="loading-state">Carregando livro de visitas...</div>
-                    ) : guestbook.length === 0 ? (
-                        <div className="empty-state">
-                            <BookOpen size={48} />
-                            <h3>Livro de visitas vazio</h3>
-                        </div>
-                    ) : (
-                        guestbook.map(entry => (
-                            <div key={entry.id} style={{
-                                background: "var(--bg-card, #1f2937)",
-                                borderRadius: "1rem",
-                                padding: "1.5rem",
-                                border: entry.isVisible ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(239, 68, 68, 0.3)",
-                                opacity: entry.isVisible ? 1 : 0.7
-                            }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-                                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                        <div className="visitor-avatar">
-                                            {entry.visitor.photoUrl ? <img src={entry.visitor.photoUrl} /> : <User size={20} />}
-                                        </div>
-                                        <div>
-                                            <span style={{ fontWeight: "bold", display: "block" }}>{entry.visitor.name || "Visitante"}</span>
-                                            <span style={{ fontSize: "0.85rem", opacity: 0.6 }}>{new Date(entry.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                                        <button
-                                            onClick={() => handleToggleVisibility(entry.id, entry.isVisible)}
-                                            style={{
-                                                background: entry.isVisible ? "rgba(255,255,255,0.1)" : "var(--accent-primary)",
-                                                color: entry.isVisible ? "white" : "black",
-                                                border: "none", padding: "0.5rem", borderRadius: "0.5rem", cursor: "pointer"
-                                            }}
-                                            title={entry.isVisible ? "Ocultar" : "Exibir"}
-                                        >
-                                            {entry.isVisible ? <EyeOff size={18} /> : <Eye size={18} />}
-                                        </button>
-                                        <button
-                                            onClick={() => handleDeleteGuestbook(entry.id)}
-                                            style={{ background: "rgba(239, 68, 68, 0.2)", color: "#ef4444", border: "none", padding: "0.5rem", borderRadius: "0.5rem", cursor: "pointer" }}
-                                            title="Excluir"
-                                        >
-                                            <XCircle size={18} />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <p style={{ fontStyle: "italic", fontSize: "1.1rem", marginBottom: "1rem" }}>"{entry.message}"</p>
-
-                                {!entry.isVisible && (
-                                    <span style={{ fontSize: "0.8rem", color: "#ef4444", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                                        <EyeOff size={12} /> Oculto para o público
-                                    </span>
-                                )}
-                            </div>
-                        ))
-                    )}
-                </div>
-            )}
-
-            <style>{`
-                .admin-reviews-page { padding: 24px; }
-                .page-header { margin-bottom: 24px; }
-                .page-header h1 { margin: 0; font-size: 1.75rem; color: #f3f4f6; }
-                .subtitle { margin: 4px 0 0; color: #9ca3af; }
-                .badge-count { background: #ef4444; color: white; padding: 2px 6px; borderRadius: 10px; fontSize: 0.7rem; verticalAlign: top; }
-                
-                .filters-bar { display: flex; gap: 8px; margin-bottom: 20px; }
-                .filter-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #374151; border: none; border-radius: 8px; color: #9ca3af; cursor: pointer; transition: all 0.2s; }
-                .filter-btn.active { background: var(--accent-primary); color: black; }
-                
-                .reviews-list { display: flex; flex-direction: column; gap: 16px; }
-                .review-card { background: #1f2937; border-radius: 12px; padding: 20px; border-left: 4px solid transparent; }
-                .review-card.pending { border-left-color: #f59e0b; }
-                .review-card.approved { border-left-color: #22c55e; }
-                
-                .review-header { display: flex; justifyContent: space-between; margin-bottom: 12px; }
-                .visitor-info { display: flex; align-items: center; gap: 12px; }
-                .visitor-avatar { width: 40px; height: 40px; border-radius: 50%; background: #374151; display: flex; alignItems: center; justifyContent: center; overflow: hidden; }
-                .visitor-avatar img { width: 100%; height: 100%; objectFit: cover; }
-                .visitor-name { font-weight: 600; color: #f3f4f6; }
-                .review-date { font-size: 0.85rem; color: #9ca3af; display: block; }
-                
-                .review-comment { font-style: italic; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px; }
-                .review-actions { display: flex; gap: 12px; align-items: center; }
-                
-                .approve-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-                .delete-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-                .approved-badge { margin-left: auto; color: #22c55e; font-weight: bold; font-size: 0.9rem; }
-                
-                .loading-state, .empty-state { text-align: center; padding: 40px; color: #6b7280; }
-            `}</style>
-        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </AnimateIn>
     );
 };

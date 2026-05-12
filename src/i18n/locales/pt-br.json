@@ -205,6 +205,8 @@
   "public": {
     "landingpage": {
       "nav": {
+        "editais": "Editais",
+        "prestadores": "Prestadores",
         "solucoes": "Soluções",
         "acessibilidade": "Acessibilidade",
         "casos": "Casos",

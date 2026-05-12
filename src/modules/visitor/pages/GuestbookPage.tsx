@@ -19,7 +19,7 @@ type GuestbookEntry = {
 
 export const GuestbookPage: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId, isAuthenticated, email } = useAuth();
+    const { tenantId, isAuthenticated, email, isGuest } = useAuth();
     const [entries, setEntries] = useState<GuestbookEntry[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -85,7 +85,7 @@ export const GuestbookPage: React.FC = () => {
                 {/* Simulated Content Area */}
 
                 {/* Writing Area */}
-                {isAuthenticated ? (
+                {!isGuest ? (
                     <div className="guestbook-form-card">
                         <form onSubmit={handleSubmit}>
                             <textarea
@@ -113,13 +113,17 @@ export const GuestbookPage: React.FC = () => {
                         </form>
                     </div>
                 ) : (
-                    <div className="login-prompt">
-                        <p>{t("visitor.guestbook.loginRequired", "Faça login para deixar uma mensagem.")}</p>
-                        <button
-                            onClick={() => window.location.href = "/login"}
-                            className="btn-login-gold"
+                    <div className="guestbook-form-card text-center py-12" style={{ border: '1px dashed var(--accent-primary)', background: 'rgba(212, 175, 55, 0.05)' }}>
+                        <PenTool size={48} className="mx-auto mb-4 text-gold opacity-50" />
+                        <h3 className="text-xl font-bold text-gold mb-2">Deixe seu Legado</h3>
+                        <p className="text-secondary max-w-xs mx-auto mb-6 opacity-80">
+                            Apenas visitantes registrados podem assinar nosso Livro de Visitas. Crie sua conta para eternizar sua passagem!
+                        </p>
+                        <button 
+                            onClick={() => window.location.href='/register'}
+                            className="btn-quill !w-auto !px-10 mx-auto"
                         >
-                            {t("auth.login")}
+                            Criar Conta Gratuita
                         </button>
                     </div>
                 )}

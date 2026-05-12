@@ -1,23 +1,64 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
 import {
-  Building2, Save, ArrowLeft, Package, Map, Settings,
-  Landmark, Music, Tent, CheckCircle2,
-  Users, Mail, Lock, Globe, FileText, ChevronRight, CheckCircle
+  Building2, 
+  Save, 
+  ArrowLeft, 
+  Package, 
+  Map, 
+  Settings,
+  Landmark, 
+  Music, 
+  Tent, 
+  CheckCircle2,
+  Users, 
+  Mail, 
+  Lock, 
+  Globe, 
+  FileText, 
+  ChevronRight, 
+  CheckCircle,
+  Zap,
+  ShieldCheck,
+  Layers,
+  ArrowRight,
+  Database,
+  Cpu,
+  Sparkles,
+  BarChart3,
+  Dna,
+  Layout,
+  Terminal,
+  Activity,
+  Briefcase,
+  Ticket,
+  Bot,
+  HeartHandshake,
+  Sticker,
+  Puzzle,
+  Microscope,
+  Award
 } from "lucide-react";
-import { Button, Input, Select, Textarea } from "../../../components/ui";
-import { useToast } from "../../../contexts/ToastContext";
+import { 
+    Button, 
+    Input, 
+    Select, 
+    Textarea, 
+    Card, 
+    Badge, 
+    AnimateIn,
+    AnimatedCounter
+} from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
-import "./MasterShared.css";
+import { toast } from "react-hot-toast";
 
-// Steps Configuration
 const STEPS = [
-  { id: 0, title: "Identificação", icon: Landmark, description: "Tipo e dados básicos" },
-  { id: 1, title: "Funcionalidades", icon: Settings, description: "Módulos ativos" },
-  { id: 2, title: "Plano & Acesso", icon: Package, description: "Contrato e admin" },
-  { id: 3, title: "Revisão", icon: CheckCircle, description: "Confirmação final" }
+  { id: 0, title: "Identificação", icon: Landmark, description: "DNA e Dados Básicos" },
+  { id: 1, title: "Funcionalidades", icon: Settings, description: "Arquitetura de Módulos" },
+  { id: 2, title: "Plano & Governança", icon: ShieldCheck, description: "Assinatura e Acesso" },
+  { id: 3, title: "Revisão", icon: CheckCircle, description: "Manifesto de Node" }
 ];
 
 export const TenantForm: React.FC = () => {
@@ -25,7 +66,6 @@ export const TenantForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  const { addToast } = useToast();
 
   // Wizard State
   const [currentStep, setCurrentStep] = useState(0);
@@ -36,7 +76,6 @@ export const TenantForm: React.FC = () => {
   const [termsOfUse, setTermsOfUse] = useState("");
   const [privacyPolicy, setPrivacyPolicy] = useState("");
 
-  // Tenant Type and Hierarchy
   const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA">("MUSEUM");
   const [parentId, setParentId] = useState<string | null>(null);
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
@@ -70,7 +109,7 @@ export const TenantForm: React.FC = () => {
   const [featureInstitutionalReports, setFeatureInstitutionalReports] = useState(false);
   const [featureEditaisSubmission, setFeatureEditaisSubmission] = useState(false);
 
-  // Group Level Flags (Sidebar Sections)
+  // Group Level Flags
   const [featureGroupContent, setFeatureGroupContent] = useState(true);
   const [featureGroupEvents, setFeatureGroupEvents] = useState(true);
   const [featureGroupEngagement, setFeatureGroupEngagement] = useState(true);
@@ -86,7 +125,7 @@ export const TenantForm: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const loadTenant = async () => {
+  const loadTenant = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get(`/tenants/${id}`);
@@ -95,7 +134,6 @@ export const TenantForm: React.FC = () => {
       setSlug(data.slug || "");
       setTenantType(data.type || "MUSEUM");
       setParentId(data.parentId || null);
-
       setPlan(data.plan || "START");
       setMaxWorks(data.maxWorks || 50);
 
@@ -137,53 +175,41 @@ export const TenantForm: React.FC = () => {
       setTermsOfUse(data.termsOfUse || "");
       setPrivacyPolicy(data.privacyPolicy || "");
     } catch {
-      addToast(t("common.errorLoad"), "error");
+      toast.error("Falha ao sincronizar node.");
       navigate("/master/tenants");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
 
   useEffect(() => {
-    if (isEdit && id) {
-      loadTenant();
-    }
-  }, [isEdit, id]);
+    if (isEdit && id) loadTenant();
+  }, [isEdit, id, loadTenant]);
 
-  // Load cities for parent selector and plans for subscription
   useEffect(() => {
-    // Use authenticated endpoint to ensure we see all tenants (avoiding rate limits or public-only filters)
-    api.get("/tenants")
-      .then(res => {
-        // Filter for tenants that can be parents (CITY, SECRETARIA or isCityMode)
+    api.get("/tenants").then(res => {
         const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: any) =>
-          item.type === "CITY" ||
-          item.type === "SECRETARIA" ||
-          item.isCityMode === true
+          item.type === "CITY" || item.type === "SECRETARIA" || item.isCityMode === true
         );
         setCities(cityTenants);
-      })
-      .catch(console.error);
+      }).catch(console.error);
 
-    api.get("/plans")
-      .then(res => {
-        const data = Array.isArray(res.data) ? res.data : [];
-        setAvailablePlans(data);
-      })
-      .catch(console.error);
+    api.get("/plans").then(res => {
+        setAvailablePlans(Array.isArray(res.data) ? res.data : []);
+      }).catch(console.error);
   }, []);
 
   const validateStep = (stepIndex: number) => {
     switch (stepIndex) {
       case 0:
-        if (!name.trim()) return "O nome da instituição é obrigatório";
-        if (!slug.trim()) return "O slug é obrigatório";
+        if (!name.trim()) return "O nome da instituição é obrigatório.";
+        if (!slug.trim()) return "O slug de URL é obrigatório.";
         return null;
       case 2:
         if (!isEdit) {
-          if (!adminName.trim()) return "Nome do administrador é obrigatório";
-          if (!adminEmail.trim()) return "E-mail do administrador é obrigatório";
-          if (!adminPassword.trim()) return "Senha do administrador é obrigatória";
+          if (!adminName.trim()) return "Nome do administrador é obrigatório.";
+          if (!adminEmail.trim()) return "E-mail do administrador é obrigatório.";
+          if (!adminPassword.trim()) return "Senha do administrador é obrigatória.";
         }
         return null;
       default:
@@ -193,10 +219,7 @@ export const TenantForm: React.FC = () => {
 
   const nextStep = () => {
     const error = validateStep(currentStep);
-    if (error) {
-      addToast(error, "error");
-      return;
-    }
+    if (error) return toast.error(error);
     setDirection(1);
     setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
   };
@@ -208,656 +231,407 @@ export const TenantForm: React.FC = () => {
 
   const handleSubmit = async () => {
     if (isDemoMode) {
-      addToast(t("master.tenantForm.demoAlert"), "info");
+      toast.error("MODO DEMO: Criação de infraestrutura bloqueada.");
       navigate("/master/tenants");
       return;
     }
 
     setSaving(true);
-    interface TenantPayload {
-      name: string;
-      slug: string;
-      isCityMode?: boolean;
-      type?: string;
-      parentId?: string | null;
-
-      adminEmail?: string;
-      adminName?: string;
-      adminPassword?: string;
-      plan?: string;
-      maxWorks?: number;
-      // Feature Flags
-      featureWorks?: boolean;
-      featureTrails?: boolean;
-      featureEvents?: boolean;
-      featureGamification?: boolean;
-      featureQRCodes?: boolean;
-      featureChatAI?: boolean;
-      featureShop?: boolean;
-      featureDonations?: boolean;
-      featureCertificates?: boolean;
-      featureReviews?: boolean;
-      featureGuestbook?: boolean;
-      featureAccessibility?: boolean;
-      featureEditais?: boolean;
-      featureMinigames?: boolean;
-      featureProviders?: boolean;
-      featureTickets?: boolean;
-      featureProjects?: boolean;
-      featureAccessibilityMgmt?: boolean;
-      featureInstitutionalReports?: boolean;
-      featureEditaisSubmission?: boolean;
-      featureGroupContent?: boolean;
-      featureGroupEvents?: boolean;
-      featureGroupEngagement?: boolean;
-      featureGroupGamification?: boolean;
-      featureGroupInstitutional?: boolean;
-      featureGroupTools?: boolean;
-      featureGroupAnalytics?: boolean;
-      featureGroupSocial?: boolean;
-      featureGroupPreservation?: boolean;
-      featureGroupAI?: boolean;
-      featureGroupRoadmap?: boolean;
-
-      termsOfUse?: string;
-      privacyPolicy?: string;
-    }
-
-    const payload: TenantPayload = {
-      name,
-      slug,
+    const payload: any = {
+      name, slug, type: tenantType, parentId: parentId || null,
       isCityMode: tenantType === "CITY" || tenantType === "SECRETARIA",
-      type: tenantType,
-      parentId: parentId || null,
-
-      plan,
-      maxWorks,
-      // Feature Flags
-      featureWorks,
-      featureTrails,
-      featureEvents,
-      featureGamification,
-      featureQRCodes,
-      featureChatAI,
-      featureShop,
-      featureDonations,
-      featureCertificates,
-      featureReviews,
-      featureGuestbook,
-      featureAccessibility,
-      featureEditais,
-      featureMinigames,
-      featureProviders,
-      featureTickets,
-      featureProjects,
-      featureAccessibilityMgmt,
-      featureInstitutionalReports,
-      featureEditaisSubmission,
-      featureGroupContent,
-      featureGroupEvents,
-      featureGroupEngagement,
-      featureGroupGamification,
-      featureGroupInstitutional,
-      featureGroupTools,
-      featureGroupAnalytics,
-      featureGroupSocial,
-      featureGroupPreservation,
-      featureGroupAI,
-      featureGroupRoadmap,
-
-      termsOfUse,
-      privacyPolicy
+      plan, maxWorks,
+      featureWorks, featureTrails, featureEvents, featureGamification, featureQRCodes,
+      featureChatAI, featureShop, featureDonations, featureCertificates, featureReviews,
+      featureGuestbook, featureAccessibility, featureEditais, featureMinigames,
+      featureProviders, featureTickets, featureProjects, featureAccessibilityMgmt,
+      featureInstitutionalReports, featureEditaisSubmission,
+      featureGroupContent, featureGroupEvents, featureGroupEngagement,
+      featureGroupGamification, featureGroupInstitutional, featureGroupTools,
+      featureGroupAnalytics, featureGroupSocial, featureGroupPreservation,
+      featureGroupAI, featureGroupRoadmap,
+      termsOfUse, privacyPolicy
     };
 
     if (!isEdit) {
       payload.adminEmail = adminEmail;
       payload.adminName = adminName;
       payload.adminPassword = adminPassword;
-      payload.plan = plan;
     }
 
     try {
       if (id) {
         await api.put(`/tenants/${id}`, payload);
-        addToast("Instituição atualizada com sucesso!", "success");
+        toast.success("Arquitetura de Node atualizada.");
       } else {
         await api.post("/tenants", payload);
-        addToast("Instituição criada com sucesso!", "success");
+        toast.success("Novo Node implantado com sucesso!");
       }
       navigate("/master/tenants");
     } catch (error) {
-      console.error("Erro ao salvar tenant", error);
-      addToast(t("master.tenantForm.errorSave"), "error");
+      toast.error("Falha no manifesto de implantação.");
     } finally {
       setSaving(false);
     }
   };
 
   const typeOptions = [
-    { value: "SECRETARIA", icon: <Building2 size={24} />, label: "Secretaria de Cultura", desc: "Gestão pública de múltiplos equipamentos culturais (Plano Municipal)." },
-    { value: "CITY", icon: <Map size={24} />, label: "Cidate / Órgão Gestor", desc: "Instância de governança turística ou cultural." },
-    { value: "MUSEUM", icon: <Landmark size={24} />, label: "Museu / UNIDADE", desc: "Tipologia clássica com acervo, salas e exposições." },
-    { value: "PRODUCER", icon: <Music size={24} />, label: "Produtora Cultural", desc: "Foco em eventos, projetos itinerantes e editais." },
-    { value: "CULTURAL_SPACE", icon: <Tent size={24} />, label: "Espaço Cultural", desc: "Galerias, bibliotecas e centros comunitários." }
+    { value: "SECRETARIA", icon: <Building2 size={28} />, label: "Secretaria de Cultura", desc: "Gestão pública de múltiplos equipamentos culturais." },
+    { value: "CITY", icon: <Map size={28} />, label: "Cidade / Órgão", desc: "Instância de governança turística ou cultural." },
+    { value: "MUSEUM", icon: <Landmark size={28} />, label: "Museu / Unidade", desc: "Tipologia clássica com acervo e exposições." },
+    { value: "PRODUCER", icon: <Music size={28} />, label: "Produtora", desc: "Foco em eventos e projetos itinerantes." },
+    { value: "CULTURAL_SPACE", icon: <Tent size={28} />, label: "Espaço Cultural", desc: "Galerias e centros comunitários." }
   ];
 
-  const featureGroups = [
-    {
-      title: "Acervo e Visitação",
-      items: [
-        { label: "Obras/Artefatos", state: featureWorks, setter: setFeatureWorks },
-        { label: "Trilhas/Roteiros", state: featureTrails, setter: setFeatureTrails },
-        { label: "QR Codes", state: featureQRCodes, setter: setFeatureQRCodes },
-      ]
-    },
-    {
-      title: "Engajamento",
-      items: [
-        { label: "Gamificação", state: featureGamification, setter: setFeatureGamification },
-        { label: "Minigames", state: featureMinigames, setter: setFeatureMinigames },
-        { label: "Livro de Visitas", state: featureGuestbook, setter: setFeatureGuestbook },
-        { label: "Avaliações", state: featureReviews, setter: setFeatureReviews },
-      ]
-    },
-    {
-      title: "Gestão Municipal e Editais",
-      items: [
-        { label: "Editais (Gestão)", state: featureEditais, setter: setFeatureEditais, premium: true },
-        { label: "Submissão de Editais", state: featureEditaisSubmission, setter: setFeatureEditaisSubmission, premium: true },
-        { label: "Gestão de Projetos", state: featureProjects, setter: setFeatureProjects, premium: true },
-        { label: "Prestadores", state: featureProviders, setter: setFeatureProviders, premium: true },
-        { label: "Relatórios Institucionais", state: featureInstitutionalReports, setter: setFeatureInstitutionalReports, premium: true },
-        { label: "Acessibilidade Pública", state: featureAccessibilityMgmt, setter: setFeatureAccessibilityMgmt, premium: true },
-      ]
-    },
-    {
-      title: "Serviços e Monetização",
-      items: [
-        { label: "Venda de Ingressos", state: featureTickets, setter: setFeatureTickets, premium: true },
-        { label: "Loja Virtual", state: featureShop, setter: setFeatureShop, premium: true },
-        { label: "Doações", state: featureDonations, setter: setFeatureDonations, premium: true },
-        { label: "Chat IA", state: featureChatAI, setter: setFeatureChatAI, premium: true },
-      ]
-    },
-    {
-      title: "Recursos de Unidade",
-      items: [
-        { label: "Certificados", state: featureCertificates, setter: setFeatureCertificates },
-        { label: "Acessibilidade Unidade", state: featureAccessibility, setter: setFeatureAccessibility },
-      ]
-    },
-    {
-      title: "Visibilidade de Módulos (Sidebar)",
-      items: [
-        { label: "Menu: Conteúdo", state: featureGroupContent, setter: setFeatureGroupContent },
-        { label: "Menu: Eventos", state: featureGroupEvents, setter: setFeatureGroupEvents },
-        { label: "Menu: Visitantes", state: featureGroupEngagement, setter: setFeatureGroupEngagement },
-        { label: "Menu: Gamificação", state: featureGroupGamification, setter: setFeatureGroupGamification },
-        { label: "Menu: Institucional", state: featureGroupInstitutional, setter: setFeatureGroupInstitutional },
-        { label: "Menu: Ferramentas", state: featureGroupTools, setter: setFeatureGroupTools },
-        { label: "Menu: Analytics", state: featureGroupAnalytics, setter: setFeatureGroupAnalytics },
-        { label: "Menu: Educação/Social", state: featureGroupSocial, setter: setFeatureGroupSocial },
-        { label: "Menu: Preservação", state: featureGroupPreservation, setter: setFeatureGroupPreservation },
-        { label: "Menu: IA/Marketing", state: featureGroupAI, setter: setFeatureGroupAI },
-        { label: "Menu: Roadmap 2026", state: featureGroupRoadmap, setter: setFeatureGroupRoadmap },
-      ]
-    }
-  ];
-
-  // Feature Toggle Component (Now using semantic classes)
-  const FeatureToggle = ({ label, state, setter, premium }: any) => (
+  const FeatureToggle = ({ label, state, setter, premium, icon: Icon }: any) => (
     <div
       onClick={() => setter(!state)}
-      className={`feature-item ${state ? 'active' : ''}`}
+      className={`p-6 rounded-3xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${state ? 'bg-blue-600/10 border-blue-500/30' : 'bg-white/[0.02] border-white/5 opacity-50 hover:opacity-100'}`}
     >
-      <div className="feature-checkbox">
-        {state && <CheckCircle2 size={12} className="text-black" />}
-      </div>
-      <span className="feature-label">
-        {label}
-      </span>
-      {premium && <span className="feature-pro-badge">PRO</span>}
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${state ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/5 text-slate-500'}`}>
+            {Icon ? <Icon size={18} /> : (state ? <CheckCircle2 size={18} /> : <div className="w-2 h-2 rounded-full bg-slate-700" />)}
+        </div>
+        <div className="flex-1">
+            <span className={`text-[10px] font-black uppercase tracking-widest ${state ? 'text-white' : 'text-slate-500'}`}>
+                {label}
+            </span>
+        </div>
+        {premium && <Badge className="bg-amber-600 text-white border-none text-[7px] font-black uppercase">PRO</Badge>}
     </div>
   );
 
-  // Animation Variants (Framer Motion works regardless of CSS framework)
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 50 : -50,
-      opacity: 0
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 50 : -50,
-      opacity: 0
-    })
-  };
-
-  if (loading) {
-    return (
-      <div className="flex-col items-center justify-center min-h-[60vh] text-center" style={{ display: 'flex' }}>
-        <div className="animate-spin" style={{ marginBottom: '1rem' }}>
-          <CheckCircle2 size={48} style={{ color: "#60a5fa" }} />
-        </div>
-        <p className="text-slate-400">{t("master.tenant.carregandoInstituio", `Carregando instituição...`)}</p>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Lendo Arquitetura de Node...</p>
+    </div>
+  );
 
   return (
-    <div className="master-page-container">
-
-      {/* HEADER */}
-      <div className="master-wizard-header">
-        <Button variant="ghost" onClick={() => navigate("/master/tenants")} className="p-0">
-          <ArrowLeft size={24} className="text-slate-400" />
-        </Button>
-        <div>
-          <h1 className="master-wizard-title">
-            {isEdit ? "Editar Órgão / Cidade" : "Novo Órgão Municipal"}
-            <span className="master-wizard-badge">Plataforma Municipal</span>
-          </h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-            Passo {currentStep + 1} de {STEPS.length}: <span style={{ color: '#fff', fontWeight: 'bold' }}>{STEPS[currentStep].title}</span>
-          </p>
-        </div>
-      </div>
-
-      {/* STEPPER */}
-      <div className="master-wizard-stepper">
-        <div className="master-stepper-progress-bg"></div>
-        <div
-          className="master-stepper-progress-fill"
-          style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
-        ></div>
-
-        {STEPS.map((step, index) => {
-          const isActive = index === currentStep;
-          const isCompleted = index < currentStep;
-          const Icon = step.icon;
-
-          return (
-            <div
-              key={step.id}
-              className={`master-step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
-              onClick={() => {
-                if (isEdit || index < currentStep) {
-                  setDirection(index > currentStep ? 1 : -1);
-                  setCurrentStep(index);
-                }
-              }}
-            >
-              <div className="master-step-icon">
-                <Icon size={20} />
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div className="master-step-label">
-                  {step.title}
+    <AnimateIn className="space-y-12 pb-32">
+        {/* Header Area */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+            <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                    <Badge className="bg-blue-600/10 text-blue-400 border-none px-4 py-1.5 text-[8px] font-black uppercase tracking-[0.3em] italic">
+                        Node Architect & Ecosystem Deployment
+                    </Badge>
                 </div>
-              </div>
+                <div className="flex items-center gap-6">
+                    <button 
+                        onClick={() => navigate('/master/tenants')}
+                        className="w-14 h-14 rounded-2xl bg-white/5 text-slate-500 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center border border-white/5 shadow-xl"
+                    >
+                        <ArrowLeft size={24} />
+                    </button>
+                    <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic leading-none">
+                        {isEdit ? 'Revisar' : 'Implantar'} <span className="text-blue-600">Node</span>
+                    </h1>
+                </div>
+                <p className="text-slate-500 font-medium text-xl max-w-3xl leading-relaxed">
+                    Passo {currentStep + 1} de {STEPS.length}: <span className="text-white font-black italic uppercase tracking-tighter">{STEPS[currentStep].title}</span>
+                </p>
             </div>
-          );
-        })}
-      </div>
-
-      {/* CONTENT AREA */}
-      <div className="master-wizard-content">
-        <AnimatePresence mode="wait" initial={false} custom={direction}>
-          <motion.div
-            key={currentStep}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            style={{ width: "100%" }}
-          >
-            {/* STEP 0: IDENTIFICAÇÃO */}
-            {currentStep === 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                {/* Type Selection */}
-                <div className="master-grid-2" style={{ marginBottom: '2rem' }}>
-                  {typeOptions.map(opt => {
-                    const isSelected = tenantType === opt.value;
-                    return (
-                      <div
-                        key={opt.value}
-                        onClick={() => setTenantType(opt.value as any)}
-                        className={`wizard-type-card ${isSelected ? 'selected' : ''}`}
-                      >
-                        <div className="wizard-type-icon">
-                          {opt.icon}
-                        </div>
-                        <div className="wizard-type-title">
-                          {opt.label}
-                        </div>
-                        <div className="wizard-type-desc">
-                          {opt.desc}
-                        </div>
-                        {isSelected && (
-                          <div style={{ position: 'absolute', top: '1rem', right: '1rem', color: 'var(--accent-primary)' }}>
-                            <CheckCircle2 size={24} fill="currentColor" className="text-[var(--accent-primary)] bg-white rounded-full" />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Basic Info */}
-                <div className="wizard-section">
-                  <h3 className="wizard-section-title">
-                    <Building2 size={20} style={{ color: '#60a5fa' }} /> Detalhes Principais
-                  </h3>
-
-                  <div className="master-grid-2">
-                    <Input
-                      label="Nome Oficial"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      placeholder="Ex: Museu Nacional..."
-                      required
-                    />
-                    <Input
-                      label="Slug (URL)"
-                      value={slug}
-                      onChange={e => setSlug(e.target.value)}
-                      placeholder="ex: museu-nacional"
-                      required
-                      leftIcon={<Globe size={18} />}
-                      style={{ fontFamily: 'monospace' }}
-                    />
-                  </div>
-
-                  {(tenantType === "MUSEUM" || tenantType === "PRODUCER" || tenantType === "CULTURAL_SPACE") && (
-                    <div className="flex-col mt-4">
-                      <div style={{ marginBottom: '1rem' }}>
-                        <Select
-                          label={t("master.tenant.vnculoHierrquicoOpcional", `Vínculo Hierárquico (Opcional)`)}
-                          value={parentId || ""}
-                          onChange={e => setParentId(e.target.value || null)}
-                        >
-                          <option value="">{t("master.tenant.semVnculoIndependente", `Sem vínculo (Independente)`)}</option>
-                          {cities.map(c => (
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                          ))}
-                        </Select>
-                      </div>
-                      <div style={{ fontSize: '0.85rem', color: '#64748b', padding: '1rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#60a5fa', display: 'block', marginBottom: '0.25rem' }}>Dica:</strong>
-                        Vincule a uma Cidade/Secretaria para aparecer nos relatórios agregados da gestão pública.
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* STEP 1: FUNCIONALIDADES */}
-            {currentStep === 1 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div style={{ textAlign: 'center', marginBottom: '2rem', padding: '1.5rem', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '1.5rem', border: '1px solid rgba(59, 130, 246, 0.1)' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' }}>{t("master.tenant.mdulosDoSistema", `Módulos do Sistema`)}</h3>
-                  <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Ative ou desative funcionalidades conforme o plano contratado.</p>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  {featureGroups.map((group, gIdx) => (
-                    <div key={gIdx} className="feature-group">
-                      <h4 className="feature-group-title">
-                        {group.title}
-                      </h4>
-
-                      <div className="master-grid-3">
-                        {group.items.map((feat: any, idx) => (
-                          <FeatureToggle
-                            key={idx}
-                            label={feat.label}
-                            state={feat.state}
-                            setter={feat.setter}
-                            premium={feat.premium}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: PLANO E ADMIN */}
-            {currentStep === 2 && (
-              <div className="master-grid-2">
-                {/* Plan Selection */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                  <div className="wizard-section" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9))' }}>
-                    <h3 className="wizard-section-title">
-                      <Package size={24} style={{ color: '#60a5fa' }} /> Configuração do Plano
-                    </h3>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      <Select
-                        label={t("master.tenant.nvelDeServio", `Nível de Serviço`)}
-                        value={plan}
-                        onChange={e => {
-                          const newPlan = e.target.value;
-                          setPlan(newPlan);
-                          
-                          // Auto set maxWorks based on plan
-                          const selectedObj = availablePlans.find(p => p.name === newPlan || p.id === newPlan);
-                          if (selectedObj && selectedObj.features && selectedObj.features.maxWorks) {
-                            setMaxWorks(selectedObj.features.maxWorks);
-                          } else if (newPlan === "START") setMaxWorks(50);
-                          else if (newPlan === "PRO") setMaxWorks(200);
-                          else if (newPlan === "ENTERPRISE") setMaxWorks(500);
-                        }}
-                      >
-                        {availablePlans.length > 0 ? (
-                          <>
-                            <option value="">Selecione um plano...</option>
-                            {availablePlans.map(p => (
-                              <option key={p.id} value={p.name}>{p.name}</option>
-                            ))}
-                            <option value="CUSTOM">Customizado</option>
-                          </>
-                        ) : (
-                          <>
-                            <option value="START">{t("master.tenant.startBsico", `Start (Básico)`)}</option>
-                            <option value="PRO">Professional</option>
-                            <option value="ENTERPRISE">Enterprise</option>
-                            <option value="CUSTOM">Customizado</option>
-                          </>
-                        )}
-                      </Select>
-
-                      <div className="master-grid-2">
-                        <Input
-                          label="Limite de Obras"
-                          type="number"
-                          value={maxWorks}
-                          onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
-                          style={{ textAlign: 'center', fontFamily: 'monospace' }}
-                        />
-                        <div style={{ padding: '1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <div>
-                            <div style={{ fontSize: '0.75rem', fontWeight: '700', color: '#64748b', marginBottom: '0.25rem' }}>SLA DEFINIDO</div>
-                            <div style={{ color: '#34d399', fontWeight: '700' }}>99.9% Uptime</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="wizard-section">
-                    <h3 className="wizard-section-title">
-                      <FileText size={20} style={{ color: '#facc15' }} /> Documentos Legais
-                    </h3>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      <Textarea
-                        label="Termos de Uso"
-                        rows={2}
-                        value={termsOfUse}
-                        onChange={e => setTermsOfUse(e.target.value)}
-                        placeholder="Cole os termos aqui..."
-                      />
-                      <Textarea
-                        label={t("master.tenant.polticaDePrivacidade", `Política de Privacidade`)}
-                        rows={2}
-                        value={privacyPolicy}
-                        onChange={e => setPrivacyPolicy(e.target.value)}
-                        placeholder={t("master.tenant.coleAPolticaAqui", `Cole a política aqui...`)}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Admin Account */}
-                <div style={{ height: '100%' }}>
-                  {!isEdit ? (
-                    <div className="wizard-section" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                      <h3 className="wizard-section-title">
-                        <Users size={20} style={{ color: '#f472b6' }} /> Primeiro Acesso
-                      </h3>
-                      <div className="flex-col gap-4 flex-1">
-                        <Input
-                          label="Nome do Admin"
-                          value={adminName}
-                          onChange={e => setAdminName(e.target.value)}
-                          placeholder="Nome completo"
-                          required
-                          leftIcon={<Users size={16} />}
-                        />
-                        <Input
-                          label="E-mail de Login"
-                          type="email"
-                          value={adminEmail}
-                          onChange={e => setAdminEmail(e.target.value)}
-                          placeholder="admin@hml.com"
-                          required
-                          leftIcon={<Mail size={16} />}
-                        />
-                        <Input
-                          label="Senha Inicial"
-                          type="password"
-                          value={adminPassword}
-                          onChange={e => setAdminPassword(e.target.value)}
-                          placeholder="••••••••"
-                          required
-                          leftIcon={<Lock size={16} />}
-                        />
-                      </div>
-                      <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(236, 72, 153, 0.1)', border: '1px solid rgba(236, 72, 153, 0.2)', borderRadius: '12px', fontSize: '0.85rem', color: '#fbcfe8', lineHeight: '1.5' }}>{t("master.tenant.esteUsurioTerPermissoTotalAdminSobreANov", `
-                        Este usuário terá permissão TOTAL de administrador sobre esta instância e todos os seus equipamentos.
-                      `)}</div>
-                    </div>
-                  ) : (
-                    <div className="wizard-section" style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.5, textAlign: 'center' }}>
-                      <Users size={48} className="text-slate-600 mb-4" />
-                      <p className="text-slate-500 text-sm">{t("master.tenant.aEdioDeAdministradoresFeitaNaAbaUsurios", `
-                        A edição de administradores é feita na aba "Usuários".
-                      `)}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: REVISÃO */}
-            {currentStep === 3 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '1.5rem', padding: '2rem', textAlign: 'center', marginBottom: '1.5rem' }}>
-                  <div style={{ width: '80px', height: '80px', background: 'rgba(16, 185, 129, 0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-                    <CheckCircle2 size={40} />
-                  </div>
-                  <h2 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#fff', marginBottom: '0.5rem' }}>Tudo pronto!</h2>
-                  <p style={{ color: '#94a3b8', maxWidth: '400px', margin: '0 auto' }}>{t("master.tenant.reviseOsDadosAbaixoAntesDeCriarOAmbiente", `
-                    Revise os dados abaixo antes de criar o ambiente da instituição.
-                  `)}</p>
-                </div>
-
-                <div className="master-grid-2">
-                  <div className="wizard-section">
-                    <h3 className="feature-group-title">Dados Gerais</h3>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      <div className="flex justify-between">
-                        <span style={{ color: '#64748b' }}>Nome:</span>
-                        <span style={{ color: '#fff', fontWeight: '500' }}>{name}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: '#64748b' }}>Slug:</span>
-                        <span style={{ color: '#60a5fa', fontFamily: 'monospace' }}>{slug}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: '#64748b' }}>Tipo:</span>
-                        <span style={{ color: '#fff' }}>{tenantType}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="wizard-section">
-                    <h3 className="feature-group-title">Contrato</h3>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      <div className="flex justify-between">
-                        <span style={{ color: '#64748b' }}>Plano:</span>
-                        <span style={{ color: '#34d399', fontWeight: '700' }}>{plan}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: '#64748b' }}>Limite Obras:</span>
-                        <span style={{ color: '#fff' }}>{maxWorks}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span style={{ color: '#64748b' }}>Admin:</span>
-                        <span style={{ color: '#fff' }}>{isEdit ? '(Existente)' : adminEmail}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* FOOTER NAVIGATION */}
-      <div className="master-wizard-footer">
-        <div className="master-wizard-footer-inner">
-          <Button
-            variant="ghost"
-            onClick={currentStep === 0 ? () => navigate("/master/tenants") : prevStep}
-            className="btn-ghost"
-          >
-            {currentStep === 0 ? "Cancelar" : "Voltar"}
-          </Button>
-
-          <div className="flex gap-2">
-            {currentStep === STEPS.length - 1 ? (
-              <Button
-                onClick={handleSubmit}
-                isLoading={saving}
-                className="btn-primary"
-                leftIcon={!saving ? <Save size={18} /> : undefined}
-              >
-                {isEdit ? "Salvar Alterações" : "Criar Instituição"}
-              </Button>
-            ) : (
-              <Button
-                onClick={nextStep}
-                className="btn-primary"
-                rightIcon={<ChevronRight size={20} />}
-              >
-                Próximo
-              </Button>
-            )}
-          </div>
         </div>
-      </div>
 
-    </div>
+        {/* Stepper Progress */}
+        <div className="relative flex justify-between items-center max-w-4xl mx-auto px-4">
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2" />
+            <motion.div 
+                className="absolute top-1/2 left-0 h-0.5 bg-blue-600 -translate-y-1/2 transition-all duration-500"
+                style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+            />
+            {STEPS.map((step, idx) => (
+                <div key={idx} className="relative z-10 flex flex-col items-center gap-3 group cursor-pointer" onClick={() => (isEdit || idx < currentStep) && setCurrentStep(idx)}>
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 border-2 ${
+                        idx < currentStep ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-600/20' : 
+                        idx === currentStep ? 'bg-[#0f172a] border-blue-500 text-blue-400 shadow-2xl' : 
+                        'bg-[#0f172a] border-white/5 text-slate-700'
+                    }`}>
+                        <step.icon size={24} />
+                    </div>
+                    <span className={`text-[9px] font-black uppercase tracking-[0.2em] transition-colors ${idx <= currentStep ? 'text-white' : 'text-slate-700'}`}>
+                        {step.title}
+                    </span>
+                </div>
+            ))}
+        </div>
+
+        {/* Wizard Content */}
+        <div className="min-h-[500px]">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={currentStep}
+                    initial={{ opacity: 0, x: direction > 0 ? 40 : -40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: direction > 0 ? -40 : 40 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                    {/* STEP 0: DNA */}
+                    {currentStep === 0 && (
+                        <div className="space-y-12">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                                {typeOptions.map(opt => (
+                                    <Card 
+                                        key={opt.value}
+                                        onClick={() => setTenantType(opt.value as any)}
+                                        className={`p-8 rounded-[40px] cursor-pointer transition-all border-2 flex flex-col items-center text-center group hover:scale-105 ${tenantType === opt.value ? 'bg-blue-600/10 border-blue-500 shadow-2xl shadow-blue-600/10' : 'bg-white/[0.02] border-white/5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100'}`}
+                                    >
+                                        <div className={`w-16 h-16 rounded-[24px] mb-6 flex items-center justify-center transition-all ${tenantType === opt.value ? 'bg-blue-600 text-white shadow-xl' : 'bg-white/5 text-slate-500'}`}>
+                                            {opt.icon}
+                                        </div>
+                                        <h4 className={`text-xs font-black uppercase tracking-tighter italic mb-3 ${tenantType === opt.value ? 'text-white' : 'text-slate-500'}`}>{opt.label}</h4>
+                                        <p className="text-[10px] text-slate-600 font-medium leading-relaxed italic">{opt.desc}</p>
+                                    </Card>
+                                ))}
+                            </div>
+
+                            <Card className="p-12 bg-white/[0.02] border-white/5 rounded-[56px] space-y-10">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-600/10 text-blue-500 flex items-center justify-center">
+                                        <Dna size={24} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-white tracking-tighter italic uppercase">Dados de Identidade</h3>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4 italic">Nome da Instituição / Node</label>
+                                        <Input
+                                            value={name}
+                                            onChange={e => setName(e.target.value)}
+                                            placeholder="Ex: Museu de Arte Contemporânea"
+                                            className="h-16 bg-white/5 border-white/5 rounded-2xl px-6"
+                                            leftIcon={<Landmark size={20} className="text-blue-500" />}
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4 italic">Identificador de URL (Slug)</label>
+                                        <Input
+                                            value={slug}
+                                            onChange={e => setSlug(e.target.value)}
+                                            placeholder="mac-museu"
+                                            className="h-16 bg-white/5 border-white/5 rounded-2xl px-6 font-mono"
+                                            leftIcon={<Globe size={20} className="text-blue-500" />}
+                                        />
+                                    </div>
+                                </div>
+                                {(tenantType === "MUSEUM" || tenantType === "PRODUCER") && (
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4 italic">Vinculação de Hierarquia (Node Pai)</label>
+                                        <Select
+                                            value={parentId || ""}
+                                            onChange={e => setParentId(e.target.value || null)}
+                                            className="h-16 bg-white/5 border-white/5 rounded-2xl px-6"
+                                            leftIcon={<Layers size={20} className="text-blue-500" />}
+                                        >
+                                            <option value="">Independente / Global</option>
+                                            {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        </Select>
+                                    </div>
+                                )}
+                            </Card>
+                        </div>
+                    )}
+
+                    {/* STEP 1: MODULES */}
+                    {currentStep === 1 && (
+                        <div className="space-y-10">
+                            <Card className="p-10 bg-white/[0.02] border-white/5 rounded-[56px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="col-span-full mb-4 flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-blue-600/10 text-blue-500 flex items-center justify-center">
+                                        <Settings size={24} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-white tracking-tighter italic uppercase">Arquitetura de Módulos</h3>
+                                </div>
+                                
+                                <FeatureToggle label="Gestão de Acervo" state={featureWorks} setter={setFeatureWorks} icon={Database} />
+                                <FeatureToggle label="Trilhas & Roteiros" state={featureTrails} setter={setFeatureTrails} icon={Map} />
+                                <FeatureToggle label="Eventos & Agenda" state={featureEvents} setter={setFeatureEvents} icon={Calendar} />
+                                <FeatureToggle label="Gamificação" state={featureGamification} setter={setFeatureGamification} icon={Zap} />
+                                <FeatureToggle label="QR System" state={featureQRCodes} setter={setFeatureQRCodes} icon={Globe} />
+                                <FeatureToggle label="Chat de IA" state={featureChatAI} setter={setFeatureChatAI} icon={Bot} premium />
+                                <FeatureToggle label="Loja Virtual" state={featureShop} setter={setFeatureShop} icon={Sticker} premium />
+                                <FeatureToggle label="Doações" state={featureDonations} setter={setFeatureDonations} icon={HeartHandshake} premium />
+                                <FeatureToggle label="Certificação" state={featureCertificates} setter={setFeatureCertificates} icon={Award} />
+                                <FeatureToggle label="Venda Ingressos" state={featureTickets} setter={setFeatureTickets} icon={Ticket} premium />
+                                <FeatureToggle label="Minigames" state={featureMinigames} setter={setFeatureMinigames} icon={Puzzle} premium />
+                                <FeatureToggle label="PCD/Acessibilidade" state={featureAccessibility} setter={setFeatureAccessibility} icon={Microscope} />
+                                
+                                <div className="col-span-full mt-10 pt-10 border-t border-white/5">
+                                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-8 ml-4 italic">Painel Administrativo: Seções Habilitadas</h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                        {[
+                                            { label: "Conteúdo", state: featureGroupContent, setter: setFeatureGroupContent },
+                                            { label: "Eventos", state: featureGroupEvents, setter: setFeatureGroupEvents },
+                                            { label: "Engagement", state: featureGroupEngagement, setter: setFeatureGroupEngagement },
+                                            { label: "Gami", state: featureGroupGamification, setter: setFeatureGroupGamification },
+                                            { label: "Institu", state: featureGroupInstitutional, setter: setFeatureGroupInstitutional },
+                                            { label: "Tools", state: featureGroupTools, setter: setFeatureGroupTools },
+                                            { label: "Analytics", state: featureGroupAnalytics, setter: setFeatureGroupAnalytics },
+                                            { label: "AI/Bot", state: featureGroupAI, setter: setFeatureGroupAI },
+                                        ].map((g, i) => (
+                                            <button 
+                                                key={i} 
+                                                onClick={() => g.setter(!g.state)}
+                                                className={`p-4 rounded-2xl border transition-all text-[8px] font-black uppercase tracking-widest ${g.state ? 'bg-blue-600/20 border-blue-500/30 text-white' : 'bg-white/5 border-white/5 text-slate-700'}`}
+                                            >
+                                                {g.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+
+                    {/* STEP 2: PLAN & ADMIN */}
+                    {currentStep === 2 && (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                            <Card className="p-12 bg-white/[0.02] border-white/5 rounded-[56px] space-y-10">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-amber-600/10 text-amber-500 flex items-center justify-center">
+                                        <Package size={24} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-white tracking-tighter italic uppercase">Assinatura & SLA</h3>
+                                </div>
+                                <div className="space-y-6">
+                                    <Select
+                                        label="Plano de Serviço"
+                                        value={plan}
+                                        onChange={e => setPlan(e.target.value)}
+                                        className="h-16 bg-white/5 border-white/5 rounded-2xl px-6"
+                                    >
+                                        <option value="START">Start Edition</option>
+                                        <option value="PRO">Professional</option>
+                                        <option value="ENTERPRISE">Enterprise (Global)</option>
+                                        <option value="CUSTOM">Customized Layout</option>
+                                    </Select>
+                                    <Input
+                                        label="Quota Máxima de Ativos (Obras)"
+                                        type="number"
+                                        value={maxWorks}
+                                        onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
+                                        className="h-16 bg-white/5 border-white/5 rounded-2xl px-6 font-mono"
+                                    />
+                                    <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-3xl flex items-center gap-4">
+                                        <Activity size={24} className="text-emerald-500/50" />
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">SLA Garantido</span>
+                                            <span className="text-sm font-black text-emerald-500 italic">99.9% High Availability</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            {!isEdit && (
+                                <Card className="p-12 bg-white/[0.02] border-white/5 rounded-[56px] space-y-10 border-indigo-500/20 shadow-2xl shadow-indigo-500/5">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-indigo-600/10 text-indigo-400 flex items-center justify-center">
+                                            <ShieldCheck size={24} />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-white tracking-tighter italic uppercase">Gestor do Node</h3>
+                                    </div>
+                                    <div className="space-y-6">
+                                        <Input
+                                            label="Nome do Primeiro Admin"
+                                            value={adminName}
+                                            onChange={e => setAdminName(e.target.value)}
+                                            placeholder="Ex: Alexander Pierce"
+                                            className="h-16 bg-white/5 border-white/5 rounded-2xl px-6"
+                                            leftIcon={<Users size={18} className="text-indigo-400" />}
+                                        />
+                                        <Input
+                                            label="E-mail de Autoridade"
+                                            type="email"
+                                            value={adminEmail}
+                                            onChange={e => setAdminEmail(e.target.value)}
+                                            placeholder="admin@hml.com"
+                                            className="h-16 bg-white/5 border-white/5 rounded-2xl px-6"
+                                            leftIcon={<Mail size={18} className="text-indigo-400" />}
+                                        />
+                                        <Input
+                                            label="Senha de Acesso"
+                                            type="password"
+                                            value={adminPassword}
+                                            onChange={e => setAdminPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            className="h-16 bg-white/5 border-white/5 rounded-2xl px-6"
+                                            leftIcon={<Lock size={18} className="text-indigo-400" />}
+                                        />
+                                    </div>
+                                </Card>
+                            )}
+                        </div>
+                    )}
+
+                    {/* STEP 3: REVIEW */}
+                    {currentStep === 3 && (
+                        <div className="max-w-4xl mx-auto space-y-10">
+                            <Card className="p-12 bg-emerald-500/5 border border-emerald-500/20 rounded-[64px] text-center space-y-6 relative overflow-hidden">
+                                <div className="w-24 h-24 bg-emerald-600/20 rounded-full flex items-center justify-center mx-auto text-emerald-500 border border-emerald-500/30">
+                                    <CheckCircle size={48} className="animate-pulse" />
+                                </div>
+                                <h2 className="text-4xl font-black text-white tracking-tighter italic uppercase">Arquitetura Validada</h2>
+                                <p className="text-slate-500 font-medium max-w-lg mx-auto italic">Revise o manifesto de implantação abaixo antes de confirmar a ativação do node de infraestrutura.</p>
+                                <div className="absolute top-[-50%] right-[-10%] w-80 h-80 bg-emerald-600/5 rounded-full blur-[100px] pointer-events-none" />
+                            </Card>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <Card className="p-10 bg-white/[0.02] border-white/5 rounded-[48px] space-y-6">
+                                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic border-b border-white/5 pb-4">Manifesto DNA</h4>
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">Nome</span><span className="text-sm font-black text-white italic">{name}</span></div>
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">Slug</span><span className="text-sm font-black text-blue-400 italic">{slug}</span></div>
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">Tipo</span><span className="text-sm font-black text-white italic">{tenantType}</span></div>
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">Plano</span><Badge variant="glass" className="bg-amber-600/20 text-amber-500">{plan}</Badge></div>
+                                    </div>
+                                </Card>
+                                <Card className="p-10 bg-white/[0.02] border-white/5 rounded-[48px] space-y-6">
+                                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic border-b border-white/5 pb-4">Capacidade de Carga</h4>
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">Obras (Quota)</span><span className="text-xl font-black text-white italic">{maxWorks} UN</span></div>
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">SLA</span><span className="text-xs font-black text-emerald-500 italic tracking-widest uppercase">High Performance</span></div>
+                                        <div className="flex justify-between items-center"><span className="text-[10px] font-bold text-slate-600 uppercase">Módulos Ativos</span><span className="text-xs font-black text-blue-400 italic">Optimized</span></div>
+                                    </div>
+                                </Card>
+                            </div>
+                        </div>
+                    )}
+                </motion.div>
+            </AnimatePresence>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="flex items-center justify-between pt-10 border-t border-white/5">
+            <Button
+                variant="ghost"
+                onClick={prevStep}
+                disabled={currentStep === 0 || saving}
+                className="h-16 px-10 rounded-2xl text-slate-500 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]"
+            >
+                {currentStep === 0 ? '' : 'Voltar Etapa'}
+            </Button>
+            
+            <div className="flex items-center gap-4">
+                {currentStep < STEPS.length - 1 ? (
+                    <Button
+                        onClick={nextStep}
+                        className="h-16 px-12 rounded-2xl bg-blue-600 text-white font-black uppercase tracking-widest shadow-2xl shadow-blue-600/20 text-xs hover:bg-blue-500"
+                    >
+                        Próxima Etapa <ArrowRight size={18} className="ml-3" />
+                    </Button>
+                ) : (
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={saving}
+                        className="h-16 px-16 rounded-2xl bg-emerald-600 text-white font-black uppercase tracking-widest shadow-2xl shadow-emerald-600/20 text-xs hover:bg-emerald-500"
+                    >
+                        {saving ? <Activity className="animate-spin mr-3" size={20} /> : <Save size={20} className="mr-3" />}
+                        {isEdit ? 'Finalizar Revisão' : 'Implantar Node'}
+                    </Button>
+                )}
+            </div>
+        </div>
+    </AnimateIn>
   );
 };

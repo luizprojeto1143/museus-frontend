@@ -44,11 +44,13 @@ export const ChallengesPage: React.FC = () => {
             }
         };
 
-        if (tenantId) {
+        if (tenantId && !isGuest) {
             fetchHunts();
             fetchUserStats();
+        } else if (isGuest) {
+            setLoading(false);
         }
-    }, [tenantId]);
+    }, [tenantId, isGuest]);
 
     const calculateLevel = (xp: number) => {
         return Math.floor(xp / 500) + 1;

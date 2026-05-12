@@ -987,6 +987,21 @@ export const ProductGrid: React.FC = () => {
                     ))}
                 </motion.div>
             )}
+
+            {/* Checkout Modal */}
+            <AnimatePresence>
+                {showCheckout && (
+                    <CheckoutModal
+                        items={cart}
+                        total={total}
+                        onClose={() => setShowCheckout(false)}
+                        onSuccess={() => {
+                            setCart([]);
+                            localStorage.removeItem(`cart_${tenantId}`);
+                        }}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

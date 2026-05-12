@@ -97,6 +97,7 @@ export const VisitorProfile: React.FC = () => {
 
     const handleTabChange = (tab: 'info' | 'tickets' | 'certificates' | 'orders' | 'rewards') => {
         setActiveTab(tab);
+        if (isGuest) return;
 
         if (tab === 'certificates' && certificates.length === 0) {
             setLoading(true);
@@ -358,70 +359,71 @@ export const VisitorProfile: React.FC = () => {
                 <p className="work-badge-premium !text-[12px] !mt-2">Prestígio Cultural & Patrimônio</p>
             </header>
 
-            <section className="profile-card-premium">
-                <div className="profile-hero-premium">
-                    <div className="avatar-premium">
-                        {name ? (
-                            <span>{name.charAt(0).toUpperCase()}</span>
-                        ) : (
-                            <User size={64} />
-                        )}
-                        <div className="level-badge-premium">LVL {currentLevel.level}</div>
+            {!isGuest ? (
+                <section className="profile-card-premium">
+                    <div className="profile-hero-premium">
+                        <div className="avatar-premium">
+                            {name ? (
+                                <span>{name.charAt(0).toUpperCase()}</span>
+                            ) : (
+                                <User size={64} />
+                            )}
+                            <div className="level-badge-premium">LVL {currentLevel.level}</div>
+                        </div>
+
+                        <div className="profile-info-premium">
+                            <div className="flex items-center gap-4">
+                                <h2 className="profile-name-premium">{name || "Viajante"}</h2>
+                            </div>
+                            <p className="profile-rank-premium">{currentLevel.title}</p>
+                            
+                            <div className="progress-section-premium mt-6">
+                                <div className="flex justify-between font-fm text-[10px] uppercase text-gold">
+                                    <span>Evolução de Prestígio</span>
+                                    <span>{Math.round(progressToNextLevel)}%</span>
+                                </div>
+                                <div className="xp-bar-premium">
+                                    <motion.div 
+                                        className="xp-fill-premium" 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progressToNextLevel}%` }}
+                                        transition={{ duration: 1, delay: 0.5 }}
+                                    />
+                                </div>
+                                <div className="flex gap-6 mt-4 font-fb text-xs text-muted">
+                                    <div className="flex items-center gap-2"><Zap size={12} className="text-gold" /> {stats.xp} XP acumulado</div>
+                                    <div className="flex items-center gap-2"><Award size={12} className="text-gold" /> {stats.achievements.filter(a => a.unlockedAt).length} Conquistas</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="profile-info-premium">
-                        <div className="flex items-center gap-4">
-                            <h2 className="profile-name-premium">{name || "Viajante"}</h2>
-                        </div>
-                        <p className="profile-rank-premium">{currentLevel.title}</p>
-                        
-                        <div className="progress-section-premium mt-6">
-                            <div className="flex justify-between font-fm text-[10px] uppercase text-gold">
-                                <span>Evolução de Prestígio</span>
-                                <span>{Math.round(progressToNextLevel)}%</span>
-                            </div>
-                            <div className="xp-bar-premium">
-                                <motion.div 
-                                    className="xp-fill-premium" 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${progressToNextLevel}%` }}
-                                    transition={{ duration: 1, delay: 0.5 }}
-                                />
-                            </div>
-                            <div className="flex gap-6 mt-4 font-fb text-xs text-muted">
-                                <div className="flex items-center gap-2"><Zap size={12} className="text-gold" /> {stats.xp} XP acumulado</div>
-                                <div className="flex items-center gap-2"><Award size={12} className="text-gold" /> {stats.achievements.filter(a => a.unlockedAt).length} Conquistas</div>
-                            </div>
-                        </div>
+                    <nav className="tabs-premium">
+                        {(['info', 'tickets', 'orders', 'certificates', 'rewards'] as const).map(tab => (
+                            <button
+                                key={tab}
+                                onClick={() => handleTabChange(tab)}
+                                className={`tab-btn-premium ${activeTab === tab ? 'active' : ''}`}
+                            >
+                                {tab === 'rewards' && <TicketPercent size={14} className="inline mr-2" />}
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                            </button>
+                        ))}
+                    </nav>
+
+                    <div className="profile-content-premium">
+                        {renderContent()}
                     </div>
-                </div>
-
-                <nav className="tabs-premium">
-                    {(['info', 'tickets', 'orders', 'certificates', 'rewards'] as const).map(tab => (
-                        <button
-                            key={tab}
-                            onClick={() => handleTabChange(tab)}
-                            className={`tab-btn-premium ${activeTab === tab ? 'active' : ''}`}
-                        >
-                            {tab === 'rewards' && <TicketPercent size={14} className="inline mr-2" />}
-                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                        </button>
-                    ))}
-                </nav>
-
-                <div className="profile-content-premium">
-                    {renderContent()}
-                </div>
-            </section>
-
-            {isGuest && (
-                <div className="sidebar-card-premium !bg-gold-dim !border-gold flex flex-col items-center text-center p-12">
+                </section>
+            ) : (
+                <div className="sidebar-card-premium !bg-gold-dim !border-gold flex flex-col items-center text-center p-12 mt-10">
                     <Star size={48} className="text-gold mb-6" />
                     <h2 className="text-2xl font-fd text-white mb-4">Acesso Restrito ao Legado</h2>
                     <p className="text-muted mb-8 max-w-lg">Crie uma conta para eternizar seu progresso, colecionar medalhas e acessar benefícios exclusivos em todo o ecossistema cultural.</p>
                     <button onClick={() => navigate("/register")} className="gallery-cta !w-auto !px-12">Iniciar Minha História</button>
                 </div>
             )}
+
         </motion.div>
     );
 };

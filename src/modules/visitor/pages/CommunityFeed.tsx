@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
 import { Button, Input, Textarea } from "../../../components/ui";
-import { MessageSquare, Heart, Share2, Send, Clock, ShieldCheck } from "lucide-react";
+import { MessageSquare, Heart, Share2, Send, Clock, ShieldCheck, Lock } from "lucide-react";
+import { useAuth } from "../../auth/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import "./CommunityFeed.css";
 
@@ -17,6 +18,7 @@ interface Post {
 
 export const CommunityFeed: React.FC = () => {
     const { targetId } = useParams<{ targetId: string }>();
+    const { isGuest } = useAuth();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [newPost, setNewPost] = useState("");
@@ -39,7 +41,7 @@ export const CommunityFeed: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newPost.trim()) return;
+        if (isGuest || !newPost.trim()) return;
 
         setIsSubmitting(true);
         try {
@@ -70,33 +72,49 @@ export const CommunityFeed: React.FC = () => {
                 <p>Compartilhe suas histórias e viva a cultura local</p>
             </header>
 
-            <motion.form
-                className="community-form-card glass"
-                onSubmit={handleSubmit}
+            <motion.div
+                className="community-form-card glass relative overflow-hidden"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
             >
-                <Textarea
-                    placeholder="O que esta obra ou espaço te faz lembrar?"
-                    value={newPost}
-                    onChange={(e) => setNewPost(e.target.value)}
-                    rows={3}
-                    className="community-input"
-                />
-                <div className="flex justify-between items-center mt-4">
-                    <span className="text-xs text-[var(--fg-muted)]">
-                        Sua história será analisada pela curadoria antes de ser publicada.
-                    </span>
-                    <Button
-                        type="submit"
-                        isLoading={isSubmitting}
-                        className="btn-primary-gradient"
-                        leftIcon={<Send size={18} />}
-                    >
-                        Compartilhar
-                    </Button>
-                </div>
-            </motion.form>
+                {isGuest && (
+                    <div className="absolute inset-0 z-10 bg-[var(--bg-card)]/80 backdrop-blur-md flex flex-col items-center justify-center text-center p-6 border border-dashed border-[var(--accent-primary)] rounded-2xl">
+                        <Lock size={32} className="text-[var(--accent-primary)] mb-3 opacity-50" />
+                        <h3 className="text-lg font-bold text-[var(--accent-primary)] mb-1">Memória Exclusiva</h3>
+                        <p className="text-xs text-[var(--fg-muted)] mb-4 max-w-[240px]">Crie sua conta para compartilhar suas vivências e eternizar sua passagem por aqui.</p>
+                        <Button 
+                            onClick={() => window.location.href='/register'}
+                            className="btn-primary-gradient !px-8 !h-9 text-xs"
+                        >
+                            Fazer Parte da Comunidade
+                        </Button>
+                    </div>
+                )}
+                <form onSubmit={handleSubmit}>
+                    <Textarea
+                        placeholder="O que esta obra ou espaço te faz lembrar?"
+                        value={newPost}
+                        onChange={(e) => setNewPost(e.target.value)}
+                        rows={3}
+                        className="community-input"
+                        disabled={isGuest}
+                    />
+                    <div className="flex justify-between items-center mt-4">
+                        <span className="text-xs text-[var(--fg-muted)]">
+                            Sua história será analisada pela curadoria antes de ser publicada.
+                        </span>
+                        <Button
+                            type="submit"
+                            isLoading={isSubmitting}
+                            className="btn-primary-gradient"
+                            leftIcon={<Send size={18} />}
+                            disabled={isGuest}
+                        >
+                            Compartilhar
+                        </Button>
+                    </div>
+                </form>
+            </motion.div>
 
             <div className="community-feed">
                 {loading ? (

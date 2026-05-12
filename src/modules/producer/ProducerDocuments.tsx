@@ -13,7 +13,6 @@ import { Button, Input } from "../../components/ui";
 export const ProducerDocuments: React.FC = () => {
     const { t } = useTranslation();
     const { addToast } = useToast();
-    const { user } = useAuth();
     
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);

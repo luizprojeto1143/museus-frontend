@@ -334,10 +334,17 @@ export const EventDetail: React.FC = () => {
             </div>
           ) : (
             <button
-              onClick={() => setIsCheckoutOpen(true)}
+              onClick={() => {
+                if (isGuest) {
+                  addToast("Crie uma conta gratuita para reservar seus ingressos!", "info");
+                  navigate("/register");
+                } else {
+                  setIsCheckoutOpen(true);
+                }
+              }}
               className="gallery-cta !w-auto !px-12"
             >
-              Garantir Acesso
+              {isGuest ? "Criar Conta para Reservar" : "Garantir Acesso"}
             </button>
           )}
         </motion.div>

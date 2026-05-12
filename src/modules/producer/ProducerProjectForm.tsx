@@ -94,7 +94,8 @@ export const ProducerProjectForm: React.FC = () => {
                     attachments: data.attachments || [],
                     accessibilityPlan: data.accessibilityPlan || { hasPlan: false, services: [], description: "" },
                     reviewNotes: data.reviewNotes || "",
-                    reviewedAt: data.reviewedAt
+                    reviewedAt: data.reviewedAt,
+                    eventId: data.eventId || null
                 });
 
                 if (data.noticeId) {
@@ -143,7 +144,7 @@ export const ProducerProjectForm: React.FC = () => {
 
     const handleAiAssist = async (field: "summary" | "description" | "justification") => {
         if (!formData.title) {
-            addToast("Dê um título ao projeto para que a IA possa entender o contexto.", "warning");
+            addToast("Dê um título ao projeto para que a IA possa entender o contexto.", "info");
             return;
         }
 
@@ -366,69 +367,57 @@ export const ProducerProjectForm: React.FC = () => {
                 </div>
             )}
 
-            <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-                {/* SIDEBAR NAVIGATION */}
-                <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-[#2c1e10] rounded-2xl p-2 border border-[#463420]">
-                        <button
-                            onClick={() => setActiveTab("DETAILS")}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm mb-1 ${activeTab === "DETAILS" ? "bg-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
-                        >
-                            <FileText size={18} /> Detalhes
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("ACCESSIBILITY")}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm mb-1 ${activeTab === "ACCESSIBILITY" ? "bg-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
-                        >
-                            <Accessibility size={18} /> Acessibilidade
-                        </button>
-                        <button
-                            onClick={() => setActiveTab("ACCOUNTABILITY")}
-                            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-medium text-sm ${activeTab === "ACCOUNTABILITY" ? "bg-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20 font-bold" : "text-[#B0A090] hover:bg-black/20"}`}
-                        >
-                            <Banknote size={18} /> Prestação de Contas
-                        </button>
-                    </div>
-
-                    {/* SUBMISSION CHECKLIST */}
-                    <div className="bg-[#2c1e10]/50 rounded-2xl p-5 border border-[#463420] backdrop-blur-sm">
-                        <div className="flex items-center gap-2 text-[#EAE0D5] font-bold text-sm mb-4">
-                            <ListChecks size={16} className="text-[var(--accent-primary)]" /> Checklist de Envio
-                        </div>
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3 text-xs">
-                                {formData.title ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
-                                <span className={formData.title ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Título do Projeto</span>
+            {/* WIZARD PROGRESS BAR */}
+            <div className="max-w-5xl mx-auto mb-12">
+                <div className="flex items-center justify-between px-2 mb-4">
+                    {[
+                        { id: "DETAILS", label: "Identidade", icon: <FileText size={14} /> },
+                        { id: "ACCESSIBILITY", label: "Inclusão", icon: <Accessibility size={14} /> },
+                        { id: "ACCOUNTABILITY", label: "Fiscal", icon: <Banknote size={14} /> }
+                    ].map((step, idx, arr) => (
+                        <React.Fragment key={step.id}>
+                            <div 
+                                onClick={() => setActiveTab(step.id as any)}
+                                className={`flex flex-col items-center gap-3 cursor-pointer transition-all group ${activeTab === step.id ? 'scale-110' : 'opacity-40 hover:opacity-100'}`}
+                            >
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${activeTab === step.id ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20' : 'bg-black/20 border-white/10 text-white'}`}>
+                                    {step.icon}
+                                </div>
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${activeTab === step.id ? 'text-[var(--accent-primary)]' : 'text-slate-500'}`}>{step.label}</span>
                             </div>
-                            <div className="flex items-center gap-3 text-xs">
-                                {formData.description.length > 50 ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
-                                <span className={formData.description.length > 50 ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Descrição Detalhada</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-xs">
-                                {formData.requestedBudget ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
-                                <span className={formData.requestedBudget ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Orçamento Definido</span>
-                            </div>
-                            <div className="flex items-center gap-3 text-xs">
-                                {formData.accessibilityPlan.hasPlan ? <CheckCircle2 size={14} className="text-emerald-500" /> : <div className="w-3.5 h-3.5 rounded-full border border-[#463420]" />}
-                                <span className={formData.accessibilityPlan.hasPlan ? "text-[#EAE0D5]" : "text-[#B0A090]"}>Plano de Acessibilidade</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* TIPS CARD */}
-                    <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] rounded-2xl p-5 border border-[#463420]">
-                        <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold text-sm mb-3">
-                            <Sparkles size={16} /> Dica de Ouro
-                        </div>
-                        <p className="text-xs text-[#B0A090] leading-relaxed">
-                            Use o <strong>Ajudante IA</strong> nos campos de descrição para alinhar seu texto automaticamente com os objetivos deste edital.
-                        </p>
-                    </div>
+                            {idx < arr.length - 1 && (
+                                <div className="flex-1 h-[2px] bg-white/5 mx-6 mb-8 relative overflow-hidden">
+                                    <div className={`absolute inset-0 bg-[var(--accent-primary)] transition-all duration-700 ${activeTab === arr[idx+1].id || (activeTab === "ACCOUNTABILITY" && idx < 2) ? 'w-full' : 'w-0'}`} />
+                                </div>
+                            )}
+                        </React.Fragment>
+                    ))}
                 </div>
+            </div>
 
-                {/* MAIN CONTENT */}
-                <div className="lg:col-span-3">
+            <div className="max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 gap-8">
+                    {/* TIPS & STATUS BANNER */}
+                    <div className="flex flex-col md:flex-row gap-4 mb-4">
+                         <div className={`flex-1 px-6 py-4 rounded-[32px] border flex items-center justify-between shadow-lg backdrop-blur-md ${statusInfo.bg} ${statusInfo.border}`}>
+                            <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-full bg-black/10 ${statusInfo.text}`}>
+                                    {statusInfo.icon}
+                                </div>
+                                <div className={`font-black text-xs uppercase tracking-widest ${statusInfo.text}`}>
+                                    {statusInfo.label}
+                                </div>
+                            </div>
+                            <div className="text-[10px] font-bold text-[#B0A090] italic">Sincronizado na Nuvem</div>
+                        </div>
+
+                        <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] rounded-[32px] px-8 py-4 border border-[#463420] flex items-center gap-4 flex-[1.5]">
+                            <Sparkles size={20} className="text-[var(--accent-primary)] shrink-0" />
+                            <p className="text-[11px] text-[#B0A090] leading-relaxed">
+                                <strong>Dica Master:</strong> Projetos com <strong>Plano de Acessibilidade</strong> detalhado têm 40% mais chance de aprovação neste edital.
+                            </p>
+                        </div>
+                    </div>
 
                     {activeTab === "DETAILS" ? (
                         <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8 animate-in fade-in slide-in-from-right-4 duration-300">

@@ -8,7 +8,7 @@ import { User, Mail, Phone, Globe, FileText, Save, Briefcase } from "lucide-reac
 
 export const ProducerProfile: React.FC = () => {
     const { t } = useTranslation();
-    const { name, email, updateSession, token, refreshToken, role, tenantId } = useAuth();
+    const { name, email, updateSession, role, tenantId } = useAuth();
     const { addToast } = useToast();
 
     const [formData, setFormData] = useState({
@@ -50,8 +50,8 @@ export const ProducerProfile: React.FC = () => {
             await api.put("/users/me", formData);
             addToast("Perfil atualizado com sucesso!", "success");
 
-            if (token && refreshToken && role) {
-                updateSession(token, refreshToken, role, tenantId, formData.name);
+            if (role) {
+                updateSession(role, tenantId || "", formData.name);
             }
         } catch (err: any) {
             console.error(err);

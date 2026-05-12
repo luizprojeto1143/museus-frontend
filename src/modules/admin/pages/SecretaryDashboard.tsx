@@ -107,25 +107,25 @@ const SecretaryDashboard: React.FC = () => {
 
             {/* KPI Cards */}
             <div className="sec-grid-cards">
-                <UICard
+                <Card
                     title="Equipamentos"
                     value={data.cards.totalEquipments}
                     icon="🏛️"
                     color="var(--accent-primary)"
                 />
-                <UICard
+                <Card
                     title="Projetos Ativos"
                     value={data.cards.activeProjects}
                     icon="📁"
                     color="#10b981"
                 />
-                <UICard
+                <Card
                     title="Acessibilidade"
                     value={data.cards.pendingAccessibility}
                     icon="♿"
                     color="#f59e0b"
                 />
-                <UICard
+                <Card
                     title="Eventos"
                     value={data.cards.totalEvents}
                     icon="📅"

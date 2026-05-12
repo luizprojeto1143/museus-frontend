@@ -17,7 +17,9 @@ import {
     Activity,
     Mail,
     Trophy,
-    Landmark
+    Landmark,
+    Briefcase as BriefcaseIcon,
+    CheckCircle
 } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 import { useTenant } from "../auth/TenantContext";
@@ -324,7 +326,7 @@ export const LandingPage: React.FC = () => {
                             <div className="space-y-6 mb-12">
                                 <div className="flex gap-4">
                                     <div className="w-12 h-12 bg-[#9f7aea]/10 rounded-2xl flex items-center justify-center text-[#9f7aea] shrink-0 border border-[#9f7aea]/20">
-                                        <Briefcase size={24} />
+                                        <BriefcaseIcon size={24} />
                                     </div>
                                     <div>
                                         <h4 className="text-lg font-bold text-white">Vitrine Exclusiva</h4>

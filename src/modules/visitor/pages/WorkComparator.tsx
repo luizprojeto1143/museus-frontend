@@ -2,10 +2,12 @@ import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, ArrowLeftRight, ChevronDown } from "lucide-react";
+import { Loader2, ArrowLeftRight, ChevronDown, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import "./WorkComparator.css";
 
 export const WorkComparator: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -29,260 +31,142 @@ export const WorkComparator: React.FC = () => {
     }, [tenantId, fetchWorks]);
 
     if (loading) return (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}>
-            <Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} />
+        <div className="flex justify-center items-center min-h-[60vh]">
+            <Loader2 className="animate-spin text-gold" size={40} />
         </div>
     );
 
     const leftWork = works.find(w => w.id === leftId);
     const rightWork = works.find(w => w.id === rightId);
 
-    const selectStyle: React.CSSProperties = {
-        width: '100%',
-        background: 'rgba(0,0,0,0.4)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: '0.75rem',
-        padding: '0.75rem 1rem',
-        color: 'white',
-        fontSize: '0.85rem',
-        outline: 'none',
-        appearance: 'none' as const,
-        cursor: 'pointer'
-    };
-
     const CompareRow = ({ label, left, right }: { label: string; left?: string | null; right?: string | null }) => (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
-            gap: '0.75rem',
-            padding: '0.75rem 0',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            alignItems: 'center'
-        }}>
-            <span style={{ color: '#ddd', fontSize: '0.85rem', textAlign: 'right' }}>{left || "—"}</span>
-            <span style={{
-                color: 'var(--accent-primary)',
-                fontSize: '0.6rem',
-                fontWeight: 900,
-                textTransform: 'uppercase',
-                letterSpacing: '0.15em',
-                minWidth: '70px',
-                textAlign: 'center'
-            }}>{label}</span>
-            <span style={{ color: '#ddd', fontSize: '0.85rem' }}>{right || "—"}</span>
-        </div>
-    );
-
-    const WorkCard = ({ work }: { work: any }) => (
-        <div style={{
-            background: 'rgba(0,0,0,0.3)',
-            borderRadius: '1rem',
-            overflow: 'hidden',
-            border: '1px solid rgba(212,175,55,0.15)'
-        }}>
-            <div style={{ aspectRatio: '1', overflow: 'hidden', position: 'relative' }}>
-                {work.imageUrl ? (
-                    <img src={work.imageUrl} alt={work.title} style={{
-                        width: '100%', height: '100%', objectFit: 'cover',
-                        transition: 'transform 0.3s'
-                    }} />
-                ) : (
-                    <div style={{
-                        width: '100%', height: '100%',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'linear-gradient(135deg, rgba(212,175,55,0.05), rgba(0,0,0,0.3))',
-                        color: '#666', fontSize: '0.8rem'
-                    }}>Sem imagem</div>
-                )}
-                {/* Gold gradient overlay at bottom */}
-                <div style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%',
-                    background: 'linear-gradient(transparent, rgba(0,0,0,0.85))'
-                }} />
-            </div>
-            <div style={{ padding: '0.75rem 1rem' }}>
-                <h3 style={{
-                    color: 'white', fontWeight: 800, fontSize: '0.9rem', marginBottom: '0.25rem',
-                    fontFamily: 'Georgia, serif'
-                }}>{work.title}</h3>
-                <p style={{ color: 'var(--accent-primary)', fontSize: '0.75rem', fontWeight: 600 }}>{work.artist}</p>
-                {work.year && <p style={{ color: '#888', fontSize: '0.7rem', marginTop: '0.15rem' }}>{work.year}</p>}
-            </div>
+        <div className="compare-row-premium">
+            <span className="compare-val-left">{left || "—"}</span>
+            <span className="compare-label-premium">{label}</span>
+            <span className="compare-val-right">{right || "—"}</span>
         </div>
     );
 
     return (
-        <div style={{ padding: '1.5rem', maxWidth: '600px', margin: '0 auto', paddingBottom: '6rem' }}>
-            {/* Header */}
-            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                <div style={{
-                    width: '56px', height: '56px', borderRadius: '50%',
-                    background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))',
-                    border: '1px solid rgba(212,175,55,0.2)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto 0.75rem'
-                }}>
-                    <ArrowLeftRight size={24} style={{ color: 'var(--accent-primary)' }} />
-                </div>
-                <h1 style={{
-                    fontSize: '1.8rem', fontWeight: 900, color: 'white',
-                    fontFamily: 'Georgia, serif'
-                }}>Comparar Obras</h1>
-                <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '0.25rem' }}>
-                    Analise duas obras lado a lado
+        <div className="comparator-container-premium">
+            <header className="comparator-header-premium">
+                <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="comparator-badge"
+                >
+                    <Sparkles size={14} className="inline mr-2" />
+                    Análise Comparativa
+                </motion.div>
+                <h1 className="comparator-title-premium">Dualidade <span className="text-gold italic">Artística</span></h1>
+                <p className="comparator-subtitle-premium">
+                    Coloque duas obras em diálogo e descubra convergências técnicas e estilísticas entre diferentes eras.
                 </p>
-                {/* Gold divider */}
-                <div style={{
-                    width: '60px', height: '2px', margin: '1rem auto 0',
-                    background: 'linear-gradient(90deg, transparent, var(--accent-primary), transparent)'
-                }} />
-            </div>
+                <div className="gold-divider-center" />
+            </header>
 
-            {/* Selectors */}
-            <div style={{
-                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem',
-                marginBottom: '1.5rem'
-            }}>
-                <div>
-                    <label style={{
-                        display: 'block', color: 'var(--accent-primary)', fontSize: '0.7rem',
-                        fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
-                        marginBottom: '0.5rem'
-                    }}>Obra 1</label>
-                    <div style={{ position: 'relative' }}>
-                        <select
-                            value={leftId}
-                            onChange={e => setLeftId(e.target.value)}
-                            style={selectStyle}
-                        >
+            <div className="comparator-selectors-grid">
+                <div className="selector-box-premium">
+                    <label>Obra Primária</label>
+                    <div className="select-wrapper-premium">
+                        <select value={leftId} onChange={e => setLeftId(e.target.value)}>
                             <option value="">Selecione...</option>
                             {works.filter(w => w.id !== rightId).map(w => (
                                 <option key={w.id} value={w.id}>{w.title}</option>
                             ))}
                         </select>
-                        <ChevronDown size={14} style={{
-                            position: 'absolute', right: '0.75rem', top: '50%',
-                            transform: 'translateY(-50%)', color: '#888', pointerEvents: 'none'
-                        }} />
+                        <ChevronDown size={16} className="select-icon" />
                     </div>
                 </div>
-                <div>
-                    <label style={{
-                        display: 'block', color: 'var(--accent-primary)', fontSize: '0.7rem',
-                        fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
-                        marginBottom: '0.5rem'
-                    }}>Obra 2</label>
-                    <div style={{ position: 'relative' }}>
-                        <select
-                            value={rightId}
-                            onChange={e => setRightId(e.target.value)}
-                            style={selectStyle}
-                        >
+
+                <div className="selector-box-premium">
+                    <label>Obra Secundária</label>
+                    <div className="select-wrapper-premium">
+                        <select value={rightId} onChange={e => setRightId(e.target.value)}>
                             <option value="">Selecione...</option>
                             {works.filter(w => w.id !== leftId).map(w => (
                                 <option key={w.id} value={w.id}>{w.title}</option>
                             ))}
                         </select>
-                        <ChevronDown size={14} style={{
-                            position: 'absolute', right: '0.75rem', top: '50%',
-                            transform: 'translateY(-50%)', color: '#888', pointerEvents: 'none'
-                        }} />
+                        <ChevronDown size={16} className="select-icon" />
                     </div>
                 </div>
             </div>
 
-            {/* Comparison */}
-            {leftWork && rightWork ? (
-                <div style={{
-                    background: 'rgba(30,32,38,0.9)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: '1.25rem',
-                    overflow: 'hidden'
-                }}>
-                    {/* Images side by side */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px', background: 'rgba(0,0,0,0.3)' }}>
-                        <WorkCard work={leftWork} />
-                        <WorkCard work={rightWork} />
-                    </div>
+            <AnimatePresence mode="wait">
+                {leftWork && rightWork ? (
+                    <motion.div 
+                        key="comparison"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        className="comparison-card-premium"
+                    >
+                        <div className="comparison-visuals-grid">
+                            <div className="work-side-premium">
+                                <div className="work-img-frame">
+                                    <img src={leftWork.imageUrl} alt={leftWork.title} />
+                                    <div className="work-img-overlay" />
+                                </div>
+                                <div className="work-meta-overlay">
+                                    <h3>{leftWork.title}</h3>
+                                    <p>{leftWork.artist}</p>
+                                </div>
+                            </div>
 
-                    {/* VS divider */}
-                    <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        gap: '0.75rem', padding: '0.75rem 0',
-                        background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.08), transparent)'
-                    }}>
-                        <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3))' }} />
-                        <span style={{
-                            color: 'var(--accent-primary)', fontWeight: 900, fontSize: '0.75rem',
-                            letterSpacing: '0.2em', textTransform: 'uppercase'
-                        }}>VS</span>
-                        <div style={{ flex: 1, height: '1px', background: 'linear-gradient(270deg, transparent, rgba(212,175,55,0.3))' }} />
-                    </div>
+                            <div className="vs-divider-premium">
+                                <div className="vs-line" />
+                                <span className="vs-text">VS</span>
+                                <div className="vs-line" />
+                            </div>
 
-                    {/* Comparison Fields */}
-                    <div style={{ padding: '0 1.25rem 1rem' }}>
-                        <CompareRow label="Artista" left={leftWork.artist} right={rightWork.artist} />
-                        <CompareRow label="Ano" left={leftWork.year} right={rightWork.year} />
-                        <CompareRow label={t("visitor.workcomparator.perodo", `Período`)} left={leftWork.period} right={rightWork.period} />
-                        <CompareRow label={t("visitor.workcomparator.tcnica", `Técnica`)} left={leftWork.technique} right={rightWork.technique} />
-                        <CompareRow label="Suporte" left={leftWork.medium} right={rightWork.medium} />
-                        <CompareRow label={t("visitor.workcomparator.dimenses", `Dimensões`)} left={leftWork.dimensions} right={rightWork.dimensions} />
-                        <CompareRow label="Sala" left={leftWork.room} right={rightWork.room} />
-                        <CompareRow label="Andar" left={leftWork.floor} right={rightWork.floor} />
-                    </div>
-
-                    {/* Descriptions */}
-                    <div style={{
-                        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px',
-                        background: 'rgba(0,0,0,0.2)'
-                    }}>
-                        <div style={{ background: 'rgba(30,32,38,0.95)', padding: '1rem 1.25rem' }}>
-                            <p style={{
-                                color: 'var(--accent-primary)', fontSize: '0.6rem', fontWeight: 800,
-                                textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem'
-                            }}>{t("visitor.workcomparator.descrio", `Descrição`)}</p>
-                            <p style={{
-                                color: '#aaa', fontSize: '0.8rem', lineHeight: '1.6',
-                                display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-                            }}>{leftWork.description || "Sem descrição."}</p>
+                            <div className="work-side-premium">
+                                <div className="work-img-frame">
+                                    <img src={rightWork.imageUrl} alt={rightWork.title} />
+                                    <div className="work-img-overlay" />
+                                </div>
+                                <div className="work-meta-overlay">
+                                    <h3>{rightWork.title}</h3>
+                                    <p>{rightWork.artist}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ background: 'rgba(30,32,38,0.95)', padding: '1rem 1.25rem' }}>
-                            <p style={{
-                                color: 'var(--accent-primary)', fontSize: '0.6rem', fontWeight: 800,
-                                textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.5rem'
-                            }}>{t("visitor.workcomparator.descrio", `Descrição`)}</p>
-                            <p style={{
-                                color: '#aaa', fontSize: '0.8rem', lineHeight: '1.6',
-                                display: '-webkit-box', WebkitLineClamp: 6, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-                            }}>{rightWork.description || "Sem descrição."}</p>
+
+                        <div className="comparison-stats-table">
+                            <CompareRow label="Artista" left={leftWork.artist} right={rightWork.artist} />
+                            <CompareRow label="Ano" left={leftWork.year} right={rightWork.year} />
+                            <CompareRow label="Período" left={leftWork.period} right={rightWork.period} />
+                            <CompareRow label="Técnica" left={leftWork.technique} right={rightWork.technique} />
+                            <CompareRow label="Suporte" left={leftWork.medium} right={rightWork.medium} />
+                            <CompareRow label="Dimensões" left={leftWork.dimensions} right={rightWork.dimensions} />
                         </div>
-                    </div>
-                </div>
-            ) : (
-                <div style={{
-                    background: 'rgba(30,32,38,0.9)',
-                    border: '2px dashed rgba(212,175,55,0.15)',
-                    borderRadius: '1.5rem',
-                    textAlign: 'center',
-                    padding: '4rem 2rem'
-                }}>
-                    <div style={{
-                        width: '64px', height: '64px', borderRadius: '50%',
-                        background: 'rgba(212,175,55,0.05)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        margin: '0 auto 1rem'
-                    }}>
-                        <ArrowLeftRight size={28} style={{ color: '#555' }} />
-                    </div>
-                    <h3 style={{
-                        color: 'white', fontWeight: 800, fontSize: '1.1rem', marginBottom: '0.4rem',
-                        fontFamily: 'Georgia, serif'
-                    }}>Selecione duas obras</h3>
-                    <p style={{ color: '#666', fontSize: '0.85rem', lineHeight: '1.5' }}>
-                        Escolha as obras acima para comparar<br />estilo, período e técnica.
-                    </p>
-                </div>
-            )}
+
+                        <div className="comparison-descriptions-grid">
+                            <div className="desc-box-premium">
+                                <label>Gênese e Contexto</label>
+                                <p>{leftWork.description || "Sem descrição disponível para análise."}</p>
+                            </div>
+                            <div className="desc-box-premium">
+                                <label>Gênese e Contexto</label>
+                                <p>{rightWork.description || "Sem descrição disponível para análise."}</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                ) : (
+                    <motion.div 
+                        key="empty"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="comparator-empty-state"
+                    >
+                        <div className="empty-icon-wrapper">
+                            <ArrowLeftRight size={32} />
+                        </div>
+                        <h3>Aguardando Seleção</h3>
+                        <p>Escolha duas relíquias do acervo acima para iniciar o processo de análise comparativa.</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

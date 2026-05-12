@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { useToast } from "../../../contexts/ToastContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
@@ -12,14 +10,25 @@ import {
   useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Input, Select, Textarea, Button } from "../../../components/ui";
+import { 
+  Input, 
+  Select, 
+  Textarea, 
+  Button, 
+  Switch, 
+  Card, 
+  Badge, 
+  AnimateIn
+} from "@/components/ui";
 import {
   ArrowLeft, Save, Plus, GripVertical, X, Music, Video,
   ToggleLeft, ToggleRight, Map, CheckCircle2, FileText,
-  MapPin, CheckCircle, ChevronRight, Upload, Play, MonitorPlay
+  MapPin, CheckCircle, ChevronRight, Upload, Play, MonitorPlay,
+  Sparkles, Info, Target, ListOrdered
 } from "lucide-react";
 import { useTerminology } from "../../../hooks/useTerminology";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
 // Componente auxiliar para item ordenável
@@ -29,7 +38,8 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
     listeners,
     setNodeRef,
     transform,
-    transition
+    transition,
+    isDragging
   } = useSortable({ id });
 
   const style = {
@@ -41,22 +51,26 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className="flex items-center justify-between p-4 mb-3 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl group hover:border-[var(--accent-gold)] transition-all cursor-grab active:cursor-grabbing"
+      className={`flex items-center justify-between p-4 mb-3 rounded-2xl border transition-all duration-200 ${
+        isDragging 
+          ? 'bg-gold-400/20 border-gold-400/50 shadow-2xl shadow-gold-400/10 z-50 scale-[1.02]' 
+          : 'bg-white/[0.03] border-white/5 hover:border-gold-400/30'
+      }`}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <GripVertical size={20} className="text-[var(--fg-muted)] group-hover:text-[var(--accent-gold)] transition-colors" />
-        <span className="text-[var(--fg-main)] font-medium">{title}</span>
+      <div className="flex items-center gap-4 flex-1" {...attributes} {...listeners}>
+        <div className="p-2 rounded-lg bg-white/5 text-slate-500 cursor-grab active:cursor-grabbing hover:text-gold-400 transition-colors">
+          <GripVertical size={18} />
+        </div>
+        <span className="text-white font-bold">{title}</span>
       </div>
       <button
         type="button"
-        onPointerDown={(e) => e.stopPropagation()} // Important to prevent drag start
+        onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation();
           onRemove();
         }}
-        className="p-2 text-[var(--fg-muted)] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+        className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all"
       >
         <X size={18} />
       </button>
@@ -69,7 +83,6 @@ export const AdminTrailForm: React.FC = () => {
   const term = useTerminology();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
-  const { addToast } = useToast();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
@@ -129,7 +142,7 @@ export const AdminTrailForm: React.FC = () => {
         })
         .catch(err => {
           console.error("Erro ao carregar trilha", err);
-          addToast("Erro ao carregar trilha", "error");
+          toast.error("Erro ao carregar trilha");
         });
     }
   }, [id, isEdit, tenantId, t]);
@@ -172,7 +185,7 @@ export const AdminTrailForm: React.FC = () => {
   const nextStep = () => {
     const error = validateStep(currentStep);
     if (error) {
-      addToast(error, "error");
+      toast.error(error);
       return;
     }
     setDirection(1);
@@ -208,11 +221,11 @@ export const AdminTrailForm: React.FC = () => {
       } else {
         await api.post("/trails", payload);
       }
-      addToast(id ? "Trilha atualizada com sucesso!" : "Trilha criada com sucesso!", "success");
+      toast.success(id ? "Trilha atualizada com sucesso!" : "Trilha criada com sucesso!");
       navigate("/admin/trilhas");
     } catch (error) {
       console.error("Erro ao salvar trilha", error);
-      addToast("Erro ao salvar trilha. Verifique os dados.", "error");
+      toast.error("Erro ao salvar trilha. Verifique os dados.");
     } finally {
       setSaving(false);
     }
@@ -230,10 +243,10 @@ export const AdminTrailForm: React.FC = () => {
           headers: { "Content-Type": "multipart/form-data" }
         });
         setter(res.data.url);
-        addToast("Arquivo enviado com sucesso!", "success");
+        toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
         console.error(`Error uploading ${type}`, error);
-        addToast("Erro ao enviar arquivo.", "error");
+        toast.error("Erro ao enviar arquivo.");
       } finally {
         setIsUploading(false);
       }
@@ -257,10 +270,10 @@ export const AdminTrailForm: React.FC = () => {
         if (data.title) setName(data.title);
         if (data.description) setDescription(data.description);
 
-        addToast("Informações extraídas do PDF com sucesso!", "success");
+        toast.success("Informações extraídas do PDF com sucesso!");
       } catch (err) {
         console.error("Erro ao extrair PDF:", err);
-        addToast("Houve um erro ao extrair informações do PDF.", "error");
+        toast.error("Houve um erro ao extrair informações do PDF.");
       } finally {
         setIsExtracting(false);
       }
@@ -289,21 +302,21 @@ export const AdminTrailForm: React.FC = () => {
     <div className="admin-form-container">
       {isUploading && (
         <div className="admin-modal-overlay">
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div className="w-12 h-12 border-4 border-white/10 border-t-gold rounded-full animate-spin mb-4 mx-auto"></div>
-            <p>Enviando arquivo...</p>
+          <div className="flex flex-col items-center gap-4 text-white">
+            <div className="w-12 h-12 border-4 border-white/10 border-t-gold-400 rounded-full animate-spin"></div>
+            <p className="font-black uppercase tracking-widest text-[10px]">Enviando arquivo...</p>
           </div>
         </div>
       )}
 
       {/* Header */}
       <div className="admin-wizard-header">
-        <Button onClick={() => navigate("/admin/trilhas")} variant="ghost" className="p-0">
+        <Button variant="ghost" onClick={() => navigate("/admin/trilhas")} className="p-0">
           <ArrowLeft size={24} />
         </Button>
         <div>
           <h1 className="admin-wizard-title">
-            {isEdit ? t("admin.trailForm.editTitle") : t("admin.trailForm.newTitle")}
+             {isEdit ? t("admin.trailForm.editTitle") : t("admin.trailForm.newTitle")}
           </h1>
           <p className="admin-wizard-subtitle">
             Passo {currentStep + 1} de {steps.length}: {steps[currentStep].title}
@@ -352,223 +365,301 @@ export const AdminTrailForm: React.FC = () => {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             style={{ width: "100%" }}
           >
-            {/* STEP 0: DADOS GERAIS */}
             {currentStep === 0 && (
-              <div className="flex-col gap-6">
-                <div style={{ padding: '1rem', background: 'rgba(96, 165, 250, 0.1)', borderRadius: '1rem', border: '1px solid rgba(96, 165, 250, 0.2)', marginBottom: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold', color: '#60a5fa' }}>Preencher automaticamente?</h4>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Suba um arquivo PDF com os dados da {term.trail.toLowerCase()} e faremos o resto.</p>
-                    </div>
-                    <label className={`btn-outline ${isExtracting ? 'opacity-50 cursor-not-allowed' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', border: '1px solid #60a5fa', color: '#60a5fa' }}>
-                      {isExtracting ? (
-                        <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <Upload size={18} />
-                      )}
-                      {isExtracting ? "Extraindo..." : "Subir PDF"}
+              <div className="space-y-8">
+                <AnimateIn variant="fadeUp">
+                  <Card className="p-6 bg-blue-500/5 border-blue-500/20 rounded-3xl">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                           <Sparkles size={24} />
+                        </div>
+                        <div>
+                          <h4 className="text-white font-bold text-lg">Preencher automaticamente?</h4>
+                          <p className="text-slate-400 text-sm">Suba um arquivo PDF com os dados da {term.trail.toLowerCase()} e faremos o resto.</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="glass"
+                        onClick={() => document.getElementById('pdf-upload')?.click()}
+                        isLoading={isExtracting}
+                        leftIcon={<Upload size={18} />}
+                        className="rounded-2xl h-12 px-8 border-blue-500/20 text-blue-400 hover:bg-blue-500/10"
+                      >
+                        {isExtracting ? "Extraindo..." : "Subir PDF"}
+                      </Button>
                       <input 
+                        id="pdf-upload"
                         type="file" 
                         accept=".pdf" 
                         onChange={handlePdfExtract} 
                         disabled={isExtracting}
-                        style={{ display: 'none' }} 
+                        className="hidden"
                       />
-                    </label>
+                    </div>
+                  </Card>
+                </AnimateIn>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <Input
+                      label={t("admin.trailForm.labels.name")}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder={t("admin.trailForm.placeholders.name")}
+                      required
+                    />
+
+                    <Select
+                      label="Equipamento Responsável"
+                      value={equipamentoId}
+                      onChange={e => setEquipamentoId(e.target.value)}
+                      required
+                    >
+                      <option value="">Selecione o equipamento...</option>
+                      {equipamentos.map(e => (
+                        <option key={e.id} value={e.id}>{e.nome}</option>
+                      ))}
+                    </Select>
+                  </div>
+
+                  <div className="space-y-6">
+                    <Card className="p-6 bg-white/[0.02] border-white/5 rounded-3xl space-y-4">
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${active ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-slate-500'}`}>
+                               <Target size={20} />
+                            </div>
+                            <h4 className="text-white font-bold">{active ? "Trilha Ativa" : "Rascunho"}</h4>
+                         </div>
+                         <Switch checked={active} onCheckedChange={setActive} />
+                      </div>
+                      <p className="text-slate-500 text-sm">
+                        {active 
+                          ? "Esta trilha está visível para os visitantes no mapa e na lista." 
+                          : "Esta trilha está oculta e não pode ser acessada pelos visitantes."}
+                      </p>
+                    </Card>
                   </div>
                 </div>
-
-                <Input
-                  label={t("admin.trailForm.labels.name")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={t("admin.trailForm.placeholders.name")}
-                  required
-                />
-
-                <Select
-                  label="Equipamento Responsável"
-                  value={equipamentoId}
-                  onChange={e => setEquipamentoId(e.target.value)}
-                  required
-                >
-                  <option value="">Selecione o equipamento...</option>
-                  {equipamentos.map(e => (
-                    <option key={e.id} value={e.id}>{e.nome}</option>
-                  ))}
-                </Select>
 
                 <Textarea
                   label={t("admin.trailForm.labels.description")}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
+                  placeholder="Descreva o objetivo e o percurso deste roteiro..."
                 />
-
-                <div className="flex items-center gap-4 p-4 bg-[var(--bg-surface)] rounded-xl border border-[var(--border-subtle)] w-fit mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setActive(!active)}
-                    className={`transition-colors ${active ? "text-[var(--accent-gold)]" : "text-[var(--fg-muted)]"}`}
-                  >
-                    {active ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
-                  </button>
-                  <span className={`font-medium ${active ? "text-[var(--fg-main)]" : "text-[var(--fg-muted)]"}`}>
-                    {active ? "Trilha Ativa" : "Trilha Inativa"}
-                  </span>
-                </div>
               </div>
             )}
 
-            {/* STEP 1: MÍDIA */}
             {currentStep === 1 && (
-              <div className="flex-col gap-8">
-                <div className="admin-section">
-                  <h3 className="admin-section-title">
-                    <Music className="text-[var(--accent-gold)]" /> Áudio-Guia
-                  </h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <p className="text-sm text-[var(--fg-muted)]">
-                      Áudio de introdução {term.trail === "Trilha" ? "da trilha" : "do roteiro"} que será reproduzido para os {term.visitors.toLowerCase()}.
-                    </p>
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <div className="flex items-center gap-3">
+                       <Music className="text-gold-400" size={24} />
+                       <h3 className="text-xl font-bold text-white">Áudio-Guia</h3>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <p className="text-sm text-slate-500 leading-relaxed">
+                        Áudio de introdução {term.trail === "Trilha" ? "da trilha" : "do roteiro"} que será reproduzido para os {term.visitors.toLowerCase()} ao iniciarem o percurso.
+                      </p>
 
-                    {audioUrl && (
-                      <div className="bg-[var(--bg-surface-active)] p-4 rounded-xl border border-[var(--border-default)]">
-                        <audio controls src={audioUrl} className="w-full" />
-                      </div>
-                    )}
+                      {audioUrl && (
+                        <Card className="p-4 bg-white/5 border-white/5 rounded-2xl">
+                           <audio controls src={audioUrl} className="w-full h-10" />
+                        </Card>
+                      )}
 
-                    <label className="upload-btn w-full justify-center">
-                      <Upload size={18} /> {audioUrl ? "Substituir Áudio" : "Enviar Áudio (MP3)"}
+                      <Button
+                        variant="glass"
+                        onClick={() => document.getElementById('audio-upload')?.click()}
+                        isLoading={isUploading}
+                        className="w-full rounded-2xl h-14 border-white/5 bg-white/5 hover:bg-white/10"
+                        leftIcon={<Upload size={20} />}
+                      >
+                        {audioUrl ? "Substituir Áudio" : "Enviar Áudio (MP3)"}
+                      </Button>
                       <input
+                        id="audio-upload"
                         type="file"
                         accept="audio/*"
                         className="hidden"
                         onChange={(e) => handleFileUpload(e, "audio", setAudioUrl)}
                       />
-                    </label>
-                  </div>
-                </div>
-
-                <div className="admin-section">
-                  <h3 className="admin-section-title">
-                    <Video style={{ color: "#60a5fa" }} /> Vídeo
-                  </h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <p className="text-sm text-[var(--fg-muted)]">
-                      URL de vídeo do YouTube ou MP4 para apresentação {term.trail === "Trilha" ? "da trilha" : "do roteiro"}.
-                    </p>
-                    <Input
-                      value={videoUrl}
-                      onChange={(e) => setVideoUrl(e.target.value)}
-                      placeholder="https://youtube.com/watch?v=..."
-                      leftIcon={<Video size={16} />}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: OBRAS (ROTEIRO) */}
-            {currentStep === 2 && (
-              <div className="flex-col gap-6">
-                <div className="flex justify-between items-end mb-2">
-                  <div>
-                    <h3 className="admin-section-title mb-1">{t("admin.trailForm.labels.works")}</h3>
-                    <p className="text-sm text-[var(--fg-muted)]">
-                      Selecione e arraste para ordenar as obras.
-                    </p>
-                  </div>
-                  <div className="px-3 py-1 rounded-full bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-xs text-[var(--accent-gold)] font-mono">
-                    {selectedWorks.length} obras
-                  </div>
-                </div>
-
-                <div className="flex gap-3 mb-4">
-                  <Select
-                    value={workToAdd}
-                    onChange={(e) => setWorkToAdd(e.target.value)}
-                    containerClassName="flex-1 mb-0"
-                  >
-                    <option value="">{t("admin.trailForm.selectWork")}</option>
-                    {allWorks.map(w => (
-                      <option key={w.id} value={w.id}>{w.title}</option>
-                    ))}
-                  </Select>
-                  <Button
-                    type="button"
-                    onClick={handleAddWork}
-                    className="btn-secondary"
-                    disabled={!workToAdd}
-                  >
-                    <Plus size={18} />
-                  </Button>
-                </div>
-
-                <div className="bg-[rgba(0,0,0,0.2)] rounded-2xl border border-[var(--border-subtle)] p-4 min-h-[300px]">
-                  <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                    <SortableContext items={selectedWorks} strategy={verticalListSortingStrategy}>
-                      {selectedWorks.map((work) => (
-                        <SortableItem
-                          key={work.id}
-                          id={work.id}
-                          title={work.title}
-                          onRemove={() => handleRemoveWork(work.id)}
-                        />
-                      ))}
-                    </SortableContext>
-                  </DndContext>
-
-                  {selectedWorks.length === 0 && (
-                    <div className="flex flex-col items-center justify-center h-full py-12 text-[var(--fg-tertiary)]">
-                      <div className="w-16 h-16 rounded-full bg-[var(--bg-surface)] flex items-center justify-center mb-4 border border-[var(--border-subtle)]">
-                        <Map className="text-[var(--fg-muted)]" size={24} />
-                      </div>
-                      <p className="font-medium">{t("admin.trailForm.empty")}</p>
                     </div>
-                  )}
+                  </Card>
+
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <div className="flex items-center gap-3">
+                       <Video className="text-blue-400" size={24} />
+                       <h3 className="text-xl font-bold text-white">Apresentação em Vídeo</h3>
+                    </div>
+                    
+                    <div className="space-y-6">
+                      <p className="text-sm text-slate-500 leading-relaxed">
+                        URL de vídeo do YouTube ou MP4 para apresentação visual {term.trail === "Trilha" ? "da trilha" : "do roteiro"}.
+                      </p>
+                      
+                      <Input
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        placeholder="https://youtube.com/watch?v=..."
+                        className="bg-black/20 h-14"
+                        leftIcon={<Video size={20} className="text-slate-500" />}
+                      />
+
+                      {videoUrl && (
+                        <div className="aspect-video rounded-2xl overflow-hidden bg-black border border-white/5">
+                           {videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
+                             <iframe
+                               className="w-full h-full"
+                               src={`https://www.youtube.com/embed/${videoUrl.split('v=')[1] || videoUrl.split('/').pop()}`}
+                               title="Video preview"
+                               frameBorder="0"
+                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                               allowFullScreen
+                             ></iframe>
+                           ) : (
+                             <video src={videoUrl} controls className="w-full h-full" />
+                           )}
+                        </div>
+                      )}
+                    </div>
+                  </Card>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: REVISÃO */}
-            {currentStep === 3 && (
-              <div className="flex-col gap-6">
-                <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '1rem', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
-                  <CheckCircle size={48} color="var(--status-success)" style={{ margin: '0 auto 1rem' }} />
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--fg-main)' }}>Pronto para salvar!</h2>
-                  <p style={{ color: 'var(--fg-muted)' }}>Revise os dados da trilha abaixo.</p>
+            {currentStep === 2 && (
+              <div className="space-y-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                       <ListOrdered className="text-gold-400" size={24} />
+                       Organizar Roteiro
+                    </h3>
+                    <p className="text-slate-500 text-sm">
+                      Selecione as {term.works.toLowerCase()} e defina a ordem de visitação.
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="h-8 px-4 text-gold-400 border-gold-400/20 bg-gold-400/5 font-mono">
+                    {selectedWorks.length} {term.works} selecionadas
+                  </Badge>
                 </div>
 
-                <div className="admin-grid-2">
-                  <div className="admin-section">
-                    <h3 className="admin-section-title">Resumo</h3>
-                    <div className="summary-card">
-                      <div className="summary-row">
-                        <span className="summary-label">Nome:</span>
-                        <span className="summary-value">{name}</span>
+                <Card className="p-6 bg-white/[0.02] border-white/5 rounded-3xl">
+                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <Select
+                      value={workToAdd}
+                      onChange={(e) => setWorkToAdd(e.target.value)}
+                      containerClassName="flex-1 mb-0"
+                      className="h-14 bg-black/20"
+                    >
+                      <option value="">Buscar {term.work.toLowerCase()}...</option>
+                      {allWorks.map(w => (
+                        <option key={w.id} value={w.id}>{w.title}</option>
+                      ))}
+                    </Select>
+                    <Button
+                      type="button"
+                      onClick={handleAddWork}
+                      disabled={!workToAdd}
+                      className="h-14 px-8 rounded-2xl bg-gold-400 text-slate-950 font-black"
+                      leftIcon={<Plus size={20} />}
+                    >
+                      Adicionar
+                    </Button>
+                  </div>
+
+                  <div className="space-y-2 min-h-[200px]">
+                    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                      <SortableContext items={selectedWorks} strategy={verticalListSortingStrategy}>
+                        {selectedWorks.map((work) => (
+                          <SortableItem
+                            key={work.id}
+                            id={work.id}
+                            title={work.title}
+                            onRemove={() => handleRemoveWork(work.id)}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+
+                    {selectedWorks.length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-20 text-slate-600">
+                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 border border-white/5 border-dashed">
+                          <Map size={32} />
+                        </div>
+                        <p className="font-bold">Nenhuma {term.work.toLowerCase()} adicionada ainda.</p>
+                        <p className="text-sm">Selecione uma {term.work.toLowerCase()} acima para começar seu roteiro.</p>
                       </div>
-                      <div className="summary-row">
-                        <span className="summary-label">Status:</span>
-                        <span className="summary-value" style={{ color: active ? 'var(--status-success)' : 'var(--fg-muted)' }}>
-                          {active ? "Ativa" : "Inativa"}
-                        </span>
+                    )}
+                  </div>
+                </Card>
+              </div>
+            )}
+
+            {currentStep === 3 && (
+              <div className="space-y-10">
+                <AnimateIn variant="fadeUp">
+                  <div className="text-center space-y-4 py-8">
+                    <div className="w-20 h-20 rounded-3xl bg-green-500/10 flex items-center justify-center text-green-400 mx-auto">
+                      <CheckCircle2 size={48} />
+                    </div>
+                    <h2 className="text-3xl font-black text-white tracking-tighter">Quase lá!</h2>
+                    <p className="text-slate-400 font-medium">Revise o roteiro da sua {term.trail.toLowerCase()} antes de publicar.</p>
+                  </div>
+                </AnimateIn>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                       <FileText className="text-gold-400" size={20} />
+                       Informações Básicas
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-slate-500 text-sm">Nome da {term.trail}</span>
+                        <span className="text-white font-bold">{name}</span>
                       </div>
-                      <div className="summary-row">
-                        <span className="summary-label">Itens no Roteiro:</span>
-                        <span className="summary-value">{selectedWorks.length}</span>
+                      <div className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-slate-500 text-sm">Status</span>
+                        <Badge variant="outline" className={active ? "text-green-400 border-green-400/20" : "text-slate-400 border-white/10"}>
+                          {active ? "Ativa" : "Rascunho"}
+                        </Badge>
                       </div>
-                      <div className="summary-row">
-                        <span className="summary-label">{t("admin.trail.mdias", `Mídias:`)}</span>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          {audioUrl && <Music size={16} color="var(--status-success)" />}
-                          {videoUrl && <Video size={16} color="var(--status-success)" />}
-                          {!audioUrl && !videoUrl && <span style={{ fontSize: '0.8rem', color: 'gray' }}>Nenhuma</span>}
+                      <div className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-slate-500 text-sm">Mídias</span>
+                        <div className="flex gap-2">
+                           {audioUrl && <Music size={18} className="text-green-400" />}
+                           {videoUrl && <Video size={18} className="text-green-400" />}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Card>
+
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                       <ListOrdered className="text-gold-400" size={20} />
+                       Sequência de Visitação
+                    </h3>
+                    <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar space-y-3">
+                       {selectedWorks.map((work, idx) => (
+                         <div key={work.id} className="flex items-center gap-4 p-3 bg-white/5 rounded-2xl border border-white/5">
+                            <div className="w-8 h-8 rounded-lg bg-gold-400/10 flex items-center justify-center text-gold-400 text-xs font-black">
+                               {idx + 1}
+                            </div>
+                            <span className="text-white font-bold text-sm truncate">{work.title}</span>
+                         </div>
+                       ))}
+                       {selectedWorks.length === 0 && (
+                         <p className="text-slate-500 text-sm text-center py-8 italic">Nenhuma obra selecionada.</p>
+                       )}
+                    </div>
+                  </Card>
                 </div>
               </div>
             )}
@@ -577,31 +668,31 @@ export const AdminTrailForm: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      {/* Footer Navigation */}
       <div className="admin-wizard-footer">
         <div className="admin-wizard-footer-inner">
           <Button
             variant="ghost"
             onClick={currentStep === 0 ? () => navigate("/admin/trilhas") : prevStep}
+            className="rounded-2xl h-14 px-8 text-slate-400 hover:text-white"
           >
             {currentStep === 0 ? "Cancelar" : "Voltar"}
           </Button>
 
-          <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="flex gap-4">
             {currentStep === steps.length - 1 ? (
               <Button
                 onClick={handleSubmit}
                 isLoading={saving}
-                className="btn-primary"
-                leftIcon={<Save size={18} />}
+                className="rounded-2xl h-14 px-10 bg-gold-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-gold-400/20"
+                leftIcon={<Save size={20} />}
               >
                 Salvar Trilha
               </Button>
             ) : (
               <Button
                 onClick={nextStep}
-                className="btn-primary"
-                rightIcon={<ChevronRight size={18} />}
+                className="rounded-2xl h-14 px-10 bg-gold-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-gold-400/20"
+                rightIcon={<ChevronRight size={20} />}
               >
                 Próximo
               </Button>

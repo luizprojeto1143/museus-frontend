@@ -38,6 +38,7 @@ import { visitorRoutes } from "./routes/visitorRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
 import { masterRoutes } from "./routes/masterRoutes";
 import { producerRoutes } from "./routes/producerRoutes";
+import { theaterRoutes } from "./routes/theaterRoutes";
 import { providerRoutes, municipalRoutes, totemRoutes } from "./routes/otherRoutes";
 
 // QueryClient — with exponential retry backoff
@@ -95,6 +96,7 @@ const RootRedirector: React.FC = () => {
   const { role } = useAuth();
   if (role === "master") return <Navigate to="/master" replace />;
   if (role === "admin") return <Navigate to="/admin" replace />;
+  if (role === "theater") return <Navigate to="/theater" replace />;
 
   return (
     <VisitorLayout>
@@ -160,6 +162,9 @@ const App: React.FC = () => {
 
                   {/* PRODUCER ROUTES */}
                   {producerRoutes(RequireRole)}
+
+                  {/* THEATER ROUTES */}
+                  {theaterRoutes(RequireRole)}
 
                   {/* PROVIDER ROUTES */}
                   {providerRoutes(RequireProvider)}

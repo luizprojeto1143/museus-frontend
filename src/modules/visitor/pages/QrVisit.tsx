@@ -20,7 +20,7 @@ export const QrVisit: React.FC = () => {
   const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
-  const { email, updateSession, token, role, name, isAuthenticated } = useAuth();
+  const { email, updateSession, role, name, isAuthenticated } = useAuth();
 
   const [data, setData] = useState<QRCodeData | null>(null);
   const [loading, setLoading] = useState(true);

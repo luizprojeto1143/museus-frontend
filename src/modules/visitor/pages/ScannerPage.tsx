@@ -17,7 +17,7 @@ export const ScannerPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [validating, setValidating] = useState(false);
-    const { equipamentoId, tenantId, enterAsGuest, updateSession, token, role, name, isAuthenticated } = useAuth();
+    const { equipamentoId, tenantId, enterAsGuest, updateSession, role, name, isAuthenticated } = useAuth();
     const scannerRef = useRef<Html5Qrcode | null>(null);
 
     const stopScanner = async () => {
@@ -76,21 +76,43 @@ export const ScannerPage: React.FC = () => {
         stopScanner();
         setValidating(true);
 
-        let workId = decodedText;
-
         try {
-            const data = JSON.parse(decodedText);
-            if (data.id) workId = data.id;
-        } catch {
-            // Not JSON
-        }
+            // 1. Detect Type based on URL/Prefix
+            if (decodedText.includes("/eventos/")) {
+                const eventId = decodedText.split("/eventos/")[1].split("?")[0];
+                navigate(`/eventos/${eventId}?scan=true`);
+                return;
+            }
 
-        if (workId.includes("/works/")) workId = workId.split("/works/")[1];
-        else if (workId.includes("/qr/")) workId = workId.split("/qr/")[1];
-        if (workId.startsWith("http")) workId = workId.split("/").pop() || "";
+            if (decodedText.includes("/registrations/") || decodedText.includes("/checkin/")) {
+                const regCode = (decodedText.includes("/registrations/") 
+                    ? decodedText.split("/registrations/")[1] 
+                    : decodedText.split("/checkin/")[1]).split("?")[0];
+                // Registrations might need a specific view or just show the ticket
+                addToast("Ingresso identificado. Redirecionando...", "info");
+                navigate(`/my-tickets?code=${regCode}`);
+                return;
+            }
 
-        try {
-            // Validar contexto da obra
+            // 2. Default to Work logic
+            let workId = decodedText;
+            try {
+                const data = JSON.parse(decodedText);
+                if (data.id) workId = data.id;
+            } catch { /* Not JSON */ }
+
+            if (workId.includes("/works/")) workId = workId.split("/works/")[1];
+            else if (workId.includes("/obras/")) workId = workId.split("/obras/")[1];
+            else if (workId.includes("/qr/")) workId = workId.split("/qr/")[1];
+            
+            if (workId.startsWith("http")) {
+                workId = workId.split("/").filter(Boolean).pop() || "";
+            }
+
+            // Clean query params
+            workId = workId.split("?")[0];
+
+            // Validate work context
             const res = await api.get(`/works/${workId}`);
             const work = res.data;
 
@@ -115,8 +137,8 @@ export const ScannerPage: React.FC = () => {
                 navigate(`/obras/${workId}?scan=true`);
             }
         } catch (err) {
-            console.error("Erro ao validar obra", err);
-            addToast("Obra não encontrada neste setor.", "error");
+            console.error("Erro ao validar scan", err);
+            addToast("Código não identificado ou fora de contexto.", "error");
             setValidating(false);
         }
     };

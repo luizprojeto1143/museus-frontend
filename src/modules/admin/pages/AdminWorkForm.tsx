@@ -1,23 +1,32 @@
-import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { QRCodeCanvas } from "qrcode.react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { useToast } from "../../../contexts/ToastContext";
 import { useParams, useNavigate } from "react-router-dom";
-import { Input, Select, Textarea, Button } from "../../../components/ui";
+import { 
+  Input, 
+  Select, 
+  Textarea, 
+  Button, 
+  Switch, 
+  Badge, 
+  Card, 
+  Dialog,
+  AnimateIn
+} from "@/components/ui";
 import {
   Save, ArrowLeft, Trash2, Upload, Volume2, Video,
   Image as ImageIcon, Accessibility, CheckCircle,
   ChevronRight, ChevronLeft, MapPin, FileText,
-  MonitorPlay, Share2, Languages, Sparkles
+  MonitorPlay, Share2, Languages, Sparkles,
+  Info, AlertCircle, X, QrCode, Target, CheckCircle2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./AdminShared.css";
-
+import { toast } from "react-hot-toast";
 import { useTerminology } from "../../../hooks/useTerminology";
 import { useIsCityMode, useTenant } from "../../auth/TenantContext";
 import { validateFileAsync, UPLOAD_PRESETS } from "../../../utils/uploadValidator";
+import "./AdminShared.css";
 
 // Steps Configuration
 // Note: We move STEPS inside the component or make it a function to use terminology, 
@@ -27,8 +36,7 @@ export const AdminWorkForm: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
-  const term = useTerminology(); // Dynamic terms
-  const { addToast } = useToast();
+  const term = useTerminology();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
@@ -125,8 +133,6 @@ export const AdminWorkForm: React.FC = () => {
         setPublished(data.published ?? true);
         setEquipamentoId(data.equipamentoId || "");
 
-        // Load translations if available in backend
-        // Load translations if available in backend
         try {
           if (data?.metadata) {
             const meta = typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata;
@@ -155,7 +161,7 @@ export const AdminWorkForm: React.FC = () => {
         if (data.qrCode) setCode(data.qrCode.code);
 
         // Vestige Data
-        if (data.vestigeActive) setVestigeActive(true);
+        setVestigeActive(!!data.vestigeActive);
         setVestigeLat(data.lat || "");
         setVestigeLng(data.lng || "");
         setLatitude(data.latitude || "");
@@ -166,7 +172,7 @@ export const AdminWorkForm: React.FC = () => {
         setVestigeImageUrl(data.vestigeImageUrl || "");
       }).catch(err => {
         console.error(err);
-        addToast(`Erro ao carregar ${term.work.toLowerCase()}`, "error");
+        toast.error(`Erro ao carregar ${term.work.toLowerCase()}`);
       });
     }
   }, [id, tenantId]);
@@ -233,12 +239,12 @@ export const AdminWorkForm: React.FC = () => {
       const validation = await validateFileAsync(file, preset);
       
       if (!validation.valid) {
-        addToast(validation.error || "Arquivo inválido", "error");
+        toast.error(validation.error || "Arquivo inválido");
         return;
       }
 
       if (validation.warning) {
-        addToast(validation.warning, "info");
+        toast(validation.warning, { icon: '⚠️' });
       }
 
       const formData = new FormData();
@@ -250,10 +256,10 @@ export const AdminWorkForm: React.FC = () => {
           headers: { "Content-Type": "multipart/form-data" }
         });
         setter(res.data.url);
-        addToast("Arquivo enviado com sucesso!", "success");
+        toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
         console.error(`Error uploading ${type}`, error);
-        addToast(t("common.errorUpload"), "error");
+        toast.error(t("common.errorUpload"));
       } finally {
         setIsUploading(false);
       }
@@ -287,10 +293,10 @@ export const AdminWorkForm: React.FC = () => {
         if (es.description) setDescriptionEs(es.description);
       }
 
-      addToast("Tradução concluída com sucesso!", "success");
+      toast.success("Tradução concluída com sucesso!");
     } catch (err) {
       console.error("Erro na tradução:", err);
-      addToast("Houve um erro ao gerar a tradução automática.", "error");
+      toast.error("Houve um erro ao gerar a tradução automática.");
     } finally {
       setIsTranslating(false);
     }
@@ -321,10 +327,13 @@ export const AdminWorkForm: React.FC = () => {
         if (data.room) setRoom(data.room);
         if (data.floor) setFloor(data.floor);
 
-        addToast("Informações extraídas do PDF com sucesso!", "success");
+        if (data.room) setRoom(data.room);
+        if (data.floor) setFloor(data.floor);
+
+        toast.success("Informações extraídas do PDF com sucesso!");
       } catch (err) {
         console.error("Erro ao extrair PDF:", err);
-        addToast("Houve um erro ao extrair informações do PDF.", "error");
+        toast.error("Houve um erro ao extrair informações do PDF.");
       } finally {
         setIsExtracting(false);
       }
@@ -349,7 +358,7 @@ export const AdminWorkForm: React.FC = () => {
   const nextStep = () => {
     const error = validateStep(currentStep);
     if (error) {
-      addToast(error, "error");
+      toast.error(error);
       return;
     }
     setDirection(1);
@@ -410,17 +419,16 @@ export const AdminWorkForm: React.FC = () => {
     try {
       if (id) {
         await api.put(`/works/${id}`, payload);
-        addToast(`${term.work} atualizada com sucesso!`, "success");
+        toast.success(`${term.work} atualizada com sucesso!`);
         navigate("/admin/obras");
       } else {
         const res = await api.post("/works", payload);
-        addToast(`${term.work} criada com sucesso!`, "success");
-        // Option to stay allows adding accessibility request immediately
+        toast.success(`${term.work} criada com sucesso!`);
         navigate(`/admin/obras/${res.data.id}`);
       }
     } catch (err: any) {
       console.error("Erro ao salvar obra", err);
-      addToast("Erro ao salvar. Verifique os dados.", "error");
+      toast.error("Erro ao salvar. Verifique os dados.");
     } finally {
       setSaving(false);
     }
@@ -514,30 +522,39 @@ export const AdminWorkForm: React.FC = () => {
           >
             {/* STEP 0: DADOS BÁSICOS */}
             {currentStep === 0 && (
-              <div className="flex-col gap-6">
-                <div style={{ padding: '1rem', background: 'rgba(96, 165, 250, 0.1)', borderRadius: '1rem', border: '1px solid rgba(96, 165, 250, 0.2)', marginBottom: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold', color: '#60a5fa' }}>Preencher automaticamente?</h4>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>Suba um arquivo PDF com os dados da {term.work.toLowerCase()} e faremos o resto.</p>
-                    </div>
-                    <label className={`btn-outline ${isExtracting ? 'opacity-50 cursor-not-allowed' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', border: '1px solid #60a5fa', color: '#60a5fa' }}>
-                      {isExtracting ? (
-                        <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <Upload size={18} />
-                      )}
-                      {isExtracting ? "Extraindo..." : "Subir PDF"}
+              <div className="space-y-8">
+                <AnimateIn variant="fadeUp">
+                  <Card className="p-6 bg-blue-500/5 border-blue-500/20 rounded-3xl">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                           <Sparkles size={24} />
+                        </div>
+                        <div>
+                          <h4 className="text-white font-bold text-lg">{t("admin.workForm.autoFill", "Preencher automaticamente?") || "Preencher automaticamente?"}</h4>
+                          <p className="text-slate-400 text-sm">{t("admin.workForm.autoFillDesc", `Suba um arquivo PDF com os dados da ${term.work.toLowerCase()} e faremos o resto.`) || `Suba um arquivo PDF com os dados da ${term.work.toLowerCase()} e faremos o resto.`}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="glass"
+                        onClick={() => document.getElementById('pdf-upload')?.click()}
+                        isLoading={isExtracting}
+                        leftIcon={<Upload size={18} />}
+                        className="rounded-2xl h-12 px-8 border-blue-500/20 text-blue-400 hover:bg-blue-500/10"
+                      >
+                        {isExtracting ? "Extraindo..." : "Subir PDF"}
+                      </Button>
                       <input 
+                        id="pdf-upload"
                         type="file" 
                         accept=".pdf" 
                         onChange={handlePdfExtract} 
                         disabled={isExtracting}
-                        style={{ display: 'none' }} 
+                        className="hidden"
                       />
-                    </label>
-                  </div>
-                </div>
+                    </div>
+                  </Card>
+                </AnimateIn>
 
                 <div className="admin-grid-2">
                   <Input
@@ -582,14 +599,13 @@ export const AdminWorkForm: React.FC = () => {
                       const newId = e.target.value;
                       setEquipamentoId(newId);
                       
-                      // Auto-pull coordinates if they are empty
                       const eq = equipamentos.find(item => item.id === newId);
                       if (eq && eq.lat && eq.lng && !vestigeLat && !vestigeLng) {
                         setVestigeLat(eq.lat);
                         setVestigeLng(eq.lng);
                         setLatitude(eq.lat);
                         setLongitude(eq.lng);
-                        addToast(`Coordenadas puxadas do equipamento: ${eq.nome}`, "info");
+                        toast(`Coordenadas puxadas do equipamento: ${eq.nome}`, { icon: '📍' });
                       }
                     }}
                     required
@@ -639,57 +655,68 @@ export const AdminWorkForm: React.FC = () => {
                   placeholder={`Conte a história desta ${term.work.toLowerCase()}...`}
                 />
 
-                <div className="admin-section" style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h3 className="admin-section-title" style={{ margin: 0 }}>
-                      <Languages color="#60a5fa" /> Traduções (Opcional)
-                    </h3>
+                <div className="space-y-6 pt-6 border-t border-white/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Languages className="text-gold-400" size={20} />
+                      <h3 className="text-lg font-bold text-white">Traduções (Opcional)</h3>
+                    </div>
                     <Button
-                      variant="outline"
+                      variant="glass"
                       size="sm"
                       onClick={handleAutoTranslate}
                       isLoading={isTranslating}
-                      leftIcon={<Sparkles size={16} color="#fbbf24" />}
-                      style={{ borderColor: 'rgba(251, 191, 36, 0.3)', color: '#fbbf24', fontSize: '0.8rem' }}
+                      leftIcon={<Sparkles size={16} />}
+                      className="rounded-xl border-gold-400/20 text-gold-400 hover:bg-gold-400/10"
                     >
                       Traduzir com IA
                     </Button>
                   </div>
 
-                  <div style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '1rem', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      <div className="space-y-3">
-                        <Input
-                          label="Título em Inglês"
-                          value={titleEn}
-                          onChange={e => setTitleEn(e.target.value)}
-                          placeholder="Ex: The Last Supper"
-                        />
-                        <Textarea
-                          label="Descrição em Inglês"
-                          value={descriptionEn}
-                          onChange={e => setDescriptionEn(e.target.value)}
-                          rows={4}
-                          placeholder="English description..."
-                        />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <Card className="p-6 bg-white/[0.02] border-white/5 rounded-3xl space-y-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-blue-400 border-blue-400/20">EN</Badge>
+                        <span className="text-xs font-black uppercase tracking-widest text-slate-500">Inglês</span>
                       </div>
+                      <Input
+                        label="Título"
+                        value={titleEn}
+                        onChange={e => setTitleEn(e.target.value)}
+                        placeholder="Ex: The Last Supper"
+                        className="bg-black/20"
+                      />
+                      <Textarea
+                        label="Descrição"
+                        value={descriptionEn}
+                        onChange={e => setDescriptionEn(e.target.value)}
+                        rows={4}
+                        placeholder="English description..."
+                        className="bg-black/20"
+                      />
+                    </Card>
 
-                      <div className="space-y-3">
-                        <Input
-                          label="Título em Espanhol"
-                          value={titleEs}
-                          onChange={e => setTitleEs(e.target.value)}
-                          placeholder="Ex: La Última Cena"
-                        />
-                        <Textarea
-                          label="Descrição em Espanhol"
-                          value={descriptionEs}
-                          onChange={e => setDescriptionEs(e.target.value)}
-                          rows={4}
-                          placeholder="Descripción en español..."
-                        />
+                    <Card className="p-6 bg-white/[0.02] border-white/5 rounded-3xl space-y-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-red-400 border-red-400/20">ES</Badge>
+                        <span className="text-xs font-black uppercase tracking-widest text-slate-500">Espanhol</span>
                       </div>
-                    </div>
+                      <Input
+                        label="Título"
+                        value={titleEs}
+                        onChange={e => setTitleEs(e.target.value)}
+                        placeholder="Ex: La Última Cena"
+                        className="bg-black/20"
+                      />
+                      <Textarea
+                        label="Descrição"
+                        value={descriptionEs}
+                        onChange={e => setDescriptionEs(e.target.value)}
+                        rows={4}
+                        placeholder="Descripción en español..."
+                        className="bg-black/20"
+                      />
+                    </Card>
                   </div>
                 </div>
               </div>
@@ -697,340 +724,309 @@ export const AdminWorkForm: React.FC = () => {
 
             {/* STEP 1: LOCALIZAÇÃO */}
             {currentStep === 1 && (
-              <div className="flex-col gap-6">
-                <div className="admin-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  <div style={{ flex: 1 }}>
+              <div className="space-y-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <div className="space-y-2">
+                       <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                          <QrCode className="text-gold-400" size={24} />
+                          Código do Discador
+                       </h3>
+                       <p className="text-slate-500 text-sm">Este código será usado pelos {term.visitors.toLowerCase()} para encontrar o item no app.</p>
+                    </div>
+                    
                     <Input
-                      label={t("admin.work.CdigoDoDiscadorApenasNmeros", `🔢 Código do Discador (Apenas Números)`)}
                       value={code}
                       onChange={e => setCode(e.target.value.replace(/\D/g, ''))}
                       placeholder="Ex: 101"
-                      style={{ fontSize: '1.5rem', textAlign: 'center', letterSpacing: '0.2em' }}
+                      className="text-4xl h-20 text-center font-black tracking-[0.3em] bg-white/5 border-white/5 focus:border-gold-400"
                     />
-                    <p style={{ fontSize: '0.8rem', color: 'gray', textAlign: 'center', marginTop: '0.5rem' }}>
-                      Este código será usado pelos {term.visitors.toLowerCase()} para encontrar o item no app.
-                    </p>
-                  </div>
 
-                  {code && (
-                    <div className="qr-container flex-col gap-4">
-                      <div id={`qr-${code}`} style={{ display: 'inline-block' }}>
-                        <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={120} level="H" />
+                    {code && (
+                      <div className="pt-6 border-t border-white/5 flex flex-col items-center gap-6">
+                        <div className="p-4 bg-white rounded-3xl shadow-2xl shadow-gold-400/10">
+                          <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={160} level="H" />
+                        </div>
+                        <Button
+                          variant="ghost"
+                          leftIcon={<Upload size={16} className="rotate-180" />}
+                          onClick={handleDownloadQR}
+                          className="rounded-xl text-xs font-black uppercase tracking-widest text-slate-400 hover:text-white"
+                        >
+                          Baixar com Moldura Premium
+                        </Button>
                       </div>
-                      <span className="qr-code-display" style={{ marginTop: '0.5rem' }}>#{code}</span>
-                      <Button
-                        variant="ghost"
-                        leftIcon={<Upload size={16} style={{ transform: 'rotate(180deg)' }} />}
-                        onClick={handleDownloadQR}
-                      >
-                        Baixar QR Code com Moldura
-                      </Button>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </Card>
 
-                <div className="admin-grid-2">
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                    <Input
-                      label={term.room}
-                      value={room}
-                      onChange={e => setRoom(e.target.value)}
-                      placeholder={isCity ? "Ex: Centro Histórico" : isCultural ? "Ex: Sala de Ensaio 1" : "Ex: Sala Moderna"}
-                    />
-                    <Input
-                      label={term.floor}
-                      value={floor}
-                      onChange={e => setFloor(e.target.value)}
-                      placeholder={isCity ? "Ex: Zona Sul" : isCultural ? "Ex: Térreo" : "Ex: 1º Pavimento"}
-                    />
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <Input
+                        label={term.room}
+                        value={room}
+                        onChange={e => setRoom(e.target.value)}
+                        placeholder={isCity ? "Ex: Centro Histórico" : isCultural ? "Ex: Sala de Ensaio 1" : "Ex: Sala Moderna"}
+                      />
+                      <Input
+                        label={term.floor}
+                        value={floor}
+                        onChange={e => setFloor(e.target.value)}
+                        placeholder={isCity ? "Ex: Zona Sul" : isCultural ? "Ex: Térreo" : "Ex: 1º Pavimento"}
+                      />
+                    </div>
+                    
+                    <Card className="p-6 bg-gold-400/5 border-gold-400/10 rounded-2xl">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                           <Target size={20} />
+                        </div>
+                        <div>
+                           <h4 className="text-white font-bold">{t("admin.work.raioDeDetecoM", `Raio de Detecção (m)`)}</h4>
+                           <p className="text-slate-500 text-xs">Distância para disparar o conteúdo automaticamente via Bluetooth/GPS.</p>
+                        </div>
+                      </div>
+                      <Input
+                        type="number"
+                        value={radius}
+                        onChange={e => setRadius(Number(e.target.value))}
+                        className="bg-black/40 border-white/5"
+                      />
+                    </Card>
                   </div>
-                  <Input
-                    label={t("admin.work.raioDeDetecoM", `Raio de Detecção (m)`)}
-                    type="number"
-                    value={radius}
-                    onChange={e => setRadius(Number(e.target.value))}
-                  />
                 </div>
               </div>
             )}
 
             {/* STEP 2: MÍDIA */}
             {currentStep === 2 && (
-              <div className="flex-col gap-6">
-                {/* Image Upload */}
-                <div className="upload-box">
-                  {imageUrl ? (
-                    <>
-                      <img src={imageUrl} alt="Preview" />
-                      <div className="upload-overlay">
-                        <label className="upload-btn">
-                          <ImageIcon size={20} /> Trocar Imagem
-                          <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} style={{ display: 'none' }} />
-                        </label>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="upload-placeholder">
-                      <ImageIcon size={48} style={{ margin: '0 auto 1rem', display: 'block' }} />
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Imagem Principal</h3>
-                      <p>Arraste uma imagem ou clique para selecionar</p>
-                      <label className="upload-btn" style={{ marginTop: '1rem' }}>
-                        <Upload size={20} /> Selecionar Arquivo
-                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} style={{ display: 'none' }} />
-                      </label>
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <div className="flex items-center gap-3">
+                       <ImageIcon className="text-blue-400" size={24} />
+                       <h3 className="text-xl font-bold text-white">Imagem Principal</h3>
                     </div>
-                  )}
-                </div>
-
-                <div className="admin-grid-2">
-                  {/* Audio Upload */}
-                  <div className="media-card">
-                    <h3 className="admin-section-title">
-                      <Volume2 style={{ color: "#60a5fa" }} /> Áudio Guia {isCity ? "do Ponto" : isCultural ? "da Atividade" : "da Obra"}
-                    </h3>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {audioUrl && (
-                        <audio controls src={audioUrl} style={{ width: '100%' }} />
-                      )}
-
-                      <label className="upload-btn" style={{ width: '100%', justifyContent: 'center' }}>
-                        <Upload size={16} /> {audioUrl ? "Substituir Áudio" : "Enviar Áudio (MP3)"}
-                        <input type="file" className="hidden" accept="audio/*" onChange={(e) => handleUpload(e, "audio", setAudioUrl)} style={{ display: 'none' }} />
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Libras Upload */}
-                  <div className="media-card">
-                    <h3 className="admin-section-title">
-                      <Video style={{ color: "#a78bfa" }} /> Vídeo em Libras
-                    </h3>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                      {librasUrl && (
-                        <video controls src={librasUrl} style={{ width: '100%', maxHeight: '150px', background: 'black', borderRadius: '8px' }} />
-                      )}
-
-                      <label className="upload-btn" style={{ width: '100%', justifyContent: 'center' }}>
-                        <Upload size={16} /> {librasUrl ? "Substituir Vídeo" : "Enviar Vídeo (MP4)"}
-                        <input type="file" className="hidden" accept="video/*" onChange={(e) => handleUpload(e, "video", setLibrasUrl)} style={{ display: 'none' }} />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: MODO VESTÍGIO */}
-            {currentStep === 3 && (
-              <div className="flex-col gap-6">
-                <div className="admin-section">
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                    <div>
-                      <h3 className="admin-section-title" style={{ margin: 0 }}>
-                        {t('vestige.admin.vestigeMode', 'Modo Vestígio')}: {vestigeActive ? t('vestige.admin.active', 'Ativado') : t('vestige.admin.inactive', 'Desativado')}
-                      </h3>
-                      <p style={{ fontSize: '0.8rem', color: 'gray' }}>{t('vestige.admin.vestigeDescription', 'Torna este ponto capturável via GPS pelos visitantes')}</p>
-                    </div>
+                    
                     <div 
-                      onClick={() => setVestigeActive(!vestigeActive)}
-                      style={{ 
-                        width: '60px', height: '32px', background: vestigeActive ? 'var(--accent-primary)' : '#333',
-                        borderRadius: '16px', position: 'relative', cursor: 'pointer', transition: '0.3s'
-                      }}
+                      className="aspect-video rounded-2xl bg-white/5 border-2 border-dashed border-white/10 overflow-hidden relative group cursor-pointer"
+                      onClick={() => document.getElementById('image-upload')?.click()}
                     >
-                      <div style={{ 
-                        width: '24px', height: '24px', background: 'white', borderRadius: '50%',
-                        position: 'absolute', top: '4px', left: vestigeActive ? '32px' : '4px', transition: '0.3s'
-                      }} />
+                      {imageUrl ? (
+                        <>
+                          <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                             <Button variant="glass" className="rounded-xl">Trocar Imagem</Button>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-500 gap-3">
+                           <Upload size={32} />
+                           <span className="text-sm font-medium">Clique ou arraste para subir</span>
+                        </div>
+                      )}
+                      <input id="image-upload" type="file" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} className="hidden" />
                     </div>
+                  </Card>
+
+                  <div className="space-y-6">
+                    <Card className="p-6 border-white/5 bg-black/20 rounded-3xl space-y-4">
+                       <div className="flex items-center gap-3">
+                          <Volume2 className="text-gold-400" size={20} />
+                          <h4 className="text-white font-bold">Áudio Guia</h4>
+                       </div>
+                       {audioUrl && <audio controls src={audioUrl} className="w-full h-10" />}
+                       <Button
+                         variant="glass"
+                         onClick={() => document.getElementById('audio-upload')?.click()}
+                         isLoading={isUploading}
+                         className="w-full rounded-xl border-white/5"
+                         leftIcon={<Upload size={16} />}
+                       >
+                         {audioUrl ? "Substituir Áudio" : "Subir Áudio (MP3)"}
+                       </Button>
+                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
+                    </Card>
+
+                    <Card className="p-6 border-white/5 bg-black/20 rounded-3xl space-y-4">
+                       <div className="flex items-center gap-3">
+                          <Video className="text-purple-400" size={20} />
+                          <h4 className="text-white font-bold">Vídeo em Libras</h4>
+                       </div>
+                       {librasUrl && <video controls src={librasUrl} className="w-full aspect-video rounded-xl bg-black" />}
+                       <Button
+                         variant="glass"
+                         onClick={() => document.getElementById('libras-upload')?.click()}
+                         isLoading={isUploading}
+                         className="w-full rounded-xl border-white/5"
+                         leftIcon={<Upload size={16} />}
+                       >
+                         {librasUrl ? "Substituir Vídeo" : "Subir Vídeo (MP4)"}
+                       </Button>
+                       <input id="libras-upload" type="file" accept="video/*" onChange={(e) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
+                    </Card>
                   </div>
-
-                  <AnimatePresence>
-                    {vestigeActive && (
-                      <motion.div 
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="space-y-6 overflow-hidden"
-                      >
-                        <div className="admin-grid-2">
-                          <Input 
-                            label={t('vestige.admin.gpsLat', 'Latitude (GPS)')}
-                            type="number"
-                            step="any"
-                            value={vestigeLat}
-                            onChange={e => {
-                              setVestigeLat(e.target.value);
-                              setLatitude(e.target.value);
-                            }}
-                            placeholder="-25.4297"
-                          />
-                          <Input 
-                            label={t('vestige.admin.gpsLng', 'Longitude (GPS)')}
-                            type="number"
-                            step="any"
-                            value={vestigeLng}
-                            onChange={e => {
-                              setVestigeLng(e.target.value);
-                              setLongitude(e.target.value);
-                            }}
-                            placeholder="-49.2719"
-                          />
-                        </div>
-
-                        <div className="admin-grid-2">
-                           <Input 
-                            label={t('vestige.admin.radius', 'Raio de Captura (metros)')}
-                            type="number"
-                            value={captureRadius}
-                            onChange={e => setCaptureRadius(Number(e.target.value))}
-                          />
-                          <Select
-                            label={t('vestige.admin.vestigeTypeLabel', 'Tipo de Vestígio (Contexto)')}
-                            value={vestigeType}
-                            onChange={e => setVestigeType(e.target.value)}
-                          >
-                             <option value="WORK">{t('vestige.admin.type.work', 'Obra de Arte (Padrão)')}</option>
-                             <option value="STREET_ART">{t('vestige.admin.type.streetArt', 'Arte Urbana / Grafite')}</option>
-                             <option value="INSTALLATION">{t('vestige.admin.type.installation', 'Instalação / Monumento')}</option>
-                             <option value="EVENT">{t('vestige.admin.type.event', 'Evento Temporário')}</option>
-                          </Select>
-                        </div>
-
-                        <div className="admin-grid-2">
-                           <Input 
-                            label={t('vestige.admin.expiry', 'Expira em')}
-                            type="date"
-                            value={vestigeExpiresAt}
-                            onChange={e => setVestigeExpiresAt(e.target.value)}
-                          />
-                           <Input 
-                            label={t('vestige.admin.vestigeImageUrl', 'Imagem de Captura (opcional)')}
-                            value={vestigeImageUrl}
-                            onChange={e => setVestigeImageUrl(e.target.value)}
-                            placeholder={t('vestige.admin.vestigeImageUrlPlaceholder', 'URL da imagem específica para o radar')}
-                          />
-                        </div>
-
-                        <div style={{ 
-                          padding: '1rem', background: 'rgba(212, 175, 55, 0.1)', 
-                          borderLeft: '4px solid var(--accent-primary)', borderRadius: '4px' 
-                        }}>
-                          <p style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: '700' }}>
-                             {t('vestige.admin.tip', 'Dica: Ao ativar o Modo Vestígio, a obra aparecerá no Radar do Mapa para os visitantes.')}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
               </div>
             )}
 
-            {/* STEP 4: REVISÃO */}
-            {currentStep === 4 && (
-              <div className="flex-col gap-6">
-                <div style={{ textAlign: 'center', padding: '2rem', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '1rem', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
-                  <CheckCircle size={48} color="var(--status-success)" style={{ margin: '0 auto 1rem' }} />
-                  <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--fg-main)' }}>Tudo pronto!</h2>
-                  <p style={{ color: 'var(--fg-muted)' }}>Revise os dados abaixo antes de publicar.</p>
-                </div>
+            {currentStep === 3 && (
+              <div className="space-y-8">
+                <Card className="p-8 border-white/5 bg-black/20 rounded-[32px]">
+                   <div className="flex items-center justify-between mb-8">
+                     <div className="flex items-center gap-4">
+                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${vestigeActive ? 'bg-gold-400/20 text-gold-400' : 'bg-white/5 text-slate-500'}`}>
+                          <Sparkles size={24} />
+                       </div>
+                       <div>
+                         <h3 className="text-xl font-bold text-white">Modo Vestígio (GPS)</h3>
+                         <p className="text-slate-500 text-sm">Torna este ponto capturável via radar para gamificação.</p>
+                       </div>
+                     </div>
+                     <Switch 
+                       checked={vestigeActive}
+                       onCheckedChange={setVestigeActive}
+                     />
+                   </div>
 
-                <div className="admin-grid-2">
-                  <div className="admin-section">
-                    <h3 className="admin-section-title">Resumo</h3>
-                    <div className="summary-card">
-                      <div className="summary-row">
-                        <span className="summary-label">{t("admin.work.nomettulo", `Nome/Título:`)}</span>
-                        <span className="summary-value">{title}</span>
+                   <AnimatePresence>
+                     {vestigeActive && (
+                       <motion.div 
+                         initial={{ opacity: 0, y: 10 }}
+                         animate={{ opacity: 1, y: 0 }}
+                         exit={{ opacity: 0, y: 10 }}
+                         className="space-y-6 pt-8 border-t border-white/5"
+                       >
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Input 
+                              label="Latitude (GPS)"
+                              type="number"
+                              step="any"
+                              value={vestigeLat}
+                              onChange={e => {
+                                setVestigeLat(e.target.value);
+                                setLatitude(e.target.value);
+                              }}
+                              placeholder="-25.4297"
+                              className="bg-black/20"
+                            />
+                            <Input 
+                              label="Longitude (GPS)"
+                              type="number"
+                              step="any"
+                              value={vestigeLng}
+                              onChange={e => {
+                                setVestigeLng(e.target.value);
+                                setLongitude(e.target.value);
+                              }}
+                              placeholder="-49.2719"
+                              className="bg-black/20"
+                            />
+                         </div>
+
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Input 
+                              label="Raio de Captura (metros)"
+                              type="number"
+                              value={captureRadius}
+                              onChange={e => setCaptureRadius(Number(e.target.value))}
+                              className="bg-black/20"
+                            />
+                            <Select
+                              label="Tipo de Vestígio"
+                              value={vestigeType}
+                              onChange={e => setVestigeType(e.target.value)}
+                              className="bg-black/20"
+                            >
+                               <option value="WORK">Obra de Arte</option>
+                               <option value="STREET_ART">Arte Urbana</option>
+                               <option value="INSTALLATION">Monumento</option>
+                               <option value="EVENT">Evento Temporário</option>
+                            </Select>
+                         </div>
+
+                         <Card className="p-4 bg-gold-400/10 border-gold-400/20 rounded-2xl flex items-center gap-4">
+                            <Info className="text-gold-400 shrink-0" size={20} />
+                            <p className="text-gold-400 text-xs font-bold uppercase tracking-widest leading-relaxed">
+                               Dica: Ao ativar o Modo Vestígio, os visitantes podem "capturar" este item ao se aproximarem fisicamente dele.
+                            </p>
+                         </Card>
+                       </motion.div>
+                     )}
+                   </AnimatePresence>
+                </Card>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div className="space-y-10">
+                <AnimateIn variant="fadeUp">
+                  <div className="text-center space-y-4 py-8">
+                    <div className="w-20 h-20 rounded-3xl bg-green-500/10 flex items-center justify-center text-green-400 mx-auto">
+                      <CheckCircle2 size={48} />
+                    </div>
+                    <h2 className="text-3xl font-black text-white tracking-tighter">Tudo pronto!</h2>
+                    <p className="text-slate-400 font-medium">Revise as informações antes de finalizar.</p>
+                  </div>
+                </AnimateIn>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Card className="p-8 border-white/5 bg-black/20 rounded-[32px] space-y-6">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                       <FileText className="text-gold-400" size={20} />
+                       Resumo da Obra
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-slate-500 text-sm">Título</span>
+                        <span className="text-white font-bold">{title}</span>
                       </div>
-                      <div className="summary-row">
-                        <span className="summary-label">{term.artist}:</span>
-                        <span className="summary-value">{artist}</span>
+                      <div className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-slate-500 text-sm">Código</span>
+                        <Badge variant="outline" className="text-gold-400 border-gold-400/20 font-mono">#{code}</Badge>
                       </div>
-                      <div className="summary-row">
-                        <span className="summary-label">{t("admin.work.cdigo", `Código:`)}</span>
-                        <span className="summary-value">#{code}</span>
-                      </div>
-                      <div className="summary-row">
-                        <span className="summary-label">{t("admin.work.mdias", `Mídias:`)}</span>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          {imageUrl && <ImageIcon size={16} color="var(--status-success)" />}
-                          {audioUrl && <Volume2 size={16} color="var(--status-success)" />}
-                          {librasUrl && <Video size={16} color="var(--status-success)" />}
-                          {!imageUrl && !audioUrl && !librasUrl && <span style={{ fontSize: '0.8rem', color: 'gray' }}>Nenhuma</span>}
+                      <div className="flex justify-between items-center py-3 border-b border-white/5">
+                        <span className="text-slate-500 text-sm">Mídias</span>
+                        <div className="flex gap-2">
+                           {imageUrl && <ImageIcon size={18} className="text-green-400" />}
+                           {audioUrl && <Volume2 size={18} className="text-green-400" />}
+                           {librasUrl && <Video size={18} className="text-green-400" />}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Card>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    {code && (
-                      <div className="admin-section" style={{ textAlign: 'center' }}>
-                         <h3 className="admin-section-title">QR Code</h3>
-                         <div id={`qr-${code}`} style={{ display: 'inline-block', marginBottom: '1rem', background: 'white', padding: '1rem', borderRadius: '1rem' }}>
-                            <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={160} level="H" />
-                         </div>
-                         <Button
-                            variant="outline"
-                            className="w-full"
-                            leftIcon={<Upload size={16} style={{ transform: 'rotate(180deg)' }} />}
-                            onClick={handleDownloadQR}
-                         >
-                            Baixar QR Code com Moldura
-                         </Button>
-                      </div>
-                    )}
-                    <h3 className="admin-section-title">{t("admin.work.aesAdicionais", `Ações Adicionais`)}</h3>
-
-                    <div
+                  <div className="space-y-6">
+                    <Card 
+                      className={`p-6 border-2 transition-all cursor-pointer rounded-3xl flex items-center justify-between ${published ? 'bg-green-500/5 border-green-500/20' : 'bg-white/5 border-white/10'}`}
                       onClick={() => setPublished(!published)}
-                      style={{
-                        padding: '1rem',
-                        borderRadius: '1rem',
-                        border: `1px solid ${published ? 'var(--status-success)' : 'rgba(255,255,255,0.1)'}`,
-                        background: published ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.05)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: published ? 'var(--status-success)' : 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Share2 size={20} color="white" />
+                      <div className="flex items-center gap-4">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${published ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-slate-500'}`}>
+                           <Share2 size={24} />
                         </div>
                         <div>
-                          <div style={{ fontWeight: 'bold', color: 'var(--fg-main)' }}>
-                            {published ? "Visível no App" : "Oculto (Rascunho)"}
-                          </div>
-                          <p style={{ fontSize: '0.8rem', color: 'var(--fg-muted)' }}>Disponibilidade para {term.visitors.toLowerCase()}</p>
+                           <h4 className="text-white font-bold">{published ? "Publicado" : "Rascunho"}</h4>
+                           <p className="text-slate-500 text-xs">{published ? "Visível para todos os visitantes" : "Apenas administradores podem ver"}</p>
                         </div>
                       </div>
-                      {published && <CheckCircle size={20} color="var(--status-success)" />}
-                    </div>
+                      <Switch checked={published} onCheckedChange={setPublished} />
+                    </Card>
 
-                    <div
+                    <Card 
+                      className="p-6 border-2 border-dashed border-purple-500/20 bg-purple-500/5 rounded-3xl cursor-pointer hover:bg-purple-500/10 transition-all flex items-center justify-between"
                       onClick={() => setShowAccessModal(true)}
-                      style={{
-                        padding: '1rem',
-                        borderRadius: '1rem',
-                        border: '1px dashed #c084fc',
-                        background: 'rgba(192, 132, 252, 0.05)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '1rem'
-                      }}
                     >
-                      <div style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: 'rgba(192, 132, 252, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Accessibility size={20} color="#c084fc" />
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                           <Accessibility size={24} />
+                        </div>
+                        <div>
+                           <h4 className="text-white font-bold">Acessibilidade Master</h4>
+                           <p className="text-slate-500 text-xs">Solicitar tradução em Libras ou Audiodescrição</p>
+                        </div>
                       </div>
-                      <div>
-                        <div style={{ fontWeight: 'bold', color: '#c084fc' }}>Acessibilidade Master</div>
-                        <p style={{ fontSize: '0.8rem', color: '#e9d5ff' }}>{t("admin.work.solicitarProduoDeLibrasudio", `Solicitar produção de Libras/Áudio`)}</p>
-                      </div>
-                    </div>
+                      <ChevronRight className="text-purple-400" size={20} />
+                    </Card>
                   </div>
                 </div>
               </div>
@@ -1072,72 +1068,76 @@ export const AdminWorkForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Accessibility Modal */}
-      {showAccessModal && (
-        <div className="admin-modal-overlay">
-          <div className="admin-modal">
-            <h3 className="admin-section-title">
-              <Accessibility color="#c084fc" /> Solicitar Acessibilidade
-            </h3>
-            <p style={{ marginBottom: '1.5rem', fontSize: '0.9rem', color: 'var(--fg-muted)' }}>
+      <Dialog
+        isOpen={showAccessModal}
+        onClose={() => setShowAccessModal(false)}
+        title="Solicitar Acessibilidade Master"
+        className="max-w-xl"
+      >
+        <div className="space-y-6">
+          <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-start gap-4">
+            <Accessibility className="text-purple-400 shrink-0 mt-1" size={24} />
+            <p className="text-slate-300 text-sm leading-relaxed">
               Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {isCity ? "este ponto" : isCultural ? "esta atividade" : "esta obra"}.
             </p>
+          </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <Select
-                label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
-                value={requestType}
-                onChange={(e) => setRequestType(e.target.value as any)}
-              >
-                <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>
-                <option value="AUDIO_DESC">{t("admin.work.apenasAudiodescrio", `Apenas Audiodescrição`)}</option>
-                <option value="BOTH">{t("admin.work.comboLibrasUdio", `Combo (Libras + Áudio)`)}</option>
-              </Select>
+          <div className="space-y-4">
+            <Select
+              label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
+              value={requestType}
+              onChange={(e) => setRequestType(e.target.value as any)}
+              className="bg-black/20"
+            >
+              <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>
+              <option value="AUDIO_DESC">{t("admin.work.apenasAudiodescrio", `Apenas Audiodescrição`)}</option>
+              <option value="BOTH">{t("admin.work.comboLibrasUdio", `Combo (Libras + Áudio)`)}</option>
+            </Select>
 
-              <Textarea
-                label={t("admin.work.observaes", `Observações`)}
-                value={requestNotes}
-                onChange={e => setRequestNotes(e.target.value)}
-                placeholder={t("admin.work.exPrioridadeAltaDetalhesEspecficos", `Ex: Prioridade alta, detalhes específicos...`)}
-                rows={3}
-              />
-            </div>
+            <Textarea
+              label={t("admin.work.observaes", `Observações`)}
+              value={requestNotes}
+              onChange={e => setRequestNotes(e.target.value)}
+              placeholder={t("admin.work.exPrioridadeAltaDetalhesEspecficos", `Ex: Prioridade alta, detalhes específicos...`)}
+              rows={3}
+              className="bg-black/20"
+            />
+          </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
-              <Button
-                variant="ghost"
-                onClick={() => setShowAccessModal(false)}
-                disabled={isRequesting}
-              >
-                Fechar
-              </Button>
-              <Button
-                onClick={async () => {
-                  if (!id) {
-                    addToast(`Salve ${isCity ? "o ponto" : isCultural ? "a atividade" : "a obra"} primeiro antes de solicitar.`, "info");
-                    return;
-                  }
-                  try {
-                    setIsRequesting(true);
-                    await api.post("/accessibility", { workId: id, type: requestType, notes: requestNotes });
-                    addToast("Solicitação enviada!", "success");
-                    setShowAccessModal(false);
-                  } catch (error) {
-                    addToast("Erro ao enviar solicitação.", "error");
-                  } finally {
-                    setIsRequesting(false);
-                  }
-                }}
-                isLoading={isRequesting}
-                className="btn-primary"
-                style={{ background: '#9333ea', borderColor: '#9333ea' }}
-              >
-                Enviar Pedido
-              </Button>
-            </div>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setShowAccessModal(false)}
+              disabled={isRequesting}
+              className="rounded-xl"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={async () => {
+                if (!id) {
+                  toast.error(`Salve ${isCity ? "o ponto" : isCultural ? "a atividade" : "a obra"} primeiro.`);
+                  return;
+                }
+                try {
+                  setIsRequesting(true);
+                  await api.post("/accessibility", { workId: id, type: requestType, notes: requestNotes });
+                  toast.success("Solicitação enviada com sucesso!");
+                  setShowAccessModal(false);
+                } catch (error) {
+                  toast.error("Erro ao enviar solicitação.");
+                } finally {
+                  setIsRequesting(false);
+                }
+              }}
+              isLoading={isRequesting}
+              className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white"
+            >
+              Enviar Solicitação
+            </Button>
           </div>
         </div>
-      )}
+      </Dialog>
     </div>
   );
 };

@@ -16,7 +16,7 @@ type Booking = {
 
 export const SchedulingPage: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId } = useAuth();
+    const { tenantId, isGuest } = useAuth();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState("10:00");
@@ -27,11 +27,12 @@ export const SchedulingPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-    const [initialLoading, setInitialLoading] = useState(true);
+    const [initialLoading, setInitialLoading] = useState(!isGuest);
 
     useEffect(() => {
-        fetchBookings();
-    }, []);
+        if (!isGuest) fetchBookings();
+        else setInitialLoading(false);
+    }, [isGuest]);
 
     const fetchBookings = async () => {
         setInitialLoading(true);
@@ -93,84 +94,101 @@ export const SchedulingPage: React.FC = () => {
                 <h1 className="scheduling-title">{t("visitor.scheduling.title", "Agendamento de Visitas")}</h1>
             </header>
 
-            <div className="scheduling-form-card">
-                <h2 className="scheduling-form-title">
-                    <CalendarDays size={20} />
-                    {t("visitor.scheduling.new", "Novo Agendamento")}
-                </h2>
-                <form onSubmit={handleSchedule} className="scheduling-form">
-                    <div className="scheduling-form-group">
-                        <label>{t("visitor.scheduling.date", "Data")}</label>
-                        <input
-                            type="date"
-                            className="scheduling-input"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            min={new Date().toISOString().split("T")[0]}
-                            required
-                        />
-                    </div>
-
-                    <div className="scheduling-form-group">
-                        <label><Clock size={14} /> {t("visitor.scheduling.time", "Horário")}</label>
-                        <select
-                            className="scheduling-select"
-                            value={selectedTime}
-                            onChange={(e) => setSelectedTime(e.target.value)}
-                            required
-                        >
-                            <option value="09:00">09:00</option>
-                            <option value="10:00">10:00</option>
-                            <option value="11:00">11:00</option>
-                            <option value="13:00">13:00</option>
-                            <option value="14:00">14:00</option>
-                            <option value="15:00">15:00</option>
-                            <option value="16:00">16:00</option>
-                        </select>
-                    </div>
-
-                    <div className="scheduling-form-group">
-                        <label>{t("visitor.scheduling.inPersonService", "Serviço Presencial (Opcional)")}</label>
-                        <select
-                            className="scheduling-select"
-                            value={selectedService}
-                            onChange={(e) => setSelectedService(e.target.value)}
-                        >
-                            <option value="">Nenhum</option>
-                            {inPersonServices.map(srv => (
-                                <option key={srv.id} value={srv.id}>{srv.name}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="scheduling-form-group">
-                        <label>{t("visitor.scheduling.participants", "Participantes")}</label>
-                        <input
-                            type="number"
-                            min="1"
-                            className="scheduling-input"
-                            value={participants}
-                            onChange={(e) => setParticipants(e.target.value)}
-                            required
-                        />
-                    </div>
-
-                    {message && (
-                        <div className={`scheduling-message ${message.type}`}>
-                            {message.text}
-                        </div>
-                    )}
-
-                    <button type="submit" className="scheduling-submit-btn" disabled={loading}>
-                        {loading ? (
-                            <>
-                                <span className="scheduling-spinner"></span>
-                                {t("common.sending", "Enviando...")}
-                            </>
-                        ) : t("visitor.scheduling.submit", "Agendar Visita")}
+            {isGuest ? (
+                <div className="scheduling-form-card text-center py-20" style={{ border: '1px dashed var(--accent-primary)', background: 'rgba(212, 175, 55, 0.05)' }}>
+                    <CalendarDays size={48} className="mx-auto mb-4 text-gold opacity-50" />
+                    <h2 className="text-xl font-bold text-gold mb-2">Agendamento Exclusivo</h2>
+                    <p className="text-secondary max-w-xs mx-auto mb-8 opacity-80">
+                        Crie sua conta para agendar visitas guiadas, workshops e garantir seu lugar em eventos concorridos.
+                    </p>
+                    <button 
+                        onClick={() => window.location.href='/register'}
+                        className="scheduling-submit-btn !w-auto !px-12 mx-auto"
+                    >
+                        Criar Conta Gratuita
                     </button>
-                </form>
-            </div>
+                </div>
+            ) : (
+                <div className="scheduling-form-card">
+                    <h2 className="scheduling-form-title">
+                        <CalendarDays size={20} />
+                        {t("visitor.scheduling.new", "Novo Agendamento")}
+                    </h2>
+                    <form onSubmit={handleSchedule} className="scheduling-form">
+                        <div className="scheduling-form-group">
+                            <label>{t("visitor.scheduling.date", "Data")}</label>
+                            <input
+                                type="date"
+                                className="scheduling-input"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                min={new Date().toISOString().split("T")[0]}
+                                required
+                            />
+                        </div>
+
+                        <div className="scheduling-form-group">
+                            <label><Clock size={14} /> {t("visitor.scheduling.time", "Horário")}</label>
+                            <select
+                                className="scheduling-select"
+                                value={selectedTime}
+                                onChange={(e) => setSelectedTime(e.target.value)}
+                                required
+                            >
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="13:00">13:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                            </select>
+                        </div>
+
+                        <div className="scheduling-form-group">
+                            <label>{t("visitor.scheduling.inPersonService", "Serviço Presencial (Opcional)")}</label>
+                            <select
+                                className="scheduling-select"
+                                value={selectedService}
+                                onChange={(e) => setSelectedService(e.target.value)}
+                            >
+                                <option value="">Nenhum</option>
+                                {inPersonServices.map(srv => (
+                                    <option key={srv.id} value={srv.id}>{srv.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="scheduling-form-group">
+                            <label>{t("visitor.scheduling.participants", "Participantes")}</label>
+                            <input
+                                type="number"
+                                min="1"
+                                className="scheduling-input"
+                                value={participants}
+                                onChange={(e) => setParticipants(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        {message && (
+                            <div className={`scheduling-message ${message.type}`}>
+                                {message.text}
+                            </div>
+                        )}
+
+                        <button type="submit" className="scheduling-submit-btn" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <span className="scheduling-spinner"></span>
+                                    {t("common.sending", "Enviando...")}
+                                </>
+                            ) : t("visitor.scheduling.submit", "Agendar Visita")}
+                        </button>
+                    </form>
+                </div>
+            )}
 
             <h2 className="scheduling-section-title">{t("visitor.scheduling.myBookings", "Meus Agendamentos")}</h2>
             <div className="scheduling-bookings-grid">

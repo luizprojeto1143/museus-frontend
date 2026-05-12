@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Headphones, Sparkles, Loader2, Info } from 'lucide-react';
 import { Button } from "../../../components/ui";
+import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
 import { useAudio } from "../context/AudioContext";
 import './NarrativeAudioGuide.css';

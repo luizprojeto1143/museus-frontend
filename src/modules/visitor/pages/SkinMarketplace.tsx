@@ -19,7 +19,7 @@ interface Skin {
 
 export const SkinMarketplace: React.FC = () => {
     const { addToast } = useToast();
-    const { tenantId, isAuthenticated } = useAuth();
+    const { tenantId, isAuthenticated, isGuest } = useAuth();
     const [skins, setSkins] = useState<Skin[]>([]);
     const [visitorXp, setVisitorXp] = useState(0);
     const [visitorId, setVisitorId] = useState<string | null>(null);
@@ -29,6 +29,10 @@ export const SkinMarketplace: React.FC = () => {
 
     useEffect(() => {
         const loadMarketplace = async () => {
+            if (isGuest) {
+                setLoading(false);
+                return;
+            }
             try {
                 const profileRes = await api.get("/visitors/me");
                 const vid = profileRes.data.id;
@@ -54,15 +58,22 @@ export const SkinMarketplace: React.FC = () => {
 
         // B-07: Sync XP when window regains focus
         const handleFocus = () => {
-            if (isAuthenticated && visitorId) {
+            if (isAuthenticated && !isGuest && visitorId) {
                 api.get(`/visitors/${visitorId}`).then(res => setVisitorXp(res.data.xp)).catch(() => {});
             }
         };
 
-        if(isAuthenticated) loadMarketplace();
+        if(isAuthenticated && !isGuest) {
+            loadMarketplace();
+        } else if (isGuest) {
+            setLoading(false);
+            // Load public skins or something? For now just empty
+            setSkins([]);
+        }
+        
         window.addEventListener('focus', handleFocus);
         return () => window.removeEventListener('focus', handleFocus);
-    }, [isAuthenticated, tenantId, visitorId]);
+    }, [isAuthenticated, isGuest, tenantId, visitorId]);
 
     const navigate = useNavigate();
 

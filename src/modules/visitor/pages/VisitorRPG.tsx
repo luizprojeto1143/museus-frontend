@@ -72,8 +72,8 @@ export const VisitorRPG: React.FC = () => {
     }, [isGenerating, fetchRPG]);
 
     useEffect(() => { 
-        fetchRPG(); 
-    }, [fetchRPG]);
+        if (!isGuest) fetchRPG(); 
+    }, [fetchRPG, isGuest]);
 
     const onSaveName = async () => {
         if (!newName.trim()) return;
@@ -104,10 +104,29 @@ export const VisitorRPG: React.FC = () => {
 
     if (isGuest) {
         return (
-            <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '400px', margin: '4rem auto' }}>
-                <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
-                <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>{t("visitor.rpg.crieUmaContaGratuitaParaEvoluirSeuAvatar", `Crie uma conta gratuita para evoluir seu avatar, ganhar níveis e desbloquear novos títulos do museu!`)}</p>
-                <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+            <div className="rpg-container flex flex-col items-center justify-center min-h-[70vh] p-6">
+                <div className="rpg-card premium-glass !max-w-md text-center py-16 px-8 relative overflow-hidden">
+                    <div className="rpg-card-glow"></div>
+                    <div className="rpg-avatar-wrapper !mx-auto mb-8">
+                        <div className="rpg-avatar-ring"></div>
+                        <div className="rpg-avatar-scanner"></div>
+                        <User size={64} className="text-white/20 mx-auto" />
+                    </div>
+                    
+                    <h2 className="text-3xl font-black text-white italic mb-4 uppercase tracking-tighter">
+                        Destino Selado
+                    </h2>
+                    <p className="text-zinc-400 text-sm mb-8 leading-relaxed">
+                        Sua jornada como herói cultural ainda não começou. Crie sua identidade digital para evoluir seu avatar, conquistar territórios e eternizar seu legado no museu.
+                    </p>
+                    
+                    <button 
+                        onClick={() => navigate('/register')} 
+                        className="btn-primary-gradient !w-full !py-4 !rounded-2xl font-black italic uppercase tracking-widest shadow-[0_0_30px_rgba(212,175,55,0.2)]"
+                    >
+                        Iniciar Minha Odisseia
+                    </button>
+                </div>
             </div>
         );
     }
@@ -122,10 +141,12 @@ export const VisitorRPG: React.FC = () => {
     return (
         <div className="rpg-container animate-in fade-in duration-700">
             {/* ═══ CHARACTER CARD ══════════════ */}
-            <div className={`rpg-card`}>
+            <div className={`rpg-card premium-glass`}>
                 <div className="rpg-card-glow"></div>
                 <div className="rpg-avatar-wrapper">
                     <div className="rpg-avatar-ring"></div>
+                    <div className="rpg-avatar-scanner"></div>
+                    <div className="rpg-hologram-effect"></div>
                     <img 
                         src={activeChar?.displayAvatarUrl || '/default_avatar.png'} 
                         className="rpg-avatar-img"

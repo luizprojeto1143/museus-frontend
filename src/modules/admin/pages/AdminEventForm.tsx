@@ -1,16 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { useToast } from "../../../contexts/ToastContext";
 import { useParams, useNavigate } from "react-router-dom";
-import { Input, Select, Textarea, Button } from "../../../components/ui";
+import { 
+  Input, 
+  Select, 
+  Textarea, 
+  Button, 
+  Switch, 
+  Card, 
+  Badge, 
+  AnimateIn 
+} from "@/components/ui";
 import {
   Calendar, MapPin, Ticket, Clock,
   ChevronRight, ChevronLeft, CheckCircle, Plus, Trash2, Globe, Video, Save,
-  Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft, Upload, Circle
+  Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft, Upload, Circle,
+  Sparkles, Info, Target, ListOrdered, CheckCircle2, Layout
 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
+import { useTerminology } from "../../../hooks/useTerminology";
 import "./AdminShared.css";
 import { QRCodeCanvas } from "qrcode.react";
 
@@ -32,15 +43,15 @@ interface TicketData {
 
 export const AdminEventForm: React.FC = () => {
   const { t } = useTranslation();
+  const term = useTerminology();
   const STEPS = [
-    { id: 0, title: t("admin.eventForm.steps.basic.title", "Básico"), desc: t("admin.eventForm.steps.basic.desc", "Informações principais"), icon: Calendar },
-    { id: 1, title: t("admin.eventForm.steps.location.title", "Local & Data"), desc: t("admin.eventForm.steps.location.desc", "Onde e quando"), icon: MapPin },
-    { id: 2, title: t("admin.eventForm.steps.tickets.title", "Ingressos"), desc: t("admin.eventForm.steps.tickets.desc", "Valores e lotes"), icon: Ticket },
-    { id: 3, title: t("admin.eventForm.steps.marketing.title", "Divulgação"), desc: t("admin.eventForm.steps.marketing.desc", "Mídia e visibilidade"), icon: PlayCircle }
+    { id: 0, title: "Básico", desc: "Informações principais", icon: Calendar },
+    { id: 1, title: "Local & Data", desc: "Onde e quando", icon: MapPin },
+    { id: 2, title: "Ingressos", desc: "Valores e lotes", icon: Ticket },
+    { id: 3, title: "Divulgação", desc: "Mídia e visibilidade", icon: PlayCircle }
   ];
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
-  const { addToast } = useToast();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
@@ -183,10 +194,10 @@ export const AdminEventForm: React.FC = () => {
           headers: { "Content-Type": "multipart/form-data" }
         });
         setter(res.data.url);
-        addToast("Arquivo enviado com sucesso!", "success");
+        toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
         console.error(`Error uploading ${type}`, error);
-        addToast("Erro ao enviar arquivo", "error");
+        toast.error("Erro ao enviar arquivo");
       } finally {
         setIsUploading(false);
       }
@@ -194,9 +205,8 @@ export const AdminEventForm: React.FC = () => {
   };
 
   const nextStep = () => {
-    // Simple validation per step could go here
     if (currentStep === 0 && !formData.title) {
-      addToast("Informe o t�tulo do evento", "error");
+      toast.error("Informe o título do evento");
       return;
     }
     setDirection(1);
@@ -262,11 +272,11 @@ export const AdminEventForm: React.FC = () => {
         }
       }
 
-      addToast(isEdit ? "Evento atualizado!" : "Evento criado!", "success");
+      toast.success(isEdit ? "Evento atualizado!" : "Evento criado!");
       navigate("/admin/eventos");
     } catch (error) {
       console.error(error);
-      addToast("Erro ao salvar.", "error");
+      toast.error("Erro ao salvar.");
     } finally {
       setSaving(false);
     }
@@ -293,19 +303,19 @@ export const AdminEventForm: React.FC = () => {
   if (loading) return <div className="text-center p-10 text-zinc-400">Carregando evento...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto pb-20 animate-fadeIn">
+    <div className="admin-form-container">
       {isUploading && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="text-white text-center">
-            <div className="w-12 h-12 border-4 border-white/10 border-t-[var(--accent-primary)] rounded-full animate-spin mb-4 mx-auto"></div>
-            <p>Enviando arquivo...</p>
+        <div className="admin-modal-overlay">
+          <div className="flex flex-col items-center gap-4 text-white">
+            <div className="w-12 h-12 border-4 border-white/10 border-t-gold-400 rounded-full animate-spin"></div>
+            <p className="font-black uppercase tracking-widest text-[10px]">Enviando arquivo...</p>
           </div>
         </div>
       )}
 
       {/* Header */}
       <div className="admin-wizard-header">
-        <Button variant="ghost" onClick={() => navigate("/admin/eventos")} className="p-0 hover:bg-transparent text-zinc-400 hover:text-white transition-colors">
+        <Button variant="ghost" onClick={() => navigate("/admin/eventos")} className="p-0">
           <ArrowLeft size={24} />
         </Button>
         <div>
@@ -318,67 +328,18 @@ export const AdminEventForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Stepper - Inline Styles because Tailwind is missing */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'relative',
-        marginBottom: '3rem',
-        padding: '0 1rem',
-        width: '100%'
-      }}>
-
-        {/* Progress Bar Background */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: 0,
-          width: '100%',
-          height: '2px',
-          background: 'rgba(255, 255, 255, 0.1)',
-          zIndex: 0,
-          transform: 'translateY(-50%)'
-        }} />
-
-        {/* Progress Bar Fill */}
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: 0,
-          height: '2px',
-          background: 'var(--accent-primary)',
-          zIndex: 0,
-          transform: 'translateY(-50%)',
-          width: `${(currentStep / (STEPS.length - 1)) * 100}%`,
-          transition: 'width 0.3s ease'
-        }} />
+      {/* Stepper */}
+      <div className="admin-wizard-stepper">
+        <div className="admin-stepper-progress-bg"></div>
+        <div
+          className="admin-stepper-progress-fill"
+          style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+        ></div>
 
         {STEPS.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
           const Icon = step.icon;
-
-          let iconBg = '#18181b'; // zinc-900 like
-          let iconBorder = 'rgba(255,255,255,0.1)';
-          let iconColor = '#71717a'; // zinc-500
-          let textColor = '#71717a';
-          let boxShadow = 'none';
-          let scale = '1';
-
-          if (isActive) {
-            iconBg = 'var(--accent-primary)';
-            iconBorder = 'var(--accent-primary)';
-            iconColor = '#000000';
-            textColor = 'var(--accent-primary)';
-            boxShadow = '0 0 20px rgba(212,175,55,0.4)';
-            scale = '1.1';
-          } else if (isCompleted) {
-            iconBg = '#22c55e';
-            iconBorder = '#22c55e';
-            iconColor = '#000000';
-            textColor = '#22c55e';
-          }
 
           return (
             <div
@@ -389,41 +350,12 @@ export const AdminEventForm: React.FC = () => {
                   setCurrentStep(index);
                 }
               }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                position: 'relative',
-                zIndex: 10,
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-              }}
+              className={`admin-step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
             >
-              <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: iconBg,
-                border: `2px solid ${iconBorder}`,
-                color: iconColor,
-                boxShadow: boxShadow,
-                transform: `scale(${scale})`,
-                transition: 'all 0.3s ease',
-                marginBottom: '0.75rem'
-              }}>
-                {isCompleted ? <CheckCircle size={24} /> : <Icon size={24} />}
+              <div className="admin-step-icon">
+                {isCompleted ? <CheckCircle size={20} /> : <Icon size={20} />}
               </div>
-              <span style={{
-                fontSize: '0.875rem',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: textColor,
-                transition: 'color 0.3s'
-              }}>
+              <span className="admin-step-label">
                 {step.title}
               </span>
             </div>
@@ -444,484 +376,571 @@ export const AdminEventForm: React.FC = () => {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             style={{ width: "100%" }}
           >
-            {/* STEP 0: B�SICO */}
             {currentStep === 0 && (
-              <div className="card space-y-6">
-                <div className="form-group">
-                  <label className="form-label">Nome do Evento</label>
-                  <input
-                    value={formData.title}
-                    onChange={e => setFormData({ ...formData, title: e.target.value })}
-                    className="input w-full"
-                    placeholder={t("admin.eventForm.placeholders.title", "Ex: Concerto de Primavera")}
-                    required
-                  />
-                </div>
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <Input
+                      label="Nome do Evento"
+                      value={formData.title}
+                      onChange={e => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="Ex: Concerto de Primavera"
+                      required
+                    />
 
-                <div className="form-group">
-                  <label className="form-label">Equipamento Responsável</label>
-                  <select
-                    value={formData.equipamentoId}
-                    onChange={e => setFormData({ ...formData, equipamentoId: e.target.value })}
-                    required
-                    className="input w-full"
-                  >
-                    <option value="">Selecione o equipamento...</option>
-                    {equipamentos.map(e => (
-                      <option key={e.id} value={e.id}>{e.nome}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="form-group">
-                    <label className="form-label">Categoria</label>
-                    <select
-                      value={formData.categoryId}
-                      onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
-                      className="input w-full"
+                    <Select
+                      label="Equipamento Responsável"
+                      value={formData.equipamentoId}
+                      onChange={e => setFormData({ ...formData, equipamentoId: e.target.value })}
+                      required
                     >
-                      <option value="">Selecione...</option>
-                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
+                      <option value="">Selecione o equipamento...</option>
+                      {equipamentos.map(e => (
+                        <option key={e.id} value={e.id}>{e.nome}</option>
+                      ))}
+                    </Select>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <Select
+                        label="Categoria"
+                        value={formData.categoryId}
+                        onChange={e => setFormData({ ...formData, categoryId: e.target.value })}
+                      >
+                        <option value="">Selecione...</option>
+                        {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </Select>
+
+                      <Select
+                        label="Tipo de Evento"
+                        value={formData.type}
+                        onChange={e => setFormData({ ...formData, type: e.target.value })}
+                      >
+                        <option value="OTHER">Geral / Outro</option>
+                        <option value="WORKSHOP">Oficina / Workshop</option>
+                        <option value="EXHIBITION">Exposição</option>
+                        <option value="SHOW">Show / Apresentação</option>
+                        <option value="LECTURE">Palestra / Aula</option>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Tipo de Evento</label>
-                    <select
-                      value={formData.type}
-                      onChange={e => setFormData({ ...formData, type: e.target.value })}
-                      className="input w-full"
-                    >
-                      <option value="OTHER">Geral / Outro</option>
-                      <option value="WORKSHOP">Oficina / Workshop</option>
-                      <option value="EXHIBITION">Exposi��o</option>
-                      <option value="SHOW">Show / Apresenta��o</option>
-                      <option value="LECTURE">Palestra / Aula</option>
-                    </select>
-                  </div>
+                  <div className="space-y-6">
+                    <Card className="p-6 bg-white/[0.02] border-white/5 rounded-3xl space-y-6">
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${formData.status === 'PUBLISHED' ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-slate-500'}`}>
+                               <Globe size={20} />
+                            </div>
+                            <div>
+                               <h4 className="text-white font-bold text-sm">Visibilidade</h4>
+                               <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{formData.status === 'PUBLISHED' ? 'Público' : 'Rascunho'}</p>
+                            </div>
+                         </div>
+                         <Switch 
+                           checked={formData.status === 'PUBLISHED'} 
+                           onCheckedChange={(val) => setFormData({...formData, status: val ? 'PUBLISHED' : 'DRAFT'})} 
+                         />
+                      </div>
 
-                  {formData.type === 'WORKSHOP' && (
-                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 bg-[rgba(255,255,255,0.03)] p-4 rounded-xl border border-[rgba(255,255,255,0.05)]">
-                      <div className="form-group">
-                        <label className="form-label">Instrutor / Facilitador</label>
-                        <input
-                          placeholder="Nome do respons�vel..."
+                      <div className="space-y-4">
+                         <label className="text-sm font-bold text-slate-400">Formato do Evento</label>
+                         <div className="grid grid-cols-2 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setFormData({ ...formData, format: "PRESENTIAL" })}
+                              className={`p-4 rounded-2xl border transition-all text-left space-y-2 ${formData.format === 'PRESENTIAL' ? 'bg-gold-400/10 border-gold-400/50 text-gold-400' : 'bg-white/5 border-white/5 text-slate-500'}`}
+                            >
+                               <MapPin size={20} />
+                               <span className="block font-black uppercase tracking-widest text-[10px]">Presencial</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setFormData({ ...formData, format: "ONLINE" })}
+                              className={`p-4 rounded-2xl border transition-all text-left space-y-2 ${formData.format === 'ONLINE' ? 'bg-blue-400/10 border-blue-400/50 text-blue-400' : 'bg-white/5 border-white/5 text-slate-500'}`}
+                            >
+                               <Monitor size={20} />
+                               <span className="block font-black uppercase tracking-widest text-[10px]">Online</span>
+                            </button>
+                         </div>
+                      </div>
+                    </Card>
+                  </div>
+                </div>
+
+                {formData.type === 'WORKSHOP' && (
+                  <AnimateIn variant="fadeUp">
+                    <Card className="p-6 bg-blue-500/5 border-blue-500/20 rounded-3xl grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Input
+                          label="Instrutor / Facilitador"
+                          placeholder="Nome do responsável..."
                           value={formData.instructor}
                           onChange={e => setFormData({ ...formData, instructor: e.target.value })}
-                          className="input w-full"
                         />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Materiais Necess�rios</label>
-                        <input
+                        <Input
+                          label="Materiais Necessários"
                           placeholder="Ex: Tesoura, papel, notebook..."
                           value={formData.materials}
                           onChange={e => setFormData({ ...formData, materials: e.target.value })}
-                          className="input w-full"
                         />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="md:col-span-2 form-group">
-                    <label className="form-label">Capa do Evento</label>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <input
-                        type="text"
-                        className="input flex-1"
-                        placeholder="URL da imagem..."
-                        value={formData.coverImageUrl}
-                        onChange={e => setFormData({ ...formData, coverImageUrl: e.target.value })}
-                      />
-                      <label className="btn btn-secondary cursor-pointer">
-                        <Upload size={18} />
-                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", (url) => setFormData({ ...formData, coverImageUrl: url }))} />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {formData.coverImageUrl && (
-                  <div className="h-64 w-full rounded-xl overflow-hidden relative border border-[rgba(212,175,55,0.2)]">
-                    <img src={formData.coverImageUrl} className="w-full h-full object-cover" alt="Capa" />
-                  </div>
+                    </Card>
+                  </AnimateIn>
                 )}
 
-                <div className="form-group">
-                  <label className="form-label">Descri��o Completa</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                    rows={5}
-                    placeholder="Descreva os detalhes incr�veis do seu evento..."
-                    className="input w-full"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div
-                    onClick={() => setFormData({ ...formData, format: "PRESENTIAL" })}
-                    className={`relative p-6 rounded-xl border cursor-pointer transition-all group ${formData.format === 'PRESENTIAL'
-                      ? 'bg-[rgba(34,197,94,0.1)] border-[#22c55e] shadow-[0_0_20px_rgba(34,197,94,0.15)]'
-                      : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.05)]'
-                      }`}
-                  >
-                    <div className="absolute top-4 right-4">
-                      {formData.format === 'PRESENTIAL' ? <CheckCircle className="text-[#22c55e]" /> : <Circle style={{ color: "#475569" }} />}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                      <div className={`p-3 rounded-lg ${formData.format === 'PRESENTIAL' ? 'bg-[#22c55e]/20 text-[#22c55e]' : 'bg-gray-800 text-gray-400'}`}>
-                        <MapPin size={24} />
+                <div className="space-y-4">
+                   <div className="flex items-center justify-between">
+                      <label className="text-sm font-bold text-slate-400">Capa do Evento</label>
+                      {formData.coverImageUrl && (
+                        <Button variant="ghost" size="sm" onClick={() => setFormData({...formData, coverImageUrl: ''})} className="text-red-400 h-8">Remover</Button>
+                      )}
+                   </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                      <div 
+                        onClick={() => document.getElementById('cover-upload')?.click()}
+                        className="aspect-video rounded-3xl border-2 border-dashed border-white/10 hover:border-gold-400/50 bg-white/5 flex flex-col items-center justify-center gap-4 cursor-pointer group transition-all overflow-hidden relative"
+                      >
+                         {formData.coverImageUrl ? (
+                           <>
+                             <img src={formData.coverImageUrl} className="w-full h-full object-cover" alt="Capa" />
+                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                <Upload className="text-white" size={32} />
+                             </div>
+                           </>
+                         ) : (
+                           <>
+                             <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-gold-400 transition-colors">
+                                <ImageIcon size={24} />
+                             </div>
+                             <div className="text-center">
+                                <p className="text-white font-bold">Clique para subir a capa</p>
+                                <p className="text-slate-500 text-xs">PNG, JPG ou WebP (Máx. 5MB)</p>
+                             </div>
+                           </>
+                         )}
+                         <input id="cover-upload" type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", (url) => setFormData({ ...formData, coverImageUrl: url }))} />
                       </div>
-                      <div>
-                        <span className={`block font-bold text-lg ${formData.format === 'PRESENTIAL' ? 'text-[#f5e6d3]' : 'text-gray-400'}`}>Presencial</span>
-                        <p className="text-sm text-zinc-400">Em um local f�sico</p>
+                      
+                      <div className="space-y-6">
+                        <Textarea
+                          label="Descrição Completa"
+                          value={formData.description}
+                          onChange={e => setFormData({ ...formData, description: e.target.value })}
+                          rows={8}
+                          placeholder="Descreva os detalhes incríveis do seu evento..."
+                        />
                       </div>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => setFormData({ ...formData, format: "ONLINE" })}
-                    className={`relative p-6 rounded-xl border cursor-pointer transition-all group ${formData.format === 'ONLINE'
-                      ? 'bg-[rgba(168,85,247,0.1)] border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.15)]'
-                      : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.05)]'
-                      }`}
-                  >
-                    <div className="absolute top-4 right-4">
-                      {formData.format === 'ONLINE' ? <CheckCircle className="text-purple-500" /> : <Circle style={{ color: "#475569" }} />}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                      <div className={`p-3 rounded-lg ${formData.format === 'ONLINE' ? 'bg-purple-500/20 text-purple-500' : 'bg-gray-800 text-gray-400'}`}>
-                        <Monitor size={24} />
-                      </div>
-                      <div>
-                        <span className={`block font-bold text-lg ${formData.format === 'ONLINE' ? 'text-[#f5e6d3]' : 'text-gray-400'}`}>Online</span>
-                        <p className="text-sm text-zinc-400">Transmiss�o remota</p>
-                      </div>
-                    </div>
-                  </div>
+                   </div>
                 </div>
               </div>
             )}
-
-            {/* STEP 1: LOCAL & DATA */}
             {currentStep === 1 && (
-              <div className="card space-y-8 animate-fadeIn">
-                <div className="bg-[rgba(255,255,255,0.02)] p-6 rounded-2xl border border-white/5">
-                  <h3 className="text-sm font-bold text-gold uppercase tracking-widest mb-4 flex items-center gap-2">
-                    <Clock size={16} /> Hor�rios
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="form-group">
-                      <label className="form-label">Data e Hora de In�cio</label>
-                      <input type="datetime-local" value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })} required className="input w-full bg-zinc-900" />
+              <div className="space-y-8 animate-fadeIn">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] space-y-6">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-3">
+                       <div className="w-10 h-10 rounded-xl bg-gold-400/10 flex items-center justify-center text-gold-400">
+                          <Clock size={20} />
+                       </div>
+                       Horários do Evento
+                    </h3>
+                    <div className="space-y-6">
+                      <Input 
+                        label="Data e Hora de Início"
+                        type="datetime-local" 
+                        value={formData.startDate} 
+                        onChange={e => setFormData({ ...formData, startDate: e.target.value })} 
+                        required 
+                        className="bg-black/20"
+                      />
+                      <Input 
+                        label="Data e Hora de Término (Opcional)"
+                        type="datetime-local" 
+                        value={formData.endDate} 
+                        onChange={e => setFormData({ ...formData, endDate: e.target.value })} 
+                        className="bg-black/20"
+                      />
                     </div>
-                    <div className="form-group">
-                      <label className="form-label">Data e Hora de T�rmino (Opcional)</label>
-                      <input type="datetime-local" value={formData.endDate} onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="input w-full bg-zinc-900" />
-                    </div>
-                  </div>
+                  </Card>
+
+                  {formData.format === 'PRESENTIAL' ? (
+                    <Card className="p-8 bg-gold-400/5 border-gold-400/20 rounded-[32px] space-y-6">
+                       <h3 className="text-lg font-bold text-gold-400 flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-gold-400/20 flex items-center justify-center text-gold-400">
+                             <Layout size={20} />
+                          </div>
+                          Reserva de Espaço
+                       </h3>
+                       <div className="space-y-6">
+                         <Select
+                           label="Espaço Físico do Museu"
+                           value={formData.spaceId}
+                           onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
+                           className="bg-black/20"
+                         >
+                           <option value="">Selecione um espaço...</option>
+                           {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                         </Select>
+                         <div className="flex items-start gap-3 p-4 bg-black/20 rounded-2xl border border-gold-400/10">
+                           <Info size={18} className="text-gold-400 mt-0.5" />
+                           <p className="text-xs text-slate-400 leading-relaxed">
+                             Ao selecionar um espaço, o sistema verificará conflitos de agenda e reservará o local automaticamente para este evento.
+                           </p>
+                         </div>
+                       </div>
+                    </Card>
+                  ) : (
+                    <Card className="p-8 bg-blue-400/5 border-blue-400/20 rounded-[32px] space-y-6">
+                       <h3 className="text-lg font-bold text-blue-400 flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-400/20 flex items-center justify-center text-blue-400">
+                             <Monitor size={20} />
+                          </div>
+                          Transmissão Online
+                       </h3>
+                       <div className="space-y-6">
+                          <Select 
+                            label="Plataforma"
+                            value={formData.platform} 
+                            onChange={e => setFormData({ ...formData, platform: e.target.value })} 
+                            className="bg-black/20"
+                          >
+                            <option value="ZOOM">Zoom</option>
+                            <option value="MEET">Google Meet</option>
+                            <option value="YOUTUBE">YouTube Live</option>
+                          </Select>
+                          <Input 
+                            label="Link da Reunião / Live"
+                            value={formData.meetingLink} 
+                            onChange={e => setFormData({ ...formData, meetingLink: e.target.value })} 
+                            placeholder="https://..." 
+                            className="bg-black/20"
+                          />
+                       </div>
+                    </Card>
+                  )}
                 </div>
 
-                {formData.format === 'PRESENTIAL' ? (
-                  <div className="space-y-6">
-                    <div className="bg-[rgba(212,175,55,0.05)] p-6 rounded-2xl border border-[var(--accent-primary)]/20">
-                      <div className="form-group">
-                        <label className="form-label flex items-center gap-2">
-                          Reservar Espa�o F�sico
-                        </label>
-                        <select
-                          value={formData.spaceId}
-                          onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
-                          className="input w-full bg-zinc-900 focus:border-gold"
-                        >
-                          <option value="">Selecione um espa�o...</option>
-                          {spaces.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                        </select>
-                        <div className="flex items-start gap-2 mt-3 p-3 bg-black/20 rounded-lg">
-                          <CheckCircle size={14} className="text-gold mt-0.5" />
-                          <p className="text-xs text-[var(--accent-primary)]/80">O sistema bloquear� automaticamente o hor�rio neste espa�o para evitar conflitos com outros eventos.</p>
-                        </div>
-                      </div>
+                {formData.format === 'PRESENTIAL' && (
+                  <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] space-y-8">
+                    <h3 className="text-lg font-bold text-white flex items-center gap-3">
+                       <MapPin className="text-gold-400" size={20} />
+                       Localização Detalhada
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                       <div className="lg:col-span-2">
+                         <Input 
+                           label="Nome do Local"
+                           placeholder="Ex: Auditório Principal, Sala de Cinema..." 
+                           value={formData.location} 
+                           onChange={e => setFormData({ ...formData, location: e.target.value })} 
+                           className="bg-black/20"
+                         />
+                       </div>
+                       <Input
+                         label="CEP"
+                         placeholder="00000-000"
+                         value={formData.zipCode}
+                         onChange={e => {
+                           const v = e.target.value.replace(/\D/g, '');
+                           setFormData({ ...formData, zipCode: v });
+                           if (v.length === 8) refreshGeocoding(v);
+                         }}
+                         maxLength={8}
+                         className="bg-black/20"
+                       />
+                       <div className="lg:col-span-2">
+                         <Input label="Endereço" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="bg-black/20" />
+                       </div>
+                       <div className="grid grid-cols-2 gap-4">
+                         <Input label="Número" value={formData.number} onChange={e => setFormData({ ...formData, number: e.target.value })} className="bg-black/20" />
+                         <Input label="UF" value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} className="bg-black/20" />
+                       </div>
+                       <Input label="Cidade" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className="bg-black/20" />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="form-group md:col-span-2">
-                        <label className="form-label">Nome do Local de Exibi��o</label>
-                        <input placeholder="Ex: Audit�rio Principal, Sala de Cinema..." value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} className="input w-full" />
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">CEP</label>
-                        <input
-                          placeholder="00000-000"
-                          value={formData.zipCode}
-                          onChange={e => {
-                            const v = e.target.value.replace(/\D/g, '');
-                            setFormData({ ...formData, zipCode: v });
-                            if (v.length === 8) refreshGeocoding(v);
-                          }}
-                          maxLength={8}
-                          className="input w-full"
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Endere�o</label>
-                        <input value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="input w-full" />
-                      </div>
-
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div className="form-group">
-                          <label className="form-label">N�mero</label>
-                          <input value={formData.number} onChange={e => setFormData({ ...formData, number: e.target.value })} className="input w-full" />
-                        </div>
-                        <div className="form-group">
-                          <label className="form-label">UF</label>
-                          <input value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} className="input w-full" />
-                        </div>
-                      </div>
-
-                      <div className="form-group">
-                        <label className="form-label">Cidade</label>
-                        <input value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className="input w-full" />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="bg-purple-500/5 p-8 rounded-2xl border border-purple-500/20 space-y-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Monitor style={{ color: "#a78bfa" }} />
-                      <h3 className="font-bold text-white">Configura��o da Transmiss�o</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="form-group">
-                        <label className="form-label">Plataforma</label>
-                        <select value={formData.platform} onChange={e => setFormData({ ...formData, platform: e.target.value })} className="input w-full bg-zinc-900 border-purple-500/30">
-                          <option value="ZOOM">Zoom</option>
-                          <option value="MEET">Google Meet</option>
-                          <option value="YOUTUBE">YouTube Live</option>
-                        </select>
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Link da Reuni�o / Live</label>
-                        <input value={formData.meetingLink} onChange={e => setFormData({ ...formData, meetingLink: e.target.value })} placeholder="https://..." className="input w-full bg-zinc-900 border-purple-500/30" />
-                      </div>
-                    </div>
-                  </div>
+                  </Card>
                 )}
               </div>
             )}
 
-            {/* STEP 2: INGRESSOS */}
             {currentStep === 2 && (
-              <div className="card space-y-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="card-title">Lotes de Ingressos</h3>
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
+              <div className="space-y-8 animate-fadeIn">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                       <Ticket className="text-gold-400" size={24} />
+                       Lotes de Ingressos
+                    </h3>
+                    <p className="text-slate-500 text-sm">Configure os valores e a quantidade de ingressos disponíveis.</p>
+                  </div>
+                  <Button
                     onClick={() => setTickets([...tickets, { name: 'Novo Lote', type: 'FREE', price: 0, quantity: 100 }])}
+                    className="rounded-2xl bg-white/5 border-white/10 hover:bg-white/10 text-white"
+                    leftIcon={<Plus size={18} />}
                   >
-                    <Plus size={16} /> Adicionar
-                  </button>
+                    Adicionar Lote
+                  </Button>
                 </div>
 
-                {tickets.length === 0 ? (
-                  <div className="text-center py-12 border border-dashed border-[rgba(255,255,255,0.1)] rounded-xl bg-[rgba(255,255,255,0.02)]">
-                    <Ticket className="mx-auto text-zinc-300 mb-2" size={32} />
-                    <p style={{ color: "#64748b" }}>Nenhum ingresso criado.</p>
-                  </div>
-                ) : (
-                  <div className="grid gap-4">
-                    {tickets.map((ticket, idx) => (
-                      <div key={idx} className="bg-[rgba(255,255,255,0.03)] p-6 rounded-xl border border-[rgba(255,255,255,0.05)] flex gap-4 items-start">
-                        <div className="flex-1 gap-4 grid">
-                          <div className="form-group">
-                            <label className="form-label">Nome do Lote</label>
-                            <input
-                              value={ticket.name}
-                              onChange={e => {
-                                const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
-                              }}
-                              className="input w-full"
-                            />
-                          </div>
-                          <div className="card-grid">
-                            <div className="form-group">
-                              <label className="form-label">Tipo</label>
-                              <select
+                <div className="grid grid-cols-1 gap-6">
+                  <AnimatePresence mode="popLayout">
+                    {tickets.length === 0 ? (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                        <Card className="p-12 text-center border-white/5 bg-black/20 rounded-[32px] border-dashed">
+                          <Ticket className="mx-auto text-slate-700 mb-4" size={48} />
+                          <p className="text-slate-500">Nenhum ingresso criado até o momento.</p>
+                        </Card>
+                      </motion.div>
+                    ) : (
+                      tickets.map((ticket, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 20 }}
+                        >
+                          <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] relative group hover:border-gold-400/30 transition-all">
+                            <button
+                              type="button"
+                              onClick={() => { const n = [...tickets]; n.splice(idx, 1); setTickets(n); }}
+                              className="absolute top-6 right-6 p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+                              <div className="lg:col-span-1">
+                                <Input
+                                  label="Nome do Lote"
+                                  value={ticket.name}
+                                  onChange={e => {
+                                    const n = [...tickets]; n[idx].name = e.target.value; setTickets(n);
+                                  }}
+                                  className="bg-black/20"
+                                />
+                              </div>
+                              <Select
+                                label="Tipo"
                                 value={ticket.type}
                                 onChange={e => {
                                   const n = [...tickets]; n[idx].type = e.target.value as any; setTickets(n);
                                 }}
-                                className="input w-full"
+                                className="bg-black/20"
                               >
                                 <option value="FREE">Gratuito</option>
                                 <option value="PAID">Pago</option>
-                              </select>
-                            </div>
-                            <div className="form-group">
-                              <label className="form-label">Quantidade</label>
-                              <input
+                              </Select>
+                              <Input
+                                label="Quantidade"
                                 type="number"
                                 value={ticket.quantity}
                                 onChange={e => {
                                   const n = [...tickets]; n[idx].quantity = Number(e.target.value); setTickets(n);
                                 }}
-                                className="input w-full"
+                                className="bg-black/20"
                               />
-                            </div>
-                            {ticket.type === 'PAID' && (
-                              <div className="form-group">
-                                <label className="form-label">Pre�o (R$)</label>
-                                <input
+                              {ticket.type === 'PAID' && (
+                                <Input
+                                  label="Preço (R$)"
                                   type="number"
                                   value={ticket.price}
                                   onChange={e => {
                                     const n = [...tickets]; n[idx].price = Number(e.target.value); setTickets(n);
                                   }}
-                                  className="input w-full"
+                                  className="bg-black/20"
                                 />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => { const n = [...tickets]; n.splice(idx, 1); setTickets(n); }}
-                          className="mt-8 p-2 text-red-400 hover:bg-red-500/10 rounded transition-colors"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                              )}
+                            </div>
+                          </Card>
+                        </motion.div>
+                      ))
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             )}
 
-            {/* STEP 3: DIVULGA��O & REVIS�O */}
             {currentStep === 3 && (
-              <div className="space-y-6">
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
-                  <h3 className="card-title mb-6">M�dia & Divulga��o</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="form-group">
-                      <label className="form-label">V�deo de Divulga��o (YouTube)</label>
-                      <input
-                        value={formData.videoUrl}
-                        onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
-                        className="input w-full"
-                      />
-                    </div>
-                    <div>
-                      <label className="form-label">�udio Guia (MP3)</label>
-                      <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <input
-                          type="text"
-                          className="input flex-1"
-                          value={formData.audioUrl}
-                          onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
-                          placeholder="URL do a�dio..."
+              <div className="space-y-8 animate-fadeIn">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="space-y-8">
+                    <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] space-y-6">
+                      <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                         <PlayCircle className="text-gold-400" size={24} />
+                         Mídia & Divulgação
+                      </h3>
+                      <div className="space-y-6">
+                        <Input
+                          label="Vídeo de Divulgação (Link YouTube)"
+                          value={formData.videoUrl}
+                          onChange={e => setFormData({ ...formData, videoUrl: e.target.value })}
+                          placeholder="https://youtube.com/watch?v=..."
+                          className="bg-black/20"
                         />
-                        <label className="btn btn-secondary cursor-pointer">
-                          <Upload size={18} />
-                          <input type="file" className="hidden" accept="audio/*" onChange={(e) => handleUpload(e, "audio", (url) => setFormData({ ...formData, audioUrl: url }))} />
-                        </label>
+                        
+                        <div className="space-y-2">
+                           <label className="text-sm font-bold text-slate-400">Áudio Guia (MP3)</label>
+                           <div className="flex gap-2">
+                             <Input
+                               value={formData.audioUrl}
+                               onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
+                               placeholder="URL do arquivo de áudio..."
+                               className="bg-black/20 flex-1"
+                             />
+                             <Button 
+                               variant="glass" 
+                               className="rounded-2xl h-12 w-12 p-0 border-white/5"
+                               onClick={() => document.getElementById('audio-upload')?.click()}
+                             >
+                               <Upload size={20} />
+                               <input id="audio-upload" type="file" className="hidden" accept="audio/*" onChange={(e) => handleUpload(e, "audio", (url) => setFormData({ ...formData, audioUrl: url }))} />
+                             </Button>
+                           </div>
+                        </div>
                       </div>
-                    </div>
+                    </Card>
+
+                    <Card className="p-8 bg-gold-400/5 border-gold-400/20 rounded-[32px] space-y-6">
+                       <h3 className="text-xl font-bold text-gold-400 flex items-center gap-3">
+                          <Target size={24} />
+                          Controle de Visibilidade
+                       </h3>
+                       <div className="space-y-4">
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
+                            className={`w-full p-6 rounded-2xl border transition-all flex items-center gap-4 text-left ${formData.visibility === 'PUBLIC' ? 'bg-gold-400/10 border-gold-400/50 text-gold-400' : 'bg-white/5 border-white/5 text-slate-500'}`}
+                          >
+                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${formData.visibility === 'PUBLIC' ? 'bg-gold-400/20' : 'bg-white/5'}`}>
+                                <Globe size={24} />
+                             </div>
+                             <div>
+                                <h4 className="font-bold text-white">Evento Público</h4>
+                                <p className="text-xs text-slate-500">Visível para todos os visitantes no App.</p>
+                             </div>
+                             <div className="ml-auto">
+                                {formData.visibility === 'PUBLIC' ? <CheckCircle2 size={24} /> : <Circle size={24} className="opacity-20" />}
+                             </div>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, visibility: "PRIVATE" })}
+                            className={`w-full p-6 rounded-2xl border transition-all flex items-center gap-4 text-left ${formData.visibility === 'PRIVATE' ? 'bg-slate-500/10 border-slate-500/50 text-slate-500' : 'bg-white/5 border-white/5 text-slate-500'}`}
+                          >
+                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${formData.visibility === 'PRIVATE' ? 'bg-slate-500/20' : 'bg-white/5'}`}>
+                                <Eye size={24} />
+                             </div>
+                             <div>
+                                <h4 className="font-bold text-white">Apenas com Link</h4>
+                                <p className="text-xs text-slate-500">Oculto na listagem, acessível via link direto.</p>
+                             </div>
+                             <div className="ml-auto">
+                                {formData.visibility === 'PRIVATE' ? <CheckCircle2 size={24} /> : <Circle size={24} className="opacity-20" />}
+                             </div>
+                          </button>
+                       </div>
+                    </Card>
                   </div>
-                </div>
 
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
-                  <h3 className="card-title mb-6">Visibilidade e Status</h3>
-                  <div className="flex flex-col gap-4">
-                    {/* Visibility */}
-                    <div className="flex gap-4">
-                      <button
-                        onClick={() => setFormData({ ...formData, visibility: "PUBLIC" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PUBLIC" ? 'bg-[var(--accent-primary)]/10 border-blue-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
-                      >
-                        <Globe size={24} className={formData.visibility === "PUBLIC" ? 'text-[var(--accent-primary)]' : 'text-zinc-400'} />
-                        <div>
-                          <div className="font-bold text-[#f5e6d3]">P�blico</div>
-                          <div className="text-xs text-zinc-400">Vis�vel no app</div>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => setFormData({ ...formData, visibility: "PRIVATE" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.visibility === "PRIVATE" ? 'bg-amber-500/10 border-amber-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
-                      >
-                        <CheckCircle size={24} className={formData.visibility === "PRIVATE" ? 'text-amber-500' : 'text-zinc-400'} />
-                        <div>
-                          <div className="font-bold text-[#f5e6d3]">Privado</div>
-                          <div className="text-xs text-zinc-400">Apenas link</div>
-                        </div>
-                      </button>
-                    </div>
+                  <div className="space-y-8">
+                     <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] space-y-6">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                           <Sparkles className="text-gold-400" size={24} />
+                           Certificado Digital
+                        </h3>
+                        <p className="text-slate-500 text-sm">Gere certificados automáticos para os participantes do evento.</p>
+                        
+                        <div className="space-y-6">
+                           <div className="flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/5">
+                              <div className="space-y-1">
+                                 <h4 className="text-white font-bold text-sm">Exigir Pesquisa</h4>
+                                 <p className="text-xs text-slate-500">Libera o certificado após responder a pesquisa.</p>
+                              </div>
+                              <Switch 
+                                checked={formData.certificateRequiresSurvey} 
+                                onCheckedChange={(val) => setFormData({...formData, certificateRequiresSurvey: val})} 
+                              />
+                           </div>
 
-                    {/* Status Toggle */}
-                    <div className="flex gap-4">
-                      <button
-                        onClick={() => setFormData({ ...formData, status: "DRAFT" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "DRAFT" ? 'bg-zinc-500/10 border-zinc-500' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
-                      >
-                        <div className={`w-3 h-3 rounded-full ${formData.status === "DRAFT" ? 'bg-zinc-500' : 'bg-transparent border-2 border-zinc-600'}`}></div>
-                        <div>
-                          <div className="font-bold text-[#f5e6d3]">{t("admin.eventForm.values.draft", "Rascunho")}</div>
-                          <div className="text-xs text-zinc-400">{t("admin.eventForm.values.draftDesc", "Oculto do público")}</div>
+                           <Input
+                             label="Tempo Mínimo de Permanência (Minutos)"
+                             type="number"
+                             value={formData.minMinutesForCertificate}
+                             onChange={e => setFormData({ ...formData, minMinutesForCertificate: e.target.value })}
+                             placeholder="Ex: 60"
+                             className="bg-black/20"
+                           />
+                           
+                           <div className="space-y-2">
+                             <label className="text-sm font-bold text-slate-400">Fundo do Certificado</label>
+                             <div className="flex gap-2">
+                               <Input
+                                 value={formData.certificateBackgroundUrl}
+                                 onChange={e => setFormData({ ...formData, certificateBackgroundUrl: e.target.value })}
+                                 placeholder="URL da imagem de fundo..."
+                                 className="bg-black/20 flex-1"
+                               />
+                               <Button 
+                                 variant="glass" 
+                                 className="rounded-2xl h-12 w-12 p-0 border-white/5"
+                                 onClick={() => document.getElementById('cert-upload')?.click()}
+                               >
+                                 <Upload size={20} />
+                                 <input id="cert-upload" type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, "image", (url) => setFormData({ ...formData, certificateBackgroundUrl: url }))} />
+                               </Button>
+                             </div>
+                           </div>
                         </div>
-                      </button>
-                      <button
-                        onClick={() => setFormData({ ...formData, status: "PUBLISHED" })}
-                        className={`flex-1 p-4 rounded-xl border text-left flex items-center gap-3 transition-all ${formData.status === "PUBLISHED" ? 'bg-[#22c55e]/10 border-[#22c55e]' : 'bg-[rgba(255,255,255,0.03)] border-[rgba(255,255,255,0.05)]'}`}
-                      >
-                        <CheckCircle size={24} className={formData.status === "PUBLISHED" ? 'text-[#22c55e]' : 'text-zinc-200'} />
-                        <div>
-                          <div className="font-bold text-[#f5e6d3]">Publicado</div>
-                          <div className="text-xs text-zinc-400">Vis�vel imediatamente</div>
+                     </Card>
+
+                     <Card className="p-8 bg-blue-500/5 border-blue-500/20 rounded-[32px] flex items-center gap-6">
+                        <div className="w-20 h-20 bg-white rounded-2xl p-2 shrink-0">
+                           <QRCodeCanvas value={id ? `https://msv.app/e/${id}` : 'https://msv.app'} size={64} style={{ width: '100%', height: '100%' }} />
                         </div>
-                      </button>
-                    </div>
+                        <div>
+                           <h4 className="font-bold text-white mb-1">QR Code de Check-in</h4>
+                           <p className="text-xs text-slate-400 leading-relaxed">
+                              Este QR Code será usado pelos visitantes para validar a entrada no evento e registrar presença.
+                           </p>
+                        </div>
+                     </Card>
                   </div>
                 </div>
               </div>
             )}
-
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Footer Navigation */}
-      <div className="flex justify-between mt-8 pt-6 border-t border-[rgba(255,255,255,0.1)]">
-        <Button
-          variant="ghost"
-          className="btn-ghost"
-          onClick={currentStep === 0 ? () => navigate("/admin/eventos") : prevStep}
-        >
-          {currentStep === 0 ? "Cancelar" : "Voltar"}
-        </Button>
+      <div className="admin-wizard-footer">
+        <div className="admin-wizard-footer-inner">
+          <Button
+            variant="ghost"
+            onClick={currentStep === 0 ? () => navigate("/admin/eventos") : prevStep}
+            className="rounded-2xl h-14 px-8 text-slate-400 hover:text-white"
+          >
+            {currentStep === 0 ? "Cancelar" : "Voltar"}
+          </Button>
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          {currentStep === STEPS.length - 1 ? (
-            <Button
-              onClick={handleSubmit}
-              isLoading={saving}
-              className="btn btn-primary px-8"
-              leftIcon={<Save size={18} />}
-            >
-              Salvar Evento
-            </Button>
-          ) : (
-            <Button
-              onClick={nextStep}
-              className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-              rightIcon={<ChevronRight size={18} />}
-            >
-              Pr�ximo
-            </Button>
-          )}
+          <div className="flex gap-4">
+            {currentStep === STEPS.length - 1 ? (
+              <Button
+                onClick={handleSubmit}
+                isLoading={saving}
+                className="rounded-2xl h-14 px-10 bg-gold-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-gold-400/20"
+                leftIcon={<Save size={20} />}
+              >
+                Salvar Evento
+              </Button>
+            ) : (
+              <Button
+                onClick={nextStep}
+                className="rounded-2xl h-14 px-10 bg-gold-400 text-slate-950 font-black uppercase tracking-widest shadow-xl shadow-gold-400/20"
+                rightIcon={<ChevronRight size={20} />}
+              >
+                Próximo
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

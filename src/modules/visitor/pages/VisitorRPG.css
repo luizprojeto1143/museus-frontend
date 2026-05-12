@@ -68,6 +68,36 @@
   filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
 }
 
+.rpg-avatar-scanner {
+  position: absolute;
+  inset: -20px;
+  border-top: 2px solid var(--accent-primary);
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: scan 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+.rpg-hologram-effect {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    transparent,
+    rgba(212, 175, 55, 0.05) 2px,
+    transparent 4px
+  );
+  border-radius: 50%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@keyframes scan {
+  0% { transform: scale(0.8) translateY(-10%); opacity: 0; }
+  50% { transform: scale(1.1) translateY(10%); opacity: 0.5; }
+  100% { transform: scale(0.8) translateY(-10%); opacity: 0; }
+}
+
 .rpg-name {
   font-family: var(--fd);
   font-size: 32px;

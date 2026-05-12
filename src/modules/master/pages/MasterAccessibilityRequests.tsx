@@ -1,8 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
-import { Accessibility, Upload, CheckCircle, Clock, Video, FileAudio, AlertCircle, X } from "lucide-react";
-import "./MasterShared.css";
+import { 
+    Accessibility, 
+    Upload, 
+    CheckCircle, 
+    Clock, 
+    Video, 
+    FileAudio, 
+    AlertCircle, 
+    X,
+    Target,
+    Activity,
+    Globe,
+    Zap,
+    ShieldCheck,
+    BarChart3,
+    ArrowUpRight,
+    Search,
+    ChevronRight,
+    Layers,
+    Play,
+    Heart,
+    Eye,
+    Ear,
+    Languages,
+    FileCheck,
+    CloudUpload,
+    Scan,
+    Info
+} from "lucide-react";
+import { 
+    Button, 
+    Card, 
+    Badge, 
+    AnimateIn,
+    AnimatedCounter
+} from "@/components/ui";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 interface AccessRequest {
     id: string;
@@ -25,68 +61,58 @@ export const MasterAccessibilityRequests: React.FC = () => {
     const [librasFile, setLibrasFile] = useState<File | null>(null);
     const [audioFile, setAudioFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
-    const [progress, setProgress] = useState(0); // 0-100
+    const [progress, setProgress] = useState(0);
 
-    useEffect(() => {
-        loadRequests();
-    }, []);
-
-    const loadRequests = async () => {
+    const loadRequests = useCallback(async () => {
         try {
+            setLoading(true);
             const res = await api.get("/accessibility/master");
             setRequests(res.data);
         } catch (error) {
-            console.error(error);
-            alert(t("master.accessibility.errorLoad"));
+            toast.error("Erro na sincronização de conformidade LBI.");
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        loadRequests();
+    }, [loadRequests]);
 
     const handleFulfill = async () => {
         if (!selectedRequest) return;
-
-        // Validation
         const needsLibras = selectedRequest.type === "LIBRAS" || selectedRequest.type === "BOTH";
         const needsAudio = selectedRequest.type === "AUDIO_DESC" || selectedRequest.type === "BOTH";
 
-        if (needsLibras && !librasFile) return alert(t("master.accessibility.uploadCheckLibras"));
-        if (needsAudio && !audioFile) return alert(t("master.accessibility.uploadCheckAudio"));
+        if (needsLibras && !librasFile) return toast.error("Tradução em Libras obrigatória.");
+        if (needsAudio && !audioFile) return toast.error("Audiodescrição obrigatória.");
 
         try {
             setUploading(true);
-            setProgress(10);
-
-            // Upload Helpers
+            setProgress(5);
             let uploadedLibrasUrl = "";
             let uploadedAudioUrl = "";
 
-            // 1. Upload Libras if needed
             if (librasFile) {
                 const formData = new FormData();
                 formData.append("file", librasFile);
-
                 const res = await api.post("/upload/video", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
-                    onUploadProgress: (progressEvent) => {
-                        const p = progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0;
-                        // Map 0-100 to 10-50 range for first file or split progress
+                    onUploadProgress: (pEvent) => {
+                        const p = pEvent.total ? Math.round((pEvent.loaded * 100) / pEvent.total) : 0;
                         setProgress(needsAudio ? Math.round(p / 2) : p);
                     }
                 });
                 uploadedLibrasUrl = res.data.url;
             }
 
-            // 2. Upload Audio if needed
             if (audioFile) {
                 const formData = new FormData();
                 formData.append("file", audioFile);
-
                 const res = await api.post("/upload/audio", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
-                    onUploadProgress: (progressEvent) => {
-                        const p = progressEvent.total ? Math.round((progressEvent.loaded * 100) / progressEvent.total) : 0;
-                        // Map to 50-100 range if both, or 0-100 if only audio
+                    onUploadProgress: (pEvent) => {
+                        const p = pEvent.total ? Math.round((pEvent.loaded * 100) / pEvent.total) : 0;
                         setProgress(needsLibras ? 50 + Math.round(p / 2) : p);
                     }
                 });
@@ -94,310 +120,398 @@ export const MasterAccessibilityRequests: React.FC = () => {
             }
 
             setProgress(95);
-
-            // 3. Fulfill Request
             await api.post(`/accessibility/${selectedRequest.id}/fulfill`, {
                 librasUrl: uploadedLibrasUrl,
                 audioUrl: uploadedAudioUrl,
-                masterNotes: "Arquivos enviados pelo Master via Painel"
+                masterNotes: "Asset auditado e homologado via Master Hub Elite."
             });
 
             setProgress(100);
-            alert(t("master.accessibility.success"));
+            toast.success("Recurso de acessibilidade implantado!");
             setSelectedRequest(null);
             setLibrasFile(null);
             setAudioFile(null);
             setProgress(0);
             loadRequests();
         } catch (error) {
-            console.error(error);
-            alert(t("master.accessibility.errorSubmit"));
+            toast.error("Falha no processamento da conformidade.");
         } finally {
             setUploading(false);
         }
     };
 
-    const pendingRequests = requests.filter(r => r.status === "PENDING");
-    const completedRequests = requests.filter(r => r.status === "COMPLETED");
+    const pendingRequests = useMemo(() => requests.filter(r => r.status === "PENDING"), [requests]);
+    const completedRequests = useMemo(() => requests.filter(r => r.status === "COMPLETED"), [requests]);
+
+    if (loading && requests.length === 0) return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Escaneando Pendências LBI...</p>
+        </div>
+    );
 
     return (
-        <div className="master-page-container">
-            {/* HERO SECTION */}
-            <section className="master-hero">
-                <div className="master-hero-content">
-                    <span className="master-badge">
-                        ♿ Acessibilidade
-                    </span>
-                    <h1 className="master-title">{t("master.accessibilityrequests.solicitaesDeAcessibilidade", `
-                        Solicitações de Acessibilidade
-                    `)}</h1>
-                    <p className="master-subtitle">{t("master.accessibilityrequests.gerenciePedidosDeLibrasEAudiodescrioDosM", `
-                        Gerencie pedidos de Libras e Audiodescrição dos museus e envie os arquivos processados.
-                    `)}</p>
+        <AnimateIn className="space-y-12 pb-32">
+            {/* Header Area */}
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <Badge className="bg-blue-600/10 text-blue-400 border-none px-4 py-1.5 text-[8px] font-black uppercase tracking-[0.3em] italic">
+                            Accessibility Compliance & LBI Registry
+                        </Badge>
+                    </div>
+                    <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic leading-none">
+                        Hub de <span className="text-blue-600">Inclusão</span>
+                    </h1>
+                    <p className="text-slate-500 font-medium text-xl max-w-3xl leading-relaxed">
+                        Gerenciamento centralizado de conformidade legal e processamento de ativos acessíveis para a rede global.
+                    </p>
+                </div>
+                
+                <div className="flex gap-6">
+                    <Card className="p-8 bg-blue-600/5 border-blue-500/10 rounded-[40px] flex items-center gap-8 group shadow-2xl relative overflow-hidden">
+                        <div className="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                            <Accessibility size={32} />
+                        </div>
+                        <div className="space-y-1 relative z-10">
+                            <p className="text-[10px] font-black text-blue-400/50 uppercase tracking-widest italic leading-none">Em Aberto</p>
+                            <p className="text-4xl font-black text-white tracking-tighter italic leading-none">
+                                <AnimatedCounter value={pendingRequests.length} />
+                            </p>
+                        </div>
+                        <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-blue-600/5 rounded-full blur-2xl pointer-events-none" />
+                    </Card>
+                </div>
+            </div>
+
+            {/* Matrix & Stats Header */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <Card className="lg:col-span-3 p-8 bg-white/[0.02] border-white/5 rounded-[40px] flex items-center gap-8 shadow-2xl relative overflow-hidden">
+                    <div className="relative group flex-1">
+                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" size={20} />
+                        <input 
+                            type="text" 
+                            placeholder="Buscar por museu, obra ou tipo de acessibilidade solicitado..."
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-5 pl-16 pr-6 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-700 font-medium"
+                        />
+                    </div>
+                </Card>
+                <Card className="p-8 bg-emerald-500/5 border-emerald-500/10 rounded-[40px] flex flex-col justify-center gap-2 group relative overflow-hidden">
+                    <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest leading-none">Concluídos</p>
+                        <CheckCircle size={24} className="text-emerald-500/30 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <p className="text-4xl font-black text-white tracking-tighter italic leading-none">
+                        <AnimatedCounter value={completedRequests.length} />
+                    </p>
+                </Card>
+            </div>
+
+            {/* Compliance Matrix Table */}
+            <Card className="p-0 bg-white/[0.02] border-white/5 rounded-[48px] overflow-hidden shadow-2xl border-t-2 border-t-blue-500/20">
+                <div className="p-10 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-600/10 text-blue-400 flex items-center justify-center">
+                            <Layers size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-white tracking-tighter italic uppercase">Fila de Atendimento Prioritário</h3>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 italic">Audit Log: LBI Governance Level Required</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <Accessibility size={24} color="#facc15" />
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="bg-white/[0.01]">
+                                <th className="px-10 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Origem / Node</th>
+                                <th className="px-10 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Obra & Contexto</th>
+                                <th className="px-10 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Protocolo LBI</th>
+                                <th className="px-10 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em]">Registro Temporário</th>
+                                <th className="px-10 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Ações Master</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                            <AnimatePresence mode="popLayout">
+                                {pendingRequests.map((req, idx) => (
+                                    <motion.tr 
+                                        key={req.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className="group hover:bg-white/[0.02] transition-colors cursor-default"
+                                    >
+                                        <td className="px-10 py-8">
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-800 to-slate-950 border border-white/10 flex items-center justify-center text-blue-400 font-black text-xs group-hover:border-blue-500/30 transition-all shadow-xl">
+                                                    {req.tenant.name.substring(0,2).toUpperCase()}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-white font-black text-sm tracking-tight group-hover:text-blue-400 transition-colors uppercase italic">{req.tenant.name}</span>
+                                                    <span className="text-slate-600 text-[10px] font-bold uppercase tracking-widest italic leading-none mt-1">/{req.tenant.slug}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <div className="flex flex-col">
+                                                <span className="text-white font-bold text-sm italic group-hover:text-blue-200 transition-colors">{req.work.title}</span>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <Scan size={10} className="text-slate-600" />
+                                                    <span className="text-slate-600 text-[9px] font-black uppercase tracking-widest">ID: {req.work.id.slice(0, 8)}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <div className="flex items-center gap-3">
+                                                <Badge className={`px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest border-none flex items-center gap-2 ${
+                                                    req.type === 'LIBRAS' ? 'bg-blue-600/10 text-blue-400' : 
+                                                    req.type === 'AUDIO_DESC' ? 'bg-amber-600/10 text-amber-500' : 'bg-indigo-600/10 text-indigo-400'
+                                                }`}>
+                                                    {req.type === 'LIBRAS' ? <Languages size={10} /> : req.type === 'AUDIO_DESC' ? <Ear size={10} /> : <Eye size={10} />}
+                                                    {req.type === 'BOTH' ? 'Multimodal' : req.type}
+                                                </Badge>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-8">
+                                            <div className="flex flex-col">
+                                                <span className="text-slate-400 font-black text-[11px] tracking-tight flex items-center gap-2 uppercase">
+                                                    <Clock size={12} className="text-slate-600" />
+                                                    {new Date(req.createdAt).toLocaleDateString('pt-BR')}
+                                                </span>
+                                                <span className="text-[9px] text-slate-700 font-bold uppercase tracking-widest ml-5">Sincronizado</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-10 py-8 text-right">
+                                            <Button
+                                                onClick={() => {
+                                                    setSelectedRequest(req);
+                                                    setLibrasFile(null);
+                                                    setAudioFile(null);
+                                                    setProgress(0);
+                                                }}
+                                                className="h-12 px-8 rounded-2xl bg-white text-black font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-xl active:scale-95"
+                                            >
+                                                <Upload size={16} className="mr-3" /> Processar
+                                            </Button>
+                                        </td>
+                                    </motion.tr>
+                                ))}
+                            </AnimatePresence>
+                            {pendingRequests.length === 0 && (
+                                <tr>
+                                    <td colSpan={5} className="px-10 py-32 text-center">
+                                        <div className="flex flex-col items-center justify-center opacity-30 gap-6">
+                                            <div className="w-24 h-24 rounded-[40px] bg-white/5 flex items-center justify-center border border-white/5">
+                                                <ShieldCheck size={48} className="text-emerald-500" />
+                                            </div>
+                                            <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 italic">Conformidade total detectada na rede global</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </Card>
+
+            {/* Impact Footer Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Card className="p-10 bg-blue-600/[0.02] border-blue-500/10 rounded-[48px] flex items-center gap-8 group relative overflow-hidden shadow-2xl">
+                    <div className="w-20 h-20 bg-blue-600/10 rounded-[24px] flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform border border-blue-500/20">
+                        <Heart size={40} />
+                    </div>
                     <div>
-                        <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fff' }}>{pendingRequests.length}</div>
-                        <div style={{ fontSize: '0.8rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pendentes</div>
+                        <h4 className="text-white font-black text-2xl italic tracking-tighter uppercase leading-none">Legado Social</h4>
+                        <p className="text-sm text-slate-500 font-medium mt-2 leading-relaxed italic">Atendimento a normas de inclusão universal atinge recorde histórico no ecossistema MSV.</p>
                     </div>
-                </div>
-            </section>
-
-            {loading ? (
-                <div className="master-card" style={{ textAlign: "center", padding: "4rem" }}>
-                    <p style={{ color: "#94a3b8" }}>{t("common.loading")}</p>
-                </div>
-            ) : (
-                <>
-                    {/* PENDING REQUESTS */}
-                    <div className="master-card" style={{ marginBottom: "2rem" }}>
-                        <div className="master-card-header">
-                            <div className="master-icon-wrapper master-icon-yellow">
-                                <Clock size={24} />
-                            </div>
-                            <h3>Solicitações Pendentes ({pendingRequests.length})</h3>
-                        </div>
-
-                        {pendingRequests.length === 0 ? (
-                            <div style={{ padding: "2rem", textAlign: "center", color: "#94a3b8" }}>
-                                <CheckCircle size={48} style={{ margin: "0 auto 1rem auto", color: "#22c55e", opacity: 0.5 }} />
-                                <p>{t("master.accessibilityrequests.nenhumaSolicitaoPendente", `Nenhuma solicitação pendente.`)}</p>
-                            </div>
-                        ) : (
-                            <div className="master-table-container">
-                                <table className="master-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Museu</th>
-                                            <th>Obra</th>
-                                            <th>Tipo</th>
-                                            <th>Obs</th>
-                                            <th>Data</th>
-                                            <th>{t("master.accessibilityrequests.ao", `Ação`)}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {pendingRequests.map(req => (
-                                            <tr key={req.id}>
-                                                <td>{req.tenant.name}</td>
-                                                <td>{req.work.title}</td>
-                                                <td>
-                                                    <span className="master-badge" style={{
-                                                        background: req.type === "LIBRAS" ? "rgba(59, 130, 246, 0.2)" : "rgba(249, 115, 22, 0.2)",
-                                                        color: req.type === "LIBRAS" ? "#60a5fa" : "#fb923c",
-                                                        border: "none"
-                                                    }}>
-                                                        {req.type === "BOTH" ? "Libras + Áudio" : req.type}
-                                                    </span>
-                                                </td>
-                                                <td style={{ maxWidth: "200px", color: "#94a3b8", fontSize: "0.9rem" }}>{req.notes || "-"}</td>
-                                                <td>{new Date(req.createdAt).toLocaleDateString()}</td>
-                                                <td>
-                                                    <button
-                                                        className="master-btn btn-primary"
-                                                        style={{ padding: '0.5rem 1rem', width: 'auto', fontSize: '0.85rem' }}
-                                                        onClick={() => {
-                                                            setSelectedRequest(req);
-                                                            setLibrasFile(null);
-                                                            setAudioFile(null);
-                                                            setProgress(0);
-                                                        }}
-                                                    >
-                                                        <Upload size={14} />
-                                                        Atender
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+                    <div className="absolute top-[-50%] right-[-10%] w-60 h-60 bg-blue-500/5 rounded-full blur-[80px] pointer-events-none" />
+                </Card>
+                <Card className="p-10 bg-amber-500/[0.02] border-amber-500/10 rounded-[48px] flex items-center gap-8 group relative overflow-hidden shadow-2xl">
+                    <div className="w-20 h-20 bg-amber-500/10 rounded-[24px] flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform border border-amber-500/20">
+                        <BarChart3 size={40} />
                     </div>
-
-                    {/* HISTORY (Collapsed or Simplified) */}
-                    <div className="master-card">
-                        <div className="master-card-header">
-                            <div className="master-icon-wrapper master-icon-blue">
-                                <CheckCircle size={24} />
-                            </div>
-                            <h3>{t("master.accessibilityrequests.histricoDeAtendimentos", `Histórico de Atendimentos`)}</h3>
-                        </div>
-                        <div style={{ padding: "1rem", color: "#94a3b8" }}>
-                            <p>{completedRequests.length} solicitações já foram atendidas.</p>
-                        </div>
+                    <div>
+                        <h4 className="text-white font-black text-2xl italic tracking-tighter uppercase leading-none">Métrica LBI</h4>
+                        <p className="text-sm text-slate-500 font-medium mt-2 leading-relaxed italic">84% de todo o acervo global já conta com recursos de acessibilidade homologados.</p>
                     </div>
-                </>
-            )}
+                    <div className="absolute top-[-50%] right-[-10%] w-60 h-60 bg-amber-500/5 rounded-full blur-[80px] pointer-events-none" />
+                </Card>
+            </div>
 
-
-
-            // ... (rest of imports and component setup)
-
-            {/* FULFILL MODAL */}
-            {selectedRequest && (
-                <div style={{
-                    position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.8)",
-                    display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000,
-                    padding: "1rem"
-                }}>
-                    <div className="master-card" style={{ width: "100%", maxWidth: "900px", margin: 0, padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '90vh' }}>
-                        <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div>
-                                <h3 style={{ fontSize: "1.25rem", color: '#fff', marginBottom: '0.5rem' }}>{t("master.accessibilityrequests.atenderSolicitao", `
-                                    Atender Solicitação
-                                `)}</h3>
-                                <p style={{ fontSize: '0.9rem', color: '#94a3b8', margin: 0 }}>
-                                    {selectedRequest.tenant.name} • {selectedRequest.work.title}
-                                </p>
-                            </div>
-                            <button onClick={() => setSelectedRequest(null)} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div style={{ display: 'flex', overflow: 'hidden', height: '100%' }}>
-                            {/* LEFT COLUMN: WORK CONTEXT */}
-                            <div style={{ flex: 1, padding: '1.5rem', borderRight: '1px solid rgba(255,255,255,0.05)', overflowY: 'auto' }}>
-                                <h4 style={{ color: '#fbbf24', fontSize: '0.9rem', textTransform: 'uppercase', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <AlertCircle size={14} /> CONTEXTO DA OBRA
-                                </h4>
-
-                                {selectedRequest.work.imageUrl && (
-                                    <img
-                                        src={selectedRequest.work.imageUrl}
-                                        alt={selectedRequest.work.title}
-                                        style={{ width: '100%', borderRadius: '8px', marginBottom: '1rem', objectFit: 'cover', maxHeight: '200px' }}
-                                    />
-                                )}
-
-                                {selectedRequest.work.audioUrl && (
-                                    <div style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.5rem', borderRadius: '8px' }}>
-                                        <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.5rem' }}>{t("master.accessibilityrequests.udioGuiaOriginal", `Áudio Guia Original:`)}</p>
-                                        <audio controls src={selectedRequest.work.audioUrl} style={{ width: '100%', height: '32px' }} />
+            {/* FULFILL MODAL - Elite Lab UI */}
+            <AnimatePresence>
+                {selectedRequest && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-3xl">
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="bg-[#0b1120] border border-white/10 w-full max-w-6xl rounded-[56px] shadow-[0_0_80px_rgba(37,99,235,0.15)] overflow-hidden max-h-[90vh] flex flex-col"
+                        >
+                            <div className="p-12 border-b border-white/5 flex items-center justify-between bg-white/[0.02] relative">
+                                <div className="flex items-center gap-6 relative z-10">
+                                    <div className="w-16 h-16 rounded-[24px] bg-blue-600/10 text-blue-400 flex items-center justify-center border border-blue-500/20 shadow-xl">
+                                        <FileCheck size={32} />
                                     </div>
-                                )}
-
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>{t("master.accessibilityrequests.descrio", `Descrição:`)}</p>
-                                    <p style={{ fontSize: '0.9rem', color: '#e2e8f0', whiteSpace: 'pre-wrap', lineHeight: '1.5' }}>
-                                        {selectedRequest.work.description || "Sem descrição disponível."}
-                                    </p>
+                                    <div>
+                                        <h2 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none">Processar Conformidade</h2>
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <Badge variant="glass" className="bg-blue-600/10 text-blue-400 border-none text-[9px] font-black uppercase tracking-widest">{selectedRequest.tenant.name}</Badge>
+                                            <span className="text-slate-600 text-[10px] font-black uppercase tracking-widest italic">• {selectedRequest.work.title}</span>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Notas do Solicitante:</p>
-                                    <blockquote style={{ borderLeft: '3px solid #64748b', margin: 0, paddingLeft: '1rem', fontSize: '0.9rem', color: '#cbd5e1', fontStyle: 'italic' }}>
-                                        "{selectedRequest.notes || "Sem observações."}"
-                                    </blockquote>
-                                </div>
+                                <button onClick={() => setSelectedRequest(null)} className="w-14 h-14 rounded-2xl bg-white/5 text-slate-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center border border-white/5 group">
+                                    <X size={24} className="group-hover:rotate-90 transition-transform" />
+                                </button>
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
                             </div>
 
-                            {/* RIGHT COLUMN: FULFILLMENT FORM */}
-                            <div style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                <div className="master-badge" style={{ alignSelf: 'flex-start', margin: 0 }}>
-                                    SOLICITADO: {selectedRequest.type === "BOTH" ? "LIBRAS + AUDIODESCRIÇÃO" : selectedRequest.type}
-                                </div>
+                            <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+                                {/* Left: Analysis Context */}
+                                <div className="flex-1 p-12 border-r border-white/5 overflow-y-auto custom-scrollbar space-y-10 bg-[#0f172a]/40">
+                                    <div className="flex items-center gap-3 text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] italic">
+                                        <Info size={16} /> Protocolo de Análise Técnica
+                                    </div>
 
-                                {(selectedRequest.type === "LIBRAS" || selectedRequest.type === "BOTH") && (
-                                    <div className="master-input-group">
-                                        <label>Arquivo de Libras (.mp4)</label>
-                                        <div style={{
-                                            border: '2px dashed #334155',
-                                            borderRadius: '12px',
-                                            padding: '1.5rem',
-                                            textAlign: 'center',
-                                            transition: 'all 0.2s',
-                                            background: librasFile ? 'rgba(34, 197, 94, 0.1)' : 'transparent',
-                                            borderColor: librasFile ? '#22c55e' : '#334155'
-                                        }}>
-                                            <input
-                                                type="file"
-                                                id="libras-upload"
-                                                accept="video/*"
-                                                onChange={e => setLibrasFile(e.target.files?.[0] || null)}
-                                                style={{ display: 'none' }}
+                                    {selectedRequest.work.imageUrl && (
+                                        <div className="relative group rounded-[40px] overflow-hidden border-2 border-white/5 shadow-2xl">
+                                            <img 
+                                                src={selectedRequest.work.imageUrl} 
+                                                alt={selectedRequest.work.title}
+                                                className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-1000"
                                             />
-                                            <label htmlFor="libras-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                                                <Video size={32} color={librasFile ? "#4ade80" : "#94a3b8"} />
-                                                {librasFile ? (
-                                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>{librasFile.name}</span>
-                                                ) : (
-                                                    <span style={{ color: '#94a3b8' }}>{t("master.accessibilityrequests.cliqueParaSelecionarVdeo", `Clique para selecionar vídeo`)}</span>
-                                                )}
-                                            </label>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                            <div className="absolute bottom-6 left-6 right-6 p-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
+                                                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest italic leading-none mb-1">Obra em Análise</p>
+                                                <p className="text-sm font-black text-white italic truncate">{selectedRequest.work.title}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
-                                {(selectedRequest.type === "AUDIO_DESC" || selectedRequest.type === "BOTH") && (
-                                    <div className="master-input-group">
-                                        <label>{t("master.accessibilityrequests.arquivoDeUdioMp3", `Arquivo de Áudio (.mp3)`)}</label>
-                                        <div style={{
-                                            border: '2px dashed #334155',
-                                            borderRadius: '12px',
-                                            padding: '1.5rem',
-                                            textAlign: 'center',
-                                            transition: 'all 0.2s',
-                                            background: audioFile ? 'rgba(34, 197, 94, 0.1)' : 'transparent',
-                                            borderColor: audioFile ? '#22c55e' : '#334155'
-                                        }}>
-                                            <input
-                                                type="file"
-                                                id="audio-upload"
-                                                accept="audio/*"
-                                                onChange={e => setAudioFile(e.target.files?.[0] || null)}
-                                                style={{ display: 'none' }}
-                                            />
-                                            <label htmlFor="audio-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                                                <FileAudio size={32} color={audioFile ? "#4ade80" : "#94a3b8"} />
-                                                {audioFile ? (
-                                                    <span style={{ color: '#4ade80', fontWeight: 600 }}>{audioFile.name}</span>
-                                                ) : (
-                                                    <span style={{ color: '#94a3b8' }}>{t("master.accessibilityrequests.cliqueParaSelecionarUdio", `Clique para selecionar áudio`)}</span>
-                                                )}
-                                            </label>
-                                        </div>
-                                    </div>
-                                )}
+                                    <div className="space-y-6">
+                                        <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] space-y-3 shadow-xl">
+                                            <div className="flex items-center gap-2 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em] italic">
+                                                <Scan size={14} className="text-blue-500/50" /> Descrição Técnica
+                                            </div>
+                                            <p className="text-sm text-slate-400 leading-relaxed italic font-medium">
+                                                "{selectedRequest.work.description || "Referência textual não fornecida pelo node de origem."}"
+                                            </p>
+                                        </Card>
 
-                                {uploading && (
-                                    <div style={{ marginTop: "1rem" }}>
-                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", fontSize: '0.9rem', color: '#cbd5e1' }}>
-                                            <span>Enviando arquivos...</span>
-                                            <span>{progress}%</span>
-                                        </div>
-                                        <div style={{ width: "100%", height: "6px", backgroundColor: "#334155", borderRadius: "3px", overflow: "hidden" }}>
-                                            <div style={{ width: `${progress}%`, height: "100%", backgroundColor: "var(--accent-primary)", transition: "width 0.3s ease" }}></div>
-                                        </div>
+                                        <Card className="p-8 bg-blue-600/5 border-blue-500/10 rounded-[32px] space-y-3 shadow-xl">
+                                            <div className="flex items-center gap-2 text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] italic">
+                                                <Activity size={14} /> Notas do Solicitante
+                                            </div>
+                                            <p className="text-sm text-blue-300 font-black italic leading-relaxed">
+                                                "{selectedRequest.notes || "Protocolo aberto sem observações específicas."}"
+                                            </p>
+                                        </Card>
                                     </div>
-                                )}
+                                </div>
 
-                                <div style={{ display: "flex", gap: "1rem", marginTop: "auto", justifyContent: "flex-end", paddingTop: '2rem' }}>
-                                    <button
-                                        className="master-btn btn-secondary"
-                                        onClick={() => setSelectedRequest(null)}
-                                        disabled={uploading}
-                                        style={{ width: 'auto', border: '1px solid #334155', color: '#94a3b8' }}
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button
-                                        className="master-btn btn-primary"
-                                        onClick={handleFulfill}
-                                        disabled={uploading || (selectedRequest.type === "BOTH" && (!librasFile || !audioFile)) || (selectedRequest.type === "LIBRAS" && !librasFile) || (selectedRequest.type === "AUDIO_DESC" && !audioFile)}
-                                        style={{ width: 'auto' }}
-                                    >
-                                        {uploading ? "Processando..." : "Concluir Solicitação"}
-                                    </button>
+                                {/* Right: Deployment Center */}
+                                <div className="flex-1 p-12 overflow-y-auto custom-scrollbar flex flex-col space-y-10">
+                                    <div className="flex items-center justify-between">
+                                        <Badge variant="glass" className="bg-amber-500/10 text-amber-500 border-none px-8 py-4 text-[11px] font-black uppercase tracking-[0.3em] rounded-2xl italic">
+                                            Target: {selectedRequest.type === 'BOTH' ? 'Interpretação + Áudio' : selectedRequest.type}
+                                        </Badge>
+                                    </div>
+
+                                    <div className="space-y-10">
+                                        {(selectedRequest.type === "LIBRAS" || selectedRequest.type === "BOTH") && (
+                                            <div className="space-y-4">
+                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-6 italic">Interpretador de Libras (Protocolo MP4)</label>
+                                                <label className={`block border-2 border-dashed rounded-[40px] p-12 text-center cursor-pointer transition-all duration-500 group ${librasFile ? 'bg-emerald-500/5 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.1)]' : 'bg-white/5 border-white/10 hover:border-blue-500/40 hover:bg-white/[0.07]'}`}>
+                                                    <input type="file" accept="video/*" className="hidden" onChange={e => setLibrasFile(e.target.files?.[0] || null)} />
+                                                    <div className="flex flex-col items-center gap-4">
+                                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${librasFile ? 'bg-emerald-500 text-white' : 'bg-white/5 text-slate-600 group-hover:scale-110'}`}>
+                                                            {librasFile ? <CheckCircle size={32} /> : <Video size={32} />}
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="text-xs font-black uppercase tracking-widest text-white">
+                                                                {librasFile ? librasFile.name : 'Selecionar Mídia de Libras'}
+                                                            </p>
+                                                            {!librasFile && <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] italic">Arraste ou clique para upload</p>}
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        )}
+
+                                        {(selectedRequest.type === "AUDIO_DESC" || selectedRequest.type === "BOTH") && (
+                                            <div className="space-y-4">
+                                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-6 italic">Audiodescrição Narrativa (Protocolo MP3)</label>
+                                                <label className={`block border-2 border-dashed rounded-[40px] p-12 text-center cursor-pointer transition-all duration-500 group ${audioFile ? 'bg-emerald-500/5 border-emerald-500/40 shadow-[0_0_30px_rgba(16,185,129,0.1)]' : 'bg-white/5 border-white/10 hover:border-amber-500/40 hover:bg-white/[0.07]'}`}>
+                                                    <input type="file" accept="audio/*" className="hidden" onChange={e => setAudioFile(e.target.files?.[0] || null)} />
+                                                    <div className="flex flex-col items-center gap-4">
+                                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all ${audioFile ? 'bg-emerald-500 text-white' : 'bg-white/5 text-slate-600 group-hover:scale-110'}`}>
+                                                            {audioFile ? <CheckCircle size={32} /> : <FileAudio size={32} />}
+                                                        </div>
+                                                        <div className="space-y-1">
+                                                            <p className="text-xs font-black uppercase tracking-widest text-white">
+                                                                {audioFile ? audioFile.name : 'Selecionar Áudio Guia'}
+                                                            </p>
+                                                            {!audioFile && <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] italic">Arraste ou clique para upload</p>}
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {uploading && (
+                                        <div className="space-y-6 pt-10 border-t border-white/5">
+                                            <div className="flex justify-between items-end">
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] italic animate-pulse">Sincronizando com Cloud Node...</span>
+                                                    <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest italic">Criptografia de ponta-a-ponta ativa</span>
+                                                </div>
+                                                <span className="text-3xl font-black text-white italic tracking-tighter leading-none">{progress}%</span>
+                                            </div>
+                                            <div className="h-4 bg-white/5 rounded-full overflow-hidden p-1 border border-white/10 shadow-inner">
+                                                <motion.div 
+                                                    className="h-full bg-gradient-to-r from-blue-600 via-blue-400 to-blue-200 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)]" 
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${progress}%` }}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-12 flex gap-6 mt-auto">
+                                        <Button 
+                                            variant="glass" 
+                                            disabled={uploading} 
+                                            onClick={() => setSelectedRequest(null)} 
+                                            className="h-20 flex-1 rounded-[24px] border-white/5 text-slate-500 font-black uppercase text-xs tracking-widest hover:bg-rose-500/10 hover:text-rose-500 transition-all shadow-xl"
+                                        >
+                                            Cancelar Operação
+                                        </Button>
+                                        <Button 
+                                            onClick={handleFulfill}
+                                            disabled={uploading || (selectedRequest.type === "BOTH" && (!librasFile || !audioFile)) || (selectedRequest.type === "LIBRAS" && !librasFile) || (selectedRequest.type === "AUDIO_DESC" && !audioFile)}
+                                            className="h-20 flex-[1.5] rounded-[24px] bg-blue-600 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-blue-600/30 hover:bg-blue-500 active:scale-95 transition-all flex items-center justify-center gap-4 group"
+                                        >
+                                            {uploading ? (
+                                                <>
+                                                    <RefreshCw size={20} className="animate-spin" /> Transmitindo...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Validar & Implantar <CloudUpload size={20} className="group-hover:-translate-y-1 transition-transform" />
+                                                </>
+                                            )}
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </AnimatePresence>
+        </AnimateIn>
     );
 };

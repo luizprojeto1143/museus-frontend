@@ -25,7 +25,7 @@ interface FeaturedWork {
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
-  const { tenantId, equipamentoId, role } = useAuth();
+  const { tenantId, equipamentoId, role, name } = useAuth();
   const navigate = useNavigate();
   const isCityMode = useIsCityMode();
   const tenant = useTenant();
@@ -97,6 +97,12 @@ export const Home: React.FC = () => {
         <meta name="description" content={t("visitor.home.subtitle")} />
       </Helmet>
 
+      {/* ═══ AMBIENT BACKGROUND ════════ */}
+      <div className="ambient-bg">
+        <div className="ambient-orb" style={{ width: '400px', height: '400px', top: '-100px', left: '-100px', background: 'var(--accent-primary)' }}></div>
+        <div className="ambient-orb" style={{ width: '300px', height: '300px', bottom: '100px', right: '-50px', background: 'var(--accent-secondary)' }}></div>
+      </div>
+
       {/* ═══ HERO SECTION ═══════════════ */}
       <motion.section variants={staggerItem} className="home-hero-premium">
         {isCityMode && (
@@ -104,6 +110,12 @@ export const Home: React.FC = () => {
             {t("visitor.home.hero.cityBadge")}
           </Badge>
         )}
+        
+        <div className="personal-greeting">
+          <span className="greeting-text">{t("visitor.home.greeting", "Bem-vindo de volta")},</span>
+          <h2 className="greeting-name">{name || t("visitor.profile.guest")}</h2>
+        </div>
+
         <h1 className="hero-title-premium">
           {t("visitor.home.patrimonio")} <br />
           <span className="text-[var(--accent-primary)] italic lowercase font-medium tracking-normal block ml-4 md:ml-12">
@@ -111,7 +123,7 @@ export const Home: React.FC = () => {
           </span>
         </h1>
         <p className="hero-subtitle-premium">
-          {t("visitor.home.subtitle")}
+          {museumName ? `${museumName} • ` : ""}{t("visitor.home.subtitle")}
         </p>
       </motion.section>
 

@@ -12,7 +12,7 @@ interface EditProfileModalProps {
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
-    const { name, email, updateSession, token, role, tenantId } = useAuth();
+    const { name, email, updateSession, role, tenantId } = useAuth();
     const [newName, setNewName] = useState(name || "");
     const [newEmail, setNewEmail] = useState(email || "");
     const [loading, setLoading] = useState(false);

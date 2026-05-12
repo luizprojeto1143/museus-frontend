@@ -1,15 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { useToast } from "../../../contexts/ToastContext";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Loader2, Clock, MapPin, Edit2, Trash2, Plus, X } from "lucide-react";
-import { Button } from "../../../components/ui";
+import { 
+  Calendar as CalendarIcon, 
+  ChevronLeft, 
+  ChevronRight, 
+  Clock, 
+  MapPin, 
+  Edit2, 
+  Trash2, 
+  Plus, 
+  X,
+  Info,
+  CheckCircle2,
+  AlertCircle,
+  XCircle,
+  Route
+} from "lucide-react";
+import { 
+  Button, 
+  Card, 
+  AnimateIn, 
+  Badge, 
+  AnimatedCounter 
+} from "@/components/ui";
 import { useAuth } from "../../auth/AuthContext";
+import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 // --- Types ---
 type Booking = {
     id: string;
-    date: string; // ISO
+    date: string;
     startTime?: string;
     endTime?: string;
     purpose?: string;
@@ -36,11 +58,9 @@ const getDaysInMonth = (date: Date) => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
-    // Start from the Sunday before the first day
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
-    // End on the Saturday after the last day
     const endDate = new Date(lastDay);
     if (endDate.getDay() !== 6) {
         endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
@@ -58,14 +78,13 @@ const getDaysInMonth = (date: Date) => {
 export const AdminCalendar: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const { addToast } = useToast();
 
     // State
     const [currentDate, setCurrentDate] = useState(new Date());
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [spaces, setSpaces] = useState<Space[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,29 +97,19 @@ export const AdminCalendar: React.FC = () => {
         purpose: ""
     });
 
-    // --- Effects ---
-    useEffect(() => {
-        if (tenantId) fetchSpaces();
-    }, [tenantId]);
-
-    useEffect(() => {
-        if (tenantId) fetchBookings();
-    }, [tenantId, currentDate]);
-
-    // --- Actions ---
-    const fetchSpaces = async () => {
+    const fetchSpaces = useCallback(async () => {
         try {
             const res = await api.get("/spaces");
             setSpaces(res.data);
-            if (res.data.length > 0) {
+            if (res.data.length > 0 && !formData.spaceId) {
                 setFormData(prev => ({ ...prev, spaceId: res.data[0].id }));
             }
         } catch (e) {
             console.error("Erro ao carregar espaços", e);
         }
-    };
+    }, [formData.spaceId]);
 
-    const fetchBookings = async () => {
+    const fetchBookings = useCallback(async () => {
         setLoading(true);
         try {
             const year = currentDate.getFullYear();
@@ -109,19 +118,27 @@ export const AdminCalendar: React.FC = () => {
             setBookings(res.data);
         } catch (e) {
             console.error("Erro ao carregar reservas", e);
-            addToast("Erro ao carregar reservas", "error");
+            toast.error("Erro ao carregar reservas");
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentDate, tenantId]);
+
+    useEffect(() => {
+        if (tenantId) {
+            fetchSpaces();
+            fetchBookings();
+        }
+    }, [tenantId, fetchSpaces, fetchBookings]);
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedDate || !formData.spaceId) return;
 
         setIsSubmitting(true);
+        const loadingToast = toast.loading(editingId ? "Atualizando reserva..." : "Criando reserva...");
+        
         try {
-            // Construct ISO dates
             const dateStub = selectedDate.toISOString().split('T')[0];
             const startISO = `${dateStub}T${formData.startTime}:00`;
             const endISO = `${dateStub}T${formData.endTime}:00`;
@@ -138,10 +155,10 @@ export const AdminCalendar: React.FC = () => {
 
             if (editingId) {
                 await api.put(`/bookings/${editingId}`, payload);
-                addToast("Reserva atualizada!", "success");
+                toast.success("Reserva atualizada!", { id: loadingToast });
             } else {
                 await api.post("/bookings", payload);
-                addToast("Reserva criada!", "success");
+                toast.success("Reserva criada!", { id: loadingToast });
             }
 
             setIsModalOpen(false);
@@ -149,20 +166,22 @@ export const AdminCalendar: React.FC = () => {
             fetchBookings();
         } catch (err: any) {
             const msg = err.response?.data?.message || "Erro ao salvar";
-            addToast(msg, "error");
+            toast.error(msg, { id: loadingToast });
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm("Excluir esta reserva?")) return;
+        if (!confirm("Deseja realmente excluir esta reserva?")) return;
+        
+        const loadingToast = toast.loading("Excluindo reserva...");
         try {
             await api.delete(`/bookings/${id}`, { params: { hard: "true" } });
-            addToast("Reserva excluída", "success");
+            toast.success("Reserva excluída", { id: loadingToast });
             fetchBookings();
         } catch {
-            addToast("Erro ao excluir", "error");
+            toast.error("Erro ao excluir", { id: loadingToast });
         }
     };
 
@@ -186,7 +205,6 @@ export const AdminCalendar: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    // --- Render Helpers ---
     const calendarDays = getDaysInMonth(currentDate);
 
     const getBookingsForDay = (date: Date) => {
@@ -210,88 +228,64 @@ export const AdminCalendar: React.FC = () => {
     };
 
     return (
-        <div className="animate-fadeIn" style={{ paddingBottom: "5rem" }}>
-
-            {/* --- HEADER --- */}
-            <div style={{ marginBottom: "3rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-                <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.5rem" }}>
-                        <div style={{
-                            width: "56px", height: "56px", background: "rgba(212,175,55,0.1)",
-                            border: "1px solid rgba(212,175,55,0.2)", borderRadius: "16px",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            boxShadow: "0 8px 32px rgba(212,175,55,0.1)"
-                        }}>
-                            <CalendarIcon size={28} style={{ color: "var(--accent-gold)" }} />
-                        </div>
-                        <div>
-                            <h1 className="section-title" style={{ margin: 0, fontSize: "2.5rem" }}>
-                                Agenda de <span style={{ color: "var(--accent-gold)" }}>{t("admin.calendar.espaos", `Espaços`)}</span>
-                            </h1>
-                            <p className="section-subtitle" style={{ margin: 0, opacity: 0.8 }}>{t("admin.calendar.gestoCentralizadaDaOcupaoEHorriosDosAmbi", `
-                                Gestão centralizada da ocupação e horários dos ambientes do museu.
-                            `)}</p>
-                        </div>
-                    </div>
+        <AnimateIn className="space-y-8 pb-32 max-w-7xl mx-auto">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-black text-white tracking-tighter flex items-center gap-3">
+                        <CalendarIcon className="text-gold-400" size={32} />
+                        Agenda de <span className="text-gold-400">Espaços</span>
+                    </h1>
+                    <p className="text-slate-400 font-medium max-w-lg">
+                        Gestão centralizada da ocupação e horários dos ambientes do museu.
+                    </p>
                 </div>
 
-                {/* Date Navigation */}
-                <div style={{
-                    display: "flex", alignItems: "center", gap: "1.5rem",
-                    padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.03)",
-                    border: "1px solid var(--border-subtle)", borderRadius: "1.25rem",
-                    backdropFilter: "blur(12px)"
-                }}>
-                    <Button
-                        variant="ghost"
+                {/* Date Controller */}
+                <div className="flex items-center bg-white/5 backdrop-blur-xl border border-white/5 p-1 rounded-3xl">
+                    <Button 
+                        variant="ghost" 
                         onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}
-                        style={{ padding: "0.5rem", borderRadius: "10px" }}
+                        className="h-12 w-12 rounded-2xl hover:bg-white/10"
                     >
                         <ChevronLeft size={20} />
                     </Button>
-                    <div style={{ textAlign: "center", minWidth: "140px" }}>
-                        <span style={{ display: "block", fontSize: "1.1rem", fontWeight: 800, color: "white", textTransform: "capitalize" }}>
+                    <div className="px-8 py-2 text-center min-w-[180px]">
+                        <span className="block text-sm font-black text-white uppercase tracking-widest">
                             {currentDate.toLocaleDateString("pt-BR", { month: "long" })}
                         </span>
-                        <span style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, color: "var(--fg-muted)", textTransform: "uppercase", letterSpacing: "0.2em", marginTop: "2px" }}>
+                        <span className="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-0.5">
                             {currentDate.getFullYear()}
                         </span>
                     </div>
-                    <Button
-                        variant="ghost"
+                    <Button 
+                        variant="ghost" 
                         onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}
-                        style={{ padding: "0.5rem", borderRadius: "10px" }}
+                        className="h-12 w-12 rounded-2xl hover:bg-white/10"
                     >
                         <ChevronRight size={20} />
                     </Button>
                 </div>
             </div>
 
-            <div style={{ display: "flex", gap: "2rem", height: "calc(100vh - 320px)", minHeight: "650px" }}>
-
-                {/* --- CALENDAR MAIN GRID --- */}
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                    {/* Day Names Row */}
-                    <div style={{
-                        display: "grid", gridTemplateColumns: "repeat(7, 1fr)",
-                        background: "rgba(212,175,55,0.05)", borderBottom: "1px solid var(--border-subtle)"
-                    }}>
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+                {/* Main Calendar Grid */}
+                <Card className="xl:col-span-8 overflow-hidden bg-white/[0.02] border-white/5 rounded-[40px] p-0 flex flex-col h-[700px]">
+                    {/* Day Names */}
+                    <div className="grid grid-cols-7 bg-white/[0.03] border-b border-white/5">
                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
-                            <div key={day} style={{
-                                padding: "1.25rem 0.5rem", textAlign: "center", fontSize: "0.75rem",
-                                fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.15em",
-                                color: "var(--fg-muted)"
-                            }}>
+                            <div key={day} className="py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
                                 {day}
                             </div>
                         ))}
                     </div>
 
-                    {/* Scrollable Grid Content */}
-                    <div style={{ flex: 1, overflowY: "auto", display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoRows: "minmax(120px, 1fr)" }}>
+                    {/* Days Grid */}
+                    <div className="flex-1 overflow-y-auto grid grid-cols-7 no-scrollbar">
                         {loading ? (
-                            <div style={{ gridColumn: "span 7", display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-                                <div className="spinner"></div>
+                            <div className="col-span-7 flex flex-col items-center justify-center h-full space-y-4 opacity-50">
+                                <div className="w-10 h-10 border-2 border-gold-400 border-t-transparent rounded-full animate-spin" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Sincronizando Agenda...</span>
                             </div>
                         ) : (
                             calendarDays.map((date, idx) => {
@@ -304,245 +298,250 @@ export const AdminCalendar: React.FC = () => {
                                     <div
                                         key={idx}
                                         onClick={() => setSelectedDate(date)}
-                                        style={{
-                                            padding: "0.75rem", cursor: "pointer",
-                                            borderRight: "1px solid var(--border-subtle)",
-                                            borderBottom: "1px solid var(--border-subtle)",
-                                            background: selected ? "rgba(212,175,55,0.08)" : "transparent",
-                                            opacity: currentMonth ? 1 : 0.3,
-                                            transition: "all 0.3s ease",
-                                            position: "relative"
-                                        }}
-                                        className="calendar-cell-hover"
+                                        className={`group relative aspect-[1.2/1] p-3 cursor-pointer border-r border-b border-white/5 transition-all duration-300 ${
+                                            selected ? 'bg-gold-400/5' : 'hover:bg-white/[0.02]'
+                                        } ${!currentMonth ? 'opacity-20 grayscale' : 'opacity-100'}`}
                                     >
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                                            <span style={{
-                                                width: "28px", height: "28px", display: "flex", alignItems: "center", justifyContent: "center",
-                                                borderRadius: "8px",
-                                                background: today ? "var(--accent-gold)" : "transparent",
-                                                color: today ? "black" : "white",
-                                                fontWeight: today ? 900 : 500,
-                                                fontSize: "0.9rem",
-                                                boxShadow: today ? "0 4px 12px rgba(212,175,55,0.4)" : "none"
-                                            }}>
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className={`w-8 h-8 flex items-center justify-center rounded-xl text-xs font-black transition-all ${
+                                                today ? 'bg-gold-400 text-slate-950 shadow-lg shadow-gold-400/20' : 
+                                                selected ? 'text-gold-400' : 'text-slate-400 group-hover:text-white'
+                                            }`}>
                                                 {date.getDate()}
                                             </span>
                                             {dayBookings.length > 0 && currentMonth && (
-                                                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--accent-gold)", boxShadow: "0 0 10px var(--accent-gold)" }}></div>
+                                                <div className="w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_100px_rgba(212,175,55,0.5)]" />
                                             )}
                                         </div>
 
-                                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                        <div className="space-y-1 overflow-hidden">
                                             {dayBookings.slice(0, 2).map((b, i) => (
-                                                <div key={i} style={{
-                                                    fontSize: "0.7rem", padding: "4px 8px", borderRadius: "6px",
-                                                    background: "rgba(255,255,255,0.03)", borderLeft: "3px solid var(--accent-gold)",
-                                                    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: "var(--fg-muted)",
-                                                    display: "flex", alignItems: "center", gap: "4px"
-                                                }}>
-                                                    <span style={{ color: "var(--accent-gold)", fontWeight: 700 }}>{b.startTime?.split('T')[1].slice(0, 5)}</span>
-                                                    {b.space?.name}
+                                                <div key={i} className="text-[8px] font-bold px-1.5 py-0.5 rounded-md bg-white/5 border-l-2 border-gold-400 text-slate-400 truncate">
+                                                    {b.startTime?.split('T')[1].slice(0, 5)} {b.space?.name}
                                                 </div>
                                             ))}
                                             {dayBookings.length > 2 && (
-                                                <div style={{ fontSize: "0.65rem", color: "var(--fg-tertiary)", fontWeight: 700, paddingLeft: "8px", marginTop: "2px" }}>
+                                                <div className="text-[7px] font-black text-gold-400/50 uppercase tracking-widest pl-2">
                                                     + {dayBookings.length - 2} reservas
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* Selected Indicator */}
                                         {selected && (
-                                            <div style={{
-                                                position: "absolute", bottom: 0, left: 0, right: 0, height: "3px",
-                                                background: "var(--accent-gold)", boxShadow: "0 0 15px var(--accent-gold)"
-                                            }}></div>
+                                            <motion.div 
+                                                layoutId="activeDay"
+                                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold-400 shadow-[0_-2px_10px_rgba(212,175,55,0.5)]" 
+                                            />
                                         )}
                                     </div>
                                 );
                             })
                         )}
                     </div>
-                </div>
+                </Card>
 
-                {/* --- SIDEBAR: DAY DETAILS --- */}
-                <div style={{ width: "420px", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-
-                    {/* Action Button */}
+                {/* Day Details Sidebar */}
+                <div className="xl:col-span-4 space-y-6">
                     <Button
-                        className="btn-primary"
-                        style={{ height: "4.5rem", borderRadius: "1.25rem", fontSize: "1rem", fontWeight: 800, width: "100%" }}
+                        className="w-full h-20 rounded-[32px] bg-gold-400 text-slate-950 font-black text-base uppercase tracking-widest shadow-xl shadow-gold-400/10 transition-transform active:scale-95"
                         disabled={!selectedDate}
                         onClick={openNewModal}
+                        leftIcon={<Plus size={24} />}
                     >
-                        <Plus size={24} style={{ marginRight: "0.75rem" }} /> NOVA RESERVA
+                        Nova Reserva
                     </Button>
 
-                    {/* Details Card */}
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ flex: 1, padding: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
-                        <div style={{ padding: "1.5rem", borderBottom: "1px solid var(--border-subtle)", background: "rgba(212,175,55,0.03)" }}>
-                            <span style={{ display: "block", fontSize: "0.7rem", fontWeight: 800, color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "0.2em", marginBottom: "0.25rem" }}>
-                                Detalhes do Dia
-                            </span>
-                            <h3 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, color: "white", textTransform: "capitalize" }}>
+                    <Card className="bg-white/[0.02] border-white/5 rounded-[40px] p-0 overflow-hidden flex flex-col min-h-[500px]">
+                        <div className="p-8 bg-white/[0.03] border-b border-white/5">
+                            <span className="text-[10px] font-black text-gold-400 uppercase tracking-[0.3em] block mb-2">Programação do Dia</span>
+                            <h3 className="text-2xl font-black text-white capitalize leading-tight">
                                 {selectedDate ? selectedDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) : "Selecione uma data"}
                             </h3>
                         </div>
 
-                        <div style={{ flex: 1, padding: "1.5rem", overflowY: "auto", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            {selectedDate ? (
-                                getBookingsForDay(selectedDate).length > 0 ? (
-                                    getBookingsForDay(selectedDate).map(b => (
-                                        <div key={b.id} style={{
-                                            padding: "1.25rem", background: "rgba(255,255,255,0.02)",
-                                            border: "1px solid var(--border-subtle)", borderRadius: "1.25rem",
-                                            position: "relative", transition: "all 0.2s ease"
-                                        }} className="booking-card-hover">
-                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.75rem" }}>
-                                                <div>
-                                                    <span style={{ display: "block", fontSize: "0.65rem", fontWeight: 800, color: "var(--fg-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.25rem" }}>
-                                                        {b.space?.type || "Espaço"}
-                                                    </span>
-                                                    <h4 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 800, color: "white" }}>{b.space?.name}</h4>
+                        <div className="flex-1 p-8 space-y-4 overflow-y-auto no-scrollbar">
+                            <AnimatePresence mode="popLayout">
+                                {selectedDate ? (
+                                    getBookingsForDay(selectedDate).length > 0 ? (
+                                        getBookingsForDay(selectedDate).map(b => (
+                                            <motion.div
+                                                key={b.id}
+                                                initial={{ opacity: 0, x: 20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                exit={{ opacity: 0, scale: 0.95 }}
+                                                className="group p-6 bg-white/[0.03] border border-white/5 rounded-3xl relative hover:bg-white/[0.05] transition-all"
+                                            >
+                                                <div className="flex justify-between items-start gap-4 mb-4">
+                                                    <div>
+                                                        <Badge variant="glass" className="mb-2 text-[8px] border-gold-400/20 text-gold-400">
+                                                            {b.space?.type || "Espaço"}
+                                                        </Badge>
+                                                        <h4 className="text-lg font-black text-white group-hover:text-gold-400 transition-colors leading-tight">{b.space?.name}</h4>
+                                                    </div>
+                                                    <div className="flex gap-2 shrink-0">
+                                                        <button 
+                                                            onClick={() => openEditModal(b)} 
+                                                            className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/10 transition-all"
+                                                        >
+                                                            <Edit2 size={16} />
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleDelete(b.id)} 
+                                                            className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-all"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                                    <button onClick={() => openEditModal(b)} style={{ padding: "0.5rem", borderRadius: "10px", background: "rgba(255,255,255,0.05)", border: "none", color: "var(--fg-muted)", cursor: "pointer" }}>
-                                                        <Edit2 size={16} />
-                                                    </button>
-                                                    <button onClick={() => handleDelete(b.id)} style={{ padding: "0.5rem", borderRadius: "10px", background: "rgba(239, 68, 68, 0.1)", border: "none", color: "#ef4444", cursor: "pointer" }}>
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
-                                            </div>
 
-                                            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", marginBottom: "1rem" }}>
-                                                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--accent-gold)" }}></div>
-                                                    <span style={{ fontSize: "0.9rem", fontWeight: 800, color: "var(--accent-gold)" }}>
-                                                        {b.startTime?.split('T')[1].slice(0, 5)} - {b.endTime?.split('T')[1].slice(0, 5)}
-                                                    </span>
+                                                <div className="flex items-center gap-4 text-slate-400">
+                                                    <div className="flex items-center gap-2">
+                                                        <Clock size={16} className="text-gold-400/50" />
+                                                        <span className="text-sm font-bold">
+                                                            {b.startTime?.split('T')[1].slice(0, 5)} — {b.endTime?.split('T')[1].slice(0, 5)}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            {b.purpose && (
-                                                <div style={{
-                                                    padding: "0.75rem", background: "rgba(0,0,0,0.2)",
-                                                    borderRadius: "0.75rem", fontSize: "0.85rem", color: "var(--fg-muted)",
-                                                    border: "1px solid rgba(255,255,255,0.02)", fontStyle: "italic"
-                                                }}>
-                                                    {b.purpose}
-                                                </div>
-                                            )}
+                                                {b.purpose && (
+                                                    <div className="mt-4 p-4 bg-black/20 rounded-2xl border border-white/5">
+                                                        <p className="text-xs text-slate-500 italic line-clamp-2">"{b.purpose}"</p>
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                        ))
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center h-64 text-center space-y-4 opacity-20">
+                                            <CalendarIcon size={64} className="text-slate-500" />
+                                            <p className="text-xs font-black uppercase tracking-widest">Nenhuma reserva agendada</p>
                                         </div>
-                                    ))
+                                    )
                                 ) : (
-                                    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: 0.2, textAlign: "center", padding: "2rem" }}>
-                                        <CalendarIcon size={64} style={{ marginBottom: "1rem" }} />
-                                        <p style={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", fontSize: "0.8rem" }}>
-                                            Nenhuma reserva para este dia
-                                        </p>
+                                    <div className="flex flex-col items-center justify-center h-64 text-center space-y-4 opacity-20">
+                                        <Info size={64} className="text-slate-500" />
+                                        <p className="text-xs font-black uppercase tracking-widest">Selecione um dia para auditar</p>
                                     </div>
-                                )
-                            ) : (
-                                <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", opacity: 0.2, textAlign: "center", padding: "2rem" }}>
-                                    <ChevronRight size={64} style={{ marginBottom: "1rem" }} />
-                                    <p style={{ fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.2em", fontSize: "0.8rem" }}>
-                                        Selecione uma data para ver os detalhes
-                                    </p>
-                                </div>
-                            )}
+                                )}
+                            </AnimatePresence>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
 
-            {/* --- MODAL: RESERVA --- */}
-            {isModalOpen && (
-                <div style={{
-                    position: "fixed", inset: 0, zIndex: 1000,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
-                    padding: "1rem"
-                }} className="animate-fadeIn">
-                    <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ width: "100%", maxWidth: "550px", padding: "2.5rem", position: "relative" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2.5rem" }}>
-                            <div>
-                                <h2 className="card-title" style={{ margin: 0, fontSize: "1.75rem" }}>
-                                    {editingId ? "Editar" : "Confirmar"} <span style={{ color: "var(--accent-gold)" }}>Reserva</span>
-                                </h2>
-                                <p style={{ margin: "0.25rem 0 0", fontSize: "0.85rem", color: "var(--fg-muted)" }}>
-                                    {selectedDate?.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                </p>
-                            </div>
-                            <button onClick={() => setIsModalOpen(false)} style={{ background: "none", border: "none", color: "var(--fg-muted)", cursor: "pointer", padding: "0.5rem" }}>
-                                <X size={28} />
-                            </button>
-                        </div>
-
-                        <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
-                            <div className="form-group" style={{ margin: 0 }}>
-                                <label className="form-label">Selecione o Ambiente</label>
-                                <select
-                                    value={formData.spaceId}
-                                    onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
-                                    required
-                                    style={{ width: "100%", height: "3.5rem" }}
+            {/* Premium Reservation Modal */}
+            <AnimatePresence>
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            onClick={() => setIsModalOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-xl bg-slate-950 border border-white/10 rounded-[40px] p-10 shadow-2xl overflow-hidden"
+                        >
+                            <div className="flex justify-between items-start mb-10">
+                                <div>
+                                    <h2 className="text-3xl font-black text-white tracking-tight leading-none">
+                                        {editingId ? "Editar" : "Nova"} <span className="text-gold-400">Reserva</span>
+                                    </h2>
+                                    <p className="text-sm text-slate-500 font-bold mt-2 flex items-center gap-2 uppercase tracking-widest">
+                                        <CalendarIcon size={14} className="text-gold-400" />
+                                        {selectedDate?.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setIsModalOpen(false)} 
+                                    className="p-2 text-slate-500 hover:text-white transition-colors"
                                 >
-                                    {spaces.map(s => <option key={s.id} value={s.id}>{s.name} ({s.type || 'Geral'})</option>)}
-                                </select>
+                                    <XCircle size={32} />
+                                </button>
                             </div>
 
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
-                                <div className="form-group" style={{ margin: 0 }}>
-                                    <label className="form-label">{t("admin.calendar.horrioDeIncio", `Horário de Início`)}</label>
-                                    <div style={{ position: "relative" }}>
-                                        <Clock size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--accent-gold)", opacity: 0.5 }} />
-                                        <input
-                                            type="time"
-                                            value={formData.startTime}
-                                            onChange={e => setFormData({ ...formData, startTime: e.target.value })}
-                                            required
-                                            style={{ width: "100%", height: "3.5rem", paddingLeft: "3rem" }}
-                                        />
+                            <form onSubmit={handleSave} className="space-y-8">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Ambiente do Museu</label>
+                                    <select
+                                        value={formData.spaceId}
+                                        onChange={e => setFormData({ ...formData, spaceId: e.target.value })}
+                                        required
+                                        className="w-full h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all appearance-none cursor-pointer"
+                                    >
+                                        <option value="" disabled className="bg-slate-900">Selecione um local...</option>
+                                        {spaces.map(s => <option key={s.id} value={s.id} className="bg-slate-900 text-white">{s.name}</option>)}
+                                    </select>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Check-in</label>
+                                        <div className="relative">
+                                            <Clock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gold-400 opacity-50" />
+                                            <input
+                                                type="time"
+                                                value={formData.startTime}
+                                                onChange={e => setFormData({ ...formData, startTime: e.target.value })}
+                                                required
+                                                className="w-full h-14 pl-12 pr-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all [color-scheme:dark]"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Check-out</label>
+                                        <div className="relative">
+                                            <Clock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" />
+                                            <input
+                                                type="time"
+                                                value={formData.endTime}
+                                                onChange={e => setFormData({ ...formData, endTime: e.target.value })}
+                                                required
+                                                className="w-full h-14 pl-12 pr-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-gold-400/50 transition-all [color-scheme:dark]"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="form-group" style={{ margin: 0 }}>
-                                    <label className="form-label">{t("admin.calendar.horrioDeTrmino", `Horário de Término`)}</label>
-                                    <div style={{ position: "relative" }}>
-                                        <Clock size={18} style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)", color: "var(--fg-muted)", opacity: 0.5 }} />
-                                        <input
-                                            type="time"
-                                            value={formData.endTime}
-                                            onChange={e => setFormData({ ...formData, endTime: e.target.value })}
-                                            required
-                                            style={{ width: "100%", height: "3.5rem", paddingLeft: "3rem" }}
-                                        />
-                                    </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Finalidade do Agendamento</label>
+                                    <textarea
+                                        value={formData.purpose}
+                                        onChange={e => setFormData({ ...formData, purpose: e.target.value })}
+                                        className="w-full p-6 bg-white/5 border border-white/5 rounded-[32px] text-white outline-none focus:border-gold-400/50 transition-all min-h-[120px] resize-none"
+                                        placeholder="Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo..."
+                                    />
                                 </div>
-                            </div>
 
-                            <div className="form-group" style={{ margin: 0 }}>
-                                <label className="form-label">{t("admin.calendar.finalidadeDaOcupao", `Finalidade da Ocupação`)}</label>
-                                <textarea
-                                    value={formData.purpose}
-                                    onChange={e => setFormData({ ...formData, purpose: e.target.value })}
-                                    style={{ width: "100%", minHeight: "120px" }}
-                                    placeholder={t("admin.calendar.exTreinamentoDeEquipeManutenoPreventivaG", `Ex: Treinamento de equipe, Manutenção preventiva, Gravação de vídeo...`)}
-                                />
-                            </div>
+                                <div className="grid grid-cols-2 gap-4 pt-4">
+                                    <Button 
+                                        type="button" 
+                                        variant="glass" 
+                                        className="h-14 rounded-2xl border-white/5 text-slate-400 hover:text-white" 
+                                        onClick={() => setIsModalOpen(false)}
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button 
+                                        type="submit" 
+                                        className="h-14 rounded-2xl bg-gold-400 text-slate-950 font-black shadow-lg shadow-gold-400/20" 
+                                        isLoading={isSubmitting}
+                                    >
+                                        Confirmar Agenda
+                                    </Button>
+                                </div>
+                            </form>
 
-                            <div style={{ display: "flex", gap: "1.25rem", marginTop: "1rem" }}>
-                                <Button type="button" variant="ghost" style={{ flex: 1, height: "3.5rem" }} onClick={() => setIsModalOpen(false)}>
-                                    DESCARTE
-                                </Button>
-                                <Button type="submit" className="btn-primary" style={{ flex: 2, height: "3.5rem", fontWeight: 800 }} isLoading={isSubmitting}>
-                                    SALVAR AGENDAMENTO
-                                </Button>
-                            </div>
-                        </form>
+                            {/* Decorative Background Elements */}
+                            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-gold-400/10 rounded-full blur-3xl" />
+                            <div className="absolute -top-10 -left-10 w-40 h-40 bg-gold-400/5 rounded-full blur-3xl" />
+                        </motion.div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </AnimatePresence>
+        </AnimateIn>
     );
 };

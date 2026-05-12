@@ -201,7 +201,7 @@ export const AdminCollaboratorForm: React.FC = () => {
           <Button 
             variant="primary" 
             type="submit" 
-            loading={loading}
+            isLoading={loading}
             className="!px-10"
           >
             {isEdit ? "Salvar Alterações" : "Criar Acesso"}

@@ -29,7 +29,7 @@ export const AdminEventDashboard: React.FC = () => {
         ticketsSold: 0,
         totalTickets: 0,
         revenue: 0,
-        views: 0, // TODO: Implement event view tracking
+        views: 0,
         recentRegistrations: [] as Array<{ id: string; name: string }>
     });
 
@@ -80,13 +80,13 @@ export const AdminEventDashboard: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex gap-3">
-                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover: flex items-center gap-2 px-4 py-2 rounded-lg">
+                    <Link to={`/admin/eventos/${id}/relatorio`} className="btn bg-zinc-900/40 border border-white/10 text-zinc-300 hover:bg-white/5 flex items-center gap-2 px-4 py-2 rounded-lg transition-colors">
                         <Printer className="w-4 h-4" /> Relatório
                     </Link>
                     <Link to={`/admin/eventos/${id}/pesquisa`} className="btn bg-zinc-900/40 border border-white/10 text-[var(--accent-primary)] hover:bg-blue-50 flex items-center gap-2 px-4 py-2 rounded-lg">
                         <CheckSquare className="w-4 h-4" /> Pesquisa
                     </Link>
-                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-zinc-800/50 rounded-lg hover:bg-zinc-900/40 border border-gold/20/10 transition-colors">
+                    <Link to={`/admin/eventos/${id}/checkin`} className="btn btn-secondary flex items-center gap-2 px-4 py-2 bg-zinc-800/50 rounded-lg hover:bg-zinc-900/40 border border-white/10 transition-colors">
                         <QrCode className="w-4 h-4" /> Check-in
                     </Link>
                     <Link to={`/admin/eventos/${id}`} className="btn flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800">

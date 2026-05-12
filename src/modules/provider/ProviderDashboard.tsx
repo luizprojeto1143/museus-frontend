@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
     MessageSquare,
     ArrowUpRight,
@@ -9,11 +9,26 @@ import {
     ShieldCheck,
     TrendingUp,
     Banknote,
-    ExternalLink
+    ExternalLink,
+    Zap,
+    Briefcase,
+    Activity,
+    ChevronRight,
+    Sparkles,
+    AlertCircle
 } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
 import { useNavigate } from "react-router-dom";
+import { 
+    Card, 
+    AnimatedCounter, 
+    Button, 
+    Badge, 
+    AnimateIn 
+} from "@/components/ui";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-hot-toast";
 
 export const ProviderDashboard: React.FC = () => {
     const { name } = useAuth();
@@ -23,23 +38,26 @@ export const ProviderDashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [onboardingLoading, setOnboardingLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [statsRes, activitiesRes] = await Promise.all([
-                    api.get("/providers/me/stats"),
-                    api.get("/inbox")
-                ]);
-                setStats(statsRes.data);
-                setActivities(activitiesRes.data.slice(0, 5));
-            } catch (err) {
-                console.error("Error fetching provider dashboard data", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+    const fetchData = useCallback(async () => {
+        try {
+            setLoading(true);
+            const [statsRes, activitiesRes] = await Promise.all([
+                api.get("/providers/me/stats"),
+                api.get("/inbox")
+            ]);
+            setStats(statsRes.data);
+            setActivities(activitiesRes.data.slice(0, 5));
+        } catch (err) {
+            console.error("Error fetching provider dashboard data", err);
+            toast.error("Erro ao sincronizar dados do painel.");
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const handleStripeOnboarding = async () => {
         try {
@@ -48,7 +66,7 @@ export const ProviderDashboard: React.FC = () => {
             window.location.href = data.url;
         } catch (err) {
             console.error("Error generating onboarding link", err);
-            alert("Erro ao conectar com o Stripe. Tente novamente.");
+            toast.error("Erro ao conectar com o gateway de pagamento.");
         } finally {
             setOnboardingLoading(false);
         }
@@ -60,181 +78,241 @@ export const ProviderDashboard: React.FC = () => {
             window.open(data.url, "_blank");
         } catch (err) {
             console.error("Error generating dashboard link", err);
+            toast.error("Não foi possível abrir o painel financeiro.");
         }
     };
 
-    const statCards = [
-        { label: "Orçamentos Pendentes", value: stats?.pendingQuotes ?? "0", icon: <Clock size={24} />, color: "text-orange-400", bg: "bg-orange-400/10" },
-        { label: "Conversas Ativas", value: stats?.activeConversations ?? "0", icon: <MessageSquare size={24} />, color: "text-blue-400", bg: "bg-blue-400/10" },
-        { label: "Serviços Concluídos", value: stats?.completedExecutions ?? "0", icon: <CheckCircle size={24} />, color: "text-green-400", bg: "bg-green-400/10" },
-        { label: "Total de Execuções", value: stats?.totalExecutions ?? "0", icon: <DollarSign size={24} />, color: "text-purple-400", bg: "bg-purple-400/10" },
-    ];
-
     if (loading) return (
-        <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#9f7aea]"></div>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+            <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Sincronizando Terminal...</p>
         </div>
     );
 
+    const statCards = [
+        { label: "Solicitações", value: stats?.pendingQuotes ?? 0, icon: <Clock size={20} />, color: "text-amber-400", bg: "bg-amber-400/10" },
+        { label: "Conversas", value: stats?.activeConversations ?? 0, icon: <MessageSquare size={20} />, color: "text-blue-400", bg: "bg-blue-400/10" },
+        { label: "Concluídos", value: stats?.completedExecutions ?? 0, icon: <CheckCircle size={20} />, color: "text-green-400", bg: "bg-green-400/10" },
+        { label: "Faturamento", value: stats?.totalExecutions ?? 0, icon: <DollarSign size={20} />, color: "text-indigo-400", bg: "bg-indigo-400/10" },
+    ];
+
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 className="text-4xl font-black text-white tracking-tight">
-                        Olá, <span className="text-[#9f7aea]">{name?.split(" ")[0]}</span>!
+        <AnimateIn className="space-y-10 pb-20 max-w-7xl mx-auto">
+            {/* Hero Section */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div className="space-y-2">
+                    <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
+                        Olá, <span className="text-indigo-500">{name?.split(" ")[0]}!</span>
                     </h1>
-                    <p className="text-[#b794f4] mt-2 text-lg">
+                    <p className="text-slate-500 font-medium text-lg">
                         {stats?.pendingQuotes > 0 ? (
-                            <>Você tem <span className="text-white font-bold">{stats.pendingQuotes} novas solicitações</span> aguardando resposta.</>
+                            <span className="flex items-center gap-2">
+                                <Sparkles size={18} className="text-amber-400" />
+                                Você tem <span className="text-white font-bold">{stats.pendingQuotes} novas solicitações</span> pendentes.
+                            </span>
                         ) : (
-                            "Sua agenda está em dia por enquanto."
+                            "Sua agenda estratégica está em dia."
                         )}
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    <button
+                    <Button
                         onClick={() => navigate("/provider/inbox")}
-                        className="bg-[#9f7aea] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#805ad5] transition-all flex items-center gap-2 shadow-lg shadow-[#9f7aea]/20"
+                        className="h-14 px-8 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-600/20 active:scale-95"
+                        rightIcon={<ArrowUpRight size={18} />}
                     >
-                        Ver Inbox <ArrowUpRight size={18} />
-                    </button>
+                        Abrir Inbox
+                    </Button>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {statCards.map((stat, i) => (
-                    <div key={i} className="bg-[#1a0f2c] p-6 rounded-2xl border border-[#3b2164] shadow-xl hover:border-[#9f7aea]/50 transition-all group">
-                        <div className="flex items-start justify-between">
-                            <div className={`${stat.bg} ${stat.color} p-3 rounded-xl group-hover:scale-110 transition-transform`}>
+                    <Card key={i} className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] group hover:bg-white/[0.04] transition-all relative overflow-hidden">
+                        <div className="flex justify-between items-start mb-4 relative z-10">
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border border-white/5 transition-all group-hover:scale-110 ${stat.bg} ${stat.color}`}>
                                 {stat.icon}
                             </div>
                         </div>
-                        <div className="mt-4">
-                            <div className="text-[2.5rem] font-black text-white leading-none">{stat.value}</div>
-                            <div className="text-[#b794f4] font-medium mt-1">{stat.label}</div>
+                        <div className="relative z-10">
+                            <div className="text-4xl font-black text-white leading-none tracking-tighter">
+                                <AnimatedCounter value={stat.value} />
+                            </div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-3">{stat.label}</div>
                         </div>
-                    </div>
+                        <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+                            {React.cloneElement(stat.icon as React.ReactElement, { size: 80 })}
+                        </div>
+                    </Card>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Recent Activities */}
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                            <Clock size={20} className="text-[#9f7aea]" /> Atividades Recentes
-                        </h2>
+                <Card className="lg:col-span-8 p-0 bg-white/[0.02] border-white/5 rounded-[40px] overflow-hidden">
+                    <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-600/10 text-indigo-400 flex items-center justify-center">
+                                <Activity size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-black text-white tracking-tight">Atividades Críticas</h2>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Últimas interações com produtores</p>
+                            </div>
+                        </div>
+                        <Button variant="glass" className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border-white/5" onClick={() => navigate("/provider/inbox")}>
+                            Ver Todas
+                        </Button>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="divide-y divide-white/5">
                         {activities.length > 0 ? activities.map((conv, i) => (
-                            <div
+                            <motion.div
                                 key={i}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: i * 0.1 }}
                                 onClick={() => navigate(`/provider/inbox?id=${conv.id}`)}
-                                className="bg-black/20 p-5 rounded-2xl border border-[#3b2164] flex items-center justify-between group hover:bg-black/40 transition-all cursor-pointer"
+                                className="p-6 flex items-center justify-between group hover:bg-white/[0.02] transition-all cursor-pointer"
                             >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-[#3b2164] rounded-full flex items-center justify-center text-[#9f7aea] font-bold">
-                                        {conv.producer?.name?.slice(0, 2).toUpperCase()}
+                                <div className="flex items-center gap-5">
+                                    <div className="w-14 h-14 bg-indigo-600/20 text-indigo-400 rounded-2xl flex items-center justify-center font-black text-lg border border-indigo-400/10 group-hover:scale-105 transition-transform">
+                                        {conv.producer?.name?.slice(0, 2).toUpperCase() || "??"}
                                     </div>
-                                    <div>
-                                        <div className="text-white font-bold group-hover:text-[#9f7aea]">{conv.producer?.name}</div>
-                                        <div className="text-[#b794f4] text-sm">
-                                            {conv.messages?.[0]?.content?.slice(0, 60)}...
+                                    <div className="min-w-0">
+                                        <div className="text-white font-bold group-hover:text-indigo-400 transition-colors">{conv.producer?.name || "Produtor Desconhecido"}</div>
+                                        <div className="text-slate-500 text-xs truncate max-w-[280px] mt-1 font-medium">
+                                            {conv.messages?.[0]?.content || "Iniciou uma nova conversa estratégica."}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-right flex flex-col items-end gap-1">
-                                    <div className="text-xs text-[#b794f4]">
-                                        {new Date(conv.lastMessageAt).toLocaleDateString()}
+                                <div className="text-right flex flex-col items-end gap-2">
+                                    <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
+                                        {new Date(conv.lastMessageAt).toLocaleDateString("pt-BR")}
                                     </div>
-                                    <span className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded ${conv.messages?.[0]?.senderType === "PRODUCER" ? "text-orange-400 bg-orange-400/10" : "text-[#9f7aea] bg-[#9f7aea]/10"
-                                        }`}>
+                                    <Badge className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                                        conv.messages?.[0]?.senderType === "PRODUCER" 
+                                        ? "text-amber-400 bg-amber-400/10 border-amber-400/20" 
+                                        : "text-indigo-400 bg-indigo-400/10 border-indigo-400/20"
+                                    }`}>
                                         {conv.messages?.[0]?.senderType === "PRODUCER" ? "Pendente" : "Respondido"}
-                                    </span>
+                                    </Badge>
                                 </div>
-                            </div>
+                            </motion.div>
                         )) : (
-                            <div className="text-[#b794f4] italic text-center py-10">Nenhuma atividade recente.</div>
+                            <div className="flex flex-col items-center justify-center py-20 text-slate-600 space-y-4">
+                                <AlertCircle size={48} className="opacity-20" />
+                                <p className="text-sm font-medium italic">Nenhum fluxo de atividade registrado.</p>
+                            </div>
                         )}
                     </div>
-                </div>
+                </Card>
 
-                {/* Payments & Subscription */}
-                <div className="space-y-6">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <Banknote size={20} className="text-[#9f7aea]" /> Configuração de Pagamentos
-                    </h2>
-
-                    <div className="bg-[#1a0f2c] p-6 rounded-[32px] border border-[#3b2164] relative overflow-hidden group">
-                        <div className="relative z-10">
-                            <p className="text-[#b794f4] text-sm mb-6 leading-relaxed">
-                                Para receber pagamentos dos produtores culturais, você precisa configurar sua conta no Stripe Connect.
-                            </p>
-                            
-                            {stats?.hasStripeConnect ? (
-                                <button
-                                    onClick={handleStripeDashboard}
-                                    className="w-full bg-[#1a0f2c] border-2 border-[#9f7aea] text-white font-bold py-3 rounded-xl hover:bg-[#9f7aea]/10 transition-all text-sm flex items-center justify-center gap-2"
-                                >
-                                    Ver Painel Financeiro <ExternalLink size={16} />
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={handleStripeOnboarding}
-                                    disabled={onboardingLoading}
-                                    className="w-full bg-[#9f7aea] text-white font-bold py-3 rounded-xl hover:bg-[#805ad5] transition-all text-sm shadow-lg shadow-[#9f7aea]/20 flex items-center justify-center gap-2"
-                                >
-                                    {onboardingLoading ? "Carregando..." : "Configurar Recebimentos"} <ArrowUpRight size={16} />
-                                </button>
-                            )}
+                {/* Right Column: Payments & Account */}
+                <div className="lg:col-span-4 space-y-8">
+                    {/* Stripe Section */}
+                    <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] relative overflow-hidden group">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-[0_0_20px_rgba(79,70,229,0.2)]">
+                                <Banknote size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-black text-white tracking-tight">Pagamentos</h3>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Gateway Stripe Connect</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <CreditCard size={20} className="text-[#9f7aea]" /> Assinatura
-                    </h2>
-                    
-                    <div className="bg-gradient-to-br from-[#2c1e10] to-[#1a0f2c] p-6 rounded-[32px] border border-[#9f7aea]/30 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
-                            <ShieldCheck size={80} />
+                        <p className="text-slate-400 text-xs leading-relaxed mb-8 font-medium">
+                            Configure seus recebimentos para processar faturamentos de serviços executados com segurança bancária.
+                        </p>
+                        
+                        <AnimatePresence mode="wait">
+                            {stats?.hasStripeConnect ? (
+                                <motion.div key="dashboard" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                                    <Button
+                                        onClick={handleStripeDashboard}
+                                        variant="glass"
+                                        className="w-full h-14 rounded-2xl border-white/5 text-white font-black text-[10px] uppercase tracking-[0.2em]"
+                                        leftIcon={<ExternalLink size={16} />}
+                                    >
+                                        Painel Financeiro
+                                    </Button>
+                                </motion.div>
+                            ) : (
+                                <motion.div key="onboarding" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                                    <Button
+                                        onClick={handleStripeOnboarding}
+                                        isLoading={onboardingLoading}
+                                        className="w-full h-14 rounded-2xl bg-indigo-600 text-white font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-indigo-600/20"
+                                        rightIcon={<ArrowUpRight size={16} />}
+                                    >
+                                        Configurar Conta
+                                    </Button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-indigo-500/10 transition-all" />
+                    </Card>
+
+                    {/* Subscription Section */}
+                    <Card className="p-8 bg-gradient-to-br from-indigo-950/20 to-black/40 border-indigo-500/20 rounded-[40px] relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:rotate-12 transition-transform duration-700">
+                            <ShieldCheck size={120} />
                         </div>
                         
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 text-[#b794f4] text-xs font-bold uppercase tracking-widest mb-4">
-                                <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">Ativa</span>
-                                <span>Plano Mensal Elite</span>
+                        <div className="relative z-10 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <Badge className="bg-green-500/10 text-green-400 border-green-500/20 uppercase text-[8px] font-black tracking-widest px-3 py-1">
+                                    Assinatura Ativa
+                                </Badge>
+                                <CreditCard size={18} className="text-indigo-400" />
                             </div>
-                            <div className="text-3xl font-black text-white mb-1">R$ 50,00</div>
-                            <div className="text-[#b794f4] text-xs mb-6">Próxima renovação: 12/06/2026</div>
                             
-                            <button className="w-full bg-white/5 border border-white/10 text-white font-bold py-3 rounded-xl hover:bg-white/10 transition-all text-sm">
-                                Gerenciar Assinatura
-                            </button>
+                            <div>
+                                <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Plano Mensal Elite</h4>
+                                <div className="text-4xl font-black text-white tracking-tighter">R$ 50,00</div>
+                            </div>
+                            
+                            <div className="text-slate-500 text-[10px] font-medium italic">
+                                Renovação automática em 12 de Junho, 2026
+                            </div>
+                            
+                            <Button variant="glass" className="w-full h-12 rounded-xl border-white/5 text-white/60 font-black text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors">
+                                Gerenciar Faturamento
+                            </Button>
                         </div>
-                    </div>
+                    </Card>
 
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                        <TrendingUp size={20} className="text-[#9f7aea]" /> Visibilidade
-                    </h2>
-                    <div className="bg-[#1a0f2c] p-6 rounded-2xl border border-[#3b2164]">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="text-sm text-[#b794f4]">Visualizações do Perfil</div>
-                            <div className="text-green-400 text-xs font-bold flex items-center gap-1">
-                                +12% <ArrowUpRight size={12} />
+                    {/* Visibility Card */}
+                    <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[32px] space-y-6 group">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <TrendingUp size={18} className="text-indigo-400" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Visibilidade</span>
+                            </div>
+                            <div className="text-green-400 text-[10px] font-black flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded-lg">
+                                +12% <ArrowUpRight size={10} />
                             </div>
                         </div>
-                        <div className="h-2 w-full bg-black/30 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-[#9f7aea] to-[#b794f4] w-[65%]" />
+                        
+                        <div>
+                            <div className="flex justify-between items-end mb-4">
+                                <div className="text-3xl font-black text-white leading-none">428</div>
+                                <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Views este mês</div>
+                            </div>
+                            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: '65%' }}
+                                    className="h-full bg-gradient-to-r from-indigo-600 to-indigo-400 shadow-[0_0_10px_rgba(79,70,229,0.3)]" 
+                                />
+                            </div>
                         </div>
-                        <div className="mt-4 flex justify-between items-end">
-                            <div className="text-2xl font-bold text-white">428</div>
-                            <div className="text-[10px] text-[#b794f4] uppercase tracking-widest">Este mês</div>
-                        </div>
-                    </div>
+                    </Card>
                 </div>
             </div>
-        </div>
+        </AnimateIn>
     );
 };
