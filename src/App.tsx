@@ -97,6 +97,7 @@ const RootRedirector: React.FC = () => {
   if (role === "master") return <Navigate to="/master" replace />;
   if (role === "admin") return <Navigate to="/admin" replace />;
   if (role === "theater") return <Navigate to="/theater" replace />;
+  if (role === "producer") return <Navigate to="/producer" replace />;
 
   return (
     <VisitorLayout>

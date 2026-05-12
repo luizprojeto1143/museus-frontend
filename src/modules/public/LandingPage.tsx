@@ -40,9 +40,19 @@ export const LandingPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const tenant = useTenant();
-    const { logout, isAuthenticated } = useAuth();
+    const { logout, isAuthenticated, role } = useAuth();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+
+    // Auto redirect if logged in
+    useEffect(() => {
+        if (isAuthenticated && role) {
+            if (role === "master") navigate("/master");
+            else if (role === "admin") navigate("/admin");
+            else if (role === "theater") navigate("/theater");
+            else if (role === "producer") navigate("/producer");
+        }
+    }, [isAuthenticated, role, navigate]);
 
     // Track scroll for header transition
     useEffect(() => {
