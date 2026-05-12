@@ -116,6 +116,11 @@ export const ProviderDashboard: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex gap-3">
+                    {!stats?.active && (
+                         <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                             <AlertCircle size={14} /> Perfil Pendente de Ativação
+                         </Badge>
+                    )}
                     <Button
                         onClick={() => navigate("/provider/inbox")}
                         className="h-14 px-8 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-600/20 active:scale-95"
@@ -125,6 +130,29 @@ export const ProviderDashboard: React.FC = () => {
                     </Button>
                 </div>
             </div>
+
+            {/* Inactive Profile Banner */}
+            {!stats?.active && (
+                <Card className="p-8 bg-amber-500/5 border-amber-500/20 rounded-[32px] border-dashed">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                            <Zap size={32} />
+                        </div>
+                        <div className="flex-1 space-y-2 text-center md:text-left">
+                            <h3 className="text-xl font-black text-white tracking-tight">Ativação de Perfil Necessária</h3>
+                            <p className="text-slate-400 text-sm font-medium">
+                                Seu cadastro foi recebido com sucesso! Para começar a receber solicitações de museus e produtores, é necessário concluir o pagamento da assinatura ou aguardar a validação administrativa.
+                            </p>
+                        </div>
+                        <Button
+                            className="bg-amber-500 text-black font-black uppercase tracking-widest text-[10px] h-12 px-8 rounded-xl hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20"
+                            onClick={() => window.location.reload()} // Just reload for now or link to stripe if we have session info
+                        >
+                            Verificar Status
+                        </Button>
+                    </div>
+                </Card>
+            )}
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -264,10 +292,14 @@ export const ProviderDashboard: React.FC = () => {
                         
                         <div className="relative z-10 space-y-6">
                             <div className="flex items-center justify-between">
-                                <Badge className="bg-green-500/10 text-green-400 border-green-500/20 uppercase text-[8px] font-black tracking-widest px-3 py-1">
-                                    Assinatura Ativa
+                                <Badge className={`uppercase text-[8px] font-black tracking-widest px-3 py-1 ${
+                                    stats?.active 
+                                    ? "bg-green-500/10 text-green-400 border-green-500/20" 
+                                    : "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                                }`}>
+                                    {stats?.active ? "Assinatura Ativa" : "Aguardando Ativação"}
                                 </Badge>
-                                <CreditCard size={18} className="text-indigo-400" />
+                                <CreditCard size={18} className={stats?.active ? "text-indigo-400" : "text-slate-500"} />
                             </div>
                             
                             <div>
