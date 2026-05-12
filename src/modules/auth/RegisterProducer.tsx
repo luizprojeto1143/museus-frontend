@@ -63,7 +63,7 @@ export const RegisterProducer: React.FC = () => {
         setError("");
 
         try {
-            await api.post("/auth/register-producer", {
+            await api.post("/auth/register", {
                 ...formData,
                 role: "PRODUCER",
                 parentTenantId: selectedCity || null // Optional city link
