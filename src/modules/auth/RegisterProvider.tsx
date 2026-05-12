@@ -65,8 +65,8 @@ export const RegisterProvider: React.FC = () => {
         <div className="min-h-screen bg-[#05050c] text-[#f5e6d3] flex flex-col lg:flex-row overflow-hidden">
             
             {/* LEFT SIDE: VALUE PROPOSITION */}
-            <div className="lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#9f7aea]/20 to-transparent opacity-50" />
+            <div className="lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center relative bg-[#0a0a14]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(159,122,234,0.1),transparent)] opacity-50" />
                 
                 <Link to="/" className="relative z-10 flex items-center gap-3 mb-16 group">
                     <div className="w-10 h-10 bg-[#9f7aea] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#9f7aea]/20">
