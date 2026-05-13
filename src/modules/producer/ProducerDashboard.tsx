@@ -38,7 +38,7 @@ export const ProducerDashboard: React.FC = () => {
                     api.get("/analytics/sales-summary"),
                     api.get("/events"),
                     api.get("/notices/public"),
-                    api.get("/projects")
+                    api.get("/projects/my")
                 ]);
 
                 // Sales & Metrics

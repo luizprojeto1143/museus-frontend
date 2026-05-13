@@ -38,7 +38,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
 
     React.useEffect(() => {
         if (tenantId) {
-            api.get(`/tenants/${tenantId}`).then(res => {
+            api.get(`/tenants/${tenantId}/features`).then(res => {
                 setFeatures(res.data);
             }).catch(err => console.warn("Could not load producer features", err));
         }
