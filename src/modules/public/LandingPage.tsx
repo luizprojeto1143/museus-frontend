@@ -51,6 +51,7 @@ export const LandingPage: React.FC = () => {
             else if (role === "admin") navigate("/admin");
             else if (role === "theater") navigate("/theater");
             else if (role === "producer") navigate("/producer");
+            else if (role === "collaborator") navigate("/admin");
         }
     }, [isAuthenticated, role, navigate]);
 
