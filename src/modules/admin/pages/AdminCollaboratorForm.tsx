@@ -16,6 +16,11 @@ const PERMISSION_FLAGS = [
   { id: "manage_chat_ai", label: "Treinar IA", description: "Configurar base de conhecimento da IA" },
   { id: "manage_guestbook", label: "Moderar Livro de Visitas", description: "Aprovar comentários e reviews" },
   { id: "manage_shop", label: "Gerenciar Loja", description: "Controle de itens e pedidos" },
+  { id: "manage_gamification", label: "Gamificação", description: "Caça ao tesouro, conquistas e cupons" },
+  { id: "manage_institutional", label: "Gestão Institucional", description: "Editais, projetos e prestadores" },
+  { id: "manage_operations", label: "Gestão de Equipamentos", description: "Espaços, equipamentos e agenda" },
+  { id: "manage_marketing", label: "IA & Marketing", description: "Descrições IA, Instagram e traduções" },
+  { id: "manage_roadmap", label: "Novas Funcionalidades (2026)", description: "Quizzes, timelines e comunidade" },
 ];
 
 export const AdminCollaboratorForm: React.FC = () => {

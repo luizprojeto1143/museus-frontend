@@ -190,41 +190,41 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.gamificaO", "Gamificação"),
       links: [
-        { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "Compass", show: features?.featureGamification ?? true },
-        { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "Trophy", show: features?.featureGamification ?? true },
-        { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "QrCode", show: features?.featureQRCodes ?? true },
-        { to: "/admin/cupons", label: t("admin.sidebar.cuponsERecompensas", "Cupons e Recompensas"), icon: "Ticket", show: features?.featureGamification ?? true },
-        { to: "/admin/colecao", label: t("admin.sidebar.cardsColecionVeis", "Cards Colecionáveis"), icon: "Diamond", show: features?.featureGamification ?? true },
-        { to: "/admin/battle", label: t("admin.sidebar.batalhaDeMuseus", "Batalha de Museus"), icon: "Sword", show: features?.featureGamification ?? true },
+        { to: "/admin/treasure-hunt", label: t("admin.sidebar.treasureHunt", "Caça ao Tesouro"), icon: "Compass", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
+        { to: "/admin/conquistas", label: t("admin.sidebar.achievements", "Conquistas"), icon: "Trophy", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
+        { to: "/admin/qrcodes", label: t("admin.sidebar.qrcodes"), icon: "QrCode", show: (features?.featureQRCodes ?? true) && hasPermission("manage_gamification") },
+        { to: "/admin/cupons", label: t("admin.sidebar.cuponsERecompensas", "Cupons e Recompensas"), icon: "Ticket", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
+        { to: "/admin/colecao", label: t("admin.sidebar.cardsColecionVeis", "Cards Colecionáveis"), icon: "Diamond", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
+        { to: "/admin/battle", label: t("admin.sidebar.batalhaDeMuseus", "Batalha de Museus"), icon: "Sword", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
       ],
       showGroup: (features?.featureGroupGamification ?? true) && role !== 'theater'
     },
     {
       label: isCityMode ? t("admin.sidebar.gestOMunicipal", "Gestão Municipal") : t("admin.sidebar.gestOInstitucional", "Gestão Institucional"),
       links: [
-        { to: "/admin/editais", label: t("admin.sidebar.editais", "Editais"), icon: "ClipboardList", show: features?.featureEditais ?? false },
-        { to: "/admin/projetos", label: t("admin.sidebar.projetosCulturais", "Projetos Culturais"), icon: "Palette", show: features?.featureProjects ?? false },
-        { to: "/admin/prestadores", label: t("admin.sidebar.prestadores", "Prestadores"), icon: "HardHat", show: features?.featureProviders ?? false },
+        { to: "/admin/editais", label: t("admin.sidebar.editais", "Editais"), icon: "ClipboardList", show: (features?.featureEditais ?? false) && hasPermission("manage_institutional") },
+        { to: "/admin/projetos", label: t("admin.sidebar.projetosCulturais", "Projetos Culturais"), icon: "Palette", show: (features?.featureProjects ?? false) && hasPermission("manage_institutional") },
+        { to: "/admin/prestadores", label: t("admin.sidebar.prestadores", "Prestadores"), icon: "HardHat", show: (features?.featureProviders ?? false) && hasPermission("manage_institutional") },
         { to: "/admin/agendamentos/novo", label: t("admin.sidebar.solicitarServiOPresencial", "Solicitar Serviço Presencial"), icon: "Handshake", show: true },
-        { to: "/admin/acessibilidade-gestao", label: t("admin.sidebar.gestOAcessibilidade", "Gestão Acessibilidade"), icon: "Accessibility", show: features?.featureAccessibilityMgmt ?? false },
-        { to: "/admin/relatorios", label: t("admin.sidebar.relatRiosInstitucionais", "Relatórios Institucionais"), icon: "BarChart", show: features?.featureInstitutionalReports ?? false },
-        { to: "/admin/equipamentos", label: t("admin.sidebar.equipamentosCulturais", "Equipamentos Culturais"), icon: "Building2", show: (features?.type === "CITY" || features?.type === "SECRETARIA") ?? false },
+        { to: "/admin/acessibilidade-gestao", label: t("admin.sidebar.gestOAcessibilidade", "Gestão Acessibilidade"), icon: "Accessibility", show: (features?.featureAccessibilityMgmt ?? false) && hasPermission("manage_institutional") },
+        { to: "/admin/relatorios", label: t("admin.sidebar.relatRiosInstitucionais", "Relatórios Institucionais"), icon: "BarChart", show: (features?.featureInstitutionalReports ?? false) && hasPermission("manage_institutional") },
+        { to: "/admin/equipamentos", label: t("admin.sidebar.equipamentosCulturais", "Equipamentos Culturais"), icon: "Building2", show: ((features?.type === "CITY" || features?.type === "SECRETARIA") ?? false) && hasPermission("manage_institutional") },
       ],
       showGroup: (features?.featureGroupInstitutional ?? true) && role !== 'theater'
     },
     {
       label: "Operações de Teatro",
       links: [
-        { to: "/theater", label: "Dashboard Palco", icon: "Theater", show: true },
-        { to: "/theater/mobile", label: "Venda Rápida (Mobile)", icon: "Smartphone", show: true },
-        { to: "/admin/assentos", label: "Mapa de Assentos", icon: "Armchair", show: true },
-        { to: "/admin/sessoes", label: "Sessões & Peças", icon: "Ticket", show: true },
-        { to: "/admin/elenco", label: "Elenco & Backstage", icon: "Users2", show: true },
-        { to: "/admin/playbill", label: "Programa Digital", icon: "BookOpen", show: true },
-        { to: "/admin/cue-master", label: "Console Backstage", icon: "Zap", show: true },
-        { to: "/admin/theater-club", label: "Clube de Membros", icon: "Diamond", show: true },
+        { to: "/theater", label: "Dashboard Palco", icon: "Theater", show: hasPermission("manage_operations") },
+        { to: "/theater/mobile", label: "Venda Rápida (Mobile)", icon: "Smartphone", show: hasPermission("manage_operations") },
+        { to: "/admin/assentos", label: "Mapa de Assentos", icon: "Armchair", show: hasPermission("manage_operations") },
+        { to: "/admin/sessoes", label: "Sessões & Peças", icon: "Ticket", show: hasPermission("manage_operations") },
+        { to: "/admin/elenco", label: "Elenco & Backstage", icon: "Users2", show: hasPermission("manage_operations") },
+        { to: "/admin/playbill", label: "Programa Digital", icon: "BookOpen", show: hasPermission("manage_operations") },
+        { to: "/admin/cue-master", label: "Console Backstage", icon: "Zap", show: hasPermission("manage_operations") },
+        { to: "/admin/theater-club", label: "Clube de Membros", icon: "Diamond", show: hasPermission("manage_operations") },
       ],
-      showGroup: features?.type === "THEATER" || role === "theater"
+      showGroup: (features?.type === "THEATER" || role === "theater") && hasPermission("manage_operations")
     },
     {
       label: t("admin.sidebar.ferramentasConfig", "Ferramentas & Config"),
@@ -235,11 +235,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/mapa-editor", label: t("admin.sidebar.mapaDePinos", "Mapa de Pinos"), icon: "MapPin", show: hasPermission("manage_works") },
         { to: "/admin/notificacoes", label: t("admin.sidebar.notificaEsPush", "Notificações Push"), icon: "Bell", show: hasPermission("manage_events") },
         { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "CircleDollarSign", show: hasPermission("view_analytics") },
-        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "Handshake", show: role === 'admin' },
-        { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "Settings", show: role === 'admin' },
-        { to: "/admin/usuarios", label: "Equipe", icon: "Users", show: role === 'admin' },
+        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "Handshake", show: role === 'admin' || role === 'master' },
+        { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "Settings", show: role === 'admin' || role === 'master' },
+        { to: "/admin/usuarios", label: "Equipe", icon: "Users", show: role === 'admin' || role === 'master' },
       ],
-      showGroup: features?.featureGroupTools ?? true
+      showGroup: (features?.featureGroupTools ?? true) && (role === 'admin' || hasPermission("view_analytics") || hasPermission("manage_works") || hasPermission("manage_events") || hasPermission("manage_chat_ai"))
     },
     {
       label: t("admin.sidebar.analyticsAvanAdo", "Analytics Avançado"),
@@ -256,44 +256,44 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.educaOSocial", "Educação & Social"),
       links: [
-        { to: "/admin/educacao", label: t("admin.sidebar.portalProfessores", "Portal Professores"), icon: "GraduationCap", show: true },
-        { to: "/admin/ingressos-grupo", label: t("admin.sidebar.ingressosGrupo", "Ingressos Grupo"), icon: "Users", show: true },
-        { to: "/admin/modo-crianca", label: t("admin.sidebar.modoCrianA", "Modo Criança"), icon: "Baby", show: true },
-        { to: "/admin/assinaturas", label: t("admin.sidebar.amigoDoMuseu", "Amigo do Museu"), icon: "Diamond", show: true },
-        { to: "/admin/patrocinios", label: t("admin.sidebar.patrocNios", "Patrocínios"), icon: "Handshake", show: true },
+        { to: "/admin/educacao", label: t("admin.sidebar.portalProfessores", "Portal Professores"), icon: "GraduationCap", show: hasPermission("manage_institutional") },
+        { to: "/admin/ingressos-grupo", label: t("admin.sidebar.ingressosGrupo", "Ingressos Grupo"), icon: "Users", show: hasPermission("manage_events") },
+        { to: "/admin/modo-crianca", label: t("admin.sidebar.modoCrianA", "Modo Criança"), icon: "Baby", show: hasPermission("manage_works") },
+        { to: "/admin/assinaturas", label: t("admin.sidebar.amigoDoMuseu", "Amigo do Museu"), icon: "Diamond", show: hasPermission("manage_shop") },
+        { to: "/admin/patrocinios", label: t("admin.sidebar.patrocNios", "Patrocínios"), icon: "Handshake", show: hasPermission("manage_institutional") },
       ],
       showGroup: (features?.featureGroupSocial ?? true) && role !== 'theater'
     },
     {
       label: t("admin.sidebar.municipalAvanAdo", "Gestão e Preservação"),
       links: [
-        { to: "/admin/voluntarios", label: t("admin.sidebar.voluntRios", "Voluntários"), icon: "Users", show: true },
-        { to: "/admin/conservacao", label: t("admin.sidebar.conservaO", "Conservação"), icon: "Wrench", show: true },
-        { to: "/admin/metas-ppa", label: t("admin.sidebar.metasPPA", "Indicadores de Gestão"), icon: "Target", show: true },
-        { to: "/admin/patrimonio", label: t("admin.sidebar.patrimNioImaterial", "Patrimônio Imaterial"), icon: "Scroll", show: true },
-        { to: "/admin/calendario-municipal", label: t("admin.sidebar.calendRioCultural", "Calendário Cultural"), icon: "CalendarDays", show: true },
-        { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Relatórios Externos"), icon: "FileSearch", show: true },
-        { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Impacto Territorial"), icon: "MapIcon", show: true },
+        { to: "/admin/voluntarios", label: t("admin.sidebar.voluntRios", "Voluntários"), icon: "Users", show: hasPermission("manage_institutional") },
+        { to: "/admin/conservacao", label: t("admin.sidebar.conservaO", "Conservação"), icon: "Wrench", show: hasPermission("manage_works") },
+        { to: "/admin/metas-ppa", label: t("admin.sidebar.metasPPA", "Indicadores de Gestão"), icon: "Target", show: hasPermission("view_analytics") },
+        { to: "/admin/patrimonio", label: t("admin.sidebar.patrimNioImaterial", "Patrimônio Imaterial"), icon: "Scroll", show: hasPermission("manage_works") },
+        { to: "/admin/calendario-municipal", label: t("admin.sidebar.calendRioCultural", "Calendário Cultural"), icon: "CalendarDays", show: hasPermission("manage_events") },
+        { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Relatórios Externos"), icon: "FileSearch", show: hasPermission("view_analytics") },
+        { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Impacto Territorial"), icon: "MapIcon", show: hasPermission("view_analytics") },
       ],
       showGroup: (features?.featureGroupPreservation ?? true) && role !== 'theater'
     },
     {
       label: t("admin.sidebar.iAMarketing", "IA & Marketing"),
       links: [
-        { to: "/admin/ia-descricoes", label: t("admin.sidebar.iADescriEs", "IA Descrições"), icon: "Wand2", show: true },
-        { to: "/admin/instagram", label: t("admin.sidebar.cardInstagram", "Card Instagram"), icon: "Camera", show: true },
-        { to: "/admin/traducoes", label: t("admin.sidebar.traduEs", "Traduções"), icon: "Globe", show: true },
+        { to: "/admin/ia-descricoes", label: t("admin.sidebar.iADescriEs", "IA Descrições"), icon: "Wand2", show: hasPermission("manage_marketing") },
+        { to: "/admin/instagram", label: t("admin.sidebar.cardInstagram", "Card Instagram"), icon: "Camera", show: hasPermission("manage_marketing") },
+        { to: "/admin/traducoes", label: t("admin.sidebar.traduEs", "Traduções"), icon: "Globe", show: hasPermission("manage_marketing") },
       ],
       showGroup: (features?.featureGroupAI ?? true) && role !== 'theater'
     },
     {
       label: "Roadmap 2026",
       links: [
-        { to: "/admin/comunidade", label: "Moderação Comunidade", icon: "MessageSquare", show: true },
-        { to: "/admin/quiz-builder", label: "Construtor de Quizzes", icon: "CheckCircle2", show: true },
-        { to: "/admin/timelines", label: "Linhas do Tempo", icon: "History", show: true },
-        { to: "/admin/submissoes", label: "Curadoria de Obras", icon: "Inbox", show: true },
-        { to: "/admin/familia", label: "Memória Familiar", icon: "TreePine", show: true },
+        { to: "/admin/comunidade", label: "Moderação Comunidade", icon: "MessageSquare", show: hasPermission("manage_roadmap") },
+        { to: "/admin/quiz-builder", label: "Construtor de Quizzes", icon: "CheckCircle2", show: hasPermission("manage_roadmap") },
+        { to: "/admin/timelines", label: "Linhas do Tempo", icon: "History", show: hasPermission("manage_roadmap") },
+        { to: "/admin/submissoes", label: "Curadoria de Obras", icon: "Inbox", show: hasPermission("manage_roadmap") },
+        { to: "/admin/familia", label: "Memória Familiar", icon: "TreePine", show: hasPermission("manage_roadmap") },
       ],
       showGroup: (features?.featureGroupRoadmap ?? true) && role !== 'theater'
     }
