@@ -207,7 +207,7 @@ export const LandingPage: React.FC = () => {
                         {t("public.landingpage.heroDesc", "A solução completa para digitalizar museus, centros culturais e cidades históricas. Engaje visitantes com gamificação, cumpra a Lei Rouanet com excelência e tenha controle total do seu acervo em tempo real.")}
                     </motion.p>
 
-                    <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row flex-wrap gap-6 justify-center items-center">
                         <Button
                             size="lg"
                             onClick={async () => {
@@ -227,6 +227,16 @@ export const LandingPage: React.FC = () => {
                             className="h-16 px-10 text-lg border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black rounded-2xl shadow-lg"
                         >
                             Sou Agente Cultural
+                        </Button>
+
+                        <Button
+                            size="lg"
+                            variant="outline"
+                            onClick={() => navigate("/patrocinar")}
+                            leftIcon={<Landmark size={20} className="text-[#9f7aea]" />}
+                            className="h-16 px-10 text-lg border-[#9f7aea]/30 hover:bg-[#9f7aea] hover:text-white rounded-2xl shadow-lg"
+                        >
+                            Quero Patrocinar
                         </Button>
                     </motion.div>
                 </motion.div>
@@ -567,9 +577,9 @@ export const LandingPage: React.FC = () => {
                         <div>
                             <h4 className="font-bold text-xs uppercase tracking-[0.3em] text-[var(--accent-primary)] mb-8">Empresa</h4>
                             <ul className="space-y-6 text-sm text-[#f5e6d3]/70 font-semibold">
-                                <li className="hover:text-white transition-colors cursor-pointer">Sobre Nós</li>
-                                <li className="hover:text-white transition-colors cursor-pointer">Consultoria</li>
-                                <li className="hover:text-white transition-colors cursor-pointer">Privacidade</li>
+                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/patrocinar")}>Portal de Patrocínio</li>
+                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/sou-produtor")}>Para Agentes</li>
+                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/sou-prestador")}>Para Prestadores</li>
                             </ul>
                         </div>
                     </div>
