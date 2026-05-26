@@ -5,48 +5,148 @@ import { QrCode, Ticket, Calendar, Search } from "lucide-react";
 
 export const TotemDashboard: React.FC = () => {
   const { t } = useTranslation();
-    return (
-        <div style={{
+  return (
+    <div style={{
+      height: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "2rem"
+    }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+        gap: "2rem",
+        maxWidth: "1000px",
+        width: "100%"
+      }}>
+        {/* Card Validação Rápida */}
+        <Link to="/totem/validar" style={{ textDecoration: "none" }}>
+          <div className="totem-card" style={{
+            background: "linear-gradient(145deg, #1e1e24, #15151a)",
+            border: "1px solid rgba(212,175,55,0.3)",
+            borderRadius: "20px",
+            padding: "3rem",
+            textAlign: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
             height: "100%",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "2rem"
-        }}>
+            gap: "1.5rem"
+          }}>
             <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                gap: "2rem",
-                maxWidth: "1000px",
-                width: "100%"
+              width: "80px",
+              height: "80px",
+              background: "rgba(212,175,55,0.1)",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--accent-primary)"
             }}>
-                {/* Card Validação Rápida */}
-                <Link to="/totem/validar" style={{ textDecoration: "none" }}>
-                    <div className="totem-card" style={{
-                        background: "linear-gradient(145deg, #1e1e24, #15151a)",
-                        border: "1px solid rgba(212,175,55,0.3)",
-                        borderRadius: "20px",
-                        padding: "3rem",
-                        textAlign: "center",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "1.5rem"
-                    }}>
-                        <div style={{
-                            width: "80px",
-                            height: "80px",
-                            background: "rgba(212,175,55,0.1)",
-                            borderRadius: "50%",
-                            display: "flex",
-                    border-color: var(--accent-primary) !important;
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-                }
-            `}</style>
-        </div>
-    );
+              <QrCode size={40} />
+            </div>
+            <div>
+              <h2 style={{ color: "#fff", fontSize: "1.8rem", marginBottom: "0.5rem" }}>
+                {t("totem.totemdashboard.validateTicket", "Validar Ingresso")}
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.6)" }}>
+                {t("totem.totemdashboard.escanearQrCodeParaEntradaRpida", "Escanear QR Code para entrada rápida")}
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Card Lista de Eventos (Manual) */}
+        <Link to="/totem/eventos" style={{ textDecoration: "none" }}>
+          <div className="totem-card" style={{
+            background: "linear-gradient(145deg, #1e1e24, #15151a)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "20px",
+            padding: "3rem",
+            textAlign: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1.5rem"
+          }}>
+            <div style={{
+              width: "80px",
+              height: "80px",
+              background: "rgba(59, 130, 246, 0.1)",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--accent-primary)"
+            }}>
+              <Calendar size={40} />
+            </div>
+            <div>
+              <h2 style={{ color: "#fff", fontSize: "1.8rem", marginBottom: "0.5rem" }}>
+                {t("totem.totemdashboard.todaysEvents", "Eventos do Dia")}
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.6)" }}>
+                {t("totem.totemdashboard.eventHelp", "Ver lista de participantes e check-in manual")}
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        {/* Card Busca Manual (Reserva) */}
+        <Link to="/totem/busca" style={{ textDecoration: "none" }}>
+          <div className="totem-card" style={{
+            background: "linear-gradient(145deg, #1e1e24, #15151a)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: "20px",
+            padding: "3rem",
+            textAlign: "center",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "1.5rem"
+          }}>
+            <div style={{
+              width: "80px",
+              height: "80px",
+              background: "rgba(16, 185, 129, 0.1)",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#10b981"
+            }}>
+              <Search size={40} />
+            </div>
+            <div>
+              <h2 style={{ color: "#fff", fontSize: "1.8rem", marginBottom: "0.5rem" }}>
+                {t("totem.totemdashboard.manualSearch", "Busca Manual")}
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.6)" }}>
+                {t("totem.totemdashboard.buscarPorNomeCpfOuCdigo", "Buscar por nome, CPF ou código")}
+              </p>
+            </div>
+          </div>
+        </Link>
+      </div>
+      <style>{`
+        .totem-card:hover {
+          transform: translateY(-5px);
+          border-color: var(--accent-primary) !important;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+      `}</style>
+    </div>
+  );
 };

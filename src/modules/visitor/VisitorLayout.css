@@ -40,14 +40,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
+    overflow: hidden;
 }
 
 .header-logo-container {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     text-decoration: none;
+    min-width: 0;
+    flex-shrink: 1;
+    overflow: hidden;
 }
 
 .header-logo {
@@ -64,7 +68,8 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .logout-btn-minimal {
@@ -223,6 +228,9 @@
     font-size: 1.25rem;
     letter-spacing: -0.02em;
     color: var(--fg-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .app-subtitle {
@@ -314,17 +322,8 @@
     z-index: 10;
 }
 
-.layout-header {
-    height: var(--header-height);
-    padding: 0 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: transparent;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+/* Note: .layout-header primary definition is at top of file (lines 13-27) */
+/* The sticky position rule below is overridden by the fixed rule above */
 
 .layout-content {
     padding: 1rem 2rem 4rem;
@@ -398,25 +397,36 @@
     }
 
     .layout-header {
-        top: 0.5rem;
+        top: calc(0.5rem + env(safe-area-inset-top));
         left: 0.5rem;
         right: 0.5rem;
-        height: 56px;
+        height: 52px;
         border-radius: 16px;
+        padding: 0;
+    }
+
+    .layout-header-inner {
+        padding: 0 0.75rem;
+        gap: 6px;
     }
 
     .header-logo {
         width: 28px;
         height: 28px;
+        flex-shrink: 0;
     }
 
     .app-title {
-        font-size: 0.85rem;
-        max-width: 140px;
+        font-size: 0.75rem;
+        max-width: 120px;
+    }
+
+    .header-actions {
+        gap: 0.25rem;
     }
 
     .layout-main-premium {
-        padding-top: 80px;
+        padding-top: calc(80px + env(safe-area-inset-top));
     }
 }
 
