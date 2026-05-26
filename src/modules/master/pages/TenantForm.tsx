@@ -110,6 +110,7 @@ export const TenantForm: React.FC = () => {
   const [featureAccessibilityMgmt, setFeatureAccessibilityMgmt] = useState(false);
   const [featureInstitutionalReports, setFeatureInstitutionalReports] = useState(false);
   const [featureEditaisSubmission, setFeatureEditaisSubmission] = useState(false);
+  const [isPublicInstitution, setIsPublicInstitution] = useState(false);
 
   // Group Level Flags
   const [featureGroupContent, setFeatureGroupContent] = useState(true);
@@ -176,6 +177,7 @@ export const TenantForm: React.FC = () => {
 
       setTermsOfUse(data.termsOfUse || "");
       setPrivacyPolicy(data.privacyPolicy || "");
+      setIsPublicInstitution(data.isPublicInstitution ?? false);
     } catch {
       toast.error("Falha ao sincronizar node.");
       navigate("/master/tenants");
@@ -252,7 +254,8 @@ export const TenantForm: React.FC = () => {
       featureGroupGamification, featureGroupInstitutional, featureGroupTools,
       featureGroupAnalytics, featureGroupSocial, featureGroupPreservation,
       featureGroupAI, featureGroupRoadmap,
-      termsOfUse, privacyPolicy
+      termsOfUse, privacyPolicy,
+      isPublicInstitution
     };
 
     if (!isEdit) {
@@ -429,6 +432,33 @@ export const TenantForm: React.FC = () => {
                                             <option value="">Independente / Global</option>
                                             {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                         </Select>
+                                    </div>
+                                )}
+
+                                {/* Public vs Private toggle */}
+                                {(tenantType === "MUSEUM" || tenantType === "CULTURAL_SPACE") && (
+                                    <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[32px] space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isPublicInstitution ? 'bg-emerald-600/20 text-emerald-400' : 'bg-amber-600/20 text-amber-400'}`}>
+                                                    {isPublicInstitution ? <ShieldCheck size={20} /> : <Briefcase size={20} />}
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-black text-white">{isPublicInstitution ? 'Instituição Pública' : 'Instituição Privada'}</p>
+                                                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest">
+                                                        {isPublicInstitution 
+                                                            ? 'Pagamentos gerenciados pela Secretaria. Sem conta bancária própria.' 
+                                                            : 'Pode cadastrar conta bancária própria e receber pagamentos diretamente.'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={() => setIsPublicInstitution(!isPublicInstitution)}
+                                                className={`w-14 h-7 rounded-full relative transition-all ${isPublicInstitution ? 'bg-emerald-600' : 'bg-amber-600'}`}
+                                            >
+                                                <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all shadow-lg ${isPublicInstitution ? 'left-8' : 'left-1'}`} />
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
                             </Card>
