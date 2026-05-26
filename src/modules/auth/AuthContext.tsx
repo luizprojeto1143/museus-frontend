@@ -191,10 +191,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       dispatch({ type: "LOGIN", payload: newState });
       persistAuth(newState);
 
-      // C1: Store tokens for hybrid authentication fallback
-      if (data.accessToken) localStorage.setItem("museus_access_token", data.accessToken);
-      if (data.refreshToken) localStorage.setItem("museus_refresh_token", data.refreshToken);
-
+      // Tokens are now securely handled via HttpOnly Cookies by the backend
 
       return { role: newState.role!, tenantType: newState.tenantType, hasProviderProfile: newState.hasProviderProfile };
     } catch (err: any) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {
+useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
 import {
@@ -39,7 +40,8 @@ import {
   Sticker,
   Puzzle,
   Microscope,
-  Award
+  Award,
+    Calendar,
 } from "lucide-react";
 import { 
     Button, 

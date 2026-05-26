@@ -40,6 +40,7 @@ import { masterRoutes } from "./routes/masterRoutes";
 import { producerRoutes } from "./routes/producerRoutes";
 import { theaterRoutes } from "./routes/theaterRoutes";
 import { providerRoutes, municipalRoutes, totemRoutes } from "./routes/otherRoutes";
+import { sponsorRoutes } from "./routes/sponsorRoutes";
 
 // QueryClient — with exponential retry backoff
 const queryClient = new QueryClient({
@@ -176,6 +177,9 @@ const App: React.FC = () => {
 
                   {/* TOTEM / KIOSK ROUTES */}
                   {totemRoutes(RequireRole)}
+
+                  {/* SPONSOR ROUTES */}
+                  {sponsorRoutes(RequireRole)}
 
                   {/* 404 */}
                   <Route path="*" element={<Navigate to="/welcome" replace />} />

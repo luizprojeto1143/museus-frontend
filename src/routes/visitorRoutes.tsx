@@ -94,11 +94,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/roteiro-inteligente/resultado" element={vr(SmartItineraryResult, RequireRole)} />
             <Route path="/scanner" element={vr(ScannerHub, RequireRole)} />
             <Route path="/scanner/qr" element={vr(ScannerPage, RequireRole)} />
-            <Route path="/scanner/ai" element={
-                <RequireRole allowed={["visitor", "admin", "master"]}>
-                    <VisualScannerPage />
-                </RequireRole>
-            } />
+            <Route path="/scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
             <Route path="/ranking" element={vr(LeaderboardPage, RequireRole)} />
             <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
             {/* Phase 1 — Timeline & Comparator */}

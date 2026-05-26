@@ -166,7 +166,6 @@ export const AdminWorks: React.FC = () => {
           {works.length === 0 ? (
             <div className="col-span-full py-20">
               <EmptyState 
-                icon={<ImageIcon size={48} />}
                 title={`Nenhuma ${term.work.toLowerCase()} encontrada`}
                 description="Tente ajustar sua busca ou adicione uma nova obra ao acervo."
               />
@@ -177,7 +176,7 @@ export const AdminWorks: React.FC = () => {
                 <Card className="group bg-white/[0.02] hover:bg-white/[0.04] border-white/5 hover:border-gold-400/30 transition-all rounded-[32px] overflow-hidden flex flex-col h-full relative">
                    <div className="h-48 relative overflow-hidden bg-black/40">
                       {work.imageUrl ? (
-                        <img src={work.imageUrl} alt="" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <img src={work.imageUrl} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-800">
                            <ImageIcon size={48} />

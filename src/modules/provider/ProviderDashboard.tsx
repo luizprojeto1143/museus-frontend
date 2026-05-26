@@ -93,7 +93,7 @@ export const ProviderDashboard: React.FC = () => {
         { label: "Solicitações", value: stats?.pendingQuotes ?? 0, icon: <Clock size={20} />, color: "text-amber-400", bg: "bg-amber-400/10" },
         { label: "Conversas", value: stats?.activeConversations ?? 0, icon: <MessageSquare size={20} />, color: "text-blue-400", bg: "bg-blue-400/10" },
         { label: "Concluídos", value: stats?.completedExecutions ?? 0, icon: <CheckCircle size={20} />, color: "text-green-400", bg: "bg-green-400/10" },
-        { label: "Faturamento", value: stats?.totalExecutions ?? 0, icon: <DollarSign size={20} />, color: "text-indigo-400", bg: "bg-indigo-400/10" },
+        { label: "Faturamento (R$)", value: stats?.totalFaturamento ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats.totalFaturamento) : "R$ 0,00", isString: true, icon: <DollarSign size={20} />, color: "text-indigo-400", bg: "bg-indigo-400/10" },
     ];
 
     return (
@@ -165,7 +165,11 @@ export const ProviderDashboard: React.FC = () => {
                         </div>
                         <div className="relative z-10">
                             <div className="text-4xl font-black text-white leading-none tracking-tighter">
-                                <AnimatedCounter value={stat.value} />
+                                {stat.isString ? (
+                                    <span>{stat.value as string}</span>
+                                ) : (
+                                    <AnimatedCounter value={stat.value as number} />
+                                )}
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-3">{stat.label}</div>
                         </div>

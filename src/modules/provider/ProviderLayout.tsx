@@ -16,7 +16,8 @@ import {
     ChevronRight,
     Zap,
     ShieldCheck,
-    X
+    X,
+    FileText
 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,6 +33,7 @@ export const ProviderLayout: React.FC<{ children: React.ReactNode }> = ({ childr
         { to: "/provider/inbox", label: "Mensagens", icon: <MessageSquare size={18} /> },
         { to: "/provider/profile", label: "Perfil Público", icon: <User size={18} /> },
         { to: "/provider/services", label: "Meus Serviços", icon: <Briefcase size={18} /> },
+        { to: "/provider/invoices", label: "Notas Fiscais", icon: <FileText size={18} /> },
         { to: "/provider/settings", label: "Configurações", icon: <Settings size={18} /> },
     ];
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import {
+useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { 
     Plus, 
@@ -29,7 +30,8 @@ import {
     Workflow,
     RefreshCw,
     TrendingUp,
-    ShieldAlert
+    ShieldAlert,
+    User, Code,
 } from "lucide-react";
 import { 
     Button, 

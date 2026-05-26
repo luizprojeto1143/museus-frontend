@@ -79,6 +79,7 @@ interface MuseumSettings {
   capacityPerHour?: number;
   stripeConnectId?: string;
   asaasWalletId?: string;
+  isPublicInstitution?: boolean;
 }
 
 export const AdminMuseumSettings: React.FC = () => {
@@ -116,6 +117,7 @@ export const AdminMuseumSettings: React.FC = () => {
     bannerUrl: "",
     stripeConnectId: "",
     asaasWalletId: "",
+    isPublicInstitution: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -596,7 +598,7 @@ export const AdminMuseumSettings: React.FC = () => {
 
                 {activeTab === "financeiro" && (
                   <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
-                     <div className="flex items-center gap-4 text-white">
+                     <div className="flex items-center gap-4 mb-6">
                         <div className="w-12 h-12 rounded-2xl bg-gold-400/10 flex items-center justify-center text-gold-400">
                            <CreditCard size={24} />
                         </div>
@@ -606,38 +608,58 @@ export const AdminMuseumSettings: React.FC = () => {
                         </div>
                      </div>
 
-                     <div className="p-8 bg-gradient-to-br from-gold-400/10 to-transparent rounded-[32px] border border-gold-400/20 space-y-6">
-                        <div className="flex items-start gap-4">
-                           <ShieldCheck className="text-gold-400 mt-1" size={24} />
-                           <div>
-                              <h4 className="text-white font-bold">Stripe Connect Habilitado</h4>
-                              <p className="text-sm text-slate-400 mt-1 leading-relaxed">
-                                 Sua conta está integrada ao Stripe. Todos os recebíveis de ingressos e doações são processados com split automático e caem direto na sua conta bancária.
-                              </p>
+                     {settings.isPublicInstitution ? (
+                        <div className="p-8 bg-slate-900/50 rounded-[32px] border border-slate-800 text-center space-y-4">
+                           <ShieldCheck className="mx-auto text-slate-500" size={48} />
+                           <h3 className="text-lg font-bold text-white">Instituição Pública</h3>
+                           <p className="text-sm text-slate-400">Os pagamentos desta instituição são gerenciados de forma centralizada pelo órgão público responsável.</p>
+                        </div>
+                     ) : (
+                        <div className="p-8 bg-gradient-to-br from-gold-400/10 to-transparent rounded-[32px] border border-gold-400/20 space-y-6">
+                           <div className="flex items-start gap-4">
+                              <ShieldCheck className="text-gold-400 mt-1" size={24} />
+                              <div>
+                                 <h4 className="text-white font-bold">Stripe Connect Habilitado</h4>
+                                 <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+                                    Sua conta está integrada ao Stripe. Todos os recebíveis de ingressos e doações são processados com split automático e caem direto na sua conta bancária.
+                                 </p>
+                              </div>
+                           </div>
+
+                           <div className="flex flex-col items-center justify-center py-10 bg-black/20 rounded-[24px] border border-white/5">
+                              {settings.stripeConnectId ? (
+                                 <div className="text-center space-y-4">
+                                    <div className="w-16 h-16 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mx-auto mb-2">
+                                       <CheckCircle size={32} />
+                                    </div>
+                                    <h5 className="text-lg font-black text-white italic">ID: {settings.stripeConnectId}</h5>
+                                    <Badge className="bg-green-500/10 text-green-400 border-green-500/20">OPERACIONAL</Badge>
+                                    <div className="pt-4">
+                                       <Button variant="glass" className="rounded-xl border-white/5">Acessar Dashboard Stripe</Button>
+                                    </div>
+                                 </div>
+                              ) : (
+                                 <div className="text-center space-y-4 max-w-xs">
+                                    <CreditCard className="text-slate-700 mx-auto" size={48} />
+                                    <p className="text-sm text-slate-400">Conecte sua conta bancária para começar a receber pagamentos online.</p>
+                                    <Button 
+                                       className="w-full bg-gold-400 text-slate-950 font-black rounded-xl h-12"
+                                       onClick={async () => {
+                                         try {
+                                           const { data } = await api.get('/stripe/onboarding-link?type=MUSEUM');
+                                           if (data && data.url) window.location.href = data.url;
+                                         } catch (err) {
+                                           toast.error("Erro ao gerar link do Stripe");
+                                         }
+                                       }}
+                                    >
+                                       CONECTAR AGORA
+                                    </Button>
+                                 </div>
+                              )}
                            </div>
                         </div>
-
-                        <div className="flex flex-col items-center justify-center py-10 bg-black/20 rounded-[24px] border border-white/5">
-                           {settings.stripeConnectId ? (
-                              <div className="text-center space-y-4">
-                                 <div className="w-16 h-16 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center mx-auto mb-2">
-                                    <CheckCircle size={32} />
-                                 </div>
-                                 <h5 className="text-lg font-black text-white italic">ID: {settings.stripeConnectId}</h5>
-                                 <Badge className="bg-green-500/10 text-green-400 border-green-500/20">OPERACIONAL</Badge>
-                                 <div className="pt-4">
-                                    <Button variant="glass" className="rounded-xl border-white/5">Acessar Dashboard Stripe</Button>
-                                 </div>
-                              </div>
-                           ) : (
-                              <div className="text-center space-y-4 max-w-xs">
-                                 <CreditCard className="text-slate-700 mx-auto" size={48} />
-                                 <p className="text-sm text-slate-400">Conecte sua conta bancária para começar a receber pagamentos online.</p>
-                                 <Button className="w-full bg-gold-400 text-slate-950 font-black rounded-xl h-12">CONECTAR AGORA</Button>
-                              </div>
-                           )}
-                        </div>
-                     </div>
+                     )}
                   </Card>
                 )}
               </motion.div>

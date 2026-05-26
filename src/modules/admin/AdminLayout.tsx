@@ -174,6 +174,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/scanner", label: t("admin.sidebar.scannerPortaria", "Scanner (Portaria)"), icon: "Smartphone", show: (features?.featureEvents ?? true) && hasPermission("manage_scanner") },
         { to: "/admin/espacos", label: t("admin.sidebar.gestODeEspaOs", "Gestão de Espaços"), icon: "Building2", show: hasPermission("manage_events") },
         { to: "/admin/calendario", label: t("admin.sidebar.agenda", "Agenda"), icon: "Calendar", show: hasPermission("manage_events") },
+        { to: "/admin/sessoes", label: "Bilheteria (PDV)", icon: "Ticket", show: hasPermission("manage_events") },
         { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "GraduationCap", show: (features?.featureCertificates ?? true) && hasPermission("manage_events") },
       ],
       showGroup: (features?.featureGroupEvents ?? true) && role !== 'theater'
@@ -218,7 +219,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/theater", label: "Dashboard Palco", icon: "Theater", show: hasPermission("manage_operations") },
         { to: "/theater/mobile", label: "Venda Rápida (Mobile)", icon: "Smartphone", show: hasPermission("manage_operations") },
         { to: "/admin/assentos", label: "Mapa de Assentos", icon: "Armchair", show: hasPermission("manage_operations") },
-        { to: "/admin/sessoes", label: "Sessões & Peças", icon: "Ticket", show: hasPermission("manage_operations") },
         { to: "/admin/elenco", label: "Elenco & Backstage", icon: "Users2", show: hasPermission("manage_operations") },
         { to: "/admin/playbill", label: "Programa Digital", icon: "BookOpen", show: hasPermission("manage_operations") },
         { to: "/admin/cue-master", label: "Console Backstage", icon: "Zap", show: hasPermission("manage_operations") },
@@ -237,6 +237,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "CircleDollarSign", show: hasPermission("view_analytics") },
         { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "Handshake", show: role === 'admin' || role === 'master' },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "Settings", show: role === 'admin' || role === 'master' },
+        { to: "/admin/patrocinio", label: "Patrocínio", icon: "CircleDollarSign", show: role === 'admin' || role === 'master' },
         { to: "/admin/usuarios", label: "Equipe", icon: "Users", show: role === 'admin' || role === 'master' },
       ],
       showGroup: (features?.featureGroupTools ?? true) && (role === 'admin' || hasPermission("view_analytics") || hasPermission("manage_works") || hasPermission("manage_events") || hasPermission("manage_chat_ai"))
@@ -260,7 +261,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/ingressos-grupo", label: t("admin.sidebar.ingressosGrupo", "Ingressos Grupo"), icon: "Users", show: hasPermission("manage_events") },
         { to: "/admin/modo-crianca", label: t("admin.sidebar.modoCrianA", "Modo Criança"), icon: "Baby", show: hasPermission("manage_works") },
         { to: "/admin/assinaturas", label: t("admin.sidebar.amigoDoMuseu", "Amigo do Museu"), icon: "Diamond", show: hasPermission("manage_shop") },
-        { to: "/admin/patrocinios", label: t("admin.sidebar.patrocNios", "Patrocínios"), icon: "Handshake", show: hasPermission("manage_institutional") },
       ],
       showGroup: (features?.featureGroupSocial ?? true) && role !== 'theater'
     },

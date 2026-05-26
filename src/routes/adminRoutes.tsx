@@ -78,7 +78,6 @@ const AdminCollectibles = React.lazy(() => import("../modules/admin/pages/AdminC
 const AdminTranslations = React.lazy(() => import("../modules/admin/pages/AdminTranslations").then(m => ({ default: m.AdminTranslations })));
 const AdminModeration = React.lazy(() => import("../modules/admin/pages/AdminModeration").then(m => ({ default: m.AdminModeration })));
 const AdminMuseumBattle = React.lazy(() => import("../modules/admin/pages/AdminMuseumBattle").then(m => ({ default: m.AdminMuseumBattle })));
-const AdminSponsorships = React.lazy(() => import("../modules/admin/pages/AdminSponsorships").then(m => ({ default: m.AdminSponsorships })));
 const AdminMunicipalCalendar = React.lazy(() => import("../modules/admin/pages/AdminMunicipalCalendar").then(m => ({ default: m.AdminMunicipalCalendar })));
 const AdminTCEExport = React.lazy(() => import("../modules/admin/pages/AdminTCEExport").then(m => ({ default: m.AdminTCEExport })));
 const AdminKidsMode = React.lazy(() => import("../modules/admin/pages/AdminKidsMode").then(m => ({ default: m.AdminKidsMode })));
@@ -92,6 +91,7 @@ const AdminQuizBuilder = React.lazy(() => import("../modules/admin/pages/AdminQu
 const AdminTimelineBuilder = React.lazy(() => import("../modules/admin/pages/AdminTimelineBuilder").then(m => ({ default: m.AdminTimelineBuilder })));
 const AdminSubmissionReview = React.lazy(() => import("../modules/admin/pages/AdminSubmissionReview").then(m => ({ default: m.AdminSubmissionReview })));
 const AdminFamilyBuilder = React.lazy(() => import("../modules/admin/pages/AdminFamilyBuilder").then(m => ({ default: m.AdminFamilyBuilder })));
+const AdminSponsorshipSettings = React.lazy(() => import("../modules/admin/pages/AdminSponsorshipSettings").then(m => ({ default: m.AdminSponsorshipSettings })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -139,6 +139,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/configuracoes/servicos" element={ar(AdminInPersonServices, RequireRole)} />
             <Route path="/admin/treasure-hunt" element={ar(AdminTreasureHunt, RequireRole)} />
             <Route path="/admin/conquistas" element={ar(AdminAchievements, RequireRole)} />
+            <Route path="/admin/patrocinio" element={ar(AdminSponsorshipSettings, RequireRole)} />
             <Route path="/admin/conquistas/nova" element={ar(AdminAchievementForm, RequireRole)} />
             <Route path="/admin/conquistas/:id" element={ar(AdminAchievementForm, RequireRole)} />
             <Route path="/admin/ia" element={ar(AdminAIAssistant, RequireRole)} />
@@ -199,8 +200,6 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/traducoes" element={ar(AdminTranslations, RequireRole)} />
             <Route path="/admin/moderacao" element={ar(AdminModeration, RequireRole)} />
             <Route path="/admin/battle" element={ar(AdminMuseumBattle, RequireRole)} />
-            {/* Monetization extras */}
-            <Route path="/admin/patrocinios" element={ar(AdminSponsorships, RequireRole)} />
             {/* Municipal extras */}
             <Route path="/admin/calendario-municipal" element={ar(AdminMunicipalCalendar, RequireRole)} />
             <Route path="/admin/tce" element={ar(AdminTCEExport, RequireRole)} />

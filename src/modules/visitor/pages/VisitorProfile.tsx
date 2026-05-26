@@ -7,6 +7,7 @@ import {
   Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, 
   CheckCircle, ShoppingBag, Clock, Package, TicketPercent, Zap, Share2
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { TicketCard } from "../components/TicketCard";
 import { Button } from "../../../components/ui";
@@ -369,6 +370,13 @@ export const VisitorProfile: React.FC = () => {
                                 <User size={64} />
                             )}
                             <div className="level-badge-premium">LVL {currentLevel.level}</div>
+                        </div>
+
+                        <div className="ml-auto mr-4 hidden sm:block">
+                            <div className="bg-white p-2 rounded-xl shadow-lg border-2 border-gold/30">
+                                <QRCodeSVG value={email || "guest"} size={64} level="H" fgColor="#1a1a24" />
+                            </div>
+                            <p className="text-[9px] text-center text-slate-400 font-bold mt-2 uppercase tracking-widest font-fm">Meu ID</p>
                         </div>
 
                         <div className="profile-info-premium">

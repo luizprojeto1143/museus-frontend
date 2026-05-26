@@ -1,4 +1,5 @@
-import { useTranslation } from "react-i18next";
+import {
+useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { 
     Settings, 
@@ -14,7 +15,8 @@ import {
     Smartphone,
     Activity,
     ShieldCheck,
-    Key
+    Key,
+    Mail, Briefcase, DollarSign,
 } from "lucide-react";
 import { api } from "../../api/client";
 import { toast } from "react-hot-toast";

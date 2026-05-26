@@ -62,6 +62,15 @@ export const WorkDetail: React.FC = () => {
   const trailId = searchParams.get("trailId");
   const [trailWorks, setTrailWorks] = useState<string[]>([]);
   const [trailTitle, setTrailTitle] = useState("");
+  const [sponsorships, setSponsorships] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (id) {
+       api.get(`/sponsor-portal/works/${id}/sponsorships`)
+         .then((res: any) => setSponsorships(res.data))
+         .catch(console.error);
+    }
+  }, [id]);
 
   const { visitWork, addXp } = useGamification();
   const [treasureFound, setTreasureFound] = useState<{ found: boolean; xp: number } | null>(null);
@@ -377,6 +386,33 @@ export const WorkDetail: React.FC = () => {
                <div className="sidebar-card-premium">
                   <span className="sidebar-label-premium">Multimídia</span>
                   <VideoPlayer url={work.videoUrl} title="Documentário" />
+               </div>
+            )}
+            
+            {sponsorships.length > 0 && (
+               <div className="sidebar-card-premium !bg-gold-500/10 !border-gold-500/30">
+                  <span className="sidebar-label-premium !text-gold-500">Patrocinadores Culturais</span>
+                  <div className="flex flex-col gap-3 mt-4">
+                     {sponsorships.map((sponsor) => {
+                        const Wrapper: any = sponsor.sponsorUrl ? 'a' : 'div';
+                        const wrapperProps = sponsor.sponsorUrl ? { href: sponsor.sponsorUrl, target: "_blank", rel: "noopener noreferrer" } : {};
+                        return (
+                           <Wrapper key={sponsor.id} {...wrapperProps} className={`flex items-center gap-3 bg-black/40 p-3 rounded-lg border border-gold-500/10 transition-colors ${sponsor.sponsorUrl ? 'hover:border-gold-500/50 cursor-pointer' : ''}`}>
+                              {sponsor.sponsorLogo ? (
+                                 <img src={sponsor.sponsorLogo} alt={sponsor.sponsorName} className="w-10 h-10 rounded-full object-cover" />
+                              ) : (
+                                 <div className="w-10 h-10 rounded-full bg-gold-500 text-black flex items-center justify-center font-bold text-lg">
+                                    {sponsor.sponsorName.charAt(0)}
+                                 </div>
+                              )}
+                              <div>
+                                 <p className="font-bold text-sm text-gold-400 hover:underline">{sponsor.sponsorName}</p>
+                                 <p className="text-[10px] text-slate-400">Patrocinador {sponsor.tier === 'EXCLUSIVE' ? 'Exclusivo' : 'Apoiador'}</p>
+                              </div>
+                           </Wrapper>
+                        );
+                     })}
+                  </div>
                </div>
             )}
          </aside>

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -65,8 +66,8 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
       </div>
       <button
         type="button"
-        onPointerDown={(e) => e.stopPropagation()}
-        onClick={(e) => {
+        onPointerDown={(e: any) => e.stopPropagation()}
+        onClick={(e: any) => {
           e.stopPropagation();
           onRemove();
         }}
@@ -199,7 +200,7 @@ export const AdminTrailForm: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!tenantId) {
-      addToast("Erro de autenticação", "error");
+      toast.success("Erro de autenticação", "error");
       return;
     }
 
@@ -405,7 +406,7 @@ export const AdminTrailForm: React.FC = () => {
                     <Input
                       label={t("admin.trailForm.labels.name")}
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e: any) => setName(e.target.value)}
                       placeholder={t("admin.trailForm.placeholders.name")}
                       required
                     />
@@ -446,7 +447,7 @@ export const AdminTrailForm: React.FC = () => {
                 <Textarea
                   label={t("admin.trailForm.labels.description")}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e: any) => setDescription(e.target.value)}
                   rows={4}
                   placeholder="Descreva o objetivo e o percurso deste roteiro..."
                 />
@@ -487,7 +488,7 @@ export const AdminTrailForm: React.FC = () => {
                         type="file"
                         accept="audio/*"
                         className="hidden"
-                        onChange={(e) => handleFileUpload(e, "audio", setAudioUrl)}
+                        onChange={(e: any) => handleFileUpload(e, "audio", setAudioUrl)}
                       />
                     </div>
                   </Card>
@@ -505,7 +506,7 @@ export const AdminTrailForm: React.FC = () => {
                       
                       <Input
                         value={videoUrl}
-                        onChange={(e) => setVideoUrl(e.target.value)}
+                        onChange={(e: any) => setVideoUrl(e.target.value)}
                         placeholder="https://youtube.com/watch?v=..."
                         className="bg-black/20 h-14"
                         leftIcon={<Video size={20} className="text-slate-500" />}
@@ -554,7 +555,7 @@ export const AdminTrailForm: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-4 mb-8">
                     <Select
                       value={workToAdd}
-                      onChange={(e) => setWorkToAdd(e.target.value)}
+                      onChange={(e: any) => setWorkToAdd(e.target.value)}
                       containerClassName="flex-1 mb-0"
                       className="h-14 bg-black/20"
                     >
@@ -577,7 +578,7 @@ export const AdminTrailForm: React.FC = () => {
                   <div className="space-y-2 min-h-[200px]">
                     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={selectedWorks} strategy={verticalListSortingStrategy}>
-                        {selectedWorks.map((work) => (
+                        {selectedWorks.map((work: any) => (
                           <SortableItem
                             key={work.id}
                             id={work.id}
@@ -647,7 +648,7 @@ export const AdminTrailForm: React.FC = () => {
                        Sequência de Visitação
                     </h3>
                     <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                       {selectedWorks.map((work, idx) => (
+                       {selectedWorks.map((work: any, idx: any) => (
                          <div key={work.id} className="flex items-center gap-4 p-3 bg-white/5 rounded-2xl border border-white/5">
                             <div className="w-8 h-8 rounded-lg bg-gold-400/10 flex items-center justify-center text-gold-400 text-xs font-black">
                                {idx + 1}

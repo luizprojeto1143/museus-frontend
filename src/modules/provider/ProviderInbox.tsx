@@ -42,6 +42,12 @@ export const ProviderInbox: React.FC = () => {
     const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CREDIT_CARD">("PIX");
     const [creatingPayment, setCreatingPayment] = useState(false);
 
+    // Delivery Modal State
+    const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+    const [nfUrl, setNfUrl] = useState("");
+    const [nfNumber, setNfNumber] = useState("");
+    const [delivering, setDelivering] = useState(false);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -128,6 +134,28 @@ export const ProviderInbox: React.FC = () => {
             toast.error("Erro ao gerar solicitação de pagamento.");
         } finally {
             setCreatingPayment(false);
+        }
+    };
+
+    const handleDeliverService = async () => {
+        if (!selectedId || !nfUrl || !nfNumber) {
+            toast.error("Preencha a URL da Nota Fiscal e o número.");
+            return;
+        }
+
+        try {
+            setDelivering(true);
+            await inboxService.sendMessage(selectedId, `Serviço Entregue!\nNota Fiscal: ${nfNumber}\nLink da NF: ${nfUrl}`);
+            toast.success("Serviço entregue e Nota Fiscal enviada!");
+            setShowDeliveryModal(false);
+            setNfUrl("");
+            setNfNumber("");
+            handleSelectConversation(selectedId);
+        } catch (error) {
+            console.error("Error delivering service", error);
+            toast.error("Erro ao registrar entrega.");
+        } finally {
+            setDelivering(false);
         }
     };
 
@@ -240,6 +268,14 @@ export const ProviderInbox: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
+                                    <Button 
+                                        onClick={() => setShowDeliveryModal(true)}
+                                        variant="glass" 
+                                        className="hidden sm:flex h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border-indigo-500/10 text-indigo-400 hover:bg-indigo-500/10 mr-2"
+                                        leftIcon={<CheckCircle2 size={14} />}
+                                    >
+                                        Entregar Serviço
+                                    </Button>
                                     <Button 
                                         onClick={() => setShowPaymentModal(true)}
                                         variant="glass" 
@@ -451,6 +487,74 @@ export const ProviderInbox: React.FC = () => {
                                     isLoading={creatingPayment}
                                 >
                                     Enviar Solicitação
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Delivery Modal */}
+            <AnimatePresence>
+                {showDeliveryModal && (
+                    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6">
+                        <motion.div 
+                            initial={{ opacity: 0 }} 
+                            animate={{ opacity: 1 }} 
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+                            onClick={() => setShowDeliveryModal(false)}
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="w-full max-w-md bg-[#0a0a1a] border border-white/5 rounded-[40px] p-10 relative z-10 shadow-2xl"
+                        >
+                            <div className="flex justify-between items-center mb-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                                        <CheckCircle2 size={24} />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-black text-white tracking-tight">Entregar Serviço</h2>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Upload de Nota Fiscal</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setShowDeliveryModal(false)} className="text-slate-500 hover:text-white transition-colors">
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Número da Nota Fiscal</label>
+                                    <input 
+                                        type="text"
+                                        value={nfNumber}
+                                        onChange={e => setNfNumber(e.target.value)}
+                                        placeholder="Ex: 2024-001"
+                                        className="w-full h-14 bg-white/5 border border-white/5 rounded-2xl px-6 text-white text-lg font-black focus:outline-none focus:border-indigo-500/50"
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-4">Link da Nota Fiscal (PDF)</label>
+                                    <input 
+                                        type="text"
+                                        value={nfUrl}
+                                        onChange={e => setNfUrl(e.target.value)}
+                                        placeholder="https://meusite.com/nf.pdf"
+                                        className="w-full h-14 bg-white/5 border border-white/5 rounded-2xl px-6 text-white text-sm focus:outline-none focus:border-indigo-500/50"
+                                    />
+                                </div>
+
+                                <Button 
+                                    className="w-full h-16 rounded-[24px] bg-indigo-600 text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-indigo-600/20 mt-4"
+                                    onClick={handleDeliverService}
+                                    isLoading={delivering}
+                                >
+                                    Confirmar Entrega
                                 </Button>
                             </div>
                         </motion.div>

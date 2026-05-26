@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { QRCodeCanvas } from "qrcode.react";
 import { api } from "../../../api/client";
@@ -270,7 +271,7 @@ export const AdminWorkForm: React.FC = () => {
 
   const handleAutoTranslate = async () => {
     if (!title && !description) {
-      addToast("Preencha o título ou a descrição em português primeiro.", "info");
+      toast.success("Preencha o título ou a descrição em português primeiro.", "info");
       return;
     }
 
@@ -824,7 +825,7 @@ export const AdminWorkForm: React.FC = () => {
                            <span className="text-sm font-medium">Clique ou arraste para subir</span>
                         </div>
                       )}
-                      <input id="image-upload" type="file" accept="image/*" onChange={(e) => handleUpload(e, "image", setImageUrl)} className="hidden" />
+                      <input id="image-upload" type="file" accept="image/*" onChange={(e: any) => handleUpload(e, "image", setImageUrl)} className="hidden" />
                     </div>
                   </Card>
 
@@ -844,7 +845,7 @@ export const AdminWorkForm: React.FC = () => {
                        >
                          {audioUrl ? "Substituir Áudio" : "Subir Áudio (MP3)"}
                        </Button>
-                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
+                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e: any) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
                     </Card>
 
                     <Card className="p-6 border-white/5 bg-black/20 rounded-3xl space-y-4">
@@ -862,7 +863,7 @@ export const AdminWorkForm: React.FC = () => {
                        >
                          {librasUrl ? "Substituir Vídeo" : "Subir Vídeo (MP4)"}
                        </Button>
-                       <input id="libras-upload" type="file" accept="video/*" onChange={(e) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
+                       <input id="libras-upload" type="file" accept="video/*" onChange={(e: any) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
                     </Card>
                   </div>
                 </div>
@@ -1069,8 +1070,8 @@ export const AdminWorkForm: React.FC = () => {
       </div>
 
       <Dialog
-        isOpen={showAccessModal}
-        onClose={() => setShowAccessModal(false)}
+        open={showAccessModal}
+        onOpenChange={() => setShowAccessModal(false)}
         title="Solicitar Acessibilidade Master"
         className="max-w-xl"
       >
@@ -1086,7 +1087,7 @@ export const AdminWorkForm: React.FC = () => {
             <Select
               label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
               value={requestType}
-              onChange={(e) => setRequestType(e.target.value as any)}
+              onChange={(e: any) => setRequestType(e.target.value as any)}
               className="bg-black/20"
             >
               <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>

@@ -12,16 +12,13 @@ export const api = axios.create({
   baseURL,
   withCredentials: true,
   timeout: 120000, // 120 seconds for large media uploads
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+  }
 });
 
-// C1: Request Interceptor — fallback to headers if cookies are blocked
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("museus_access_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  // C2: Ensure x-tenant-id is ALWAYS sent for multi-tenant isolation
+// C1: Request Interceptor — cookies HttpOnly already handle the auth
+api.interceptors.request.use((config) => {  // C2: Ensure x-tenant-id is ALWAYS sent for multi-tenant isolation
   try {
     const rawAuth = localStorage.getItem("museus_auth_v1");
     if (rawAuth) {
@@ -95,23 +92,8 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // C1: Hybrid Refresh — send token in body to bypass cookie blocks
-        const storedRefreshToken = localStorage.getItem("museus_refresh_token");
-        
-        if (!storedRefreshToken) {
-          throw new Error("No refresh token available");
-        }
-
-        const { data } = await axios.post(baseURL + "/auth/refresh", { 
-          refreshToken: storedRefreshToken 
-        }, { withCredentials: true });
-
-        if (data.accessToken) {
-          localStorage.setItem("museus_access_token", data.accessToken);
-        }
-        if (data.refreshToken) {
-          localStorage.setItem("museus_refresh_token", data.refreshToken);
-        }
+        // C1: Secure Refresh — rely entirely on HttpOnly cookie sent automatically via withCredentials: true
+        await axios.post(baseURL + "/auth/refresh", {}, { withCredentials: true });
 
         isRefreshing = false;
         onRefreshDone();

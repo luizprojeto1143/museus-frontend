@@ -226,15 +226,15 @@ export const MunicipalSettings: React.FC = () => {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Email Oficial</label>
-                                        <Input value={settings.email || ""} onChange={e => updateField("email", e.target.value)} className="h-14 bg-white/5 border-white/5 rounded-2xl px-6" icon={<Mail size={16} />} />
+                                        <Input value={settings.email || ""} onChange={e => updateField("email", e.target.value)} className="h-14 bg-white/5 border-white/5 rounded-2xl px-6"  />
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">WhatsApp Gov</label>
-                                        <Input value={settings.whatsapp || ""} onChange={e => updateField("whatsapp", e.target.value)} className="h-14 bg-white/5 border-white/5 rounded-2xl px-6" icon={<Phone size={16} />} />
+                                        <Input value={settings.whatsapp || ""} onChange={e => updateField("whatsapp", e.target.value)} className="h-14 bg-white/5 border-white/5 rounded-2xl px-6"  />
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-4">Portal Transparência</label>
-                                        <Input value={settings.website || ""} onChange={e => updateField("website", e.target.value)} className="h-14 bg-white/5 border-white/5 rounded-2xl px-6" icon={<Globe size={16} />} />
+                                        <Input value={settings.website || ""} onChange={e => updateField("website", e.target.value)} className="h-14 bg-white/5 border-white/5 rounded-2xl px-6"  />
                                     </div>
                                 </div>
                             </Card>

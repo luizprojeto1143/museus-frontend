@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { 
@@ -28,7 +29,8 @@ import {
     UserX,
     Filter,
     RefreshCw,
-    ExternalLink
+    ExternalLink,
+    Crown,
 } from "lucide-react";
 import { 
     Button, 

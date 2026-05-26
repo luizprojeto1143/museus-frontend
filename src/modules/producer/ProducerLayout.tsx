@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
+import {
+useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../api/client";
@@ -18,7 +19,8 @@ import {
     ExternalLink,
     MessageSquare,
     Folder,
-    FolderLock
+    FolderLock,
+    QrCode,
 } from "lucide-react";
 // Removed import "./ProducerLayout.css";
 

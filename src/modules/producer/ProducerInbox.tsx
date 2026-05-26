@@ -12,8 +12,11 @@ export const ProducerInbox: React.FC = () => {
     const [newMessage, setNewMessage] = useState("");
     const [sending, setSending] = useState(false);
 
-    // Payment Modal State (Placeholder)
+    // Payment Modal State
     const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [paymentAmount, setPaymentAmount] = useState("");
+    const [receiptUrl, setReceiptUrl] = useState("");
+    const [processingPayment, setProcessingPayment] = useState(false);
 
     useEffect(() => {
         loadConversations();
@@ -75,19 +78,24 @@ export const ProducerInbox: React.FC = () => {
     };
 
     const handlePaymentRequest = async () => {
-        // Here we would open a modal to define amount/description
-        // For prototype, we just verify the call works
-        if (!selectedId) return;
-        const amount = Number(prompt("Valor do Pagamento (R$):", "0"));
-        if (!amount) return;
+        if (!selectedId || !paymentAmount || !receiptUrl) {
+            alert("Preencha o valor e o link do comprovante!");
+            return;
+        }
 
         try {
-            await inboxService.createPayment(selectedId, amount, "Pagamento de Serviço", "PIX");
+            setProcessingPayment(true);
+            await inboxService.createPayment(selectedId, Number(paymentAmount), `Pagamento efetuado. Comprovante: ${receiptUrl}`, "PIX");
             // Refresh conversation to show system message
             handleSelectConversation(selectedId);
-            alert("Solicitação de pagamento gerada!");
+            setShowPaymentModal(false);
+            setPaymentAmount("");
+            setReceiptUrl("");
+            alert("Pagamento registrado e comprovante enviado!");
         } catch (error) {
-            alert("Erro ao gerar pagamento");
+            alert("Erro ao registrar pagamento");
+        } finally {
+            setProcessingPayment(false);
         }
     };
 
@@ -164,8 +172,8 @@ export const ProducerInbox: React.FC = () => {
                                 </div>
                             </div>
                             <div className="flex gap-2">
-                                <Button size="sm" variant="outline" onClick={handlePaymentRequest} leftIcon={<DollarSign size={16} />}>
-                                    Pagar
+                                <Button size="sm" variant="outline" onClick={() => setShowPaymentModal(true)} leftIcon={<DollarSign size={16} />}>
+                                    Pagar com Comprovante
                                 </Button>
                                 <Button size="sm" variant="ghost">
                                     <MoreVertical size={18} />
@@ -245,6 +253,46 @@ export const ProducerInbox: React.FC = () => {
                     </div>
                 )}
             </div>
+            
+            {showPaymentModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                    <div className="bg-[#1a1108] border border-[var(--accent-primary)]/20 rounded-xl p-6 w-full max-w-md">
+                        <h2 className="text-[var(--accent-primary)] text-xl font-bold mb-4">Registrar Pagamento</h2>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm text-[#e5e5e5] mb-1">Valor (R$)</label>
+                                <Input 
+                                    type="number"
+                                    value={paymentAmount}
+                                    onChange={e => setPaymentAmount(e.target.value)}
+                                    placeholder="Ex: 500.00"
+                                    className="bg-black/50 border-[var(--accent-primary)]/30 text-white"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-[#e5e5e5] mb-1">URL do Comprovante</label>
+                                <Input 
+                                    type="text"
+                                    value={receiptUrl}
+                                    onChange={e => setReceiptUrl(e.target.value)}
+                                    placeholder="https://link.com/comprovante.pdf"
+                                    className="bg-black/50 border-[var(--accent-primary)]/30 text-white"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 mt-4">
+                                <Button variant="ghost" onClick={() => setShowPaymentModal(false)}>Cancelar</Button>
+                                <Button 
+                                    className="bg-[var(--accent-primary)] text-[#1a1108]" 
+                                    onClick={handlePaymentRequest}
+                                    disabled={processingPayment}
+                                >
+                                    Confirmar Pagamento
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

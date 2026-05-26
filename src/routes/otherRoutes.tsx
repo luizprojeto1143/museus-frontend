@@ -9,6 +9,7 @@ import { ProviderInbox } from "../modules/provider/ProviderInbox";
 import { ProviderProfile } from "../modules/provider/ProviderProfile";
 import { ProviderServices } from "../modules/provider/ProviderServices";
 import { ProviderSettings } from "../modules/provider/ProviderSettings";
+import { ProviderInvoices } from "../modules/provider/ProviderInvoices";
 
 // Municipal
 import { MunicipalLayout } from "../modules/municipal/MunicipalLayout";
@@ -46,6 +47,7 @@ export function providerRoutes(RequireProvider: React.FC<RequireProviderProps>) 
             <Route path="/provider/inbox" element={pvr(ProviderInbox)} />
             <Route path="/provider/profile" element={pvr(ProviderProfile)} />
             <Route path="/provider/services" element={pvr(ProviderServices)} />
+            <Route path="/provider/invoices" element={pvr(ProviderInvoices)} />
             <Route path="/provider/settings" element={pvr(ProviderSettings)} />
         </>
     );

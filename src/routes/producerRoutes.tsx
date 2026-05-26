@@ -20,6 +20,7 @@ const ProducerSettings = React.lazy(() => import("../modules/producer/ProducerSe
 const ProducerNoticeResults = React.lazy(() => import("../modules/producer/ProducerNoticeResults").then(m => ({ default: m.ProducerNoticeResults })));
 const ProducerDocuments = React.lazy(() => import("../modules/producer/ProducerDocuments").then(m => ({ default: m.ProducerDocuments })));
 const ProducerProviders = React.lazy(() => import("../modules/producer/ProducerProviders").then(m => ({ default: m.ProducerProviders })));
+const ProducerFinance = React.lazy(() => import("../modules/producer/pages/ProducerFinance").then(m => ({ default: m.ProducerFinance })));
 
 // Theater pages
 const TheaterDashboard = React.lazy(() => import("../modules/theater/pages/TheaterDashboard").then(m => ({ default: m.TheaterDashboard })));
@@ -28,12 +29,13 @@ const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/Theat
 const TheaterSeatEditor = React.lazy(() => import("../modules/theater/pages/TheaterSeatEditor").then(m => ({ default: m.TheaterSeatEditor })));
 const TheaterPlaybill = React.lazy(() => import("../modules/theater/pages/TheaterPlaybill").then(m => ({ default: m.TheaterPlaybill })));
 const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
-const TheaterBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterBoxOffice").then(m => ({ default: m.TheaterBoxOffice })));
+const AdminBoxOffice = React.lazy(() => import("../modules/admin/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
 
 // Reused admin components for museum features (converted to lazy)
 const AdminWorks = React.lazy(() => import("../modules/admin/pages/AdminWorks").then(m => ({ default: m.AdminWorks })));
 const AdminWorkForm = React.lazy(() => import("../modules/admin/pages/AdminWorkForm").then(m => ({ default: m.AdminWorkForm })));
 const AdminAchievements = React.lazy(() => import("../modules/admin/pages/AdminAchievements").then(m => ({ default: m.AdminAchievements })));
+const AdminCalendar = React.lazy(() => import("../modules/admin/pages/AdminCalendar").then(m => ({ default: m.AdminCalendar })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -61,6 +63,7 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/events" element={pr(ProducerEvents, RequireRole)} />
             <Route path="/producer/events/new" element={pr(ProducerEventForm, RequireRole)} />
             <Route path="/producer/events/:id" element={pr(ProducerEventForm, RequireRole)} />
+            <Route path="/producer/calendario" element={pr(AdminCalendar, RequireRole)} />
             <Route path="/producer/works" element={pr(AdminWorks, RequireRole)} />
             <Route path="/producer/works/new" element={pr(AdminWorkForm, RequireRole)} />
             <Route path="/producer/works/:id" element={pr(AdminWorkForm, RequireRole)} />
@@ -70,6 +73,7 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/inbox" element={pr(ProducerInbox, RequireRole)} />
             <Route path="/producer/audience" element={pr(ProducerAudience, RequireRole)} />
             <Route path="/producer/reports" element={pr(ProducerReports, RequireRole)} />
+            <Route path="/producer/finance" element={pr(ProducerFinance, RequireRole)} />
 
             {/* Theater Module */}
             <Route path="/producer/theater" element={pr(TheaterDashboard, RequireRole)} />
@@ -78,7 +82,7 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/theater/seats" element={pr(TheaterSeatEditor, RequireRole)} />
             <Route path="/producer/theater/playbill" element={pr(TheaterPlaybill, RequireRole)} />
             <Route path="/producer/theater/subscriptions" element={pr(TheaterSubscriptions, RequireRole)} />
-            <Route path="/producer/theater/box-office" element={pr(TheaterBoxOffice, RequireRole)} />
+            <Route path="/producer/box-office" element={pr(AdminBoxOffice, RequireRole)} />
 
             <Route path="/producer/*" element={pr(ProducerDashboard, RequireRole)} />
         </>

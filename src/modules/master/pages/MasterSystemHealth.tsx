@@ -1,4 +1,5 @@
-import { useTranslation } from "react-i18next";
+import {
+useTranslation } from "react-i18next";
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { 
     Activity, 
@@ -27,8 +28,9 @@ import {
     Code,
     History,
     Network,
-    MonitorCheck
-} from 'lucide-react';
+    MonitorCheck,
+    Activity,
+} from "lucide-react";
 import { api } from '../../../api/client';
 import { 
     Button, 

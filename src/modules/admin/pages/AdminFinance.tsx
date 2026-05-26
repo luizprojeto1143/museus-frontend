@@ -25,6 +25,7 @@ interface DailyRevenue {
     date: string;
     loja: number;
     doacoes: number;
+    patrocinios: number;
 }
 
 interface FinanceData {
@@ -187,7 +188,7 @@ export const AdminFinance: React.FC = () => {
                         </div>
                     )}
 
-                    <div className="mt-6 grid grid-cols-3 gap-3">
+                    <div className="mt-6 grid grid-cols-4 gap-3">
                         <div className="bg-zinc-900/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-white/5 hover:border-gold/30 transition-colors cursor-default">
                             <ShoppingBag size={20} className="text-gold mb-2" />
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Loja</span>
@@ -199,6 +200,10 @@ export const AdminFinance: React.FC = () => {
                         <div className="bg-zinc-900/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-white/5 hover:border-blue-500/30 transition-colors cursor-default">
                             <Ticket size={20} className="text-[var(--accent-primary)] mb-2" />
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Ingressos</span>
+                        </div>
+                        <div className="bg-zinc-900/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center border border-white/5 hover:border-amber-500/30 transition-colors cursor-default">
+                            <CreditCard size={20} className="text-amber-500 mb-2" />
+                            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Patrocínio</span>
                         </div>
                     </div>
                 </div>
@@ -253,6 +258,15 @@ export const AdminFinance: React.FC = () => {
                                     strokeWidth={3}
                                     dot={{ r: 4, strokeWidth: 2, fill: '#18181b', stroke: '#10b981' }}
                                     activeDot={{ r: 6, fill: '#10b981', stroke: '#fff', strokeWidth: 2 }}
+                                />
+                                <Line
+                                    type="monotone"
+                                    name="Patrocínios"
+                                    dataKey="patrocinios"
+                                    stroke="#f59e0b"
+                                    strokeWidth={3}
+                                    dot={{ r: 4, strokeWidth: 2, fill: '#18181b', stroke: '#f59e0b' }}
+                                    activeDot={{ r: 6, fill: '#f59e0b', stroke: '#fff', strokeWidth: 2 }}
                                 />
                             </LineChart>
                         </ResponsiveContainer>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { api } from "../../../api/client";
+import {
+api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
 import { 
     Accessibility, 
@@ -28,7 +29,8 @@ import {
     FileCheck,
     CloudUpload,
     Scan,
-    Info
+    Info,
+    RefreshCw,
 } from "lucide-react";
 import { 
     Button, 
