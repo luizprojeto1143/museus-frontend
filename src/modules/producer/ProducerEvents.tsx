@@ -47,14 +47,14 @@ export const ProducerEvents: React.FC = () => {
         <div className="pb-16 animate-in fade-in duration-500">
             <div className="flex justify-between items-end mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">Meus Eventos</h1>
+                    <h1 className="text-3xl font-bold text-[var(--accent-primary)] mb-2 font-serif">{t("producer.producerevents.myEvents", "Meus Eventos")}</h1>
                     <p className="text-[#B0A090]">{t("producer.producerevents.gerencieSeusEventosExposiesEWorkshops", `Gerencie seus eventos, exposições e workshops.`)}</p>
                 </div>
                 <button
                     onClick={() => navigate("/producer/events/new")}
                     className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg shadow-[var(--accent-primary)]/20"
                 >
-                    <Plus size={20} /> Novo Evento
+                    <Plus size={20} /> {t("producer.producerevents.newEvent", "Novo Evento")}
                 </button>
             </div>
 
@@ -67,7 +67,7 @@ export const ProducerEvents: React.FC = () => {
                     <div className="w-20 h-20 bg-black/20 rounded-full flex items-center justify-center mx-auto mb-6 text-[#463420]">
                         <Calendar size={40} />
                     </div>
-                    <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">Nenhum evento encontrado</h3>
+                    <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">{t("producer.producerevents.noEventsFound", "Nenhum evento encontrado")}</h3>
                     <p className="text-[#B0A090] mb-8 max-w-md mx-auto">{t("producer.producerevents.comeceCriandoSeuPrimeiroEventoOuExposioP", `
                         Comece criando seu primeiro evento ou exposição para aparecer na programação da cidade.
                     `)}</p>
@@ -75,7 +75,7 @@ export const ProducerEvents: React.FC = () => {
                         onClick={() => navigate("/producer/events/new")}
                         className="px-6 py-3 border border-[var(--accent-primary)] text-[var(--accent-primary)] rounded-lg hover:bg-[var(--accent-primary)] hover:text-[#1a1108] transition-all font-bold"
                     >
-                        Criar Agora
+                        {t("producer.producerevents.createNow", "Criar Agora")}
                     </button>
                 </div>
             ) : (
@@ -98,7 +98,7 @@ export const ProducerEvents: React.FC = () => {
                                             ? "bg-[#4cd964] text-[#1a1108]"
                                             : "bg-[#eab308] text-[#1a1108]"
                                         }`}>
-                                        {event.active ? "ATIVO" : "RASCUNHO"}
+                                        {event.active ? t("producer.producerevents.active", "ATIVO") : t("producer.producerevents.draft", "RASCUNHO")}
                                     </span>
                                 </div>
                             </div>
@@ -116,7 +116,7 @@ export const ProducerEvents: React.FC = () => {
                                     </div>
                                     <div className="flex items-center gap-2 text-[#B0A090] text-sm line-clamp-1">
                                         <MapPin size={14} className="text-[var(--accent-primary)]" />
-                                        {event.location || "Local não informado"}
+                                        {event.location || t("producer.producerevents.noLocation", "Local não informado")}
                                     </div>
                                 </div>
 
@@ -125,7 +125,7 @@ export const ProducerEvents: React.FC = () => {
                                         onClick={() => navigate(`/producer/events/${event.id}`)}
                                         className="flex-1 py-2.5 bg-black/20 hover:bg-[var(--accent-primary)] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
                                     >
-                                        <Edit size={16} /> Gerenciar
+                                        <Edit size={16} /> {t("producer.producerevents.manage", "Gerenciar")}
                                     </button>
                                 </div>
                             </div>

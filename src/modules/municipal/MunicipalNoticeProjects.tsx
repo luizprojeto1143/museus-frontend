@@ -59,19 +59,20 @@ type Notice = {
     status: string;
 };
 
-const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    DRAFT: { label: "Rascunho", color: "text-slate-400", bg: "bg-white/5", border: "border-white/5" },
-    SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
-    UNDER_REVIEW: { label: "Em Análise", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-    APPROVED: { label: "Aprovado", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-    REJECTED: { label: "Reprovado", color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20" },
-    IN_EXECUTION: { label: "Em Execução", color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },
-    COMPLETED: { label: "Concluído", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
-    CANCELED: { label: "Cancelado", color: "text-slate-600", bg: "bg-white/5", border: "border-white/5" }
-};
-
 export const MunicipalNoticeProjects: React.FC = () => {
     const { t } = useTranslation();
+
+    const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
+        DRAFT: { label: t("municipal.projects.status_draft", "Rascunho"), color: "text-slate-400", bg: "bg-white/5", border: "border-white/5" },
+        SUBMITTED: { label: t("municipal.projects.status_submitted", "Enviado"), color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+        UNDER_REVIEW: { label: t("municipal.projects.status_under_review", "Em Análise"), color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+        APPROVED: { label: t("municipal.projects.status_approved", "Aprovado"), color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+        REJECTED: { label: t("municipal.projects.status_rejected", "Reprovado"), color: "text-rose-500", bg: "bg-rose-500/10", border: "border-rose-500/20" },
+        IN_EXECUTION: { label: t("municipal.projects.status_in_execution", "Em Execução"), color: "text-indigo-400", bg: "bg-indigo-500/10", border: "border-indigo-500/20" },
+        COMPLETED: { label: t("municipal.projects.status_completed", "Concluído"), color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
+        CANCELED: { label: t("municipal.projects.status_canceled", "Cancelado"), color: "text-slate-600", bg: "bg-white/5", border: "border-white/5" }
+    };
+
     const { id } = useParams<{ id: string }>();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
@@ -98,7 +99,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
             if (noticeRes) setNotice(noticeRes.data);
         } catch (err) {
             console.error(err);
-            toast.error("Erro ao carregar pipeline de projetos.");
+            toast.error(t("municipal.projects.error_load", "Erro ao carregar pipeline de projetos."));
         } finally {
             setLoading(false);
         }
@@ -125,7 +126,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
             <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Sincronizando Projetos...</p>
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">{t("municipal.projects.loading", "Sincronizando Projetos...")}</p>
         </div>
     );
 
@@ -144,14 +145,14 @@ export const MunicipalNoticeProjects: React.FC = () => {
                     <div className="space-y-2">
                         <div className="flex items-center gap-3">
                             <Badge variant="glass" className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">
-                                <Activity size={12} className="mr-1.5" /> Pipeline Municipal
+                                <Activity size={12} className="mr-1.5" /> {t("municipal.projects.pipeline_municipal", "Pipeline Municipal")}
                             </Badge>
                         </div>
                         <h1 className="text-4xl font-black text-white tracking-tighter leading-none">
-                            {id ? "Projetos do Edital" : "Panorama de Projetos"}
+                            {id ? t("municipal.projects.title_notice", "Projetos do Edital") : t("municipal.projects.title_panorama", "Panorama de Projetos")}
                         </h1>
                         <p className="text-slate-500 font-medium">
-                            {notice?.title || "Visão estratégica consolidada de todas as unidades."}
+                            {notice?.title || t("municipal.projects.subtitle", "Visão estratégica consolidada de todas as unidades.")}
                         </p>
                     </div>
                 </div>
@@ -163,7 +164,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                             type="text"
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            placeholder="Buscar projeto ou proponente..."
+                            placeholder={t("municipal.projects.search_placeholder", "Buscar projeto ou proponente...")}
                             className="w-full bg-white/5 border border-white/5 rounded-2xl py-3.5 pl-12 pr-4 text-xs text-white focus:outline-none focus:border-emerald-500/50 transition-all placeholder:text-slate-600"
                         />
                     </div>
@@ -179,7 +180,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                     : 'text-slate-500 hover:text-slate-300'
                                 }`}
                             >
-                                {val === "ALL" ? "Todos" : val === "SUBMITTED" ? "Novos" : val === "UNDER_REVIEW" ? "Análise" : "Aprovados"}
+                                {val === "ALL" ? t("municipal.projects.filter_all", "Todos") : val === "SUBMITTED" ? t("municipal.projects.filter_new", "Novos") : val === "UNDER_REVIEW" ? t("municipal.projects.filter_review", "Análise") : t("municipal.projects.filter_approved", "Aprovados")}
                             </button>
                         ))}
                     </div>
@@ -197,8 +198,8 @@ export const MunicipalNoticeProjects: React.FC = () => {
                         <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                             <FileText size={40} className="text-slate-700" />
                         </div>
-                        <h3 className="text-xl font-black text-slate-600 uppercase tracking-widest">Nenhum projeto identificado</h3>
-                        <p className="text-slate-500 text-sm mt-2">Ajuste os filtros para visualizar outros registros.</p>
+                        <h3 className="text-xl font-black text-slate-600 uppercase tracking-widest">{t("municipal.projects.empty_title", "Nenhum projeto identificado")}</h3>
+                        <p className="text-slate-500 text-sm mt-2">{t("municipal.projects.empty_desc", "Ajuste os filtros para visualizar outros registros.")}</p>
                     </Card>
                 ) : (
                     filteredProjects.map((project, idx) => {
@@ -220,7 +221,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                             <div className={`font-black text-4xl tracking-tighter ${scoreColor}`}>
                                                 {score.toFixed(1)}
                                             </div>
-                                            <div className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">Score Global</div>
+                                            <div className="text-[9px] text-slate-600 uppercase font-black tracking-[0.2em]">{t("municipal.projects.global_score", "Score Global")}</div>
                                             <div className="mt-2 w-12 h-1 bg-white/5 rounded-full overflow-hidden">
                                                 <div className={`h-full ${scoreColor.replace('text-', 'bg-')} transition-all duration-1000`} style={{ width: `${score * 10}%` }} />
                                             </div>
@@ -239,7 +240,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                                 )}
                                                 {project.aiAnalysis && (
                                                     <Badge className="bg-indigo-500/10 text-indigo-400 border-indigo-500/20 uppercase text-[8px] font-black flex items-center gap-1.5 px-3 py-1">
-                                                        <Sparkles size={10} /> IA Analisado
+                                                        <Sparkles size={10} /> {t("municipal.projects.ai_analyzed", "IA Analisado")}
                                                     </Badge>
                                                 )}
                                             </div>
@@ -250,10 +251,10 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                                 </h3>
                                                 <div className="flex flex-wrap items-center gap-6 text-[11px] font-bold text-slate-500 uppercase tracking-widest">
                                                     <div className="flex items-center gap-2 group-hover:text-slate-300 transition-colors">
-                                                        <Users size={14} className="text-emerald-500" /> {project.proponent?.name || "Proponente Desconhecido"}
+                                                        <Users size={14} className="text-emerald-500" /> {project.proponent?.name || t("municipal.projects.unknown_proponent", "Proponente Desconhecido")}
                                                     </div>
                                                     <div className="flex items-center gap-2 group-hover:text-slate-300 transition-colors">
-                                                        <MapPin size={14} className="text-emerald-500" /> {project.targetRegion || "Região Municipal"}
+                                                        <MapPin size={14} className="text-emerald-500" /> {project.targetRegion || t("municipal.projects.municipal_region", "Região Municipal")}
                                                     </div>
                                                     <div className="flex items-center gap-2 group-hover:text-slate-300 transition-colors font-black text-white/60">
                                                         <Target size={14} className="text-emerald-500" /> {formatCurrency(project.requestedBudget)}
@@ -268,7 +269,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
                                                 onClick={() => navigate(`/municipal/projects/${project.id}`)}
                                                 className="h-12 w-full lg:w-auto px-6 rounded-2xl bg-white/5 text-white font-black uppercase text-[10px] tracking-widest hover:bg-emerald-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all flex items-center justify-center gap-2"
                                             >
-                                                Avaliar <ChevronRight size={16} />
+                                                {t("municipal.projects.evaluate", "Avaliar")} <ChevronRight size={16} />
                                             </Button>
                                         </div>
                                     </div>

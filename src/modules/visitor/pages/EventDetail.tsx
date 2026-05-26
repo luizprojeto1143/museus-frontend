@@ -173,9 +173,9 @@ export const EventDetail: React.FC = () => {
 
   if (!event) return (
     <div className="work-error p-20 text-center">
-      <h2 className="text-2xl font-fd text-gold-hi mb-6">Espetáculo não encontrado</h2>
+      <h2 className="text-2xl font-fd text-gold-hi mb-6">{t("visitor.eventdetail.not_found", "Espetáculo não encontrado")}</h2>
       <button onClick={() => navigate('/eventos')} className="gallery-cta">
-        Voltar para Agenda
+        {t("visitor.eventdetail.back_to_agenda", "Voltar para Agenda")}
       </button>
     </div>
   );
@@ -204,7 +204,7 @@ export const EventDetail: React.FC = () => {
 
       <div className="event-header-premium">
         <span className="event-badge-premium">
-           {event.isOnline ? "Transmissão Digital" : (event.type === 'WORKSHOP' ? "Oficina Cultural" : "Espetáculo Presencial")}
+           {event.isOnline ? t("visitor.eventdetail.digital_stream", "Transmissão Digital") : (event.type === 'WORKSHOP' ? t("visitor.eventdetail.workshop", "Oficina Cultural") : t("visitor.eventdetail.live_show", "Espetáculo Presencial"))}
         </span>
         <h1 className="event-title-premium">{event.title}</h1>
         
@@ -322,7 +322,7 @@ export const EventDetail: React.FC = () => {
            animate={{ y: 0 }}
         >
           <div className="flex flex-col">
-            <span className="font-fm text-[10px] uppercase text-gold">Ingressos a partir de</span>
+            <span className="font-fm text-[10px] uppercase text-gold">{t("visitor.eventdetail.tickets_from", "Ingressos a partir de")}</span>
             <span className="event-footer-price">
               {tickets.length > 0 ? (Math.min(...tickets.map(item => Number(item.price))) === 0 ? 'Grátis' : `R$ ${Math.min(...tickets.map(item => Number(item.price)))}`) : '---'}
             </span>
@@ -330,7 +330,7 @@ export const EventDetail: React.FC = () => {
 
           {attendance ? (
             <div className="bg-gold-dim border border-gold-glow px-10 py-4 rounded-full font-fm text-[12px] uppercase text-gold">
-               Presença Confirmada
+               {t("visitor.eventdetail.presence_confirmed", "Presença Confirmada")}
             </div>
           ) : (
             <button
@@ -366,8 +366,8 @@ export const EventDetail: React.FC = () => {
                 <X size={24} />
               </button>
 
-              <h2 className="text-3xl font-fd text-gold-hi mb-2">Reserva de Entrada</h2>
-              <p className="text-muted text-sm font-fb mb-10">Escolha sua modalidade de participação neste evento cultural.</p>
+              <h2 className="text-3xl font-fd text-gold-hi mb-2">{t("visitor.eventdetail.ticket_reservation", "Reserva de Entrada")}</h2>
+              <p className="text-muted text-sm font-fb mb-10">{t("visitor.eventdetail.reservation_desc", "Escolha sua modalidade de participação neste evento cultural.")}</p>
 
               {paymentData ? (
                 <div className="space-y-8 text-center">
@@ -414,7 +414,7 @@ export const EventDetail: React.FC = () => {
 
                   {event.customFormSchema && event.customFormSchema.length > 0 && (
                     <div className="space-y-6 pt-6 border-t border-border">
-                      <span className="sidebar-label-premium">Dados Necessários</span>
+                      <span className="sidebar-label-premium">{t("visitor.eventdetail.required_data", "Dados Necessários")}</span>
                       {event.customFormSchema.map((field, idx) => (
                         <div key={idx} className="flex flex-col gap-2">
                            <label className="text-xs font-fm uppercase text-muted">{field.label}</label>
@@ -441,7 +441,7 @@ export const EventDetail: React.FC = () => {
                     onClick={handleRegister}
                     disabled={submitting}
                   >
-                    {submitting ? "Processando..." : "Confirmar Inscrição"}
+                    {submitting ? t("visitor.eventdetail.processing", "Processando...") : t("visitor.eventdetail.confirm", "Confirmar Inscrição")}
                   </button>
                 </div>
               )}

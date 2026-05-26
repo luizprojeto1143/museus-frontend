@@ -35,14 +35,14 @@ export const ContactForm: React.FC = () => {
             <AnimateIn variant="scaleIn">
                 <div role="alert" className="text-center p-12 bg-green-500/10 rounded-[var(--radius-lg)] border border-[var(--status-success)]">
                     <CheckCircle size={48} className="text-[var(--status-success)] mx-auto mb-4" aria-hidden="true" />
-                    <h3 className="text-[var(--status-success)] text-xl font-bold mb-2">Mensagem Enviada!</h3>
+                    <h3 className="text-[var(--status-success)] text-xl font-bold mb-2">{t("public.contact.messageSent", "Mensagem Enviada!")}</h3>
                     <p className="font-[var(--font-body)] opacity-80">{t("public.contact.nossaEquipeEntrarEmContatoEmBreve", `Nossa equipe entrará em contato em breve.`)}</p>
                     <Button
                         variant="outline"
                         className="mt-6 border-[var(--status-success)] text-[var(--status-success)] hover:bg-[var(--status-success)] hover:text-white"
                         onClick={() => setStatus("idle")}
                     >
-                        Enviar outra
+                        {t("public.contact.sendAnother", "Enviar outra")}
                     </Button>
                 </div>
             </AnimateIn>
@@ -53,35 +53,35 @@ export const ContactForm: React.FC = () => {
         <AnimateIn variant="fadeUp">
             <form onSubmit={handleSubmit} className="bg-[var(--bg-surface)] p-10 rounded-[var(--radius-xl)] border border-[var(--border-default)] shadow-2xl relative">
                 <h3 className="text-[var(--accent-primary)] text-xl font-bold mb-8 flex items-center gap-3">
-                    <Mail size={24} aria-hidden="true" /> Fale com um Consultor
+                    <Mail size={24} aria-hidden="true" /> {t("public.contact.talkToConsultant", "Fale com um Consultor")}
                 </h3>
 
                 <div className="space-y-6">
                     <div>
-                        <label htmlFor="contact-name" className="block mb-2 text-sm font-bold opacity-70">Nome</label>
+                        <label htmlFor="contact-name" className="block mb-2 text-sm font-bold opacity-70">{t("public.contact.name", "Nome")}</label>
                         <Input
                             id="contact-name"
                             required
                             value={name}
                             onChange={e => setName(e.target.value)}
-                            placeholder="Seu nome completo"
+                            placeholder={t("public.contact.fullNamePlaceholder", "Seu nome completo")}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="contact-email" className="block mb-2 text-sm font-bold opacity-70">Email Profissional</label>
+                        <label htmlFor="contact-email" className="block mb-2 text-sm font-bold opacity-70">{t("public.contact.professionalEmail", "Email Profissional")}</label>
                         <Input
                             id="contact-email"
                             required
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
-                            placeholder="seu@empresa.com"
+                            placeholder={t("public.contact.emailPlaceholder", "seu@empresa.com")}
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="contact-subject" className="block mb-2 text-sm font-bold opacity-70">Assunto</label>
+                        <label htmlFor="contact-subject" className="block mb-2 text-sm font-bold opacity-70">{t("public.contact.subject", "Assunto")}</label>
                         <select
                             id="contact-subject"
                             value={subject}
@@ -95,7 +95,7 @@ export const ContactForm: React.FC = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="contact-message" className="block mb-2 text-sm font-bold opacity-70">Mensagem</label>
+                        <label htmlFor="contact-message" className="block mb-2 text-sm font-bold opacity-70">{t("public.contact.message", "Mensagem")}</label>
                         <textarea
                             id="contact-message"
                             required
@@ -103,14 +103,14 @@ export const ContactForm: React.FC = () => {
                             onChange={e => setMessage(e.target.value)}
                             rows={4}
                             className="flex min-h-[120px] w-full rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-page)] px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-[var(--fg-main)]"
-                            placeholder="Como podemos ajudar sua instituição?"
+                            placeholder={t("public.contact.messagePlaceholder", "Como podemos ajudar sua instituição?")}
                         />
                     </div>
 
                     {status === "error" && (
                         <AnimateIn variant="fadeUp">
                             <div role="alert" className="p-4 bg-red-500/10 border border-[var(--status-error)] rounded-[var(--radius-md)] text-red-400 text-sm flex items-center gap-2">
-                                <AlertCircle size={16} aria-hidden="true" /> Erro ao enviar. Tente novamente.
+                                <AlertCircle size={16} aria-hidden="true" /> {t("public.contact.sendError", "Erro ao enviar. Tente novamente.")}
                             </div>
                         </AnimateIn>
                     )}
@@ -121,7 +121,7 @@ export const ContactForm: React.FC = () => {
                         className="w-full h-14 text-base font-bold"
                         rightIcon={status !== "submitting" ? <Send size={18} /> : undefined}
                     >
-                        {status === "submitting" ? "Enviando..." : "Enviar Mensagem"}
+                        {status === "submitting" ? t("public.contact.sending", "Enviando...") : t("public.contact.sendMessage", "Enviar Mensagem")}
                     </Button>
                 </div>
             </form>

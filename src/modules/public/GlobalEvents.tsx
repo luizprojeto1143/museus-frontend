@@ -40,10 +40,10 @@ export const GlobalEvents: React.FC = () => {
             {/* Header */}
             <header style={{ marginBottom: "3rem" }}>
                 <Link to="/welcome" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "var(--fg-muted)", textDecoration: "none", marginBottom: "1rem" }}>
-                    <ArrowLeft size={20} /> Voltar
+                    <ArrowLeft size={20} /> {t("public.globalevents.back", "Voltar")}
                 </Link>
                 <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", background: "linear-gradient(90deg, var(--accent-primary), #f3e5b5)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "0.5rem" }}>
-                    Agenda Cultural Unificada
+                    {t("public.globalevents.unifiedAgenda", "Agenda Cultural Unificada")}
                 </h1>
                 <p style={{ opacity: 0.7, fontSize: "1.1rem" }}>{t("public.globalevents.exploreEventosExposiesEOficinasEmTodosOs", `
                     Explore eventos, exposições e oficinas em todos os nossos museus parceiros.
@@ -55,7 +55,7 @@ export const GlobalEvents: React.FC = () => {
                 <Search size={20} style={{ position: "absolute", top: "1rem", left: "1rem", opacity: 0.5 }} />
                 <input
                     type="text"
-                    placeholder="Busque por evento, museu ou cidade..."
+                    placeholder={t("public.globalevents.searchPlaceholder", "Busque por evento, museu ou cidade...")}
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                     style={{
@@ -72,12 +72,12 @@ export const GlobalEvents: React.FC = () => {
 
             {/* Grid */}
             {loading ? (
-                <div style={{ textAlign: "center", padding: "4rem", opacity: 0.5 }}>Carregando agenda...</div>
+                <div style={{ textAlign: "center", padding: "4rem", opacity: 0.5 }}>{t("public.globalevents.loading", "Carregando agenda...")}</div>
             ) : filteredEvents.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "4rem", background: "rgba(255,255,255,0.02)", borderRadius: "1rem" }}>
                     <Calendar size={48} style={{ opacity: 0.3, marginBottom: "1rem" }} />
-                    <h3 style={{ marginBottom: "0.5rem" }}>Nenhum evento encontrado</h3>
-                    <p style={{ opacity: 0.6 }}>Tente buscar com outros termos.</p>
+                    <h3 style={{ marginBottom: "0.5rem" }}>{t("public.globalevents.noEventsFound", "Nenhum evento encontrado")}</h3>
+                    <p style={{ opacity: 0.6 }}>{t("public.globalevents.tryOtherTerms", "Tente buscar com outros termos.")}</p>
                 </div>
             ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "2rem" }}>
@@ -120,7 +120,7 @@ export const GlobalEvents: React.FC = () => {
                                         <Calendar size={16} /> {new Date(event.startDate).toLocaleDateString()} at {new Date(event.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                        <MapPin size={16} /> {event.location || "Local não informado"}
+                                        <MapPin size={16} /> {event.location || t("public.globalevents.locationNotProvided", "Local não informado")}
                                     </div>
                                 </div>
                                 <div style={{ marginTop: "auto" }}>
@@ -128,7 +128,7 @@ export const GlobalEvents: React.FC = () => {
                                     {/* Since we don't have multi-tenant routing perfectly setup in frontend (e.g. subdomains), we might need to route to a generic public event view or handle tenant switching */}
                                     {/* For MVP: Just link to login or standard event details if logged in */}
                                     <button style={{ width: "100%", padding: "0.8rem", background: "var(--primary-color)", color: "white", border: "none", borderRadius: "0.5rem", fontWeight: "bold", cursor: "pointer" }}>
-                                        Ver Detalhes
+                                        {t("public.globalevents.viewDetails", "Ver Detalhes")}
                                     </button>
                                 </div>
                             </div>

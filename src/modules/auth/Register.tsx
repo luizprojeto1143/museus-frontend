@@ -480,7 +480,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
                 <button type="button" onClick={() => setShowTermsModal(false)} style={{ background: "none", border: "none", color: "#fff", fontSize: "1.5rem", cursor: "pointer" }}>&times;</button>
               </div>
               <div style={{ padding: "1rem", overflowY: "auto", color: "#ddd", lineHeight: "1.6", whiteSpace: "pre-wrap" }}>
-                {termsText || "Termos de uso padrão da plataforma..."}
+                {termsText || t("auth.register.defaultTerms", "Termos de uso padrão da plataforma...")}
                 {privacyText && (
                   <>
                     <h4 style={{ color: "var(--accent-primary)", marginTop: "1rem" }}>{t("auth.register.polticaDePrivacidade")}</h4>

@@ -51,10 +51,10 @@ export const WorksList: React.FC = () => {
       animate="visible"
     >
       <header className="workslist-header-premium">
-        <span className="workslist-badge">Curadoria Digital</span>
-        <h1 className="workslist-title-premium">Acervo de Relíquias</h1>
+        <span className="workslist-badge">{t("visitor.workslist.badge", "Curadoria Digital")}</span>
+        <h1 className="workslist-title-premium">{t("visitor.workslist.title", "Acervo de Relíquias")}</h1>
         <p className="hero-subtitle-premium">
-          Explore uma jornada visual através das décadas, onde cada obra conta uma parte da nossa história sagrada.
+          {t("visitor.workslist.subtitle", "Explore uma jornada visual através das décadas, onde cada obra conta uma parte da nossa história sagrada.")}
         </p>
         
         <div className="workslist-controls">
@@ -65,7 +65,7 @@ export const WorksList: React.FC = () => {
                 onClick={() => setFilter(cat)}
                 className={`filter-btn ${filter === cat ? 'active' : ''}`}
               >
-                {cat === 'all' ? 'Tudo' : cat}
+                {cat === 'all' ? t("visitor.workslist.all", "Tudo") : cat}
               </button>
             ))}
           </div>
@@ -81,8 +81,8 @@ export const WorksList: React.FC = () => {
       ) : filteredWorks.length === 0 ? (
         <div className="workslist-empty py-40">
           <div className="text-6xl mb-6 opacity-30">🖼️</div>
-          <h3 className="text-2xl font-fd text-white mb-2">Vazio Silencioso</h3>
-          <p className="text-muted max-w-sm mx-auto">Nenhuma obra encontrada nesta categoria no momento.</p>
+          <h3 className="text-2xl font-fd text-white mb-2">{t("visitor.workslist.empty_title", "Vazio Silencioso")}</h3>
+          <p className="text-muted max-w-sm mx-auto">{t("visitor.workslist.empty_desc", "Nenhuma obra encontrada nesta categoria no momento.")}</p>
         </div>
       ) : (
         <div className="workslist-grid-premium">
@@ -104,16 +104,16 @@ export const WorksList: React.FC = () => {
                       className="work-img-premium"
                     />
                     <div className="work-category-tag">
-                      {work.category?.name || 'Geral'}
+                      {work.category?.name || t("visitor.workslist.general", "Geral")}
                     </div>
                   </div>
 
                   <div className="work-content-premium">
-                    <span className="work-artist-premium">{work.artist || 'Artista Desconhecido'}</span>
+                    <span className="work-artist-premium">{work.artist || t("visitor.workslist.unknown_artist", "Artista Desconhecido")}</span>
                     <h2 className="work-title-premium">{work.title}</h2>
                     <div className="work-footer-premium">
                        <span className="work-explore-btn">
-                          Explorar Detalhes <ArrowRight size={14} />
+                          {t("visitor.workslist.explore", "Explorar Detalhes")} <ArrowRight size={14} />
                        </span>
                     </div>
                   </div>

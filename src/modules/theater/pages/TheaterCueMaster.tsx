@@ -9,10 +9,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../components/ui";
 import { toast } from "react-hot-toast";
 
-import { theaterApi } from "../../../api/theater";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const TheaterCueMaster: React.FC = () => {
+    const { t } = useTranslation();
     const { id: sessionId } = useParams();
     const [activeCue, setActiveCue] = useState<string | null>(null);
     const [status, setStatus] = useState("STANDBY");
@@ -26,7 +27,7 @@ export const TheaterCueMaster: React.FC = () => {
             const res = await theaterApi.getCues(sessionId);
             setCues(res.data);
         } catch (err) {
-            toast.error("Erro ao carregar cues");
+            toast.error(t("theater.cuemaster.load_error", "Erro ao carregar cues"));
         } finally {
             setLoading(false);
         }
@@ -40,7 +41,7 @@ export const TheaterCueMaster: React.FC = () => {
 
     const triggerCue = (id: string) => {
         setActiveCue(id);
-        toast.success(`Cue disparado!`, {
+        toast.success(t("theater.cuemaster.cue_triggered", "Cue disparado!"), {
             icon: '⚡',
             style: { borderRadius: '20px', background: '#333', color: '#fff' }
         });
@@ -53,16 +54,16 @@ export const TheaterCueMaster: React.FC = () => {
                 <div>
                     <div className="flex items-center gap-3 mb-4">
                         <div className={`w-3 h-3 rounded-full ${status === 'GO' ? 'bg-red-500 animate-ping' : 'bg-gold-500'}`} />
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic">Technical Control Unit</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic">{t("theater.cuemaster.unit_name", "Technical Control Unit")}</span>
                     </div>
-                    <h1 className="text-5xl font-black text-white tracking-tighter italic">Cue Master Pro</h1>
+                    <h1 className="text-5xl font-black text-white tracking-tighter italic">{t("theater.cuemaster.title", "Cue Master Pro")}</h1>
                     <p className="text-slate-500 font-medium mt-2 flex items-center gap-2">
-                        <Activity size={14} className="text-red-500" /> Latência do Sistema: <strong className="text-white">12ms</strong> • Nodes Online: <strong className="text-white">14/14</strong>
+                        <Activity size={14} className="text-red-500" /> {t("theater.cuemaster.latency", "Latência do Sistema:")} <strong className="text-white">12ms</strong> • {t("theater.cuemaster.nodes", "Nodes Online:")} <strong className="text-white">14/14</strong>
                     </p>
                 </div>
                 <div className="text-right">
                     <p className="text-6xl font-black text-white tracking-tighter font-mono">{time}</p>
-                    <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mt-2">Local Stage Time</p>
+                    <p className="text-[10px] font-black text-red-500 uppercase tracking-widest mt-2">{t("theater.cuemaster.stage_time", "Local Stage Time")}</p>
                 </div>
             </div>
 
@@ -115,19 +116,19 @@ export const TheaterCueMaster: React.FC = () => {
                     <div className="premium-glass p-10 rounded-[48px] border-white/5">
                         <div className="flex items-center justify-between mb-10">
                             <h3 className="text-2xl font-black text-white italic flex items-center gap-3">
-                                <Zap className="text-red-500 fill-red-500" /> Cue List: {sessionId ? "Sessão Ativa" : "Selecione uma Sessão"}
+                                <Zap className="text-red-500 fill-red-500" /> {t("theater.cuemaster.cue_list", "Cue List:")} {sessionId ? t("theater.cuemaster.active_session", "Sessão Ativa") : t("theater.cuemaster.select_session", "Selecione uma Sessão")}
                             </h3>
                             <div className="flex gap-4">
-                                <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">Console Backstage</div>
+                                <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("theater.cuemaster.console_backstage", "Console Backstage")}</div>
                             </div>
                         </div>
 
                         {loading ? (
-                            <div className="flex justify-center p-20 text-white font-black italic animate-pulse">Sincronizando Backstage...</div>
+                            <div className="flex justify-center p-20 text-white font-black italic animate-pulse">{t("theater.cuemaster.syncing", "Sincronizando Backstage...")}</div>
                         ) : cues.length === 0 ? (
                             <div className="text-center p-20 border border-dashed border-white/10 rounded-[32px]">
-                                <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Nenhum Cue programado para esta sessão.</p>
-                                <Button variant="secondary" className="mt-4 px-8">Programar Primeiro Cue</Button>
+                                <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">{t("theater.cuemaster.no_cues", "Nenhum Cue programado para esta sessão.")}</p>
+                                <Button variant="secondary" className="mt-4 px-8">{t("theater.cuemaster.program_cue", "Programar Primeiro Cue")}</Button>
                             </div>
                         ) : (
                             <div className="space-y-4 relative">
@@ -171,7 +172,7 @@ export const TheaterCueMaster: React.FC = () => {
 
                         <div className="mt-12 flex justify-center">
                             <button className="flex items-center gap-2 text-slate-700 hover:text-red-500 transition-colors font-black text-[10px] uppercase tracking-widest">
-                                <Play size={14} fill="currentColor" /> Simular Ensaio Completo
+                                <Play size={14} fill="currentColor" /> {t("theater.cuemaster.simulate_rehearsal", "Simular Ensaio Completo")}
                             </button>
                         </div>
                     </div>
@@ -183,8 +184,8 @@ export const TheaterCueMaster: React.FC = () => {
                                 <Radio size={24} />
                             </div>
                             <div>
-                                <h4 className="text-white font-black italic">Intercom: Direção Táctica</h4>
-                                <p className="text-xs text-blue-300 font-medium">Canal 1: Ativo (3 participantes)</p>
+                                <h4 className="text-white font-black italic">{t("theater.cuemaster.intercom_dir", "Intercom: Direção Táctica")}</h4>
+                                <p className="text-xs text-blue-300 font-medium">{t("theater.cuemaster.channel_active", "Canal 1: Ativo (3 participantes)")}</p>
                             </div>
                         </div>
                         <div className="flex gap-2">

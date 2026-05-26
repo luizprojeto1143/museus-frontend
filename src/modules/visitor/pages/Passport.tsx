@@ -171,7 +171,7 @@ export const Passport: React.FC = () => {
                       {relics.length === 0 ? (
                         <div className="empty-state">
                            <Shield size={48} className="opacity-20" />
-                           <p>Relíquias são vestígios que não estão mais em exposição.</p>
+                           <p>{t("visitor.passport.relics_desc", "Relíquias são vestígios que não estão mais em exposição.")}</p>
                         </div>
                       ) : (
                         relics.map(r => (
@@ -180,7 +180,7 @@ export const Passport: React.FC = () => {
                              <div className="relic-info">
                                 <h4>{r.title}</h4>
                                 <p>{r.artist}</p>
-                                <span className="relic-tag">RELÍQUIA HISTÓRICA</span>
+                                <span className="relic-tag">{t("visitor.passport.historical_relic", "RELÍQUIA HISTÓRICA")}</span>
                              </div>
                           </div>
                         ))
@@ -202,17 +202,17 @@ export const Passport: React.FC = () => {
                                animate={{ width: `${progressToNextLevel}%` }} 
                             />
                          </div>
-                         <p className="lvl-footer">{Math.round(progressToNextLevel)}% para {nextLevel?.title}</p>
+                         <p className="lvl-footer">{Math.round(progressToNextLevel)}% {t("visitor.passport.to_next_level", "para")} {nextLevel?.title}</p>
                       </div>
                       
                       <div className="stats-mini-grid">
                          <div className="stat-box">
                             <span className="val">{stamps.length}</span>
-                            <span className="lab">Capturas</span>
+                            <span className="lab">{t("visitor.passport.captures", "Capturas")}</span>
                          </div>
                          <div className="stat-box">
                             <span className="val">{relics.length}</span>
-                            <span className="lab">Relíquias</span>
+                            <span className="lab">{t("visitor.passport.relics_label", "Relíquias")}</span>
                          </div>
                       </div>
                    </div>

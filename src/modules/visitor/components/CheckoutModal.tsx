@@ -80,7 +80,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
             onSuccess();
         } catch (e) {
             console.error(e);
-            alert("Erro ao processar inscrição. Tente novamente.");
+            alert(t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
         } finally {
             setLoading(false);
         }
@@ -106,11 +106,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                 <div className="p-8 pb-4 flex justify-between items-start">
                     <div>
                         <Badge variant="glass" className="mb-3 text-[10px] font-black uppercase tracking-widest bg-amber-500/10 text-amber-500 border-amber-500/20">
-                            Check-in Express
+                            {t("visitor.checkoutmodal.checkin", "Check-in Express")}
                         </Badge>
                         <h3 className="text-3xl font-black text-white tracking-tighter flex items-center gap-2">
                             <TicketIcon size={24} className="text-amber-500" />
-                            Ingressos
+                            {t("visitor.checkoutmodal.tickets", "Ingressos")}
                         </h3>
                     </div>
                     <button 
@@ -141,12 +141,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                                         {Number(ticket.price) > 0 ? (
                                             `R$ ${Number(ticket.price).toFixed(2)}`
                                         ) : (
-                                            <span className="text-green-400">Gratuito</span>
+                                            <span className="text-green-400">{t("visitor.checkoutmodal.free", "Gratuito")}</span>
                                         )}
                                     </span>
                                     {ticket.quantity - ticket.sold < 10 && (
                                         <Badge variant="outline" className="text-[9px] h-5 border-red-500/30 text-red-500 bg-red-500/5">
-                                            Últimos!
+                                            {t("visitor.checkoutmodal.last_tickets", "Últimos!")}
                                         </Badge>
                                     )}
                                 </div>
@@ -176,10 +176,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                 {/* Footer */}
                 <div className="p-8 bg-black/40 border-t border-white/5">
                     <div className="flex justify-between items-center mb-8">
-                        <span className="text-slate-400 font-bold uppercase tracking-widest text-xs">Total</span>
+                        <span className="text-slate-400 font-bold uppercase tracking-widest text-xs">{t("visitor.checkoutmodal.total", "Total")}</span>
                         <div className="text-right">
                            <span className="block text-3xl font-black text-white tabular-nums">R$ {totalAmount.toFixed(2)}</span>
-                           <span className="text-[10px] text-slate-500 font-medium">{totalItems} itens no carrinho</span>
+                           <span className="text-[10px] text-slate-500 font-medium">{totalItems} {t("visitor.checkoutmodal.items_in_cart", "itens no carrinho")}</span>
                         </div>
                     </div>
                     
@@ -190,7 +190,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                         isLoading={loading}
                         leftIcon={<CreditCard size={18} />}
                     >
-                        {loading ? 'Processando...' : `Confirmar Inscrição`}
+                        {loading ? t("visitor.checkoutmodal.processing", "Processando...") : t("visitor.checkoutmodal.confirm", "Confirmar Inscrição")}
                     </Button>
 
                     {!isAuthenticated && (

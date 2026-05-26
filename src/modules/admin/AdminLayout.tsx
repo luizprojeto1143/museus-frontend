@@ -152,7 +152,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.painel", "Painel"),
       links: [
-        { to: role === 'theater' ? "/theater" : "/admin", label: role === 'theater' ? "Dashboard Palco" : (isCityMode ? "Secretaria de Cultura" : t("admin.sidebar.dashboard")), icon: "LayoutDashboard", show: true },
+        { to: role === 'theater' ? "/theater" : "/admin", label: role === 'theater' ? t("admin.sidebar.stage_dashboard", "Dashboard Palco") : (isCityMode ? t("admin.sidebar.culture_dept", "Secretaria de Cultura") : t("admin.sidebar.dashboard")), icon: "LayoutDashboard", show: true },
       ],
       showGroup: true
     },
@@ -174,7 +174,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/scanner", label: t("admin.sidebar.scannerPortaria", "Scanner (Portaria)"), icon: "Smartphone", show: (features?.featureEvents ?? true) && hasPermission("manage_scanner") },
         { to: "/admin/espacos", label: t("admin.sidebar.gestODeEspaOs", "Gestão de Espaços"), icon: "Building2", show: hasPermission("manage_events") },
         { to: "/admin/calendario", label: t("admin.sidebar.agenda", "Agenda"), icon: "Calendar", show: hasPermission("manage_events") },
-        { to: "/admin/sessoes", label: "Bilheteria (PDV)", icon: "Ticket", show: hasPermission("manage_events") },
+        { to: "/admin/sessoes", label: t("admin.sidebar.box_office", "Bilheteria (PDV)"), icon: "Ticket", show: hasPermission("manage_events") },
         { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "GraduationCap", show: (features?.featureCertificates ?? true) && hasPermission("manage_events") },
       ],
       showGroup: (features?.featureGroupEvents ?? true) && role !== 'theater'
@@ -182,7 +182,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.visitantesEngajamento", "Visitantes & Engajamento"),
       links: [
-        { to: "/admin/visitantes", label: isCityMode ? "Cidadãos" : t("admin.sidebar.visitors"), icon: "Users", show: hasPermission("view_analytics") },
+        { to: "/admin/visitantes", label: isCityMode ? t("admin.sidebar.citizens", "Cidadãos") : t("admin.sidebar.visitors"), icon: "Users", show: hasPermission("view_analytics") },
         { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "Star", show: ((features?.featureReviews || features?.featureGuestbook) ?? true) && hasPermission("manage_guestbook") },
         { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "ShoppingCart", show: (features?.featureShop ?? true) && hasPermission("manage_shop") },
       ],
@@ -214,15 +214,15 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       showGroup: (features?.featureGroupInstitutional ?? true) && role !== 'theater'
     },
     {
-      label: "Operações de Teatro",
+      label: t("admin.sidebar.theater_operations", "Operações de Teatro"),
       links: [
-        { to: "/theater", label: "Dashboard Palco", icon: "Theater", show: hasPermission("manage_operations") },
-        { to: "/theater/mobile", label: "Venda Rápida (Mobile)", icon: "Smartphone", show: hasPermission("manage_operations") },
-        { to: "/admin/assentos", label: "Mapa de Assentos", icon: "Armchair", show: hasPermission("manage_operations") },
-        { to: "/admin/elenco", label: "Elenco & Backstage", icon: "Users2", show: hasPermission("manage_operations") },
-        { to: "/admin/playbill", label: "Programa Digital", icon: "BookOpen", show: hasPermission("manage_operations") },
-        { to: "/admin/cue-master", label: "Console Backstage", icon: "Zap", show: hasPermission("manage_operations") },
-        { to: "/admin/theater-club", label: "Clube de Membros", icon: "Diamond", show: hasPermission("manage_operations") },
+        { to: "/theater", label: t("admin.sidebar.stage_dashboard", "Dashboard Palco"), icon: "Theater", show: hasPermission("manage_operations") },
+        { to: "/theater/mobile", label: t("admin.sidebar.fast_sale", "Venda Rápida (Mobile)"), icon: "Smartphone", show: hasPermission("manage_operations") },
+        { to: "/admin/assentos", label: t("admin.sidebar.seat_map", "Mapa de Assentos"), icon: "Armchair", show: hasPermission("manage_operations") },
+        { to: "/admin/elenco", label: t("admin.sidebar.cast_backstage", "Elenco & Backstage"), icon: "Users2", show: hasPermission("manage_operations") },
+        { to: "/admin/playbill", label: t("admin.sidebar.digital_program", "Programa Digital"), icon: "BookOpen", show: hasPermission("manage_operations") },
+        { to: "/admin/cue-master", label: t("admin.sidebar.backstage_console", "Console Backstage"), icon: "Zap", show: hasPermission("manage_operations") },
+        { to: "/admin/theater-club", label: t("admin.sidebar.members_club", "Clube de Membros"), icon: "Diamond", show: hasPermission("manage_operations") },
       ],
       showGroup: (features?.type === "THEATER" || role === "theater") && hasPermission("manage_operations")
     },
@@ -237,8 +237,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "CircleDollarSign", show: hasPermission("view_analytics") },
         { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "Handshake", show: role === 'admin' || role === 'master' },
         { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "Settings", show: role === 'admin' || role === 'master' },
-        { to: "/admin/patrocinio", label: "Patrocínio", icon: "CircleDollarSign", show: role === 'admin' || role === 'master' },
-        { to: "/admin/usuarios", label: "Equipe", icon: "Users", show: role === 'admin' || role === 'master' },
+        { to: "/admin/patrocinio", label: t("admin.sidebar.sponsorship", "Patrocínio"), icon: "CircleDollarSign", show: role === 'admin' || role === 'master' },
+        { to: "/admin/usuarios", label: t("admin.sidebar.team", "Equipe"), icon: "Users", show: role === 'admin' || role === 'master' },
       ],
       showGroup: (features?.featureGroupTools ?? true) && (role === 'admin' || hasPermission("view_analytics") || hasPermission("manage_works") || hasPermission("manage_events") || hasPermission("manage_chat_ai"))
     },
@@ -287,13 +287,13 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       showGroup: (features?.featureGroupAI ?? true) && role !== 'theater'
     },
     {
-      label: "Roadmap 2026",
+      label: t("admin.sidebar.roadmap_2026", "Roadmap 2026"),
       links: [
-        { to: "/admin/comunidade", label: "Moderação Comunidade", icon: "MessageSquare", show: hasPermission("manage_roadmap") },
-        { to: "/admin/quiz-builder", label: "Construtor de Quizzes", icon: "CheckCircle2", show: hasPermission("manage_roadmap") },
-        { to: "/admin/timelines", label: "Linhas do Tempo", icon: "History", show: hasPermission("manage_roadmap") },
-        { to: "/admin/submissoes", label: "Curadoria de Obras", icon: "Inbox", show: hasPermission("manage_roadmap") },
-        { to: "/admin/familia", label: "Memória Familiar", icon: "TreePine", show: hasPermission("manage_roadmap") },
+        { to: "/admin/comunidade", label: t("admin.sidebar.community_mod", "Moderação Comunidade"), icon: "MessageSquare", show: hasPermission("manage_roadmap") },
+        { to: "/admin/quiz-builder", label: t("admin.sidebar.quiz_builder", "Construtor de Quizzes"), icon: "CheckCircle2", show: hasPermission("manage_roadmap") },
+        { to: "/admin/timelines", label: t("admin.sidebar.timelines", "Linhas do Tempo"), icon: "History", show: hasPermission("manage_roadmap") },
+        { to: "/admin/submissoes", label: t("admin.sidebar.art_curation", "Curadoria de Obras"), icon: "Inbox", show: hasPermission("manage_roadmap") },
+        { to: "/admin/familia", label: t("admin.sidebar.family_memory", "Memória Familiar"), icon: "TreePine", show: hasPermission("manage_roadmap") },
       ],
       showGroup: (features?.featureGroupRoadmap ?? true) && role !== 'theater'
     }
@@ -355,12 +355,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                 />
              </div>
              {!isCollapsed && (
-               <div className="flex flex-col min-w-0">
+              <div className="flex flex-col min-w-0">
                   <span className="text-white font-black tracking-tight text-sm truncate uppercase">
-                    {features?.name || (isCityMode ? "Secretaria" : "Gestão")}
+                    {features?.name || (isCityMode ? t("admin.sidebar.secretariat", "Secretaria") : t("admin.sidebar.management", "Gestão"))}
                   </span>
                   <span className={`${isCityMode ? 'text-blue-400' : 'text-gold-400'} font-bold text-[9px] uppercase tracking-widest mt-0.5 truncate`}>
-                    {isCityMode ? "Portal Municipal" : "Portal Administrativo"}
+                    {isCityMode ? t("admin.sidebar.municipal_portal", "Portal Municipal") : t("admin.sidebar.admin_portal", "Portal Administrativo")}
                   </span>
                </div>
              )}
@@ -468,11 +468,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           
           <div className="ml-auto flex items-center gap-6">
              <div className="hidden sm:flex flex-col text-right">
-                <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Autenticado como</span>
-                <span className="text-white font-black text-xs">{userName || "Administrador"}</span>
+                <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">{t("admin.header.authenticated_as", "Autenticado como")}</span>
+                <span className="text-white font-black text-xs">{userName || t("admin.header.administrator", "Administrador")}</span>
              </div>
              <div className={`px-4 py-1.5 rounded-full border border-white/10 font-black text-[10px] uppercase tracking-widest ${isCityMode ? 'bg-[var(--accent-primary)]/10 text-blue-400' : 'bg-gold-500/10 text-gold-400'}`}>
-                {isCityMode ? "Gestão Municipal" : "Gestor Cultural"}
+                {isCityMode ? t("admin.header.municipal_management", "Gestão Municipal") : t("admin.header.cultural_manager", "Gestor Cultural")}
              </div>
           </div>
         </header>

@@ -79,21 +79,21 @@ export const ProducerInbox: React.FC = () => {
 
     const handlePaymentRequest = async () => {
         if (!selectedId || !paymentAmount || !receiptUrl) {
-            alert("Preencha o valor e o link do comprovante!");
+            alert(t("producer.producerinbox.fillPaymentDetails", "Preencha o valor e o link do comprovante!"));
             return;
         }
 
         try {
             setProcessingPayment(true);
-            await inboxService.createPayment(selectedId, Number(paymentAmount), `Pagamento efetuado. Comprovante: ${receiptUrl}`, "PIX");
+            await inboxService.createPayment(selectedId, Number(paymentAmount), t("producer.producerinbox.paymentDoneMsg", "Pagamento efetuado. Comprovante: {{receiptUrl}}", { receiptUrl }), "PIX");
             // Refresh conversation to show system message
             handleSelectConversation(selectedId);
             setShowPaymentModal(false);
             setPaymentAmount("");
             setReceiptUrl("");
-            alert("Pagamento registrado e comprovante enviado!");
+            alert(t("producer.producerinbox.paymentRegistered", "Pagamento registrado e comprovante enviado!"));
         } catch (error) {
-            alert("Erro ao registrar pagamento");
+            alert(t("producer.producerinbox.paymentError", "Erro ao registrar pagamento"));
         } finally {
             setProcessingPayment(false);
         }
@@ -118,12 +118,12 @@ export const ProducerInbox: React.FC = () => {
             {/* Sidebar List */}
             <div className={`w-full md:w-1/3 border-r border-[var(--accent-primary)]/20 flex flex-col ${selectedId ? 'hidden md:flex' : 'flex'}`}>
                 <div className="p-4 border-b border-[var(--accent-primary)]/20 bg-[#2c1a0b]/50">
-                    <h2 className="text-[var(--accent-primary)] font-serif text-xl mb-4">Inbox</h2>
+                    <h2 className="text-[var(--accent-primary)] font-serif text-xl mb-4">{t("producer.producerinbox.inbox", "Inbox")}</h2>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--accent-primary)]/50" size={18} />
                         <input
                             type="text"
-                            placeholder="Buscar conversa..."
+                            placeholder={t("producer.producerinbox.searchConversation", "Buscar conversa...")}
                             className="w-full bg-[#1a1108] border border-[var(--accent-primary)]/30 rounded-full py-2 pl-10 pr-4 text-[#e5e5e5] focus:outline-none focus:border-[var(--accent-primary)]"
                         />
                     </div>
@@ -143,14 +143,14 @@ export const ProducerInbox: React.FC = () => {
                                 </span>
                             </div>
                             <p className="text-sm text-[var(--accent-primary)]/70 truncate">
-                                {conv.messages[conv.messages.length - 1]?.content || "Inicie a conversa..."}
+                                {conv.messages[conv.messages.length - 1]?.content || t("producer.producerinbox.startConversation", "Inicie a conversa...")}
                             </p>
                         </div>
                     ))}
 
                     {conversations.length === 0 && !loading && (
                         <div className="p-8 text-center text-[var(--accent-primary)]/50">
-                            Nenhuma conversa iniciada.
+                            {t("producer.producerinbox.noConversation", "Nenhuma conversa iniciada.")}
                         </div>
                     )}
                 </div>
@@ -173,7 +173,7 @@ export const ProducerInbox: React.FC = () => {
                             </div>
                             <div className="flex gap-2">
                                 <Button size="sm" variant="outline" onClick={() => setShowPaymentModal(true)} leftIcon={<DollarSign size={16} />}>
-                                    Pagar com Comprovante
+                                    {t("producer.producerinbox.payWithReceipt", "Pagar com Comprovante")}
                                 </Button>
                                 <Button size="sm" variant="ghost">
                                     <MoreVertical size={18} />
@@ -204,11 +204,11 @@ export const ProducerInbox: React.FC = () => {
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex items-center gap-2 font-bold opacity-80">
                                                         <DollarSign size={16} />
-                                                        Solicitação de Pagamento
+                                                        {t("producer.producerinbox.paymentRequest", "Solicitação de Pagamento")}
                                                     </div>
                                                     <p>{msg.content}</p>
                                                     <Button size="sm" className="mt-2 w-full bg-[#1a1108] text-[var(--accent-primary)] border border-[var(--accent-primary)]">
-                                                        Pagar Agora (Simulado)
+                                                        {t("producer.producerinbox.payNow", "Pagar Agora (Simulado)")}
                                                     </Button>
                                                 </div>
                                             ) : (
@@ -232,7 +232,7 @@ export const ProducerInbox: React.FC = () => {
                                 <Input
                                     value={newMessage}
                                     onChange={e => setNewMessage(e.target.value)}
-                                    placeholder="Digite sua mensagem..."
+                                    placeholder={t("producer.producerinbox.typeMessage", "Digite sua mensagem...")}
                                     className="flex-1 bg-[#1a1108] border-[var(--accent-primary)]/30 focus:border-[var(--accent-primary)]"
                                     onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
                                 />
@@ -257,36 +257,36 @@ export const ProducerInbox: React.FC = () => {
             {showPaymentModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
                     <div className="bg-[#1a1108] border border-[var(--accent-primary)]/20 rounded-xl p-6 w-full max-w-md">
-                        <h2 className="text-[var(--accent-primary)] text-xl font-bold mb-4">Registrar Pagamento</h2>
+                        <h2 className="text-[var(--accent-primary)] text-xl font-bold mb-4">{t("producer.producerinbox.registerPayment", "Registrar Pagamento")}</h2>
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm text-[#e5e5e5] mb-1">Valor (R$)</label>
+                                <label className="block text-sm text-[#e5e5e5] mb-1">{t("producer.producerinbox.amount", "Valor (R$)")}</label>
                                 <Input 
                                     type="number"
                                     value={paymentAmount}
                                     onChange={e => setPaymentAmount(e.target.value)}
-                                    placeholder="Ex: 500.00"
+                                    placeholder={t("producer.producerinbox.amountPlaceholder", "Ex: 500.00")}
                                     className="bg-black/50 border-[var(--accent-primary)]/30 text-white"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm text-[#e5e5e5] mb-1">URL do Comprovante</label>
+                                <label className="block text-sm text-[#e5e5e5] mb-1">{t("producer.producerinbox.receiptUrl", "URL do Comprovante")}</label>
                                 <Input 
                                     type="text"
                                     value={receiptUrl}
                                     onChange={e => setReceiptUrl(e.target.value)}
-                                    placeholder="https://link.com/comprovante.pdf"
+                                    placeholder={t("producer.producerinbox.receiptPlaceholder", "https://link.com/comprovante.pdf")}
                                     className="bg-black/50 border-[var(--accent-primary)]/30 text-white"
                                 />
                             </div>
                             <div className="flex justify-end gap-2 mt-4">
-                                <Button variant="ghost" onClick={() => setShowPaymentModal(false)}>Cancelar</Button>
+                                <Button variant="ghost" onClick={() => setShowPaymentModal(false)}>{t("producer.producerinbox.cancel", "Cancelar")}</Button>
                                 <Button 
                                     className="bg-[var(--accent-primary)] text-[#1a1108]" 
                                     onClick={handlePaymentRequest}
                                     disabled={processingPayment}
                                 >
-                                    Confirmar Pagamento
+                                    {t("producer.producerinbox.confirmPayment", "Confirmar Pagamento")}
                                 </Button>
                             </div>
                         </div>

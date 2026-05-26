@@ -45,7 +45,7 @@ export const NotFound: React.FC = () => {
             </div>
 
             <div className="absolute bottom-6 text-[#463420] text-sm">
-                Cultura Viva System
+                {t("common.notFound.system", "Cultura Viva System")}
             </div>
         </div>
     );

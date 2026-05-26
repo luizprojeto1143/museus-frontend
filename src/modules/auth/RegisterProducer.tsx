@@ -57,7 +57,7 @@ export const RegisterProducer: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            setError("Senhas não conferem");
+            setError(t("auth.registerproducer.passwordsDontMatch", "Senhas não conferem"));
             return;
         }
 
@@ -70,7 +70,7 @@ export const RegisterProducer: React.FC = () => {
                 role: "PRODUCER",
                 parentTenantId: selectedCity || null // Optional city link
             });
-            alert("Cadastro realizado com sucesso! Entrando no sistema...");
+            alert(t("auth.registerproducer.success", "Cadastro realizado com sucesso! Entrando no sistema..."));
             
             // Auto-login
             await login({ email: formData.email, password: formData.password });
@@ -78,7 +78,7 @@ export const RegisterProducer: React.FC = () => {
             navigate("/producer");
         } catch (err: any) {
             console.error(err);
-            setError(err.response?.data?.message || "Erro ao realizar cadastro");
+            setError(err.response?.data?.message || t("auth.registerproducer.error", "Erro ao realizar cadastro"));
         } finally {
             setLoading(false);
         }
@@ -87,7 +87,7 @@ export const RegisterProducer: React.FC = () => {
     const nextStep = () => {
         if (step === 1) {
             if (!formData.name || !formData.cpf || !formData.email) {
-                setError("Preencha todos os campos obrigatórios");
+                setError(t("auth.registerproducer.fillRequired", "Preencha todos os campos obrigatórios"));
                 return;
             }
             setError("");
@@ -131,7 +131,7 @@ export const RegisterProducer: React.FC = () => {
                         <User size={40} color="#1a1108" />
                     </div>
                     <h2 style={{ color: "var(--accent-primary)", marginBottom: "0.5rem", fontSize: "1.8rem", fontWeight: "bold" }}>
-                        🎬 Sou Produtor Cultural
+                        🎬 {t("auth.registerproducer.title", "Sou Produtor Cultural")}
                     </h2>
                     <p style={{ color: "#B0A090", fontSize: "0.95rem" }}>{t("auth.registerproducer.cadastreseParaSubmeterProjetosEGerenciar", `
                         Cadastre-se para submeter projetos e gerenciar sua produção cultural
@@ -191,7 +191,7 @@ export const RegisterProducer: React.FC = () => {
                                 <input
                                     type="text"
                                     name="cpf"
-                                    placeholder="CPF / CNPJ *"
+                                    placeholder={t("auth.registerproducer.cpfCnpj", "CPF / CNPJ *")}
                                     required
                                     value={formData.cpf}
                                     onChange={handleChange}
@@ -204,7 +204,7 @@ export const RegisterProducer: React.FC = () => {
                                 <input
                                     type="email"
                                     name="email"
-                                    placeholder="E-mail *"
+                                    placeholder={t("auth.registerproducer.email", "E-mail *")}
                                     required
                                     value={formData.email}
                                     onChange={handleChange}
@@ -217,7 +217,7 @@ export const RegisterProducer: React.FC = () => {
                                 <input
                                     type="text"
                                     name="phone"
-                                    placeholder="Telefone / WhatsApp"
+                                    placeholder={t("auth.registerproducer.phone", "Telefone / WhatsApp")}
                                     value={formData.phone}
                                     onChange={handleChange}
                                     style={inputStyle}
@@ -225,7 +225,7 @@ export const RegisterProducer: React.FC = () => {
                             </div>
 
                             <button type="button" onClick={nextStep} style={primaryButtonStyle}>
-                                Continuar <ArrowRight size={18} />
+                                {t("auth.registerproducer.continue", "Continuar")} <ArrowRight size={18} />
                             </button>
                         </div>
                     )}
@@ -300,10 +300,10 @@ export const RegisterProducer: React.FC = () => {
 
                             <div style={{ display: "flex", gap: "1rem" }}>
                                 <button type="button" onClick={prevStep} style={secondaryButtonStyle}>
-                                    Voltar
+                                    {t("auth.registerproducer.back", "Voltar")}
                                 </button>
                                 <button type="button" onClick={nextStep} style={{ ...primaryButtonStyle, flex: 1 }}>
-                                    Continuar <ArrowRight size={18} />
+                                    {t("auth.registerproducer.continue", "Continuar")} <ArrowRight size={18} />
                                 </button>
                             </div>
                         </div>
@@ -321,7 +321,7 @@ export const RegisterProducer: React.FC = () => {
                                 <input
                                     type="password"
                                     name="password"
-                                    placeholder="Senha *"
+                                    placeholder={t("auth.registerproducer.passwordPlaceholder", "Senha *")}
                                     required
                                     value={formData.password}
                                     onChange={handleChange}
@@ -334,7 +334,7 @@ export const RegisterProducer: React.FC = () => {
                                 <input
                                     type="password"
                                     name="confirmPassword"
-                                    placeholder="Confirmar Senha *"
+                                    placeholder={t("auth.registerproducer.confirmPasswordPlaceholder", "Confirmar Senha *")}
                                     required
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
@@ -349,22 +349,22 @@ export const RegisterProducer: React.FC = () => {
                                 borderRadius: "0.75rem",
                                 padding: "1rem"
                             }}>
-                                <h4 style={{ color: "var(--accent-primary)", marginBottom: "0.5rem" }}>Resumo do Cadastro</h4>
+                                <h4 style={{ color: "var(--accent-primary)", marginBottom: "0.5rem" }}>{t("auth.registerproducer.summaryTitle", "Resumo do Cadastro")}</h4>
                                 <div style={{ fontSize: "0.9rem", color: "#94a3b8" }}>
-                                    <div><strong>Nome:</strong> {formData.name}</div>
-                                    <div><strong>E-mail:</strong> {formData.email}</div>
-                                    <div><strong>{t("auth.registerproducer.vnculo", `Vínculo:`)}</strong> {selectedCity ? cities.find(c => c.id === selectedCity)?.name : "Independente"}</div>
+                                    <div><strong>{t("auth.registerproducer.name", "Nome:")}</strong> {formData.name}</div>
+                                    <div><strong>{t("auth.registerproducer.email", "E-mail:")}</strong> {formData.email}</div>
+                                    <div><strong>{t("auth.registerproducer.vnculo", `Vínculo:`)}</strong> {selectedCity ? cities.find(c => c.id === selectedCity)?.name : t("auth.registerproducer.independent", "Independente")}</div>
                                 </div>
                             </div>
 
                             <div style={{ display: "flex", gap: "1rem" }}>
                                 <button type="button" onClick={prevStep} style={secondaryButtonStyle}>
-                                    Voltar
+                                    {t("auth.registerproducer.back", "Voltar")}
                                 </button>
                                 <button type="submit" disabled={loading} style={{ ...primaryButtonStyle, flex: 1 }}>
-                                    {loading ? "Cadastrando..." : (
+                                    {loading ? t("auth.registerproducer.registering", "Cadastrando...") : (
                                         <>
-                                            <Check size={18} /> Finalizar Cadastro
+                                            <Check size={18} /> {t("auth.registerproducer.finishRegistration", "Finalizar Cadastro")}
                                         </>
                                     )}
                                 </button>
@@ -374,12 +374,12 @@ export const RegisterProducer: React.FC = () => {
                 </form>
 
                 <p style={{ textAlign: "center", marginTop: "2rem", color: "#64748b" }}>
-                    Já possui conta?{" "}
+                    {t("auth.registerproducer.alreadyHaveAccount", "Já possui conta?")}{" "}
                     <span
                         onClick={() => navigate("/login")}
                         style={{ color: "var(--accent-primary)", cursor: "pointer", textDecoration: "underline" }}
                     >
-                        Fazer Login
+                        {t("auth.registerproducer.login", "Fazer Login")}
                     </span>
                 </p>
             </div>

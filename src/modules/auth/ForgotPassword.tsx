@@ -22,7 +22,7 @@ export const ForgotPassword: React.FC = () => {
             setSent(true);
         } catch (err) {
             console.error(err);
-            setError("Não foi possível enviar o e-mail. Verifique se o endereço está correto.");
+            setError(t("auth.forgotpassword.error", "Não foi possível enviar o e-mail. Verifique se o endereço está correto."));
         } finally {
             setLoading(false);
         }
@@ -46,32 +46,6 @@ export const ForgotPassword: React.FC = () => {
                 padding: "2rem",
                 border: "1px solid rgba(255,255,255,0.05)"
             }}>
-                {sent ? (
-                    <div style={{ textAlign: "center" }}>
-                        <div style={{ margin: "0 auto 1.5rem", width: "64px", height: "64px", borderRadius: "50%", background: "rgba(76, 217, 100, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#4cd964" }}>
-                            <CheckCircle size={32} />
-                        </div>
-                        <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1rem" }}>E-mail enviado!</h2>
-                        <p style={{ opacity: 0.7, marginBottom: "2rem", lineHeight: "1.6" }}>
-                            Se houver uma conta associada a <strong>{email}</strong>, você receberá as instruções de recuperação em instantes.
-                        </p>
-                        <Link to="/login" className="btn-primary" style={{ width: "100%", padding: "0.8rem", borderRadius: "0.5rem", display: "inline-block", textAlign: "center", textDecoration: "none", color: "black", fontWeight: "bold" }}>
-                            Voltar ao Login
-                        </Link>
-                    </div>
-                ) : (
-                    <>
-                        <div style={{ marginBottom: "2rem" }}>
-                            <Link to="/login" style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", color: "var(--fg-muted)", textDecoration: "none", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
-                                <ArrowLeft size={16} /> Voltar ao login
-                            </Link>
-                            <h1 style={{ fontSize: "1.75rem", fontWeight: "bold", marginBottom: "0.5rem" }}>Esqueceu a senha?</h1>
-                            <p style={{ opacity: 0.7 }}>{t("auth.forgotpassword.digiteSeuEmailParaReceberAsInstruesDeRed", `
-                                Digite seu e-mail para receber as instruções de redefinição.
-                            `)}</p>
-                        </div>
-
-                        {error && (
                             <div style={{ background: "rgba(255, 68, 68, 0.1)", color: "#ff4444", padding: "0.8rem", borderRadius: "0.5rem", marginBottom: "1.5rem", fontSize: "0.9rem" }}>
                                 {error}
                             </div>
@@ -79,7 +53,7 @@ export const ForgotPassword: React.FC = () => {
 
                         <form onSubmit={handleSubmit}>
                             <div style={{ marginBottom: "1.5rem" }}>
-                                <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", color: "#ccc" }}>E-mail</label>
+                                <label style={{ display: "block", marginBottom: "0.5rem", fontSize: "0.9rem", color: "#ccc" }}>{t("auth.forgotpassword.email", "E-mail")}</label>
                                 <div style={{ position: "relative" }}>
                                     <Mail size={20} style={{ position: "absolute", top: "12px", left: "12px", color: "#666" }} />
                                     <input
@@ -87,7 +61,7 @@ export const ForgotPassword: React.FC = () => {
                                         required
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
-                                        placeholder="seu@email.com"
+                                        placeholder={t("auth.forgotpassword.emailPlaceholder", "seu@email.com")}
                                         style={{
                                             width: "100%",
                                             padding: "0.8rem 0.8rem 0.8rem 2.5rem",
@@ -118,7 +92,7 @@ export const ForgotPassword: React.FC = () => {
                                     opacity: loading ? 0.7 : 1
                                 }}
                             >
-                                {loading ? "Enviando..." : "Enviar Instruções"}
+                                {loading ? t("auth.forgotpassword.sending", "Enviando...") : t("auth.forgotpassword.sendInstructions", "Enviar Instruções")}
                             </button>
                         </form>
                     </>

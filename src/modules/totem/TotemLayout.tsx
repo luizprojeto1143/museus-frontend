@@ -41,8 +41,8 @@ export const TotemLayout: React.FC = () => {
                         M
                     </div>
                     <div>
-                        <h1 style={{ fontSize: "1.2rem", margin: 0 }}>Modo Totem</h1>
-                        <span style={{ fontSize: "0.8rem", opacity: 0.6 }}>Controle de Acesso</span>
+                        <h1 style={{ fontSize: "1.2rem", margin: 0 }}>{t("totem.layout.title", "Modo Totem")}</h1>
+                        <span style={{ fontSize: "0.8rem", opacity: 0.6 }}>{t("totem.layout.subtitle", "Controle de Acesso")}</span>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@ export const TotemLayout: React.FC = () => {
                     </Link>
                     <button onClick={logout} className="btn-secondary" style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid rgba(255,68,68,0.5)", color: "#ff4444", background: "transparent", cursor: "pointer" }}>
                         <LogOut size={18} />
-                        <span className="hidden-mobile">Sair</span>
+                        <span className="hidden-mobile">{t("totem.layout.logout", "Sair")}</span>
                     </button>
                 </div>
             </header>
@@ -69,7 +69,7 @@ export const TotemLayout: React.FC = () => {
                 opacity: 0.4,
                 borderTop: "1px solid rgba(255,255,255,0.05)"
             }}>
-                &copy; {new Date().getFullYear()} Museus Conectados - Totem System v1.0
+                &copy; {new Date().getFullYear()} {t("totem.layout.footer", "Museus Conectados - Totem System v1.0")}
             </footer>
         </div>
     );

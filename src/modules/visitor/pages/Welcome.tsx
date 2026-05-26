@@ -78,7 +78,7 @@ export const Welcome: React.FC = () => {
               className="w-full h-18 md:h-20 text-lg md:text-xl tracking-[0.2em] font-black rounded-3xl shadow-[0_20px_50px_rgba(212,175,55,0.15)] border border-white/10 active:scale-95"
               rightIcon={<Smartphone size={24} />}
             >
-              {isAuthenticated ? "ENTRAR NO PAINEL" : "EXPLORAR / LOGIN"}
+              {isAuthenticated ? t("welcome.enter_panel", "ENTRAR NO PAINEL") : t("welcome.explore_login", "EXPLORAR / LOGIN")}
             </Button>
           </motion.div>
 
@@ -101,7 +101,7 @@ export const Welcome: React.FC = () => {
               onClick={() => navigate("/login")}
               className="h-14 md:h-16 bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl text-[10px] font-bold uppercase tracking-widest text-[#f5e6d3]/60 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"
             >
-              <Lock size={16} /> {isAuthenticated ? "Painel" : t("welcome.login")}
+              <Lock size={16} /> {isAuthenticated ? t("welcome.panel", "Painel") : t("welcome.login")}
             </button>
           </motion.div>
         </div>

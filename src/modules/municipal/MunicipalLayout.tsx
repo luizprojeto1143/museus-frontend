@@ -30,13 +30,13 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const links = [
-        { to: "/municipal", label: "Dashboard Executivo", icon: <LayoutDashboard size={18} /> },
-        { to: "/municipal/equipments", label: "Equipamentos Culturais", icon: <Building2 size={18} /> },
-        { to: "/municipal/projects", label: "Gestão de Projetos", icon: <FileText size={18} /> },
-        { to: "/municipal/reports", label: "Relatórios de Impacto", icon: <BarChart3 size={18} /> },
-        { to: "/municipal/compliance", label: "Conformidade Legal", icon: <ShieldCheck size={18} /> },
-        { to: "/municipal/ppa", label: "Metas PPA", icon: <TrendingUp size={18} /> },
-        { to: "/municipal/settings", label: "Configurações da Cidade", icon: <Settings size={18} /> },
+        { to: "/municipal", label: t("municipal.layout.link_dashboard", "Dashboard Executivo"), icon: <LayoutDashboard size={18} /> },
+        { to: "/municipal/equipments", label: t("municipal.layout.link_equipments", "Equipamentos Culturais"), icon: <Building2 size={18} /> },
+        { to: "/municipal/projects", label: t("municipal.layout.link_projects", "Gestão de Projetos"), icon: <FileText size={18} /> },
+        { to: "/municipal/reports", label: t("municipal.layout.link_reports", "Relatórios de Impacto"), icon: <BarChart3 size={18} /> },
+        { to: "/municipal/compliance", label: t("municipal.layout.link_compliance", "Conformidade Legal"), icon: <ShieldCheck size={18} /> },
+        { to: "/municipal/ppa", label: t("municipal.layout.link_ppa", "Metas PPA"), icon: <TrendingUp size={18} /> },
+        { to: "/municipal/settings", label: t("municipal.layout.link_settings", "Configurações da Cidade"), icon: <Settings size={18} /> },
     ];
 
     return (
@@ -69,23 +69,23 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                         </div>
                         <div className="min-w-0">
                             <div className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] leading-none mb-1">
-                                Secretaria
+                                {t("municipal.layout.secretariat", "Secretaria")}
                             </div>
                             <div className="text-sm text-white font-bold truncate">
-                                Portal Municipal
+                                {t("municipal.layout.municipal_portal", "Portal Municipal")}
                             </div>
                         </div>
                     </div>
                     
                     <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/5">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">Jurisdição Ativa</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">{t("municipal.layout.active_jurisdiction", "Jurisdição Ativa")}</span>
                     </div>
                 </div>
 
                 <nav className="flex-1 p-6 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar">
                     <div className="px-4 mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-                        Gestão Governamental
+                        {t("municipal.layout.government_management", "Gestão Governamental")}
                     </div>
                     {links.map(link => (
                         <Link
@@ -123,7 +123,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                         </div>
                         <div className="min-w-0">
                             <p className="text-[10px] font-bold text-white truncate">{name}</p>
-                            <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">Secretário(a)</p>
+                            <p className="text-[8px] font-black uppercase tracking-widest text-slate-600">{t("municipal.layout.secretary_role", "Secretário(a)")}</p>
                         </div>
                     </div>
 
@@ -131,7 +131,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                         onClick={logout}
                         className="flex items-center justify-center w-full px-5 py-4 text-slate-400 bg-white/5 border border-white/5 rounded-2xl hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-all duration-300 gap-3 font-black text-[10px] uppercase tracking-widest"
                     >
-                        <LogOut size={16} /> Encerrar Sessão
+                        <LogOut size={16} /> {t("municipal.layout.logout", "Encerrar Sessão")}
                     </button>
                 </div>
             </aside>
@@ -148,7 +148,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
                             <Search size={18} className="text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Buscar processos ou leis..."
+                                placeholder={t("municipal.layout.search_placeholder", "Buscar processos ou leis...")}
                                 className="bg-transparent border-none text-sm text-white focus:outline-none w-full placeholder:text-slate-600 font-medium"
                             />
                         </div>
@@ -156,10 +156,10 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
 
                     <div className="flex items-center gap-4">
                          <div className="hidden sm:flex flex-col items-end">
-                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">Status de Gestão</span>
+                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] leading-none mb-1">{t("municipal.layout.management_status", "Status de Gestão")}</span>
                              <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-400 uppercase tracking-widest">
                                  <Globe size={12} />
-                                 Em conformidade (LBI)
+                                 {t("municipal.layout.compliance_lbi", "Em conformidade (LBI)")}
                              </span>
                          </div>
                          <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center relative hover:bg-white/10 transition-colors cursor-pointer group">
@@ -175,7 +175,7 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
 
                 <footer className="p-12 text-center">
                     <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">
-                        © 2024 Plataforma Cultura Viva • Monitoramento de Impacto Municipal
+                        {t("municipal.layout.footer", "© 2024 Plataforma Cultura Viva • Monitoramento de Impacto Municipal")}
                     </p>
                 </footer>
             </main>

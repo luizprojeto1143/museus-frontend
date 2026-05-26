@@ -42,23 +42,24 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
     const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const links = [
-        { to: "/master", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
-        { to: "/master/messages", label: "Comunicações", icon: <MessageSquare size={20} /> },
-        { to: "/master/tenants", label: "Rede de Cidades", icon: <Building2 size={20} /> },
-        { to: "/master/users", label: "Administradores", icon: <Users size={20} /> },
-        { to: "/master/plans", label: "Assinaturas", icon: <CreditCard size={20} /> },
-        { to: "/master/providers", label: "Ecosistema", icon: <Wrench size={20} /> },
-        { to: "/master/servicos-presenciais", label: "Operações", icon: <Handshake size={20} /> },
-        { to: "/master/ai-costs", label: "Custos IA", icon: <Cpu size={20} /> },
-        { to: "/master/skins", label: "Marketplace", icon: <Shirt size={20} /> },
-        { to: "/master/cards", label: "Grimório", icon: <Layers size={20} /> },
-        { to: "/master/badges", label: "Identidades", icon: <UserCheck size={20} /> },
-        { to: "/master/seeder", label: "Simulador", icon: <Database size={20} /> },
-        { to: "/master/achievements", label: "Gamificação", icon: <Trophy size={20} /> },
-        { to: "/master/audit-logs", label: "Auditoria", icon: <FileSearch size={20} /> },
-        { to: "/master/error-monitor", label: "Monitor", icon: <AlertTriangle size={20} /> },
-        { to: "/master/accessibility-requests", label: "LBI Center", icon: <Accessibility size={20} /> },
-        { to: "/master/system-health", label: "Core Health", icon: <Activity size={20} /> }
+        { to: "/master", label: t("master.sidebar.dashboard", "Dashboard"), icon: <LayoutDashboard size={20} /> },
+        { to: "/master/messages", label: t("master.sidebar.communications", "Comunicações"), icon: <MessageSquare size={20} /> },
+        { to: "/master/tenants", label: t("master.sidebar.city_network", "Rede de Cidades"), icon: <Building2 size={20} /> },
+        { to: "/master/users", label: t("master.sidebar.admins", "Administradores"), icon: <Users size={20} /> },
+        { to: "/master/plans", label: t("master.sidebar.subscriptions", "Assinaturas"), icon: <CreditCard size={20} /> },
+        { to: "/master/providers", label: t("master.sidebar.ecosystem", "Ecosistema"), icon: <Wrench size={20} /> },
+        { to: "/master/servicos-presenciais", label: t("master.sidebar.operations", "Operações"), icon: <Handshake size={20} /> },
+        { to: "/master/ai-costs", label: t("master.sidebar.ai_costs", "Custos IA"), icon: <Cpu size={20} /> },
+        { to: "/master/skins", label: t("master.sidebar.marketplace", "Marketplace"), icon: <Shirt size={20} /> },
+        { to: "/master/cards", label: t("master.sidebar.grimoire", "Grimório"), icon: <Layers size={20} /> },
+        { to: "/master/badges", label: t("master.sidebar.identities", "Identidades"), icon: <UserCheck size={20} /> },
+        { to: "/master/seeder", label: t("master.sidebar.simulator", "Simulador"), icon: <Database size={20} /> },
+        { to: "/master/achievements", label: t("master.sidebar.gamification", "Gamificação"), icon: <Trophy size={20} /> },
+        { to: "/master/audit-logs", label: t("master.sidebar.audit", "Auditoria"), icon: <FileSearch size={20} /> },
+        { to: "/master/error-monitor", label: t("master.sidebar.monitor", "Monitor"), icon: <AlertTriangle size={20} /> },
+        { to: "/master/accessibility-requests", label: t("master.sidebar.lbi_center", "LBI Center"), icon: <Accessibility size={20} /> },
+        { to: "/master/system-health", label: t("master.sidebar.core_health", "Core Health"), icon: <Activity size={20} /> },
+        { to: "/master/financeiro", label: t("master.sidebar.financial", "Financeiro"), icon: <CreditCard size={20} /> }
     ];
 
     return (
@@ -154,7 +155,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
                         className="w-full h-12 rounded-2xl bg-white/5 border border-white/5 hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 transition-all duration-300 flex items-center justify-center gap-3 font-black text-[9px] uppercase tracking-[0.2em] group"
                     >
                         <LogOut size={16} className="group-hover:rotate-12 transition-transform" />
-                        {!isCollapsed && <span>Encerrar Sessão</span>}
+                        {!isCollapsed && <span>{t("master.sidebar.logout", "Encerrar Sessão")}</span>}
                     </button>
                 </div>
             </aside>
@@ -175,7 +176,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
 
                     <div className="hidden lg:flex items-center gap-6">
                         <Badge variant="glass" className="bg-blue-600/10 text-blue-400 border-none px-4 py-2 text-[9px] font-black uppercase tracking-[0.2em]">
-                           <Globe size={14} className="mr-2" /> Global Governance Node
+                           <Globe size={14} className="mr-2" /> {t("master.header.global_governance", "Global Governance Node")}
                         </Badge>
                     </div>
 

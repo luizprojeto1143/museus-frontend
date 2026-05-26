@@ -67,7 +67,7 @@ export const MasterDashboard: React.FC = () => {
             }));
             setSummaries(data);
         } catch (err) {
-            toast.error("Erro na sincronização de dados globais.");
+            toast.error(t("master.dashboard.sync_error", "Erro na sincronização de dados globais."));
         } finally {
             setLoading(false);
         }
@@ -87,7 +87,7 @@ export const MasterDashboard: React.FC = () => {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
             <div className="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Sincronizando Nodes Globais...</p>
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">{t("master.dashboard.syncing_nodes", "Sincronizando Nodes Globais...")}</p>
         </div>
     );
 
@@ -121,14 +121,14 @@ export const MasterDashboard: React.FC = () => {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <Badge className="bg-amber-500/10 text-amber-500 border-none px-4 py-1.5 text-[8px] font-black uppercase tracking-[0.3em] italic">
-                            Supreme Command & Global Governance
+                            {t("master.dashboard.supreme_command", "Supreme Command & Global Governance")}
                         </Badge>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic leading-none">
-                        Dashboard <span className="text-amber-500">Supremo</span>
+                        {t("master.dashboard.dashboard", "Dashboard")} <span className="text-amber-500">{t("master.dashboard.supreme", "Supremo")}</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-xl max-w-3xl leading-relaxed">
-                        Controle centralizado do ecossistema cultural: Monitoramento de tráfego, ativos e governança municipal.
+                        {t("master.dashboard.desc", "Controle centralizado do ecossistema cultural: Monitoramento de tráfego, ativos e governança municipal.")}
                     </p>
                 </div>
                 <div className="flex gap-4">
@@ -136,7 +136,7 @@ export const MasterDashboard: React.FC = () => {
                         onClick={() => navigate('/master/users')}
                         className="h-16 px-10 rounded-2xl bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-amber-500 hover:text-white transition-all shadow-2xl shadow-amber-500/10 active:scale-95"
                     >
-                        <ShieldCheck size={20} className="mr-3" /> Gerir Autoridade
+                        <ShieldCheck size={20} className="mr-3" /> {t("master.dashboard.manage_authority", "Gerir Autoridade")}
                     </Button>
                 </div>
             </div>
@@ -160,9 +160,9 @@ export const MasterDashboard: React.FC = () => {
             {/* Global Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                 {[
-                    { label: "Público Global", value: stats.visitors, icon: <Users size={32} />, color: "text-amber-500", bg: "bg-amber-500/10", trend: "Embaixadores", desc: "Cidadãos únicos integrados ao ecossistema." },
-                    { label: "Nodes de Rede", value: stats.equipments, icon: <Landmark size={32} />, color: "text-blue-400", bg: "bg-blue-600/10", trend: "Ativos", desc: "Equipamentos culturais operando em rede." },
-                    { label: "Interações Totais", value: stats.visits, icon: <Activity size={32} />, color: "text-emerald-400", bg: "bg-emerald-600/10", trend: "Sync Flow", desc: "Fluxo total de engajamento e consultas API." },
+                    { label: t("master.dashboard.global_audience", "Público Global"), value: stats.visitors, icon: <Users size={32} />, color: "text-amber-500", bg: "bg-amber-500/10", trend: t("master.dashboard.ambassadors", "Embaixadores"), desc: t("master.dashboard.citizens_integrated", "Cidadãos únicos integrados ao ecossistema.") },
+                    { label: t("master.dashboard.network_nodes", "Nodes de Rede"), value: stats.equipments, icon: <Landmark size={32} />, color: "text-blue-400", bg: "bg-blue-600/10", trend: t("master.dashboard.assets", "Ativos"), desc: t("master.dashboard.cultural_equipments", "Equipamentos culturais operando em rede.") },
+                    { label: t("master.dashboard.total_interactions", "Interações Totais"), value: stats.visits, icon: <Activity size={32} />, color: "text-emerald-400", bg: "bg-emerald-600/10", trend: "Sync Flow", desc: t("master.dashboard.flow_desc", "Fluxo total de engajamento e consultas API.") },
                 ].map((stat, idx) => (
                     <motion.div
                         key={idx}
@@ -202,8 +202,8 @@ export const MasterDashboard: React.FC = () => {
                 <Card className="p-12 bg-black/40 border-white/5 rounded-[56px] space-y-12 shadow-2xl relative overflow-hidden border-t border-t-amber-500/10">
                     <div className="flex justify-between items-center relative z-10">
                         <div className="space-y-2">
-                            <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">Performance Regional</h3>
-                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Visitas por Instância Municipal</p>
+                            <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">{t("master.dashboard.regional_performance", "Performance Regional")}</h3>
+                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">{t("master.dashboard.visits_by_instance", "Visitas por Instância Municipal")}</p>
                         </div>
                         <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
                             <BarChart3 size={32} />
@@ -223,7 +223,7 @@ export const MasterDashboard: React.FC = () => {
                                             </div>
                                             <span className="text-[11px] font-black text-white uppercase tracking-widest">{s.name}</span>
                                         </div>
-                                        <span className="text-xs font-black text-amber-500 italic tracking-tighter">{s.visitsCount?.toLocaleString()} Interações</span>
+                                        <span className="text-xs font-black text-amber-500 italic tracking-tighter">{s.visitsCount?.toLocaleString()} {t("master.dashboard.interactions", "Interações")}</span>
                                     </div>
                                     <div className="h-3 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
                                         <motion.div 
@@ -243,8 +243,8 @@ export const MasterDashboard: React.FC = () => {
                 <Card className="p-12 bg-black/40 border-white/5 rounded-[56px] space-y-12 shadow-2xl relative overflow-hidden border-t border-t-blue-500/10">
                     <div className="flex justify-between items-center relative z-10">
                         <div className="space-y-2">
-                            <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">Topologia de Rede</h3>
-                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Distribuição Geográfica de Nodes</p>
+                            <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">{t("master.dashboard.network_topology", "Topologia de Rede")}</h3>
+                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">{t("master.dashboard.node_dist", "Distribuição Geográfica de Nodes")}</p>
                         </div>
                         <div className="w-16 h-16 rounded-2xl bg-blue-600/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
                             <Globe size={32} />
@@ -290,12 +290,12 @@ export const MasterDashboard: React.FC = () => {
                             <Navigation size={32} />
                         </div>
                         <div>
-                            <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none">Matriz de Governança</h3>
+                            <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase leading-none">{t("master.dashboard.gov_matrix", "Matriz de Governança")}</h3>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 mt-2 italic">Global Node Audit: Level 4 Clearance</p>
                         </div>
                     </div>
                     <Button variant="glass" className="h-14 px-10 rounded-2xl border-white/10 text-amber-500 font-black text-[10px] uppercase tracking-widest hover:bg-amber-500/10 transition-all flex items-center gap-3">
-                        <TrendingUp size={18} /> Ver Relatório Consolidado
+                        <TrendingUp size={18} /> {t("master.dashboard.view_report", "Ver Relatório Consolidado")}
                     </Button>
                 </div>
 
@@ -303,10 +303,10 @@ export const MasterDashboard: React.FC = () => {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-white/[0.01]">
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Cidade / Node</th>
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Capacidade Instalada</th>
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Engajamento Ativo</th>
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">Controles</th>
+                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.city_node", "Cidade / Node")}</th>
+                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.installed_cap", "Capacidade Instalada")}</th>
+                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.active_engagement", "Engajamento Ativo")}</th>
+                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">{t("master.dashboard.controls", "Controles")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -327,12 +327,12 @@ export const MasterDashboard: React.FC = () => {
                                         <div className="flex items-center gap-4">
                                             <div className="flex flex-col">
                                                 <span className="text-white font-black text-lg tracking-tighter italic leading-none">{s.equipamentosCount}</span>
-                                                <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Unidades</span>
+                                                <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">{t("master.dashboard.units", "Unidades")}</span>
                                             </div>
                                             <div className="h-10 w-px bg-white/5" />
                                             <div className="flex flex-col">
                                                 <span className="text-blue-400 font-black text-lg tracking-tighter italic leading-none">{s.worksCount}</span>
-                                                <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Acervo</span>
+                                                <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">{t("master.dashboard.collection", "Acervo")}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -342,7 +342,7 @@ export const MasterDashboard: React.FC = () => {
                                                 <TrendingUp size={16} className="text-emerald-500" />
                                                 <span className="text-white font-black text-2xl tracking-tighter italic leading-none">{(s.visitorsCount || 0).toLocaleString()}</span>
                                             </div>
-                                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-6 mt-1 italic">Cidadãos Únicos</span>
+                                            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-6 mt-1 italic">{t("master.dashboard.unique_citizens", "Cidadãos Únicos")}</span>
                                         </div>
                                     </td>
                                     <td className="px-12 py-10 text-right">

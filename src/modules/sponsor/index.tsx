@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../api/client';
 // Fallback for button if it doesn't exist
 const Button = ({ children, className, onClick }: any) => (
@@ -7,15 +8,16 @@ const Button = ({ children, className, onClick }: any) => (
 );
 
 export function SponsorLanding() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-black text-gold-400 mb-6">Portal de Patrocínios</h1>
+      <h1 className="text-4xl font-black text-gold-400 mb-6">{t("sponsor.landing.title", "Portal de Patrocínios")}</h1>
       <p className="text-lg text-slate-300 max-w-2xl text-center mb-8">
-        Apoie a cultura viva da sua cidade. Patrocine obras de arte, exposições e peças teatrais para ganhar visibilidade para sua marca.
+        {t("sponsor.landing.subtitle", "Apoie a cultura viva da sua cidade. Patrocine obras de arte, exposições e peças teatrais para ganhar visibilidade para sua marca.")}
       </p>
       <div className="flex gap-4">
         <Link to="/patrocinar/obras">
-          <Button className="bg-gold-500 text-slate-900 font-bold px-8 py-4 rounded-xl">Explorar Obras</Button>
+          <Button className="bg-gold-500 text-slate-900 font-bold px-8 py-4 rounded-xl">{t("sponsor.landing.explore", "Explorar Obras")}</Button>
         </Link>
       </div>
     </div>
@@ -23,6 +25,7 @@ export function SponsorLanding() {
 }
 
 export function SponsorBrowseWorks() {
+  const { t } = useTranslation();
   const [works, setWorks] = useState<any[]>([]);
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export function SponsorBrowseWorks() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">
-      <h1 className="text-3xl font-black text-gold-400 mb-8">Obras Disponíveis para Patrocínio</h1>
+      <h1 className="text-3xl font-black text-gold-400 mb-8">{t("sponsor.browse.title", "Obras Disponíveis para Patrocínio")}</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {works.map(w => (
           <div key={w.id} className="bg-slate-900 p-4 rounded-xl border border-slate-800">
@@ -39,10 +42,10 @@ export function SponsorBrowseWorks() {
             <h2 className="text-xl font-bold">{w.title}</h2>
             <p className="text-sm text-slate-400 mb-4">{w.tenantName}</p>
             {w.hasExclusiveSponsor ? (
-              <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-xs">Patrocínio Exclusivo Ativo</span>
+              <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-xs">{t("sponsor.browse.exclusive_active", "Patrocínio Exclusivo Ativo")}</span>
             ) : (
               <Link to={`/patrocinar/checkout/${w.id}`}>
-                <Button className="w-full bg-gold-500 text-slate-900 py-2 rounded-lg mt-4 font-bold">Patrocinar</Button>
+                <Button className="w-full bg-gold-500 text-slate-900 py-2 rounded-lg mt-4 font-bold">{t("sponsor.browse.sponsor_btn", "Patrocinar")}</Button>
               </Link>
             )}
           </div>
@@ -53,6 +56,7 @@ export function SponsorBrowseWorks() {
 }
 
 export function SponsorCheckout() {
+  const { t } = useTranslation();
   const { workId } = useParams();
   const [form, setForm] = useState({ sponsorName: '', sponsorEmail: '', sponsorCNPJ: '', tier: 'SHARED', sponsorLogo: '', sponsorUrl: '' });
   const [prices, setPrices] = useState({ exclusivePrice: 500, sharedPrice: 250 });
@@ -70,42 +74,42 @@ export function SponsorCheckout() {
       const res = await api.post('/sponsor-portal/subscribe', { ...form, workId });
       window.location.href = res.data.checkoutUrl;
     } catch (err) {
-      alert("Erro ao gerar checkout");
+      alert(t("sponsor.checkout.error", "Erro ao gerar checkout"));
     }
   };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8 flex flex-col items-center">
       <div className="w-full max-w-xl">
-        <h1 className="text-3xl font-black text-gold-400 mb-8">Assinar Patrocínio</h1>
+        <h1 className="text-3xl font-black text-gold-400 mb-8">{t("sponsor.checkout.title", "Assinar Patrocínio")}</h1>
         <div className="space-y-4">
           <input 
             className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
-            placeholder="Nome do Patrocinador / Empresa" 
+            placeholder={t("sponsor.checkout.name_placeholder", "Nome do Patrocinador / Empresa")} 
             value={form.sponsorName} 
             onChange={e => setForm({...form, sponsorName: e.target.value})} 
           />
           <input 
             className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
-            placeholder="E-mail" 
+            placeholder={t("sponsor.checkout.email_placeholder", "E-mail")} 
             value={form.sponsorEmail} 
             onChange={e => setForm({...form, sponsorEmail: e.target.value})} 
           />
           <input 
             className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
-            placeholder="CNPJ" 
+            placeholder={t("sponsor.checkout.cnpj_placeholder", "CNPJ")} 
             value={form.sponsorCNPJ} 
             onChange={e => setForm({...form, sponsorCNPJ: e.target.value})} 
           />
           <input 
             className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
-            placeholder="URL da Logomarca (Opcional, formato JPG/PNG)" 
+            placeholder={t("sponsor.checkout.logo_placeholder", "URL da Logomarca (Opcional, formato JPG/PNG)")} 
             value={form.sponsorLogo} 
             onChange={e => setForm({...form, sponsorLogo: e.target.value})} 
           />
           <input 
             className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
-            placeholder="URL do seu Site (Opcional)" 
+            placeholder={t("sponsor.checkout.url_placeholder", "URL do seu Site (Opcional)")} 
             value={form.sponsorUrl} 
             onChange={e => setForm({...form, sponsorUrl: e.target.value})} 
           />
@@ -114,10 +118,10 @@ export function SponsorCheckout() {
             value={form.tier} 
             onChange={e => setForm({...form, tier: e.target.value})}
           >
-            <option value="SHARED">Patrocínio Compartilhado (R$ {prices.sharedPrice}/mês)</option>
-            <option value="EXCLUSIVE">Patrocínio Exclusivo (R$ {prices.exclusivePrice}/mês)</option>
+            <option value="SHARED">{t("sponsor.checkout.tier_shared", "Patrocínio Compartilhado (R$ {{price}}/mês)", { price: prices.sharedPrice })}</option>
+            <option value="EXCLUSIVE">{t("sponsor.checkout.tier_exclusive", "Patrocínio Exclusivo (R$ {{price}}/mês)", { price: prices.exclusivePrice })}</option>
           </select>
-          <Button className="w-full bg-gold-500 text-slate-900 font-bold h-12 rounded-lg mt-4" onClick={handleSubscribe}>Ir para Pagamento</Button>
+          <Button className="w-full bg-gold-500 text-slate-900 font-bold h-12 rounded-lg mt-4" onClick={handleSubscribe}>{t("sponsor.checkout.pay_btn", "Ir para Pagamento")}</Button>
         </div>
       </div>
     </div>
@@ -125,20 +129,22 @@ export function SponsorCheckout() {
 }
 
 export function SponsorSuccess() {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-black text-emerald-400 mb-6">Patrocínio Confirmado!</h1>
+      <h1 className="text-4xl font-black text-emerald-400 mb-6">{t("sponsor.success.title", "Patrocínio Confirmado!")}</h1>
       <p className="text-lg text-slate-300 max-w-md text-center mb-8">
-        Obrigado por apoiar a cultura. Sua marca agora ganhará destaque na obra patrocinada!
+        {t("sponsor.success.subtitle", "Obrigado por apoiar a cultura. Sua marca agora ganhará destaque na obra patrocinada!")}
       </p>
       <Link to="/patrocinar/dashboard">
-        <Button className="bg-gold-500 text-slate-900 font-bold px-8 py-4 rounded-xl">Acessar Painel</Button>
+        <Button className="bg-gold-500 text-slate-900 font-bold px-8 py-4 rounded-xl">{t("sponsor.success.dashboard_btn", "Acessar Painel")}</Button>
       </Link>
     </div>
   );
 }
 
 export function SponsorDashboard() {
+  const { t } = useTranslation();
   const [sponsorships, setSponsorships] = useState<any[]>([]);
 
   useEffect(() => {
@@ -147,25 +153,25 @@ export function SponsorDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">
-      <h1 className="text-3xl font-black text-gold-400 mb-8">Meu Painel de Patrocínios</h1>
+      <h1 className="text-3xl font-black text-gold-400 mb-8">{t("sponsor.dashboard.title", "Meu Painel de Patrocínios")}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {sponsorships.map(s => (
           <div key={s.id} className="bg-slate-900 p-6 rounded-xl border border-slate-800 flex justify-between items-center">
             <div>
               <h2 className="text-xl font-bold">{s.work.title}</h2>
-              <p className="text-sm text-slate-400 mt-1">Status: <span className="text-emerald-400">{s.status}</span></p>
-              <p className="text-sm text-slate-400 mt-1">Plano: {s.tier}</p>
+              <p className="text-sm text-slate-400 mt-1">{t("sponsor.dashboard.status", "Status:")} <span className="text-emerald-400">{s.status}</span></p>
+              <p className="text-sm text-slate-400 mt-1">{t("sponsor.dashboard.tier", "Plano:")} {s.tier}</p>
             </div>
             <Button 
               className="bg-rose-500/20 text-rose-400 px-4 py-2 rounded-lg font-bold"
               onClick={async () => {
-                if (window.confirm("Deseja cancelar o patrocínio?")) {
+                if (window.confirm(t("sponsor.dashboard.cancel_confirm", "Deseja cancelar o patrocínio?"))) {
                   await api.delete(`/sponsor-portal/${s.id}/cancel`);
                   window.location.reload();
                 }
               }}
             >
-              Cancelar
+              {t("sponsor.dashboard.cancel_btn", "Cancelar")}
             </Button>
           </div>
         ))}

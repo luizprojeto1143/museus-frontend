@@ -36,7 +36,7 @@ export const ShopPage: React.FC = () => {
                             transition={{ delay: 0.2 }}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-black uppercase tracking-[0.3em] mb-6"
                         >
-                            <Sparkles size={14} /> Coleção Exclusiva
+                            <Sparkles size={14} /> {t("visitor.shoppage.exclusive_collection", "Coleção Exclusiva")}
                         </motion.div>
 
                         <motion.h1
@@ -66,7 +66,7 @@ export const ShopPage: React.FC = () => {
                                 ))}
                             </div>
                             <p className="text-sm text-gray-400">
-                                <span className="text-white font-bold">+500 pessoas</span> compraram esta semana
+                                <span className="text-white font-bold">{t("visitor.shoppage.purchased_count", "+500 pessoas")}</span> {t("visitor.shoppage.purchased_desc", "compraram esta semana")}
                             </p>
                         </div>
                     </div>

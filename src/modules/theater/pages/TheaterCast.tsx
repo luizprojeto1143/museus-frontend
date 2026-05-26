@@ -10,8 +10,10 @@ import { Button, Input } from "../../../components/ui";
 
 import { theaterApi } from "../../../api/theater";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 export const TheaterCast: React.FC = () => {
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState("");
     const [castMembers, setCastMembers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ export const TheaterCast: React.FC = () => {
             const res = await theaterApi.getMembers();
             setCastMembers(res.data);
         } catch (err) {
-            toast.error("Erro ao carregar elenco");
+            toast.error(t("theater.cast.load_error", "Erro ao carregar elenco"));
         } finally {
             setLoading(false);
         }
@@ -50,13 +52,13 @@ export const TheaterCast: React.FC = () => {
             {/* ═══ HEADER ═══════════ */}
             <div className="flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
-                    <span className="text-red-500 font-black text-[10px] uppercase tracking-[0.4em] mb-2 block italic">Talent Management System</span>
-                    <h1 className="text-5xl font-black text-white tracking-tighter italic">Elenco & Crew</h1>
-                    <p className="text-slate-500 font-medium mt-2">Gerencie sua força criativa, elencom e equipes técnicas.</p>
+                    <span className="text-red-500 font-black text-[10px] uppercase tracking-[0.4em] mb-2 block italic">{t("theater.cast.management_system", "Talent Management System")}</span>
+                    <h1 className="text-5xl font-black text-white tracking-tighter italic">{t("theater.cast.title", "Elenco & Crew")}</h1>
+                    <p className="text-slate-500 font-medium mt-2">{t("theater.cast.subtitle", "Gerencie sua força criativa, elencos e equipes técnicas.")}</p>
                 </div>
                 <div className="flex gap-4">
                     <Button className="bg-red-600 hover:bg-red-700 text-white px-10 py-7 rounded-3xl font-black italic shadow-2xl shadow-red-600/20 flex items-center gap-3">
-                        <UserPlus size={20} /> Novo Talento
+                        <UserPlus size={20} /> {t("theater.cast.new_talent", "Novo Talento")}
                     </Button>
                 </div>
             </div>
@@ -67,12 +69,12 @@ export const TheaterCast: React.FC = () => {
                     <Sparkles size={32} />
                 </div>
                 <div className="flex-1">
-                    <h3 className="text-lg font-black text-white italic">IA Matchmaking: Sugestão de Casting</h3>
+                    <h3 className="text-lg font-black text-white italic">{t("theater.cast.ai_matchmaking", "IA Matchmaking: Sugestão de Casting")}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed mt-1">
-                        "Para o papel de <strong>Carlotta Giudicelli</strong>, identifiquei que <strong>Christine Daaé</strong> possui a tessitura vocal ideal e 98% de compatibilidade com o cronograma de ensaios."
+                        {t("theater.cast.ai_suggestion", "\"Para o papel de Carlotta Giudicelli, identifiquei que Christine Daaé possui a tessitura vocal ideal e 98% de compatibilidade com o cronograma de ensaios.\"")}
                     </p>
                 </div>
-                <Button variant="secondary" className="text-[10px] px-6">Ver Análise</Button>
+                <Button variant="secondary" className="text-[10px] px-6">{t("theater.cast.view_analysis", "Ver Análise")}</Button>
             </div>
 
             {/* ═══ SEARCH & FILTERS ═════════ */}
@@ -80,20 +82,20 @@ export const TheaterCast: React.FC = () => {
                 <div className="relative flex-1 group">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-hover:text-red-500 transition-colors" size={20} />
                     <Input 
-                        placeholder="Buscar por nome, papel ou especialidade..."
+                        placeholder={t("theater.cast.search_placeholder", "Buscar por nome, papel ou especialidade...")}
                         className="bg-black/40 border-white/5 text-white pl-16 py-8 rounded-[32px] focus:border-red-500/50"
                         value={searchTerm}
                         onChange={e => setSearchTerm(e.target.value)}
                     />
                 </div>
                 <Button variant="secondary" className="px-8 py-8 rounded-[32px] flex items-center gap-3 font-black text-xs uppercase tracking-widest">
-                    <Filter size={20} /> Filtros Avançados
+                    <Filter size={20} /> {t("theater.cast.advanced_filters", "Filtros Avançados")}
                 </Button>
             </div>
 
             {/* ═══ CAST GRID ═════════ */}
             {loading ? (
-                <div className="flex justify-center p-20 text-white font-black italic animate-pulse">Sincronizando Talentos...</div>
+                <div className="flex justify-center p-20 text-white font-black italic animate-pulse">{t("theater.cast.syncing", "Sincronizando Talentos...")}</div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {filteredMembers.map((member, idx) => (
@@ -147,9 +149,9 @@ export const TheaterCast: React.FC = () => {
             <section className="premium-glass p-10 rounded-[48px] border-white/5">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black text-white italic flex items-center gap-3">
-                        <Award className="text-red-500" /> Equipe Técnica (Backstage)
+                        <Award className="text-red-500" /> {t("theater.cast.technical_crew", "Equipe Técnica (Backstage)")}
                     </h3>
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">12 Membros Ativos</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("theater.cast.active_members", "12 Membros Ativos")}</span>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

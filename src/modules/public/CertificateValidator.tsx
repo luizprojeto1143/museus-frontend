@@ -76,7 +76,7 @@ export const CertificateValidator: React.FC = () => {
                         <h1 className="text-2xl font-bold text-[var(--primary-color)] tracking-widest uppercase">Cultura Viva</h1>
                     )}
                     <p className="text-[var(--fg-muted)] text-xs uppercase tracking-widest mt-1">
-                        {data?.issuerName || "Sistema de Validação Digital"}
+                        {data?.issuerName || t("public.certificate.systemName", "Sistema de Validação Digital")}
                     </p>
                 </div>
 
@@ -87,7 +87,7 @@ export const CertificateValidator: React.FC = () => {
                         status === 'invalid' ? 'bg-red-900/20 border-red-800' :
                             'bg-gray-900/20 border-gray-800'
                         }`}>
-                        {status === 'loading' && <div className="text-[var(--primary-color)]">Verificando autenticidade...</div>}
+                        {status === 'loading' && <div className="text-[var(--primary-color)]">{t("public.certificate.verifying", "Verificando autenticidade...")}</div>}
 
                         {status === 'valid' && (
                             <div className="flex flex-col items-center gap-3">
@@ -96,7 +96,7 @@ export const CertificateValidator: React.FC = () => {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold text-green-400">{t("public.certificatevalidator.certificadoVlido", `Certificado Válido`)}</h2>
-                                    <p className="text-green-300/60 text-sm">A autenticidade deste documento foi confirmada.</p>
+                                    <p className="text-green-300/60 text-sm">{t("public.certificate.authenticityConfirmed", "A autenticidade deste documento foi confirmada.")}</p>
                                 </div>
                             </div>
                         )}
@@ -128,7 +128,7 @@ export const CertificateValidator: React.FC = () => {
                         <div className="p-8 space-y-6">
                             {/* Visitor Info */}
                             <div className="text-center space-y-2 pb-6 border-b border-[var(--border-subtle)]">
-                                <div className="text-[var(--fg-muted)] text-xs uppercase tracking-wider">Certificado emitido para</div>
+                                <div className="text-[var(--fg-muted)] text-xs uppercase tracking-wider">{t("public.certificate.issuedTo", "Certificado emitido para")}</div>
                                 <h3 className="text-2xl font-bold text-[var(--fg-primary)]">{data.visitorName}</h3>
                             </div>
 
@@ -137,7 +137,7 @@ export const CertificateValidator: React.FC = () => {
                                 <div className="flex items-start gap-3 p-3 rounded bg-[var(--bg-base)]/50">
                                     <User className="text-[var(--primary-color)] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">Atividade</div>
+                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">{t("public.certificate.activity", "Atividade")}</div>
                                         <div className="text-[var(--fg-primary)] font-medium">{data.title}</div>
                                         <div className="text-[var(--fg-muted)] text-xs mt-0.5 leading-relaxed">{data.description}</div>
                                     </div>
@@ -146,7 +146,7 @@ export const CertificateValidator: React.FC = () => {
                                 <div className="flex items-start gap-3 p-3 rounded bg-[var(--bg-base)]/50">
                                     <MapPin className="text-[var(--primary-color)] shrink-0 mt-0.5" size={18} />
                                     <div>
-                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">Emissor</div>
+                                        <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold">{t("public.certificate.issuer", "Emissor")}</div>
                                         <div className="text-[var(--fg-primary)] font-medium">{data.issuerName}</div>
                                     </div>
                                 </div>
@@ -167,7 +167,7 @@ export const CertificateValidator: React.FC = () => {
                                     className="w-full flex items-center justify-center gap-2 py-3 btn-primary font-bold rounded shadow-lg transition-all"
                                 >
                                     <Download size={18} />
-                                    Imprimir Comprovante
+                                    {t("public.certificate.printReceipt", "Imprimir Comprovante")}
                                 </button>
                             </div>
 

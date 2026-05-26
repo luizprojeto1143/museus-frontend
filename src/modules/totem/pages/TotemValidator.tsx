@@ -16,7 +16,7 @@ type ScanResult = {
 };
 
 export const TotemValidator: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [processing, setProcessing] = useState(false);
@@ -41,17 +41,17 @@ export const TotemValidator: React.FC = () => {
                 eventTitle: res.data.event?.title
             });
             playSound('success');
-            addToast("Acesso Liberado!", "success");
+            addToast(t("totem.validator.access_granted", "Acesso Liberado!"), "success");
         } catch (err) {
             const axiosErr = err as AxiosError<{ error?: string }>;
-            const errorMessage = axiosErr.response?.data?.error || "Ingresso inválido ou não encontrado";
+            const errorMessage = axiosErr.response?.data?.error || t("totem.validator.invalid_ticket", "Ingresso inválido ou não encontrado");
             setError(errorMessage);
             playSound('error');
             addToast(errorMessage, "error");
         } finally {
             setProcessing(false);
         }
-    }, [processing, addToast]);
+    }, [processing, addToast, t]);
 
     useEffect(() => {
         // Scanner with larger box for kiosk mode
@@ -87,7 +87,7 @@ export const TotemValidator: React.FC = () => {
         return () => {
             scanner.clear().catch(e => console.error("Scanner clear error", e));
         };
-    }, []); // Only init once, handleCheckIn uses ref if needed or simplified logic
+    }, [handleCheckIn]); // Only init once, handleCheckIn uses ref if needed or simplified logic
 
     const handleReset = () => {
         setScanResult(null);
@@ -105,7 +105,7 @@ export const TotemValidator: React.FC = () => {
             {/* Header / Back */}
             <div style={{ width: "100%", maxWidth: "600px", marginBottom: "1rem", display: "flex", justifyContent: "flex-start" }}>
                 <Link to="/totem" className="btn-secondary" style={{ display: "flex", gap: "0.5rem", alignItems: "center", color: "#fff", textDecoration: "none", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)" }}>
-                    <ArrowLeft size={20} /> Voltar
+                    <ArrowLeft size={20} /> {t("totem.validator.back", "Voltar")}
                 </Link>
             </div>
 
@@ -150,11 +150,11 @@ export const TotemValidator: React.FC = () => {
                             <div style={{ background: "#fff", borderRadius: "50%", padding: "1.5rem", marginBottom: "1rem" }}>
                                 <UserCheck size={64} color="#10b981" />
                             </div>
-                            <h2 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "0.5rem" }}>ACESSO LIBERADO</h2>
-                            <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{scanResult.guestName || "Visitante"}</h3>
+                            <h2 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "0.5rem" }}>{t("totem.validator.status_granted", "ACESSO LIBERADO")}</h2>
+                            <h3 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>{scanResult.guestName || t("totem.validator.visitor_default", "Visitante")}</h3>
                             <div style={{ background: "rgba(0,0,0,0.1)", padding: "1rem", borderRadius: "10px", width: "100%" }}>
-                                <p style={{ fontSize: "1.1rem" }}><strong>Evento:</strong> {scanResult.eventTitle}</p>
-                                <p style={{ fontSize: "1.1rem" }}><strong>Tipo:</strong> {scanResult.ticketType}</p>
+                                <p style={{ fontSize: "1.1rem" }}><strong>{t("totem.validator.event_label", "Evento:")}</strong> {scanResult.eventTitle}</p>
+                                <p style={{ fontSize: "1.1rem" }}><strong>{t("totem.validator.type_label", "Tipo:")}</strong> {scanResult.ticketType}</p>
                             </div>
                             <button onClick={handleReset} style={{
                                 marginTop: "2rem",
@@ -170,7 +170,7 @@ export const TotemValidator: React.FC = () => {
                                 alignItems: "center",
                                 gap: "0.5rem"
                             }}>
-                                <RotateCcw size={24} /> Próximo (3s)
+                                <RotateCcw size={24} /> {t("totem.validator.next_btn", "Próximo (3s)")}
                             </button>
                         </div>
                     )}
@@ -192,7 +192,7 @@ export const TotemValidator: React.FC = () => {
                             <div style={{ background: "#fff", borderRadius: "50%", padding: "1.5rem", marginBottom: "1rem" }}>
                                 <AlertTriangle size={64} color="#ef4444" />
                             </div>
-                            <h2 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "0.5rem" }}>ACESSO NEGADO</h2>
+                            <h2 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "0.5rem" }}>{t("totem.validator.status_denied", "ACESSO NEGADO")}</h2>
                             <p style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>{error}</p>
 
                             <button onClick={handleReset} style={{
@@ -208,15 +208,15 @@ export const TotemValidator: React.FC = () => {
                                 alignItems: "center",
                                 gap: "0.5rem"
                             }}>
-                                <RotateCcw size={24} /> Tentar Novamente
+                                <RotateCcw size={24} /> {t("totem.validator.try_again_btn", "Tentar Novamente")}
                             </button>
                         </div>
                     )}
                 </div>
 
                 <div style={{ textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
-                    <p>{t("totem.totemvalidator.aponteOCdigoQrParaACmera", `Aponte o código QR para a câmera`)}</p>
-                    <p style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>{t("totem.totemvalidator.noPrecisaTocarEmNadaLeituraAutomtica", `Não precisa tocar em nada, leitura automática`)}</p>
+                    <p>{t("totem.validator.point_qr_to_camera", "Aponte o código QR para a câmera")}</p>
+                    <p style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>{t("totem.validator.auto_scan_instruction", "Não precisa tocar em nada, leitura automática")}</p>
                 </div>
             </div>
         </div>

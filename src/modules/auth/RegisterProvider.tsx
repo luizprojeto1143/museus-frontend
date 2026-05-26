@@ -34,7 +34,7 @@ export const RegisterProvider: React.FC = () => {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            addToast("As senhas não coincidem.", "error");
+            addToast(t("auth.registerprovider.passwordsDontMatch", "As senhas não coincidem."), "error");
             return;
         }
 
@@ -47,13 +47,13 @@ export const RegisterProvider: React.FC = () => {
             });
             
             if (response.data.checkoutUrl) {
-                addToast("Cadastro realizado! Redirecionando para o pagamento da assinatura...", "success");
+                addToast(t("auth.registerprovider.successCheckout", "Cadastro realizado! Redirecionando para o pagamento da assinatura..."), "success");
                 // Wait a bit for the toast
                 setTimeout(() => {
                     window.location.href = response.data.checkoutUrl;
                 }, 1500);
             } else {
-                addToast("Cadastro realizado! Bem-vindo à rede de prestadores.", "success");
+                addToast(t("auth.registerprovider.successNetwork", "Cadastro realizado! Bem-vindo à rede de prestadores."), "success");
                 
                 // Auto-login
                 await login({ email: formData.email, password: formData.password });
@@ -61,7 +61,7 @@ export const RegisterProvider: React.FC = () => {
                 navigate("/provider");
             }
         } catch (err: any) {
-            addToast(err.response?.data?.message || "Erro ao realizar cadastro.", "error");
+            addToast(err.response?.data?.message || t("auth.registerprovider.error", "Erro ao realizar cadastro."), "error");
         } finally {
             setLoading(false);
         }
@@ -86,8 +86,8 @@ export const RegisterProvider: React.FC = () => {
                 <div className="relative z-10 max-w-md">
                     <Badge variant="outline" className="mb-6 border-[#9f7aea]/30 text-[#9f7aea] uppercase tracking-widest font-bold">Oportunidade</Badge>
                     <h1 className="text-5xl lg:text-7xl font-black text-white leading-none mb-8 tracking-tighter italic">
-                        Trabalhe na <br />
-                        <span className="text-[#9f7aea]">Cultura.</span>
+                        {t("auth.registerprovider.workIn", "Trabalhe na")} <br />
+                        <span className="text-[#9f7aea]">{t("auth.registerprovider.culture", "Cultura.")}</span>
                     </h1>
                     <p className="text-xl text-[#b794f4] mb-12 leading-relaxed">
                         Conectamos prestadores de serviços aos maiores projetos culturais da cidade. Seja visto por centenas de produtores.
@@ -155,11 +155,11 @@ export const RegisterProvider: React.FC = () => {
                                 onChange={handleChange}
                                 className="w-full bg-[#0a0a14] border border-white/10 rounded-xl p-3 text-white focus:ring-2 focus:ring-[#9f7aea]/50 transition-all outline-none"
                             >
-                                <option value="LIBRAS_INTERPRETATION">Intérprete de Libras</option>
-                                <option value="AUDIO_DESCRIPTION">Audiodescrição</option>
-                                <option value="CAPTIONING">Legendagem / Transcrição</option>
-                                <option value="BRAILLE">Acessibilidade Física / Braille</option>
-                                <option value="OTHER">Outros Serviços Culturais</option>
+                                <option value="LIBRAS_INTERPRETATION">{t("auth.registerprovider.serviceLibras", "Intérprete de Libras")}</option>
+                                <option value="AUDIO_DESCRIPTION">{t("auth.registerprovider.serviceAudioDescription", "Audiodescrição")}</option>
+                                <option value="CAPTIONING">{t("auth.registerprovider.serviceCaptioning", "Legendagem / Transcrição")}</option>
+                                <option value="BRAILLE">{t("auth.registerprovider.serviceBraille", "Acessibilidade Física / Braille")}</option>
+                                <option value="OTHER">{t("auth.registerprovider.serviceOther", "Outros Serviços Culturais")}</option>
                             </select>
                         </div>
 
@@ -205,7 +205,7 @@ export const RegisterProvider: React.FC = () => {
 
                     <div className="mt-8 text-center">
                         <p className="text-sm text-[#b794f4]">
-                            Já tem uma conta? <Link to="/login" className="text-white font-bold hover:text-[#9f7aea]">Fazer Login</Link>
+                            {t("auth.registerprovider.alreadyHaveAccount", "Já tem uma conta?")} <Link to="/login" className="text-white font-bold hover:text-[#9f7aea]">{t("auth.registerprovider.login", "Fazer Login")}</Link>
                         </p>
                     </div>
                 </div>

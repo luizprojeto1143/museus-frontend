@@ -23,6 +23,7 @@ import { MasterSkinManager } from "../modules/master/pages/MasterSkinManager";
 import { MasterBadgeQueue } from "../modules/master/pages/MasterBadgeQueue";
 import { MasterErrorMonitor } from "../modules/master/pages/MasterErrorMonitor";
 import { MasterCardManager } from "../modules/master/pages/MasterCardManager";
+import { MasterFinancialSettings } from "../modules/master/pages/MasterFinancialSettings";
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -60,6 +61,7 @@ export function masterRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/master/badges" element={mr(MasterBadgeQueue, RequireRole)} />
             <Route path="/master/error-monitor" element={mr(MasterErrorMonitor, RequireRole)} />
             <Route path="/master/cards" element={mr(MasterCardManager, RequireRole)} />
+            <Route path="/master/financeiro" element={mr(MasterFinancialSettings, RequireRole)} />
         </>
     );
 }

@@ -136,7 +136,7 @@ export const LandingPage: React.FC = () => {
                         }}
                         className="px-8 shadow-[0_0_20px_rgba(212,175,55,0.2)]"
                     >
-                        {t("public.landingpage.entrar", "Entrar")}
+                        {t("public.landingpage.loginDashboard", "Entrar no Painel")}
                     </Button>
                 </div>
 
@@ -226,7 +226,7 @@ export const LandingPage: React.FC = () => {
                             leftIcon={<Trophy size={20} className="text-[var(--accent-primary)]" />}
                             className="h-16 px-10 text-lg border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black rounded-2xl shadow-lg"
                         >
-                            Sou Agente Cultural
+                            {t("public.landingpage.iAmCulturalAgent", "Sou Agente Cultural")}
                         </Button>
 
                         <Button
@@ -236,7 +236,7 @@ export const LandingPage: React.FC = () => {
                             leftIcon={<Landmark size={20} className="text-[#9f7aea]" />}
                             className="h-16 px-10 text-lg border-[#9f7aea]/30 hover:bg-[#9f7aea] hover:text-white rounded-2xl shadow-lg"
                         >
-                            Quero Patrocinar
+                            {t("public.landingpage.iWantToSponsor", "Quero Patrocinar")}
                         </Button>
                     </motion.div>
                 </motion.div>
@@ -251,17 +251,17 @@ export const LandingPage: React.FC = () => {
                 >
                     <div className="text-center group">
                         <div className="text-2xl font-heading font-bold text-white group-hover:text-[var(--accent-primary)] transition-colors">+<AnimatedCounter value={95} />%</div>
-                        <div className="text-[9px] uppercase tracking-widest opacity-40 font-bold">Engajamento</div>
+                        <div className="text-[9px] uppercase tracking-widest opacity-40 font-bold">{t("public.landingpage.engagement", "Engajamento")}</div>
                     </div>
                     <div className="w-[1px] h-8 bg-white/10" />
                     <div className="text-center group">
                         <div className="text-2xl font-heading font-bold text-white group-hover:text-[var(--accent-primary)] transition-colors"><AnimatedCounter value={100} />%</div>
-                        <div className="text-[9px] uppercase tracking-widest opacity-40 font-bold">Conformidade</div>
+                        <div className="text-[9px] uppercase tracking-widest opacity-40 font-bold">{t("public.landingpage.compliance", "Conformidade")}</div>
                     </div>
                     <div className="w-[1px] h-8 bg-white/10" />
                     <div className="text-center group">
                         <div className="text-2xl font-heading font-bold text-white group-hover:text-[var(--accent-primary)] transition-colors"><AnimatedCounter value={50} />k+</div>
-                        <div className="text-[9px] uppercase tracking-widest opacity-40 font-bold">Visitantes/Mês</div>
+                        <div className="text-[9px] uppercase tracking-widest opacity-40 font-bold">{t("public.landingpage.visitorsPerMonth", "Visitantes/Mês")}</div>
                     </div>
                 </motion.div>
             </header>
@@ -272,11 +272,11 @@ export const LandingPage: React.FC = () => {
                     <AnimateIn variant="fadeUp">
                         <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
                             <div className="max-w-2xl">
-                                <Badge variant="outline" className="mb-6 uppercase tracking-[0.3em] font-bold border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">Fomento Cultural</Badge>
-                                <h2 className="text-4xl md:text-6xl font-heading font-bold text-white">Onde o Talento encontra <br /><span className="text-[var(--accent-primary)]">as Oportunidades.</span></h2>
+                                <Badge variant="outline" className="mb-6 uppercase tracking-[0.3em] font-bold border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">{t("public.landingpage.fomento", "Fomento Cultural")}</Badge>
+                                <h2 className="text-4xl md:text-6xl font-heading font-bold text-white">{t("public.landingpage.whereTalentMeets", "Onde o Talento encontra")} <br /><span className="text-[var(--accent-primary)]">{t("public.landingpage.opportunities", "as Oportunidades.")}</span></h2>
                             </div>
                             <p className="text-[#f5e6d3]/60 max-w-md text-lg leading-relaxed border-l border-[var(--accent-primary)]/30 pl-8">
-                                Simplificamos a jornada do Agente Cultural. Da descoberta do edital à execução do evento, tudo em um único lugar.
+                                {t("public.landingpage.agentJourney", "Simplificamos a jornada do Agente Cultural. Da descoberta do edital à execução do evento, tudo em um único lugar.")}
                             </p>
                         </div>
                     </AnimateIn>
@@ -313,14 +313,14 @@ export const LandingPage: React.FC = () => {
                         <div className="mt-16 p-1 bg-gradient-to-r from-transparent via-[var(--accent-primary)]/20 to-transparent rounded-[32px]">
                             <div className="bg-[#0a0a14] rounded-[31px] p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5">
                                 <div>
-                                    <h3 className="text-2xl font-bold text-white mb-2">Pronto para captar recursos?</h3>
-                                    <p className="text-[#f5e6d3]/50">Crie seu perfil de Agente Cultural e comece hoje mesmo.</p>
+                                    <h3 className="text-2xl font-bold text-white mb-2">{t("public.landingpage.readyToFund", "Pronto para captar recursos?")}</h3>
+                                    <p className="text-[#f5e6d3]/50">{t("public.landingpage.createAgentProfile", "Crie seu perfil de Agente Cultural e comece hoje mesmo.")}</p>
                                 </div>
                                 <Button 
                                     onClick={() => navigate("/sou-produtor")}
                                     className="h-16 px-12 text-lg rounded-2xl whitespace-nowrap"
                                 >
-                                    Criar Perfil de Agente
+                                    {t("public.landingpage.createAgentProfileBtn", "Criar Perfil de Agente")}
                                 </Button>
                             </div>
                         </div>
@@ -334,14 +334,13 @@ export const LandingPage: React.FC = () => {
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <AnimateIn variant="fadeRight">
                         <div>
-                            <Badge variant="outline" className="mb-6 border-[#9f7aea]/40 text-[#9f7aea] font-bold uppercase tracking-widest">Trabalhe na Cultura</Badge>
+                            <Badge variant="outline" className="mb-6 border-[#9f7aea]/40 text-[#9f7aea] font-bold uppercase tracking-widest">{t("public.landingpage.workInCulture", "Trabalhe na Cultura")}</Badge>
                             <h2 className="text-4xl md:text-6xl font-heading font-black text-white mb-8 leading-tight">
-                                Seja um Prestador <br />
-                                <span className="text-[#9f7aea]">de Elite.</span>
+                                {t("public.landingpage.beAProvider", "Seja um Prestador")} <br />
+                                <span className="text-[#9f7aea]">{t("public.landingpage.ofElite", "de Elite.")}</span>
                             </h2>
                             <p className="text-xl text-[#b794f4] mb-10 leading-relaxed">
-                                Ofereça seus serviços de som, luz, acessibilidade ou produção para os projetos mais importantes da cidade. 
-                                Nossa rede conecta quem faz com quem precisa de excelência.
+                                {t("public.landingpage.providerDesc", "Ofereça seus serviços de som, luz, acessibilidade ou produção para os projetos mais importantes da cidade. Nossa rede conecta quem faz com quem precisa de excelência.")}
                             </p>
                             
                             <div className="space-y-6 mb-12">
@@ -350,8 +349,8 @@ export const LandingPage: React.FC = () => {
                                         <BriefcaseIcon size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-bold text-white">Vitrine Exclusiva</h4>
-                                        <p className="text-[#b794f4]/60 text-sm">Seu perfil visível para todos os Agentes Culturais aprovados em editais.</p>
+                                        <h4 className="text-lg font-bold text-white">{t("public.landingpage.exclusiveShowcase", "Vitrine Exclusiva")}</h4>
+                                        <p className="text-[#b794f4]/60 text-sm">{t("public.landingpage.exclusiveShowcaseDesc", "Seu perfil visível para todos os Agentes Culturais aprovados em editais.")}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
@@ -359,22 +358,22 @@ export const LandingPage: React.FC = () => {
                                         <Zap size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="text-lg font-bold text-white">Contratação Simplificada</h4>
-                                        <p className="text-[#b794f4]/60 text-sm">Receba solicitações de orçamento e gerencie sua agenda em um só lugar.</p>
+                                        <h4 className="text-lg font-bold text-white">{t("public.landingpage.simplifiedHiring", "Contratação Simplificada")}</h4>
+                                        <p className="text-[#b794f4]/60 text-sm">{t("public.landingpage.simplifiedHiringDesc", "Receba solicitações de orçamento e gerencie sua agenda em um só lugar.")}</p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="p-6 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-between gap-4">
                                 <div>
-                                    <div className="text-[10px] uppercase tracking-widest text-[#9f7aea] font-bold mb-1">Investimento Mensal</div>
+                                    <div className="text-[10px] uppercase tracking-widest text-[#9f7aea] font-bold mb-1">{t("public.landingpage.monthlyInvestment", "Investimento Mensal")}</div>
                                     <div className="text-2xl font-black text-white">R$ 50,00</div>
                                 </div>
                                 <Button 
                                     onClick={() => navigate("/sou-prestador")}
                                     className="bg-[#9f7aea] hover:bg-[#805ad5] text-white font-bold h-14 px-8 rounded-2xl"
                                 >
-                                    Quero me Cadastrar
+                                    {t("public.landingpage.iWantToRegister", "Quero me Cadastrar")}
                                 </Button>
                             </div>
                         </div>
@@ -394,8 +393,8 @@ export const LandingPage: React.FC = () => {
                                         <CheckCircle size={20} />
                                     </div>
                                     <div>
-                                        <div className="text-xs text-[#b794f4] uppercase font-bold">Novo Orçamento</div>
-                                        <div className="text-white font-bold">Solicitação Recebida!</div>
+                                        <div className="text-xs text-[#b794f4] uppercase font-bold">{t("public.landingpage.newBudget", "Novo Orçamento")}</div>
+                                        <div className="text-white font-bold">{t("public.landingpage.requestReceived", "Solicitação Recebida!")}</div>
                                     </div>
                                 </div>
                              </div>
@@ -408,7 +407,7 @@ export const LandingPage: React.FC = () => {
             <section id="solucoes" className="py-32 px-6 max-w-7xl mx-auto">
                 <AnimateIn variant="fadeUp">
                     <div className="text-center mb-24">
-                        <Badge variant="outline" className="mb-6 uppercase tracking-[0.3em] font-bold border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">Inovação</Badge>
+                        <Badge variant="outline" className="mb-6 uppercase tracking-[0.3em] font-bold border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">{t("public.landingpage.innovation", "Inovação")}</Badge>
                         <h2 className="text-4xl md:text-6xl font-heading font-bold mb-6 italic text-white">{t("public.landingpage.solucoesTitle", "Cultura Impulsionada por Dados")}</h2>
                         <p className="text-[#f5e6d3]/60 max-w-2xl mx-auto text-lg leading-relaxed">{t("public.landingpage.solucoesDesc", "Integramos o mundo físico ao digital através de um ecossistema completo de ferramentas administrativas e de engajamento.")}</p>
                     </div>
@@ -455,7 +454,7 @@ export const LandingPage: React.FC = () => {
                         <div>
                             <div className="flex items-center gap-4 mb-8">
                                 <div className="h-0.5 w-12 bg-[var(--accent-primary)]" />
-                                <span className="text-[var(--accent-primary)] font-bold tracking-[0.3em] text-xs uppercase">Compliance Legal</span>
+                                <span className="text-[var(--accent-primary)] font-bold tracking-[0.3em] text-xs uppercase">{t("public.landingpage.legalCompliance", "Compliance Legal")}</span>
                             </div>
                             <h2 className="text-4xl md:text-6xl font-heading font-bold mb-8 leading-[1.1] text-white">
                                 {t("public.landingpage.rouanetTitle", "Democratize o Acesso com a Lei Rouanet")}
@@ -505,7 +504,7 @@ export const LandingPage: React.FC = () => {
                                     <div className="mt-10 flex flex-col gap-4 text-xs tracking-widest opacity-30 font-bold uppercase">
                                         <div className="flex items-center justify-center gap-3">
                                             <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
-                                            Especialistas Disponíveis
+                                            {t("public.landingpage.specialistsAvailable", "Especialistas Disponíveis")}
                                         </div>
                                     </div>
                                 </div>
@@ -567,7 +566,7 @@ export const LandingPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-16 md:gap-32 w-full md:w-auto">
                         <div>
-                            <h4 className="font-bold text-xs uppercase tracking-[0.3em] text-[var(--accent-primary)] mb-8">Plataforma</h4>
+                            <h4 className="font-bold text-xs uppercase tracking-[0.3em] text-[var(--accent-primary)] mb-8">{t("public.landingpage.platform", "Plataforma")}</h4>
                             <ul className="space-y-6 text-sm text-[#f5e6d3]/70 font-semibold">
                                 <li className="hover:text-white transition-colors cursor-pointer">Pulse Hub Admin</li>
                                 <li className="hover:text-white transition-colors cursor-pointer">Web App Visitante</li>
@@ -575,18 +574,18 @@ export const LandingPage: React.FC = () => {
                             </ul>
                         </div>
                         <div>
-                            <h4 className="font-bold text-xs uppercase tracking-[0.3em] text-[var(--accent-primary)] mb-8">Empresa</h4>
+                            <h4 className="font-bold text-xs uppercase tracking-[0.3em] text-[var(--accent-primary)] mb-8">{t("public.landingpage.company", "Empresa")}</h4>
                             <ul className="space-y-6 text-sm text-[#f5e6d3]/70 font-semibold">
-                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/patrocinar")}>Portal de Patrocínio</li>
-                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/sou-produtor")}>Para Agentes</li>
-                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/sou-prestador")}>Para Prestadores</li>
+                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/patrocinar")}>{t("public.landingpage.sponsorshipPortal", "Portal de Patrocínio")}</li>
+                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/sou-produtor")}>{t("public.landingpage.forAgents", "Para Agentes")}</li>
+                                <li className="hover:text-white transition-colors cursor-pointer" onClick={() => navigate("/sou-prestador")}>{t("public.landingpage.forProviders", "Para Prestadores")}</li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div className="max-w-7xl mx-auto mt-32 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 opacity-20 text-[10px] uppercase font-bold tracking-widest text-center md:text-left">
                     <span>{t("public.landingpage.footerCopyright", { year: new Date().getFullYear(), defaultValue: `&copy; ${new Date().getFullYear()} Cultura Viva Tecnologia. Todos os direitos reservados.` })}</span>
-                    <span>Selo de Acessibilidade Digital W3C Platinum</span>
+                    <span>{t("public.landingpage.accessibilitySeal", "Selo de Acessibilidade Digital W3C Platinum")}</span>
                 </div>
             </footer>
         </div>

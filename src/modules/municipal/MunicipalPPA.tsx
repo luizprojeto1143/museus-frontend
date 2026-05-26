@@ -43,7 +43,7 @@ export const MunicipalPPA: React.FC = () => {
             setGoals(res.data);
         } catch (error) { 
             console.error(error); 
-            toast.error("Erro ao consolidar metas do PPA.");
+            toast.error(t("municipal.ppa.error_load", "Erro ao consolidar metas do PPA."));
         } finally { 
             setLoading(false); 
         }
@@ -60,7 +60,7 @@ export const MunicipalPPA: React.FC = () => {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
             <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Consolidando Orçamento & Ciclos PPA...</p>
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">{t("municipal.ppa.loading", "Consolidando Orçamento & Ciclos PPA...")}</p>
         </div>
     );
 
@@ -72,10 +72,10 @@ export const MunicipalPPA: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-8 bg-emerald-500 rounded-full" />
                         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
-                            Metas <span className="text-emerald-500">PPA</span>
+                            {t("municipal.ppa.title_goals", "Metas")} <span className="text-emerald-500">{t("municipal.ppa.title_ppa", "PPA")}</span>
                         </h1>
                     </div>
-                    <p className="text-slate-500 font-medium text-lg">Plano Plurianual — Monitoramento Estratégico Municipal.</p>
+                    <p className="text-slate-500 font-medium text-lg">{t("municipal.ppa.subtitle", "Plano Plurianual — Monitoramento Estratégico Municipal.")}</p>
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
@@ -96,7 +96,7 @@ export const MunicipalPPA: React.FC = () => {
                     </div>
                     
                     <Button variant="glass" className="h-14 px-6 rounded-2xl border-white/5 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-white">
-                        <Download size={16} className="mr-2" /> Relatório PPA
+                        <Download size={16} className="mr-2" /> {t("municipal.ppa.ppa_report", "Relatório PPA")}
                     </Button>
                 </div>
             </div>
@@ -106,12 +106,12 @@ export const MunicipalPPA: React.FC = () => {
                 <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black uppercase tracking-widest px-4 py-1.5">Visão Executiva</Badge>
+                            <Badge className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black uppercase tracking-widest px-4 py-1.5">{t("municipal.ppa.executive_vision", "Visão Executiva")}</Badge>
                             <Globe size={18} className="text-emerald-500/50" />
                         </div>
-                        <h2 className="text-3xl font-black text-white tracking-tighter italic leading-tight">Ciclo de Gestão {year}</h2>
+                        <h2 className="text-3xl font-black text-white tracking-tighter italic leading-tight">{t("municipal.ppa.management_cycle", "Ciclo de Gestão")} {year}</h2>
                         <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                            Acompanhamento consolidado da execução orçamentária e metas sociais estabelecidas para o exercício atual.
+                            {t("municipal.ppa.management_cycle_desc", "Acompanhamento consolidado da execução orçamentária e metas sociais estabelecidas para o exercício atual.")}
                         </p>
                     </div>
 
@@ -144,7 +144,7 @@ export const MunicipalPPA: React.FC = () => {
                              </svg>
                              <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className="text-4xl font-black text-white tracking-tighter">{globalProgress}%</span>
-                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Execução</span>
+                                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{t("municipal.ppa.execution", "Execução")}</span>
                              </div>
                         </div>
                     </div>
@@ -152,11 +152,11 @@ export const MunicipalPPA: React.FC = () => {
                     <div className="grid grid-cols-2 gap-6">
                         <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
                             <div className="text-2xl font-black text-emerald-400"><AnimatedCounter value={goals.length} /></div>
-                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-1">Metas Ativas</div>
+                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-1">{t("municipal.ppa.active_goals", "Metas Ativas")}</div>
                         </div>
                         <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl">
                             <div className="text-2xl font-black text-white"><AnimatedCounter value={goals.reduce((acc, g) => acc + g.goals.length, 0)} /></div>
-                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-1">Indicadores</div>
+                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mt-1">{t("municipal.ppa.indicators", "Indicadores")}</div>
                         </div>
                     </div>
                 </div>
@@ -170,8 +170,8 @@ export const MunicipalPPA: React.FC = () => {
                 {goals.length === 0 ? (
                     <Card className="lg:col-span-2 py-32 text-center bg-white/[0.02] border-white/5 rounded-[48px] border-dashed">
                         <Target size={64} className="mx-auto text-slate-800 mb-6" />
-                        <h3 className="text-xl font-black text-slate-600 uppercase tracking-widest">Plano em Elaboração</h3>
-                        <p className="text-slate-500 text-sm mt-2">Nenhuma meta estratégica foi consolidada para o ciclo {year}.</p>
+                        <h3 className="text-xl font-black text-slate-600 uppercase tracking-widest">{t("municipal.ppa.plan_in_progress", "Plano em Elaboração")}</h3>
+                        <p className="text-slate-500 text-sm mt-2">{t("municipal.ppa.no_goals_consolidated", "Nenhuma meta estratégica foi consolidada para o ciclo {{year}}.", { year })}</p>
                     </Card>
                 ) : (
                     goals.map((g, idx) => {
@@ -191,7 +191,7 @@ export const MunicipalPPA: React.FC = () => {
                                         <div className="flex justify-between items-start gap-4">
                                             <div className="space-y-2 flex-1">
                                                 <Badge variant="glass" className="bg-white/5 text-slate-500 border-white/5 text-[8px] font-black uppercase tracking-widest px-3 py-1">
-                                                    {g.metric || "Indicador Governamental"}
+                                                    {g.metric || t("municipal.ppa.government_indicator", "Indicador Governamental")}
                                                 </Badge>
                                                 <h3 className="text-2xl font-black text-white tracking-tight leading-tight group-hover:text-emerald-400 transition-colors">{g.title}</h3>
                                             </div>
@@ -200,7 +200,7 @@ export const MunicipalPPA: React.FC = () => {
 
                                         <div className="space-y-4">
                                             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-slate-600">
-                                                <span>Progresso da Meta</span>
+                                                <span>{t("municipal.ppa.goal_progress", "Progresso da Meta")}</span>
                                                 <span>{g.currentValue.toLocaleString()} / {g.targetValue.toLocaleString()}</span>
                                             </div>
                                             <div className="w-full bg-white/5 rounded-full h-2 relative overflow-hidden">
@@ -216,7 +216,7 @@ export const MunicipalPPA: React.FC = () => {
                                         <div className="space-y-3 pt-6 border-t border-white/5">
                                             <div className="flex items-center gap-2 mb-4">
                                                 <Flag size={14} className="text-emerald-500" />
-                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Execução por Unidade</span>
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("municipal.ppa.execution_by_unit", "Execução por Unidade")}</span>
                                             </div>
                                             <div className="grid grid-cols-1 gap-3">
                                                 {g.goals.map((item: any, i: number) => (

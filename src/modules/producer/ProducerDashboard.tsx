@@ -146,7 +146,7 @@ export const ProducerDashboard: React.FC = () => {
                             onClick={() => navigate("/producer/projects/new")}
                             className="bg-[var(--accent-primary)] text-black px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-[var(--accent-primary)]/20"
                         >
-                            <Plus size={18} /> Nova Proposta
+                            <Plus size={18} /> {t("producer.dashboard.newProposal", "Nova Proposta")}
                         </button>
                     </div>
                 </div>
@@ -159,24 +159,24 @@ export const ProducerDashboard: React.FC = () => {
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h2 className="text-2xl font-black text-white flex items-center gap-3 italic">
-                                <ListChecks className="text-[var(--accent-primary)]" size={28} /> Pipeline de Projetos
+                                <ListChecks className="text-[var(--accent-primary)]" size={28} /> {t("producer.dashboard.projectPipeline", "Pipeline de Projetos")}
                             </h2>
-                            <p className="text-[10px] text-[#B0A090] uppercase tracking-widest mt-1">Gestão de propostas e editais</p>
+                            <p className="text-[10px] text-[#B0A090] uppercase tracking-widest mt-1">{t("producer.dashboard.proposalsManagement", "Gestão de propostas e editais")}</p>
                         </div>
-                        <button onClick={() => navigate("/producer/projects")} className="btn-secondary text-[10px] px-4 py-2">Explorar Tudo</button>
+                        <button onClick={() => navigate("/producer/projects")} className="btn-secondary text-[10px] px-4 py-2">{t("producer.dashboard.exploreAll", "Explorar Tudo")}</button>
                     </div>
                     <div className="grid grid-cols-3 gap-6">
                         <div className="bg-white/5 rounded-3xl p-6 border border-white/5 flex flex-col items-center group hover:bg-white/10 transition-all cursor-pointer" onClick={() => navigate("/producer/projects?status=DRAFT")}>
                             <div className="text-4xl font-black text-white mb-1 group-hover:scale-110 transition-transform">{projectSummary.drafts}</div>
-                            <div className="text-[9px] text-[#B0A090] font-black uppercase tracking-tighter">Rascunhos</div>
+                            <div className="text-[9px] text-[#B0A090] font-black uppercase tracking-tighter">{t("producer.dashboard.drafts", "Rascunhos")}</div>
                         </div>
                         <div className="bg-[var(--accent-primary)]/5 rounded-3xl p-6 border border-[var(--accent-primary)]/20 flex flex-col items-center group hover:bg-[var(--accent-primary)]/10 transition-all cursor-pointer" onClick={() => navigate("/producer/projects?status=SUBMITTED")}>
                             <div className="text-4xl font-black text-[var(--accent-primary)] mb-1 group-hover:scale-110 transition-transform">{projectSummary.submitted}</div>
-                            <div className="text-[9px] text-[var(--accent-primary)] font-black uppercase tracking-tighter">Em Análise</div>
+                            <div className="text-[9px] text-[var(--accent-primary)] font-black uppercase tracking-tighter">{t("producer.dashboard.underReview", "Em Análise")}</div>
                         </div>
                         <div className="bg-green-500/5 rounded-3xl p-6 border border-green-500/20 flex flex-col items-center group hover:bg-green-500/10 transition-all cursor-pointer" onClick={() => navigate("/producer/projects?status=APPROVED")}>
                             <div className="text-4xl font-black text-green-400 mb-1 group-hover:scale-110 transition-transform">{projectSummary.approved}</div>
-                            <div className="text-[9px] text-green-400/70 font-black uppercase tracking-tighter">Aprovados</div>
+                            <div className="text-[9px] text-green-400/70 font-black uppercase tracking-tighter">{t("producer.dashboard.approved", "Aprovados")}</div>
                         </div>
                     </div>
                 </div>
@@ -188,14 +188,14 @@ export const ProducerDashboard: React.FC = () => {
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 text-[var(--accent-primary)] font-black text-xs uppercase tracking-widest mb-4">
-                            <Sparkles size={16} /> AI Command Center
+                            <Sparkles size={16} /> {t("producer.dashboard.aiCommandCenter", "AI Command Center")}
                         </div>
                         <p className="text-sm text-[#EAE0D5] font-medium leading-relaxed mb-6">
-                            "Analisei seus rascunhos. O projeto <strong>'{projectSummary.drafts > 0 ? "..." : "Novo Projeto"}'</strong> tem 85% de aderência ao edital da Lei Paulo Gustavo."
+                            {t("producer.dashboard.aiAnalysisMessage", "\"Analisei seus rascunhos. O projeto <strong>'{projectName}'</strong> tem 85% de aderência ao edital da Lei Paulo Gustavo.\"", { projectName: projectSummary.drafts > 0 ? "..." : "Novo Projeto" })}
                         </p>
                     </div>
                     <button className="btn-primary w-full text-[10px] font-black italic relative z-10">
-                        Otimizar Propostas agora
+                        {t("producer.dashboard.optimizeProposals", "Otimizar Propostas agora")}
                     </button>
                 </div>
             </div>
@@ -234,7 +234,7 @@ export const ProducerDashboard: React.FC = () => {
 
                 <div className="premium-glass p-6 rounded-3xl glow-hover">
                     <div className="flex justify-between items-start mb-4">
-                        <span className="text-[10px] font-black text-[#B0A090] uppercase tracking-widest">Valor Captado</span>
+                        <span className="text-[10px] font-black text-[#B0A090] uppercase tracking-widest">{t("producer.dashboard.metrics.raisedAmount", "Valor Captado")}</span>
                         <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500">
                             <BarChart3 size={18} />
                         </div>
@@ -251,7 +251,7 @@ export const ProducerDashboard: React.FC = () => {
                             <Calendar className="text-[var(--accent-primary)]" /> {t("producer.dashboard.nextEvents.title")}
                         </h2>
                         <button onClick={() => navigate("/producer/events")} className="text-xs text-[#B0A090] hover:text-[var(--accent-primary)] font-bold flex items-center gap-1 transition-colors">
-                            Ver Agenda <ArrowRight size={14} />
+                            {t("producer.dashboard.viewAgenda", "Ver Agenda")} <ArrowRight size={14} />
                         </button>
                     </div>
 
@@ -275,9 +275,9 @@ export const ProducerDashboard: React.FC = () => {
                         )) : (
                             <div className="bg-[#2c1e10]/50 border border-dashed border-[#463420] rounded-3xl p-12 text-center">
                                 <Calendar size={40} className="mx-auto mb-4 text-[#463420]" />
-                                <p className="text-[#B0A090] mb-4">Nenhum evento próximo. Que tal criar um agora?</p>
+                                <p className="text-[#B0A090] mb-4">{t("producer.dashboard.noUpcomingEvents", "Nenhum evento próximo. Que tal criar um agora?")}</p>
                                 <button onClick={() => navigate("/producer/events/new")} className="bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20 px-6 py-2 rounded-xl font-bold hover:bg-[var(--accent-primary)] hover:text-black transition-all">
-                                    Criar Evento
+                                    {t("producer.dashboard.createEvent", "Criar Evento")}
                                 </button>
                             </div>
                         )}
@@ -287,34 +287,34 @@ export const ProducerDashboard: React.FC = () => {
                 {/* OPPORTUNITIES HUB (NOTICES) */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
-                        <Sparkles className="text-[var(--accent-primary)]" /> Editais Abertos
+                        <Sparkles className="text-[var(--accent-primary)]" /> {t("producer.dashboard.openNotices", "Editais Abertos")}
                     </h2>
                     <div className="space-y-3">
                         {openNotices.length > 0 ? openNotices.map(notice => (
                             <div key={notice.id} className="bg-gradient-to-br from-[#2c1e10] to-[#1a1108] border border-[#463420] rounded-2xl p-5 hover:border-[var(--accent-primary)]/50 transition-all">
-                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-2 tracking-widest">Oportunidade</div>
+                                <div className="text-[10px] font-bold text-[var(--accent-primary)] uppercase mb-2 tracking-widest">{t("producer.dashboard.opportunity", "Oportunidade")}</div>
                                 <h3 className="font-bold text-[#EAE0D5] mb-2 line-clamp-2">{notice.title}</h3>
                                 <div className="flex items-center justify-between text-xs text-[#B0A090] mb-4">
-                                    <span className="flex items-center gap-1"><Calendar size={12} /> Até {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
+                                    <span className="flex items-center gap-1"><Calendar size={12} /> {t("producer.dashboard.until", "Até")} {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
                                     <span className="text-[var(--accent-primary)] font-bold">R$ {Number(notice.maxPerProject).toLocaleString()}</span>
                                 </div>
                                 <button 
                                     onClick={() => navigate(`/producer/projects/new?noticeId=${notice.id}`)}
                                     className="w-full bg-white/5 hover:bg-[var(--accent-primary)] hover:text-black border border-white/10 transition-all py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2"
                                 >
-                                    Inscrever Projeto <ArrowRight size={14} />
+                                    {t("producer.dashboard.enrollProject", "Inscrever Projeto")} <ArrowRight size={14} />
                                 </button>
                             </div>
                         )) : (
                             <div className="bg-[#2c1e10]/30 border border-[#463420] rounded-2xl p-6 text-center italic text-[#B0A090] text-sm">
-                                Nenhum edital aberto no momento.
+                                {t("producer.dashboard.noOpenNotices", "Nenhum edital aberto no momento.")}
                             </div>
                         )}
                         <button 
                             onClick={() => navigate("/producer/notices")}
                             className="w-full py-3 text-[#B0A090] hover:text-[var(--accent-primary)] transition-colors text-sm font-bold border border-dashed border-[#463420] rounded-2xl"
                         >
-                            Ver Todos os Editais
+                            {t("producer.dashboard.viewAllNotices", "Ver Todos os Editais")}
                         </button>
                     </div>
                 </div>

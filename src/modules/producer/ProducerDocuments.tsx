@@ -34,7 +34,7 @@ export const ProducerDocuments: React.FC = () => {
             const allDocs = Array.isArray(res.data) ? res.data : [];
             setDocuments(allDocs);
         } catch (err) {
-            addToast("Erro ao carregar documentos.", "error");
+            addToast(t("producer.documents.loadError", "Erro ao carregar documentos."), "error");
         } finally {
             setLoading(false);
         }
@@ -52,23 +52,23 @@ export const ProducerDocuments: React.FC = () => {
             await api.post("/upload/document", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            addToast("Documento guardado no cofre!", "success");
+            addToast(t("producer.documents.uploadSuccess", "Documento guardado no cofre!"), "success");
             fetchDocuments();
         } catch (err) {
-            addToast("Erro no upload do documento.", "error");
+            addToast(t("producer.documents.uploadError", "Erro no upload do documento."), "error");
         } finally {
             setUploading(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm("Deseja realmente excluir este documento do seu cofre?")) return;
+        if (!window.confirm(t("producer.documents.confirmDelete", "Deseja realmente excluir este documento do seu cofre?"))) return;
         try {
             await api.delete(`/upload/${id}`);
-            addToast("Documento removido.", "success");
+            addToast(t("producer.documents.deleteSuccess", "Documento removido."), "success");
             setDocuments(prev => prev.filter(d => d.id !== id));
         } catch (err) {
-            addToast("Erro ao excluir.", "error");
+            addToast(t("producer.documents.deleteError", "Erro ao excluir."), "error");
         }
     };
 
@@ -90,9 +90,9 @@ export const ProducerDocuments: React.FC = () => {
                 <div>
                     <h1 className="text-3xl font-bold text-[#EAE0D5] font-serif flex items-center gap-3">
                         <Folder className="text-[var(--accent-primary)]" size={32} />
-                        Cofre de Documentos
+                        {t("producer.documents.title", "Cofre de Documentos")}
                     </h1>
-                    <p className="text-[#B0A090] mt-1">Centralize seus arquivos para agilizar inscrições em editais.</p>
+                    <p className="text-[#B0A090] mt-1">{t("producer.documents.subtitle", "Centralize seus arquivos para agilizar inscrições em editais.")}</p>
                 </div>
 
                 <div className="relative">
@@ -111,7 +111,7 @@ export const ProducerDocuments: React.FC = () => {
                         `}
                     >
                         {uploading ? <div className="w-5 h-5 border-2 border-black border-t-transparent animate-spin rounded-full" /> : <Upload size={20} />}
-                        Subir Documento
+                        {t("producer.documents.uploadButton", "Subir Documento")}
                     </label>
                 </div>
             </div>
@@ -122,8 +122,8 @@ export const ProducerDocuments: React.FC = () => {
                     <ShieldCheck size={28} />
                 </div>
                 <div>
-                    <h3 className="font-bold text-emerald-100">Cofre Seguro</h3>
-                    <p className="text-xs text-emerald-400/70">Seus documentos são criptografados e acessíveis apenas por você e pela administração do museu vinculado.</p>
+                    <h3 className="font-bold text-emerald-100">{t("producer.documents.safeVault", "Cofre Seguro")}</h3>
+                    <p className="text-xs text-emerald-400/70">{t("producer.documents.safeVaultDesc", "Seus documentos são criptografados e acessíveis apenas por você e pela administração do museu vinculado.")}</p>
                 </div>
             </div>
 
@@ -133,7 +133,7 @@ export const ProducerDocuments: React.FC = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#463420]" size={18} />
                     <input 
                         type="text"
-                        placeholder="Buscar por nome do arquivo..."
+                        placeholder={t("producer.documents.searchPlaceholder", "Buscar por nome do arquivo...")}
                         className="w-full bg-[#2c1e10] border border-[#463420] rounded-2xl py-3 pl-12 pr-4 text-[#EAE0D5] focus:border-[var(--accent-primary)] outline-none transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -141,7 +141,7 @@ export const ProducerDocuments: React.FC = () => {
                 </div>
                 <div className="flex gap-2">
                     <Button variant="outline" className="border-[#463420] text-[#B0A090] h-full rounded-2xl px-6">
-                        <Filter size={18} className="mr-2" /> Filtros
+                        <Filter size={18} className="mr-2" /> {t("producer.documents.filters", "Filtros")}
                     </Button>
                 </div>
             </div>
@@ -167,14 +167,14 @@ export const ProducerDocuments: React.FC = () => {
                                         target="_blank" 
                                         rel="noreferrer"
                                         className="p-2 hover:bg-white/5 rounded-xl text-[#B0A090] hover:text-[var(--accent-primary)] transition-all"
-                                        title="Baixar"
+                                        title={t("producer.documents.download", "Baixar")}
                                     >
                                         <Download size={18} />
                                     </a>
                                     <button 
                                         onClick={() => handleDelete(doc.id)}
                                         className="p-2 hover:bg-red-500/10 rounded-xl text-[#B0A090] hover:text-red-400 transition-all"
-                                        title="Excluir"
+                                        title={t("producer.documents.delete", "Excluir")}
                                     >
                                         <Trash2 size={18} />
                                     </button>
@@ -204,15 +204,15 @@ export const ProducerDocuments: React.FC = () => {
                     <div className="w-20 h-20 bg-[#2c1e10] border border-[#463420] rounded-3xl flex items-center justify-center mx-auto mb-6 text-[#463420]">
                         <FileText size={40} />
                     </div>
-                    <h2 className="text-xl font-bold text-[#EAE0D5] mb-2">Seu cofre está vazio</h2>
+                    <h2 className="text-xl font-bold text-[#EAE0D5] mb-2">{t("producer.documents.emptyVault", "Seu cofre está vazio")}</h2>
                     <p className="text-[#B0A090] max-w-md mx-auto mb-8">
-                        Comece subindo seus documentos essenciais (RG, Portfólio, CNPJ) para facilitar o preenchimento de futuros projetos.
+                        {t("producer.documents.emptyVaultDesc", "Comece subindo seus documentos essenciais (RG, Portfólio, CNPJ) para facilitar o preenchimento de futuros projetos.")}
                     </p>
                     <label 
                         htmlFor="vault-upload"
                         className="inline-flex items-center gap-2 px-8 py-3 border border-[var(--accent-primary)] text-[var(--accent-primary)] font-bold rounded-xl cursor-pointer hover:bg-[var(--accent-primary)] hover:text-black transition-all"
                     >
-                        Subir meu primeiro arquivo
+                        {t("producer.documents.uploadFirst", "Subir meu primeiro arquivo")}
                     </label>
                 </div>
             )}

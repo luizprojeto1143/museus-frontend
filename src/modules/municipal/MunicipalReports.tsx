@@ -50,7 +50,7 @@ export const MunicipalReports: React.FC = () => {
             setCompliance(complianceRes.data);
         } catch (err) {
             console.error("Error fetching report data", err);
-            toast.error("Erro ao consolidar indicadores executivos.");
+            toast.error(t("municipal.reports.error_fetch", "Erro ao consolidar indicadores executivos."));
         } finally {
             setLoading(false);
         }
@@ -63,24 +63,24 @@ export const MunicipalReports: React.FC = () => {
     const handleDownloadPDF = async () => {
         try {
             window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank');
-            toast.success("Gerando relatório em PDF...");
+            toast.success(t("municipal.reports.generating_pdf", "Gerando relatório em PDF..."));
         } catch (err) {
             console.error("Error downloading PDF", err);
-            toast.error("Erro ao gerar documento.");
+            toast.error(t("municipal.reports.error_pdf", "Erro ao gerar documento."));
         }
     };
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
             <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">Compilando Indicadores de Impacto...</p>
+            <p className="text-slate-500 font-black animate-pulse uppercase tracking-widest text-[10px]">{t("municipal.reports.loading", "Compilando Indicadores de Impacto...")}</p>
         </div>
     );
 
     const reportCards = [
-        { title: "Resumo Executivo Mensal", icon: <FileText size={24} />, desc: "Panorama consolidado de todos os equipamentos culturais municipais.", date: "Gerado hoje", color: "text-emerald-400", bg: "bg-emerald-400/10" },
-        { title: "Relatório de Conformidade LBI", icon: <ShieldCheck size={24} />, desc: "Status legal e acessibilidade perante a Lei Brasileira de Inclusão.", date: "Atualizado em tempo real", color: "text-indigo-400", bg: "bg-indigo-400/10" },
-        { title: "Evolução do Impacto Público", icon: <TrendingUp size={24} />, desc: "Análise histórica de frequência, engajamento e ROI social.", date: "Métricas consolidadas", color: "text-amber-400", bg: "bg-amber-400/10" }
+        { title: t("municipal.reports.card1_title", "Resumo Executivo Mensal"), icon: <FileText size={24} />, desc: t("municipal.reports.card1_desc", "Panorama consolidado de todos os equipamentos culturais municipais."), date: t("municipal.reports.generated_today", "Gerado hoje"), color: "text-emerald-400", bg: "bg-emerald-400/10" },
+        { title: t("municipal.reports.card2_title", "Relatório de Conformidade LBI"), icon: <ShieldCheck size={24} />, desc: t("municipal.reports.card2_desc", "Status legal e acessibilidade perante a Lei Brasileira de Inclusão."), date: t("municipal.reports.updated_realtime", "Atualizado em tempo real"), color: "text-indigo-400", bg: "bg-indigo-400/10" },
+        { title: t("municipal.reports.card3_title", "Evolução do Impacto Público"), icon: <TrendingUp size={24} />, desc: t("municipal.reports.card3_desc", "Análise histórica de frequência, engajamento e ROI social."), date: t("municipal.reports.consolidated_metrics", "Métricas consolidadas"), color: "text-amber-400", bg: "bg-amber-400/10" }
     ];
 
     return (
@@ -91,16 +91,16 @@ export const MunicipalReports: React.FC = () => {
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-8 bg-emerald-500 rounded-full" />
                         <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
-                            Central de <span className="text-emerald-500">Relatórios</span>
+                            {t("municipal.reports.title_central", "Central de")} <span className="text-emerald-500">{t("municipal.reports.title_reports", "Relatórios")}</span>
                         </h1>
                     </div>
                     <p className="text-slate-500 font-medium text-lg max-w-2xl leading-relaxed">
-                        Inteligência governamental e indicadores estratégicos para suporte à tomada de decisão.
+                        {t("municipal.reports.subtitle", "Inteligência governamental e indicadores estratégicos para suporte à tomada de decisão.")}
                     </p>
                 </div>
                 <div className="flex gap-3">
                     <Button variant="glass" className="h-14 px-6 rounded-2xl border-white/5 text-slate-400 font-black uppercase text-[10px] tracking-widest">
-                        <Share2 size={16} className="mr-2" /> Compartilhar Portal
+                        <Share2 size={16} className="mr-2" /> {t("municipal.reports.share_portal", "Compartilhar Portal")}
                     </Button>
                 </div>
             </div>
@@ -111,12 +111,12 @@ export const MunicipalReports: React.FC = () => {
                     <Card className="p-10 bg-gradient-to-br from-emerald-600 to-emerald-800 border-none rounded-[48px] text-white shadow-2xl shadow-emerald-900/30 relative overflow-hidden group">
                         <div className="relative z-10 space-y-8">
                             <div className="flex items-center justify-between">
-                                <Badge className="bg-white/20 text-white border-none text-[8px] font-black uppercase tracking-widest px-4 py-1.5">Métrica Global</Badge>
+                                <Badge className="bg-white/20 text-white border-none text-[8px] font-black uppercase tracking-widest px-4 py-1.5">{t("municipal.reports.global_metric", "Métrica Global")}</Badge>
                                 <Globe size={24} className="opacity-40" />
                             </div>
                             
                             <div className="space-y-1">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-200 opacity-80">Taxa de Adesão LBI</h3>
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-200 opacity-80">{t("municipal.reports.lbi_compliance_rate", "Taxa de Adesão LBI")}</h3>
                                 <div className="text-7xl font-black tracking-tighter flex items-end gap-2">
                                     <AnimatedCounter value={summary?.summary?.accessibilityPlanRate || 0} />
                                     <span className="text-3xl mb-2">%</span>
@@ -124,17 +124,17 @@ export const MunicipalReports: React.FC = () => {
                             </div>
                             
                             <p className="text-emerald-100 text-sm font-medium leading-relaxed opacity-80 italic">
-                                "A maioria dos projetos ativos já incorporou planos de tecnologia assistiva homologados."
+                                {t("municipal.reports.insight_quote", "\"A maioria dos projetos ativos já incorporou planos de tecnologia assistiva homologados.\"")}
                             </p>
                             
                             <div className="pt-8 border-t border-white/10 flex justify-between gap-4">
                                 <div>
                                     <div className="text-2xl font-black leading-none">128</div>
-                                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mt-1">Projetos Ativos</div>
+                                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mt-1">{t("municipal.reports.active_projects", "Projetos Ativos")}</div>
                                 </div>
                                 <div className="text-right">
                                     <div className="text-2xl font-black leading-none">42</div>
-                                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mt-1">Unidades</div>
+                                    <div className="text-[9px] font-black uppercase tracking-widest opacity-60 mt-1">{t("municipal.reports.units", "Unidades")}</div>
                                 </div>
                             </div>
                         </div>
@@ -146,7 +146,7 @@ export const MunicipalReports: React.FC = () => {
                     <Card className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] space-y-8">
                         <div className="flex items-center gap-3">
                             <PieChart size={20} className="text-emerald-500" />
-                            <h4 className="text-sm font-black text-white uppercase tracking-widest">Ações por Tipologia</h4>
+                            <h4 className="text-sm font-black text-white uppercase tracking-widest">{t("municipal.reports.actions_by_type", "Ações por Tipologia")}</h4>
                         </div>
                         <div className="space-y-4">
                             {Object.entries(summary?.summary?.accessibilityByType || {}).map(([type, count]: [string, any], idx) => (
@@ -201,15 +201,15 @@ export const MunicipalReports: React.FC = () => {
                                     <FileSearch size={32} />
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-xl font-black text-white tracking-tight italic">Transparência</h3>
-                                    <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-[200px] mx-auto">Exportação de dados brutos para o Portal da Transparência.</p>
+                                    <h3 className="text-xl font-black text-white tracking-tight italic">{t("municipal.reports.transparency", "Transparência")}</h3>
+                                    <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-[200px] mx-auto">{t("municipal.reports.transparency_desc", "Exportação de dados brutos para o Portal da Transparência.")}</p>
                                 </div>
                                 <Button 
                                     variant="glass" 
-                                    onClick={() => toast("Exportação de dataset bruto em processamento.", { icon: "📊" })} 
+                                    onClick={() => toast(t("municipal.reports.export_dataset", "Exportação de dataset bruto em processamento."), { icon: "📊" })} 
                                     className="h-12 w-full rounded-2xl border-white/5 text-emerald-400 font-black text-[9px] uppercase tracking-widest hover:bg-emerald-500/10"
                                 >
-                                    Preparar Dataset (CSV)
+                                    {t("municipal.reports.prepare_dataset", "Preparar Dataset (CSV)")}
                                 </Button>
                             </div>
                             <div className="absolute inset-0 bg-gradient-to-t from-emerald-600/5 to-transparent pointer-events-none" />
@@ -224,12 +224,12 @@ export const MunicipalReports: React.FC = () => {
                                     <Scale size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black text-white tracking-tighter italic">Compliance Jurídico</h3>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">Verificação obrigatória LBI</p>
+                                    <h3 className="text-xl font-black text-white tracking-tighter italic">{t("municipal.reports.legal_compliance", "Compliance Jurídico")}</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("municipal.reports.legal_compliance_subtitle", "Verificação obrigatória LBI")}</p>
                                 </div>
                             </div>
                             <Badge variant="glass" className="h-10 px-6 rounded-xl bg-emerald-500/10 text-emerald-400 border-none uppercase text-[10px] font-black tracking-widest">
-                                {compliance?.summary?.complianceRate || 0}% de Conformidade
+                                {compliance?.summary?.complianceRate || 0}% {t("municipal.reports.compliance_suffix", "de Conformidade")}
                             </Badge>
                         </div>
                         
@@ -256,14 +256,14 @@ export const MunicipalReports: React.FC = () => {
                                         </div>
                                     </div>
                                     <Badge className={`bg-transparent border-none uppercase text-[9px] font-black tracking-widest ${item.compliant ? 'text-emerald-500' : 'text-rose-500 animate-pulse'}`}>
-                                        {item.compliant ? 'Consolidado' : 'Ação Necessária'}
+                                        {item.compliant ? t("municipal.reports.consolidated", "Consolidado") : t("municipal.reports.action_needed", "Ação Necessária")}
                                     </Badge>
                                 </motion.div>
                             ))}
                             {(!compliance?.matrix || compliance.matrix.length === 0) && (
                                 <div className="flex flex-col items-center justify-center py-10 opacity-30 gap-4">
                                     <Activity size={40} />
-                                    <p className="text-sm font-medium italic">Iniciando auditoria legal...</p>
+                                    <p className="text-sm font-medium italic">{t("municipal.reports.starting_audit", "Iniciando auditoria legal...")}</p>
                                 </div>
                             )}
                         </div>
@@ -274,7 +274,7 @@ export const MunicipalReports: React.FC = () => {
                                 className="w-full h-14 rounded-2xl border-white/5 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:text-white hover:bg-white/5 transition-all flex items-center justify-between px-8"
                                 onClick={() => navigate('/municipal/compliance')}
                             >
-                                Acessar Relatório Completo de Conformidade <ChevronRight size={18} />
+                                {t("municipal.reports.access_full_report", "Acessar Relatório Completo de Conformidade")} <ChevronRight size={18} />
                             </Button>
                         </div>
                     </Card>

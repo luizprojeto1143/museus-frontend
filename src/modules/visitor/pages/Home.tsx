@@ -152,8 +152,8 @@ export const Home: React.FC = () => {
           <Link to="/agenda" className="bento-card">
             <div className="bento-icon">🎟️</div>
             <div className="bento-info">
-              <span className="bento-label">Global</span>
-              <span className="bento-title">Agenda Cultural</span>
+              <span className="bento-label">{t("visitor.home.bento.agenda.label", "Global")}</span>
+              <span className="bento-title">{t("visitor.home.bento.agenda.title", "Agenda Cultural")}</span>
             </div>
           </Link>
 

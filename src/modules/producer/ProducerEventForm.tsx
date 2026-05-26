@@ -58,7 +58,7 @@ export const ProducerEventForm: React.FC = () => {
                 })
                 .catch(err => {
                     console.error(err);
-                    addToast("Erro ao carregar evento", "error");
+                    addToast(t("producer.producerevent.loadError", "Erro ao carregar evento"), "error");
                 })
                 .finally(() => setLoading(false));
         }
@@ -89,11 +89,11 @@ export const ProducerEventForm: React.FC = () => {
             } else {
                 await api.post("/events", payload);
             }
-            addToast("Evento salvo com sucesso!", "success");
+            addToast(t("producer.producerevent.saveSuccess", "Evento salvo com sucesso!"), "success");
             navigate("/producer/events");
         } catch (error) {
             console.error("Error saving event", error);
-            addToast("Erro ao salvar evento. Verifique os dados.", "error");
+            addToast(t("producer.producerevent.saveError", "Erro ao salvar evento. Verifique os dados."), "error");
         } finally {
             setSaving(false);
         }
@@ -118,7 +118,7 @@ export const ProducerEventForm: React.FC = () => {
                     </Button>
                     <div>
                         <h1 className="text-3xl font-bold text-[var(--accent-primary)] font-serif">
-                            {id ? "Editar Evento" : "Novo Evento"}
+                            {id ? t("producer.producerevent.editEvent", "Editar Evento") : t("producer.producerevent.newEvent", "Novo Evento")}
                         </h1>
                         <p className="text-[#B0A090]">{t("producer.producerevent.preenchaAsInformaesParaDivulgarNaAgendaC", `Preencha as informações para divulgar na agenda cultural.`)}</p>
                     </div>
@@ -129,7 +129,7 @@ export const ProducerEventForm: React.FC = () => {
                     {/* Basic Info */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold border-b border-[#463420] pb-2">
-                            <Info size={18} /> Informações Básicas
+                            <Info size={18} /> {t("producer.producerevent.basicInfo", "Informações Básicas")}
                         </div>
 
                         <Input
@@ -138,7 +138,7 @@ export const ProducerEventForm: React.FC = () => {
                             value={formData.title}
                             onChange={handleChange}
                             required
-                            placeholder="Ex: Festival de Jazz 2024"
+                            placeholder={t("producer.producerevent.titlePlaceholder", "Ex: Festival de Jazz 2024")}
                             leftIcon={<AlignLeft size={18} className="text-[var(--accent-primary)]" />}
                             className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] h-12 text-lg font-bold"
                         />
@@ -155,7 +155,7 @@ export const ProducerEventForm: React.FC = () => {
 
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-[#B0A090] flex items-center gap-2">
-                                <Tag size={16} className="text-[var(--accent-primary)]" /> Categoria
+                                <Tag size={16} className="text-[var(--accent-primary)]" /> {t("producer.producerevent.category", "Categoria")}
                             </label>
                             <select
                                 name="categoryId"
@@ -163,7 +163,7 @@ export const ProducerEventForm: React.FC = () => {
                                 onChange={handleChange}
                                 className="w-full bg-black/20 border border-[#463420] rounded-xl px-4 py-3 text-[#EAE0D5] focus:border-[var(--accent-primary)] outline-none transition-colors appearance-none"
                             >
-                                <option value="" className="bg-[#2c1e10]">Selecione uma categoria (Opcional)</option>
+                                <option value="" className="bg-[#2c1e10]">{t("producer.producerevent.selectCategory", "Selecione uma categoria (Opcional)")}</option>
                                 {categories.map(cat => (
                                     <option key={cat.id} value={cat.id} className="bg-[#2c1e10]">{cat.name}</option>
                                 ))}
@@ -174,7 +174,7 @@ export const ProducerEventForm: React.FC = () => {
                     {/* DateTime */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold border-b border-[#463420] pb-2">
-                            <Calendar size={18} /> Data e Hora
+                            <Calendar size={18} /> {t("producer.producerevent.dateAndTime", "Data e Hora")}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -200,7 +200,7 @@ export const ProducerEventForm: React.FC = () => {
                             </div>
                             <div className="space-y-4">
                                 <Input
-                                    label="Data Fim (Opcional)"
+                                    label={t("producer.producerevent.endDate", "Data Fim (Opcional)")}
                                     name="endDate"
                                     type="date"
                                     value={formData.endDate}
@@ -223,7 +223,7 @@ export const ProducerEventForm: React.FC = () => {
                     {/* Location & Media */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 text-[var(--accent-primary)] font-bold border-b border-[#463420] pb-2">
-                            <MapPin size={18} /> Localização e Mídia
+                            <MapPin size={18} /> {t("producer.producerevent.locationAndMedia", "Localização e Mídia")}
                         </div>
 
                         <Input
@@ -231,13 +231,13 @@ export const ProducerEventForm: React.FC = () => {
                             name="location"
                             value={formData.location}
                             onChange={handleChange}
-                            placeholder="Ex: Teatro Municipal - Sala 2"
+                            placeholder={t("producer.producerevent.locationPlaceholder", "Ex: Teatro Municipal - Sala 2")}
                             leftIcon={<MapPin size={18} className="text-[var(--accent-primary)]" />}
                             className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                         />
 
                         <Input
-                            label="URL da Imagem de Capa"
+                            label={t("producer.producerevent.coverImage", "URL da Imagem de Capa")}
                             name="coverUrl"
                             value={formData.coverUrl}
                             onChange={handleChange}
@@ -254,7 +254,7 @@ export const ProducerEventForm: React.FC = () => {
 
                     {/* Status */}
                     <div className="bg-black/20 p-6 rounded-xl border border-[#463420]">
-                        <label className="block text-sm font-medium text-[#B0A090] mb-4">Status do Evento</label>
+                        <label className="block text-sm font-medium text-[#B0A090] mb-4">{t("producer.producerevent.eventStatus", "Status do Evento")}</label>
                         <div className="flex gap-4">
                             <button
                                 type="button"
@@ -264,7 +264,7 @@ export const ProducerEventForm: React.FC = () => {
                                         : "bg-transparent border-[#463420] text-[#B0A090] hover:bg-white/5"
                                     }`}
                             >
-                                Rascunho
+                                {t("producer.producerevent.draft", "Rascunho")}
                             </button>
                             <button
                                 type="button"
@@ -274,7 +274,7 @@ export const ProducerEventForm: React.FC = () => {
                                         : "bg-transparent border-[#463420] text-[#B0A090] hover:bg-white/5"
                                     }`}
                             >
-                                Publicado
+                                {t("producer.producerevent.published", "Publicado")}
                             </button>
                         </div>
                     </div>
@@ -286,7 +286,7 @@ export const ProducerEventForm: React.FC = () => {
                             leftIcon={<Save size={20} />}
                             className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 py-6 font-bold text-lg shadow-lg shadow-[var(--accent-primary)]/20 border-none rounded-xl w-full md:w-auto"
                         >
-                            Salvar Evento
+                            {t("producer.producerevent.saveEvent", "Salvar Evento")}
                         </Button>
                     </div>
 

@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export const TotemSearch: React.FC = () => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
@@ -29,14 +29,14 @@ export const TotemSearch: React.FC = () => {
                 id: reg.id,
                 code: reg.code,
                 status: reg.status,
-                ownerName: reg.guestName || reg.visitor?.name || "Visitante",
-                eventName: reg.event?.title || "Evento",
+                ownerName: reg.guestName || reg.visitor?.name || t("totem.search.visitor_default", "Visitante"),
+                eventName: reg.event?.title || t("totem.search.event_default", "Evento"),
                 ticketName: reg.ticket?.name
             }));
             setResults(mapped);
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao buscar");
+            toast.error(t("totem.search.search_error", "Erro ao buscar"));
             setResults([]);
         } finally {
             setLoading(false);
@@ -46,11 +46,11 @@ export const TotemSearch: React.FC = () => {
     const handleCheckIn = async (ticketCode: string) => {
         try {
             await api.post('/registrations/checkin', { code: ticketCode });
-            toast.success("Check-in realizado!");
+            toast.success(t("totem.search.checkin_success", "Check-in realizado!"));
             // Refresh results
             handleSearch({ preventDefault: () => { } } as any);
         } catch (error: any) {
-            toast.error(error.response?.data?.error || "Erro ao realizar check-in");
+            toast.error(error.response?.data?.error || t("totem.search.checkin_error", "Erro ao realizar check-in"));
         }
     };
 
@@ -69,9 +69,9 @@ export const TotemSearch: React.FC = () => {
                         marginBottom: "1rem"
                     }}
                 >
-                    ← Voltar
+                    ← {t("totem.search.back", "Voltar")}
                 </button>
-                <h1 style={{ margin: "0 0 2rem", fontSize: "2rem", textAlign: "center" }}>Busca Manual</h1>
+                <h1 style={{ margin: "0 0 2rem", fontSize: "2rem", textAlign: "center" }}>{t("totem.search.title", "Busca Manual")}</h1>
 
                 <form onSubmit={handleSearch} style={{ position: "relative" }}>
                     <Search style={{ position: "absolute", left: "20px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.5)" }} size={24} />
@@ -110,7 +110,7 @@ export const TotemSearch: React.FC = () => {
                             cursor: "pointer"
                         }}
                     >
-                        {loading ? "..." : "Buscar"}
+                        {loading ? "..." : t("totem.search.btn_search", "Buscar")}
                     </button>
                 </form>
             </div>
@@ -118,7 +118,7 @@ export const TotemSearch: React.FC = () => {
             <div style={{ width: "100%", maxWidth: "800px", display: "flex", flexDirection: "column", gap: "1rem" }}>
                 {results.length === 0 && searched && !loading && (
                     <div style={{ textAlign: "center", padding: "3rem", color: "rgba(255,255,255,0.5)" }}>
-                        Nenhum resultado encontrado
+                        {t("totem.search.no_results", "Nenhum resultado encontrado")}
                     </div>
                 )}
 
@@ -142,7 +142,7 @@ export const TotemSearch: React.FC = () => {
                                 {ticket.status === 'CHECKED_IN' ? <CheckCircle color="#22c55e" /> : <Ticket color="#fff" />}
                             </div>
                             <div>
-                                <h3 style={{ margin: 0, fontSize: "1.2rem" }}>{ticket.ownerName || "Visitante"}</h3>
+                                <h3 style={{ margin: 0, fontSize: "1.2rem" }}>{ticket.ownerName}</h3>
                                 <p style={{ margin: "0.2rem 0 0", opacity: 0.6, fontSize: "0.9rem" }}>Code: {ticket.code} • {ticket.eventName}</p>
                             </div>
                         </div>
@@ -150,12 +150,12 @@ export const TotemSearch: React.FC = () => {
                         {ticket.status === 'CHECKED_IN' ? (
                             <span style={{ color: "#22c55e", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                 <CheckCircle size={18} />
-                                Já entrou
+                                {t("totem.search.status_entered", "Já entrou")}
                             </span>
                         ) : ticket.status === 'CANCELED' ? (
                             <span style={{ color: "#ef4444", fontWeight: "bold", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                 <XCircle size={18} />
-                                Cancelado
+                                {t("totem.search.status_canceled", "Cancelado")}
                             </span>
                         ) : (
                             <button
@@ -171,7 +171,7 @@ export const TotemSearch: React.FC = () => {
                                     fontSize: "1rem"
                                 }}
                             >
-                                Realizar Check-in
+                                {t("totem.search.btn_checkin", "Realizar Check-in")}
                             </button>
                         )}
                     </div>

@@ -28,10 +28,10 @@ export const ProducerAudience: React.FC = () => {
                 // Map API response to Participant type
                 const data = res.data.map((reg: any) => ({
                     id: reg.id,
-                    name: reg.visitor?.name || reg.guestName || "Visitante",
+                    name: reg.visitor?.name || reg.guestName || t("producer.produceraudience.visitor", "Visitante"),
                     email: reg.visitor?.email || reg.guestEmail || "",
-                    event: reg.event?.title || "Evento Desconhecido",
-                    ticketType: reg.ticket?.name || "Ingresso",
+                    event: reg.event?.title || t("producer.produceraudience.unknown_event", "Evento Desconhecido"),
+                    ticketType: reg.ticket?.name || t("producer.produceraudience.ticket", "Ingresso"),
                     status: reg.status,
                     date: reg.createdAt // Used for sorting if needed
                 }));
@@ -82,7 +82,7 @@ export const ProducerAudience: React.FC = () => {
                     className="border-[#463420] text-[#B0A090] hover:text-[#EAE0D5] hover:bg-white/5 hover:border-[var(--accent-primary)]/30"
                     leftIcon={<Download size={20} />}
                 >
-                    Exportar CSV
+                    {t("producer.produceraudience.exportCsv", "Exportar CSV")}
                 </Button>
             </div>
 
@@ -91,7 +91,7 @@ export const ProducerAudience: React.FC = () => {
                 <div className="p-6 border-b border-[#463420] flex gap-4">
                     <div className="relative flex-1">
                         <Input
-                            placeholder="Buscar por nome ou email..."
+                            placeholder={t("producer.produceraudience.searchPlaceholder", "Buscar por nome ou email...")}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             leftIcon={<Search size={18} />}
@@ -102,19 +102,19 @@ export const ProducerAudience: React.FC = () => {
 
                 {/* Table Header */}
                 <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-black/20 text-xs font-bold text-[#B0A090] uppercase tracking-wider">
-                    <div className="col-span-4">Nome</div>
-                    <div className="col-span-3">Evento</div>
-                    <div className="col-span-2">Ingresso</div>
-                    <div className="col-span-2">Status</div>
+                    <div className="col-span-4">{t("producer.produceraudience.name", "Nome")}</div>
+                    <div className="col-span-3">{t("producer.produceraudience.event", "Evento")}</div>
+                    <div className="col-span-2">{t("producer.produceraudience.ticketCol", "Ingresso")}</div>
+                    <div className="col-span-2">{t("producer.produceraudience.status", "Status")}</div>
                     <div className="col-span-1 text-right">{t("producer.produceraudience.aes", `Ações`)}</div>
                 </div>
 
                 {/* Rows */}
                 <div className="divide-y divide-[#463420]">
                     {loading ? (
-                        <div className="p-8 text-center text-[#B0A090]">Carregando...</div>
+                        <div className="p-8 text-center text-[#B0A090]">{t("producer.produceraudience.loading", "Carregando...")}</div>
                     ) : filteredParticipants.length === 0 ? (
-                        <div className="p-8 text-center text-[#B0A090]">Nenhum participante encontrado.</div>
+                        <div className="p-8 text-center text-[#B0A090]">{t("producer.produceraudience.noParticipants", "Nenhum participante encontrado.")}</div>
                     ) : (
                         filteredParticipants.map(p => (
                             <div key={p.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-white/5 transition-colors">
@@ -138,7 +138,7 @@ export const ProducerAudience: React.FC = () => {
                                         ? "bg-[#4cd964]/10 text-[#4cd964] border-[#4cd964]/20"
                                         : "bg-[#ffb340]/10 text-[#ffb340] border-[#ffb340]/20"
                                         }`}>
-                                        {p.status === "CHECKED_IN" ? "PRESENTE" : "CONFIRMADO"}
+                                        {p.status === "CHECKED_IN" ? t("producer.produceraudience.present", "PRESENTE") : t("producer.produceraudience.confirmed", "CONFIRMADO")}
                                     </span>
                                 </div>
                                 <div className="col-span-1 text-right">

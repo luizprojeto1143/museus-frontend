@@ -108,15 +108,15 @@ export const AdminDashboard: React.FC = () => {
            <AlertTriangle size={80} className="text-red-500 relative z-10" />
         </div>
         <div className="text-center space-y-2">
-           <h2 className="text-3xl font-black text-white tracking-tighter leading-none">Sincronização Interrompida</h2>
-           <p className="text-slate-500 max-w-sm mx-auto text-sm font-medium leading-relaxed">Não foi possível estabelecer conexão com o centro de comando estratégico.</p>
+           <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{t("admin.dashboard.sync_interrupted", "Sincronização Interrompida")}</h2>
+           <p className="text-slate-500 max-w-sm mx-auto text-sm font-medium leading-relaxed">{t("admin.dashboard.sync_error", "Não foi possível estabelecer conexão com o centro de comando estratégico.")}</p>
         </div>
         <Button 
           onClick={() => { setLoading(true); loadDashboard(); }}
           className="h-14 px-10 rounded-2xl bg-red-500 text-white font-black uppercase tracking-widest shadow-xl shadow-red-500/20"
           leftIcon={<Zap size={18} />}
         >
-          Tentar Reconexão
+          {t("admin.dashboard.retry_connection", "Tentar Reconexão")}
         </Button>
       </AnimateIn>
     );
@@ -139,13 +139,13 @@ export const AdminDashboard: React.FC = () => {
             {t("admin.dashboard.commandCenter")}
           </Badge>
           <div className="flex flex-col">
-            <span className="text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] mb-2">{t("admin.dashboard.welcomeBack", "Bem-vindo de volta")}, {name} • {role === 'master' ? 'Diretoria' : role === 'admin' ? 'Administrador' : 'Equipe Técnica'}</span>
+            <span className="text-zinc-500 font-black text-[10px] uppercase tracking-[0.2em] mb-2">{t("admin.dashboard.welcomeBack", "Bem-vindo de volta")}, {name} • {role === 'master' ? t("admin.dashboard.board", "Diretoria") : role === 'admin' ? t("admin.dashboard.admin", "Administrador") : t("admin.dashboard.tech_team", "Equipe Técnica")}</span>
             <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none">
-              Dashboard <span className={isCityMode ? 'text-blue-400' : 'text-gold-400'}>Estratégico</span>
+              {t("admin.dashboard.title_dashboard", "Dashboard")} <span className={isCityMode ? 'text-blue-400' : 'text-gold-400'}>{t("admin.dashboard.title_strategic", "Estratégico")}</span>
             </h1>
           </div>
           <p className="text-slate-400 font-medium max-w-lg leading-relaxed">
-            Visão consolidada da operação, engajamento e métricas de impacto do museu.
+            {t("admin.dashboard.subtitle", "Visão consolidada da operação, engajamento e métricas de impacto do museu.")}
           </p>
         </div>
         {(role === 'admin' || role === 'master') && (
@@ -174,11 +174,11 @@ export const AdminDashboard: React.FC = () => {
             </div>
             <div className="flex-1 text-center md:text-left">
                 <span className="bg-gold-400/20 text-gold-400 font-black text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block border border-gold-400/20">
-                  PROXIMA ATUALIZAÇÃO 2026
+                  {t("admin.dashboard.next_update", "PROXIMA ATUALIZAÇÃO 2026")}
                 </span>
                 <h2 className="text-3xl font-black text-white tracking-tight leading-tight">{t("admin.dashboard.roadmap.title")}</h2>
                 <p className="text-slate-400 font-medium text-sm mt-2 max-w-2xl leading-relaxed">
-                  Estamos finalizando o módulo de Realidade Aumentada e Integração Web3 para o acervo digital. Participe da nossa comunidade de beta testers.
+                  {t("admin.dashboard.roadmap.desc", "Estamos finalizando o módulo de Realidade Aumentada e Integração Web3 para o acervo digital. Participe da nossa comunidade de beta testers.")}
                 </p>
             </div>
               <button 
@@ -302,7 +302,7 @@ export const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 divide-x divide-white/5">
                       <div className="p-10 space-y-8">
-                          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Top Obras do Mês</h3>
+                          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">{t("admin.dashboard.top_works", "Top Obras do Mês")}</h3>
                           <div className="space-y-6">
                             {data.topWorks.slice(0, 5).map((work, idx) => (
                               <div key={work.id} className="flex items-center justify-between group">
@@ -316,7 +316,7 @@ export const AdminDashboard: React.FC = () => {
                           </div>
                       </div>
                       <div className="p-10 bg-white/[0.01] space-y-8">
-                          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Acessos por Origem</h3>
+                          <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">{t("admin.dashboard.access_by_source", "Acessos por Origem")}</h3>
                           <div className="space-y-6">
                             {Object.entries(data.accessBySource).map(([source, count]) => (
                               <div key={source} className="space-y-3">
@@ -343,8 +343,8 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="card p-10 border-white/5 bg-white/[0.02] rounded-[48px] relative overflow-hidden group">
                     <div className="flex justify-between items-center mb-10">
-                      <h2 className="text-xl font-black text-white tracking-tight">Crescimento de Visibilidade</h2>
-                      <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-[9px] font-black uppercase tracking-widest">+12% vs anterior</Badge>
+                      <h2 className="text-xl font-black text-white tracking-tight">{t("admin.dashboard.visibility_growth", "Crescimento de Visibilidade")}</h2>
+                      <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-[9px] font-black uppercase tracking-widest">{t("admin.dashboard.vs_previous", "+12% vs anterior")}</Badge>
                     </div>
                     <div className="flex items-end gap-3 h-48">
                       {data.visitsByDay.slice(-14).map((day, idx) => (
@@ -363,19 +363,19 @@ export const AdminDashboard: React.FC = () => {
                       ))}
                     </div>
                     <div className="flex justify-between mt-6 text-[9px] font-black text-slate-600 uppercase tracking-widest border-t border-white/5 pt-6">
-                      <span>{data.visitsByDay[0]?.date || 'Início'}</span>
-                      <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-gold-400" /> Fluxo de Visitas (Últimos 14 dias)</span>
-                      <span>{data.visitsByDay[data.visitsByDay.length - 1]?.date || 'Hoje'}</span>
+                      <span>{data.visitsByDay[0]?.date || t("admin.dashboard.start", "Início")}</span>
+                      <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-gold-400" /> {t("admin.dashboard.visit_flow", "Fluxo de Visitas (Últimos 14 dias)")}</span>
+                      <span>{data.visitsByDay[data.visitsByDay.length - 1]?.date || t("admin.dashboard.today", "Hoje")}</span>
                     </div>
                 </div>
               </>
            )}
            
-           {!canSeeAnalytics && !canSeeEvents && !canSeeOps && (
+            {!canSeeAnalytics && !canSeeEvents && !canSeeOps && (
               <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[48px]">
                  <Layout size={48} className="text-zinc-700 mx-auto mb-4" />
-                 <p className="text-zinc-500 font-bold tracking-tight">Seu painel está configurado para acesso focado em tarefas específicas.</p>
-                 <p className="text-zinc-600 text-xs mt-1">Use a barra lateral para acessar suas ferramentas.</p>
+                 <p className="text-zinc-500 font-bold tracking-tight">{t("admin.dashboard.focused_access", "Seu painel está configurado para acesso focado em tarefas específicas.")}</p>
+                 <p className="text-zinc-600 text-xs mt-1">{t("admin.dashboard.use_sidebar", "Use a barra lateral para acessar suas ferramentas.")}</p>
               </div>
            )}
         </div>

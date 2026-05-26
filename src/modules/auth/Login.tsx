@@ -89,14 +89,14 @@ export const Login: React.FC = () => {
               Pulse <span className="text-gold-400 italic">Auth</span>
             </h1>
             <p className="text-gray-400 text-sm font-medium">
-              Sua jornada cultural começa aqui
+              {t("auth.login.subtitle", "Sua jornada cultural começa aqui")}
             </p>
           </div>
 
           <div className="space-y-6">
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-gray-500 ml-1">
-                E-mail
+                {t("auth.login.email", "E-mail")}
               </label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-gold-400 transition-colors" size={18} />
@@ -105,7 +105,7 @@ export const Login: React.FC = () => {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
+                  placeholder={t("auth.login.emailPlaceholder", "seu@email.com")}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:border-gold-400/50 focus:bg-white/10 transition-all placeholder:text-white/20"
                 />
               </div>
@@ -114,10 +114,10 @@ export const Login: React.FC = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-xs font-black uppercase tracking-widest text-gray-500">
-                  Senha
+                  {t("auth.login.password", "Senha")}
                 </label>
                 <Link to="/forgot-password" className="text-xs text-gold-400/80 hover:text-gold-400 transition-colors font-bold uppercase tracking-tighter">
-                  Esqueceu a senha?
+                  {t("auth.login.forgotPassword", "Esqueceu a senha?")}
                 </Link>
               </div>
               <div className="relative group">
@@ -149,19 +149,19 @@ export const Login: React.FC = () => {
               isLoading={isSubmitting}
               rightIcon={<ArrowRight size={20} />}
             >
-              Entrar
+              {t("auth.login.submit", "Entrar")}
             </Button>
           </div>
 
           <div className="mt-10 text-center">
             <p className="text-gray-500 text-sm font-medium">
-              Não possui uma conta?{" "}
+              {t("auth.login.noAccount", "Não possui uma conta?")}{" "}
               <button
                 type="button"
                 className="text-gold-400 font-black uppercase tracking-tighter hover:underline px-2"
                 onClick={() => navigate("/select-museum?mode=register")}
               >
-                Cadastre-se agora
+                {t("auth.login.registerNow", "Cadastre-se agora")}
               </button>
             </p>
           </div>

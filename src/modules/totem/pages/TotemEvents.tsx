@@ -4,8 +4,10 @@ import { useAuth } from "../../auth/AuthContext";
 import { Calendar, Users, CheckCircle, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const TotemEvents: React.FC = () => {
+    const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
     const [events, setEvents] = useState<any[]>([]);
@@ -23,7 +25,7 @@ export const TotemEvents: React.FC = () => {
             setEvents(res.data);
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao carregar eventos");
+            toast.error(t("totem.events.load_error", "Erro ao carregar eventos"));
         } finally {
             setLoading(false);
         }
@@ -43,13 +45,13 @@ export const TotemEvents: React.FC = () => {
                         cursor: "pointer"
                     }}
                 >
-                    ← Voltar
+                    ← {t("totem.events.back", "Voltar")}
                 </button>
-                <h1 style={{ margin: 0, fontSize: "2rem" }}>Eventos do Dia</h1>
+                <h1 style={{ margin: 0, fontSize: "2rem" }}>{t("totem.events.title", "Eventos do Dia")}</h1>
             </div>
 
             {loading ? (
-                <div style={{ color: "#fff", textAlign: "center", marginTop: "4rem" }}>Carregando...</div>
+                <div style={{ color: "#fff", textAlign: "center", marginTop: "4rem" }}>{t("totem.events.loading", "Carregando...")}</div>
             ) : (
                 <div style={{
                     display: "grid",
@@ -83,12 +85,12 @@ export const TotemEvents: React.FC = () => {
                             }}>
                                 <div style={{ textAlign: "center" }}>
                                     <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{event.registrationsCount || 0}</div>
-                                    <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>Inscritos</div>
+                                    <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>{t("totem.events.registered", "Inscritos")}</div>
                                 </div>
                                 <div style={{ width: "1px", background: "rgba(255,255,255,0.1)" }}></div>
                                 <div style={{ textAlign: "center", color: "#22c55e" }}>
                                     <div style={{ fontSize: "1.5rem", fontWeight: "bold" }}>{event.checkedInCount || 0}</div>
-                                    <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>Presentes</div>
+                                    <div style={{ fontSize: "0.8rem", opacity: 0.6 }}>{t("totem.events.present", "Presentes")}</div>
                                 </div>
                             </div>
 
@@ -111,7 +113,7 @@ export const TotemEvents: React.FC = () => {
                                 }}
                             >
                                 <Users size={20} />
-                                Lista de Presença
+                                {t("totem.events.attendance_list", "Lista de Presença")}
                             </button>
                         </div>
                     ))}
