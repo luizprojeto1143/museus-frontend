@@ -93,6 +93,12 @@ const AdminSubmissionReview = React.lazy(() => import("../modules/admin/pages/Ad
 const AdminFamilyBuilder = React.lazy(() => import("../modules/admin/pages/AdminFamilyBuilder").then(m => ({ default: m.AdminFamilyBuilder })));
 const AdminSponsorshipSettings = React.lazy(() => import("../modules/admin/pages/AdminSponsorshipSettings").then(m => ({ default: m.AdminSponsorshipSettings })));
 
+// Roteiro Cultural
+const ServiceProvidersManagement = React.lazy(() => import("../modules/admin/pages/ServiceProvidersManagement").then(m => ({ default: m.ServiceProvidersManagement })));
+const ServiceProviderForm = React.lazy(() => import("../modules/admin/pages/ServiceProviderForm").then(m => ({ default: m.ServiceProviderForm })));
+const ProviderDashboard = React.lazy(() => import("../modules/admin/pages/ProviderDashboard").then(m => ({ default: m.ProviderDashboard })));
+const MasterEcosystemDashboard = React.lazy(() => import("../modules/admin/pages/MasterEcosystemDashboard").then(m => ({ default: m.MasterEcosystemDashboard })));
+
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
 /** Helper to wrap admin page with layout + role guard */
@@ -217,6 +223,13 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/timelines" element={ar(AdminTimelineBuilder, RequireRole)} />
             <Route path="/admin/submissoes" element={ar(AdminSubmissionReview, RequireRole)} />
             <Route path="/admin/familia" element={ar(AdminFamilyBuilder, RequireRole)} />
+            
+            {/* Roteiro Cultural */}
+            <Route path="/admin/parceiros-roteiro" element={ar(ServiceProvidersManagement, RequireRole)} />
+            <Route path="/admin/parceiros-roteiro/novo" element={ar(ServiceProviderForm, RequireRole)} />
+            <Route path="/admin/parceiros-roteiro/:id" element={ar(ServiceProviderForm, RequireRole)} />
+            <Route path="/admin/meu-negocio" element={ar(ProviderDashboard, RequireRole)} />
+            <Route path="/admin/ecossistema-master" element={ar(MasterEcosystemDashboard, RequireRole)} />
         </>
     );
 }

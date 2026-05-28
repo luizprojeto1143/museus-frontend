@@ -55,6 +55,13 @@ const BadgeRequestPage = React.lazy(() => import("../modules/visitor/pages/Badge
 const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTracking").then(m => ({ default: m.BadgeTracking })));
 const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
 
+// Roteiro Cultural (Turismo Inteligente)
+const RoteiroHome = React.lazy(() => import("../modules/roteiro/RoteiroHome").then(m => ({ default: m.RoteiroHome })));
+const InteractiveMap = React.lazy(() => import("../modules/roteiro/InteractiveMap").then(m => ({ default: m.InteractiveMap })));
+const SmartRouteGenerator = React.lazy(() => import("../modules/roteiro/SmartRouteGenerator").then(m => ({ default: m.SmartRouteGenerator })));
+const CulturalPassport = React.lazy(() => import("../modules/roteiro/CulturalPassport").then(m => ({ default: m.CulturalPassport })));
+const ProviderDetail = React.lazy(() => import("../modules/roteiro/ProviderDetail").then(m => ({ default: m.ProviderDetail })));
+
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
 /** Helper to wrap a visitor page with layout + role guard */
@@ -120,6 +127,13 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
+            
+            {/* Roteiro Cultural */}
+            <Route path="/roteiro" element={vr(RoteiroHome, RequireRole)} />
+            <Route path="/roteiro/map" element={vr(InteractiveMap, RequireRole)} />
+            <Route path="/roteiro/ai-generator" element={vr(SmartRouteGenerator, RequireRole)} />
+            <Route path="/roteiro/passaporte" element={vr(CulturalPassport, RequireRole)} />
+            <Route path="/roteiro/parceiro/:providerId" element={vr(ProviderDetail, RequireRole)} />
         </>
     );
 }

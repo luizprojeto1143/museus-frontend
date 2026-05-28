@@ -30,19 +30,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   </React.StrictMode>
 );
 
-// PWA Cleanup & Cache Busting (Ensuring new design appears)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (const registration of registrations) {
-      console.log('🗑️ Purging legacy Service Worker:', registration.scope);
-      registration.unregister();
-    }
-  });
-}
-
-// Clear legacy caches to force fresh branding load
-if ('caches' in window) {
-  caches.keys().then((names) => {
-    for (const name of names) caches.delete(name);
-  });
-}
+// O PWA Vite lida automaticamente com atualização de service workers via autoUpdate.
+// Não é necessário (nem recomendado) expurgar o cache manualmente aqui, pois isso quebra a capacidade offline real.

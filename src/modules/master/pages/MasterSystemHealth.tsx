@@ -22,14 +22,12 @@ import {
     ActivitySquare,
     Signal,
     Box,
-    CloudPulse,
     Gauge,
     Binary,
     Code,
     History,
     Network,
-    MonitorCheck,
-    Activity,
+    MonitorCheck
 } from "lucide-react";
 import { api } from '../../../api/client';
 import { 

@@ -14,6 +14,8 @@ export const WorksList: React.FC = () => {
   const { tenantId } = useAuth();
   const { data: works = [], isLoading: loading } = useWorks();
 
+  const [filter, setFilter] = React.useState("all");
+
   if (!tenantId) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -34,7 +36,6 @@ export const WorksList: React.FC = () => {
     visible: { y: 0, opacity: 1 }
   };
 
-  const [filter, setFilter] = React.useState("all");
   const filteredWorks = filter === "all" 
     ? works 
     : works.filter((w: any) => {

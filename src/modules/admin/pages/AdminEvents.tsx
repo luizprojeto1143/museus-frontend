@@ -126,8 +126,7 @@ export const AdminEvents: React.FC = () => {
 
         {hasPermission("manage_events") && (
           <Button
-            
-            to="/admin/eventos/novo"
+            onClick={() => navigate("/admin/eventos/novo")}
             className="rounded-2xl h-14 px-8 bg-gold-400 text-slate-950 hover:bg-gold-500 font-black uppercase tracking-widest shadow-xl shadow-gold-400/20"
             leftIcon={<Plus size={20} />}
           >
@@ -257,8 +256,7 @@ export const AdminEvents: React.FC = () => {
                     <p className="text-slate-500 max-w-sm mx-auto">Tente ajustar sua busca ou crie um novo evento cultural para o seu museu.</p>
                   </div>
                   <Button
-                    
-                    to="/admin/eventos/novo"
+                    onClick={() => navigate("/admin/eventos/novo")}
                     variant="glass"
                     className="rounded-2xl h-12 border-gold-400/20 text-gold-400"
                   >

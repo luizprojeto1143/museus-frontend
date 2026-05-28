@@ -213,7 +213,7 @@ export const MasterMessages: React.FC = () => {
                                                 </div>
                                                 <div className="flex items-center gap-4 group/info">
                                                     <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-blue-500/40 border border-white/5 group-hover/info:border-blue-500/30 transition-all">
-                                                        <div size={20} />
+                                                        <Clock size={20} />
                                                     </div>
                                                     <div className="flex flex-col">
                                                         <span className="text-white font-black text-lg tracking-tighter italic leading-none">{new Date(msg.createdAt).toLocaleTimeString('pt-BR')}</span>

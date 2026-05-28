@@ -161,8 +161,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const res = await api.post("/auth/login", { email, password });
         const data = res.data as {
-        accessToken?: string;
-        refreshToken?: string;
         role?: string;
         tenantId?: string | null;
         equipamentoId?: string | null;
@@ -170,9 +168,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         hasProviderProfile?: boolean;
         user?: { email: string; name?: string; id?: string; hasProviderProfile?: boolean };
       };
-
-      const token = data.accessToken;
-      if (!token) throw new Error("Token não recebido do backend");
 
       const newState: AuthState = {
         role: mapRole(data.role ?? ""),

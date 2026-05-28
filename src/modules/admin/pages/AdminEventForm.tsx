@@ -16,7 +16,7 @@ import {
   Calendar, MapPin, Ticket, Clock,
   ChevronRight, ChevronLeft, CheckCircle, Plus, Trash2, Globe, Video, Save,
   Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft, Upload, Circle,
-  Sparkles, Info, Target, ListOrdered, CheckCircle2, Layout
+  Sparkles, Info, Target, ListOrdered, CheckCircle2, Layout, Lock
 } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
@@ -827,7 +827,7 @@ export const AdminEventForm: React.FC = () => {
                             className={`w-full p-6 rounded-2xl border transition-all flex items-center gap-4 text-left ${formData.visibility === 'PRIVATE' ? 'bg-slate-500/10 border-slate-500/50 text-slate-500' : 'bg-white/5 border-white/5 text-slate-500'}`}
                           >
                              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${formData.visibility === 'PRIVATE' ? 'bg-slate-500/20' : 'bg-white/5'}`}>
-                                <div size={24} />
+                                <Lock size={24} />
                              </div>
                              <div>
                                 <h4 className="font-bold text-white">Apenas com Link</h4>
