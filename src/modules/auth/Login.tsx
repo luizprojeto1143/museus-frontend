@@ -43,7 +43,7 @@ export const Login: React.FC = () => {
           redirectPath = "/admin";
         }
       } else if (userRole === "visitor") {
-        redirectPath = "/select-museum";
+        redirectPath = "/hub-cidades";
       }
 
 

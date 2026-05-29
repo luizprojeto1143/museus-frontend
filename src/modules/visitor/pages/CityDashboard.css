@@ -1,0 +1,1042 @@
+/* ==========================================================================
+   🏠 CITY DASHBOARD ROOT & CORE COLORS (UX/UI PREMIUM BLACK & GOLD)
+   ========================================================================== */
+.city-dashboard-root-wrapper {
+  min-height: 100vh;
+  background-color: #070a10;
+  color: #ffffff;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Scrollbar customized styling */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(234, 179, 8, 0.2);
+  border-radius: 99px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(234, 179, 8, 0.4);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   💻 1. DESKTOP GRID LAYOUT STRUCTURE (Viewport >= 1024px)
+   ========================================================================== */
+.desktop-layout-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 340px;
+  min-height: 100vh;
+  background-color: #070a10;
+}
+
+/* --------------------------------------------------------------------------
+   A. SIDEBAR DE MENU ESQUERDA
+   -------------------------------------------------------------------------- */
+.city-left-sidebar {
+  background: #080d16;
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 2.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.city-left-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Brand Logo with heartbeat */
+.sidebar-logo-container {
+  cursor: pointer;
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.logo-flex {
+  display: flex;
+  align-items: center;
+}
+
+.logo-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  background: linear-gradient(135deg, #ffffff 40%, #eab308 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(234, 179, 8, 0.25);
+}
+
+.heartbeat-pulse-line {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  background: #eab308;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #eab308;
+}
+
+.heartbeat-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #eab308;
+  opacity: 0.8;
+  animation: pulse-ring 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { opacity: 0.5; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Navigation items */
+.sidebar-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #8c93a0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+
+.sidebar-nav-item:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateX(2px);
+}
+
+.sidebar-nav-item.active {
+  color: #eab308;
+  background: rgba(234, 179, 8, 0.06);
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.sidebar-nav-item.active .sidebar-nav-icon {
+  filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.4));
+}
+
+.sidebar-nav-icon {
+  font-size: 1.15rem;
+}
+
+/* Sidebar Footer & Immersive Button */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.sidebar-immersive-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(234, 179, 8, 0.03);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+  color: #eab308;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.sidebar-immersive-btn:hover {
+  background: #eab308;
+  color: #000000;
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Seu Passaporte Cultural widget */
+.sidebar-passport-card {
+  background: linear-gradient(135deg, #101622 0%, #080d16 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  border-radius: 1rem !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar-passport-card:hover {
+  border-color: rgba(234, 179, 8, 0.2) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.passport-card-inner {
+  padding: 1rem;
+}
+
+.passport-card-lbl {
+  font-size: 0.7rem;
+  color: #eab308;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.passport-cover-image-container {
+  display: flex;
+  justify-content: center;
+}
+
+.passport-cover-image {
+  width: 110px;
+  height: 140px;
+  background: linear-gradient(135deg, #422d1b 0%, #1e130c 100%);
+  border: 2px solid #b8935c;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.8);
+  position: relative;
+}
+
+.passport-cover-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 6px;
+  bottom: 0;
+  width: 1px;
+  background: rgba(184, 147, 92, 0.3);
+}
+
+.passport-cover-image .book-title {
+  color: #b8935c;
+  font-family: 'Cinzel', 'Georgia', serif;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  border: 1px solid rgba(184, 147, 92, 0.3);
+  padding: 0.4rem;
+}
+
+.passport-card-desc {
+  font-size: 0.75rem;
+  color: #8c93a0;
+  line-height: 1.4;
+  margin: 0.5rem 0 0;
+}
+
+/* --------------------------------------------------------------------------
+   B. PAINEL CENTRAL DE CONTEÚDO
+   -------------------------------------------------------------------------- */
+.city-main-content {
+  padding: 2.25rem 2.5rem;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.city-main-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* Search and profile Topbar */
+.dashboard-top-bar {
+  background: transparent;
+}
+
+.search-bar-wrapper {
+  display: flex;
+  align-items: center;
+  background: #0f1622;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  transition: all 0.25s ease;
+}
+
+.search-bar-wrapper:focus-within {
+  border-color: rgba(234, 179, 8, 0.3);
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.08);
+}
+
+.topbar-search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.topbar-search-input::placeholder {
+  color: #626c7a;
+}
+
+.bell-notification-btn {
+  background: #0f1622;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bell-notification-btn:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.bell-badge-pulse {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+.user-avatar-circular {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  color: #000000;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+}
+
+.user-profile-name {
+  color: #ffffff;
+  font-size: 0.85rem;
+}
+
+/* Hero Banner container */
+.dashboard-hero-banner {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  margin-bottom: 2rem;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: all 0.3s ease;
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(7, 10, 16, 0.95) 30%, rgba(7, 10, 16, 0.7) 100%);
+  z-index: 1;
+}
+
+.hero-banner-content {
+  position: relative;
+  z-index: 5;
+  padding: 2.5rem;
+  width: 100%;
+}
+
+.hero-welcome-lbl {
+  font-size: 0.7rem;
+  color: #8c93a0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.hero-title-main {
+  background: linear-gradient(135deg, #ffffff 40%, #eab308 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-stats-row {
+  max-width: 500px;
+}
+
+.hero-stat-item {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* Weather Widget */
+.hero-weather-widget {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  width: 220px;
+  z-index: 5;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* Central Category Buttons row */
+.category-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #0f1622;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 150px;
+}
+
+.category-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(234, 179, 8, 0.2);
+  transform: translateY(-2px);
+}
+
+.category-pill-btn .emoji {
+  font-size: 1.35rem;
+  background: rgba(234, 179, 8, 0.06);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(234, 179, 8, 0.1);
+}
+
+.category-pill-btn .title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: block;
+}
+
+.category-pill-btn .sub {
+  font-size: 0.65rem;
+  color: #8c93a0;
+  display: block;
+  margin-top: 0.1rem;
+}
+
+/* Destaques da Cidade */
+.city-section-block {
+  position: relative;
+}
+
+.section-heading {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+}
+
+.highlight-item-card {
+  background: #080d16 !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-radius: 1rem !important;
+  text-align: left;
+  transition: all 0.3s ease !important;
+}
+
+.highlight-item-card:hover {
+  border-color: rgba(234, 179, 8, 0.2) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+}
+
+.card-image-wrapper {
+  position: relative;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #080d16 5%, transparent 60%);
+}
+
+.card-badge-absolute {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(234, 179, 8, 0.1);
+  color: #eab308;
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  backdrop-filter: blur(4px);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.35rem;
+  letter-spacing: 0.04em;
+}
+
+.card-badge-absolute.event-badge {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.card-badge-absolute.route-badge {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.card-desc {
+  line-height: 1.5;
+}
+
+/* Experiências em Alta compact items */
+.experience-compact-item {
+  width: 160px;
+  height: 100px;
+  border-radius: 0.75rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  transition: all 0.25s ease !important;
+}
+
+.experience-compact-item:hover {
+  transform: scale(1.03);
+  border-color: rgba(234, 179, 8, 0.2) !important;
+}
+
+.experience-compact-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(8, 13, 22, 0.9) 20%, transparent 80%);
+  z-index: 10;
+}
+
+/* --------------------------------------------------------------------------
+   C. PAINEL DE STATUS DIREITO
+   -------------------------------------------------------------------------- */
+.city-right-sidebar {
+  background: #080d16;
+  border-left: 1px solid rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+}
+
+.city-right-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.right-panel-user-header {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.avatar-w {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: #eab308;
+  color: #000000;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right-panel-block {
+  position: relative;
+}
+
+.block-title {
+  font-size: 0.7rem;
+  color: #8c93a0;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+/* Radial Donut Ring Progress SVG */
+.radial-donut-ring {
+  width: 90px;
+  height: 90px;
+  transform: rotate(-90deg);
+}
+
+.radial-donut-ring circle {
+  fill: none;
+  stroke-width: 7;
+}
+
+.radial-donut-ring .bg-ring {
+  stroke: rgba(255, 255, 255, 0.02);
+}
+
+.radial-donut-ring .progress-ring {
+  stroke: #eab308;
+  stroke-linecap: round;
+  stroke-dasharray: 251.2;
+  transition: stroke-dashoffset 0.6s ease;
+  filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.4));
+}
+
+.radial-inner-value {
+  position: absolute;
+  inset: 0;
+}
+
+.radial-inner-value .percent {
+  line-height: 1;
+}
+
+/* Mini Progress bars */
+.progress-track-small {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-track-small .fill-gold {
+  height: 100%;
+  background: #eab308;
+  border-radius: 99px;
+  box-shadow: 0 0 6px rgba(234, 179, 8, 0.3);
+}
+
+/* Explorers Ranking List */
+.explorer-rank-item {
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.explorer-rank-item.active-user-rank-style {
+  background: rgba(234, 179, 8, 0.04);
+  border: 1px solid rgba(234, 179, 8, 0.1);
+}
+
+.rank-avatar {
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 50%;
+  background: #101622;
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* Conquistas Medalhas */
+.achievement-badge-shield {
+  width: 3.2rem;
+  height: 3.2rem;
+  background: #101622;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.achievement-badge-shield:hover {
+  transform: translateY(-2px) scale(1.05);
+  border-color: rgba(234, 179, 8, 0.25);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+/* Callout Explorador Lendario banner */
+.explorer-legendary-banner {
+  background: linear-gradient(135deg, #101622 0%, #080d16 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  border-radius: 1.25rem !important;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.explorer-legendary-banner:hover {
+  border-color: rgba(234, 179, 8, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.legendary-crown-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.3));
+}
+
+.legendary-banner-glow {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(234, 179, 8, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   📱 2. MOBILE VIEW LAYOUT STYLE (Viewport < 1024px)
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .city-dashboard-root-wrapper {
+    background-color: #070b13;
+  }
+}
+
+.mobile-view-layout {
+  background-color: #070b13;
+  min-height: 100vh;
+}
+
+.mobile-top-bar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.mobile-logo-circle {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mobile-avatar-circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #eab308;
+  color: #000000;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Hero Banner */
+.mobile-hero-image-card {
+  border-radius: 1.25rem;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.mobile-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #070b13 15%, rgba(7, 11, 19, 0.8) 70%, rgba(7, 11, 19, 0.95) 100%);
+  z-index: 1;
+}
+
+/* Mobile Categories Grid */
+.mob-category-btn {
+  background: #0f1622;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mob-category-btn:hover {
+  border-color: rgba(234, 179, 8, 0.2);
+}
+
+.mob-category-btn .emoji {
+  font-size: 1.2rem;
+  background: rgba(234, 179, 8, 0.04);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(234, 179, 8, 0.08);
+}
+
+.mob-category-btn .lbl {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 0.4rem;
+}
+
+.mob-category-btn .sub {
+  font-size: 0.55rem;
+  color: #8c93a0;
+  margin-top: 0.05rem;
+  white-space: nowrap;
+}
+
+/* Mobile Sub-Screen headers */
+.mobile-sub-screen-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding-bottom: 0.75rem;
+}
+
+.mobile-sub-screen-header .back-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+}
+
+/* Mobile circular progress donut card */
+.mobile-circular-progress-card {
+  border-radius: 1rem !important;
+}
+
+.mobile-checklist-card {
+  border-radius: 1rem !important;
+}
+
+.mobile-ranking-card {
+  border-radius: 1rem !important;
+}
+
+/* --------------------------------------------------------------------------
+   🗺️ C. MOBILE MAPA CULTURAL SCREEN & PINS
+   -------------------------------------------------------------------------- */
+.mobile-map-simulation-area {
+  position: relative;
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(#151f32 1px, transparent 1px),
+    radial-gradient(#151f32 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+.streets-overlay-grid {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* Map Interactive glowing pins */
+.map-glowing-pin-interactive {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.map-glowing-pin-interactive:hover {
+  transform: translate(-50%, -100%) scale(1.1);
+  z-index: 20;
+}
+
+.map-glowing-pin-interactive.active-pin {
+  z-index: 30;
+}
+
+.map-glowing-pin-interactive.active-pin .pin-head {
+  background: #eab308;
+  color: #000000;
+  border-color: #ffffff;
+  box-shadow: 0 0 20px #eab308;
+  transform: scale(1.15);
+}
+
+.pin-head {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50% 50% 50% 0;
+  background: #101622;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #eab308;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-45deg);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  transition: all 0.2s ease;
+}
+
+.pin-head * {
+  transform: rotate(45deg);
+}
+
+.pin-pulse {
+  position: absolute;
+  bottom: -4px;
+  left: calc(50% - 6px);
+  width: 12px;
+  height: 6px;
+  background: rgba(234, 179, 8, 0.6);
+  border-radius: 50%;
+  animation: map-pulse 1.6s infinite;
+  pointer-events: none;
+}
+
+@keyframes map-pulse {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Floating Bottom Sheet */
+.floating-bottom-sheet-card {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #080d16;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1.5rem 1.5rem 0 0;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+  z-index: 50;
+}
+
+.bottom-sheet-handle {
+  cursor: pointer;
+}
+
+.handle-bar {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+
+.badge-tag {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.05) !important;
+  color: #8c93a0 !important;
+  font-size: 0.65rem !important;
+  font-weight: bold !important;
+  padding: 0.25rem 0.5rem !important;
+}
+
+.badge-tag.gold-text {
+  color: #eab308 !important;
+}
+
+/* --------------------------------------------------------------------------
+   📱 FIXED BOTTOM NAVIGATION TAB BAR
+   -------------------------------------------------------------------------- */
+.mobile-bottom-nav-bar {
+  box-shadow: 0 -8px 25px rgba(0,0,0,0.5);
+}
+
+.mob-nav-item {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: #626c7a;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.mob-nav-item.active-gold {
+  color: #eab308;
+}
+
+.mob-nav-item.active-gold .mob-nav-icon {
+  filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.4));
+}
+
+.mob-nav-scanner-button-wrapper {
+  position: relative;
+  top: -15px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  margin: 0 10px;
+}
+
+.mob-scanner-glowing-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  border: 3px solid #070b13;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mob-scanner-glowing-circle:hover {
+  transform: scale(1.05);
+}
+
+/* SVG ring progress on mobile bottom central logo */
+.mob-nav-scanner-button-wrapper .mob-scanner-glowing-circle {
+  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+}

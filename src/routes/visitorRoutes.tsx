@@ -54,6 +54,8 @@ const SkinMarketplace = React.lazy(() => import("../modules/visitor/pages/SkinMa
 const BadgeRequestPage = React.lazy(() => import("../modules/visitor/pages/BadgeRequestPage").then(m => ({ default: m.BadgeRequestPage })));
 const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTracking").then(m => ({ default: m.BadgeTracking })));
 const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
+const CityHub = React.lazy(() => import("../modules/visitor/pages/CityHub").then(m => ({ default: m.CityHub })));
+const CityDashboard = React.lazy(() => import("../modules/visitor/pages/CityDashboard").then(m => ({ default: m.CityDashboard })));
 
 // Roteiro Cultural (Turismo Inteligente)
 const RoteiroHome = React.lazy(() => import("../modules/roteiro/RoteiroHome").then(m => ({ default: m.RoteiroHome })));
@@ -127,6 +129,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
+            <Route path="/hub-cidades" element={vr(CityHub, RequireRole)} />
+            <Route path="/cidades/:tenantSlug" element={vr(CityDashboard, RequireRole)} />
             
             {/* Roteiro Cultural */}
             <Route path="/roteiro" element={vr(RoteiroHome, RequireRole)} />

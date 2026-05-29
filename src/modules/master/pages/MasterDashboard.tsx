@@ -52,6 +52,78 @@ export const MasterDashboard: React.FC = () => {
     const [summaries, setSummaries] = useState<TenantSummary[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [hubTitle, setHubTitle] = useState("");
+    const [hubSubtitle, setHubSubtitle] = useState("");
+    const [hubImageUrl, setHubImageUrl] = useState("");
+    const [savingSettings, setSavingSettings] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        const fetchHubSettings = async () => {
+            try {
+                const res = await api.get("/analytics/municipal-pwa/settings");
+                if (res.data) {
+                    setHubTitle(res.data.title || "Pulse Hub");
+                    setHubSubtitle(res.data.subtitle || "");
+                    setHubImageUrl(res.data.imageUrl || "");
+                }
+            } catch (err) {
+                console.error("Erro ao carregar configurações globais do Pulse Hub", err);
+            }
+        };
+        fetchHubSettings();
+    }, []);
+
+    const handleSaveSettings = async () => {
+        if (!hubTitle.trim() || !hubSubtitle.trim()) {
+            toast.error("Título e Subtítulo são obrigatórios!");
+            return;
+        }
+        try {
+            setSavingSettings(true);
+            await api.put("/analytics/municipal-pwa/settings", {
+                title: hubTitle,
+                subtitle: hubSubtitle,
+                imageUrl: hubImageUrl
+            }, {
+                headers: {
+                    'x-requested-with': 'XMLHttpRequest'
+                }
+            });
+            toast.success("Configurações do Pulse Hub atualizadas com sucesso!");
+        } catch (err) {
+            toast.error("Erro ao salvar as configurações.");
+        } finally {
+            setSavingSettings(false);
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            setUploading(true);
+            const res = await api.post("/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    "x-requested-with": "XMLHttpRequest"
+                }
+            });
+            if (res.data && res.data.url) {
+                setHubImageUrl(res.data.url);
+                toast.success("Imagem de banner enviada com sucesso!");
+            }
+        } catch (err) {
+            toast.error("Erro ao enviar imagem de banner.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
@@ -357,6 +429,102 @@ export const MasterDashboard: React.FC = () => {
                             ))}
                         </tbody>
                     </table>
+                </div>
+            </Card>
+
+            {/* 🖥️ CUSTOMIZADOR DO BANNER DO PULSE HUB (EXCLUSIVO MASTER) */}
+            <Card className="p-12 bg-black/40 border-white/5 rounded-[56px] space-y-8 shadow-2xl relative overflow-hidden border-t border-t-amber-500/20">
+                <div className="flex justify-between items-center relative z-10">
+                    <div className="space-y-2">
+                        <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">Customizador do Pulse Hub</h3>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Edite o Banner de Boas-vindas da plataforma do visitante</p>
+                    </div>
+                    <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                        <Sparkles size={32} />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
+                    {/* Inputs Formulário */}
+                    <div className="space-y-6 text-left">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-500">Título do Banner</label>
+                            <input 
+                                type="text"
+                                value={hubTitle}
+                                onChange={e => setHubTitle(e.target.value)}
+                                className="w-full bg-[#0f172a]/60 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-amber-500/50 transition-all font-bold"
+                                placeholder="Ex: Pulse Hub"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-500">Subtítulo / Descrição</label>
+                            <textarea 
+                                rows={3}
+                                value={hubSubtitle}
+                                onChange={e => setHubSubtitle(e.target.value)}
+                                className="w-full bg-[#0f172a]/60 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-amber-500/50 transition-all font-semibold"
+                                placeholder="Conecte-se com a cultura..."
+                            />
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-500 block">Imagem de Fundo do Banner</label>
+                            <div className="flex gap-4 items-center">
+                                <input 
+                                    type="text"
+                                    value={hubImageUrl}
+                                    onChange={e => setHubImageUrl(e.target.value)}
+                                    className="flex-1 bg-[#0f172a]/60 border border-white/5 rounded-2xl py-4 px-6 text-white outline-none focus:border-amber-500/50 transition-all text-sm font-mono"
+                                    placeholder="https://images.unsplash.com..."
+                                />
+                                <div className="relative">
+                                    <input 
+                                        type="file"
+                                        id="hub-banner-upload"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                    />
+                                    <label 
+                                        htmlFor="hub-banner-upload"
+                                        className="h-14 px-6 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 font-black text-[10px] uppercase tracking-widest hover:bg-amber-500/20 transition-all flex items-center justify-center cursor-pointer"
+                                    >
+                                        {uploading ? "Subindo..." : "Upload"}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Button 
+                            onClick={handleSaveSettings}
+                            isLoading={savingSettings}
+                            className="w-full py-6 rounded-2xl bg-amber-500 hover:bg-amber-600 text-black font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-xl shadow-amber-500/20"
+                        >
+                            Salvar Configurações do Banner
+                        </Button>
+                    </div>
+
+                    {/* Preview Real em Tempo Real */}
+                    <div className="flex flex-col justify-center">
+                        <div className="border border-white/5 rounded-3xl p-8 bg-[#090c13] relative overflow-hidden" style={hubImageUrl ? { backgroundImage: `radial-gradient(circle at 0% 0%, rgba(234, 179, 8, 0.05) 0%, transparent 60%), url(${hubImageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '220px' } : { minHeight: '220px' }}>
+                            <div className="absolute inset-0 bg-[#090c13]/85 pointer-events-none"></div>
+                            <div className="relative z-10 text-left space-y-4">
+                                <Badge className="bg-amber-500/10 text-amber-500 border-none text-[8px] uppercase tracking-[0.2em] font-black italic">Preview em Tempo Real</Badge>
+                                <div>
+                                    <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block mb-1">Bem-vindo ao</span>
+                                    <h1 className="text-3xl font-black text-white leading-none">
+                                        {hubTitle ? hubTitle.split(" ").slice(0, -1).join(" ") : "Pulse"}{" "}
+                                        <span className="text-amber-500">{hubTitle ? hubTitle.split(" ").pop() : "Hub"}</span>
+                                    </h1>
+                                </div>
+                                <p className="text-xs text-slate-400 leading-relaxed font-semibold" style={{ whiteSpace: 'pre-line' }}>
+                                    {hubSubtitle || "Conecte-se com a cultura. Explore. Descubra. Viva experiências únicas."}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </Card>
 
