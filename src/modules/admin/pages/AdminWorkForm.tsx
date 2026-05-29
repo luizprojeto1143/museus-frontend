@@ -271,7 +271,7 @@ export const AdminWorkForm: React.FC = () => {
 
   const handleAutoTranslate = async () => {
     if (!title && !description) {
-      toast.success("Preencha o título ou a descrição em português primeiro.", "info");
+      toast("Preencha o título ou a descrição em português primeiro.");
       return;
     }
 
@@ -1071,73 +1071,76 @@ export const AdminWorkForm: React.FC = () => {
 
       <Dialog
         open={showAccessModal}
-        onOpenChange={() => setShowAccessModal(false)}
-        title="Solicitar Acessibilidade Master"
-        className="max-w-xl"
+        onOpenChange={(open) => setShowAccessModal(open)}
       >
-        <div className="space-y-6">
-          <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-start gap-4">
-            <Accessibility className="text-purple-400 shrink-0 mt-1" size={24} />
-            <p className="text-slate-300 text-sm leading-relaxed">
-              Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {isCity ? "este ponto" : isCultural ? "esta atividade" : "esta obra"}.
-            </p>
-          </div>
+        <Dialog.Content
+          title="Solicitar Acessibilidade Master"
+          className="max-w-xl"
+        >
+          <div className="space-y-6">
+            <div className="p-4 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-start gap-4">
+              <Accessibility className="text-purple-400 shrink-0 mt-1" size={24} />
+              <p className="text-slate-300 text-sm leading-relaxed">
+                Envie um pedido para o time Master produzir os conteúdos de acessibilidade para {isCity ? "este ponto" : isCultural ? "esta atividade" : "esta obra"}.
+              </p>
+            </div>
 
-          <div className="space-y-4">
-            <Select
-              label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
-              value={requestType}
-              onChange={(e: any) => setRequestType(e.target.value as any)}
-              className="bg-black/20"
-            >
-              <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>
-              <option value="AUDIO_DESC">{t("admin.work.apenasAudiodescrio", `Apenas Audiodescrição`)}</option>
-              <option value="BOTH">{t("admin.work.comboLibrasUdio", `Combo (Libras + Áudio)`)}</option>
-            </Select>
+            <div className="space-y-4">
+              <Select
+                label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
+                value={requestType}
+                onChange={(e: any) => setRequestType(e.target.value as any)}
+                className="bg-black/20"
+              >
+                <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>
+                <option value="AUDIO_DESC">{t("admin.work.apenasAudiodescrio", `Apenas Audiodescrição`)}</option>
+                <option value="BOTH">{t("admin.work.comboLibrasUdio", `Combo (Libras + Áudio)`)}</option>
+              </Select>
 
-            <Textarea
-              label={t("admin.work.observaes", `Observações`)}
-              value={requestNotes}
-              onChange={e => setRequestNotes(e.target.value)}
-              placeholder={t("admin.work.exPrioridadeAltaDetalhesEspecficos", `Ex: Prioridade alta, detalhes específicos...`)}
-              rows={3}
-              className="bg-black/20"
-            />
-          </div>
+              <Textarea
+                label={t("admin.work.observaes", `Observações`)}
+                value={requestNotes}
+                onChange={e => setRequestNotes(e.target.value)}
+                placeholder={t("admin.work.exPrioridadeAltaDetalhesEspecficos", `Ex: Prioridade alta, detalhes específicos...`)}
+                rows={3}
+                className="bg-black/20"
+              />
+            </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="ghost"
-              onClick={() => setShowAccessModal(false)}
-              disabled={isRequesting}
-              className="rounded-xl"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={async () => {
-                if (!id) {
-                  toast.error(`Salve ${isCity ? "o ponto" : isCultural ? "a atividade" : "a obra"} primeiro.`);
-                  return;
-                }
-                try {
-                  setIsRequesting(true);
-                  await api.post("/accessibility", { workId: id, type: requestType, notes: requestNotes });
-                  toast.success("Solicitação enviada com sucesso!");
-                  setShowAccessModal(false);
-                } catch (error) {
-                  toast.error("Erro ao enviar solicitação.");
-                } finally {
-                  setIsRequesting(false);
-                }
-              }}
-              isLoading={isRequesting}
-              className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              Enviar Solicitação
-            </Button>
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="ghost"
+                onClick={() => setShowAccessModal(false)}
+                disabled={isRequesting}
+                className="rounded-xl"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!id) {
+                    toast.error(`Salve ${isCity ? "o ponto" : isCultural ? "a atividade" : "a obra"} primeiro.`);
+                    return;
+                  }
+                  try {
+                    setIsRequesting(true);
+                    await api.post("/accessibility", { workId: id, type: requestType, notes: requestNotes });
+                    toast.success("Solicitação enviada com sucesso!");
+                    setShowAccessModal(false);
+                  } catch (error) {
+                    toast.error("Erro ao enviar solicitação.");
+                  } finally {
+                    setIsRequesting(false);
+                  }
+                }}
+                isLoading={isRequesting}
+                className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Enviar Solicitação
+              </Button>
+            </div>
           </div>
-        </div>
+        </Dialog.Content>
       </Dialog>
     </div>
   );

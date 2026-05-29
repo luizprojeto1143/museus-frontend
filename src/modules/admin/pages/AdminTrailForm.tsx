@@ -200,7 +200,7 @@ export const AdminTrailForm: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!tenantId) {
-      toast.success("Erro de autenticação", "error");
+      toast.error("Erro de autenticação");
       return;
     }
 

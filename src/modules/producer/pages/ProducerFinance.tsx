@@ -54,6 +54,25 @@ export const ProducerFinance: React.FC = () => {
         }
     };
 
+    const handlePayout = async () => {
+        if (balance.available <= 0) {
+            alert("Você não possui saldo disponível para saque no momento.");
+            return;
+        }
+        try {
+            setActionLoading(true);
+            const res = await api.post('/stripe/payout?type=PRODUCER');
+            alert(res.data.message || "Saque solicitado com sucesso!");
+            fetchBalance();
+        } catch (error: any) {
+            console.error("Failed to process payout", error);
+            const errMsg = error.response?.data?.message || "Erro ao solicitar saque";
+            alert(errMsg);
+        } finally {
+            setActionLoading(false);
+        }
+    };
+
     const formatCurrency = (cents: number) => {
         return (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
@@ -95,14 +114,23 @@ export const ProducerFinance: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <div className="flex flex-col lg:flex-row gap-4 mt-8">
                 <button
                     onClick={handleDashboard}
                     disabled={actionLoading}
                     className="flex-1 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-[#1a1108] h-14 rounded-xl flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-colors disabled:opacity-50"
                 >
                     <ExternalLink size={20} />
-                    Painel Stripe (Saques)
+                    Painel Stripe
+                </button>
+
+                <button
+                    onClick={handlePayout}
+                    disabled={actionLoading || balance.available <= 0}
+                    className="flex-1 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white border border-yellow-500/20 h-14 rounded-xl flex items-center justify-center gap-2 font-black uppercase tracking-widest transition-all shadow-lg hover:shadow-yellow-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                    <DollarSign size={20} />
+                    Solicitar Saque Imediato
                 </button>
 
                 <button

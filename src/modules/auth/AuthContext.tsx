@@ -21,6 +21,8 @@ interface StoredAuth {
   isGuest?: boolean;
   cityId?: string | null;
   permissions?: Record<string, boolean> | null;
+  tenantSlug?: string | null;
+  user?: { email: string | null; name: string | null; id: string | null; tenantId: string | null } | null;
 }
 
 interface AuthState {
@@ -35,6 +37,8 @@ interface AuthState {
   isGuest: boolean;
   cityId: string | null;
   permissions: Record<string, boolean> | null;
+  tenantSlug?: string | null;
+  user?: { email: string | null; name: string | null; id: string | null; tenantId: string | null } | null;
 }
 
 interface AuthContextValue extends AuthState {
@@ -329,6 +333,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const contextValue: AuthContextValue = {
     ...state,
+    tenantSlug: state.tenantSlug ?? state.tenantId ?? "default",
+    user: state.user ?? (state.userId ? {
+      email: state.email,
+      name: state.name,
+      id: state.userId,
+      tenantId: state.tenantId
+    } : null),
     isAuthenticated: !!state.userId,
     login,
     enterAsGuest,

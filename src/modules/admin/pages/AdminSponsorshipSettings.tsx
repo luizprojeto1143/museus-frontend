@@ -6,8 +6,7 @@ import { DollarSign, Save } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 
 export function AdminSponsorshipSettings() {
-    const { user } = useAuth();
-    const tenantId = user?.tenantId;
+    const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     

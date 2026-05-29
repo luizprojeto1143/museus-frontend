@@ -125,7 +125,7 @@ export const TheaterCast: React.FC = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-8">
-                            {member.tags.map(tag => (
+                            {member.tags.map((tag: string) => (
                                 <span key={tag} className="px-3 py-1 bg-white/5 rounded-lg text-[9px] font-bold text-slate-500">#{tag}</span>
                             ))}
                         </div>

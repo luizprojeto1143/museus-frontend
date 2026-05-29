@@ -8,7 +8,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../components/ui";
 import { toast } from "react-hot-toast";
-
+import { theaterApi } from "../../../api/theater";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
