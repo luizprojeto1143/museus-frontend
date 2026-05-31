@@ -55,32 +55,10 @@ export const AdminMunicipalGaps: React.FC = () => {
       setLoading(true);
       const res = await api.get(`/analytics/territorial-gaps?tenantId=${tenantId}`);
       
-      // Fallback rico em caso de dados vazios no banco local (para garantir um visual Premium imediato)
-      const equipments = res.data?.equipments?.length > 0 ? res.data.equipments : [
-        { id: "eq1", name: "Casa da Cultura Betim", lat: -19.9678, lng: -44.1985, type: "CENTRO_CULTURAL", source: "equipamento" },
-        { id: "eq2", name: "Teatro Municipal Betim", lat: -19.9702, lng: -44.2010, type: "TEATRO", source: "equipamento" },
-        { id: "eq3", name: "Biblioteca Pública Municipal", lat: -19.9645, lng: -44.1950, type: "BIBLIOTECA", source: "equipamento" },
-        { id: "eq4", name: "Museu Ferroviário", lat: -19.9805, lng: -44.2120, type: "MUSEU", source: "equipamento" },
-      ];
-
-      const events = res.data?.events?.length > 0 ? res.data.events : [
-        { id: "ev1", title: "Festival de Teatro de Betim", lat: -19.9702, lng: -44.2010, tenantName: "Teatro Municipal" },
-        { id: "ev2", title: "Oficina de Cerâmica e Escultura", lat: -19.9678, lng: -44.1985, tenantName: "Casa da Cultura" },
-        { id: "ev3", title: "Sarau Lítero-Musical da Primavera", lat: -19.9645, lng: -44.1950, tenantName: "Biblioteca Pública" },
-      ];
-
-      const checkins = res.data?.checkins?.length > 0 ? res.data.checkins : [
-        // Alta densidade ao redor do centro (coberto)
-        { id: "ch1", lat: -19.9680, lng: -44.1980, equipmentName: "Casa da Cultura" },
-        { id: "ch2", lat: -19.9695, lng: -44.2005, equipmentName: "Teatro Municipal" },
-        { id: "ch3", lat: -19.9642, lng: -44.1953, equipmentName: "Biblioteca Pública" },
-        // Zonas de alta demanda periférica (sem equipamentos -> VAZIOS!)
-        { id: "ch4", lat: -19.9920, lng: -44.2250, equipmentName: "Ponto Móvel Norte" },
-        { id: "ch5", lat: -19.9935, lng: -44.2265, equipmentName: "Ponto Móvel Norte" },
-        { id: "ch6", lat: -19.9910, lng: -44.2230, equipmentName: "Ponto Móvel Norte" },
-        { id: "ch7", lat: -19.9550, lng: -44.1750, equipmentName: "Ponto Móvel Leste" },
-        { id: "ch8", lat: -19.9562, lng: -44.1738, equipmentName: "Ponto Móvel Leste" },
-      ];
+      // Use real data from the database only - no demo fallbacks
+      const equipments = res.data?.equipments || [];
+      const events = res.data?.events || [];
+      const checkins = res.data?.checkins || [];
 
       setData({ equipments, events, checkins });
     } catch (error) { 

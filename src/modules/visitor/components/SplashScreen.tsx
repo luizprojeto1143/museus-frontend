@@ -37,7 +37,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ name, onComplete }) 
       </div>
 
       <div className="splash-city">Cultura Viva</div>
-      <div className="splash-sub">Betim · Minas Gerais</div>
+      <div className="splash-sub">Patrimônio · Tecnologia · Inclusão</div>
 
       <div className="splash-greeting">
         <div className="splash-g-label">Que bom te ver de novo</div>

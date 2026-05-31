@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -294,7 +294,7 @@ export const AdminProjectForm: React.FC = () => {
                                     label={t("admin.project.ttuloDoProjeto", `Título do Projeto *`)}
                                     value={formData.title}
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                    placeholder="Ex: Festival de Jazz de Betim 2024"
+                                    placeholder="Ex: Festival Cultural Municipal 2024"
                                     required
                                     className="h-12 text-lg font-bold"
                                 />

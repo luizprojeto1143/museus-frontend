@@ -86,9 +86,7 @@ export const CityDashboard: React.FC = () => {
         if (res.data && res.data.cities) {
           // Robust slug matching (e.g. betim or betim-cultura)
           const found = res.data.cities.find((c: CityData) => 
-            c.slug === tenantSlug || 
-            (tenantSlug === "betim" && c.slug === "betim-cultura") ||
-            (tenantSlug === "betim-cultura" && c.slug === "betim")
+            c.slug === tenantSlug
           );
           if (found) {
             const enrichedEquipments = found.equipments.map((eq: CityEquipment, index: number) => ({
@@ -350,10 +348,10 @@ export const CityDashboard: React.FC = () => {
               </button>
               <div className="user-profile-meta flex items-center gap-3">
                 <div className="user-avatar-circular">
-                  {authName ? authName.charAt(0).toUpperCase() : "L"}
+                  {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="user-profile-name font-bold">{authName || "Lucas Explorer"}</span>
+                  <span className="user-profile-name font-bold">{authName || "Visitante"}</span>
                   <span className="user-profile-title font-semibold text-xs text-gold-400">{activeTitle}</span>
                 </div>
               </div>
@@ -577,13 +575,15 @@ export const CityDashboard: React.FC = () => {
               </div>
 
               <div className="experiences-horizontal-grid flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
-                <Card className="experience-compact-item flex-shrink-0 cursor-pointer overflow-hidden relative" onClick={() => navigate("/select-museum")}>
-                  <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=300" alt="Visitas" />
-                  <div className="info-overlay flex flex-col justify-end p-3 text-left">
-                    <span className="title font-bold text-white text-xs">Visitas Guiadas</span>
-                    <span className="count text-[9px] text-gray-400">{totalExperiences} experiências</span>
-                  </div>
-                </Card>
+                {city.equipments.map((eq) => (
+                  <Card key={eq.id} className="experience-compact-item flex-shrink-0 cursor-pointer overflow-hidden relative" onClick={() => handleSelectMuseum(eq)}>
+                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=300"} alt={eq.name} />
+                    <div className="info-overlay flex flex-col justify-end p-3 text-left">
+                      <span className="title font-bold text-white text-xs">{eq.name}</span>
+                      <span className="count text-[9px] text-gray-400">{eq.worksCount} obras</span>
+                    </div>
+                  </Card>
+                ))}
               </div>
             </section>
           )}
@@ -595,10 +595,10 @@ export const CityDashboard: React.FC = () => {
           <div className="right-panel-user-header flex items-center justify-between p-4 border-b border-white/5">
             <div className="flex items-center gap-3">
               <div className="avatar-w">
-                {authName ? authName.charAt(0).toUpperCase() : "L"}
+                {authName ? authName.charAt(0).toUpperCase() : "V"}
               </div>
               <div className="text-left">
-                <span className="name font-bold text-white block text-sm">{authName || "Lucas Explorer"}</span>
+                <span className="name font-bold text-white block text-sm">{authName || "Visitante"}</span>
                 <span className="title text-gold-400 text-[10px] font-bold uppercase">{activeTitle}</span>
               </div>
             </div>
@@ -764,7 +764,7 @@ export const CityDashboard: React.FC = () => {
                   <span className="bell-badge-pulse-small"></span>
                 </button>
                 <div className="mobile-avatar-circle" onClick={() => navigate("/perfil")}>
-                  {authName ? authName.charAt(0).toUpperCase() : "L"}
+                  {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
               </div>
             </header>
@@ -796,7 +796,7 @@ export const CityDashboard: React.FC = () => {
                       <span className="stat-lbl text-[8px] text-gray-500 font-bold uppercase block">Eventos</span>
                     </div>
                     <div className="mobile-stat-box">
-                      <span className="stat-num font-black text-white text-sm">🧭 {dbTrails.length > 0 ? dbTrails.length : 56}</span>
+                      <span className="stat-num font-black text-white text-sm">🧭 {dbTrails.length}</span>
                       <span className="stat-lbl text-[8px] text-gray-500 font-bold uppercase block">Roteiros</span>
                     </div>
                     <div className="mobile-stat-box">
@@ -868,22 +868,22 @@ export const CityDashboard: React.FC = () => {
                 <button className="mob-category-btn" onClick={() => navigate("/roteiro")}>
                   <span className="emoji">🧭</span>
                   <span className="lbl">Roteiros</span>
-                  <span className="sub">{dbTrails.length > 0 ? `${dbTrails.length} rotas` : "8 rotas"}</span>
+                  <span className="sub">{dbTrails.length} rotas</span>
                 </button>
                 <button className="mob-category-btn" onClick={() => navigate("/select-museum")}>
                   <span className="emoji">🎨</span>
                   <span className="lbl">Arte</span>
-                  <span className="sub">24 obras</span>
+                  <span className="sub">{totalExperiences} obras</span>
                 </button>
                 <button className="mob-category-btn" onClick={() => navigate("/roteiro")}>
                   <span className="emoji">🍴</span>
                   <span className="lbl">Gastron.</span>
-                  <span className="sub">18 parcei.</span>
+                  <span className="sub">Parceiros</span>
                 </button>
                 <button className="mob-category-btn" onClick={() => navigate("/select-museum")}>
                   <span className="emoji">✈️</span>
                   <span className="lbl">Turismo</span>
-                  <span className="sub">15 atraç.</span>
+                  <span className="sub">Atrações</span>
                 </button>
                 <button className="mob-category-btn" onClick={() => navigate("/chat")}>
                   <span className="emoji">🎧</span>
@@ -906,64 +906,71 @@ export const CityDashboard: React.FC = () => {
               </div>
 
               <div className="mobile-highlights-list flex flex-col gap-5">
-                {/* 1: Casa da Cultura (REAL DO BANCO!) */}
-                <Card 
-                  className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5"
-                  onClick={() => {
-                    if (firstMuseum) {
-                      handleSelectMuseum(firstMuseum);
-                    } else {
-                      navigate("/select-museum");
-                    }
-                  }}
-                >
-                  <div className="h-44 relative overflow-hidden">
-                    <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=600"} alt="Casa da Cultura" className="w-full h-full object-cover" />
-                    <div className="card-overlay"></div>
-                    <span className="card-badge uppercase">Museu em destaque</span>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-black text-white text-base">{firstMuseum?.name || "Casa da Cultura"}</h4>
-                    <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                      {firstMuseum?.missao || `História, arte e memória no coração de ${cityName}. Explore obras e acumule conquistas.`}
-                    </p>
-                    <span className="text-xs text-gold-400 font-bold block mt-3">Explorar &gt;</span>
-                  </div>
-                </Card>
+                {/* 1: Equipamento em destaque (REAL DO BANCO!) */}
+                {firstMuseum && (
+                  <Card 
+                    className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5"
+                    onClick={() => handleSelectMuseum(firstMuseum)}
+                  >
+                    <div className="h-44 relative overflow-hidden">
+                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=600"} alt={firstMuseum.name} className="w-full h-full object-cover" />
+                      <div className="card-overlay"></div>
+                      <span className="card-badge uppercase">Museu em destaque</span>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-black text-white text-base">{firstMuseum.name}</h4>
+                      <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
+                        {firstMuseum.missao || `História, arte e memória no coração de ${cityName}.`}
+                      </p>
+                      <span className="text-xs text-gold-400 font-bold block mt-3">Explorar &gt;</span>
+                    </div>
+                  </Card>
+                )}
 
-                {/* 2: Festival de Inverno (REAL DO BANCO!) */}
-                <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/agenda")}>
-                  <div className="h-44 relative overflow-hidden">
-                    <img src={firstEvent?.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600"} alt="Festival de Inverno" className="w-full h-full object-cover" />
-                    <div className="card-overlay"></div>
-                    <span className="card-badge event uppercase">Evento em alta</span>
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-black text-white text-base">{firstEvent?.title || "Festival de Inverno"}</h4>
-                    <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                      {firstEvent?.description || "Música, arte e cultura em vários pontos da cidade. Programação ativa completa disponível."}
-                    </p>
-                    <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-3 font-extrabold">
-                      {firstEvent ? `${new Date(firstEvent.startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date(firstEvent.endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}` : "24 MAI - 02 JUN"}
-                    </span>
-                  </div>
-                </Card>
+                {/* 2: Evento em destaque (REAL DO BANCO!) */}
+                {firstEvent && (
+                  <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/agenda")}>
+                    <div className="h-44 relative overflow-hidden">
+                      <img src={firstEvent.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600"} alt={firstEvent.title} className="w-full h-full object-cover" />
+                      <div className="card-overlay"></div>
+                      <span className="card-badge event uppercase">Evento em alta</span>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-black text-white text-base">{firstEvent.title}</h4>
+                      <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
+                        {firstEvent.description || "Programação completa disponível no portal."}
+                      </p>
+                      <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-3 font-extrabold">
+                        {`${new Date(firstEvent.startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date(firstEvent.endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                      </span>
+                    </div>
+                  </Card>
+                )}
 
-                {/* 3: Rota Histórica (REAL DO BANCO!) */}
-                <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/roteiro")}>
-                  <div className="h-44 relative overflow-hidden">
-                    <img src={firstTrail?.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1568230315894-1edd16d248b7?q=80&w=600"} alt="Rota Histórica" className="w-full h-full object-cover" />
-                    <div className="card-overlay"></div>
-                    <span className="card-badge route uppercase">Roteiro sugerido</span>
+                {/* 3: Roteiro em destaque (REAL DO BANCO!) */}
+                {firstTrail && (
+                  <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/roteiro")}>
+                    <div className="h-44 relative overflow-hidden">
+                      <img src={firstTrail.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1568230315894-1edd16d248b7?q=80&w=600"} alt={firstTrail.title} className="w-full h-full object-cover" />
+                      <div className="card-overlay"></div>
+                      <span className="card-badge route uppercase">Roteiro sugerido</span>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-black text-white text-base">{firstTrail.title}</h4>
+                      <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
+                        {firstTrail.description || `Percorra os principais marcos históricos do município.`}
+                      </p>
+                      <span className="text-xs text-gold-400 font-bold block mt-3">Ver roteiro &gt;</span>
+                    </div>
+                  </Card>
+                )}
+
+                {/* Empty state when no highlights */}
+                {!firstMuseum && !firstEvent && !firstTrail && (
+                  <div className="text-center py-8 text-xs text-gray-500 font-semibold">
+                    Nenhum destaque disponível ainda para esta cidade.
                   </div>
-                  <div className="p-4">
-                    <h4 className="font-black text-white text-base">{firstTrail?.title || "Rota Histórica"}</h4>
-                    <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                      {firstTrail?.description || `Percorra os principais marcos históricos do município, resgatando as origens e memórias locais.`}
-                    </p>
-                    <span className="text-xs text-gold-400 font-bold block mt-3">Ver roteiro &gt;</span>
-                  </div>
-                </Card>
+                )}
               </div>
             </section>
           </motion.div>

@@ -194,10 +194,10 @@ export const CityHub: React.FC = () => {
               </button>
               <div className="user-profile-meta flex items-center gap-3">
                 <div className="user-avatar-circular">
-                  {authName ? authName.charAt(0).toUpperCase() : "L"}
+                  {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="user-profile-name font-bold">{authName || "Lucas Explorer"}</span>
+                  <span className="user-profile-name font-bold">{authName || "Visitante"}</span>
                   <span className="user-profile-title font-semibold text-xs text-gold-400">{levelTitle}</span>
                 </div>
               </div>
@@ -501,7 +501,7 @@ export const CityHub: React.FC = () => {
               <span className="bell-badge-pulse-small"></span>
             </button>
             <div className="mobile-avatar-circle" onClick={() => navigate("/perfil")}>
-              {authName ? authName.charAt(0).toUpperCase() : "L"}
+              {authName ? authName.charAt(0).toUpperCase() : "V"}
             </div>
           </div>
         </header>
@@ -771,9 +771,9 @@ export const CityHub: React.FC = () => {
               <h3 className="font-black text-lg text-white mb-4">Seu Perfil Cultural</h3>
               <Card className="p-6 bg-white/5 border-white/5 text-center flex flex-col items-center">
                 <div className="w-16 h-16 rounded-full bg-gold-400 text-black text-2xl font-black flex items-center justify-center mb-3">
-                  {authName ? authName.charAt(0).toUpperCase() : "L"}
+                  {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
-                <h4 className="font-bold text-white text-lg">{authName || "Lucas Explorer"}</h4>
+                <h4 className="font-bold text-white text-lg">{authName || "Visitante"}</h4>
                 <span className="text-xs text-gold-400 font-bold uppercase tracking-wider">{levelTitle}</span>
                 <Button className="w-full mt-6" onClick={() => navigate("/perfil")}>Ver Perfil Completo</Button>
               </Card>

@@ -417,7 +417,7 @@ export const SelectMuseum: React.FC = () => {
                       </Badge>
                     </div>
                     <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
-                      {event.equipamentoNome || "Espaço Cultural de Betim"} • {event.location || "Presencial"}
+                      {event.equipamentoNome || "Espaço Cultural"} • {event.location || "Presencial"}
                     </p>
                     <Button 
                       variant="primary"

@@ -109,7 +109,7 @@ export const AdminHeritage: React.FC = () => {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                         <div>
                             <label style={labelStyle}>{t("admin.heritage.ttulo", `Título *`)}</label>
-                            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Ex: Congada de Betim" />
+                            <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inputStyle} placeholder="Ex: Congada Municipal" />
                         </div>
                         <div>
                             <label style={labelStyle}>Categoria</label>
