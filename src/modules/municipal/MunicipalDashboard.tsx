@@ -93,13 +93,13 @@ export const MunicipalDashboard: React.FC = () => {
                     <p className="text-slate-500 font-medium text-lg">{t("municipal.dashboard.subtitle", "Monitoramento estratégico de equipamentos, projetos e conformidade LBI.")}</p>
                 </div>
                 
-                <div className="flex flex-wrap gap-4">
-                    <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-xl">
+                <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-1 bg-white/5 p-1 rounded-2xl border border-white/5 backdrop-blur-xl w-full md:w-auto">
                         {(Object.entries(periodLabels) as [keyof typeof periodLabels, string][]).map(([val, label]) => (
                             <button
                                 key={val}
                                 onClick={() => setPeriod(val as any)}
-                                className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                                className={`flex-1 md:flex-none min-w-[60px] px-3 md:px-5 py-3 md:py-2.5 rounded-xl text-xs md:text-[10px] font-black uppercase tracking-widest transition-all ${
                                     period === val 
                                     ? 'bg-emerald-600 text-white shadow-lg' 
                                     : 'text-slate-500 hover:text-slate-300'
@@ -112,7 +112,7 @@ export const MunicipalDashboard: React.FC = () => {
                     
                     <Button
                         onClick={() => window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank')}
-                        className="h-14 px-8 rounded-[20px] bg-white/5 border border-white/5 text-white font-black uppercase text-[10px] tracking-[0.2em] hover:bg-white/10 transition-all shadow-xl shadow-black/20"
+                        className="h-14 w-full md:w-auto px-8 rounded-[20px] bg-white/5 border border-white/5 text-white font-black uppercase text-xs md:text-[10px] tracking-[0.2em] hover:bg-white/10 transition-all shadow-xl shadow-black/20"
                         leftIcon={<Download size={18} />}
                     >
                         {t("municipal.dashboard.executive_report", "Relatório Executivo")}
@@ -121,24 +121,24 @@ export const MunicipalDashboard: React.FC = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {cards.map((card, idx) => (
-                    <Card key={idx} className="p-8 bg-white/[0.02] border-white/5 rounded-[40px] group hover:bg-white/[0.04] transition-all relative overflow-hidden">
+                    <Card key={idx} className="p-6 md:p-8 bg-white/[0.02] border-white/5 rounded-[32px] md:rounded-[40px] group hover:bg-white/[0.04] transition-all relative overflow-hidden">
                         <div className="flex justify-between items-start mb-6 relative z-10">
-                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border border-white/5 transition-all group-hover:scale-110 ${card.bg} ${card.color}`}>
+                            <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center border border-white/5 transition-all group-hover:scale-110 ${card.bg} ${card.color}`}>
                                 {card.icon}
                             </div>
-                            <Badge variant="glass" className="bg-emerald-500/10 text-emerald-400 border-none text-[8px] font-black uppercase tracking-widest px-3 py-1">
+                            <Badge variant="glass" className="bg-emerald-500/10 text-emerald-400 border-none text-[9px] md:text-[8px] font-black uppercase tracking-widest px-3 py-1">
                                 {card.trend}
                             </Badge>
                         </div>
                         <div className="relative z-10">
-                            <div className="text-4xl font-black text-white leading-none tracking-tighter">
+                            <div className="text-3xl md:text-4xl font-black text-white leading-none tracking-tighter">
                                 <AnimatedCounter value={card.value} />
                             </div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-4">{card.label}</div>
+                            <div className="text-xs md:text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-4">{card.label}</div>
                         </div>
-                        <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <div className="absolute -right-6 -bottom-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity hidden md:block">
                             {React.cloneElement(card.icon as React.ReactElement, { size: 100 })}
                         </div>
                     </Card>
@@ -149,10 +149,10 @@ export const MunicipalDashboard: React.FC = () => {
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="relative p-10 rounded-[48px] bg-gradient-to-br from-emerald-600/10 via-[#0a0f1e] to-indigo-600/5 border border-white/5 overflow-hidden group shadow-2xl shadow-emerald-950/20"
+                className="relative p-6 md:p-10 rounded-[32px] md:rounded-[48px] bg-gradient-to-br from-emerald-600/10 via-[#0a0f1e] to-indigo-600/5 border border-white/5 overflow-hidden group shadow-2xl shadow-emerald-950/20"
             >
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
-                    <div className="w-20 h-20 bg-emerald-600 text-white rounded-[32px] flex items-center justify-center shadow-2xl shadow-emerald-600/40 shrink-0 group-hover:rotate-6 transition-transform duration-700">
+                <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-10">
+                    <div className="w-16 h-16 md:w-20 md:h-20 bg-emerald-600 text-white rounded-[24px] md:rounded-[32px] flex items-center justify-center shadow-2xl shadow-emerald-600/40 shrink-0 group-hover:rotate-6 transition-transform duration-700">
                         <Sparkles size={40} />
                     </div>
                     <div className="flex-1 space-y-4">
@@ -174,10 +174,10 @@ export const MunicipalDashboard: React.FC = () => {
                 <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-indigo-600/5 rounded-full blur-[100px] -ml-32 -mb-32 pointer-events-none" />
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10">
                 {/* Accessibility Compliance List */}
-                <Card className="lg:col-span-8 p-0 bg-white/[0.02] border-white/5 rounded-[48px] overflow-hidden">
-                    <div className="p-10 border-b border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 bg-white/[0.01]">
+                <Card className="lg:col-span-8 p-0 bg-white/[0.02] border-white/5 rounded-[32px] md:rounded-[48px] overflow-hidden">
+                    <div className="p-6 md:p-10 border-b border-white/5 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/[0.01]">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-2xl bg-emerald-600/10 text-emerald-400 flex items-center justify-center">
                                 <ShieldCheck size={24} />
@@ -196,30 +196,30 @@ export const MunicipalDashboard: React.FC = () => {
                         </Button>
                     </div>
                     
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-white/[0.02] text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
+                    <div className="overflow-x-auto pb-4">
+                        <table className="w-full text-left min-w-[700px]">
+                            <thead className="bg-white/[0.02] text-[11px] md:text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
                                 <tr>
-                                    <th className="px-10 py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_equipment", "Equipamento")}</th>
-                                    <th className="px-10 py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_type", "Tipologia")}</th>
-                                    <th className="px-10 py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_accessibility", "Acessibilidade")}</th>
-                                    <th className="px-10 py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_pending", "Pendências")}</th>
-                                    <th className="px-10 py-6"></th>
+                                    <th className="px-6 md:px-10 py-5 md:py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_equipment", "Equipamento")}</th>
+                                    <th className="px-6 md:px-10 py-5 md:py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_type", "Tipologia")}</th>
+                                    <th className="px-6 md:px-10 py-5 md:py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_accessibility", "Acessibilidade")}</th>
+                                    <th className="px-6 md:px-10 py-5 md:py-6 font-black tracking-[0.2em]">{t("municipal.dashboard.table_pending", "Pendências")}</th>
+                                    <th className="px-6 md:px-10 py-5 md:py-6"></th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {(data?.equipmentAccessibility || []).map((eq: any, idx: number) => (
                                     <tr key={idx} className="hover:bg-white/[0.02] transition-all group">
-                                        <td className="px-10 py-8">
-                                            <div className="font-bold text-white group-hover:text-emerald-400 transition-colors text-lg">{eq.name}</div>
-                                            <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1">{t("municipal.dashboard.ref", "Ref:")} {eq.id.slice(0, 8)}</div>
+                                        <td className="px-6 md:px-10 py-6 md:py-8">
+                                            <div className="font-bold text-white group-hover:text-emerald-400 transition-colors text-base md:text-lg">{eq.name}</div>
+                                            <div className="text-[11px] md:text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1">{t("municipal.dashboard.ref", "Ref:")} {eq.id.slice(0, 8)}</div>
                                         </td>
-                                        <td className="px-10 py-8">
-                                            <Badge variant="glass" className="bg-white/5 text-slate-400 border-white/5 uppercase text-[9px] font-black tracking-widest px-3 py-1">
+                                        <td className="px-6 md:px-10 py-6 md:py-8">
+                                            <Badge variant="glass" className="bg-white/5 text-slate-400 border-white/5 uppercase text-[10px] md:text-[9px] font-black tracking-widest px-3 py-1">
                                                 {eq.type}
                                             </Badge>
                                         </td>
-                                        <td className="px-10 py-8">
+                                        <td className="px-6 md:px-10 py-6 md:py-8">
                                             {eq.hasAccessibility ? (
                                                 <div className="flex items-center gap-2 text-emerald-500 font-black text-[10px] uppercase tracking-widest">
                                                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
@@ -231,7 +231,7 @@ export const MunicipalDashboard: React.FC = () => {
                                                 </div>
                                             )}
                                         </td>
-                                        <td className="px-10 py-8">
+                                        <td className="px-6 md:px-10 py-6 md:py-8">
                                             <div className="flex flex-col">
                                                 <span className={`text-sm font-black ${eq.pendingRequests > 0 ? 'text-amber-500' : 'text-slate-700'}`}>
                                                     {eq.pendingRequests} {t("municipal.dashboard.requests", "Solicitações")}
@@ -241,8 +241,8 @@ export const MunicipalDashboard: React.FC = () => {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-10 py-8 text-right">
-                                            <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-600 hover:text-emerald-400 hover:bg-emerald-400/10 transition-all">
+                                        <td className="px-6 md:px-10 py-6 md:py-8 text-right">
+                                            <button className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-600 hover:text-emerald-400 hover:bg-emerald-400/10 transition-all min-h-[44px] min-w-[44px]">
                                                 <ArrowUpRight size={20} />
                                             </button>
                                         </td>
@@ -254,10 +254,10 @@ export const MunicipalDashboard: React.FC = () => {
                 </Card>
 
                 {/* Right Column: Operational Flow */}
-                <div className="lg:col-span-4 space-y-10">
+                <div className="lg:col-span-4 space-y-8 md:space-y-10">
                     {/* Alerts Panel */}
-                    <Card className="p-10 bg-[#0f172a] rounded-[48px] border-white/5 shadow-2xl relative overflow-hidden group">
-                        <div className="relative z-10 space-y-8">
+                    <Card className="p-6 md:p-10 bg-[#0f172a] rounded-[32px] md:rounded-[48px] border-white/5 shadow-2xl relative overflow-hidden group">
+                        <div className="relative z-10 space-y-6 md:space-y-8">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-xl font-black text-white italic tracking-tighter flex items-center gap-3">
                                     <Zap size={20} className="text-amber-400" /> {t("municipal.dashboard.critical_alerts", "Alertas Críticos")}
@@ -289,7 +289,7 @@ export const MunicipalDashboard: React.FC = () => {
                     </Card>
 
                     {/* Project Timeline */}
-                    <Card className="p-10 bg-white/[0.02] border-white/5 rounded-[48px] space-y-8 relative overflow-hidden">
+                    <Card className="p-6 md:p-10 bg-white/[0.02] border-white/5 rounded-[32px] md:rounded-[48px] space-y-8 relative overflow-hidden">
                         <div className="flex items-center gap-3">
                             <BarChart3 size={20} className="text-emerald-500" />
                             <h3 className="text-xl font-black text-white italic tracking-tighter">{t("municipal.dashboard.project_flow", "Fluxo de Projetos")}</h3>

@@ -214,8 +214,8 @@ export const MasterDashboard: React.FC = () => {
             </div>
 
             {/* AI Insight Bar - Deep Blue & Gold */}
-            <Card className="p-10 bg-gradient-to-r from-blue-600/10 via-amber-500/5 to-transparent border-amber-500/20 rounded-[48px] flex items-center gap-10 group relative overflow-hidden shadow-2xl">
-                <div className="w-20 h-20 bg-amber-500 rounded-[32px] flex items-center justify-center text-white shadow-2xl shadow-amber-500/40 group-hover:rotate-12 transition-transform duration-700">
+            <Card className="p-6 md:p-10 bg-gradient-to-r from-blue-600/10 via-amber-500/5 to-transparent border-amber-500/20 rounded-[48px] flex flex-col md:flex-row items-center gap-6 md:gap-10 group relative overflow-hidden shadow-2xl">
+                <div className="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-amber-500 rounded-[24px] md:rounded-[32px] flex items-center justify-center text-white shadow-2xl shadow-amber-500/40 group-hover:rotate-12 transition-transform duration-700">
                     <Sparkles size={40} />
                 </div>
                 <div className="flex-1 space-y-2">
@@ -242,9 +242,9 @@ export const MasterDashboard: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.1 }}
                     >
-                        <Card className="p-12 bg-[#0f172a]/40 border-white/5 rounded-[56px] group hover:bg-white/[0.04] transition-all relative overflow-hidden shadow-2xl border-t border-t-white/10">
-                            <div className="relative z-10 space-y-10">
-                                <div className={`w-16 h-16 rounded-[24px] ${stat.bg} ${stat.color} flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform shadow-lg`}>
+                        <Card className="p-8 md:p-12 bg-[#0f172a]/40 border-white/5 rounded-[56px] group hover:bg-white/[0.04] transition-all relative overflow-hidden shadow-2xl border-t border-t-white/10">
+                            <div className="relative z-10 space-y-6 md:space-y-10">
+                                <div className={`w-14 h-14 md:w-16 md:h-16 rounded-[20px] md:rounded-[24px] ${stat.bg} ${stat.color} flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform shadow-lg`}>
                                     {stat.icon}
                                 </div>
                                 <div className="space-y-1">
@@ -253,14 +253,14 @@ export const MasterDashboard: React.FC = () => {
                                         <AnimatedCounter value={stat.value} />
                                     </div>
                                 </div>
-                                <div className="pt-8 border-t border-white/5 flex items-center justify-between">
-                                    <Badge variant="glass" className={`${stat.bg} ${stat.color} border-none text-[10px] font-black uppercase tracking-widest`}>
+                                <div className="pt-6 md:pt-8 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
+                                    <Badge variant="glass" className={`${stat.bg} ${stat.color} border-none text-[11px] md:text-[10px] font-black uppercase tracking-widest`}>
                                         {stat.trend}
                                     </Badge>
-                                    <p className="text-[9px] text-slate-600 font-bold max-w-[120px] text-right leading-tight italic">{stat.desc}</p>
+                                    <p className="text-xs md:text-[9px] text-slate-600 font-bold max-w-[120px] text-left md:text-right leading-tight italic">{stat.desc}</p>
                                 </div>
                             </div>
-                            <div className={`absolute -right-12 -top-12 opacity-[0.02] group-hover:opacity-[0.08] transition-opacity pointer-events-none ${stat.color}`}>
+                            <div className={`absolute -right-12 -top-12 opacity-[0.02] group-hover:opacity-[0.08] transition-opacity pointer-events-none hidden md:block ${stat.color}`}>
                                 {stat.icon}
                             </div>
                         </Card>
@@ -271,7 +271,7 @@ export const MasterDashboard: React.FC = () => {
             {/* Performance Analytics Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {/* Top Cities - High Fidelity */}
-                <Card className="p-12 bg-black/40 border-white/5 rounded-[56px] space-y-12 shadow-2xl relative overflow-hidden border-t border-t-amber-500/10">
+                <Card className="p-6 md:p-12 bg-black/40 border-white/5 rounded-[56px] space-y-8 md:space-y-12 shadow-2xl relative overflow-hidden border-t border-t-amber-500/10">
                     <div className="flex justify-between items-center relative z-10">
                         <div className="space-y-2">
                             <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">{t("master.dashboard.regional_performance", "Performance Regional")}</h3>
@@ -282,7 +282,7 @@ export const MasterDashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-10 relative z-10">
+                    <div className="space-y-6 md:space-y-10 relative z-10">
                         {summaries.sort((a, b) => (b.visitsCount || 0) - (a.visitsCount || 0)).slice(0, 5).map((s, idx) => {
                             const maxVisits = Math.max(...summaries.map(s => s.visitsCount || 1));
                             const percentage = ((s.visitsCount || 0) / maxVisits) * 100;
@@ -312,7 +312,7 @@ export const MasterDashboard: React.FC = () => {
                 </Card>
 
                 {/* Network Topology Map (Abstract Heatmap) */}
-                <Card className="p-12 bg-black/40 border-white/5 rounded-[56px] space-y-12 shadow-2xl relative overflow-hidden border-t border-t-blue-500/10">
+                <Card className="p-6 md:p-12 bg-black/40 border-white/5 rounded-[56px] space-y-8 md:space-y-12 shadow-2xl relative overflow-hidden border-t border-t-blue-500/10">
                     <div className="flex justify-between items-center relative z-10">
                         <div className="space-y-2">
                             <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">{t("master.dashboard.network_topology", "Topologia de Rede")}</h3>
@@ -355,9 +355,9 @@ export const MasterDashboard: React.FC = () => {
             </div>
 
             {/* Matrix & Governance Footer */}
-            <Card className="p-0 bg-white/[0.02] border-white/5 rounded-[56px] overflow-hidden shadow-2xl relative border-t-2 border-t-amber-500/20">
-                <div className="p-12 border-b border-white/5 flex flex-col md:flex-row items-center justify-between gap-8 bg-white/[0.01]">
-                    <div className="flex items-center gap-6">
+            <Card className="p-0 bg-white/[0.02] border-white/5 rounded-[32px] md:rounded-[56px] overflow-hidden shadow-2xl relative border-t-2 border-t-amber-500/20">
+                <div className="p-6 md:p-12 border-b border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 bg-white/[0.01]">
+                    <div className="flex items-center gap-4 md:gap-6">
                         <div className="w-16 h-16 rounded-[24px] bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
                             <Navigation size={32} />
                         </div>
@@ -371,21 +371,21 @@ export const MasterDashboard: React.FC = () => {
                     </Button>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto pb-4">
+                    <table className="w-full text-left min-w-[800px]">
                         <thead>
                             <tr className="bg-white/[0.01]">
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.city_node", "Cidade / Node")}</th>
+                                <th className="px-6 md:px-12 py-6 md:py-8 text-[11px] md:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.city_node", "Cidade / Node")}</th>
                                 <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.installed_cap", "Capacidade Instalada")}</th>
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.active_engagement", "Engajamento Ativo")}</th>
-                                <th className="px-12 py-8 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">{t("master.dashboard.controls", "Controles")}</th>
+                                <th className="px-6 md:px-12 py-6 md:py-8 text-[11px] md:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t("master.dashboard.active_engagement", "Engajamento Ativo")}</th>
+                                <th className="px-6 md:px-12 py-6 md:py-8 text-[11px] md:text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">{t("master.dashboard.controls", "Controles")}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {summaries.map((s) => (
                                 <tr key={s.tenantId} className="group hover:bg-white/[0.03] transition-all cursor-default">
-                                    <td className="px-12 py-10">
-                                        <div className="flex items-center gap-6">
+                                    <td className="px-6 md:px-12 py-6 md:py-10">
+                                        <div className="flex items-center gap-4 md:gap-6">
                                             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600/20 to-amber-500/20 flex items-center justify-center text-amber-500 font-black text-sm border border-white/5 shadow-xl group-hover:scale-110 transition-transform">
                                                 {s.name.substring(0, 2).toUpperCase()}
                                             </div>
@@ -395,7 +395,7 @@ export const MasterDashboard: React.FC = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-12 py-10">
+                                    <td className="px-6 md:px-12 py-6 md:py-10">
                                         <div className="flex items-center gap-4">
                                             <div className="flex flex-col">
                                                 <span className="text-white font-black text-lg tracking-tighter italic leading-none">{s.equipamentosCount}</span>
@@ -408,7 +408,7 @@ export const MasterDashboard: React.FC = () => {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-12 py-10">
+                                    <td className="px-6 md:px-12 py-6 md:py-10">
                                         <div className="flex flex-col">
                                             <div className="flex items-center gap-2">
                                                 <TrendingUp size={16} className="text-emerald-500" />
@@ -417,7 +417,7 @@ export const MasterDashboard: React.FC = () => {
                                             <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest ml-6 mt-1 italic">{t("master.dashboard.unique_citizens", "Cidadãos Únicos")}</span>
                                         </div>
                                     </td>
-                                    <td className="px-12 py-10 text-right">
+                                    <td className="px-6 md:px-12 py-6 md:py-10 text-right">
                                         <button 
                                             onClick={() => navigate(`/master/tenants?search=${s.slug}`)}
                                             className="w-12 h-12 rounded-2xl bg-white/5 text-slate-500 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center border border-white/5 group-hover:border-amber-500/30 shadow-xl"
@@ -433,14 +433,14 @@ export const MasterDashboard: React.FC = () => {
             </Card>
 
             {/* 🖥️ CUSTOMIZADOR DO BANNER DO PULSE HUB (EXCLUSIVO MASTER) */}
-            <Card className="p-12 bg-black/40 border-white/5 rounded-[56px] space-y-8 shadow-2xl relative overflow-hidden border-t border-t-amber-500/20">
-                <div className="flex justify-between items-center relative z-10">
+            <Card className="p-6 md:p-12 bg-black/40 border-white/5 rounded-[32px] md:rounded-[56px] space-y-8 shadow-2xl relative overflow-hidden border-t border-t-amber-500/20">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-4">
                     <div className="space-y-2">
-                        <h3 className="text-3xl font-black text-white tracking-tighter italic uppercase">Customizador do Pulse Hub</h3>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Edite o Banner de Boas-vindas da plataforma do visitante</p>
+                        <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter italic uppercase">Customizador do Pulse Hub</h3>
+                        <p className="text-xs md:text-[10px] font-black text-slate-600 uppercase tracking-widest italic">Edite o Banner de Boas-vindas da plataforma do visitante</p>
                     </div>
-                    <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
-                        <Sparkles size={32} />
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                        <Sparkles size={24} className="md:w-8 md:h-8" />
                     </div>
                 </div>
 

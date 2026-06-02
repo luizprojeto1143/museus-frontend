@@ -490,17 +490,17 @@ export const CityHub: React.FC = () => {
           <div className="mobile-brand-logo flex items-center gap-2">
             <img src="/logo-culturaviva.jpg" alt="Logo" className="mobile-logo-circle" onError={(e) => {(e.target as HTMLImageElement).style.display = 'none'}} />
             <div className="flex flex-col text-left">
-              <h2 className="mobile-brand-title font-black text-gold-400 leading-none">CULTURA VIVA</h2>
-              <span className="mobile-brand-subtitle text-[8px] text-gray-400 tracking-widest leading-none mt-1">PATRIMÔNIO • TECNOLOGIA</span>
+              <h2 className="mobile-brand-title font-black text-gold-400 leading-none text-base">CULTURA VIVA</h2>
+              <span className="mobile-brand-subtitle text-[10px] text-gray-400 tracking-widest leading-none mt-1 uppercase font-bold">PATRIMÔNIO • TECNOLOGIA</span>
             </div>
           </div>
 
           <div className="mobile-top-actions flex items-center gap-3">
-            <button className="mobile-bell-btn relative">
+            <button className="mobile-bell-btn relative min-w-[44px] min-h-[44px] flex items-center justify-center">
               <Bell size={18} className="text-gray-400" />
-              <span className="bell-badge-pulse-small"></span>
+              <span className="bell-badge-pulse-small absolute top-2 right-2"></span>
             </button>
-            <div className="mobile-avatar-circle" onClick={() => navigate("/perfil")}>
+            <div className="mobile-avatar-circle min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer" onClick={() => navigate("/perfil")}>
               {authName ? authName.charAt(0).toUpperCase() : "V"}
             </div>
           </div>
@@ -553,7 +553,9 @@ export const CityHub: React.FC = () => {
                       className="mobile-search-input-field"
                     />
                   </div>
-                  <Scan size={18} className="text-gold-400 flex-shrink-0 cursor-pointer" onClick={() => navigate("/scanner")} />
+                  <div className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer" onClick={() => navigate("/scanner")}>
+                    <Scan size={18} className="text-gold-400 flex-shrink-0" />
+                  </div>
                 </div>
               </div>
 
@@ -562,28 +564,28 @@ export const CityHub: React.FC = () => {
                 <div className="mobile-stat-box flex flex-col items-center text-center">
                   <span className="mobile-stat-icon">🏛️</span>
                   <span className="mobile-stat-num font-black text-white text-base">{museumsExplored}</span>
-                  <span className="mobile-stat-lbl text-[9px] text-gray-500 font-bold uppercase mt-1">Museus visitados</span>
+                  <span className="mobile-stat-lbl text-[10px] text-gray-500 font-bold uppercase mt-1">Museus visitados</span>
                 </div>
                 <div className="mobile-stat-box flex flex-col items-center text-center">
                   <span className="mobile-stat-icon">📅</span>
                   <span className="mobile-stat-num font-black text-white text-base">{events.length}</span>
-                  <span className="mobile-stat-lbl text-[9px] text-gray-500 font-bold uppercase mt-1">Eventos ativos</span>
+                  <span className="mobile-stat-lbl text-[10px] text-gray-500 font-bold uppercase mt-1">Eventos ativos</span>
                 </div>
                 <div className="mobile-stat-box flex flex-col items-center text-center">
                   <span className="mobile-stat-icon">🖼️</span>
                   <span className="mobile-stat-num font-black text-white text-base">{visitor?.stamps || 0}</span>
-                  <span className="mobile-stat-lbl text-[9px] text-gray-500 font-bold uppercase mt-1">Obras descobertas</span>
+                  <span className="mobile-stat-lbl text-[10px] text-gray-500 font-bold uppercase mt-1">Obras descobertas</span>
                 </div>
                 <div className="mobile-stat-box flex flex-col items-center text-center">
                   <span className="mobile-stat-icon">🏆</span>
                   <span className="mobile-stat-num font-black text-white text-base">{visitor?.achievements || 0}</span>
-                  <span className="mobile-stat-lbl text-[9px] text-gray-500 font-bold uppercase mt-1">Conquistas</span>
+                  <span className="mobile-stat-lbl text-[10px] text-gray-500 font-bold uppercase mt-1">Conquistas</span>
                 </div>
                 <div className="mobile-stat-box flex flex-col items-center text-center">
                   <div className="mobile-progress-circle-donut">
                     <span className="donut-text font-black text-xs">{totalExploration}%</span>
                   </div>
-                  <span className="mobile-stat-lbl text-[9px] text-gray-500 font-bold uppercase mt-1">Exploração geral</span>
+                  <span className="mobile-stat-lbl text-[10px] text-gray-500 font-bold uppercase mt-1">Exploração geral</span>
                 </div>
               </div>
 
@@ -597,7 +599,7 @@ export const CityHub: React.FC = () => {
                   {categories.map(cat => (
                     <Card key={cat.id} className="mobile-category-grid-item" onClick={() => navigate("/select-museum")}>
                       <span className="mob-cat-emoji">{cat.icon}</span>
-                      <span className="mob-cat-name font-bold text-[10px] text-gray-300 mt-1">{cat.label}</span>
+                      <span className="mob-cat-name font-bold text-xs text-gray-300 mt-1">{cat.label}</span>
                     </Card>
                   ))}
                 </div>
@@ -626,7 +628,7 @@ export const CityHub: React.FC = () => {
                             }}
                           />
                           <div className="mobile-featured-img-overlay"></div>
-                          <Badge variant="glass" className="absolute top-4 left-4 bg-gold-400/20 text-gold-400 border-gold-400/30 text-[9px] font-black uppercase tracking-wider">
+                          <Badge variant="glass" className="absolute top-4 left-4 bg-gold-400/20 text-gold-400 border-gold-400/30 text-[10px] font-black uppercase tracking-wider py-1 px-3">
                             Em Destaque
                           </Badge>
                         </div>
@@ -641,7 +643,7 @@ export const CityHub: React.FC = () => {
                           <Button 
                             variant="outline" 
                             size="sm" 
-                            className="mobile-explore-btn-accent border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black mt-4 h-9 font-bold text-xs uppercase tracking-wider"
+                            className="mobile-explore-btn-accent border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black mt-4 min-h-[44px] font-bold text-xs uppercase tracking-wider w-full"
                             rightIcon={<ChevronRight size={14} />}
                           >
                             Explorar agora
@@ -679,7 +681,7 @@ export const CityHub: React.FC = () => {
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="mobile-explore-btn-accent border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black mt-4 h-9 font-bold text-xs uppercase tracking-wider"
+                        className="mobile-explore-btn-accent border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black mt-4 min-h-[44px] font-bold text-xs uppercase tracking-wider w-full"
                         rightIcon={<ChevronRight size={14} />}
                       >
                         Explorar agora
@@ -788,14 +790,14 @@ export const CityHub: React.FC = () => {
             onClick={() => setMobileTab("inicio")}
           >
             <span className="mob-nav-icon text-lg">🏠</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Início</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Início</span>
           </button>
           <button 
             className={`mob-nav-item flex flex-col items-center ${mobileTab === "explorar" ? "active-gold" : ""}`}
             onClick={() => setMobileTab("explorar")}
           >
             <span className="mob-nav-icon text-lg">🧭</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Explorar</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Explorar</span>
           </button>
           
           {/* Glowing central Scanner Button */}
@@ -810,14 +812,14 @@ export const CityHub: React.FC = () => {
             onClick={() => setMobileTab("missoes")}
           >
             <span className="mob-nav-icon text-lg">🏳️</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Missões</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Missões</span>
           </button>
           <button 
             className={`mob-nav-item flex flex-col items-center ${mobileTab === "perfil" ? "active-gold" : ""}`}
             onClick={() => setMobileTab("perfil")}
           >
             <span className="mob-nav-icon text-lg">👤</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Perfil</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Perfil</span>
           </button>
         </nav>
       </div>

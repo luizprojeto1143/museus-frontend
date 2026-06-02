@@ -775,16 +775,16 @@ export const CityDashboard: React.FC = () => {
                 </div>
                 <div className="flex flex-col text-left">
                   <h2 className="mobile-brand-title font-black text-gold-400 leading-none text-base">PULSE HUB</h2>
-                  <span className="mobile-brand-subtitle text-[7px] text-gray-500 tracking-widest leading-none mt-1 uppercase font-bold">Portal Municipal</span>
+                  <span className="mobile-brand-subtitle text-[10px] text-gray-500 tracking-widest leading-none mt-1 uppercase font-bold">Portal Municipal</span>
                 </div>
               </div>
 
               <div className="mobile-top-actions flex items-center gap-3">
-                <button className="mobile-bell-btn relative">
+                <button className="mobile-bell-btn relative min-w-[44px] min-h-[44px] flex items-center justify-center">
                   <Bell size={18} className="text-gray-400" />
-                  <span className="bell-badge-pulse-small"></span>
+                  <span className="bell-badge-pulse-small absolute top-2 right-2"></span>
                 </button>
-                <div className="mobile-avatar-circle" onClick={() => navigate("/perfil")}>
+                <div className="mobile-avatar-circle min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer" onClick={() => navigate("/perfil")}>
                   {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
               </div>
@@ -798,8 +798,8 @@ export const CityDashboard: React.FC = () => {
               >
                 <div className="mobile-hero-overlay"></div>
                 <div className="relative z-10">
-                  <span className="mobile-breadcrumb text-[10px] text-gray-500 font-bold uppercase">Pulse Hub &gt; Cidades</span>
-                  <h1 className="mobile-city-title font-black text-white text-4xl uppercase tracking-tighter my-1">
+                  <span className="mobile-breadcrumb text-xs text-gray-500 font-bold uppercase">Pulse Hub &gt; Cidades</span>
+                  <h1 className="mobile-city-title font-black text-white text-3xl md:text-4xl uppercase tracking-tighter my-1">
                     {cityName}
                   </h1>
                   <span className="mobile-city-slogan font-extrabold text-gold-400 text-xs uppercase block mb-3">Cultura que transforma, história que conecta.</span>
@@ -810,25 +810,25 @@ export const CityDashboard: React.FC = () => {
                   <div className="mobile-stats-row flex gap-4 mt-5 border-t border-white/5 pt-4">
                     <div className="mobile-stat-box">
                       <span className="stat-num font-black text-white text-sm">🏛️ {equipmentsCount}</span>
-                      <span className="stat-lbl text-[8px] text-gray-500 font-bold uppercase block">Museus</span>
+                      <span className="stat-lbl text-[10px] text-gray-500 font-bold uppercase block">Museus</span>
                     </div>
                     <div className="mobile-stat-box">
                       <span className="stat-num font-black text-white text-sm">📅 {activeEventsCount}</span>
-                      <span className="stat-lbl text-[8px] text-gray-500 font-bold uppercase block">Eventos</span>
+                      <span className="stat-lbl text-[10px] text-gray-500 font-bold uppercase block">Eventos</span>
                     </div>
                     <div className="mobile-stat-box">
                       <span className="stat-num font-black text-white text-sm">🧭 {dbTrails.length}</span>
-                      <span className="stat-lbl text-[8px] text-gray-500 font-bold uppercase block">Roteiros</span>
+                      <span className="stat-lbl text-[10px] text-gray-500 font-bold uppercase block">Roteiros</span>
                     </div>
                     <div className="mobile-stat-box">
                       <span className="stat-num font-black text-white text-sm">➕ {totalExperiences}+</span>
-                      <span className="stat-lbl text-[8px] text-gray-500 font-bold uppercase block">Exp.</span>
+                      <span className="stat-lbl text-[10px] text-gray-500 font-bold uppercase block">Exp.</span>
                     </div>
                   </div>
 
                   <div className="mobile-actions-flex flex flex-col gap-3 mt-5">
                     <Button 
-                      className="explore-now-btn-mob w-full bg-gold-400 hover:bg-gold-500 text-black font-black uppercase text-xs h-10 rounded-lg flex items-center justify-center gap-2"
+                      className="explore-now-btn-mob w-full bg-gold-400 hover:bg-gold-500 text-black font-black uppercase text-xs min-h-[44px] rounded-lg flex items-center justify-center gap-2"
                       onClick={() => {
                         if (firstMuseum) {
                           handleSelectMuseum(firstMuseum);
@@ -841,7 +841,7 @@ export const CityDashboard: React.FC = () => {
                     </Button>
                     <Button 
                       variant="outline"
-                      className="view-map-btn-mob w-full border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black font-black uppercase text-xs h-10 rounded-lg flex items-center justify-center gap-2"
+                      className="view-map-btn-mob w-full border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black font-black uppercase text-xs min-h-[44px] rounded-lg flex items-center justify-center gap-2"
                       onClick={() => setMobileTab("mapa")}
                     >
                       <Map size={14} /> Ver mapa da cidade
@@ -857,12 +857,12 @@ export const CityDashboard: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <Moon className="text-gold-400" size={24} />
                   <div>
-                    <span className="mobile-weather-title text-[9px] text-gray-500 font-bold uppercase block">Clima agora</span>
+                    <span className="mobile-weather-title text-xs text-gray-500 font-bold uppercase block">Clima agora</span>
                     <span className="temp-value font-black text-white text-lg">23°C • Céu limpo</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="mobile-weather-title text-[8px] text-gray-500 font-bold uppercase block">Melhor horário</span>
+                  <span className="mobile-weather-title text-xs text-gray-500 font-bold uppercase block">Melhor horário</span>
                   <span className="text-xs text-gray-300 font-bold">Pôr do sol 17:42</span>
                 </div>
               </Card>
@@ -1007,7 +1007,7 @@ export const CityDashboard: React.FC = () => {
           >
             {/* Header com botão de voltar */}
             <header className="mobile-sub-screen-header flex items-center gap-4 mb-6">
-              <button className="back-btn p-1.5" onClick={() => setMobileTab("dashboard")}>
+              <button className="back-btn p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setMobileTab("dashboard")}>
                 <ArrowLeft size={20} className="text-gold-400" />
               </button>
               <h2 className="sub-screen-title font-black text-white text-lg uppercase tracking-wider">Progresso na cidade</h2>
@@ -1022,7 +1022,7 @@ export const CityDashboard: React.FC = () => {
                 </svg>
                 <div className="radial-inner-value flex flex-col items-center justify-center">
                   <span className="percent font-black text-white text-2xl">{explorationPercent}%</span>
-                  <span className="lbl text-[9px] text-gold-400 uppercase font-black">Explorado</span>
+                  <span className="lbl text-xs text-gold-400 uppercase font-black">Explorado</span>
                 </div>
               </div>
               <p className="text-gray-400 text-xs leading-relaxed max-w-xs mt-4">
@@ -1061,7 +1061,7 @@ export const CityDashboard: React.FC = () => {
 
               <Button 
                 variant="outline"
-                className="w-full border-gold-400 text-gold-400 font-extrabold uppercase text-xs h-10 mt-5 rounded-lg flex items-center justify-center gap-2 hover:bg-gold-400 hover:text-black"
+                className="w-full border-gold-400 text-gold-400 font-extrabold uppercase text-xs min-h-[44px] mt-5 rounded-lg flex items-center justify-center gap-2 hover:bg-gold-400 hover:text-black"
                 onClick={() => navigate("/perfil")}
               >
                 Ver meu progresso <ChevronRight size={14} />
@@ -1146,12 +1146,12 @@ export const CityDashboard: React.FC = () => {
             {/* Header com botão de voltar */}
             <header className="mobile-sub-screen-header flex items-center justify-between px-6 py-4 border-b border-white/5 flex-shrink-0">
               <div className="flex items-center gap-4">
-                <button className="back-btn p-1.5" onClick={() => setMobileTab("dashboard")}>
+                <button className="back-btn p-2 min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => setMobileTab("dashboard")}>
                   <ArrowLeft size={20} className="text-gold-400" />
                 </button>
                 <h2 className="sub-screen-title font-black text-white text-lg uppercase tracking-wider">Mapa Cultural</h2>
               </div>
-              <div className="filter-icon-mob cursor-pointer p-1">
+              <div className="filter-icon-mob cursor-pointer p-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
                 <Navigation size={18} className="text-gold-400" />
               </div>
             </header>
@@ -1161,7 +1161,7 @@ export const CityDashboard: React.FC = () => {
               {["Todos", "Museus", "Eventos", "Roteiros", "Arte Pública"].map(pill => (
                 <button 
                   key={pill} 
-                  className={`pill-btn text-[10px] font-black uppercase px-4 py-1.5 rounded-full border transition-all ${mapFilter === pill ? "bg-gold-400 text-black border-gold-400" : "bg-transparent text-gray-400 border-white/10"}`}
+                  className={`pill-btn text-xs font-black uppercase px-4 py-2 min-h-[44px] rounded-full border transition-all ${mapFilter === pill ? "bg-gold-400 text-black border-gold-400" : "bg-transparent text-gray-400 border-white/10"}`}
                   onClick={() => setMapFilter(pill)}
                 >
                   {pill}
@@ -1261,7 +1261,7 @@ export const CityDashboard: React.FC = () => {
             onClick={() => setMobileTab("dashboard")}
           >
             <span className="mob-nav-icon text-lg">🏠</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Início</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Início</span>
           </button>
           
           <button 
@@ -1269,7 +1269,7 @@ export const CityDashboard: React.FC = () => {
             onClick={() => setMobileTab("mapa")}
           >
             <span className="mob-nav-icon text-lg">🧭</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Explorar</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Explorar</span>
           </button>
           
           {/* Glowing central Pulse Hub Logo button */}
@@ -1284,7 +1284,7 @@ export const CityDashboard: React.FC = () => {
             onClick={() => setMobileTab("progresso")}
           >
             <span className="mob-nav-icon text-lg">🚀</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Missões</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Missões</span>
           </button>
 
           <button 
@@ -1292,7 +1292,7 @@ export const CityDashboard: React.FC = () => {
             onClick={() => navigate("/perfil")}
           >
             <span className="mob-nav-icon text-lg">👤</span>
-            <span className="mob-nav-lbl text-[9px] font-bold mt-0.5">Perfil</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Perfil</span>
           </button>
         </nav>
       </div>
