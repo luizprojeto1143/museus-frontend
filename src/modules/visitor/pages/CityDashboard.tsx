@@ -371,9 +371,9 @@ export const CityDashboard: React.FC = () => {
                 <div className="user-avatar-circular">
                   {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
-                <div className="flex flex-col text-left">
-                  <span className="user-profile-name font-bold">{authName || "Visitante"}</span>
-                  <span className="user-profile-title font-semibold text-xs text-gold-400">{activeTitle}</span>
+                <div className="flex flex-col text-left min-w-0">
+                  <span className="user-profile-name font-bold truncate block">{authName || "Visitante"}</span>
+                  <span className="user-profile-title font-semibold text-xs text-gold-400 truncate block">{activeTitle}</span>
                 </div>
               </div>
             </div>
@@ -614,13 +614,13 @@ export const CityDashboard: React.FC = () => {
         <aside className="city-right-sidebar">
           {/* User selector Profile panel */}
           <div className="right-panel-user-header flex items-center justify-between p-4 border-b border-white/5">
-            <div className="flex items-center gap-3">
-              <div className="avatar-w">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="avatar-w flex-shrink-0">
                 {authName ? authName.charAt(0).toUpperCase() : "V"}
               </div>
-              <div className="text-left">
-                <span className="name font-bold text-white block text-sm">{authName || "Visitante"}</span>
-                <span className="title text-gold-400 text-[10px] font-bold uppercase">{activeTitle}</span>
+              <div className="text-left min-w-0">
+                <span className="name font-bold text-white block text-sm truncate">{authName || "Visitante"}</span>
+                <span className="title text-gold-400 text-[10px] font-bold uppercase block truncate">{activeTitle}</span>
               </div>
             </div>
             <ChevronDown size={16} className="text-gray-400" />
@@ -694,8 +694,8 @@ export const CityDashboard: React.FC = () => {
                     <div key={r.rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
                       <span className={`rank-num font-black text-sm ${r.rank === 1 ? 'text-yellow-500' : r.rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{r.rank}</span>
                       <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{r.name ? r.name.charAt(0) : "V"}</div>
-                      <div className="flex-1">
-                        <span className="name font-bold text-xs text-white block">{r.name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="name font-bold text-xs text-white block truncate">{r.name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                       </div>
                       <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                     </div>

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -70,7 +70,7 @@ export const AdminVolunteers: React.FC = () => {
                 </div>
             )}
 
-            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
+            <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflowX: "auto", padding: 0 }}>
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                         <tr><th className="px-6 py-3">{t("admin.volunteers.voluntrio", `Voluntário`)}</th><th className="px-6 py-3">Disponibilidade</th><th className="px-6 py-3">Habilidades</th><th className="px-6 py-3 text-center">Horas</th><th className="px-6 py-3 text-center">Turnos</th></tr>

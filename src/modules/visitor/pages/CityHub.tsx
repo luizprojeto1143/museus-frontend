@@ -196,9 +196,9 @@ export const CityHub: React.FC = () => {
                 <div className="user-avatar-circular">
                   {authName ? authName.charAt(0).toUpperCase() : "V"}
                 </div>
-                <div className="flex flex-col text-left">
-                  <span className="user-profile-name font-bold">{authName || "Visitante"}</span>
-                  <span className="user-profile-title font-semibold text-xs text-gold-400">{levelTitle}</span>
+                <div className="flex flex-col text-left min-w-0">
+                  <span className="user-profile-name font-bold block truncate">{authName || "Visitante"}</span>
+                  <span className="user-profile-title font-semibold text-xs text-gold-400 block truncate">{levelTitle}</span>
                 </div>
               </div>
             </div>
@@ -432,9 +432,9 @@ export const CityHub: React.FC = () => {
                         <span className="event-date-num font-black text-white text-sm leading-none">{day}</span>
                         <span className="event-date-month font-bold text-gold-400 text-[9px] uppercase leading-none mt-1">{month}</span>
                       </div>
-                      <div className="event-item-info flex-1 text-left">
-                        <h5 className="event-item-title font-bold text-white text-xs leading-snug line-clamp-1">{evt.title}</h5>
-                        <span className="event-item-loc text-[10px] text-gray-400 block mt-0.5">{evt.location || evt.tenant?.name || ""}</span>
+                      <div className="event-item-info flex-1 text-left min-w-0">
+                        <h5 className="event-item-title font-bold text-white text-xs leading-snug truncate">{evt.title}</h5>
+                        <span className="event-item-loc text-[10px] text-gray-400 block mt-0.5 truncate">{evt.location || evt.tenant?.name || ""}</span>
                       </div>
                       <Badge variant="glass" className="event-item-tag-badge bg-gold-400/10 text-gold-400 text-[9px] font-bold px-2 py-0.5 border border-gold-400/20">
                         Evento
@@ -465,9 +465,9 @@ export const CityHub: React.FC = () => {
                     }}
                   />
                 </div>
-                <div className="continue-widget-info flex-1 text-left">
-                  <h5 className="continue-widget-title font-bold text-white text-xs line-clamp-1">{cities[0].equipments[0].name}</h5>
-                  <span className="continue-widget-loc text-[10px] text-gray-400 block mt-0.5">{cities[0].name} - MG</span>
+                <div className="continue-widget-info flex-1 text-left min-w-0">
+                  <h5 className="continue-widget-title font-bold text-white text-xs truncate">{cities[0].equipments[0].name}</h5>
+                  <span className="continue-widget-loc text-[10px] text-gray-400 block mt-0.5 truncate">{cities[0].name} - MG</span>
                   
                   <div className="continue-progress-bar-small mt-2">
                     <div className="continue-bar-track">

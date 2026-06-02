@@ -83,7 +83,7 @@ export const AdminDashboard: React.FC = () => {
       <AnimateIn className="space-y-12 pb-20">
         <div className="space-y-4">
            <div className="h-10 w-64 bg-white/5 rounded-2xl animate-pulse" />
-           <div className="h-6 w-96 bg-white/5 rounded-xl animate-pulse opacity-50" />
+           <div className="h-6 w-full max-w-sm bg-white/5 rounded-xl animate-pulse opacity-50" />
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

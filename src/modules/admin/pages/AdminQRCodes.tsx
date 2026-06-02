@@ -182,7 +182,7 @@ export const AdminQRCodes: React.FC = () => {
       )}
 
       {/* Lista de QR Codes existentes (apenas visualização por enquanto) */}
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors overflow-x-auto">
         <h3 className="card-title" style={{ marginBottom: "1rem" }}>{t("admin.qrCodes.listTitle")}</h3>
         <table className="table">
           <thead>

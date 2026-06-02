@@ -409,7 +409,8 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 1rem;
-  width: 220px;
+  width: 100%;
+  max-width: 220px;
   z-index: 5;
   box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
@@ -536,6 +537,7 @@
 /* Experiências em Alta compact items */
 .experience-compact-item {
   width: 160px;
+  min-width: 160px;
   height: 100px;
   border-radius: 0.75rem !important;
   border: 1px solid rgba(255, 255, 255, 0.04) !important;

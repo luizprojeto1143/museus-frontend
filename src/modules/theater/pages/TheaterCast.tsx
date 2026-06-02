@@ -64,11 +64,11 @@ export const TheaterCast: React.FC = () => {
             </div>
 
             {/* ═══ AI MATCHMAKING BANNER ═════════ */}
-            <div className="premium-glass p-8 rounded-[40px] border-red-500/30 bg-red-500/5 flex items-center gap-8 group">
+            <div className="premium-glass p-8 rounded-[40px] border-red-500/30 bg-red-500/5 flex flex-col sm:flex-row sm:items-center gap-8 group">
                 <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-black rounded-3xl flex items-center justify-center text-white shrink-0 shadow-2xl shadow-red-600/30 group-hover:scale-110 transition-transform">
                     <Sparkles size={32} />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                     <h3 className="text-lg font-black text-white italic">{t("theater.cast.ai_matchmaking", "IA Matchmaking: Sugestão de Casting")}</h3>
                     <p className="text-sm text-slate-400 leading-relaxed mt-1">
                         {t("theater.cast.ai_suggestion", "\"Para o papel de Carlotta Giudicelli, identifiquei que Christine Daaé possui a tessitura vocal ideal e 98% de compatibilidade com o cronograma de ensaios.\"")}
@@ -162,7 +162,7 @@ export const TheaterCast: React.FC = () => {
                     ].map((tech, i) => (
                         <div key={tech.name} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
                             <div className={`w-3 h-3 rounded-full ${tech.active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`} />
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                                 <p className="text-sm font-black text-white">{tech.name}</p>
                                 <p className="text-[10px] text-slate-500 font-bold uppercase">{tech.skill}</p>
                             </div>

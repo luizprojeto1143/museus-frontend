@@ -171,7 +171,7 @@ const SecretaryDashboard: React.FC = () => {
                 </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: '2rem' }}>
                 {/* Equipment Accessibility Status */}
                 <div>
                     <h2 className="sec-section-title">Status de Equipamentos</h2>

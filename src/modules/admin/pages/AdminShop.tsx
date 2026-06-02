@@ -343,7 +343,7 @@ export const AdminShop: React.FC = () => {
                             <p style={{ color: "#64748b" }}>{t("admin.shop.osPedidosDosClientesApareceroAqui", `Os pedidos dos clientes aparecerão aqui.`)}</p>
                         </div>
                     ) : (
-                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
+                        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflowX: "auto", padding: 0 }}>
                             <table className="w-full text-left">
                                 <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
                                     <tr>

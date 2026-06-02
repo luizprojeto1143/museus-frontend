@@ -60,13 +60,13 @@ export const TheaterSubscriptions: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* ═══ MEMBERS LIST ═════════ */}
                 <div className="lg:col-span-2 premium-glass p-10 rounded-[48px] border-white/5">
-                    <div className="flex items-center justify-between mb-10">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
                         <h3 className="text-2xl font-black text-white italic flex items-center gap-3">
                             <Users className="text-red-500" /> Gestão de Membros
                         </h3>
                         <div className="relative group">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-red-500 transition-colors" size={16} />
-                            <Input className="bg-white/5 border-white/5 pl-12 py-5 rounded-2xl text-xs w-64" placeholder="Buscar assinante..." />
+                            <Input className="bg-white/5 border-white/5 pl-12 py-5 rounded-2xl text-xs w-full sm:w-64" placeholder="Buscar assinante..." />
                         </div>
                     </div>
 

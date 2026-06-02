@@ -292,7 +292,7 @@ export const ProducerProjectForm: React.FC = () => {
     };
 
     if (loading) return (
-        <div className="flex justify-center items-center h-screen bg-[#1a1108]">
+        <div className="flex justify-center items-center min-h-screen bg-[#1a1108]">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--accent-primary)]"></div>
         </div>
     );
