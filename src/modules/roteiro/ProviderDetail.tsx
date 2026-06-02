@@ -22,10 +22,21 @@ export const ProviderDetail: React.FC = () => {
     coverUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop"
   };
 
-  const products = [
-    { id: 1, name: "Tour Histórico - 2 Horas", price: 80.00, desc: "Passeio a pé pelo centro." },
-    { id: 2, name: "Pacote B2B: Tour + Almoço Mineiro", price: 150.00, desc: "Inclui almoço no parceiro Sabor Mineiro." }
-  ];
+  const [products, setProducts] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Exemplo de como a integração real funcionará usando o useEffect e a api
+  React.useEffect(() => {
+    // Simulando a chamada de API (já que o endpoint exato pode variar na arquitetura de Roteiros)
+    // api.get(`/providers/${providerId}/products`).then(res => setProducts(res.data));
+    // api.get(`/providers/${providerId}/reviews`).then(res => setReviews(res.data));
+    
+    // Fallback vazio até a API ser alimentada
+    setProducts([]);
+    setReviews([]);
+    setIsLoading(false);
+  }, [providerId]);
 
   const handleBuy = (product: any) => {
     setSelectedProduct(product);
@@ -76,23 +87,29 @@ export const ProviderDetail: React.FC = () => {
           {activeTab === 'PRODUCTS' && (
             <motion.div key="products" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               <div className="space-y-4">
-                {products.map(prod => (
-                  <div key={prod.id} className="bg-gray-800/50 p-4 rounded-2xl border border-gray-700 flex flex-col gap-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-lg text-white">{prod.name}</h3>
-                        <p className="text-sm text-gray-400">{prod.desc}</p>
+                {isLoading ? (
+                   <p className="text-gray-500 text-center py-8">Carregando serviços...</p>
+                ) : products.length === 0 ? (
+                   <p className="text-gray-500 text-center py-8">Nenhum serviço cadastrado no momento.</p>
+                ) : (
+                  products.map(prod => (
+                    <div key={prod.id} className="bg-gray-800/50 p-4 rounded-2xl border border-gray-700 flex flex-col gap-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-bold text-lg text-white">{prod.name}</h3>
+                          <p className="text-sm text-gray-400">{prod.desc}</p>
+                        </div>
+                        <span className="font-bold text-amber-500">R$ {prod.price.toFixed(2)}</span>
                       </div>
-                      <span className="font-bold text-amber-500">R$ {prod.price.toFixed(2)}</span>
+                      <button 
+                        onClick={() => handleBuy(prod)}
+                        className="w-full bg-white text-black font-bold py-2.5 rounded-xl hover:bg-gray-200 transition"
+                      >
+                        Comprar
+                      </button>
                     </div>
-                    <button 
-                      onClick={() => handleBuy(prod)}
-                      className="w-full bg-white text-black font-bold py-2.5 rounded-xl hover:bg-gray-200 transition"
-                    >
-                      Comprar
-                    </button>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </motion.div>
           )}
@@ -100,18 +117,23 @@ export const ProviderDetail: React.FC = () => {
           {activeTab === 'REVIEWS' && (
             <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               <div className="grid grid-cols-2 gap-4">
-                {/* Mock Video Review Thumbnails */}
-                {[1, 2, 3, 4].map(v => (
-                  <div key={v} className="relative aspect-[9/16] bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
-                    <img src={`https://source.unsplash.com/random/400x700?portrait&sig=${v}`} alt="Video Thumbnail" className="w-full h-full object-cover opacity-60" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Play size={40} className="text-white/80" fill="currentColor" />
+                {isLoading ? (
+                   <p className="text-gray-500 col-span-2 text-center py-8">Carregando avaliações...</p>
+                ) : reviews.length === 0 ? (
+                   <p className="text-gray-500 col-span-2 text-center py-8">Ainda não há avaliações em vídeo para este parceiro.</p>
+                ) : (
+                  reviews.map((rev, index) => (
+                    <div key={rev.id || index} className="relative aspect-[9/16] bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
+                      <img src={rev.thumbnailUrl || `https://source.unsplash.com/random/400x700?portrait&sig=${index}`} alt="Video Thumbnail" className="w-full h-full object-cover opacity-60" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Play size={40} className="text-white/80" fill="currentColor" />
+                      </div>
+                      <div className="absolute bottom-2 left-2 flex items-center gap-1 text-sm font-bold text-white shadow-black drop-shadow-md">
+                        <Star size={14} className="text-amber-400" fill="currentColor" /> {rev.rating}
+                      </div>
                     </div>
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 text-sm font-bold text-white shadow-black drop-shadow-md">
-                      <Star size={14} className="text-amber-400" fill="currentColor" /> 5.0
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </motion.div>
           )}

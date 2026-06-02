@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { useToast } from "../../contexts/ToastContext";
 import { Button, Input, Textarea } from "../../components/ui";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 type AccountabilityDoc = {
     name: string;
@@ -29,6 +32,21 @@ const STATUS_STYLES = {
     COMPLETED: { label: "Finalizado", bg: "bg-cyan-500/10", text: "text-cyan-400", border: "border-cyan-500/20", icon: <CheckCircle2 size={16} /> },
 };
 
+
+const projectSchema = z.object({
+    title: z.string().min(1, "O título é obrigatório"),
+    summary: z.string().max(200, "Máximo 200 caracteres").optional(),
+    description: z.string().optional(),
+    justification: z.string().optional(),
+    culturalCategory: z.string().optional(),
+    targetRegion: z.string().optional(),
+    requestedBudget: z.union([z.string(), z.number()]).optional(),
+    expectedAudience: z.union([z.string(), z.number()]).optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+});
+type ProjectFormData = z.infer<typeof projectSchema>;
+
 export const ProducerProjectForm: React.FC = () => {
     const { t } = useTranslation();
     const { addToast } = useToast();
@@ -45,17 +63,7 @@ export const ProducerProjectForm: React.FC = () => {
     const [uploading, setUploading] = useState(false);
     const [dragActive, setDragActive] = useState(false);
 
-    const [formData, setFormData] = useState({
-        title: "",
-        summary: "",
-        description: "",
-        justification: "",
-        culturalCategory: "",
-        targetRegion: "",
-        requestedBudget: "",
-        expectedAudience: "",
-        startDate: "",
-        endDate: "",
+    const [extraData, setExtraData] = useState({
         noticeId: searchParams.get("noticeId") || "",
         status: "DRAFT" as keyof typeof STATUS_STYLES,
         attachments: [] as AccountabilityDoc[],
@@ -68,6 +76,17 @@ export const ProducerProjectForm: React.FC = () => {
         reviewedAt: null as string | null,
         eventId: null as string | null
     });
+    const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<ProjectFormData>({
+        resolver: zodResolver(projectSchema),
+        defaultValues: {
+            title: "", summary: "", description: "", justification: "", culturalCategory: "",
+            targetRegion: "", requestedBudget: "", expectedAudience: "", startDate: "", endDate: ""
+        }
+    });
+
+    const formValues = watch();
+    const title = watch("title");
+
 
     const [showShareModal, setShowShareModal] = useState(false);
     const [publishedEventData, setPublishedEventData] = useState<any>(null);
@@ -77,18 +96,19 @@ export const ProducerProjectForm: React.FC = () => {
         if (id) {
             setLoading(true);
             api.get(`/projects/${id}`).then(res => {
-                const data = res.data;
-                setFormData({
-                    title: data.title || "",
-                    summary: data.summary || "",
-                    description: data.description || "",
-                    justification: data.justification || "",
-                    culturalCategory: data.culturalCategory || "",
-                    targetRegion: data.targetRegion || "",
-                    requestedBudget: data.requestedBudget || "",
-                    expectedAudience: data.expectedAudience || "",
-                    startDate: data.startDate ? new Date(data.startDate).toISOString().split('T')[0] : "",
-                    endDate: data.endDate ? new Date(data.endDate).toISOString().split('T')[0] : "",
+                                const data = res.data;
+                setValue("title", data.title || "");
+                setValue("summary", data.summary || "");
+                setValue("description", data.description || "");
+                setValue("justification", data.justification || "");
+                setValue("culturalCategory", data.culturalCategory || "");
+                setValue("targetRegion", data.targetRegion || "");
+                setValue("requestedBudget", data.requestedBudget || "");
+                setValue("expectedAudience", data.expectedAudience || "");
+                setValue("startDate", data.startDate ? new Date(data.startDate).toISOString().split('T')[0] : "");
+                setValue("endDate", data.endDate ? new Date(data.endDate).toISOString().split('T')[0] : "");
+                
+                setExtraData({
                     noticeId: data.noticeId || "",
                     status: data.status,
                     attachments: data.attachments || [],
@@ -111,19 +131,18 @@ export const ProducerProjectForm: React.FC = () => {
         }
     }, [id, searchParams]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    
 
-    const handleSave = async () => {
+    const handleSave = async (data: ProjectFormData) => {
         if (!tenantId) return;
         setSaving(true);
         try {
             const payload = {
-                ...formData,
+                ...data,
+                ...extraData,
                 tenantId,
-                requestedBudget: formData.requestedBudget ? parseFloat(String(formData.requestedBudget)) : null,
-                expectedAudience: formData.expectedAudience ? parseInt(String(formData.expectedAudience)) : null,
+                requestedBudget: formValues.requestedBudget ? parseFloat(String(formValues.requestedBudget)) : null,
+                expectedAudience: formValues.expectedAudience ? parseInt(String(formValues.expectedAudience)) : null,
             };
 
             if (isEdit) {
@@ -143,7 +162,7 @@ export const ProducerProjectForm: React.FC = () => {
     };
 
     const handleAiAssist = async (field: "summary" | "description" | "justification") => {
-        if (!formData.title) {
+        if (!title) {
             addToast("Dê um título ao projeto para que a IA possa entender o contexto.", "info");
             return;
         }
@@ -152,14 +171,14 @@ export const ProducerProjectForm: React.FC = () => {
         try {
             const res = await api.post("/ai/refine-proposal", {
                 field,
-                projectTitle: formData.title,
-                projectCurrentText: formData[field],
+                projectTitle: title,
+                projectCurrentText: formValues[field as keyof ProjectFormData],
                 noticeObjectives: notice?.objectives,
                 noticeRequirements: notice?.requirements
             });
 
-            if (res.data.response) {
-                setFormData(prev => ({ ...prev, [field]: res.data.response }));
+                        if (res.data.response) {
+                setValue(field, res.data.response);
                 addToast("Texto refinado pela IA!", "success");
             }
         } catch (err) {
@@ -173,9 +192,9 @@ export const ProducerProjectForm: React.FC = () => {
         if (!id) return;
 
         // Budget Validation
-        if (notice && notice.maxPerProject && formData.requestedBudget) {
-            if (parseFloat(String(formData.requestedBudget)) > parseFloat(String(notice.maxPerProject))) {
-                addToast(`O valor solicitado (R$ ${formData.requestedBudget}) excede o teto permitido pelo edital (R$ ${notice.maxPerProject}).`, "error");
+        if (notice && notice.maxPerProject && formValues.requestedBudget) {
+            if (parseFloat(String(formValues.requestedBudget)) > parseFloat(String(notice.maxPerProject))) {
+                addToast(`O valor solicitado (R$ ${formValues.requestedBudget}) excede o teto permitido pelo edital (R$ ${notice.maxPerProject}).`, "error");
                 return;
             }
         }
@@ -184,7 +203,7 @@ export const ProducerProjectForm: React.FC = () => {
         try {
             await api.post(`/projects/${id}/submit`);
             addToast("Projeto submetido com sucesso!", "success");
-            setFormData(prev => ({ ...prev, status: "SUBMITTED" }));
+            setExtraData(prev => ({ ...prev, status: "SUBMITTED" }));
         } catch (err: any) {
             console.error(err);
             addToast(err.response?.data?.message || "Erro ao submeter projeto.", "error");
@@ -203,7 +222,7 @@ export const ProducerProjectForm: React.FC = () => {
             addToast("Publicado na agenda com sucesso!", "success");
             setPublishedEventData(res.data);
             setShowShareModal(true);
-            setFormData(prev => ({ ...prev, status: "IN_EXECUTION", eventId: res.data.eventId }));
+            setExtraData(prev => ({ ...prev, status: "IN_EXECUTION", eventId: res.data.eventId }));
         } catch (err: any) {
             addToast("Erro ao publicar.", "error");
         } finally {
@@ -232,7 +251,7 @@ export const ProducerProjectForm: React.FC = () => {
                     date: new Date().toISOString()
                 };
 
-                setFormData(prev => ({
+                setExtraData(prev => ({
                     ...prev,
                     attachments: [...prev.attachments, newDoc]
                 }));
@@ -267,9 +286,9 @@ export const ProducerProjectForm: React.FC = () => {
     };
 
     const removeAttachment = (index: number) => {
-        const newAttachments = [...formData.attachments];
+        const newAttachments = [...extraData.attachments];
         newAttachments.splice(index, 1);
-        setFormData({ ...formData, attachments: newAttachments });
+        setExtraData({ ...extraData, attachments: newAttachments });
     };
 
     if (loading) return (
@@ -278,9 +297,9 @@ export const ProducerProjectForm: React.FC = () => {
         </div>
     );
 
-    const readOnly = formData.status !== 'DRAFT' && isEdit && activeTab === "DETAILS";
-    const accountabilityEditable = ["APPROVED", "IN_EXECUTION", "COMPLETED"].includes(formData.status);
-    const statusInfo = STATUS_STYLES[formData.status] || STATUS_STYLES.DRAFT;
+    const readOnly = extraData.status !== 'DRAFT' && isEdit && activeTab === "DETAILS";
+    const accountabilityEditable = ["APPROVED", "IN_EXECUTION", "COMPLETED"].includes(extraData.status);
+    const statusInfo = STATUS_STYLES[extraData.status] || STATUS_STYLES.DRAFT;
 
     return (
         <div className="min-h-screen bg-[#1a1108] text-[#EAE0D5] p-6 md:p-12 animate-in fade-in duration-500">
@@ -300,7 +319,7 @@ export const ProducerProjectForm: React.FC = () => {
                             {isEdit ? "Gestão do Projeto" : "Nova Proposta"}
                         </h1>
                         <p className="text-[#B0A090]">
-                            {formData.title || "Rascunho sem título"}
+                            {title || "Rascunho sem título"}
                         </p>
                     </div>
                 </div>
@@ -351,17 +370,17 @@ export const ProducerProjectForm: React.FC = () => {
             )}
 
             {/* REVIEW NOTES FROM ADMIN */}
-            {isEdit && formData.reviewNotes && formData.status !== 'DRAFT' && (
+            {isEdit && extraData.reviewNotes && extraData.status !== 'DRAFT' && (
                 <div className="max-w-5xl mx-auto mb-8 bg-[var(--accent-primary)]/10 border border-blue-500/20 rounded-3xl p-6 flex flex-col gap-3">
                     <div className="flex items-center gap-2 text-blue-400 font-bold">
                         <Info size={18} /> Parecer da Avaliação
                     </div>
                     <p className="text-blue-200 text-sm italic leading-relaxed">
-                        "{formData.reviewNotes}"
+                        "{extraData.reviewNotes}"
                     </p>
-                    {formData.reviewedAt && (
+                    {extraData.reviewedAt && (
                         <div className="text-[10px] text-blue-400/60 text-right uppercase tracking-wider font-bold">
-                            Avaliado em {new Date(formData.reviewedAt).toLocaleDateString()}
+                            Avaliado em {new Date(extraData.reviewedAt).toLocaleDateString()}
                         </div>
                     )}
                 </div>
@@ -424,7 +443,7 @@ export const ProducerProjectForm: React.FC = () => {
                             {readOnly && (
                                 <div className="mb-6 bg-[var(--accent-primary)]/10 border border-blue-500/20 rounded-xl p-4 flex gap-3 text-blue-300 text-sm">
                                     <AlertCircle size={20} className="shrink-0" />
-                                    Este projeto já foi submetido. Edições estão restritas. {formData.status === 'REJECTED' && "Caso deseje realizar ajustes, entre em contato com a organização."}
+                                    Este projeto já foi submetido. Edições estão restritas. {extraData.status === 'REJECTED' && "Caso deseje realizar ajustes, entre em contato com a organização."}
                                 </div>
                             )}
 
@@ -433,9 +452,8 @@ export const ProducerProjectForm: React.FC = () => {
                                     <div className="md:col-span-2">
                                         <Input
                                             label={t("producer.producerproject.ttuloDoProjeto", `Título do Projeto`)}
-                                            name="title"
-                                            value={formData.title}
-                                            onChange={handleChange}
+                                            
+                                            {...register("title")}
                                             disabled={readOnly}
                                             required
                                             className="h-12 bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] text-lg font-bold"
@@ -464,9 +482,8 @@ export const ProducerProjectForm: React.FC = () => {
                                     <Input
                                         label={t("producer.producerproject.oramentoR", `Orçamento (R$)`)}
                                         type="number"
-                                        name="requestedBudget"
-                                        value={formData.requestedBudget}
-                                        onChange={handleChange}
+                                        
+                                        {...register("requestedBudget")}
                                         disabled={readOnly}
                                         leftIcon={<span className="text-[var(--accent-primary)] font-bold">$</span>}
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)] font-mono"
@@ -474,9 +491,8 @@ export const ProducerProjectForm: React.FC = () => {
                                     <Input
                                         label={t("producer.producerproject.pblicoEstimado", `Público Estimado`)}
                                         type="number"
-                                        name="expectedAudience"
-                                        value={formData.expectedAudience}
-                                        onChange={handleChange}
+                                        
+                                        {...register("expectedAudience")}
                                         disabled={readOnly}
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                                     />
@@ -496,9 +512,8 @@ export const ProducerProjectForm: React.FC = () => {
                                         )}
                                     </div>
                                     <Textarea
-                                        name="summary"
-                                        value={formData.summary}
-                                        onChange={handleChange}
+                                        
+                                        {...register("summary")}
                                         rows={3}
                                         maxLength={200}
                                         disabled={readOnly}
@@ -521,9 +536,8 @@ export const ProducerProjectForm: React.FC = () => {
                                         )}
                                     </div>
                                     <Textarea
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleChange}
+                                        
+                                        {...register("description")}
                                         rows={8}
                                         disabled={readOnly}
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
@@ -544,9 +558,8 @@ export const ProducerProjectForm: React.FC = () => {
                                         )}
                                     </div>
                                     <Textarea
-                                        name="justification"
-                                        value={formData.justification}
-                                        onChange={handleChange}
+                                        
+                                        {...register("justification")}
                                         rows={5}
                                         disabled={readOnly}
                                         placeholder="Por que este projeto deve receber o recurso?"
@@ -558,18 +571,16 @@ export const ProducerProjectForm: React.FC = () => {
                                     <Input
                                         label={t("producer.producerproject.dataDeIncio", `Data de Início`)}
                                         type="date"
-                                        name="startDate"
-                                        value={formData.startDate}
-                                        onChange={handleChange}
+                                        
+                                        {...register("startDate")}
                                         disabled={readOnly}
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                                     />
                                     <Input
                                         label={t("producer.producerproject.dataDeTrmino", `Data de Término`)}
                                         type="date"
-                                        name="endDate"
-                                        value={formData.endDate}
-                                        onChange={handleChange}
+                                        
+                                        {...register("endDate")}
                                         disabled={readOnly}
                                         className="bg-black/20 border-[#463420] text-[#EAE0D5] focus:border-[var(--accent-primary)]"
                                     />
@@ -577,7 +588,7 @@ export const ProducerProjectForm: React.FC = () => {
 
                                 {!readOnly && (
                                     <div className="pt-6 flex flex-col md:flex-row justify-end gap-3 border-t border-[#463420]">
-                                        {isEdit && formData.status === "DRAFT" && (
+                                        {isEdit && extraData.status === "DRAFT" && (
                                             <Button
                                                 onClick={handleSubmitProject}
                                                 isLoading={submitting}
@@ -587,7 +598,7 @@ export const ProducerProjectForm: React.FC = () => {
                                                 Submeter ao Edital
                                             </Button>
                                         )}
-                                        {isEdit && formData.status === "APPROVED" && (
+                                        {isEdit && extraData.status === "APPROVED" && (
                                             <Button
                                                 onClick={handlePublish}
                                                 disabled={saving}
@@ -599,7 +610,7 @@ export const ProducerProjectForm: React.FC = () => {
                                             </Button>
                                         )}
                                         <Button
-                                            onClick={() => handleSave()}
+                                            onClick={handleSubmit(handleSave)}
                                             isLoading={saving}
                                             className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold"
                                             leftIcon={<Save size={18} />}
@@ -645,26 +656,26 @@ export const ProducerProjectForm: React.FC = () => {
                                     </div>
                                     <button
                                         disabled={readOnly}
-                                        onClick={() => setFormData({
-                                            ...formData,
+                                        onClick={() => setExtraData({
+                                            ...extraData,
                                             accessibilityPlan: {
-                                                ...formData.accessibilityPlan,
-                                                hasPlan: !formData.accessibilityPlan.hasPlan
+                                                ...extraData.accessibilityPlan,
+                                                hasPlan: !extraData.accessibilityPlan.hasPlan
                                             }
                                         })}
                                         className={`
                                                 w-14 h-8 rounded-full transition-all relative
-                                                ${formData.accessibilityPlan.hasPlan ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}
+                                                ${extraData.accessibilityPlan.hasPlan ? 'bg-[var(--accent-primary)]' : 'bg-[#463420]'}
                                             `}
                                     >
                                         <div className={`
                                                 absolute top-1 w-6 h-6 rounded-full bg-white transition-all
-                                                ${formData.accessibilityPlan.hasPlan ? 'left-7' : 'left-1'}
+                                                ${extraData.accessibilityPlan.hasPlan ? 'left-7' : 'left-1'}
                                             `} />
                                     </button>
                                 </div>
 
-                                {formData.accessibilityPlan.hasPlan && (
+                                {extraData.accessibilityPlan.hasPlan && (
                                     <div className="space-y-6 animate-in slide-in-from-top-4 duration-300">
                                         <div>
                                             <label className="text-sm font-bold text-[#B0A090] mb-4 block">{t("producer.producerproject.serviosOferecidos", `Serviços Oferecidos`)}</label>
@@ -681,23 +692,23 @@ export const ProducerProjectForm: React.FC = () => {
                                                         key={service.id}
                                                         disabled={readOnly}
                                                         onClick={() => {
-                                                            const services = formData.accessibilityPlan.services.includes(service.id)
-                                                                ? formData.accessibilityPlan.services.filter(s => s !== service.id)
-                                                                : [...formData.accessibilityPlan.services, service.id];
-                                                            setFormData({
-                                                                ...formData,
-                                                                accessibilityPlan: { ...formData.accessibilityPlan, services }
+                                                            const services = extraData.accessibilityPlan.services.includes(service.id)
+                                                                ? extraData.accessibilityPlan.services.filter(s => s !== service.id)
+                                                                : [...extraData.accessibilityPlan.services, service.id];
+                                                            setExtraData({
+                                                                ...extraData,
+                                                                accessibilityPlan: { ...extraData.accessibilityPlan, services }
                                                             });
                                                         }}
                                                         className={`
                                                                 flex items-center gap-2 px-4 py-3 rounded-xl border text-xs font-bold transition-all
-                                                                ${formData.accessibilityPlan.services.includes(service.id)
+                                                                ${extraData.accessibilityPlan.services.includes(service.id)
                                                                 ? 'bg-[var(--accent-primary)]/10 border-[var(--accent-primary)] text-[var(--accent-primary)]'
                                                                 : 'bg-black/20 border-[#463420] text-[#B0A090] hover:border-[var(--accent-primary)]/30'}
                                                             `}
                                                     >
-                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center ${formData.accessibilityPlan.services.includes(service.id) ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]' : 'border-[#463420]'}`}>
-                                                            {formData.accessibilityPlan.services.includes(service.id) && <CheckCircle2 size={12} className="text-[#1a1108]" />}
+                                                        <div className={`w-4 h-4 rounded border flex items-center justify-center ${extraData.accessibilityPlan.services.includes(service.id) ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]' : 'border-[#463420]'}`}>
+                                                            {extraData.accessibilityPlan.services.includes(service.id) && <CheckCircle2 size={12} className="text-[#1a1108]" />}
                                                         </div>
                                                         {service.label}
                                                     </button>
@@ -708,11 +719,11 @@ export const ProducerProjectForm: React.FC = () => {
                                         <Textarea
                                             label={t("producer.producerproject.descrioDaImplementao", `Descrição da Implementação`)}
                                             placeholder={t("producer.producerproject.descrevaDetalhadamenteComoOsRecursosDeAc", `Descreva detalhadamente como os recursos de acessibilidade serão garantidos...`)}
-                                            value={formData.accessibilityPlan.description}
+                                            value={extraData.accessibilityPlan.description}
                                             disabled={readOnly}
-                                            onChange={(e) => setFormData({
-                                                ...formData,
-                                                accessibilityPlan: { ...formData.accessibilityPlan, description: e.target.value }
+                                            onChange={(e) => setExtraData({
+                                                ...extraData,
+                                                accessibilityPlan: { ...extraData.accessibilityPlan, description: e.target.value }
                                             })}
                                             rows={5}
                                             className="bg-black/20 border-[#463420] text-[#EAE0D5] text-sm focus:border-[var(--accent-primary)]"
@@ -723,7 +734,7 @@ export const ProducerProjectForm: React.FC = () => {
                                 {!readOnly && (
                                     <div className="pt-6 flex justify-end gap-3 border-t border-[#463420]">
                                         <Button
-                                            onClick={() => handleSave()}
+                                            onClick={handleSubmit(handleSave)}
                                             isLoading={saving}
                                             className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] px-8 font-bold"
                                             leftIcon={<Save size={18} />}
@@ -744,7 +755,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         <Banknote className="text-[var(--accent-primary)]" size={24} /> Comprovantes
                                     </h2>
                                     <div className="text-xs font-mono text-[#B0A090] bg-black/30 px-3 py-1 rounded-full">
-                                        {formData.attachments.length} arquivos
+                                        {extraData.attachments.length} arquivos
                                     </div>
                                 </div>
 
@@ -793,9 +804,9 @@ export const ProducerProjectForm: React.FC = () => {
                             </div>
 
                             {/* FILE LIST */}
-                            {formData.attachments.length > 0 && (
+                            {extraData.attachments.length > 0 && (
                                 <div className="grid gap-3">
-                                    {formData.attachments.map((doc, idx) => (
+                                    {extraData.attachments.map((doc, idx) => (
                                         <div key={idx} className="group flex items-center justify-between p-4 bg-[#2c1e10] border border-[#463420] rounded-2xl hover:border-[var(--accent-primary)]/50 transition-colors">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-lg bg-black/30 flex items-center justify-center text-[#B0A090]">
@@ -837,7 +848,7 @@ export const ProducerProjectForm: React.FC = () => {
                             {accountabilityEditable && (
                                 <div className="flex justify-end pt-4">
                                     <Button
-                                        onClick={() => handleSave()}
+                                        onClick={handleSubmit(handleSave)}
                                         isLoading={saving}
                                         disabled={uploading}
                                         className="bg-[var(--accent-primary)] hover:bg-[#c5a028] text-[#1a1108] font-bold px-8 rounded-xl shadow-lg shadow-[var(--accent-primary)]/20 border-none"
@@ -921,7 +932,7 @@ export const ProducerProjectForm: React.FC = () => {
                         <div className="space-y-3 relative z-10">
                             <button 
                                 onClick={() => {
-                                    const text = encodeURIComponent(`Confira meu novo evento cultural: ${formData.title}! Veja mais em: https://cultura.viva/events/${publishedEventData.eventId}`);
+                                    const text = encodeURIComponent(`Confira meu novo evento cultural: ${title}! Veja mais em: https://cultura.viva/events/${publishedEventData.eventId}`);
                                     window.open(`https://wa.me/?text=${text}`, '_blank');
                                 }}
                                 className="w-full flex items-center justify-center gap-3 py-4 bg-[#25D366] text-white font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg"

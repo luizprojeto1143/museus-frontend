@@ -6,6 +6,7 @@ import { ArrowLeft, Navigation, Star, MapPin } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import './InteractiveMap.css';
+import { api } from '@/api/client';
 
 // Custom Marker Icons
 const createCustomIcon = (color: string, iconUrl: string) => {
@@ -28,13 +29,48 @@ export const InteractiveMap: React.FC = () => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams<{ tenantSlug: string }>();
   const [selectedPin, setSelectedPin] = useState<any>(null);
+  const [pins, setPins] = useState<any[]>([]);
+  const [userLocation, setUserLocation] = useState<[number, number]>(defaultCenter);
 
-  // Mock data for the Map
-  const mockPins = [
-    { id: 1, type: 'WORK', title: 'Estátua do Tiradentes', lat: -19.921, lng: -43.935, color: '#d4af37', icon: '/icons/statue.svg' },
-    { id: 2, type: 'RESTAURANT', title: 'Cantina Italiana', lat: -19.918, lng: -43.932, color: '#ff4b4b', icon: '/icons/food.svg' },
-    { id: 3, type: 'MUSEUM', title: 'Museu de Artes', lat: -19.920, lng: -43.940, color: '#4b7bff', icon: '/icons/museum.svg' }
-  ];
+  // Busca dados reais de obras e serviços pela proximidade
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const coords: [number, number] = [pos.coords.latitude, pos.coords.longitude];
+        setUserLocation(coords);
+        fetchPins(coords[0], coords[1]);
+      }, () => {
+        fetchPins(defaultCenter[0], defaultCenter[1]);
+      });
+    } else {
+      fetchPins(defaultCenter[0], defaultCenter[1]);
+    }
+  }, [tenantSlug]);
+
+  const fetchPins = async (lat: number, lng: number) => {
+    try {
+      const res = await api.post(`/roteiros/${tenantSlug}/intelligent`, {
+        userLatitude: lat,
+        userLongitude: lng,
+        timeAvailable: 1440 // tempo ilimitado para listar todos
+      });
+      
+      const realPins = res.data.stops.map((stop: any) => ({
+        id: stop.targetId,
+        type: stop.targetType,
+        title: stop.name,
+        lat: stop.latitude,
+        lng: stop.longitude,
+        color: stop.targetType === 'WORK' ? '#d4af37' : '#ff4b4b',
+        distance: stop.distanceKm
+      }));
+
+      // Filtra itens sem coordenada válida
+      setPins(realPins.filter((p: any) => p.lat !== 0 && p.lng !== 0));
+    } catch (err) {
+      console.error("Erro ao carregar mapa", err);
+    }
+  };
 
   return (
     <div className="interactive-map-container">
@@ -48,14 +84,14 @@ export const InteractiveMap: React.FC = () => {
           <ArrowLeft size={24} />
         </button>
         <h2>Explorar Mapa</h2>
-        <button className="location-btn">
+        <button className="location-btn" onClick={() => fetchPins(userLocation[0], userLocation[1])}>
           <Navigation size={20} />
         </button>
       </motion.div>
 
       {/* The Leaflet Map */}
       <MapContainer 
-        center={defaultCenter} 
+        center={userLocation} 
         zoom={14} 
         zoomControl={false}
         className="leaflet-map-wrapper"
@@ -66,7 +102,7 @@ export const InteractiveMap: React.FC = () => {
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
         />
 
-        {mockPins.map(pin => (
+        {pins.map(pin => (
           <Marker 
             key={pin.id} 
             position={[pin.lat, pin.lng]}

@@ -78,11 +78,13 @@ export const CityDashboard: React.FC = () => {
 
   // Fetch City Data from PWA dynamic analytics
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchCityData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await api.get("/analytics/municipal-pwa/summary");
+        const res = await api.get("/analytics/municipal-pwa/summary", { signal: abortController.signal });
         if (res.data && res.data.cities) {
           // Robust slug matching (e.g. betim or betim-cultura)
           const found = res.data.cities.find((c: CityData) => 
@@ -110,7 +112,8 @@ export const CityDashboard: React.FC = () => {
             setError("Cidade não encontrada no ecossistema municipal.");
           }
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
         console.error("Error loading city data", err);
         setError("Erro de rede ao carregar o ecossistema municipal.");
       } finally {
@@ -120,51 +123,69 @@ export const CityDashboard: React.FC = () => {
     if (tenantSlug) {
       fetchCityData();
     }
+
+    return () => {
+      abortController.abort();
+    };
   }, [tenantSlug]);
 
   // Dynamic Database Fetching for Rankings, Achievements, Events, and Trails
   useEffect(() => {
     if (city?.id) {
       const allTenantIds = [city.id, ...city.equipments.map(eq => eq.id)];
+      const abortController = new AbortController();
+      const signal = abortController.signal;
 
       // 1. Fetch Real Ranking for this City
-      api.get(`/leaderboard/city/${city.id}`)
+      api.get(`/leaderboard/city/${city.id}`, { signal })
         .then(res => {
           if (res.data && res.data.ranking) {
             setDbRankings(res.data.ranking);
             setDbMyRank(res.data.myRank);
           }
         })
-        .catch(err => console.warn("Could not load database rankings:", err));
+        .catch(err => {
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database rankings:", err)
+        });
 
       // 2. Fetch Real Achievements for this City
-      api.get(`/achievements?tenantId=${city.id}`)
+      api.get(`/achievements?tenantId=${city.id}`, { signal })
         .then(res => {
           if (Array.isArray(res.data)) {
             setDbAchievements(res.data);
           }
         })
-        .catch(err => console.warn("Could not load database achievements:", err));
+        .catch(err => {
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database achievements:", err)
+        });
 
       // 3. Fetch Real Events of City and Children
-      api.get("/events")
+      api.get("/events", { signal })
         .then(res => {
           if (Array.isArray(res.data)) {
             const filtered = res.data.filter(ev => allTenantIds.includes(ev.tenantId));
             setDbEvents(filtered);
           }
         })
-        .catch(err => console.warn("Could not load database events:", err));
+        .catch(err => {
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database events:", err)
+        });
 
       // 4. Fetch Real Trails/Roteiros of City and Children
-      api.get("/trails")
+      api.get("/trails", { signal })
         .then(res => {
           if (Array.isArray(res.data)) {
             const filtered = res.data.filter(tr => allTenantIds.includes(tr.tenantId));
             setDbTrails(filtered);
           }
         })
-        .catch(err => console.warn("Could not load database trails:", err));
+        .catch(err => {
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database trails:", err)
+        });
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [city]);
 

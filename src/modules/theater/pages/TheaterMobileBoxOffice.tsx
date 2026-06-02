@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { 
     Smartphone, Ticket, Users, CreditCard, 
     Smartphone as MobileIcon, MessageSquare, 
@@ -7,44 +7,18 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, Input } from "../../../components/ui";
+import { useBoxOffice } from "./useBoxOffice";
 
 export const TheaterMobileBoxOffice: React.FC = () => {
-    const [step, setStep] = useState<"LIST" | "SEATS" | "EXTRAS" | "PAY" | "DONE">("LIST");
-    const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
-    const [selectedExtras, setSelectedExtras] = useState<any[]>([]);
-    const [online, setOnline] = useState(true);
-
-    const extras = [
-        { id: 101, name: "Combo Pipoca G + Refri", price: 45, icon: "🍿" },
-        { id: 102, name: "Camiseta Oficial", price: 80, icon: "👕" },
-        { id: 103, name: "Programa de Luxo (Físico)", price: 25, icon: "📖" },
-    ];
-
-    const toggleExtra = (item: any) => {
-        if (selectedExtras.find(e => e.id === item.id)) {
-            setSelectedExtras(selectedExtras.filter(e => e.id !== item.id));
-        } else {
-            setSelectedExtras([...selectedExtras, item]);
-        }
-    };
-
-    const seatsTotal = selectedSeats.length * 120;
-    const extrasTotal = selectedExtras.reduce((acc, curr) => acc + curr.price, 0);
-    const grandTotal = seatsTotal + extrasTotal;
-
-    const sessions = [
-        { id: 1, title: "O Fantasma da Ópera", time: "20:00", price: 120, occupancy: 85 },
-        { id: 2, title: "O Fantasma da Ópera", time: "22:30", price: 100, occupancy: 40 },
-        { id: 3, title: "Les Misérables", time: "19:00", price: 150, occupancy: 95 },
-    ];
-
-    const toggleSeat = (id: number) => {
-        if (selectedSeats.includes(id)) {
-            setSelectedSeats(selectedSeats.filter(s => s !== id));
-        } else {
-            setSelectedSeats([...selectedSeats, id]);
-        }
-    };
+    const {
+        step, setStep,
+        selectedSeats, toggleSeat,
+        selectedExtras, toggleExtra,
+        online,
+        sessions, extras,
+        seatsTotal, grandTotal,
+        resetSale
+    } = useBoxOffice();
 
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-red-500/30 overflow-x-hidden">
@@ -253,7 +227,7 @@ export const TheaterMobileBoxOffice: React.FC = () => {
                                 <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-[10px]">Ingresso enviado por WhatsApp</p>
                             </div>
                             <Button 
-                                onClick={() => { setStep("LIST"); setSelectedSeats([]); }}
+                                onClick={resetSale}
                                 className="w-full bg-white text-black py-6 rounded-2xl font-black italic text-sm"
                             >
                                 Próxima Venda

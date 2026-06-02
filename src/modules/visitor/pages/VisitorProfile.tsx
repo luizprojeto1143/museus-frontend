@@ -89,11 +89,16 @@ export const VisitorProfile: React.FC = () => {
 
     useEffect(() => {
         if (isGuest) return;
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+
         setLoading(true);
         Promise.all([
-            api.get('/visitors/stamps').then(res => setStamps(res.data.slice(0, 4))).catch(() => {}),
-            api.get('/favorites').then(res => setFavorites(res.data.slice(0, 3))).catch(() => {})
+            api.get('/visitors/stamps', { signal }).then(res => setStamps(res.data.slice(0, 4))).catch(() => {}),
+            api.get('/favorites', { signal }).then(res => setFavorites(res.data.slice(0, 3))).catch(() => {})
         ]).finally(() => setLoading(false));
+
+        return () => abortController.abort();
     }, [isGuest]);
 
     const handleTabChange = (tab: 'info' | 'tickets' | 'certificates' | 'orders' | 'rewards') => {

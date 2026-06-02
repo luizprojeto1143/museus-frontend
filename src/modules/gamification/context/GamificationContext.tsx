@@ -145,22 +145,30 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         });
     }, [addToast]);
 
+    const fetchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+    const debouncedFetchBackendData = useCallback(() => {
+        if (fetchTimeoutRef.current) clearTimeout(fetchTimeoutRef.current);
+        fetchTimeoutRef.current = setTimeout(() => {
+            fetchBackendData();
+        }, 1000);
+    }, [fetchBackendData]);
+
     const visitWork = useCallback((workId: string) => {
         setStats((prev) => {
             if (prev.visitedWorks.includes(workId)) return prev;
             return { ...prev, visitedWorks: [...prev.visitedWorks, workId] };
         });
         // Also trigger refresh from backend if connected
-        if (isAuthenticated) setTimeout(fetchBackendData, 1000);
-    }, [isAuthenticated, fetchBackendData]);
+        if (isAuthenticated) debouncedFetchBackendData();
+    }, [isAuthenticated, debouncedFetchBackendData]);
 
     const completeTrail = useCallback((trailId: string) => {
         setStats((prev) => {
             if (prev.visitedTrails.includes(trailId)) return prev;
             return { ...prev, visitedTrails: [...prev.visitedTrails, trailId] };
         });
-        if (isAuthenticated) setTimeout(fetchBackendData, 1000);
-    }, [isAuthenticated, fetchBackendData]);
+        if (isAuthenticated) debouncedFetchBackendData();
+    }, [isAuthenticated, debouncedFetchBackendData]);
 
     // Client-side achievement checks (can still run for immediate feedback)
     useEffect(() => {

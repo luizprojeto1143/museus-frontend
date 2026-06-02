@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Clock } from "lucide-react";
 
 export const WorkTimeline: React.FC = () => {
     const { tenantId } = useAuth();
@@ -47,11 +47,7 @@ export const WorkTimeline: React.FC = () => {
         ? works.filter(w => (w.period || "Sem Período") === selectedPeriod)
         : works;
 
-    const getCentury = (year: string | number | null) => {
-        const y = typeof year === 'string' ? parseInt(year) : year;
-        if (!y) return "?";
-        return `Séc. ${Math.ceil(y / 100)}`;
-    };
+
 
     return (
         <div className="min-h-screen bg-[#0d0e11] pb-24">
@@ -89,7 +85,7 @@ export const WorkTimeline: React.FC = () => {
                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-white/10" />
 
                 <div className="space-y-6">
-                    {filteredWorks.map((work, idx) => (
+                    {filteredWorks.map((work) => (
                         <div key={work.id} className="flex gap-4 relative">
                             {/* Dot */}
                             <div className="relative z-10 w-8 flex justify-center shrink-0">

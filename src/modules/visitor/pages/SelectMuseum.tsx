@@ -74,11 +74,15 @@ export const SelectMuseum: React.FC = () => {
 
   // Load Tenants & Handle Auto-selection
   useEffect(() => {
+    const abortController = new AbortController();
+    
     async function init() {
-      await loadEquipamentos();
-      await loadEvents();
+      await loadEquipamentos(abortController.signal);
+      await loadEvents(abortController.signal);
     }
     init();
+
+    return () => abortController.abort();
   }, []);
 
   useEffect(() => {
@@ -89,13 +93,14 @@ export const SelectMuseum: React.FC = () => {
     }
   }, [searchParams, equipamentos]);
 
-  const loadEquipamentos = async () => {
+  const loadEquipamentos = async (signal?: AbortSignal) => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const res = await api.get("/equipamentos/public");
+      const res = await api.get("/equipamentos/public", { signal });
       setEquipamentos(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
+    } catch (err: any) {
+      if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
       console.error("Error loading equipments", err);
       setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
     } finally {
@@ -103,12 +108,13 @@ export const SelectMuseum: React.FC = () => {
     }
   };
 
-  const loadEvents = async () => {
+  const loadEvents = async (signal?: AbortSignal) => {
     setLoadingEvents(true);
     try {
-      const res = await api.get("/events?discovery=true");
+      const res = await api.get("/events?discovery=true", { signal });
       setEvents(Array.isArray(res.data.data) ? res.data.data : []);
-    } catch (err) {
+    } catch (err: any) {
+      if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
       console.error("Error loading events", err);
     } finally {
       setLoadingEvents(false);

@@ -293,14 +293,14 @@ export const ProviderInbox: React.FC = () => {
                             {/* Messages Area */}
                             <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] bg-fixed opacity-90 relative">
                                 <AnimatePresence mode="popLayout">
-                                    {activeConversation.messages.map((msg, idx) => {
+                                    {activeConversation.messages.map((msg) => {
                                         const isMe = msg.senderType === "PROVIDER";
                                         const isSystem = msg.senderType === "SYSTEM";
 
                                         if (isSystem) {
                                             return (
                                                 <motion.div 
-                                                    key={idx}
+                                                    key={msg.id}
                                                     initial={{ opacity: 0, scale: 0.95 }}
                                                     animate={{ opacity: 1, scale: 1 }}
                                                     className="flex justify-center my-8"
@@ -314,7 +314,7 @@ export const ProviderInbox: React.FC = () => {
 
                                         return (
                                             <motion.div 
-                                                key={idx} 
+                                                key={msg.id} 
                                                 initial={{ opacity: 0, x: isMe ? 20 : -20 }}
                                                 animate={{ opacity: 1, x: 0 }}
                                                 className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}

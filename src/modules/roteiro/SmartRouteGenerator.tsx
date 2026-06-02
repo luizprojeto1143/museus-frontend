@@ -34,10 +34,8 @@ export const SmartRouteGenerator: React.FC = () => {
         interests
       });
       console.log("Roteiro Gerado:", response.data);
-      setTimeout(() => {
-        setIsGenerating(false);
-        navigate(`/${tenantSlug}/roteiro/map`);
-      }, 1500); // 1.5s delay just for the cool animation
+      setIsGenerating(false);
+      navigate(`/${tenantSlug}/roteiro/map`);
     } catch (err) {
       setIsGenerating(false);
       console.error(err);

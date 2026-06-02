@@ -53,6 +53,11 @@ export const TotemValidator: React.FC = () => {
         }
     }, [processing, addToast, t]);
 
+    const handleCheckInRef = React.useRef(handleCheckIn);
+    useEffect(() => {
+        handleCheckInRef.current = handleCheckIn;
+    }, [handleCheckIn]);
+
     useEffect(() => {
         // Scanner with larger box for kiosk mode
         const scanner = new Html5QrcodeScanner(
@@ -72,7 +77,7 @@ export const TotemValidator: React.FC = () => {
             (decodedText) => {
                 // Pause scanning while processing result
                 scanner.pause();
-                handleCheckIn(decodedText).finally(() => {
+                handleCheckInRef.current(decodedText).finally(() => {
                     // Wait a bit before scanning again
                     setTimeout(() => {
                         scanner.resume();
@@ -87,7 +92,7 @@ export const TotemValidator: React.FC = () => {
         return () => {
             scanner.clear().catch(e => console.error("Scanner clear error", e));
         };
-    }, [handleCheckIn]); // Only init once, handleCheckIn uses ref if needed or simplified logic
+    }, []); // Empty deps to prevent camera crash
 
     const handleReset = () => {
         setScanResult(null);

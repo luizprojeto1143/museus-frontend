@@ -50,6 +50,14 @@ export const TenantsList: React.FC = () => {
     const [tenants, setTenants] = useState<TenantItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 400);
+        return () => clearTimeout(handler);
+    }, [searchTerm]);
 
     const fetchData = useCallback(async () => {
         try {
@@ -70,10 +78,10 @@ export const TenantsList: React.FC = () => {
 
     const filteredTenants = useMemo(() => {
         return tenants.filter(t => 
-            t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            t.slug.toLowerCase().includes(searchTerm.toLowerCase())
+            t.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || 
+            t.slug.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
         );
-    }, [tenants, searchTerm]);
+    }, [tenants, debouncedSearchTerm]);
 
     const handleDelete = async (id: string) => {
         const tenant = tenants.find(t => t.id === id);
