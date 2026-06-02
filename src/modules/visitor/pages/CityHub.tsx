@@ -253,7 +253,7 @@ export const CityHub: React.FC = () => {
                         alt={c.name} 
                         className="carousel-city-img" 
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1596436889106-be35e843f974?q=80&w=600";
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600";
                         }}
                       />
                       <div className="carousel-city-overlay"></div>
@@ -274,7 +274,7 @@ export const CityHub: React.FC = () => {
                 >
                   <div className="carousel-city-img-wrapper">
                     <img 
-                      src="https://images.unsplash.com/photo-1596436889106-be35e843f974?q=80&w=600" 
+                      src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600" 
                       alt="Novas Cidades" 
                       className="carousel-city-img opacity-50" 
                     />
@@ -461,7 +461,7 @@ export const CityHub: React.FC = () => {
                     alt={cities[0].equipments[0].name} 
                     className="continue-exploring-img"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=300";
+                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=300";
                     }}
                   />
                 </div>
@@ -622,7 +622,7 @@ export const CityHub: React.FC = () => {
                             alt={firstEquip?.name || featuredCity.name} 
                             className="mobile-featured-img object-cover w-full h-full"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?q=80&w=600";
+                              (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1572949645841-094f3a9c4c94?q=80&w=600";
                             }}
                           />
                           <div className="mobile-featured-img-overlay"></div>
@@ -659,7 +659,7 @@ export const CityHub: React.FC = () => {
                   >
                     <div className="mobile-featured-img-wrapper h-48 relative">
                       <img 
-                        src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?q=80&w=600" 
+                        src="https://images.unsplash.com/photo-1572949645841-094f3a9c4c94?q=80&w=600" 
                         alt="Cultura Viva" 
                         className="mobile-featured-img object-cover w-full h-full opacity-55"
                       />
@@ -713,7 +713,7 @@ export const CityHub: React.FC = () => {
                         alt={c.name} 
                         className="w-16 h-16 rounded-xl object-cover" 
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1596436889106-be35e843f974?q=80&w=600";
+                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600";
                         }}
                       />
                       <div className="flex-1 flex flex-col justify-center">

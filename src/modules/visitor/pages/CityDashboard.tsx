@@ -532,7 +532,7 @@ export const CityDashboard: React.FC = () => {
                     onClick={() => handleSelectMuseum(firstMuseum)}
                   >
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=600"} alt={firstMuseum.name} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=600"} alt={firstMuseum.name} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute uppercase">Destaque</span>
                     </div>
@@ -550,7 +550,7 @@ export const CityDashboard: React.FC = () => {
                 {firstEvent && (
                   <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate("/agenda")}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstEvent?.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600"} alt={firstEvent.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={firstEvent?.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={firstEvent.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute event-badge uppercase">Evento</span>
                     </div>
@@ -570,7 +570,7 @@ export const CityDashboard: React.FC = () => {
                 {firstTrail && (
                   <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate("/roteiro")}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstTrail?.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1568230315894-1edd16d248b7?q=80&w=600"} alt={firstTrail.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={firstTrail?.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={firstTrail.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute route-badge uppercase">Roteiro</span>
                     </div>
@@ -598,7 +598,7 @@ export const CityDashboard: React.FC = () => {
               <div className="experiences-horizontal-grid flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
                 {city.equipments.map((eq) => (
                   <Card key={eq.id} className="experience-compact-item flex-shrink-0 cursor-pointer overflow-hidden relative" onClick={() => handleSelectMuseum(eq)}>
-                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=300"} alt={eq.name} />
+                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "https://images.unsplash.com/photo-1566378246598-5b11a0d486cc?q=80&w=300"} alt={eq.name} />
                     <div className="info-overlay flex flex-col justify-end p-3 text-left">
                       <span className="title font-bold text-white text-xs">{eq.name}</span>
                       <span className="count text-[9px] text-gray-400">{eq.worksCount} obras</span>
@@ -934,7 +934,7 @@ export const CityDashboard: React.FC = () => {
                     onClick={() => handleSelectMuseum(firstMuseum)}
                   >
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=600"} alt={firstMuseum.name} className="w-full h-full object-cover" />
+                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=600"} alt={firstMuseum.name} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge uppercase">Museu em destaque</span>
                     </div>
@@ -952,7 +952,7 @@ export const CityDashboard: React.FC = () => {
                 {firstEvent && (
                   <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/agenda")}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstEvent.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=600"} alt={firstEvent.title} className="w-full h-full object-cover" />
+                      <img src={firstEvent.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={firstEvent.title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge event uppercase">Evento em alta</span>
                     </div>
@@ -972,7 +972,7 @@ export const CityDashboard: React.FC = () => {
                 {firstTrail && (
                   <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/roteiro")}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstTrail.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1568230315894-1edd16d248b7?q=80&w=600"} alt={firstTrail.title} className="w-full h-full object-cover" />
+                      <img src={firstTrail.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={firstTrail.title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge route uppercase">Roteiro sugerido</span>
                     </div>
