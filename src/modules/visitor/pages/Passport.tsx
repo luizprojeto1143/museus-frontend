@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, Link } from "react-router-dom";
@@ -68,7 +69,7 @@ export const Passport: React.FC = () => {
           city: s.work.tenant?.address?.city || s.work.tenant?.city || "Geral"
         })));
       }
-    } catch (error) { console.error(error); }
+    } catch (error) { logger.error(error); }
     finally { setLoading(false); }
   }, [visitorId]);
 

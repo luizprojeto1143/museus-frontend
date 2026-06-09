@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -44,7 +45,7 @@ export const FamilyTimeline: React.FC = () => {
             const res = await api.get(`/roadmap-family/profiles/${profileId}`);
             setProfile(res.data);
         } catch (err) {
-            console.error("Erro ao carregar perfil familiar:", err);
+            logger.error("Erro ao carregar perfil familiar:", err);
         } finally {
             setLoading(false);
         }
@@ -69,7 +70,7 @@ export const FamilyTimeline: React.FC = () => {
             audioRef.current.pause();
         } else {
             audioRef.current.play().catch(e => {
-                console.warn("Erro ao reproduzir áudio:", e);
+                logger.warn("Erro ao reproduzir áudio:", e);
                 setIsPlaying(false);
             });
         }

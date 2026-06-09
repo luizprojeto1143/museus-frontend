@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +35,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
             });
             setResults(res.data);
         } catch (error) {
-            console.error("Error searching items", error);
+            logger.error("Error searching items", error);
         }
     }, [tenantId]);
 

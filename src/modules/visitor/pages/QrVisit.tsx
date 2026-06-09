@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -36,7 +37,7 @@ export const QrVisit: React.FC = () => {
         const res = await api.get(`/qr/${code}`);
         setData(res.data);
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         setError(t("visitor.qr.invalid"));
       } finally {
         setLoading(false);
@@ -57,7 +58,7 @@ export const QrVisit: React.FC = () => {
       await api.post("/visitors/visit-from-qr", { code: data.code, email });
       setFeedback(t("visitor.qr.success", { xp: data.xpReward }));
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       setError(t("visitor.qr.error"));
     } finally {
       setRegistering(false);

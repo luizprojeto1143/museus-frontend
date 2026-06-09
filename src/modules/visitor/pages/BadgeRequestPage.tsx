@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { Mail, MapPin, BadgeCheck, AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
@@ -33,7 +34,7 @@ export const BadgeRequestPage: React.FC = () => {
                 setVisitorData(res.data);
                 setFormData(prev => ({ ...prev, addressName: res.data.name }));
             } catch (err) {
-                console.error(err);
+                logger.error(err);
             } finally {
                 setLoading(false);
             }

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -109,7 +110,7 @@ export const VisitorProfile: React.FC = () => {
             setLoading(true);
             api.get('/certificates/mine')
                 .then(res => setCertificates(res.data))
-                .catch(console.error)
+                .catch(logger.error)
                 .finally(() => setLoading(false));
         }
 
@@ -125,7 +126,7 @@ export const VisitorProfile: React.FC = () => {
             setLoading(true);
             api.get('/shop/my-orders')
                 .then(res => setOrders(res.data))
-                .catch(console.error)
+                .catch(logger.error)
                 .finally(() => setLoading(false));
         }
 
@@ -136,7 +137,7 @@ export const VisitorProfile: React.FC = () => {
                     setAvailableCoupons(res.data?.available || []);
                     setRedeemedCoupons(res.data?.redeemed || []);
                 })
-                .catch(console.error)
+                .catch(logger.error)
                 .finally(() => setLoading(false));
         }
     };
@@ -149,7 +150,7 @@ export const VisitorProfile: React.FC = () => {
             setAvailableCoupons(res.data?.available || []);
             setRedeemedCoupons(res.data?.redeemed || []);
         } catch (error: any) {
-            console.error(error);
+            logger.error(error);
         } finally {
             setLoading(false);
         }

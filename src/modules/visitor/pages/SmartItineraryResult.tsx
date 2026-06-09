@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +36,7 @@ export const SmartItineraryResult: React.FC = () => {
                 });
                 setItinerary(res.data);
             } catch (error) {
-                console.error("Failed to generate itinerary", error);
+                logger.error("Failed to generate itinerary", error);
                 setItinerary([]);
             } finally {
                 setLoading(false);

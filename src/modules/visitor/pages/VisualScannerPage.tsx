@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -66,7 +67,7 @@ export const VisualScannerPage: React.FC = () => {
                         });
                         loadedClassifier.setClassifierDataset(dataset);
                     } catch (e) {
-                        console.error("Erro ao carregar modelo", e);
+                        logger.error("Erro ao carregar modelo", e);
                     }
                 } else {
                     if (isMounted) setStatus("Scan offline disponível.");
@@ -78,7 +79,7 @@ export const VisualScannerPage: React.FC = () => {
                 }
 
             } catch (err) {
-                console.error("Error initializing scanner:", err);
+                logger.error("Error initializing scanner:", err);
                 if (isMounted) {
                     setStatus(t("common.error", "Erro ao inicializar scanner"));
                     setLoading(false);
@@ -102,7 +103,7 @@ export const VisualScannerPage: React.FC = () => {
                 setScanning(true);
                 requestAnimationFrame(scanLoop);
             } catch (err) {
-                console.error("Error accessing camera:", err);
+                logger.error("Error accessing camera:", err);
                 addToast(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"), "error");
             }
         }
@@ -136,7 +137,7 @@ export const VisualScannerPage: React.FC = () => {
                 }
                 activation.dispose();
             } catch (e) {
-                console.error("Error predicting", e);
+                logger.error("Error predicting", e);
             }
         }
 
@@ -156,7 +157,7 @@ export const VisualScannerPage: React.FC = () => {
                     });
                     setWorksMap(mapping);
                 })
-                .catch(console.error);
+                .catch(logger.error);
         }
 
         return () => stopCamera();

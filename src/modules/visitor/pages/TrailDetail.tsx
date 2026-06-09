@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -39,7 +40,7 @@ export const TrailDetail: React.FC = () => {
     if (!id || isGuest) return;
     api.get(`/favorites/check?type=trail&id=${id}`)
       .then(res => setIsFavorite(res.data.isFavorite))
-      .catch(err => console.error("Error checking favorite status", err));
+      .catch(err => logger.error("Error checking favorite status", err));
   }, [id, isGuest]);
 
   useEffect(() => {
@@ -78,7 +79,7 @@ export const TrailDetail: React.FC = () => {
         await api.post('/favorites', { type: "trail", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error(err); }
   };
 
   if (apiLoading) return (

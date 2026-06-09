@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -33,7 +34,7 @@ export const GuestbookPage: React.FC = () => {
             const res = await api.get(`/guestbook?tenantId=${tenantId}`);
             setEntries(res.data);
         } catch (error) {
-            console.error("Failed to fetch guestbook", error);
+            logger.error("Failed to fetch guestbook", error);
         } finally {
             setLoading(false);
         }
@@ -59,7 +60,7 @@ export const GuestbookPage: React.FC = () => {
             setNewMessage("");
             fetchEntries();
         } catch (error) {
-            console.error("Failed to post message", error);
+            logger.error("Failed to post message", error);
             setError(t("visitor.guestbook.error", "Erro ao enviar mensagem."));
         } finally {
             setSubmitting(false);

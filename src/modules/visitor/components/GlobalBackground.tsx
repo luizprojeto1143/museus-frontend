@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useRef } from 'react';
 
 interface GlobalBackgroundProps {
@@ -90,7 +91,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
     gl.attachShader(program, fs);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error(gl.getProgramInfoLog(program));
+      logger.error(gl.getProgramInfoLog(program));
       return;
     }
     gl.useProgram(program);
@@ -136,7 +137,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error(gl.getShaderInfoLog(shader));
+            logger.error(gl.getShaderInfoLog(shader));
             gl.deleteShader(shader);
             return null;
         }

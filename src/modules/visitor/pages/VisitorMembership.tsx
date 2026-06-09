@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
@@ -18,7 +19,7 @@ export const VisitorMembership: React.FC = () => {
         try {
             const res = await api.get(`/memberships/plans?tenantId=${tenantId}`);
             setPlans(res.data);
-        } catch (error) { console.error(error); }
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 

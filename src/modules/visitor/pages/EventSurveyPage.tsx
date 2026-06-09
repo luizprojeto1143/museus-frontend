@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -53,11 +54,11 @@ export const EventSurveyPage: React.FC = () => {
                         setSuccess(true);
                     }
                 } catch (error) {
-                    console.warn("Failed to load existing responses or none found", error);
+                    logger.warn("Failed to load existing responses or none found", error);
                 }
             }
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             addToast("Falha ao carregar a pesquisa.", "error");
         } finally {
             setLoading(false);
@@ -87,7 +88,7 @@ export const EventSurveyPage: React.FC = () => {
             setSuccess(true);
             addToast("Pesquisa enviada com sucesso!", "success");
         } catch (err: any) {
-            console.error(err);
+            logger.error(err);
             addToast(err.response?.data?.error || 'Erro ao enviar respostas.', "error");
         } finally {
             setSubmitting(false);

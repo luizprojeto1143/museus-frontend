@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -65,7 +66,7 @@ export const RouteMap: React.FC = () => {
                 const res = await api.get(`/roadmap-extra/${routeId}`);
                 setRoute(res.data);
             } catch (err) {
-                console.error("Erro ao carregar rota:", err);
+                logger.error("Erro ao carregar rota:", err);
             } finally {
                 setLoading(false);
             }
@@ -82,7 +83,7 @@ export const RouteMap: React.FC = () => {
                         lng: pos.coords.longitude
                     });
                 },
-                (err) => console.error("Erro GPS:", err),
+                (err) => logger.error("Erro GPS:", err),
                 { enableHighAccuracy: true }
             );
             return () => navigator.geolocation.clearWatch(watchId);

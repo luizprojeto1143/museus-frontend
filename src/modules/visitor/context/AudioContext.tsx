@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { createContext, useContext, useState, useRef, useEffect, ReactNode } from 'react';
 
 interface AudioTrack {
@@ -70,7 +71,7 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     playPromise
                         .then(() => setIsPlaying(true))
                         .catch(e => {
-                            console.warn("Auto-play blocked or interrupted", e);
+                            logger.warn("Auto-play blocked or interrupted", e);
                             // We don't set isPlaying(true) here, forcing user to click play if needed, 
                             // or simple recovery.
                             setIsPlaying(false);
@@ -100,7 +101,7 @@ export const AudioProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     playPromise
                         .then(() => setIsPlaying(true))
                         .catch(error => {
-                            console.log("Playback failed or was interrupted:", error);
+                            logger.info("Playback failed or was interrupted:", error);
                             setIsPlaying(false);
                         });
                 }

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -44,7 +45,7 @@ export const TrailsList: React.FC = () => {
         }));
         setTrails(apiTrails);
       })
-      .catch(console.error)
+      .catch(logger.error)
       .finally(() => {
         if (mounted) setLoading(false);
       });

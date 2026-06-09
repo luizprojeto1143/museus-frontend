@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { useTranslation } from "react-i18next";
@@ -34,7 +35,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ work, onClose }) => {
             link.href = canvas.toDataURL("image/png");
             link.click();
         } catch (err) {
-            console.error("Failed to generate image", err);
+            logger.error("Failed to generate image", err);
             alert(t("common.error"));
         } finally {
             setGenerating(false);

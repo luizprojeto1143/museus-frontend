@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -101,7 +102,7 @@ export const SelectMuseum: React.FC = () => {
       setEquipamentos(Array.isArray(res.data) ? res.data : []);
     } catch (err: any) {
       if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
-      console.error("Error loading equipments", err);
+      logger.error("Error loading equipments", err);
       setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
     } finally {
       setLoading(false);
@@ -115,7 +116,7 @@ export const SelectMuseum: React.FC = () => {
       setEvents(Array.isArray(res.data.data) ? res.data.data : []);
     } catch (err: any) {
       if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
-      console.error("Error loading events", err);
+      logger.error("Error loading events", err);
     } finally {
       setLoadingEvents(false);
     }
@@ -181,7 +182,7 @@ export const SelectMuseum: React.FC = () => {
         navigate("/home");
         return;
       } catch (err) {
-        console.error(err);
+        logger.error(err);
       }
     }
 

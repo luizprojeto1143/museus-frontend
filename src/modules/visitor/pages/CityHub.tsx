@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -77,7 +78,7 @@ export const CityHub: React.FC = () => {
           setEvents(eventsRes.data.data || []);
         }
       } catch (err) {
-        console.error("Error fetching city hub data", err);
+        logger.error("Error fetching city hub data", err);
       } finally {
         setLoading(false);
       }

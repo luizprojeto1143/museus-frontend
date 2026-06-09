@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -15,7 +16,7 @@ export const CertificateList: React.FC = () => {
                 const res = await api.get(`/certificates/mine?tenantId=${tenantId}`);
                 setCertificates(res.data);
             } catch (error) {
-                console.error(error);
+                logger.error(error);
             } finally {
                 setLoading(false);
             }

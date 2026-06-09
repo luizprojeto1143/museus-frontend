@@ -1,3 +1,5 @@
+import { logger } from "@/utils/logger";
+import { Work } from "../types/domain";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
@@ -68,7 +70,7 @@ export const WorkDetail: React.FC = () => {
     if (id) {
        api.get(`/sponsor-portal/works/${id}/sponsorships`)
          .then((res: any) => setSponsorships(res.data))
-         .catch(console.error);
+         .catch(logger.error);
     }
   }, [id]);
 
@@ -84,7 +86,7 @@ export const WorkDetail: React.FC = () => {
             setTrailTitle(res.data.title);
           }
         })
-        .catch(console.error);
+        .catch(logger.error);
     }
   }, [trailId]);
 
@@ -144,7 +146,7 @@ export const WorkDetail: React.FC = () => {
     if (!isGuest) {
       api.get(`/favorites/check?type=work&id=${id}`)
         .then(res => setIsFavorite(res.data.isFavorite))
-        .catch(console.error);
+        .catch(logger.error);
     }
   }, [id, tenantId, isGuest, visitWork, addXp]);
 
@@ -158,7 +160,7 @@ export const WorkDetail: React.FC = () => {
              imageUrl: getFullUrl(w.imageUrl)
           })));
         })
-        .catch(console.error);
+        .catch(logger.error);
     }
   }, [tenantId, id]);
 
@@ -172,7 +174,7 @@ export const WorkDetail: React.FC = () => {
         await api.post('/favorites', { type: "work", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err) { console.error(err); }
+    } catch (err) { logger.error(err); }
   };
 
   if (loading) return <PageLoader label="Preparando curadoria..." />;
@@ -373,12 +375,12 @@ export const WorkDetail: React.FC = () => {
             )}
 
             <div className="sidebar-card-premium">
-               <span className="sidebar-label-premium">Audioguia Imersivo</span>
+               <span className="sidebar-label-premium">Audiodescrição</span>
                <NarrativeAudioGuide audioUrl={work.audioUrl} title={work.title} artist={work.artist} />
             </div>
 
             <div className="sidebar-card-premium">
-               <span className="sidebar-label-premium">Acessibilidade Estrita</span>
+               <span className="sidebar-label-premium">Interpretação em Libras</span>
                <LibrasSection videoUrl={work.librasUrl} contentTitle={work.title} />
             </div>
 

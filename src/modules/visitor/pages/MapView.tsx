@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -54,7 +55,7 @@ export const MapView: React.FC = () => {
         description: w.vestigeActive ? t('vestige.admin.active', 'Vestígio Ativo') : (w.room ? `${w.room} • ${w.floor || ""}` : w.artist || t('common.poi', 'Ponto de Interesse'))
       })));
     } catch (err) {
-      console.error("Erro ao carregar dados do mapa", err);
+      logger.error("Erro ao carregar dados do mapa", err);
     } finally {
       setLoading(false);
     }

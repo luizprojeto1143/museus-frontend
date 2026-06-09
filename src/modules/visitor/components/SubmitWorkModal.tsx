@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { Button, Input, Textarea } from "../../../components/ui";
@@ -32,7 +33,7 @@ export const SubmitWorkModal: React.FC<SubmitWorkModalProps> = ({ spaceId, onClo
             setIsSuccess(true);
             setTimeout(onClose, 3000);
         } catch (err) {
-            console.error("Erro ao submeter obra:", err);
+            logger.error("Erro ao submeter obra:", err);
             alert("Erro ao enviar sua contribuição. Tente novamente.");
         } finally {
             setIsSubmitting(false);

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -116,7 +117,7 @@ export const EventDetail: React.FC = () => {
     if (!id || isGuest) return;
     api.get(`/favorites/check?type=event&id=${id}`)
       .then(res => setIsFavorite(res.data.isFavorite))
-      .catch(err => console.error("Error checking favorite status", err));
+      .catch(err => logger.error("Error checking favorite status", err));
   }, [id, isGuest]);
 
   const toggleFavorite = async () => {
@@ -133,7 +134,7 @@ export const EventDetail: React.FC = () => {
         setIsFavorite(true);
       }
     } catch (err) {
-      console.error("Erro ao favoritar", err);
+      logger.error("Erro ao favoritar", err);
     }
   };
 
@@ -158,7 +159,7 @@ export const EventDetail: React.FC = () => {
         fetchEventData();
       }
     } catch (err) {
-      console.error("Registration failed", err);
+      logger.error("Registration failed", err);
       addToast(t("common.error", "Erro ao realizar inscrição"), "error");
     } finally {
       setSubmitting(false);

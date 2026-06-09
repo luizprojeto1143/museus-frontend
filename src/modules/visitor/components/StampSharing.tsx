@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Share2, Instagram, MessageCircle, Download, Check, Loader2 } from "lucide-react";
@@ -52,7 +53,7 @@ export const StampSharing: React.FC<StampSharingProps> = ({ title, subtitle, ima
 
             toast.success("Carimbo salvo com sucesso!", { id: "stamp-gen" });
         } catch (err) {
-            console.error("Erro ao gerar imagem:", err);
+            logger.error("Erro ao gerar imagem:", err);
             toast.error("Erro ao gerar imagem para download", { id: "stamp-gen" });
         } finally {
             setCapturing(false);

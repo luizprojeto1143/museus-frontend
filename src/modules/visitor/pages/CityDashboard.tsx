@@ -1,3 +1,5 @@
+import { logger } from "@/utils/logger";
+import { VisitorProfile, Achievement, Event, Trail } from "../types/domain";
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -70,11 +72,11 @@ export const CityDashboard: React.FC = () => {
   const [mapFilter, setMapFilter] = useState<string>("Todos");
 
   // Dynamic Database-Integrated States
-  const [dbRankings, setDbRankings] = useState<any[]>([]);
-  const [dbMyRank, setDbMyRank] = useState<any>(null);
-  const [dbAchievements, setDbAchievements] = useState<any[]>([]);
-  const [dbEvents, setDbEvents] = useState<any[]>([]);
-  const [dbTrails, setDbTrails] = useState<any[]>([]);
+  const [dbRankings, setDbRankings] = useState<VisitorProfile[]>([]);
+  const [dbMyRank, setDbMyRank] = useState<VisitorProfile | null>(null);
+  const [dbAchievements, setDbAchievements] = useState<Achievement[]>([]);
+  const [dbEvents, setDbEvents] = useState<Event[]>([]);
+  const [dbTrails, setDbTrails] = useState<Trail[]>([]);
 
   // Fetch City Data from PWA dynamic analytics
   useEffect(() => {
@@ -114,7 +116,7 @@ export const CityDashboard: React.FC = () => {
         }
       } catch (err: any) {
         if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
-        console.error("Error loading city data", err);
+        logger.error("Error loading city data", err);
         setError("Erro de rede ao carregar o ecossistema municipal.");
       } finally {
         setLoading(false);
@@ -145,7 +147,7 @@ export const CityDashboard: React.FC = () => {
           }
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database rankings:", err)
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database rankings:", err)
         });
 
       // 2. Fetch Real Achievements for this City
@@ -156,7 +158,7 @@ export const CityDashboard: React.FC = () => {
           }
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database achievements:", err)
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database achievements:", err)
         });
 
       // 3. Fetch Real Events of City and Children
@@ -168,7 +170,7 @@ export const CityDashboard: React.FC = () => {
           }
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database events:", err)
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database events:", err)
         });
 
       // 4. Fetch Real Trails/Roteiros of City and Children
@@ -180,7 +182,7 @@ export const CityDashboard: React.FC = () => {
           }
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') console.warn("Could not load database trails:", err)
+            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database trails:", err)
         });
 
       return () => {
@@ -197,7 +199,7 @@ export const CityDashboard: React.FC = () => {
         navigate("/home");
         return;
       } catch (err) {
-        console.error("Error switching tenant session", err);
+        logger.error("Error switching tenant session", err);
       }
     }
     enterAsGuest(equip.id, equip.id, city?.id || null);

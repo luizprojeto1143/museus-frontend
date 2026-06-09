@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -29,7 +30,7 @@ export const CommunityFeed: React.FC = () => {
             const res = await api.get(`/community?targetId=${targetId}`);
             setPosts(res.data);
         } catch (err) {
-            console.error("Erro ao carregar feed:", err);
+            logger.error("Erro ao carregar feed:", err);
         } finally {
             setLoading(false);
         }
@@ -53,7 +54,7 @@ export const CommunityFeed: React.FC = () => {
             setNewPost("");
             alert("Sua memória foi enviada para curadoria! ✨");
         } catch (err) {
-            console.error("Erro ao enviar post:", err);
+            logger.error("Erro ao enviar post:", err);
         } finally {
             setIsSubmitting(false);
         }

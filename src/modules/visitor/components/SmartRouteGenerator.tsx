@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Clock, Loader, MapPin, Play } from "lucide-react";
@@ -45,7 +46,7 @@ export const SmartRouteGenerator: React.FC = () => {
             });
             setResult(res.data);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         } finally {
             setLoading(false);
         }

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -30,7 +31,7 @@ export const EventsList: React.FC = () => {
     try {
       const res = await api.get("/events", { params: { tenantId, equipamentoId, status: 'PUBLISHED' } });
       setEvents(res.data.data || []);
-    } catch { console.error("Failed to fetch events"); }
+    } catch { logger.error("Failed to fetch events"); }
     finally { setLoading(false); }
   }, [tenantId, equipamentoId]);
 

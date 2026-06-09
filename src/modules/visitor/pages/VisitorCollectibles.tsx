@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
@@ -31,7 +32,7 @@ export const VisitorCollectibles: React.FC = () => {
             ]);
             setAllCards(all.data);
             setMyCards(my.data);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 

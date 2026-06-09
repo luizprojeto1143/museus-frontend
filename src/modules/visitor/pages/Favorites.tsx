@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -26,7 +27,7 @@ export const Favorites: React.FC = () => {
     if (isGuest || !tenantId) return;
     api.get("/favorites")
       .then(res => setFavorites(res.data))
-      .catch(err => console.error("Erro ao carregar favoritos", err))
+      .catch(err => logger.error("Erro ao carregar favoritos", err))
       .finally(() => setLoading(false));
   }, [isGuest, tenantId]);
 
@@ -35,7 +36,7 @@ export const Favorites: React.FC = () => {
       await api.delete(`/favorites/${type}/${itemId}`);
       setFavorites(prev => prev.filter(f => f.id !== itemId));
     } catch (err) {
-      console.error("Erro ao remover favorito", err);
+      logger.error("Erro ao remover favorito", err);
     }
   };
 

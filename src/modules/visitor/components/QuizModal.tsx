@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { Button } from "../../../components/ui";
@@ -40,7 +41,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ targetId, onClose }) => {
                 const res = await api.get(`/quiz?targetId=${targetId}`);
                 setQuiz(res.data);
             } catch (err) {
-                console.error("Erro ao buscar quiz:", err);
+                logger.error("Erro ao buscar quiz:", err);
             } finally {
                 setLoading(false);
             }
@@ -65,7 +66,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ targetId, onClose }) => {
                     answerIndex: index
                 });
             } catch (err) {
-                console.error("Erro ao registrar resposta:", err);
+                logger.error("Erro ao registrar resposta:", err);
             }
         }
 

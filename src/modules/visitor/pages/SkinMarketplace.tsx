@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -49,7 +50,7 @@ export const SkinMarketplace: React.FC = () => {
                 const skinsRes = await api.get(`/marketplace?visitorId=${vid}`);
                 setSkins(skinsRes.data);
             } catch (err) {
-                console.error(err);
+                logger.error(err);
                 addToast("Erro ao carregar marketplace", "error");
             } finally {
                 setLoading(false);

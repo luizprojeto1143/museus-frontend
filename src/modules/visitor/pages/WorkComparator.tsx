@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
@@ -20,7 +21,7 @@ export const WorkComparator: React.FC = () => {
             const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setWorks(list);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         } finally {
             setLoading(false);
         }

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { QRCodeSVG } from "qrcode.react";
@@ -40,7 +41,7 @@ export const MyTickets: React.FC = () => {
     }
     api.get("/registrations/my-registrations")
       .then(res => setRegistrations(res.data))
-      .catch(err => console.error("Error fetching tickets", err))
+      .catch(err => logger.error("Error fetching tickets", err))
       .finally(() => setLoading(false));
   }, [isGuest]);
 

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useState } from 'react';
 import { X, Minus, Plus, Calendar, CreditCard, Ticket as TicketIcon } from 'lucide-react';
@@ -79,7 +80,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
 
             onSuccess();
         } catch (e) {
-            console.error(e);
+            logger.error(e);
             alert(t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
         } finally {
             setLoading(false);

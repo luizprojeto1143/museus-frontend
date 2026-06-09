@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -39,7 +40,7 @@ export const LeaderboardPage: React.FC = () => {
                 setEntries(res.data);
             }
         } catch (err) {
-            console.error("Erro ao carregar ranking", err);
+            logger.error("Erro ao carregar ranking", err);
         } finally {
             setLoading(false);
         }

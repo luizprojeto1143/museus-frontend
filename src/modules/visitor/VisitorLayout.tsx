@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -127,7 +128,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             });
           } catch (apiErr: any) {
             if (apiErr.response?.status !== 404) {
-               console.warn("Could not load tenant settings", apiErr);
+               logger.warn("Could not load tenant settings", apiErr);
             }
           }
         }

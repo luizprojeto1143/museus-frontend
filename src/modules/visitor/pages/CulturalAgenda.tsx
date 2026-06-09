@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -46,7 +47,7 @@ export const CulturalAgenda: React.FC = () => {
         setCities(cityTenants);
         setEvents(eventsRes.data.data || []);
       } catch (err) {
-        console.error("Error fetching agenda data", err);
+        logger.error("Error fetching agenda data", err);
       } finally {
         setLoading(false);
       }
@@ -63,7 +64,7 @@ export const CulturalAgenda: React.FC = () => {
       const res = await api.get("/events", { params });
       setEvents(res.data.data || []);
     } catch (err) {
-      console.error("Error fetching filtered events", err);
+      logger.error("Error fetching filtered events", err);
     } finally {
       setLoading(false);
     }

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -26,7 +27,7 @@ export const ArchitecturalTimeline: React.FC = () => {
                 const res = await api.get(`/roadmap-extra/events?spaceId=${spaceId}`);
                 setEvents(res.data);
             } catch (err) {
-                console.error("Erro ao buscar linha do tempo:", err);
+                logger.error("Erro ao buscar linha do tempo:", err);
             } finally {
                 setLoading(false);
             }

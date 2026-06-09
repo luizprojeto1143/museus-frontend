@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Target, Trophy, Map, ChevronRight, Star, Clock } from 'lucide-react';
@@ -29,7 +30,7 @@ export const ChallengesPage: React.FC = () => {
                 const res = await api.get(`/challenges/hunts?tenantId=${tenantId}`);
                 setHunts(res.data);
             } catch (error) {
-                console.error('Error fetching hunts:', error);
+                logger.error('Error fetching hunts:', error);
             } finally {
                 setLoading(false);
             }
@@ -40,7 +41,7 @@ export const ChallengesPage: React.FC = () => {
                 const res = await api.get('/visitors/me');
                 setUserXp(res.data.xp || 0);
             } catch (error) {
-                console.error('Error fetching user stats:', error);
+                logger.error('Error fetching user stats:', error);
             }
         };
 
@@ -138,7 +139,7 @@ const HuntCard: React.FC<{ hunt: ScavengerHunt }> = ({ hunt }) => {
             await api.post(`/challenges/hunts/${hunt.id}/start`);
             window.location.href = `/desafios/cacas/${hunt.id}`;
         } catch (error) {
-            console.error('Error starting hunt:', error);
+            logger.error('Error starting hunt:', error);
         } finally {
             setStarting(false);
         }

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +27,7 @@ export const ScannerPage: React.FC = () => {
                 await scannerRef.current.stop();
                 scannerRef.current.clear();
             } catch (err) {
-                console.error("Error stopping scanner", err);
+                logger.error("Error stopping scanner", err);
             }
         }
         setIsScanning(false);
@@ -57,7 +58,7 @@ export const ScannerPage: React.FC = () => {
             );
             setIsScanning(true);
         } catch (err: any) {
-            console.error("Error starting scanner", err);
+            logger.error("Error starting scanner", err);
             let errMsg = "Não foi possível acessar a câmera. Verifique se você permitiu o acesso.";
             if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
                 errMsg = "⚠️ O leitor de QR Code exige uma conexão segura (HTTPS). Se você estiver usando um celular, o navegador bloqueia a câmera em conexões HTTP normais.";
@@ -137,7 +138,7 @@ export const ScannerPage: React.FC = () => {
                 navigate(`/obras/${workId}?scan=true`);
             }
         } catch (err) {
-            console.error("Erro ao validar scan", err);
+            logger.error("Erro ao validar scan", err);
             addToast("Código não identificado ou fora de contexto.", "error");
             setValidating(false);
         }

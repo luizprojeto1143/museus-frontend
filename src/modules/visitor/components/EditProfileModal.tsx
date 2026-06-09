@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
@@ -40,7 +41,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                 }
             }
         } catch (error) {
-            console.error("Error updating profile", error);
+            logger.error("Error updating profile", error);
         }
 
         setLoading(false);

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -16,7 +17,7 @@ export const PublicPassportPage: React.FC = () => {
                 const res = await api.get(`/visitors/public-passport/${id}`);
                 setVisitor(res.data);
             } catch (err) {
-                console.error(err);
+                logger.error(err);
             } finally {
                 setLoading(false);
             }

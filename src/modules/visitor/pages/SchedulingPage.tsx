@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -44,7 +45,7 @@ export const SchedulingPage: React.FC = () => {
             setBookings(bookingsRes.data);
             setInPersonServices(servicesRes.data);
         } catch (error) {
-            console.error("Failed to fetch data", error);
+            logger.error("Failed to fetch data", error);
         } finally {
             setInitialLoading(false);
         }

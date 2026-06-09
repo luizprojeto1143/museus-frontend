@@ -119,16 +119,35 @@ function ClusteredMarkers({ pois, vestigeIcon, defaultIcon }: {
 
                 const popupContent = document.createElement("div");
                 popupContent.className = "flex flex-col gap-3 min-w-[200px] p-2";
-                popupContent.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        ${poi.type === "vestige" ? '<span class="text-gold-500">✨</span>' : ""}
-                        <h4 class="font-black text-slate-900 tracking-tight text-lg">${poi.title}</h4>
-                    </div>
-                    ${poi.description ? `<p class="text-slate-600 text-xs leading-relaxed font-medium">${poi.description}</p>` : ""}
-                    <div class="flex items-center gap-1 mt-1">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200">${poi.type || 'Ponto de Interesse'}</span>
-                    </div>
-                `;
+                const titleContainer = document.createElement("div");
+                titleContainer.className = "flex items-center gap-2";
+                if (poi.type === "vestige") {
+                    const spark = document.createElement("span");
+                    spark.className = "text-gold-500";
+                    spark.textContent = "✨";
+                    titleContainer.appendChild(spark);
+                }
+                const titleNode = document.createElement("h4");
+                titleNode.className = "font-black text-slate-900 tracking-tight text-lg";
+                titleNode.textContent = poi.title;
+                titleContainer.appendChild(titleNode);
+                popupContent.appendChild(titleContainer);
+
+                if (poi.description) {
+                    const descNode = document.createElement("p");
+                    descNode.className = "text-slate-600 text-xs leading-relaxed font-medium";
+                    descNode.textContent = poi.description;
+                    popupContent.appendChild(descNode);
+                }
+
+                const footerContainer = document.createElement("div");
+                footerContainer.className = "flex items-center gap-1 mt-1";
+                const typeBadge = document.createElement("span");
+                typeBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200";
+                typeBadge.textContent = poi.type || "Ponto de Interesse";
+                footerContainer.appendChild(typeBadge);
+                popupContent.appendChild(footerContainer);
+
                 marker.bindPopup(popupContent);
                 clusterGroup.addLayer(marker);
             });

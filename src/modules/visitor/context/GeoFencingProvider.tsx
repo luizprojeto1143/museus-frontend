@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -183,7 +184,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
             setGeoPoints(points);
         } catch (err) {
-            console.error("Failed to load geo points", err);
+            logger.error("Failed to load geo points", err);
             setGeoPoints([]);
         }
     }, [tenantId, isCityMode]);
@@ -223,7 +224,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // Geolocation Watcher
     useEffect(() => {
         if (!navigator.geolocation) {
-            console.warn("Geolocation not supported");
+            logger.warn("Geolocation not supported");
             return;
         }
 
@@ -235,7 +236,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                 checkProximity(latitude, longitude);
             },
             (error) => {
-                console.warn("Geolocation error", error);
+                logger.warn("Geolocation error", error);
                 if (error.code === error.PERMISSION_DENIED) {
                     setPermission("denied");
                 }

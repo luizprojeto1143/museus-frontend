@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
@@ -42,7 +43,7 @@ export const VisitorRPG: React.FC = () => {
                 setIsGenerating(active.avatarStatus === 'GENERATING');
             }
         } catch (error) { 
-            console.error(error); 
+            logger.error(error); 
         } finally { 
             setLoading(false); 
         }
@@ -64,7 +65,7 @@ export const VisitorRPG: React.FC = () => {
                     }
                 }
             } catch (err) {
-                console.error("Polling error", err);
+                logger.error("Polling error", err);
             }
         }, 4000);
 

@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Headphones, Sparkles, Loader2, Info } from 'lucide-react';
@@ -75,7 +76,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
 
             addToast("Áudio-guia gerado com sucesso!", "success");
         } catch (error) {
-            console.error("TTS Error", error);
+            logger.error("TTS Error", error);
             addToast(t('visitor.audioGuide.errorTTS', 'Erro ao gerar áudio.'), "error");
         } finally {
             setGenerating(false);

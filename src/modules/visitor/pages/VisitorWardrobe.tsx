@@ -1,3 +1,4 @@
+import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
@@ -74,7 +75,7 @@ export const VisitorWardrobe: React.FC = () => {
                 else if (rpgRes.data.characters.length > 0) setSelectedCharId(rpgRes.data.characters[0].id);
                 
             } catch (err) {
-                console.error(err);
+                logger.error(err);
             } finally {
                 setLoading(false);
             }
@@ -111,7 +112,7 @@ export const VisitorWardrobe: React.FC = () => {
                     }
                 }
             } catch (err) {
-                console.error("Polling skin error", err);
+                logger.error("Polling skin error", err);
             }
         }, 4000);
 
@@ -160,7 +161,7 @@ export const VisitorWardrobe: React.FC = () => {
                 addToast("IA está aplicando a skin ao seu avatar...", "info");
             } catch (err) {
                 setGeneratingSkin(null);
-                console.error("AI Skin start error", err);
+                logger.error("AI Skin start error", err);
             }
         }
     };
