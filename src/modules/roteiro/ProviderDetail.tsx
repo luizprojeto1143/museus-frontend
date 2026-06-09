@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Play, CheckCircle, CreditCard } from 'lucide-react';
-// import { api } from '../../../api/client';
+import { api } from '../../api/client';
 
 export const ProviderDetail: React.FC = () => {
   const navigate = useNavigate();
@@ -12,15 +12,7 @@ export const ProviderDetail: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   // Mocked data for the provider
-  const provider = {
-    name: "Maria Guia Turística",
-    type: "TOUR_GUIDE",
-    description: "Especialista em turismo histórico com mais de 10 anos de experiência. Guias bilíngues (EN/ES/PT).",
-    rating: 4.9,
-    reviewsCount: 128,
-    verified: true,
-    coverUrl: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop"
-  };
+  const [provider, setProvider] = useState<any>(null);
 
   const [products, setProducts] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -28,15 +20,19 @@ export const ProviderDetail: React.FC = () => {
 
   // Exemplo de como a integração real funcionará usando o useEffect e a api
   React.useEffect(() => {
-    // Simulando a chamada de API (já que o endpoint exato pode variar na arquitetura de Roteiros)
-    // api.get(`/providers/${providerId}/products`).then(res => setProducts(res.data));
-    // api.get(`/providers/${providerId}/reviews`).then(res => setReviews(res.data));
-    
-    // Fallback vazio até a API ser alimentada
-    setProducts([]);
-    setReviews([]);
-    setIsLoading(false);
+    api.get(`/public/providers/${providerId}`)
+      .then(res => {
+        setProvider(res.data);
+        setProducts(res.data.products || []);
+        setReviews(res.data.reviews || []);
+      })
+      .catch(() => {
+        setProvider({ name: "Desconhecido", description: "Não encontrado", coverUrl: "", verified: false, rating: 0, reviewsCount: 0 });
+      })
+      .finally(() => setIsLoading(false));
   }, [providerId]);
+
+  if (isLoading || !provider) return <div className="min-h-screen bg-[#121212] text-white p-6 pb-24">Carregando Prestador...</div>;
 
   const handleBuy = (product: any) => {
     setSelectedProduct(product);

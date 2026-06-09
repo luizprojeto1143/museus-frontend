@@ -108,6 +108,10 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             fontFamily: equip.fontePrincipal || equip.tenant?.fontFamily || "'Inter', sans-serif"
           };
           setSettings(mergedSettings);
+          setSpaceTheme({
+            primaryColor: mergedSettings.primaryColor,
+            secondaryColor: mergedSettings.secondaryColor,
+            theme: mergedSettings.theme as "light" | "dark",
             historicalFont: mergedSettings.historicalFont
           });
         } else if (tenantId && tenantId !== "undefined" && tenantId !== "null") {

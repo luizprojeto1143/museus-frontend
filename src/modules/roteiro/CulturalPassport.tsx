@@ -7,16 +7,28 @@ export const CulturalPassport: React.FC = () => {
   const navigate = useNavigate();
 
   // Mocked state for the visitor's passport
-  const passport = {
-    level: 3,
-    culturaCoins: 1250,
-    stamps: [
-      { id: 1, name: 'Museu Histórico', date: '25 Mai 2026', icon: '🏛️' },
-      { id: 2, name: 'Restaurante Sabor Mineiro', date: '26 Mai 2026', icon: '🍲' },
-      { id: 3, name: 'Guia Maria - Tour Centro', date: '27 Mai 2026', icon: '🗺️' }
-    ],
-    nextRewardAt: 1500
-  };
+  const [passport, setPassport] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+  
+  React.useEffect(() => {
+    import("../../api/client").then(({ api }) => {
+      api.get("/visitors/me/passport").then(res => {
+        const data = res.data;
+        setPassport({
+          level: Math.floor(data.xp / 500) + 1,
+          culturaCoins: data.xp,
+          stamps: data.stamps.map((s: any) => ({ id: s.id, name: s.work?.title || "Local Cultural", date: new Date(s.createdAt).toLocaleDateString("pt-BR"), icon: "🏛️" })),
+          nextRewardAt: (Math.floor(data.xp / 500) + 1) * 500
+        });
+        setLoading(false);
+      }).catch(() => {
+        setPassport({ level: 1, culturaCoins: 0, stamps: [], nextRewardAt: 500 });
+        setLoading(false);
+      });
+    });
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-[#121212] text-white p-6 pb-24">Carregando Passaporte...</div>;
 
   const progressPercentage = (passport.culturaCoins / passport.nextRewardAt) * 100;
 

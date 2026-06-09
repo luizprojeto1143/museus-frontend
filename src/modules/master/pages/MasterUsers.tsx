@@ -114,7 +114,9 @@ export const MasterUsers: React.FC = () => {
                 <div className="flex items-center gap-6">
                     <Button 
                         onClick={() => navigate("/master/users/novo")}
-                        className="h-20 px-12 rounded-[32px] bg-indigo-600 text-white font-black uppercase text-xs tracking-[0.3em] hover:bg-indigo-500 transition-all shadow-2xl shadow-indigo-600/30 active:scale-95 flex items-center gap-4 group"
+                        className="h-20 px-12 rounded-[32px] bg-indigo-600 text-white font-black uppercase text-xs tracking-[0.3em] hover:bg-indigo-500 transition-all shadow-2xl shadow-indigo-600/30 active:scale-95 flex items-center gap-4 group">
+                    Novo Usuário 
+                    </Button>
                     <Badge variant="glass" className="bg-indigo-500/10 text-indigo-400 border-none px-12 py-6 text-[12px] font-black uppercase tracking-[0.4em] italic rounded-[24px] flex items-center gap-4 shadow-2xl border border-indigo-500/20">
                         <ShieldAlert size={24} /> Audit Status: Sovereign Secure
                     </Badge>
