@@ -123,7 +123,7 @@ export const ProducerProjects: React.FC = () => {
                                 <div className="flex gap-2 w-full md:w-auto">
                                     <button
                                         onClick={() => router(`/producer/projects/${project.id}`)}
-                                        className="flex-1 md:flex-none px-4 py-2 bg-black/20 hover:bg-[var(--accent-primary)] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
+                                        className="flex-1 md:flex-none px-4 py-3 min-h-[44px] bg-black/20 hover:bg-[var(--accent-primary)] hover:text-[#1a1108] border border-[#463420] rounded-lg text-[#EAE0D5] text-sm font-bold flex items-center justify-center gap-2 transition-all"
                                         title={project.status === 'DRAFT' ? "Editar" : "Visualizar"}
                                     >
                                         {project.status === 'DRAFT' ? <><Edit size={16} /> Editar</> : <><Eye size={16} /> Detalhes</>}

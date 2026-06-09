@@ -106,7 +106,7 @@ export const ProducerEventForm: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#1a1108] text-[#EAE0D5] p-6 md:p-12 animate-in fade-in duration-500">
+        <div className="min-h-screen bg-[#1a1108] text-[#EAE0D5] p-4 md:p-12 animate-in fade-in duration-500">
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center gap-4 mb-8">
                     <Button
@@ -124,7 +124,7 @@ export const ProducerEventForm: React.FC = () => {
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="bg-[#2c1e10] rounded-2xl p-8 border border-[#463420] shadow-lg shadow-black/20 space-y-8">
+                <form onSubmit={handleSubmit} className="bg-[#2c1e10] rounded-2xl p-4 md:p-8 border border-[#463420] shadow-lg shadow-black/20 space-y-8">
 
                     {/* Basic Info */}
                     <div className="space-y-6">
@@ -255,7 +255,7 @@ export const ProducerEventForm: React.FC = () => {
                     {/* Status */}
                     <div className="bg-black/20 p-6 rounded-xl border border-[#463420]">
                         <label className="block text-sm font-medium text-[#B0A090] mb-4">{t("producer.producerevent.eventStatus", "Status do Evento")}</label>
-                        <div className="flex gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 type="button"
                                 onClick={() => setFormData(prev => ({ ...prev, status: "DRAFT" }))}

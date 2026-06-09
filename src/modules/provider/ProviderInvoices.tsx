@@ -110,11 +110,11 @@ export const ProviderInvoices: React.FC = () => {
                                         <input 
                                             type="text" 
                                             placeholder="Número da NF" 
-                                            className="bg-black/50 border border-white/10 rounded-lg px-3 py-2 text-white text-sm"
+                                            className="bg-black/50 border border-white/10 rounded-lg px-4 py-3 min-h-[44px] text-white text-sm"
                                             value={uploadingId === exec.id ? nfNumber : (nfNumber && uploadingId === null ? nfNumber : '')}
                                             onChange={(e) => setNfNumber(e.target.value)}
                                         />
-                                        <label className={`cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2 transition-colors ${uploadingId === exec.id ? 'opacity-50 pointer-events-none' : ''}`}>
+                                        <label className={`cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-3 min-h-[44px] rounded-xl flex items-center justify-center gap-2 transition-colors ${uploadingId === exec.id ? 'opacity-50 pointer-events-none' : ''}`}>
                                             {uploadingId === exec.id ? <Clock size={16} className="animate-spin" /> : <Upload size={16} />}
                                             <span className="text-xs font-bold uppercase tracking-widest">
                                                 {uploadingId === exec.id ? 'Enviando...' : 'Anexar NF (PDF)'}

@@ -31,42 +31,42 @@ export function SponsorCheckout() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-8 flex flex-col items-center">
+    <div className="min-h-screen bg-slate-950 text-white p-4 md:p-8 flex flex-col items-center">
       <div className="w-full max-w-xl">
         <h1 className="text-3xl font-black text-gold-400 mb-8">{t("sponsor.checkout.title", "Assinar Patrocínio")}</h1>
         <div className="space-y-4">
           <input 
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 min-h-[44px] text-base" 
             placeholder={t("sponsor.checkout.name_placeholder", "Nome do Patrocinador / Empresa")} 
             value={form.sponsorName} 
             onChange={e => setForm({...form, sponsorName: e.target.value})} 
           />
           <input 
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 min-h-[44px] text-base" 
             placeholder={t("sponsor.checkout.email_placeholder", "E-mail")} 
             value={form.sponsorEmail} 
             onChange={e => setForm({...form, sponsorEmail: e.target.value})} 
           />
           <input 
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 min-h-[44px] text-base" 
             placeholder={t("sponsor.checkout.cnpj_placeholder", "CNPJ")} 
             value={form.sponsorCNPJ} 
             onChange={e => setForm({...form, sponsorCNPJ: e.target.value})} 
           />
           <input 
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 min-h-[44px] text-base" 
             placeholder={t("sponsor.checkout.logo_placeholder", "URL da Logomarca (Opcional, formato JPG/PNG)")} 
             value={form.sponsorLogo} 
             onChange={e => setForm({...form, sponsorLogo: e.target.value})} 
           />
           <input 
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3" 
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 min-h-[44px] text-base" 
             placeholder={t("sponsor.checkout.url_placeholder", "URL do seu Site (Opcional)")} 
             value={form.sponsorUrl} 
             onChange={e => setForm({...form, sponsorUrl: e.target.value})} 
           />
           <select 
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-3 text-white" 
+            className="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 min-h-[44px] text-base text-white" 
             value={form.tier} 
             onChange={e => setForm({...form, tier: e.target.value})}
           >

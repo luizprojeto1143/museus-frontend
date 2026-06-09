@@ -25,6 +25,24 @@ const Model: React.FC<ModelProps> = ({ url, autoRotate = true }) => {
     }
   });
 
+  // VRAM Garbage Collector
+  React.useEffect(() => {
+    return () => {
+      scene.traverse((object: any) => {
+        if (object.isMesh) {
+          object.geometry?.dispose();
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach((m: any) => m.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        }
+      });
+    };
+  }, [scene]);
+
   return (
     <group ref={meshRef}>
       <Center>

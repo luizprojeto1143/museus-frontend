@@ -105,12 +105,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             theme: equip.theme || equip.tenant?.theme || "dark",
             historicalFont: equip.historicalFont !== undefined ? equip.historicalFont : equip.tenant?.historicalFont,
             name: equip.nome,
+            fontFamily: equip.fontePrincipal || equip.tenant?.fontFamily || "'Inter', sans-serif"
           };
           setSettings(mergedSettings);
-          setSpaceTheme({
-            primaryColor: mergedSettings.primaryColor,
-            secondaryColor: mergedSettings.secondaryColor,
-            theme: (mergedSettings.theme as "light" | "dark") || "dark",
             historicalFont: mergedSettings.historicalFont
           });
         } else if (tenantId && tenantId !== "undefined" && tenantId !== "null") {
@@ -137,7 +134,8 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     fetchSettings();
-  }, [tenantId, equipamentoId, setSpaceTheme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tenantId, equipamentoId]);
 
   // Welcome Logic: Show only once per mount/session if authenticated
   useEffect(() => {

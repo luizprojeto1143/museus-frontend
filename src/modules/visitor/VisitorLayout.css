@@ -342,6 +342,17 @@
     border-radius: 24px;
     padding: 2rem;
     transition: transform 0.3s ease, border-color 0.3s ease;
+    /* Evita que texto vaze do card */
+    overflow: hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 1.25rem;
+        border-radius: 16px;
+    }
 }
 
 .card:hover {
