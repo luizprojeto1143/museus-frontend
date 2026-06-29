@@ -74,7 +74,7 @@ export const VisitorWardrobe: React.FC = () => {
                 if (active) setSelectedCharId(active.id);
                 else if (rpgRes.data.characters.length > 0) setSelectedCharId(rpgRes.data.characters[0].id);
                 
-            } catch (err) {
+            } catch (err: any) {
                 logger.error(err);
             } finally {
                 setLoading(false);
@@ -111,7 +111,7 @@ export const VisitorWardrobe: React.FC = () => {
                         addToast("Erro na geração da IA pela skin.", "error");
                     }
                 }
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Polling skin error", err);
             }
         }, 4000);
@@ -126,7 +126,7 @@ export const VisitorWardrobe: React.FC = () => {
             // Refresh character data
             const rpgRes = await api.get("/rpg/me");
             setCharacters(rpgRes.data.characters);
-        } catch (err) {
+        } catch (err: any) {
             addToast("Erro ao resetar status", "error");
         }
     };
@@ -147,7 +147,7 @@ export const VisitorWardrobe: React.FC = () => {
                     ? { ...c, equippedSkinId: skinId, equippedSkin: ownedSkins.find(s => s.skin.id === skinId)?.skin } 
                     : c
             ));
-        } catch (err) {
+        } catch (err: any) {
             addToast("Erro ao equipar", "error");
         } finally {
             setEquipping(null);
@@ -159,7 +159,7 @@ export const VisitorWardrobe: React.FC = () => {
                 setGeneratingSkin(skinId);
                 await api.post(`/rpg/apply-skin/${skinId}`);
                 addToast("IA está aplicando a skin ao seu avatar...", "info");
-            } catch (err) {
+            } catch (err: any) {
                 setGeneratingSkin(null);
                 logger.error("AI Skin start error", err);
             }

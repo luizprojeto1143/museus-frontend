@@ -132,7 +132,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
             }
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         // Silently skip if it's just a non-existent public equipamento or tenant
         // console.debug("Settings not loaded", err);
       }

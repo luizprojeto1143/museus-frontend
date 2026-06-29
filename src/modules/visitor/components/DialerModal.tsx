@@ -60,7 +60,7 @@ export const DialerModal: React.FC<DialerModalProps> = ({ isOpen, onClose }) => 
             else if (data.type === "EVENT") navigate(`/eventos/${data.referenceId}`);
             else navigate("/"); // Fallback
 
-        } catch (err) {
+        } catch (err: any) {
             setError(err instanceof Error ? err.message : "Erro");
         } finally {
             setLoading(false);

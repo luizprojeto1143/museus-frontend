@@ -91,7 +91,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
     gl.attachShader(program, fs);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      logger.error(gl.getProgramInfoLog(program));
+      logger.error(gl.getProgramInfoLog(program) || "Unknown error");
       return;
     }
     gl.useProgram(program);
@@ -137,7 +137,7 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            logger.error(gl.getShaderInfoLog(shader));
+            logger.error(gl.getShaderInfoLog(shader) || "Unknown error");
             gl.deleteShader(shader);
             return null;
         }

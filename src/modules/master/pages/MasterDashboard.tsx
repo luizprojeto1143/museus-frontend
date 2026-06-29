@@ -67,7 +67,7 @@ export const MasterDashboard: React.FC = () => {
                     setHubSubtitle(res.data.subtitle || "");
                     setHubImageUrl(res.data.imageUrl || "");
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Erro ao carregar configurações globais do Pulse Hub", err);
             }
         };
@@ -91,7 +91,7 @@ export const MasterDashboard: React.FC = () => {
                 }
             });
             toast.success("Configurações do Pulse Hub atualizadas com sucesso!");
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao salvar as configurações.");
         } finally {
             setSavingSettings(false);
@@ -117,7 +117,7 @@ export const MasterDashboard: React.FC = () => {
                 setHubImageUrl(res.data.url);
                 toast.success("Imagem de banner enviada com sucesso!");
             }
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao enviar imagem de banner.");
         } finally {
             setUploading(false);
@@ -138,7 +138,7 @@ export const MasterDashboard: React.FC = () => {
                 equipamentosCount: item.equipamentos || 0
             }));
             setSummaries(data);
-        } catch (err) {
+        } catch (err: any) {
             toast.error(t("master.dashboard.sync_error", "Erro na sincronização de dados globais."));
         } finally {
             setLoading(false);

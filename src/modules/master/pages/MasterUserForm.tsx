@@ -67,7 +67,7 @@ export const MasterUserForm: React.FC = () => {
             try {
                 const res = await api.get("/tenants");
                 setTenants(res.data || []);
-            } catch (err) {
+            } catch (err: any) {
                 console.error(err);
             }
         }
@@ -134,7 +134,7 @@ export const MasterUserForm: React.FC = () => {
                 toast.success("Nova autoridade integrada à malha MSV.");
             }
             navigate("/master/users");
-        } catch (error) {
+        } catch (error: any) {
             toast.error("Falha no protocolo de salvamento de autoridade.");
         }
     };

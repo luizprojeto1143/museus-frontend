@@ -26,7 +26,7 @@ export const VestigeCapture: React.FC = () => {
     try {
       const res = await api.get(`/works/${workId}`);
       setWork(res.data);
-    } catch (err) {
+    } catch (err: any) {
       setError("Não foi possível localizar este vestígio.");
     } finally {
       setLoading(false);

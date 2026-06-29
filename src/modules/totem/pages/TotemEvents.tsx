@@ -23,7 +23,7 @@ export const TotemEvents: React.FC = () => {
             // Ideally backend supports date filter. Using generic list for now.
             const res = await api.get(`/events?tenantId=${tenantId}`);
             setEvents(res.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             toast.error(t("totem.events.load_error", "Erro ao carregar eventos"));
         } finally {

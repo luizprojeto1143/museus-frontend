@@ -27,7 +27,7 @@ api.interceptors.request.use((config) => {  // C2: Ensure x-tenant-id is ALWAYS 
         config.headers["x-tenant-id"] = parsed.tenantId;
       }
     }
-  } catch (e) {
+  } catch (e: any) {
     // Silent catch for parsing errors
   }
 

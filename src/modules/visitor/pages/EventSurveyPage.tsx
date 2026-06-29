@@ -53,11 +53,11 @@ export const EventSurveyPage: React.FC = () => {
                     if (myResp.data.length > 0 && myResp.data.length === surveyRes.data.length) {
                         setSuccess(true);
                     }
-                } catch (error) {
+                } catch (error: any) {
                     logger.warn("Failed to load existing responses or none found", error);
                 }
             }
-        } catch (error) {
+        } catch (error: any) {
             logger.error(error);
             addToast("Falha ao carregar a pesquisa.", "error");
         } finally {

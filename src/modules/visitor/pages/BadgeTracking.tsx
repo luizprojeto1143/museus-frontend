@@ -35,7 +35,7 @@ export const BadgeTracking: React.FC = () => {
             try {
                 const res = await api.get("/badges/my");
                 setRequests(res.data);
-            } catch (err) {
+            } catch (err: any) {
                 logger.error(err);
             } finally {
                 setLoading(false);

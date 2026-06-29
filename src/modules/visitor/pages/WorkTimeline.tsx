@@ -23,7 +23,7 @@ export const WorkTimeline: React.FC = () => {
                     return yearA - yearB;
                 });
             setWorks(sorted);
-        } catch (error) {
+        } catch (error: any) {
             logger.error(error);
         } finally {
             setLoading(false);

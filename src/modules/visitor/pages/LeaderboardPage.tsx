@@ -39,7 +39,7 @@ export const LeaderboardPage: React.FC = () => {
             } else {
                 setEntries(res.data);
             }
-        } catch (err) {
+        } catch (err: any) {
             logger.error("Erro ao carregar ranking", err);
         } finally {
             setLoading(false);

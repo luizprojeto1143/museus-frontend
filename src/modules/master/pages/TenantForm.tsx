@@ -273,7 +273,7 @@ export const TenantForm: React.FC = () => {
         toast.success("Novo Node implantado com sucesso!");
       }
       navigate("/master/tenants");
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Falha no manifesto de implantação.");
     } finally {
       setSaving(false);

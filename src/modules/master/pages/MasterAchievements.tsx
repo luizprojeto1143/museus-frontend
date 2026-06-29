@@ -65,7 +65,7 @@ export const MasterAchievements: React.FC = () => {
             if (res.data.length > 0) {
                 setSelectedTenantId(res.data[0].id);
             }
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao sincronizar domínios municipais.");
         } finally {
             setTenantsLoading(false);
@@ -77,7 +77,7 @@ export const MasterAchievements: React.FC = () => {
         try {
             const res = await api.get(`/achievements?tenantId=${tenantId}`);
             setAchievements(res.data);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro na leitura do cofre de medalhas.");
         } finally {
             setLoading(false);
@@ -102,7 +102,7 @@ export const MasterAchievements: React.FC = () => {
             await api.delete(`/achievements/${id}`);
             toast.success("Medalha removida do cofre.");
             if (selectedTenantId) loadAchievements(selectedTenantId);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro no protocolo de remoção.");
         }
     };

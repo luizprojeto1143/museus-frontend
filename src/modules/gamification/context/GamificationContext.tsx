@@ -85,7 +85,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                     achievements: mergedAchievements,
                 };
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error fetching gamification data", error);
         } finally {
             setLoading(false);

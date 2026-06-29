@@ -93,7 +93,7 @@ export const MasterPlans: React.FC = () => {
             setLoading(true);
             const response = await api.get("/plans");
             setPlans(response.data || []);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro na sincronização de camadas de serviço.");
         } finally {
             setLoading(false);

@@ -16,7 +16,7 @@ export const PublicPassportPage: React.FC = () => {
                 // Public route - doesn't need auth (needs to be created in backend)
                 const res = await api.get(`/visitors/public-passport/${id}`);
                 setVisitor(res.data);
-            } catch (err) {
+            } catch (err: any) {
                 logger.error(err);
             } finally {
                 setLoading(false);

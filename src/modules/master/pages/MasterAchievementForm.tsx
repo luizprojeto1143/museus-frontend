@@ -72,7 +72,7 @@ export const MasterAchievementForm: React.FC = () => {
         try {
             const res = await api.get("/tenants");
             setTenants(res.data);
-        } catch (err) {
+        } catch (err: any) {
             console.error("Erro ao carregar tenants", err);
         }
     }, []);
@@ -88,7 +88,7 @@ export const MasterAchievementForm: React.FC = () => {
                 description: res.data.description || "",
                 imageUrl: res.data.imageUrl || ""
             });
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Falha na sincronização da medalha.");
             navigate("/master/achievements");
         } finally {
@@ -120,7 +120,7 @@ export const MasterAchievementForm: React.FC = () => {
                 toast.success("Nova conquista forjada!");
             }
             navigate("/master/achievements");
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Falha no protocolo de salvamento.");
         } finally {
             setSaving(false);
@@ -250,7 +250,7 @@ export const MasterAchievementForm: React.FC = () => {
                                                 });
                                                 setFormData(prev => ({ ...prev, imageUrl: res.data.url }));
                                                 toast.success("Ativo visual injetado com sucesso.");
-                                            } catch (err) {
+                                            } catch (err: any) {
                                                 toast.error("Falha na injeção de ativo.");
                                             }
                                         }}

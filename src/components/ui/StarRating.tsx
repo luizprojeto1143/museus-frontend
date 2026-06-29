@@ -169,7 +169,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({
             setRating(0);
             setComment('');
             onSubmit?.();
-        } catch (err: unknown) {
+        } catch (err: any) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setError((err as any).response?.data?.message || 'Erro ao enviar avaliação');
         } finally {

@@ -19,7 +19,7 @@ export const TeacherPortal: React.FC = () => {
         try {
             const res = await api.get(`/teachers/visits?tenantId=${tenantId}`);
             setVisits(Array.isArray(res.data) ? res.data : []);
-        } catch (error) { logger.error(error); }
+        } catch (error: any) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -33,7 +33,7 @@ export const TeacherPortal: React.FC = () => {
             setShowForm(false);
             setForm({ schoolName: '', grade: '', studentCount: '', preferredDate: '', objectives: '' });
             fetchData();
-        } catch (err) { toast.error("Erro"); }
+        } catch (err: any) { toast.error("Erro"); }
     };
 
     const educationalResources = [

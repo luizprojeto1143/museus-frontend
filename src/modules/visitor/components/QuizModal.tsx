@@ -40,7 +40,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ targetId, onClose }) => {
             try {
                 const res = await api.get(`/quiz?targetId=${targetId}`);
                 setQuiz(res.data);
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Erro ao buscar quiz:", err);
             } finally {
                 setLoading(false);
@@ -65,7 +65,7 @@ export const QuizModal: React.FC<QuizModalProps> = ({ targetId, onClose }) => {
                     questionId: question.id,
                     answerIndex: index
                 });
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Erro ao registrar resposta:", err);
             }
         }

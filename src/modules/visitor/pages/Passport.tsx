@@ -69,7 +69,7 @@ export const Passport: React.FC = () => {
           city: s.work.tenant?.address?.city || s.work.tenant?.city || "Geral"
         })));
       }
-    } catch (error) { logger.error(error); }
+    } catch (error: any) { logger.error(error); }
     finally { setLoading(false); }
   }, [visitorId]);
 

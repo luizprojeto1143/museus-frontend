@@ -22,7 +22,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { Badge, Button, MagneticButton, Card, AnimateIn, PageLoader, ModelViewer } from "@/components/ui";
+import { Badge, Button, MagneticButton, Card, AnimateIn, PageLoader } from "@/components/ui";
+import { ModelViewer } from "@/components/ui/ModelViewer";
 import { pageVariants, staggerContainer, staggerItem } from "@/lib/motion";
 import "./WorkDetail.css";
 
@@ -174,7 +175,7 @@ export const WorkDetail: React.FC = () => {
         await api.post('/favorites', { type: "work", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err) { logger.error(err); }
+    } catch (err: any) { logger.error(err); }
   };
 
   if (loading) return <PageLoader label="Preparando curadoria..." />;

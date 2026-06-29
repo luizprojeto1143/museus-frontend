@@ -35,7 +35,7 @@ export const NewsletterForm: React.FC<{ variant?: 'inline' | 'card' }> = ({
                 tenantId
             });
             setSuccess(true);
-        } catch (err: unknown) {
+        } catch (err: any) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setError((err as any).response?.data?.message || 'Erro ao inscrever');
         } finally {

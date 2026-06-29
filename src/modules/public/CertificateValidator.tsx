@@ -34,7 +34,7 @@ export const CertificateValidator: React.FC = () => {
             } else {
                 setStatus('invalid');
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             const axiosErr = err as { response?: { status?: number } };
             if (axiosErr.response?.status === 404) {

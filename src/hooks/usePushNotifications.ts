@@ -61,7 +61,7 @@ export const usePushNotifications = () => {
                         userAgent: navigator.userAgent
                     });
                     // console.debug('Firebase SW registered:', registration);
-                } catch (err) {
+                } catch (err: any) {
                     console.warn('Failed to register token on backend:', err);
                 }
 
@@ -83,7 +83,7 @@ export const usePushNotifications = () => {
                 }));
                 return null;
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Push notification error:', error);
             setState(prev => ({
                 ...prev,

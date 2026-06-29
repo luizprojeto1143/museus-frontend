@@ -88,7 +88,7 @@ export const MasterProviders: React.FC = () => {
             setLoading(true);
             const res = await api.get("/providers");
             setProviders(res.data || []);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro na sincronização do ecossistema.");
         } finally {
             setLoading(false);
@@ -114,7 +114,7 @@ export const MasterProviders: React.FC = () => {
             setFormData({ name: "", description: "", email: "", phone: "", services: [], tenantId: "" });
             fetchProviders();
             toast.success("Parceiro homologado no ecossistema!");
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro na autorização do parceiro.");
         }
     };
@@ -125,7 +125,7 @@ export const MasterProviders: React.FC = () => {
             await api.delete(`/providers/${id}`);
             setProviders(prev => prev.filter(p => p.id !== id));
             toast.success("Parceiro removido do registro histórico.");
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro no protocolo de remoção.");
         }
     };

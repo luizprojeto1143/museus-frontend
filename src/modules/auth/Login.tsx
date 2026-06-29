@@ -7,9 +7,9 @@ import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 import { 
   Button, 
   AnimateIn, 
-  ParticleBackground,
   Badge
 } from "@/components/ui";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { Zap, Mail, Lock, ArrowRight } from "lucide-react";
 
 export const Login: React.FC = () => {
@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
 
       const from = location.state?.from?.pathname;
       navigate(from || redirectPath, { replace: true, state: { justLoggedIn: true } });
-    } catch (err) {
+    } catch (err: any) {
       setError(
         err instanceof Error ? err.message : t("auth.errors.generic")
       );

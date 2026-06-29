@@ -32,7 +32,7 @@ export const VisitorCollectibles: React.FC = () => {
             ]);
             setAllCards(all.data);
             setMyCards(my.data);
-        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
+        } catch (error: any) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 

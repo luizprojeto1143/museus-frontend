@@ -79,7 +79,7 @@ export const MasterErrorMonitor: React.FC = () => {
             
             setLogs(technicalLogs);
             lastFetchRef.current = Date.now();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Failed to fetch technical logs:', error);
         } finally {
             setLoading(false);

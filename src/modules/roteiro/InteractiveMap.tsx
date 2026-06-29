@@ -67,7 +67,7 @@ export const InteractiveMap: React.FC = () => {
 
       // Filtra itens sem coordenada válida
       setPins(realPins.filter((p: any) => p.lat !== 0 && p.lng !== 0));
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao carregar mapa", err);
     }
   };

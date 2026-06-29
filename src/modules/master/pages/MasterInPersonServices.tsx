@@ -95,7 +95,7 @@ export const MasterInPersonServices: React.FC = () => {
             ]);
             setServices(servicesRes.data || []);
             setRequests(requestsRes.data || []);
-        } catch (error) {
+        } catch (error: any) {
             toast.error("Erro ao sincronizar operações de campo.");
         } finally {
             setLoading(false);
@@ -121,7 +121,7 @@ export const MasterInPersonServices: React.FC = () => {
             setEditService(null);
             setFormData({ name: "", description: "", active: true, tenantId: "8cc9b546-7f7d-4908-a6cf-acdd7b86982b" });
             loadData();
-        } catch (error) {
+        } catch (error: any) {
             toast.error("Erro no protocolo de salvamento tático.");
         }
     };
@@ -132,7 +132,7 @@ export const MasterInPersonServices: React.FC = () => {
             await api.delete(`/in-person-services/${id}`);
             toast.success("Serviço removido do inventário operacional.");
             loadData();
-        } catch (error) {
+        } catch (error: any) {
             toast.error("Falha na desativação do protocolo.");
         }
     };
@@ -148,7 +148,7 @@ export const MasterInPersonServices: React.FC = () => {
             await api.put(`/bookings/${id}`, { status: newStatus });
             toast.success(`Protocolo ${newStatus}: Processamento finalizado.`);
             loadData();
-        } catch (error) {
+        } catch (error: any) {
             toast.error("Falha na atualização do despacho logístico.");
         }
     };

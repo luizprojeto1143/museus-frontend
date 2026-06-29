@@ -79,7 +79,7 @@ export const TrailDetail: React.FC = () => {
         await api.post('/favorites', { type: "trail", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err) { logger.error(err); }
+    } catch (err: any) { logger.error(err); }
   };
 
   if (apiLoading) return (

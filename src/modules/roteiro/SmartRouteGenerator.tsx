@@ -36,7 +36,7 @@ export const SmartRouteGenerator: React.FC = () => {
       console.log("Roteiro Gerado:", response.data);
       setIsGenerating(false);
       navigate(`/${tenantSlug}/roteiro/map`);
-    } catch (err) {
+    } catch (err: any) {
       setIsGenerating(false);
       console.error(err);
     }

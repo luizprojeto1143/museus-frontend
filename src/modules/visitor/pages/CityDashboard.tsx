@@ -552,17 +552,17 @@ export const CityDashboard: React.FC = () => {
                 {firstEvent && (
                   <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate("/agenda")}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstEvent?.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={firstEvent.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={(firstEvent as any)?.coverImageUrl ? getFullUrl((firstEvent as any).coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={(firstEvent as any).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute event-badge uppercase">Evento</span>
                     </div>
                     <div className="card-info p-4">
-                      <h4 className="card-title font-black text-white text-base">{firstEvent.title}</h4>
+                      <h4 className="card-title font-black text-white text-base">{(firstEvent as any).title}</h4>
                       <p className="card-desc text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {firstEvent.description || "Programação completa disponível no portal."}
+                        {(firstEvent as any).description || "Programação completa disponível no portal."}
                       </p>
                       <span className="card-date-badge font-extrabold text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-4">
-                        {`${new Date(firstEvent.startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date(firstEvent.endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                        {`${new Date((firstEvent as any).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as any).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
                       </span>
                     </div>
                   </Card>
@@ -572,14 +572,14 @@ export const CityDashboard: React.FC = () => {
                 {firstTrail && (
                   <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate("/roteiro")}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstTrail?.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={firstTrail.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={(firstTrail as any)?.imageUrl ? getFullUrl((firstTrail as any).imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={(firstTrail as any).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute route-badge uppercase">Roteiro</span>
                     </div>
                     <div className="card-info p-4">
-                      <h4 className="card-title font-black text-white text-base">{firstTrail.title}</h4>
+                      <h4 className="card-title font-black text-white text-base">{(firstTrail as any).title}</h4>
                       <p className="card-desc text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {firstTrail.description || `Percorra os principais marcos históricos.`}
+                        {(firstTrail as any).description || `Percorra os principais marcos históricos.`}
                       </p>
                       <span className="card-action-btn font-extrabold text-gold-400 text-xs block mt-4 group-hover:translate-x-1 transition-transform">Ver roteiro &gt;</span>
                     </div>
@@ -693,11 +693,11 @@ export const CityDashboard: React.FC = () => {
                 dbRankings.slice(0, 3).map((r, index) => {
                   const isMe = r.email === dbMyRank?.email;
                   return (
-                    <div key={r.rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
-                      <span className={`rank-num font-black text-sm ${r.rank === 1 ? 'text-yellow-500' : r.rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{r.rank}</span>
-                      <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{r.name ? r.name.charAt(0) : "V"}</div>
+                    <div key={(r as any).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
+                      <span className={`rank-num font-black text-sm ${(r as any).rank === 1 ? 'text-yellow-500' : (r as any).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as any).rank}</span>
+                      <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as any).name ? (r as any).name.charAt(0) : "V"}</div>
                       <div className="flex-1 min-w-0">
-                        <span className="name font-bold text-xs text-white block truncate">{r.name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                        <span className="name font-bold text-xs text-white block truncate">{(r as any).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                       </div>
                       <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                     </div>
@@ -726,8 +726,8 @@ export const CityDashboard: React.FC = () => {
                   const colors = ["gold", "purple", "bronze", "dark"];
                   const color = colors[idx % 4];
                   return (
-                    <div key={ach.id} className={`achievement-badge-shield ${color}`} title={ach.description || ach.title}>
-                      {ach.title.includes("Pioneiro") ? "🥇" : ach.title.includes("Mestre") ? "👑" : ach.title.includes("Rotas") ? "🧭" : "🔒"}
+                    <div key={ach.id} className={`achievement-badge-shield ${color}`} title={ach.description || (ach as any).title}>
+                      {(ach as any).title.includes("Pioneiro") ? "🥇" : (ach as any).title.includes("Mestre") ? "👑" : (ach as any).title.includes("Rotas") ? "🧭" : "🔒"}
                     </div>
                   );
                 })
@@ -954,17 +954,17 @@ export const CityDashboard: React.FC = () => {
                 {firstEvent && (
                   <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/agenda")}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstEvent.coverImageUrl ? getFullUrl(firstEvent.coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={firstEvent.title} className="w-full h-full object-cover" />
+                      <img src={(firstEvent as any).coverImageUrl ? getFullUrl((firstEvent as any).coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={(firstEvent as any).title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge event uppercase">Evento em alta</span>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-black text-white text-base">{firstEvent.title}</h4>
+                      <h4 className="font-black text-white text-base">{(firstEvent as any).title}</h4>
                       <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {firstEvent.description || "Programação completa disponível no portal."}
+                        {(firstEvent as any).description || "Programação completa disponível no portal."}
                       </p>
                       <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-3 font-extrabold">
-                        {`${new Date(firstEvent.startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date(firstEvent.endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                        {`${new Date((firstEvent as any).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as any).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
                       </span>
                     </div>
                   </Card>
@@ -974,14 +974,14 @@ export const CityDashboard: React.FC = () => {
                 {firstTrail && (
                   <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/roteiro")}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstTrail.imageUrl ? getFullUrl(firstTrail.imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={firstTrail.title} className="w-full h-full object-cover" />
+                      <img src={(firstTrail as any).imageUrl ? getFullUrl((firstTrail as any).imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={(firstTrail as any).title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge route uppercase">Roteiro sugerido</span>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-black text-white text-base">{firstTrail.title}</h4>
+                      <h4 className="font-black text-white text-base">{(firstTrail as any).title}</h4>
                       <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {firstTrail.description || `Percorra os principais marcos históricos do município.`}
+                        {(firstTrail as any).description || `Percorra os principais marcos históricos do município.`}
                       </p>
                       <span className="text-xs text-gold-400 font-bold block mt-3">Ver roteiro &gt;</span>
                     </div>
@@ -1082,11 +1082,11 @@ export const CityDashboard: React.FC = () => {
                   dbRankings.slice(0, 3).map((r, index) => {
                     const isMe = r.email === dbMyRank?.email;
                     return (
-                      <div key={r.rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
-                        <span className={`rank-num font-black text-sm ${r.rank === 1 ? 'text-yellow-500' : r.rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{r.rank}</span>
-                        <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{r.name ? r.name.charAt(0) : "V"}</div>
+                      <div key={(r as any).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
+                        <span className={`rank-num font-black text-sm ${(r as any).rank === 1 ? 'text-yellow-500' : (r as any).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as any).rank}</span>
+                        <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as any).name ? (r as any).name.charAt(0) : "V"}</div>
                         <div className="flex-1">
-                          <span className="name font-bold text-xs text-white block">{r.name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                          <span className="name font-bold text-xs text-white block">{(r as any).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                         </div>
                         <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                       </div>
@@ -1109,8 +1109,8 @@ export const CityDashboard: React.FC = () => {
                 <div className="flex gap-2">
                   {dbAchievements.length > 0 ? (
                     dbAchievements.slice(0, 4).map((ach) => (
-                      <span key={ach.id} className="text-xl" title={ach.title}>
-                        {ach.title.includes("Pioneiro") ? "🥇" : ach.title.includes("Mestre") ? "👑" : ach.title.includes("Rotas") ? "🧭" : "🔒"}
+                      <span key={ach.id} className="text-xl" title={(ach as any).title}>
+                        {(ach as any).title.includes("Pioneiro") ? "🥇" : (ach as any).title.includes("Mestre") ? "👑" : (ach as any).title.includes("Rotas") ? "🧭" : "🔒"}
                       </span>
                     ))
                   ) : (

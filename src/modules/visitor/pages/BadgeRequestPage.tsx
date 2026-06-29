@@ -33,7 +33,7 @@ export const BadgeRequestPage: React.FC = () => {
                 const res = await api.get(`/visitors/${vid}`);
                 setVisitorData(res.data);
                 setFormData(prev => ({ ...prev, addressName: res.data.name }));
-            } catch (err) {
+            } catch (err: any) {
                 logger.error(err);
             } finally {
                 setLoading(false);
@@ -53,7 +53,7 @@ export const BadgeRequestPage: React.FC = () => {
             });
             addToast("Solicitação enviada!", "success");
             // Redirect or show success
-        } catch (err) {
+        } catch (err: any) {
             addToast("Erro ao solicitar", "error");
         } finally {
             setSubmitting(false);

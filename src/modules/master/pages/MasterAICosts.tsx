@@ -79,7 +79,7 @@ export const MasterAICosts: React.FC = () => {
             setLoading(true);
             const res = await api.get("/ai-costs/report");
             setReport(res.data);
-        } catch (error) {
+        } catch (error: any) {
             toast.error("Erro na sincronização de telemetria neuronal.");
         } finally {
             setLoading(false);

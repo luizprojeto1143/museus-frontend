@@ -49,7 +49,7 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 theme: res.data.theme || "dark",
                 logoUrl: res.data.logoUrl
             });
-        } catch (err) {
+        } catch (err: any) {
             console.error("Erro ao carregar tenant:", err);
             setTenant(null);
         } finally {

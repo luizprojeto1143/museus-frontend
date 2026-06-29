@@ -23,7 +23,7 @@ export const TheaterSeatEditor: React.FC = () => {
             try {
                 const res = await spacesApi.list();
                 setSpaces(res.data);
-            } catch (err) {
+            } catch (err: any) {
                 toast.error("Erro ao carregar espaços");
             } finally {
                 setLoading(false);
@@ -46,7 +46,7 @@ export const TheaterSeatEditor: React.FC = () => {
             } else {
                 setRows([]);
             }
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao carregar layout");
         } finally {
             setLoading(false);
@@ -69,7 +69,7 @@ export const TheaterSeatEditor: React.FC = () => {
             };
             await spacesApi.update(selectedSpaceId, updateData);
             toast.success("Layout salvo com sucesso!");
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao salvar layout");
         } finally {
             setSaving(false);

@@ -34,7 +34,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ work, onClose }) => {
             link.download = `cultura-viva-${work.title.replace(/\s+/g, "-").toLowerCase()}.png`;
             link.href = canvas.toDataURL("image/png");
             link.click();
-        } catch (err) {
+        } catch (err: any) {
             logger.error("Failed to generate image", err);
             alert(t("common.error"));
         } finally {

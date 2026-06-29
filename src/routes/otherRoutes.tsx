@@ -3,23 +3,23 @@ import { Route } from "react-router-dom";
 import { Role } from "../modules/auth/AuthContext";
 
 // Provider
-import { ProviderLayout } from "../modules/provider/ProviderLayout";
-import { ProviderDashboard } from "../modules/provider/ProviderDashboard";
-import { ProviderInbox } from "../modules/provider/ProviderInbox";
-import { ProviderProfile } from "../modules/provider/ProviderProfile";
-import { ProviderServices } from "../modules/provider/ProviderServices";
-import { ProviderSettings } from "../modules/provider/ProviderSettings";
-import { ProviderInvoices } from "../modules/provider/ProviderInvoices";
+import { ProviderLayout } from "../modules/backoffice/provider/ProviderLayout";
+import { ProviderDashboard } from "../modules/backoffice/provider/ProviderDashboard";
+import { ProviderInbox } from "../modules/backoffice/provider/ProviderInbox";
+import { ProviderProfile } from "../modules/backoffice/provider/ProviderProfile";
+import { ProviderServices } from "../modules/backoffice/provider/ProviderServices";
+import { ProviderSettings } from "../modules/backoffice/provider/ProviderSettings";
+import { ProviderInvoices } from "../modules/backoffice/provider/ProviderInvoices";
 
 // Municipal
-import { MunicipalLayout } from "../modules/municipal/MunicipalLayout";
-import { MunicipalDashboard } from "../modules/municipal/MunicipalDashboard";
-import { MunicipalReports } from "../modules/municipal/MunicipalReports";
-import { MunicipalEquipments } from "../modules/municipal/MunicipalEquipments";
-import { MunicipalSettings } from "../modules/municipal/MunicipalSettings";
-import { MunicipalNoticeProjects } from "../modules/municipal/MunicipalNoticeProjects";
-import { MunicipalAccessibilityGaps } from "../modules/municipal/MunicipalAccessibilityGaps";
-import { MunicipalPPA } from "../modules/municipal/MunicipalPPA";
+import { MunicipalLayout } from "../modules/backoffice/municipal/MunicipalLayout";
+import { MunicipalDashboard } from "../modules/backoffice/municipal/MunicipalDashboard";
+import { MunicipalReports } from "../modules/backoffice/municipal/MunicipalReports";
+import { MunicipalEquipments } from "../modules/backoffice/municipal/MunicipalEquipments";
+import { MunicipalSettings } from "../modules/backoffice/municipal/MunicipalSettings";
+import { MunicipalNoticeProjects } from "../modules/backoffice/municipal/MunicipalNoticeProjects";
+import { MunicipalAccessibilityGaps } from "../modules/backoffice/municipal/MunicipalAccessibilityGaps";
+import { MunicipalPPA } from "../modules/backoffice/municipal/MunicipalPPA";
 
 // Totem
 import { TotemLayout } from "../modules/totem/TotemLayout";

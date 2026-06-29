@@ -20,7 +20,7 @@ export const WorkComparator: React.FC = () => {
             const res = await api.get(`/works?tenantId=${tenantId}`);
             const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setWorks(list);
-        } catch (error) {
+        } catch (error: any) {
             logger.error(error);
         } finally {
             setLoading(false);

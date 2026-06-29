@@ -45,7 +45,7 @@ export const SmartRouteGenerator: React.FC = () => {
                 }
             });
             setResult(res.data);
-        } catch (err) {
+        } catch (err: any) {
             logger.error(err);
         } finally {
             setLoading(false);

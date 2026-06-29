@@ -26,7 +26,7 @@ export const ScannerPage: React.FC = () => {
             try {
                 await scannerRef.current.stop();
                 scannerRef.current.clear();
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Error stopping scanner", err);
             }
         }
@@ -137,7 +137,7 @@ export const ScannerPage: React.FC = () => {
             } else {
                 navigate(`/obras/${workId}?scan=true`);
             }
-        } catch (err) {
+        } catch (err: any) {
             logger.error("Erro ao validar scan", err);
             addToast("Código não identificado ou fora de contexto.", "error");
             setValidating(false);

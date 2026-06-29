@@ -20,7 +20,7 @@ let messaging: Messaging | null = null;
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     try {
         messaging = getMessaging(app);
-    } catch (error) {
+    } catch (error: any) {
         console.warn('Firebase Messaging not supported:', error);
     }
 }
@@ -48,7 +48,7 @@ export const getFCMToken = async (): Promise<string | null> => {
 
         // console.debug('FCM Token:', token);
         return token;
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error getting FCM token:', error);
         return null;
     }

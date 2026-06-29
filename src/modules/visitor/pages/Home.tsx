@@ -54,7 +54,7 @@ export const Home: React.FC = () => {
           setMuseumName(equipRes.data.nome || "");
         }
         
-      } catch (err) {
+      } catch (err: any) {
         logger.error("Error fetching home data", err);
       } finally {
         setLoading(false);

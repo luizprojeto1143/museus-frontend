@@ -19,9 +19,9 @@ import {
   Button, 
   Card, 
   AnimateIn, 
-  ParticleBackground,
   Badge
 } from "@/components/ui";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
 import { motion } from "framer-motion";
 
@@ -181,7 +181,7 @@ export const SelectMuseum: React.FC = () => {
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
         navigate("/home");
         return;
-      } catch (err) {
+      } catch (err: any) {
         logger.error(err);
       }
     }

@@ -6,7 +6,8 @@ import { useTenant } from "../../auth/TenantContext";
 import { TenantLogo } from "../../../components/Branding/TenantLogo";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
 import { Smartphone, Eye, Lock, Zap } from "lucide-react";
-import { ParticleBackground, Button } from "@/components/ui";
+import { Button } from "@/components/ui";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { motion } from "framer-motion";
 
 export const Welcome: React.FC = () => {

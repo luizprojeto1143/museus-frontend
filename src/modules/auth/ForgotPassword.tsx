@@ -19,7 +19,7 @@ export const ForgotPassword: React.FC = () => {
     try {
       await api.post("/auth/recover-password", { email });
       setSent(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       setError(t("auth.forgotpassword.error", "Não foi possível enviar o e-mail. Verifique se o endereço está correto."));
     } finally {

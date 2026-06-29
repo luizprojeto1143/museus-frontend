@@ -44,7 +44,7 @@ export const FamilyTimeline: React.FC = () => {
         try {
             const res = await api.get(`/roadmap-family/profiles/${profileId}`);
             setProfile(res.data);
-        } catch (err) {
+        } catch (err: any) {
             logger.error("Erro ao carregar perfil familiar:", err);
         } finally {
             setLoading(false);

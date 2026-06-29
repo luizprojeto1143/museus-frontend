@@ -42,7 +42,7 @@ export const TotemValidator: React.FC = () => {
             });
             playSound('success');
             addToast(t("totem.validator.access_granted", "Acesso Liberado!"), "success");
-        } catch (err) {
+        } catch (err: any) {
             const axiosErr = err as AxiosError<{ error?: string }>;
             const errorMessage = axiosErr.response?.data?.error || t("totem.validator.invalid_ticket", "Ingresso inválido ou não encontrado");
             setError(errorMessage);

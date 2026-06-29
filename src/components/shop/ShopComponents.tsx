@@ -693,7 +693,7 @@ export const ProductGrid: React.FC = () => {
         try {
             const res = await api.get('/coupons/available');
             setAvailableCoupons(res.data.available || []);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching coupons:', error);
         }
     }, []);
@@ -720,7 +720,7 @@ export const ProductGrid: React.FC = () => {
         try {
             const res = await api.get(`/shop/products?tenantId=${tenantId}`);
             setProducts(res.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching products:', error);
         } finally {
             setLoading(false);

@@ -34,5 +34,6 @@ export { AnimateIn } from './AnimateIn';
 export { PageTransition } from './PageTransition';
 export { AnimatedCounter } from './AnimatedCounter';
 export { MagneticButton } from './MagneticButton';
-export * from './ParticleBackground';
-export * from './ModelViewer';
+
+// 3D Components
+export { ModelViewer } from './ModelViewer';

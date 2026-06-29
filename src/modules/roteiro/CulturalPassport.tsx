@@ -89,7 +89,7 @@ export const CulturalPassport: React.FC = () => {
           <Star className="text-amber-500" /> Carimbos Conquistados
         </h2>
         <div className="space-y-4">
-          {passport.stamps.map((stamp, i) => (
+          {passport.stamps.map((stamp: any, i: number) => (
             <motion.div 
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}

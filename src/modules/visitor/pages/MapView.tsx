@@ -54,7 +54,7 @@ export const MapView: React.FC = () => {
         vestigeActive: w.vestigeActive,
         description: w.vestigeActive ? t('vestige.admin.active', 'Vestígio Ativo') : (w.room ? `${w.room} • ${w.floor || ""}` : w.artist || t('common.poi', 'Ponto de Interesse'))
       })));
-    } catch (err) {
+    } catch (err: any) {
       logger.error("Erro ao carregar dados do mapa", err);
     } finally {
       setLoading(false);

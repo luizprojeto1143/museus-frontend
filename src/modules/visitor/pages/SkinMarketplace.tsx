@@ -49,7 +49,7 @@ export const SkinMarketplace: React.FC = () => {
                 // L8 Fix: profileRes already contains XP, only need marketplace now
                 const skinsRes = await api.get(`/marketplace?visitorId=${vid}`);
                 setSkins(skinsRes.data);
-            } catch (err) {
+            } catch (err: any) {
                 logger.error(err);
                 addToast("Erro ao carregar marketplace", "error");
             } finally {
@@ -92,7 +92,7 @@ export const SkinMarketplace: React.FC = () => {
             setVisitorXp(res.data.newXpBalance);
             setSkins(prev => prev.map(s => s.id === skin.id ? { ...s, owned: true } : s));
             setShowWarning(null);
-        } catch (err) {
+        } catch (err: any) {
             addToast("Erro na compra", "error");
         } finally {
             setBuyingId(null);

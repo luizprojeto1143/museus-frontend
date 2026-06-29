@@ -35,7 +35,7 @@ export const SmartItineraryResult: React.FC = () => {
                     preferences
                 });
                 setItinerary(res.data);
-            } catch (error) {
+            } catch (error: any) {
                 logger.error("Failed to generate itinerary", error);
                 setItinerary([]);
             } finally {

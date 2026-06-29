@@ -42,7 +42,7 @@ export const VisitorRPG: React.FC = () => {
                 setAvatarStatus(active.avatarStatus || 'NONE');
                 setIsGenerating(active.avatarStatus === 'GENERATING');
             }
-        } catch (error) { 
+        } catch (error: any) { 
             logger.error(error); 
         } finally { 
             setLoading(false); 
@@ -64,7 +64,7 @@ export const VisitorRPG: React.FC = () => {
                         toast.success("Seu avatar personalizado está pronto! ✨");
                     }
                 }
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Polling error", err);
             }
         }, 4000);
@@ -83,7 +83,7 @@ export const VisitorRPG: React.FC = () => {
             toast.success("Nome atualizado!");
             setEditing(false);
             fetchRPG();
-        } catch (err) { toast.error("Erro"); }
+        } catch (err: any) { toast.error("Erro"); }
     };
 
     const handleSelfieUpload = async (file: File) => {
@@ -95,7 +95,7 @@ export const VisitorRPG: React.FC = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success("Foto enviada! A IA está trabalhando...");
-        } catch (err) {
+        } catch (err: any) {
             setIsGenerating(false);
             toast.error("Erro ao enviar selfie");
         }

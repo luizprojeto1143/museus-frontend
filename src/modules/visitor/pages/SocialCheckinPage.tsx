@@ -23,7 +23,7 @@ export const SocialCheckinPage: React.FC = () => {
         try {
             const res = await api.get(`/social-checkin?tenantId=${tenantId}`);
             setCheckins(res.data);
-        } catch (error) { logger.error(error); }
+        } catch (error: any) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -36,7 +36,7 @@ export const SocialCheckinPage: React.FC = () => {
             toast.success("Check-in realizado! 🎉");
             setMessage('');
             fetchData();
-        } catch (err) { toast.error("Erro"); }
+        } catch (err: any) { toast.error("Erro"); }
         finally { setPosting(false); }
     };
 

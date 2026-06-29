@@ -14,6 +14,10 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Card, Badge, Button } from "@/components/ui";
+import { HubHeader } from "../components/CityHub/HubHeader";
+import { HubFeaturedCities } from "../components/CityHub/HubFeaturedCities";
+import { HubHeroBanner } from "../components/CityHub/HubHeroBanner";
+import { HubCulturalProgress } from "../components/CityHub/HubCulturalProgress";
 import { pageVariants, staggerItem } from "@/lib/motion";
 import "./CityHub.css";
 
@@ -27,7 +31,7 @@ interface CityEquipment {
   eventsCount: number;
 }
 
-interface CityData {
+export interface CityData {
   id: string;
   name: string;
   slug: string;
@@ -77,7 +81,7 @@ export const CityHub: React.FC = () => {
         if (eventsRes.data) {
           setEvents(eventsRes.data.data || []);
         }
-      } catch (err) {
+      } catch (err: any) {
         logger.error("Error fetching city hub data", err);
       } finally {
         setLoading(false);
@@ -171,127 +175,16 @@ export const CityHub: React.FC = () => {
           </div>
         </aside>
 
-        {/* Central Dashboard Scroll Area */}
+                  {/* Central Dashboard Scroll Area */}
         <main className="hub-main-dashboard">
           {/* Top Bar Header */}
-          <header className="dashboard-top-bar flex justify-between items-center mb-8">
-            <div className="search-bar-container max-w-xl flex-1 mr-4">
-              <div className="search-bar-wrapper">
-                <Search size={18} className="text-gray-400 mr-3" />
-                <input 
-                  type="text" 
-                  placeholder="Buscar cidades, museus, obras e experiências..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="topbar-search-input"
-                />
-              </div>
-            </div>
-
-            <div className="topbar-user-profile flex items-center gap-4">
-              <button className="bell-notification-btn relative">
-                <Bell size={20} className="text-gray-400 hover:text-white transition-colors" />
-                <span className="bell-badge-pulse"></span>
-              </button>
-              <div className="user-profile-meta flex items-center gap-3">
-                <div className="user-avatar-circular">
-                  {authName ? authName.charAt(0).toUpperCase() : "V"}
-                </div>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="user-profile-name font-bold block truncate">{authName || "Visitante"}</span>
-                  <span className="user-profile-title font-semibold text-xs text-gold-400 block truncate">{levelTitle}</span>
-                </div>
-              </div>
-            </div>
-          </header>
+          <HubHeader searchTerm={searchTerm} setSearchTerm={setSearchTerm} authName={authName} levelTitle={levelTitle} />
 
           {/* Hero Welcome banner */}
-          <div 
-            className="dashboard-hero-banner cursor-pointer" 
-            onClick={() => {
-              if (cities.length === 0) {
-                toast.error("Cidade em manutenção, logo irá ser liberada!!");
-              }
-            }}
-            style={hubSettings?.imageUrl ? { backgroundImage: `radial-gradient(circle at 0% 0%, rgba(234, 179, 8, 0.05) 0%, transparent 60%), url(${getFullUrl(hubSettings.imageUrl)})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
-          >
-            <div className="hero-banner-glow"></div>
-            <div className="hero-banner-content">
-              <span className="hero-welcome-lbl">Bem-vindo ao</span>
-              <div className="hero-banner-title-flex flex items-center gap-4">
-                <h1 className="hero-title-main font-black">
-                  {hubSettings?.title ? hubSettings.title.split(" ").slice(0, -1).join(" ") : "Pulse"}{" "}
-                  <span className="text-gold-400">{hubSettings?.title ? hubSettings.title.split(" ").pop() || "Hub" : "Hub"}</span>
-                </h1>
-                <div className="heartbeat-pulse-line">
-                  <span className="heartbeat-pulse"></span>
-                </div>
-              </div>
-              <p className="hero-subtitle-desc" style={{ whiteSpace: 'pre-line' }}>
-                {hubSettings?.subtitle || `Conecte-se com a cultura.\nExplore. Descubra. Viva experiências únicas.`}
-              </p>
-            </div>
-          </div>
+          <HubHeroBanner hubSettings={hubSettings} hasCities={cities.length > 0} />
 
           {/* Cidades em Destaque Rows */}
-          <section className="dashboard-section-row mb-10">
-            <div className="section-title-flex flex justify-between items-center mb-6">
-              <h3 className="section-title font-bold text-white border-l-2 border-gold-400 pl-3">Cidades em destaque</h3>
-              <button className="text-xs text-gold-400 hover:underline">Ver todas &gt;</button>
-            </div>
-
-            <div className="dashboard-cities-carousel">
-              {filteredCities.length > 0 ? (
-                filteredCities.map((c, idx) => (
-                  <div 
-                    key={c.id} 
-                    className="carousel-city-card"
-                    onClick={() => navigate(`/cidades/${c.slug}`)}
-                  >
-                    <div className="carousel-city-img-wrapper">
-                      <img 
-                        src={getFullUrl(c.coverImageUrl || "")} 
-                        alt={c.name} 
-                        className="carousel-city-img" 
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600";
-                        }}
-                      />
-                      <div className="carousel-city-overlay"></div>
-                      <div className="carousel-city-museum-badge">🏛️</div>
-                    </div>
-                    <div className="carousel-city-info flex flex-col p-4 text-left">
-                      <h4 className="carousel-city-name font-bold text-white text-base">{c.name}</h4>
-                      <span className="carousel-city-exp-count text-xs text-gray-400">
-                        {c.totalExperiences} experiências
-                      </span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div 
-                  className="carousel-city-card cursor-pointer"
-                  onClick={() => toast.error("Cidade em manutenção, logo irá ser liberada!!")}
-                >
-                  <div className="carousel-city-img-wrapper">
-                    <img 
-                      src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600" 
-                      alt="Novas Cidades" 
-                      className="carousel-city-img opacity-50" 
-                    />
-                    <div className="carousel-city-overlay"></div>
-                    <div className="carousel-city-museum-badge">🏛️</div>
-                  </div>
-                  <div className="carousel-city-info flex flex-col p-4 text-left">
-                    <h4 className="carousel-city-name font-bold text-white text-base">Novas Cidades</h4>
-                    <span className="carousel-city-exp-count text-xs text-gold-400 font-bold">
-                      Cidade em manutenção, logo irá ser liberada!!
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
+          <HubFeaturedCities filteredCities={filteredCities} />
 
           {/* Categories & Map Widgets Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-10">
@@ -332,41 +225,7 @@ export const CityHub: React.FC = () => {
           </div>
 
           {/* Seu progresso cultural row */}
-          <section className="dashboard-cultural-progress-banner">
-            <div className="progress-banner-header flex justify-between items-center mb-6">
-              <h3 className="section-title font-bold text-white border-l-2 border-gold-400 pl-3">Seu progresso cultural</h3>
-            </div>
-
-            <div className="progress-banner-flex">
-              <div className="progress-circular-widget flex items-center gap-4">
-                <div className="circular-progress-ring-gold">
-                  <div className="circular-inner">
-                    <span className="circular-pct font-black">{totalExploration}%</span>
-                    <span className="circular-lbl font-semibold">Exploração</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="progress-numeric-stats">
-                <div className="progress-stat-col text-left">
-                  <h4 className="stat-number font-black text-white text-2xl">{citiesVisited}</h4>
-                  <span className="stat-lbl font-semibold text-xs text-gray-400">Cidades visitadas</span>
-                </div>
-                <div className="progress-stat-col text-left">
-                  <h4 className="stat-number font-black text-white text-2xl">{museumsExplored}</h4>
-                  <span className="stat-lbl font-semibold text-xs text-gray-400">Museus explorados</span>
-                </div>
-                <div className="progress-stat-col text-left">
-                  <h4 className="stat-number font-black text-white text-2xl">{visitor?.stamps || 0}</h4>
-                  <span className="stat-lbl font-semibold text-xs text-gray-400">Obras descobertas</span>
-                </div>
-                <div className="progress-stat-col text-left">
-                  <h4 className="stat-number font-black text-white text-2xl">{visitor?.achievements || 0}</h4>
-                  <span className="stat-lbl font-semibold text-xs text-gray-400">Conquistas</span>
-                </div>
-              </div>
-            </div>
-          </section>
+          <HubCulturalProgress totalExploration={totalExploration} citiesVisited={citiesVisited} museumsExplored={museumsExplored} visitor={visitor} />
         </main>
 
         {/* Right Sidebar Panel */}

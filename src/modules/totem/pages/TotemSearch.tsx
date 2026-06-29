@@ -34,7 +34,7 @@ export const TotemSearch: React.FC = () => {
                 ticketName: reg.ticket?.name
             }));
             setResults(mapped);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             toast.error(t("totem.search.search_error", "Erro ao buscar"));
             setResults([]);

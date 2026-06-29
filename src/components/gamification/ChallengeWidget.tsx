@@ -33,7 +33,7 @@ export const DailyChallengeWidget: React.FC = () => {
         try {
             const res = await api.get(`/challenges/today?tenantId=${tenantId}`);
             setChallenge(res.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching challenge:', error);
         } finally {
             setLoading(false);
@@ -44,7 +44,7 @@ export const DailyChallengeWidget: React.FC = () => {
         try {
             const res = await api.get(`/challenges/my-progress?tenantId=${tenantId}`);
             setProgress(res.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching progress:', error);
         }
     }, [tenantId]);

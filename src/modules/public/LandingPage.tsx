@@ -29,9 +29,9 @@ import {
     Badge, 
     Button, 
     AnimateIn, 
-    AnimatedCounter, 
-    ParticleBackground 
+    AnimatedCounter
 } from "@/components/ui";
+import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { staggerContainer, staggerItem, fadeInUp, scaleIn } from "@/lib/motion";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/cn";

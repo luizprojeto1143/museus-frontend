@@ -32,7 +32,7 @@ export const TotemEventDetails: React.FC = () => {
             ]);
             setEvent(eventRes.data);
             setAttendees(attendeesRes.data.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             toast.error(t("totem.event_details.load_error", "Erro ao carregar detalhes"));
         } finally {

@@ -19,7 +19,7 @@ export const VisitorMembership: React.FC = () => {
         try {
             const res = await api.get(`/memberships/plans?tenantId=${tenantId}`);
             setPlans(res.data);
-        } catch (error) { logger.error(error); }
+        } catch (error: any) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -32,7 +32,7 @@ export const VisitorMembership: React.FC = () => {
             await api.post("/memberships", { planId, visitorEmail: email, visitorName: name || "Visitante", tenantId });
             toast.success("Assinatura realizada! 🎉");
             fetchPlans();
-        } catch (err) { toast.error("Erro ao assinar"); }
+        } catch (err: any) { toast.error("Erro ao assinar"); }
         finally { setSubscribing(null); }
     };
 

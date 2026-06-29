@@ -40,7 +40,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                     }
                 }
             }
-        } catch (error) {
+        } catch (error: any) {
             logger.error("Error updating profile", error);
         }
 

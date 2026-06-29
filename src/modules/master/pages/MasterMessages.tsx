@@ -61,7 +61,7 @@ export const MasterMessages: React.FC = () => {
             setLoading(true);
             const res = await api.get("/contact");
             setMessages(res.data || []);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao sincronizar terminal de mensagens.");
         } finally {
             setLoading(false);
@@ -77,7 +77,7 @@ export const MasterMessages: React.FC = () => {
             await api.patch(`/contact/${id}`, { status: newStatus });
             setMessages(prev => prev.map(m => m.id === id ? { ...m, status: newStatus as any } : m));
             toast.success(`Protocolo: Mensagem ${newStatus === 'ARCHIVED' ? 'arquivada' : 'processada'}.`);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Falha no protocolo de atualização de status.");
         }
     };

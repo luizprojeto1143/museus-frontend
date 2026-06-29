@@ -52,7 +52,7 @@ export const StampSharing: React.FC<StampSharingProps> = ({ title, subtitle, ima
             link.click();
 
             toast.success("Carimbo salvo com sucesso!", { id: "stamp-gen" });
-        } catch (err) {
+        } catch (err: any) {
             logger.error("Erro ao gerar imagem:", err);
             toast.error("Erro ao gerar imagem para download", { id: "stamp-gen" });
         } finally {

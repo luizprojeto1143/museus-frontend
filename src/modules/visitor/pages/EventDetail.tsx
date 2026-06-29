@@ -133,7 +133,7 @@ export const EventDetail: React.FC = () => {
         await api.post('/favorites', { type: 'event', itemId: id });
         setIsFavorite(true);
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error("Erro ao favoritar", err);
     }
   };
@@ -158,7 +158,7 @@ export const EventDetail: React.FC = () => {
         addToast("Inscrição realizada com sucesso!", "success");
         fetchEventData();
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error("Registration failed", err);
       addToast(t("common.error", "Erro ao realizar inscrição"), "error");
     } finally {

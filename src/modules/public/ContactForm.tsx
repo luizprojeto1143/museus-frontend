@@ -24,7 +24,7 @@ export const ContactForm: React.FC = () => {
             setName("");
             setEmail("");
             setMessage("");
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
             setStatus("error");
         }

@@ -36,7 +36,7 @@ export const QrVisit: React.FC = () => {
       try {
         const res = await api.get(`/qr/${code}`);
         setData(res.data);
-      } catch (err) {
+      } catch (err: any) {
         logger.error(err);
         setError(t("visitor.qr.invalid"));
       } finally {
@@ -57,7 +57,7 @@ export const QrVisit: React.FC = () => {
     try {
       await api.post("/visitors/visit-from-qr", { code: data.code, email });
       setFeedback(t("visitor.qr.success", { xp: data.xpReward }));
-    } catch (err) {
+    } catch (err: any) {
       logger.error(err);
       setError(t("visitor.qr.error"));
     } finally {

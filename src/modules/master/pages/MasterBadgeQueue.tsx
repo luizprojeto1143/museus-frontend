@@ -75,7 +75,7 @@ export const MasterBadgeQueue: React.FC = () => {
             setLoading(true);
             const res = await api.get("/badges/queue");
             setRequests(res.data || []);
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Erro ao sincronizar terminal logístico.");
         } finally {
             setLoading(false);
@@ -97,7 +97,7 @@ export const MasterBadgeQueue: React.FC = () => {
             await api.put(`/badges/${id}/status`, { status, trackingCode });
             toast.success(`Logística: ${status} processado.`);
             loadRequests();
-        } catch (err) {
+        } catch (err: any) {
             toast.error("Falha no protocolo de atualização.");
         }
     };

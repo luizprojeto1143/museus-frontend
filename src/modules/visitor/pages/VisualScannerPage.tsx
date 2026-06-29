@@ -66,7 +66,7 @@ export const VisualScannerPage: React.FC = () => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
                         loadedClassifier.setClassifierDataset(dataset);
-                    } catch (e) {
+                    } catch (e: any) {
                         logger.error("Erro ao carregar modelo", e);
                     }
                 } else {
@@ -78,7 +78,7 @@ export const VisualScannerPage: React.FC = () => {
                     setStatus("");
                 }
 
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Error initializing scanner:", err);
                 if (isMounted) {
                     setStatus(t("common.error", "Erro ao inicializar scanner"));
@@ -102,7 +102,7 @@ export const VisualScannerPage: React.FC = () => {
                 videoRef.current.play();
                 setScanning(true);
                 requestAnimationFrame(scanLoop);
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Error accessing camera:", err);
                 addToast(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"), "error");
             }
@@ -136,7 +136,7 @@ export const VisualScannerPage: React.FC = () => {
                     setMatch(null);
                 }
                 activation.dispose();
-            } catch (e) {
+            } catch (e: any) {
                 logger.error("Error predicting", e);
             }
         }

@@ -268,7 +268,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                     opacity: 0.9
                 }).addTo(mapInstanceRef.current);
             }
-        } catch (err: unknown) {
+        } catch (err: any) {
             console.error("Erro rota:", err);
             setError("Erro ao calcular rota");
         } finally {

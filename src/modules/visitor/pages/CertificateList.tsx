@@ -15,7 +15,7 @@ export const CertificateList: React.FC = () => {
             try {
                 const res = await api.get(`/certificates/mine?tenantId=${tenantId}`);
                 setCertificates(res.data);
-            } catch (error) {
+            } catch (error: any) {
                 logger.error(error);
             } finally {
                 setLoading(false);

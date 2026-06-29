@@ -183,7 +183,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             }
 
             setGeoPoints(points);
-        } catch (err) {
+        } catch (err: any) {
             logger.error("Failed to load geo points", err);
             setGeoPoints([]);
         }

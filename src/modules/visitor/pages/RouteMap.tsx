@@ -65,7 +65,7 @@ export const RouteMap: React.FC = () => {
             try {
                 const res = await api.get(`/roadmap-extra/${routeId}`);
                 setRoute(res.data);
-            } catch (err) {
+            } catch (err: any) {
                 logger.error("Erro ao carregar rota:", err);
             } finally {
                 setLoading(false);

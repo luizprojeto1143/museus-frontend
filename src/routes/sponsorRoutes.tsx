@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 
-const SponsorLanding = React.lazy(() => import('../modules/sponsor').then(m => ({ default: m.SponsorLanding })));
-const SponsorBrowseWorks = React.lazy(() => import('../modules/sponsor').then(m => ({ default: m.SponsorBrowseWorks })));
-const SponsorCheckout = React.lazy(() => import('../modules/sponsor').then(m => ({ default: m.SponsorCheckout })));
-const SponsorDashboard = React.lazy(() => import('../modules/sponsor').then(m => ({ default: m.SponsorDashboard })));
-const SponsorSuccess = React.lazy(() => import('../modules/sponsor').then(m => ({ default: m.SponsorSuccess })));
+const SponsorLanding = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorLanding })));
+const SponsorBrowseWorks = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorBrowseWorks })));
+const SponsorCheckout = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorCheckout })));
+const SponsorDashboard = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorDashboard })));
+const SponsorSuccess = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorSuccess })));
 
 export const sponsorRoutes = (RequireRole: any) => (
   <>

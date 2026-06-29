@@ -79,7 +79,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
             }
 
             onSuccess();
-        } catch (e) {
+        } catch (e: any) {
             logger.error(e);
             alert(t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
         } finally {

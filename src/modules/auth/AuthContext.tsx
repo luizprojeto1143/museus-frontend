@@ -227,7 +227,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = async () => {
     try {
       await api.post("/auth/logout");
-    } catch (e) {
+    } catch (e: any) {
       console.error("Erro ao notificar logout", e);
     }
 

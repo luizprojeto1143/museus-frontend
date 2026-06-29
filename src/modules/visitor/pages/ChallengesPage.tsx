@@ -29,7 +29,7 @@ export const ChallengesPage: React.FC = () => {
             try {
                 const res = await api.get(`/challenges/hunts?tenantId=${tenantId}`);
                 setHunts(res.data);
-            } catch (error) {
+            } catch (error: any) {
                 logger.error('Error fetching hunts:', error);
             } finally {
                 setLoading(false);
@@ -40,7 +40,7 @@ export const ChallengesPage: React.FC = () => {
             try {
                 const res = await api.get('/visitors/me');
                 setUserXp(res.data.xp || 0);
-            } catch (error) {
+            } catch (error: any) {
                 logger.error('Error fetching user stats:', error);
             }
         };
@@ -138,7 +138,7 @@ const HuntCard: React.FC<{ hunt: ScavengerHunt }> = ({ hunt }) => {
         try {
             await api.post(`/challenges/hunts/${hunt.id}/start`);
             window.location.href = `/desafios/cacas/${hunt.id}`;
-        } catch (error) {
+        } catch (error: any) {
             logger.error('Error starting hunt:', error);
         } finally {
             setStarting(false);

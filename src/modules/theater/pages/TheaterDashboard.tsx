@@ -26,7 +26,7 @@ export const TheaterDashboard: React.FC = () => {
             try {
                 const res = await theaterApi.getAnalytics();
                 setStats(res.data);
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Error fetching theater stats", err);
             } finally {
                 setLoading(false);

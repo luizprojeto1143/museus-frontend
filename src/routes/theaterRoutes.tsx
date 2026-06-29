@@ -1,10 +1,10 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { AdminLayout } from "../modules/admin/AdminLayout";
+import { AdminLayout } from "../modules/backoffice/equipment/AdminLayout";
 import { Role } from "../modules/auth/AuthContext";
 
 const TheaterDashboard = React.lazy(() => import("../modules/theater/pages/TheaterDashboard").then(m => ({ default: m.TheaterDashboard })));
-const AdminBoxOffice = React.lazy(() => import("../modules/admin/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
+const AdminBoxOffice = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
 const TheaterSeatEditor = React.lazy(() => import("../modules/theater/pages/TheaterSeatEditor").then(m => ({ default: m.TheaterSeatEditor })));
 const TheaterPlaybill = React.lazy(() => import("../modules/theater/pages/TheaterPlaybill").then(m => ({ default: m.TheaterPlaybill })));
 const TheaterCast = React.lazy(() => import("../modules/theater/pages/TheaterCast").then(m => ({ default: m.TheaterCast })));

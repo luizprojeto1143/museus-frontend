@@ -46,7 +46,7 @@ export const CulturalAgenda: React.FC = () => {
         const cityTenants = cityData.filter((t: any) => t.type === 'CITY' || t.type === 'SECRETARIA');
         setCities(cityTenants);
         setEvents(eventsRes.data.data || []);
-      } catch (err) {
+      } catch (err: any) {
         logger.error("Error fetching agenda data", err);
       } finally {
         setLoading(false);
@@ -63,7 +63,7 @@ export const CulturalAgenda: React.FC = () => {
       
       const res = await api.get("/events", { params });
       setEvents(res.data.data || []);
-    } catch (err) {
+    } catch (err: any) {
       logger.error("Error fetching filtered events", err);
     } finally {
       setLoading(false);
