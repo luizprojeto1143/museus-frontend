@@ -11,16 +11,6 @@ import { ProviderServices } from "../modules/backoffice/provider/ProviderService
 import { ProviderSettings } from "../modules/backoffice/provider/ProviderSettings";
 import { ProviderInvoices } from "../modules/backoffice/provider/ProviderInvoices";
 
-// Municipal
-import { MunicipalLayout } from "../modules/backoffice/municipal/MunicipalLayout";
-import { MunicipalDashboard } from "../modules/backoffice/municipal/MunicipalDashboard";
-import { MunicipalReports } from "../modules/backoffice/municipal/MunicipalReports";
-import { MunicipalEquipments } from "../modules/backoffice/municipal/MunicipalEquipments";
-import { MunicipalSettings } from "../modules/backoffice/municipal/MunicipalSettings";
-import { MunicipalNoticeProjects } from "../modules/backoffice/municipal/MunicipalNoticeProjects";
-import { MunicipalAccessibilityGaps } from "../modules/backoffice/municipal/MunicipalAccessibilityGaps";
-import { MunicipalPPA } from "../modules/backoffice/municipal/MunicipalPPA";
-
 // Totem
 import { TotemLayout } from "../modules/totem/TotemLayout";
 import { TotemDashboard } from "../modules/totem/pages/TotemDashboard";
@@ -49,28 +39,6 @@ export function providerRoutes(RequireProvider: React.FC<RequireProviderProps>) 
             <Route path="/provider/services" element={pvr(ProviderServices)} />
             <Route path="/provider/invoices" element={pvr(ProviderInvoices)} />
             <Route path="/provider/settings" element={pvr(ProviderSettings)} />
-        </>
-    );
-}
-
-export function municipalRoutes(RequireRole: React.FC<RequireRoleProps>) {
-    const mun = (Component: React.ComponentType) => (
-        <RequireRole allowed={["admin", "master"]}>
-            <MunicipalLayout>
-                <Component />
-            </MunicipalLayout>
-        </RequireRole>
-    );
-
-    return (
-        <>
-            <Route path="/municipal" element={mun(MunicipalDashboard)} />
-            <Route path="/municipal/equipments" element={mun(MunicipalEquipments)} />
-            <Route path="/municipal/projects" element={mun(MunicipalNoticeProjects)} />
-            <Route path="/municipal/reports" element={mun(MunicipalReports)} />
-            <Route path="/municipal/compliance" element={mun(MunicipalAccessibilityGaps)} />
-            <Route path="/municipal/ppa" element={mun(MunicipalPPA)} />
-            <Route path="/municipal/settings" element={mun(MunicipalSettings)} />
         </>
     );
 }

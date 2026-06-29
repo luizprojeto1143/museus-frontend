@@ -50,7 +50,7 @@ export const Login: React.FC = () => {
 
       const from = location.state?.from?.pathname;
       navigate(from || redirectPath, { replace: true, state: { justLoggedIn: true } });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : t("auth.errors.generic")
       );

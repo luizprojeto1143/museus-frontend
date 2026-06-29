@@ -81,47 +81,55 @@ const vr = (Component: React.ComponentType, RequireRole: React.FC<RequireRolePro
 export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
     return (
         <>
+            {/* Roteiro Cultural */}
+            <Route path="/roteiro" element={vr(RoteiroHome, RequireRole)} />
+            <Route path="/roteiro/map" element={vr(InteractiveMap, RequireRole)} />
+            <Route path="/roteiro/ai-generator" element={vr(SmartRouteGenerator, RequireRole)} />
+            <Route path="/roteiro/passaporte" element={vr(CulturalPassport, RequireRole)} />
+            <Route path="/roteiro/parceiro/:providerId" element={vr(ProviderDetail, RequireRole)} />
+
+            {/* Hub do Museu/Equipamento (Rotas aninhadas) */}
+            <Route path="/cidades/:citySlug/equipamentos/:equipmentSlug">
+                <Route index element={vr(MuseumHub, RequireRole)} />
+                <Route path="obras" element={vr(WorksList, RequireRole)} />
+                <Route path="obras/:id" element={vr(WorkDetail, RequireRole)} />
+                <Route path="trilhas" element={vr(TrailsList, RequireRole)} />
+                <Route path="trilhas/:id" element={vr(TrailDetail, RequireRole)} />
+                <Route path="mapa" element={vr(MapView, RequireRole)} />
+                <Route path="agenda" element={vr(CulturalAgenda, RequireRole)} />
+                <Route path="eventos" element={vr(EventsList, RequireRole)} />
+                <Route path="eventos/:id" element={vr(EventDetail, RequireRole)} />
+                <Route path="eventos/:id/pesquisa" element={vr(EventSurveyPage, RequireRole)} />
+                <Route path="loja" element={vr(ShopPage, RequireRole)} />
+                <Route path="desafios" element={vr(ChallengesPage, RequireRole)} />
+                <Route path="souvenir" element={vr(Souvenir, RequireRole)} />
+                <Route path="passaporte" element={vr(Passport, RequireRole)} />
+                <Route path="conquistas" element={vr(Achievements, RequireRole)} />
+                <Route path="livro-visitas" element={vr(GuestbookPage, RequireRole)} />
+                <Route path="agendar" element={vr(SchedulingPage, RequireRole)} />
+                <Route path="scanner" element={vr(ScannerHub, RequireRole)} />
+                <Route path="scanner/qr" element={vr(ScannerPage, RequireRole)} />
+                <Route path="scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
+                <Route path="ranking" element={vr(LeaderboardPage, RequireRole)} />
+                <Route path="obras/timeline" element={vr(WorkTimeline, RequireRole)} />
+                <Route path="obras/comparar" element={vr(WorkComparator, RequireRole)} />
+            </Route>
+            
             <Route path="/home" element={vr(Home, RequireRole)} />
-            <Route path="/obras" element={vr(WorksList, RequireRole)} />
-            <Route path="/obras/:id" element={vr(WorkDetail, RequireRole)} />
-            <Route path="/trilhas" element={vr(TrailsList, RequireRole)} />
-            <Route path="/trilhas/:id" element={vr(TrailDetail, RequireRole)} />
-            <Route path="/mapa" element={vr(MapView, RequireRole)} />
-            <Route path="/agenda" element={vr(CulturalAgenda, RequireRole)} />
             <Route path="/meus-ingressos" element={vr(MyTickets, RequireRole)} />
-            <Route path="/eventos" element={vr(EventsList, RequireRole)} />
-            <Route path="/eventos/:id" element={vr(EventDetail, RequireRole)} />
-            <Route path="/eventos/:id/pesquisa" element={vr(EventSurveyPage, RequireRole)} />
             <Route path="/favoritos" element={vr(Favorites, RequireRole)} />
-            <Route path="/loja" element={vr(ShopPage, RequireRole)} />
-            <Route path="/desafios" element={vr(ChallengesPage, RequireRole)} />
             <Route path="/perfil" element={vr(VisitorProfile, RequireRole)} />
             <Route path="/chat" element={vr(ChatAI, RequireRole)} />
-            <Route path="/souvenir" element={vr(Souvenir, RequireRole)} />
-            <Route path="/passaporte" element={vr(Passport, RequireRole)} />
-            <Route path="/conquistas" element={vr(Achievements, RequireRole)} />
-            <Route path="/livro-visitas" element={vr(GuestbookPage, RequireRole)} />
             <Route path="/roteiro-inteligente" element={vr(SmartItineraryWizard, RequireRole)} />
-            <Route path="/agendar" element={vr(SchedulingPage, RequireRole)} />
             <Route path="/roteiro-inteligente/resultado" element={vr(SmartItineraryResult, RequireRole)} />
-            <Route path="/scanner" element={vr(ScannerHub, RequireRole)} />
-            <Route path="/scanner/qr" element={vr(ScannerPage, RequireRole)} />
-            <Route path="/scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
-            <Route path="/ranking" element={vr(LeaderboardPage, RequireRole)} />
             <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
-            {/* Phase 1 — Timeline & Comparator */}
-            <Route path="/obras/timeline" element={vr(WorkTimeline, RequireRole)} />
-            <Route path="/obras/comparar" element={vr(WorkComparator, RequireRole)} />
-            {/* Monetization & Gamification */}
             <Route path="/assinatura" element={vr(VisitorMembership, RequireRole)} />
             <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
-            {/* Final Batch */}
             <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />
             <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
             <Route path="/checkin" element={vr(SocialCheckinPage, RequireRole)} />
             <Route path="/professor" element={vr(TeacherPortal, RequireRole)} />
-            {/* Roadmap 2026 */}
             <Route path="/comunidade" element={vr(CommunityFeed, RequireRole)} />
             <Route path="/linha-do-tempo/:spaceId" element={vr(ArchitecturalTimeline, RequireRole)} />
             <Route path="/rota/:routeId" element={vr(RouteMap, RequireRole)} />
@@ -129,9 +137,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/meus-certificados" element={vr(CertificateList, RequireRole)} />
             <Route path="/wardrobe" element={vr(VisitorWardrobe, RequireRole)} />
             <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
-            <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
-            <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
+
             {/* Hub do Visitante — tela raiz após login */}
             <Route path="/hub" element={vr(VisitorHub, RequireRole)} />
             {/* Compatibilidade reversa */}
@@ -140,15 +147,6 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/cidades" element={vr(CitySearch, RequireRole)} />
             {/* Hub da Cidade */}
             <Route path="/cidades/:citySlug" element={vr(CityDashboard, RequireRole)} />
-            {/* Hub do Museu/Equipamento */}
-            <Route path="/cidades/:citySlug/equipamentos/:equipmentSlug" element={vr(MuseumHub, RequireRole)} />
-            
-            {/* Roteiro Cultural */}
-            <Route path="/roteiro" element={vr(RoteiroHome, RequireRole)} />
-            <Route path="/roteiro/map" element={vr(InteractiveMap, RequireRole)} />
-            <Route path="/roteiro/ai-generator" element={vr(SmartRouteGenerator, RequireRole)} />
-            <Route path="/roteiro/passaporte" element={vr(CulturalPassport, RequireRole)} />
-            <Route path="/roteiro/parceiro/:providerId" element={vr(ProviderDetail, RequireRole)} />
         </>
     );
 }

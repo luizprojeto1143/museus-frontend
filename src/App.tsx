@@ -39,7 +39,8 @@ import { adminRoutes } from "./routes/adminRoutes";
 import { masterRoutes } from "./routes/masterRoutes";
 import { producerRoutes } from "./routes/producerRoutes";
 import { theaterRoutes } from "./routes/theaterRoutes";
-import { providerRoutes, municipalRoutes, totemRoutes } from "./routes/otherRoutes";
+import { providerRoutes, totemRoutes } from "./routes/otherRoutes";
+import { municipalRoutes } from "./routes/municipalRoutes";
 import { sponsorRoutes } from "./routes/sponsorRoutes";
 
 // QueryClient — with exponential retry backoff

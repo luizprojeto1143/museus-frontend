@@ -42,19 +42,13 @@ const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equip
 const AdminEventSurvey = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventSurvey").then(m => ({ default: m.AdminEventSurvey })));
 const AdminEventReport = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventReport").then(m => ({ default: m.AdminEventReport })));
 const AdminNotices = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNotices").then(m => ({ default: m.AdminNotices })));
-const AdminNoticeForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNoticeForm").then(m => ({ default: m.AdminNoticeForm })));
-const AdminNoticeProjects = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNoticeProjects").then(m => ({ default: m.AdminNoticeProjects })));
-const AdminProjects = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProjects").then(m => ({ default: m.AdminProjects })));
-const AdminProjectForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProjectForm").then(m => ({ default: m.AdminProjectForm })));
-const AdminProviders = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProviders").then(m => ({ default: m.AdminProviders })));
-const AdminProviderForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProviderForm").then(m => ({ default: m.AdminProviderForm })));
-const AdminAccessibilityManagement = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAccessibilityManagement").then(m => ({ default: m.AdminAccessibilityManagement })));
+
+
 const AdminAccessibilityForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAccessibilityForm").then(m => ({ default: m.AdminAccessibilityForm })));
 const AdminEquipments = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipments").then(m => ({ default: m.AdminEquipments })));
 const AdminEquipmentForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipmentForm").then(m => ({ default: m.AdminEquipmentForm })));
-const AdminReports = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminReports").then(m => ({ default: m.AdminReports })));
-const SecretaryDashboard = React.lazy(() => import("../modules/backoffice/equipment/pages/SecretaryDashboard"));
-const LegalCompliance = React.lazy(() => import("../modules/backoffice/equipment/pages/LegalCompliance"));
+
+
 const AccessibilityTimeline = React.lazy(() => import("../modules/backoffice/equipment/pages/AccessibilityTimeline"));
 const AIUsageDashboard = React.lazy(() => import("../modules/backoffice/equipment/pages/AIUsageDashboard"));
 const AdminScannerTrainer = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminScannerTrainer").then(module => ({ default: module.AdminScannerTrainer })));
@@ -74,18 +68,15 @@ const AdminTeachers = React.lazy(() => import("../modules/backoffice/equipment/p
 const AdminMemberships = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMemberships").then(m => ({ default: m.AdminMemberships })));
 const AdminVolunteers = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminVolunteers").then(m => ({ default: m.AdminVolunteers })));
 const AdminConservation = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminConservation").then(m => ({ default: m.AdminConservation })));
-const AdminPPA = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminPPA").then(m => ({ default: m.AdminPPA })));
-const AdminCollectibles = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminCollectibles").then(m => ({ default: m.AdminCollectibles })));
+
 const AdminTranslations = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTranslations").then(m => ({ default: m.AdminTranslations })));
 const AdminModeration = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminModeration").then(m => ({ default: m.AdminModeration })));
 const AdminMuseumBattle = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMuseumBattle").then(m => ({ default: m.AdminMuseumBattle })));
-const AdminMunicipalCalendar = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMunicipalCalendar").then(m => ({ default: m.AdminMunicipalCalendar })));
-const AdminTCEExport = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTCEExport").then(m => ({ default: m.AdminTCEExport })));
+
 const AdminKidsMode = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminKidsMode").then(m => ({ default: m.AdminKidsMode })));
 const AdminAIDescriptions = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAIDescriptions").then(m => ({ default: m.AdminAIDescriptions })));
 const AdminInstagramCard = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminInstagramCard").then(m => ({ default: m.AdminInstagramCard })));
-const AdminHeritage = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminHeritage").then(m => ({ default: m.AdminHeritage })));
-const AdminMunicipalGaps = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMunicipalGaps").then(m => ({ default: m.AdminMunicipalGaps })));
+
 const AdminGroupTickets = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminGroupTickets").then(m => ({ default: m.AdminGroupTickets })));
 const AdminCommunityModeration = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminCommunityModeration").then(m => ({ default: m.AdminCommunityModeration })));
 const AdminQuizBuilder = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminQuizBuilder").then(m => ({ default: m.AdminQuizBuilder })));
@@ -166,24 +157,8 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/cupons" element={ar(AdminCoupons, RequireRole)} />
             <Route path="/admin/notificacoes" element={ar(AdminNotifications, RequireRole)} />
             <Route path="/admin/certificates/*" element={ar(AdminCertificates, RequireRole)} />
-            {/* Municipal Management */}
-            <Route path="/admin/editais" element={ar(AdminNotices, RequireRole)} />
-            <Route path="/admin/editais/novo" element={ar(AdminNoticeForm, RequireRole)} />
-            <Route path="/admin/editais/:id" element={ar(AdminNoticeForm, RequireRole)} />
-            <Route path="/admin/editais/:id/projetos" element={ar(AdminNoticeProjects, RequireRole)} />
-            <Route path="/admin/projetos" element={ar(AdminProjects, RequireRole)} />
-            <Route path="/admin/projetos/novo" element={ar(AdminProjectForm, RequireRole)} />
-            <Route path="/admin/projetos/:id" element={ar(AdminProjectForm, RequireRole)} />
-            <Route path="/admin/prestadores" element={ar(AdminProviders, RequireRole)} />
-            <Route path="/admin/prestadores/novo" element={ar(AdminProviderForm, RequireRole)} />
-            <Route path="/admin/prestadores/:id" element={ar(AdminProviderForm, RequireRole)} />
-            <Route path="/admin/acessibilidade-gestao" element={ar(AdminAccessibilityManagement, RequireRole)} />
-            <Route path="/admin/acessibilidade/novo" element={ar(AdminAccessibilityForm, RequireRole)} />
-            <Route path="/admin/acessibilidade/:id" element={ar(AdminAccessibilityForm, RequireRole)} />
-            <Route path="/admin/relatorios" element={ar(AdminReports, RequireRole)} />
-            {/* Governance / Executive */}
-            <Route path="/admin/secretaria" element={ar(SecretaryDashboard, RequireRole)} />
-            <Route path="/admin/conformidade-legal" element={ar(LegalCompliance, RequireRole)} />
+
+
             <Route path="/admin/timeline-acessibilidade" element={ar(AccessibilityTimeline, RequireRole)} />
             <Route path="/admin/uso-ia" element={ar(AIUsageDashboard, RequireRole)} />
             <Route path="/admin/doacoes" element={ar(AdminDonations, RequireRole)} />
@@ -201,23 +176,18 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/assinaturas" element={ar(AdminMemberships, RequireRole)} />
             {/* Phase 4 — Municipal */}
             <Route path="/admin/voluntarios" element={ar(AdminVolunteers, RequireRole)} />
-            <Route path="/admin/conservacao" element={ar(AdminConservation, RequireRole)} />
-            <Route path="/admin/metas-ppa" element={ar(AdminPPA, RequireRole)} />
+
             {/* Phase 5 — Gamification, AI & i18n */}
             <Route path="/admin/colecao" element={ar(AdminCollectibles, RequireRole)} />
             <Route path="/admin/traducoes" element={ar(AdminTranslations, RequireRole)} />
             <Route path="/admin/moderacao" element={ar(AdminModeration, RequireRole)} />
             <Route path="/admin/battle" element={ar(AdminMuseumBattle, RequireRole)} />
-            {/* Municipal extras */}
-            <Route path="/admin/calendario-municipal" element={ar(AdminMunicipalCalendar, RequireRole)} />
-            <Route path="/admin/tce" element={ar(AdminTCEExport, RequireRole)} />
+
             {/* Advanced Features */}
             <Route path="/admin/modo-crianca" element={ar(AdminKidsMode, RequireRole)} />
             <Route path="/admin/ia-descricoes" element={ar(AdminAIDescriptions, RequireRole)} />
             <Route path="/admin/instagram" element={ar(AdminInstagramCard, RequireRole)} />
-            {/* Final Batch */}
-            <Route path="/admin/patrimonio" element={ar(AdminHeritage, RequireRole)} />
-            <Route path="/admin/vazios" element={ar(AdminMunicipalGaps, RequireRole)} />
+
             <Route path="/admin/ingressos-grupo" element={ar(AdminGroupTickets, RequireRole)} />
             {/* Roadmap 2026 */}
             <Route path="/admin/comunidade" element={ar(AdminCommunityModeration, RequireRole)} />

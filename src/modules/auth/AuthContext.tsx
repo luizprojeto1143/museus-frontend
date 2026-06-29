@@ -10,19 +10,9 @@ export type Role = "visitor" | "admin" | "master" | "producer" | "collaborator" 
 
 // ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
-  role: Role;
-  tenantId: string | null;
-  equipamentoId: string | null;
-  tenantType: "MUSEUM" | "PRODUCER" | "THEATER" | null;
-  email: string | null;
-  name: string | null;
-  userId: string | null;
-  hasProviderProfile: boolean;
   isGuest?: boolean;
   cityId?: string | null;
-  permissions?: Record<string, boolean> | null;
-  tenantSlug?: string | null;
-  user?: { email: string | null; name: string | null; id: string | null; tenantId: string | null } | null;
+  tenantId?: string | null;
 }
 
 interface AuthState {
@@ -104,17 +94,10 @@ function readStoredAuth(): AuthState {
     if (!raw) return EMPTY_STATE;
     const parsed = JSON.parse(raw) as Partial<StoredAuth>;
     return {
-      role: parsed.role ?? null,
-      tenantId: parsed.tenantId ?? null,
-      equipamentoId: parsed.equipamentoId ?? null,
-      tenantType: parsed.tenantType ?? null,
-      email: parsed.email ?? null,
-      name: parsed.name ?? null,
-      userId: parsed.userId ?? null,
-      hasProviderProfile: parsed.hasProviderProfile ?? false,
+      ...EMPTY_STATE,
       isGuest: parsed.isGuest ?? false,
       cityId: parsed.cityId ?? null,
-      permissions: parsed.permissions ?? null,
+      tenantId: parsed.tenantId ?? null,
     };
   } catch {
     return EMPTY_STATE;
@@ -124,17 +107,9 @@ function readStoredAuth(): AuthState {
 function persistAuth(state: AuthState): void {
   try {
     const toStore: StoredAuth = {
-      role: state.role ?? "visitor",
-      tenantId: state.tenantId,
-      equipamentoId: state.equipamentoId,
-      tenantType: state.tenantType,
-      email: state.email,
-      name: state.name,
-      userId: state.userId,
-      hasProviderProfile: state.hasProviderProfile,
       isGuest: state.isGuest,
       cityId: state.cityId,
-      permissions: state.permissions,
+      tenantId: state.tenantId, // Safe to keep for context routing
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   } catch {
@@ -193,8 +168,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Tokens are now securely handled via HttpOnly Cookies by the backend
 
       return { role: newState.role!, tenantType: newState.tenantType, hasProviderProfile: newState.hasProviderProfile };
-    } catch (err: any) {
-      const message = err.response?.data?.message || err.message || "Erro de conexão";
+    } catch (err: unknown) {
+      const message = err instanceof Error ? (err as any).response?.data?.message || err.message : "Erro de conexão";
       throw new Error(message);
     }
   } else {
@@ -227,7 +202,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = async () => {
     try {
       await api.post("/auth/logout");
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Erro ao notificar logout", e);
     }
 
@@ -304,9 +279,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           };
           dispatch({ type: "LOGIN", payload: restoredState });
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         // Not authenticated or error, clear storage
-        if (e.response?.status !== 401) {
+        if ((e as any).response?.status !== 401) {
           console.log("Session restore failed, treating as guest/logged out.");
         }
         dispatch({ type: "LOGOUT" });

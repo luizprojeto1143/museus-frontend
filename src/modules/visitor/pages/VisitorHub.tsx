@@ -54,8 +54,21 @@ export const VisitorHub: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
+      let citiesQuery = "/public/cities?limit=8";
+      
+      try {
+        if ("geolocation" in navigator) {
+          const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 3000 });
+          });
+          citiesQuery += `&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;
+        }
+      } catch {
+        // Fallback to standard fetch without coordinates
+      }
+
       const results = await Promise.allSettled([
-        api.get("/public/cities?limit=8"),
+        api.get(citiesQuery),
         api.get("/visitors/me/recent-visits?limit=3"),
         api.get("/visitors/me/active-tickets?limit=3"),
         api.get("/visitors/me/stats"),

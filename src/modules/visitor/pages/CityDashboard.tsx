@@ -1245,7 +1245,12 @@ export const CityDashboard: React.FC = () => {
                       <Button 
                         variant="outline"
                         className="directions-sheet-btn border-gold-400 text-gold-400 font-black uppercase text-xs h-11 rounded-lg flex items-center justify-center gap-1.5"
-                        onClick={() => alert(`Como chegar em: ${selectedPin.name}\nRotas integradas via GPS local!`)}
+                        onClick={() => {
+                          const query = selectedPin.latitude && selectedPin.longitude 
+                            ? `${selectedPin.latitude},${selectedPin.longitude}`
+                            : `${selectedPin.name}, ${cityName}`;
+                          window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
+                        }}
                       >
                         <Compass size={14} /> Como chegar
                       </Button>

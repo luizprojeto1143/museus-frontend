@@ -194,7 +194,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-checkin"
             className="mh-action-btn mh-action-primary"
-            onClick={() => navigate("/scanner")}
+            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/scanner`)}
           >
             <QrCode size={20} />
             <span>Check-in QR</span>
@@ -202,7 +202,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-audioguia"
             className="mh-action-btn"
-            onClick={() => navigate(`/obras?equipamentoId=${museum.id}`)}
+            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`)}
           >
             <Volume2 size={20} />
             <span>Audioguia</span>
@@ -210,7 +210,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-mapa"
             className="mh-action-btn"
-            onClick={() => navigate("/mapa")}
+            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/mapa`)}
           >
             <Map size={20} />
             <span>Mapa</span>
@@ -218,7 +218,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-passaporte"
             className="mh-action-btn"
-            onClick={() => navigate("/passaporte")}
+            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/passaporte`)}
           >
             <Award size={20} />
             <span>Passaporte</span>
@@ -296,7 +296,7 @@ export const MuseumHub: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.06 }}
-                      onClick={() => navigate(`/obras/${work.id}`)}
+                      onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${work.id}`)}
                     >
                       {work.imageUrl ? (
                         <img src={work.imageUrl} alt={work.title} className="mh-work-img" />
@@ -315,7 +315,7 @@ export const MuseumHub: React.FC = () => {
               )}
               <button
                 className="mh-see-all-btn"
-                onClick={() => navigate(`/obras?equipamentoId=${museum.id}`)}
+                onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`)}
               >
                 Ver todas as obras <ChevronRight size={16} />
               </button>
@@ -336,7 +336,7 @@ export const MuseumHub: React.FC = () => {
                     <button
                       key={ev.id}
                       className="mh-event-card"
-                      onClick={() => navigate(`/eventos/${ev.id}`)}
+                      onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos/${ev.id}`)}
                     >
                       {ev.imageUrl && (
                         <img src={ev.imageUrl} alt={ev.title} className="mh-event-img" />
@@ -367,7 +367,7 @@ export const MuseumHub: React.FC = () => {
                     <button
                       key={trail.id}
                       className="mh-trail-card"
-                      onClick={() => navigate(`/trilhas/${trail.id}`)}
+                      onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/trilhas/${trail.id}`)}
                     >
                       <div className="mh-trail-icon"><Map size={20} /></div>
                       <div className="mh-trail-info">
@@ -439,7 +439,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-loja"
             className="mh-footer-btn"
-            onClick={() => navigate("/loja")}
+            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/loja`)}
           >
             <ShoppingBag size={18} />
             Loja Cultural
@@ -447,7 +447,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-agendar"
             className="mh-footer-btn mh-footer-primary"
-            onClick={() => navigate("/agendar")}
+            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/agendar`)}
           >
             <Calendar size={18} />
             Agendar Visita

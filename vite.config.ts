@@ -49,7 +49,7 @@ export default defineConfig({
       },
       workbox: {
         // Increase file size limit for caching
-        maximumFileSizeToCacheInBytes: 5000000,
+        maximumFileSizeToCacheInBytes: 10000000,
 
         // Precache essential assets
         globPatterns: [
@@ -180,7 +180,17 @@ export default defineConfig({
           // 3D (heavy — only loaded on demand)
           'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
           // AI / TensorFlow (heaviest — only on scanner pages)
-          'vendor-tf': ['@tensorflow/tfjs', '@tensorflow-models/mobilenet', '@tensorflow-models/knn-classifier']
+          'vendor-tf': ['@tensorflow/tfjs', '@tensorflow-models/mobilenet', '@tensorflow-models/knn-classifier'],
+          // Animation
+          'vendor-gsap': ['gsap'],
+          // QR scanner
+          'vendor-scanner': ['html5-qrcode'],
+          // Admin routes
+          'vendor-admin': ['./src/routes/adminRoutes.tsx'],
+          // Municipal routes
+          'vendor-municipal': ['./src/routes/municipalRoutes.tsx'],
+          // Master routes
+          'vendor-master': ['./src/routes/masterRoutes.tsx']
         }
       }
     },

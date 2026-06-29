@@ -68,12 +68,17 @@ export const QrVisit: React.FC = () => {
       setRegistering(false);
     }
 
+    let basePath = "";
+    if (data.citySlug && (data.equipmentSlug || data.slug)) {
+      basePath = `/cidades/${data.citySlug}/equipamentos/${data.equipmentSlug || data.slug}`;
+    }
+
     if (data.type === "WORK" && data.referenceId) {
-      navigate(`/obras/${data.referenceId}`);
+      navigate(basePath ? `${basePath}/obras/${data.referenceId}` : `/obras/${data.referenceId}`);
     } else if (data.type === "TRAIL" && data.referenceId) {
-      navigate(`/trilhas/${data.referenceId}`);
+      navigate(basePath ? `${basePath}/trilhas/${data.referenceId}` : `/trilhas/${data.referenceId}`);
     } else if (data.type === "EVENT" && data.referenceId) {
-      navigate(`/eventos/${data.referenceId}`);
+      navigate(basePath ? `${basePath}/eventos/${data.referenceId}` : `/eventos/${data.referenceId}`);
     } else if (data.type === "TENANT" && data.referenceId) {
       // Redireciona para Hub da Cidade se tiver slug, senao busca de cidades
       if (data.slug) {
@@ -86,8 +91,8 @@ export const QrVisit: React.FC = () => {
         updateSession(role || "visitor", data.tenantId, name, data.referenceId);
       }
       // Navegar para Hub do Museu com URL semântica
-      if (data.citySlug && (data.equipmentSlug || data.slug)) {
-        navigate(`/cidades/${data.citySlug}/equipamentos/${data.equipmentSlug || data.slug}`);
+      if (basePath) {
+        navigate(basePath);
       } else {
         // Fallback: redireciona para o hub principal (se não tiver slug da cidade)
         navigate(`/hub`);
