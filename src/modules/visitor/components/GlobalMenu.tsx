@@ -13,46 +13,35 @@ interface GlobalMenuProps {
   currentPath: string;
 }
 
-export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, currentPath }) => {
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { X, ChevronDown, ChevronUp, ChevronRight, LogOut, RefreshCcw } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../auth/AuthContext';
+import './GlobalMenu.css';
+
+interface GlobalMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  links: any[];
+  currentPath: string;
+}
+
+export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, currentPath }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // Close menu automatically when path changes (more robust than onClick)
   React.useEffect(() => {
     if (isOpen) {
       onClose();
     }
   }, [currentPath]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Categories structure
-  const exploracaoPaths = ['/home', '/obras', '/trilhas', '/mapa', '/eventos', '/scanner', '/agenda'];
-  const jornadaPaths = ['/rpg', '/perfil', '/colecao', '/meus-certificados', '/meus-ingressos', '/cracha', '/wardrobe', '/meus-certificados'];
-  const socialPaths = ['/desafios', '/ranking', '/loja', '/favoritos', '/chat', '/comunidade', '/marketplace'];
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  const categories = [
-    {
-      title: 'Exploração',
-      items: links.filter(l => exploracaoPaths.some(p => l.to.startsWith(p)))
-    },
-    {
-      title: 'Minha Jornada',
-      items: links.filter(l => jornadaPaths.some(p => l.to.startsWith(p)))
-    },
-    {
-      title: 'Social & Mais',
-      items: links.filter(l => socialPaths.some(p => l.to.startsWith(p)))
-    }
-  ];
-
-  // Add any leftover links that are not explicitly categorized
-  const categorizedPaths = [...exploracaoPaths, ...jornadaPaths, ...socialPaths];
-  const uncategorizedLinks = links.filter(l => !categorizedPaths.some(p => l.to.startsWith(p)));
-  if (uncategorizedLinks.length > 0) {
-      categories.push({
-          title: 'Outros',
-          items: uncategorizedLinks
-      });
-  }
+  const toggleSection = (section: string) => {
+    setExpandedSection(prev => (prev === section ? null : section));
+  };
 
   const handleSwitchMuseum = () => {
     navigate('/select-museum');
@@ -90,27 +79,148 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, links, 
               </button>
             </div>
 
-            <div className="menu-content">
-              {categories.map((cat, idx) => (
-                cat.items.length > 0 && (
-                  <div key={idx} className="menu-category">
-                    <h3 className="category-title">{cat.title}</h3>
-                    <div className="category-items">
-                      {cat.items.map((item) => (
-                        <Link
-                          key={item.to}
-                          to={item.to}
-                          className={`menu-item ${currentPath === item.to ? 'active' : ''}`}
-                        >
-                          <span className="item-icon">{item.icon}</span>
-                          <span className="item-label">{item.label}</span>
-                          <ChevronRight className="item-chevron" size={16} />
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )
-              ))}
+            <div className="menu-content" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              
+              {/* 1. INÍCIO */}
+              <Link to="/home" className={`menu-item ${currentPath === '/home' ? 'active' : ''}`}>
+                <span className="item-icon">🏠</span>
+                <span className="item-label">Início</span>
+              </Link>
+
+              {/* 2. EXPLORAR (Sub-menu) */}
+              <div className="menu-section-wrapper">
+                <button className={`menu-item-header ${expandedSection === 'explorar' ? 'active-header' : ''}`} onClick={() => toggleSection('explorar')}>
+                  <span className="item-icon">🔍</span>
+                  <span className="item-label">Explorar</span>
+                  {expandedSection === 'explorar' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+                <AnimatePresence>
+                  {expandedSection === 'explorar' && (
+                    <motion.div 
+                      className="menu-submenu-items"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                    >
+                      <Link to="/select-museum" className="submenu-item">
+                        <span>🏛️ Museus</span>
+                      </Link>
+                      <Link to="/obras" className="submenu-item">
+                        <span>🎨 Obras</span>
+                      </Link>
+                      <Link to="/eventos" className="submenu-item">
+                        <span>📅 Eventos</span>
+                      </Link>
+                      <Link to="/trilhas" className="submenu-item">
+                        <span>🗺️ Trilhas</span>
+                      </Link>
+                      <Link to="/loja" className="submenu-item">
+                        <span>🛒 Lojas</span>
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* 3. MAPA */}
+              <Link to="/mapa" className={`menu-item ${currentPath === '/mapa' ? 'active' : ''}`}>
+                <span className="item-icon">📍</span>
+                <span className="item-label">Mapa</span>
+              </Link>
+
+              {/* 4. AGENDA */}
+              <Link to="/agenda" className={`menu-item ${currentPath === '/agenda' ? 'active' : ''}`}>
+                <span className="item-icon">🎟️</span>
+                <span className="item-label">Agenda</span>
+              </Link>
+
+              {/* 5. ROTEIROS */}
+              <Link to="/roteiro" className={`menu-item ${currentPath === '/roteiro' ? 'active' : ''}`}>
+                <span className="item-icon">🗺️</span>
+                <span className="item-label">Roteiros</span>
+              </Link>
+
+              {/* 6. PASSAPORTE (Sub-menu) */}
+              <div className="menu-section-wrapper">
+                <button className={`menu-item-header ${expandedSection === 'passaporte' ? 'active-header' : ''}`} onClick={() => toggleSection('passaporte')}>
+                  <span className="item-icon">🎫</span>
+                  <span className="item-label">Passaporte</span>
+                  {expandedSection === 'passaporte' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+                <AnimatePresence>
+                  {expandedSection === 'passaporte' && (
+                    <motion.div 
+                      className="menu-submenu-items"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                    >
+                      <Link to="/passaporte" className="submenu-item">
+                        <span>🎫 Selos</span>
+                      </Link>
+                      <Link to="/conquistas" className="submenu-item">
+                        <span>✨ Conquistas</span>
+                      </Link>
+                      <Link to="/ranking" className="submenu-item">
+                        <span>🏆 Ranking</span>
+                      </Link>
+                      <Link to="/meus-certificados" className="submenu-item">
+                        <span>🏅 Certificados</span>
+                      </Link>
+                      <Link to="/desafios" className="submenu-item">
+                        <span>🎯 Desafios</span>
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* 7. INGRESSOS */}
+              <Link to="/meus-ingressos" className={`menu-item ${currentPath === '/meus-ingressos' ? 'active' : ''}`}>
+                <span className="item-icon">🎫</span>
+                <span className="item-label">Ingressos</span>
+              </Link>
+
+              {/* 8. PERFIL (Sub-menu) */}
+              <div className="menu-section-wrapper">
+                <button className={`menu-item-header ${expandedSection === 'perfil' ? 'active-header' : ''}`} onClick={() => toggleSection('perfil')}>
+                  <span className="item-icon">👤</span>
+                  <span className="item-label">Perfil</span>
+                  {expandedSection === 'perfil' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </button>
+                <AnimatePresence>
+                  {expandedSection === 'perfil' && (
+                    <motion.div 
+                      className="menu-submenu-items"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                    >
+                      <Link to="/favoritos" className="submenu-item">
+                        <span>❤️ Favoritos</span>
+                      </Link>
+                      <Link to="/perfil" className="submenu-item">
+                        <span>⏳ Histórico</span>
+                      </Link>
+                      <Link to="/meus-ingressos" className="submenu-item">
+                        <span>🎫 Ingressos</span>
+                      </Link>
+                      <Link to="/meus-certificados" className="submenu-item">
+                        <span>🏅 Certificados</span>
+                      </Link>
+                      <Link to="/perfil" className="submenu-item">
+                        <span>⚙️ Configurações</span>
+                      </Link>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               <div className="menu-separator" />
 
