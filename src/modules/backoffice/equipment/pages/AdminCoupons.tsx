@@ -92,7 +92,7 @@ export function AdminCoupons() {
             setIsModalOpen(false);
             resetForm();
             fetchCoupons();
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(err.response?.data?.error || 'Erro ao criar cupom');
         } finally {
             setIsSubmitting(false);
@@ -251,7 +251,7 @@ export function AdminCoupons() {
                                     <label className="block text-sm font-medium text-zinc-200 mb-1">Tipo de Desconto</label>
                                     <select
                                         value={discountType}
-                                        onChange={(e) => setDiscountType(e.target.value as any)}
+                                        onChange={(e) => setDiscountType(e.target.value as unknown)}
                                         className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold"
                                     >
                                         <option value="PERCENTAGE">Porcentagem (%)</option>

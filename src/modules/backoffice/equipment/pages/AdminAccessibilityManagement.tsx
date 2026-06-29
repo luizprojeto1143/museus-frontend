@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -60,7 +62,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                 setDashboard(dashRes.data);
                 setWorkRequests(reqRes.data);
             } catch (err) {
-                console.error("Erro ao carregar dados", err);
+                logger.error("Erro ao carregar dados", err);
             } finally {
                 setLoading(false);
             }
@@ -178,9 +180,9 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                                                 try {
                                                                     const res = await api.post(`/accessibility-execution/${exec.id}/pay`);
                                                                     window.location.href = res.data.checkoutUrl;
-                                                                } catch (err: any) {
-                                                                    console.error("Erro ao pagar", err);
-                                                                    alert(err.response?.data?.message || "Erro ao processar pagamento.");
+                                                                } catch (err: unknown) {
+                                                                    logger.error("Erro ao pagar", err);
+                                                                    logger.warn("Alert:", err.response?.data?.message || "Erro ao processar pagamento.");
                                                                 }
                                                             }}
                                                             className="text-[10px] uppercase font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded transition-colors flex items-center gap-2"
@@ -222,7 +224,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                 <tr>
                                     <td colSpan={4} className="text-center py-8 text-zinc-400">Nenhuma solicitação encontrada.</td>
                                 </tr>
-                            ) : workRequests.map((req: any) => (
+                            ) : workRequests.map((req: unknown) => (
                                 <tr key={req.id}>
                                     <td className="font-bold text-white">{req.work?.title || "Obra removida"}</td>
                                     <td>{req.type}</td>

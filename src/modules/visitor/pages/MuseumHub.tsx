@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import { getFullUrl } from "../../../utils/url";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import {
@@ -76,7 +77,7 @@ export const MuseumHub: React.FC = () => {
         setMuseum(res.data);
         // Atualiza sessão com esse equipamento
         if (isAuthenticated && res.data.id) {
-          updateSession(role || "visitor", res.data.tenantId || res.data.id, authName, res.data.id, null);
+          updateSession(role || "visitor", res.data.tenantId || res.data.id, authName, res.data.id, citySlug || null);
         }
         // Busca conteúdo associado
         const eqId = res.data.id;
@@ -140,7 +141,7 @@ export const MuseumHub: React.FC = () => {
         {/* Capa */}
         <div className="mh-cover">
           {museum.coverImageUrl ? (
-            <img src={museum.coverImageUrl} alt={museum.nome} className="mh-cover-img" />
+            <img src={getFullUrl(museum.coverImageUrl)} alt={museum.nome} className="mh-cover-img" />
           ) : (
             <div className="mh-cover-placeholder" />
           )}
@@ -156,7 +157,7 @@ export const MuseumHub: React.FC = () => {
 
           <div className="mh-cover-content">
             {museum.logoUrl && (
-              <img src={museum.logoUrl} alt="" className="mh-logo" />
+              <img src={getFullUrl(museum.logoUrl)} alt="" className="mh-logo" />
             )}
             <h1 className="mh-title">{museum.nome}</h1>
             {museum.endereco && (
@@ -254,11 +255,6 @@ export const MuseumHub: React.FC = () => {
             <strong>{museum.trailsCount ?? trails.length}</strong>
             <small>Trilhas</small>
           </div>
-          <div className="mh-counter">
-            <Users size={20} />
-            <strong>—</strong>
-            <small>Visitantes</small>
-          </div>
         </div>
 
         {/* Abas de conteúdo */}
@@ -299,7 +295,7 @@ export const MuseumHub: React.FC = () => {
                       onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${work.id}`)}
                     >
                       {work.imageUrl ? (
-                        <img src={work.imageUrl} alt={work.title} className="mh-work-img" />
+                        <img src={getFullUrl(work.imageUrl)} alt={work.title} className="mh-work-img" />
                       ) : (
                         <div className="mh-work-img-placeholder">
                           <Star size={24} />
@@ -339,7 +335,7 @@ export const MuseumHub: React.FC = () => {
                       onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos/${ev.id}`)}
                     >
                       {ev.imageUrl && (
-                        <img src={ev.imageUrl} alt={ev.title} className="mh-event-img" />
+                        <img src={getFullUrl(ev.imageUrl)} alt={ev.title} className="mh-event-img" />
                       )}
                       <div className="mh-event-info">
                         <strong>{ev.title}</strong>

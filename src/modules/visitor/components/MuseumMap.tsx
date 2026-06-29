@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap, ImageOverlay, Circle, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -230,7 +232,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
                     const { latitude, longitude, accuracy } = position.coords;
                     setUserLocation({ lat: latitude, lng: longitude, accuracy });
                 },
-                (error) => console.error("Erro ao obter localização", error),
+                (error) => logger.error("Erro ao obter localização", error),
                 { enableHighAccuracy: true }
             );
         }

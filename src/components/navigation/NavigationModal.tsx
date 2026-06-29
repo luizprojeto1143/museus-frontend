@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 // import { useTranslation } from "react-i18next";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -124,7 +126,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                 updateCurrentStep(newLoc.lat, newLoc.lng);
             },
             (err) => {
-                console.error("Erro GPS:", err);
+                logger.error("Erro GPS:", err);
                 setError("Erro ao rastrear localização");
             },
             {
@@ -168,7 +170,7 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                     setGettingLocation(false);
                 },
                 (err) => {
-                    console.error("Erro ao obter localização:", err);
+                    logger.error("Erro ao obter localização:", err);
                     setError("Não foi possível obter sua localização.");
                     setGettingLocation(false);
                 },
@@ -268,8 +270,8 @@ export const NavigationModal: React.FC<NavigationModalProps> = ({
                     opacity: 0.9
                 }).addTo(mapInstanceRef.current);
             }
-        } catch (err: any) {
-            console.error("Erro rota:", err);
+        } catch (err: unknown) {
+            logger.error("Erro rota:", err);
             setError("Erro ao calcular rota");
         } finally {
             setLoading(false);

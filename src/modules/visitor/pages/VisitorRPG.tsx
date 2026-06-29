@@ -20,9 +20,9 @@ export const VisitorRPG: React.FC = () => {
     const { t } = useTranslation();
     const { isGuest } = useAuth();
     const navigate = useNavigate();
-    const [visitor, setVisitor] = useState<any>(null);
+    const [visitor, setVisitor] = useState<unknown>(null);
     const [characters, setCharacters] = useState<any[]>([]);
-    const [activeChar, setActiveChar] = useState<any>(null);
+    const [activeChar, setActiveChar] = useState<unknown>(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
@@ -35,14 +35,14 @@ export const VisitorRPG: React.FC = () => {
             setVisitor(res.data.visitor);
             setCharacters(res.data.characters);
             
-            const active = res.data.characters.find((c: any) => c.isActive) || res.data.characters[0];
+            const active = res.data.characters.find((c: unknown) => c.isActive) || res.data.characters[0];
             setActiveChar(active);
             if (active) {
                 setNewName(active.characterName);
                 setAvatarStatus(active.avatarStatus || 'NONE');
                 setIsGenerating(active.avatarStatus === 'GENERATING');
             }
-        } catch (error: any) { 
+        } catch (error: unknown) { 
             logger.error(error); 
         } finally { 
             setLoading(false); 
@@ -64,7 +64,7 @@ export const VisitorRPG: React.FC = () => {
                         toast.success("Seu avatar personalizado está pronto! ✨");
                     }
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error("Polling error", err);
             }
         }, 4000);
@@ -83,7 +83,7 @@ export const VisitorRPG: React.FC = () => {
             toast.success("Nome atualizado!");
             setEditing(false);
             fetchRPG();
-        } catch (err: any) { toast.error("Erro"); }
+        } catch (err: unknown) { toast.error("Erro"); }
     };
 
     const handleSelfieUpload = async (file: File) => {
@@ -95,7 +95,7 @@ export const VisitorRPG: React.FC = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success("Foto enviada! A IA está trabalhando...");
-        } catch (err: any) {
+        } catch (err: unknown) {
             setIsGenerating(false);
             toast.error("Erro ao enviar selfie");
         }

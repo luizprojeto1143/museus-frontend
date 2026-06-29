@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Plus, MessageSquare, Pin, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
@@ -42,7 +44,7 @@ export const AdminCuratorNotes: React.FC = () => {
             setNotes(Array.isArray(notesRes.data) ? notesRes.data : (notesRes.data.data || []));
             setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar notas");
         } finally {
             setLoading(false);
@@ -127,7 +129,7 @@ export const AdminCuratorNotes: React.FC = () => {
                             style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}
                         >
                             <option value="">Selecione uma obra...</option>
-                            {works.map((w: any) => (
+                            {works.map((w: unknown) => (
                                 <option key={w.id} value={w.id}>{w.title} {w.room ? `(${w.room})` : ''}</option>
                             ))}
                         </select>

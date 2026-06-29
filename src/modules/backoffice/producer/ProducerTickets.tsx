@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { Ticket, Plus, DollarSign, Users, Calendar } from "lucide-react";
@@ -42,7 +44,7 @@ export const ProducerTickets: React.FC = () => {
             setTickets(ticketsRes.data);
             setEvents(eventsRes.data);
         } catch (err) {
-            console.error("Error fetching data", err);
+            logger.error("Error fetching data", err);
         } finally {
             setLoading(false);
         }
@@ -64,8 +66,8 @@ export const ProducerTickets: React.FC = () => {
             setFormData({ name: "", price: "", quantity: "", eventId: "" });
             fetchData();
         } catch (err) {
-            console.error("Error creating batch", err);
-            alert("Erro ao criar lote");
+            logger.error("Error creating batch", err);
+            logger.warn("Alert:", "Erro ao criar lote");
         }
     };
 

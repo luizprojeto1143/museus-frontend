@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Inbox, Check, X, User, MapPin, ExternalLink } from "lucide-react";
@@ -16,7 +18,7 @@ export const AdminSubmissionReview: React.FC = () => {
             const res = await api.get(`/roadmap-family/submissions?tenantId=${tenantId}&status=${filter}`);
             setSubmissions(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar submissões");
         } finally {
             setLoading(false);

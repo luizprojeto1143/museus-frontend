@@ -26,7 +26,7 @@ export const TheaterCueMaster: React.FC = () => {
         try {
             const res = await theaterApi.getCues(sessionId);
             setCues(res.data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(t("theater.cuemaster.load_error", "Erro ao carregar cues"));
         } finally {
             setLoading(false);

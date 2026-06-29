@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, FileText, Download, Calendar } from "lucide-react";
@@ -11,7 +13,7 @@ import "./AdminShared.css";
 export const AdminTCEExport: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<unknown>(null);
     const [loading, setLoading] = useState(true);
     const [year, setYear] = useState(new Date().getFullYear());
     const [quarter, setQuarter] = useState(Math.ceil((new Date().getMonth() + 1) / 3));
@@ -21,7 +23,7 @@ export const AdminTCEExport: React.FC = () => {
             setLoading(true);
             const res = await api.get(`/analytics/summary?tenantId=${tenantId}`);
             setStats(res.data);
-        } catch (error) { console.error(error); }
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 

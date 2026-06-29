@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../api/client";
 import { useAuth } from "./AuthContext";
 
@@ -49,8 +51,8 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
                 theme: res.data.theme || "dark",
                 logoUrl: res.data.logoUrl
             });
-        } catch (err: any) {
-            console.error("Erro ao carregar tenant:", err);
+        } catch (err: unknown) {
+            logger.error("Erro ao carregar tenant:", err);
             setTenant(null);
         } finally {
             setLoading(false);

@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect } from 'react';
 import { Mail, Send, Paperclip, DollarSign, Search, MoreVertical } from 'lucide-react';
 import { Button, Input, Textarea } from '../../../components/ui';
@@ -32,7 +34,7 @@ export const ProducerInbox: React.FC = () => {
                 // setSelectedId(data[0].id);
             }
         } catch (error) {
-            console.error("Error loading conversations", error);
+            logger.error("Error loading conversations", error);
         } finally {
             setLoading(false);
         }
@@ -46,7 +48,7 @@ export const ProducerInbox: React.FC = () => {
             const fullConv = await inboxService.getById(id);
             setConversations(prev => prev.map(c => c.id === id ? fullConv : c));
         } catch (error) {
-            console.error("Error fetching details", error);
+            logger.error("Error fetching details", error);
         }
     };
 
@@ -71,7 +73,7 @@ export const ProducerInbox: React.FC = () => {
             }));
 
         } catch (error) {
-            console.error("Error sending message", error);
+            logger.error("Error sending message", error);
         } finally {
             setSending(false);
         }
@@ -79,7 +81,7 @@ export const ProducerInbox: React.FC = () => {
 
     const handlePaymentRequest = async () => {
         if (!selectedId || !paymentAmount || !receiptUrl) {
-            alert(t("producer.producerinbox.fillPaymentDetails", "Preencha o valor e o link do comprovante!"));
+            logger.warn("Alert:", t("producer.producerinbox.fillPaymentDetails", "Preencha o valor e o link do comprovante!"));
             return;
         }
 
@@ -91,9 +93,9 @@ export const ProducerInbox: React.FC = () => {
             setShowPaymentModal(false);
             setPaymentAmount("");
             setReceiptUrl("");
-            alert(t("producer.producerinbox.paymentRegistered", "Pagamento registrado e comprovante enviado!"));
+            logger.warn("Alert:", t("producer.producerinbox.paymentRegistered", "Pagamento registrado e comprovante enviado!"));
         } catch (error) {
-            alert(t("producer.producerinbox.paymentError", "Erro ao registrar pagamento"));
+            logger.warn("Alert:", t("producer.producerinbox.paymentError", "Erro ao registrar pagamento"));
         } finally {
             setProcessingPayment(false);
         }

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
 import { Card, Button } from "@/components/ui";
@@ -24,7 +26,7 @@ export function AdminSponsorshipSettings() {
             if (res.data.sponsorSharedPrice) setSponsorSharedPrice(res.data.sponsorSharedPrice.toString());
             if (res.data.sponsorExclusivePrice) setSponsorExclusivePrice(res.data.sponsorExclusivePrice.toString());
         } catch (error) {
-            console.error("Erro ao carregar configurações de patrocínio:", error);
+            logger.error("Erro ao carregar configurações de patrocínio:", error);
             toast.error("Falha ao carregar configurações.");
         } finally {
             setLoading(false);
@@ -53,7 +55,7 @@ export function AdminSponsorshipSettings() {
             });
             toast.success("Valores de patrocínio atualizados com sucesso!");
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao salvar valores.");
         } finally {
             setSaving(false);

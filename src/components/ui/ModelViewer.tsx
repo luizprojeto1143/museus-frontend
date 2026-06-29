@@ -28,12 +28,12 @@ const Model: React.FC<ModelProps> = ({ url, autoRotate = true }) => {
   // VRAM Garbage Collector
   React.useEffect(() => {
     return () => {
-      scene.traverse((object: any) => {
+      scene.traverse((object: unknown) => {
         if (object.isMesh) {
           object.geometry?.dispose();
           if (object.material) {
             if (Array.isArray(object.material)) {
-              object.material.forEach((m: any) => m.dispose());
+              object.material.forEach((m: unknown) => m.dispose());
             } else {
               object.material.dispose();
             }

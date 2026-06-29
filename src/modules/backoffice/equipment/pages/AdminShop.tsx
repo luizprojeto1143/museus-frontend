@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon, TrendingUp, AlertTriangle, Filter } from 'lucide-react';
 import { api } from '../../../../api/client';
@@ -64,7 +66,7 @@ export const AdminShop: React.FC = () => {
             setProducts(productsRes.data);
             setOrders(ordersRes.data || []);
         } catch (error) {
-            console.error('Error fetching shop data:', error);
+            logger.error('Error fetching shop data:', error);
         } finally {
             setLoading(false);
         }
@@ -76,7 +78,7 @@ export const AdminShop: React.FC = () => {
             await api.delete(`/shop/products/${id}`);
             setProducts(prev => prev.filter(p => p.id !== id));
         } catch (error) {
-            console.error('Error deleting product:', error);
+            logger.error('Error deleting product:', error);
         }
     };
 
@@ -85,7 +87,7 @@ export const AdminShop: React.FC = () => {
             await api.put(`/shop/products/${product.id}`, { active: !product.active });
             setProducts(prev => prev.map(p => p.id === product.id ? { ...p, active: !p.active } : p));
         } catch (error) {
-            console.error('Error toggling product:', error);
+            logger.error('Error toggling product:', error);
         }
     };
 
@@ -109,7 +111,7 @@ export const AdminShop: React.FC = () => {
             await api.patch(`/shop/orders/${orderId}/status`, { status });
             setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
         } catch (error) {
-            console.error('Error updating order status:', error);
+            logger.error('Error updating order status:', error);
         }
     };
 
@@ -493,7 +495,7 @@ const ProductForm: React.FC<{
             }
             onSave();
         } catch (error) {
-            console.error('Error saving product:', error);
+            logger.error('Error saving product:', error);
         } finally {
             setSaving(false);
         }

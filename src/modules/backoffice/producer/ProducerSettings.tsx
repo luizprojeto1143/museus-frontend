@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { Save, Bell, Lock, User, Globe, Shield, ToggleLeft, ToggleRight } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
@@ -25,7 +27,7 @@ export const ProducerSettings: React.FC = () => {
             });
             addToast("Configurações salvas com sucesso!", "success");
         } catch (error) {
-            console.error("Error saving settings", error);
+            logger.error("Error saving settings", error);
             addToast("Erro ao salvar configurações", "error");
         } finally {
             setLoading(false);

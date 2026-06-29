@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../../api/client";
@@ -40,7 +42,7 @@ export const AdminProviders: React.FC = () => {
         api.get("/providers", { params: { tenantId } })
             .then(res => setProviders(res.data))
             .catch(err => {
-                console.error("Erro ao carregar prestadores", err);
+                logger.error("Erro ao carregar prestadores", err);
                 setProviders([]);
                 addToast("Erro ao carregar prestadores", "error");
             })
@@ -133,7 +135,7 @@ export const AdminProviders: React.FC = () => {
                                                     setProviders(providers.filter(p => p.id !== provider.id));
                                                     addToast("Prestador excluído com sucesso", "success");
                                                 } catch (err) {
-                                                    console.error("Erro ao excluir", err);
+                                                    logger.error("Erro ao excluir", err);
                                                     addToast("Erro ao excluir prestador", "error");
                                                 }
                                             }

@@ -34,7 +34,7 @@ interface Equipamento {
   fotoCapaUrl?: string;
   lat?: number;
   lng?: number;
-  horarios?: any;
+  horarios?: unknown;
   endereco?: string;
   cidade?: string;
   cityId?: string | null;
@@ -100,7 +100,7 @@ export const SelectMuseum: React.FC = () => {
     try {
       const res = await api.get("/equipamentos/public", { signal });
       setEquipamentos(Array.isArray(res.data) ? res.data : []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
       logger.error("Error loading equipments", err);
       setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
@@ -114,7 +114,7 @@ export const SelectMuseum: React.FC = () => {
     try {
       const res = await api.get("/events?discovery=true", { signal });
       setEvents(Array.isArray(res.data.data) ? res.data.data : []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
       logger.error("Error loading events", err);
     } finally {
@@ -181,7 +181,7 @@ export const SelectMuseum: React.FC = () => {
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
         navigate("/home");
         return;
-      } catch (err: any) {
+      } catch (err: unknown) {
         logger.error(err);
       }
     }
@@ -305,7 +305,7 @@ export const SelectMuseum: React.FC = () => {
                   >
                     <div className="relative h-44">
                       <img 
-                        src={event.coverImage || "https://images.unsplash.com/photo-1514525253361-bee8718a7439?q=80&w=800&auto=format&fit=crop"} 
+                        src={event.coverImage || "/placeholder-image.jpg"} 
                         alt={event.title} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
@@ -405,7 +405,7 @@ export const SelectMuseum: React.FC = () => {
                 >
                   <div className="relative h-60 overflow-hidden">
                     <img
-                      src={event.coverImage || "https://images.unsplash.com/photo-1514525253361-bee8718a7439?q=80&w=800&auto=format&fit=crop"}
+                      src={event.coverImage || "/placeholder-image.jpg"}
                       alt={event.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -454,7 +454,7 @@ export const SelectMuseum: React.FC = () => {
                 >
                   <div className="relative h-60 overflow-hidden">
                     <img
-                      src={equip.fotoCapaUrl || "https://images.unsplash.com/photo-1544967082-d9d25d867d66?q=80&w=800&auto=format&fit=crop"}
+                      src={equip.fotoCapaUrl || "/placeholder-image.jpg"}
                       alt={equip.nome}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
                     />

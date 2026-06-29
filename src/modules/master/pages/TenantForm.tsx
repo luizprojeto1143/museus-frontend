@@ -192,7 +192,7 @@ export const TenantForm: React.FC = () => {
 
   useEffect(() => {
     api.get("/tenants").then(res => {
-        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: any) =>
+        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: unknown) =>
           item.type === "CITY" || item.type === "SECRETARIA" || item.isCityMode === true
         );
         setCities(cityTenants);
@@ -241,7 +241,7 @@ export const TenantForm: React.FC = () => {
     }
 
     setSaving(true);
-    const payload: any = {
+    const payload: unknown = {
       name, slug, type: tenantType, parentId: parentId || null,
       isCityMode: tenantType === "CITY" || tenantType === "SECRETARIA",
       plan, maxWorks,
@@ -273,7 +273,7 @@ export const TenantForm: React.FC = () => {
         toast.success("Novo Node implantado com sucesso!");
       }
       navigate("/master/tenants");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.error("Falha no manifesto de implantação.");
     } finally {
       setSaving(false);
@@ -288,7 +288,7 @@ export const TenantForm: React.FC = () => {
     { value: "CULTURAL_SPACE", icon: <Tent size={28} />, label: "Espaço Cultural", desc: "Galerias e centros comunitários." }
   ];
 
-  const FeatureToggle = ({ label, state, setter, premium, icon: Icon }: any) => (
+  const FeatureToggle = ({ label, state, setter, premium, icon: Icon }: unknown) => (
     <div
       onClick={() => setter(!state)}
       className={`p-6 rounded-3xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${state ? 'bg-blue-600/10 border-blue-500/30' : 'bg-white/[0.02] border-white/5 opacity-50 hover:opacity-100'}`}
@@ -379,7 +379,7 @@ export const TenantForm: React.FC = () => {
                                 {typeOptions.map(opt => (
                                     <Card 
                                         key={opt.value}
-                                        onClick={() => setTenantType(opt.value as any)}
+                                        onClick={() => setTenantType(opt.value as unknown)}
                                         className={`p-8 rounded-[40px] cursor-pointer transition-all border-2 flex flex-col items-center text-center group hover:scale-105 ${tenantType === opt.value ? 'bg-blue-600/10 border-blue-500 shadow-2xl shadow-blue-600/10' : 'bg-white/[0.02] border-white/5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100'}`}
                                     >
                                         <div className={`w-16 h-16 rounded-[24px] mb-6 flex items-center justify-center transition-all ${tenantType === opt.value ? 'bg-blue-600 text-white shadow-xl' : 'bg-white/5 text-slate-500'}`}>

@@ -1,4 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
+import { logger } from "@/utils/logger";
+
 import { getFCMToken, onForegroundMessage } from '../lib/firebase';
 import { api } from '../api/client';
 
@@ -61,8 +63,8 @@ export const usePushNotifications = () => {
                         userAgent: navigator.userAgent
                     });
                     // console.debug('Firebase SW registered:', registration);
-                } catch (err: any) {
-                    console.warn('Failed to register token on backend:', err);
+                } catch (err: unknown) {
+                    logger.warn('Failed to register token on backend:', err);
                 }
 
                 setState({
@@ -83,8 +85,8 @@ export const usePushNotifications = () => {
                 }));
                 return null;
             }
-        } catch (error: any) {
-            console.error('Push notification error:', error);
+        } catch (error: unknown) {
+            logger.error('Push notification error:', error);
             setState(prev => ({
                 ...prev,
                 isLoading: false,

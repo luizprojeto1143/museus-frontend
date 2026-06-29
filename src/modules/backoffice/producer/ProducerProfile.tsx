@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
@@ -33,7 +35,7 @@ export const ProducerProfile: React.FC = () => {
                 website: u.website || ""
             });
         }).catch(err => {
-            console.error(err);
+            logger.error(err);
             addToast("Erro ao carregar perfil", "error");
         });
     }, []);
@@ -53,8 +55,8 @@ export const ProducerProfile: React.FC = () => {
             if (role) {
                 updateSession(role, tenantId || "", formData.name);
             }
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             addToast("Erro ao atualizar perfil: " + (err.response?.data?.message || err.message), "error");
         } finally {
             setLoading(false);

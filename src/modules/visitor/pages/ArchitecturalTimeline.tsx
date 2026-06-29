@@ -26,7 +26,7 @@ export const ArchitecturalTimeline: React.FC = () => {
             try {
                 const res = await api.get(`/roadmap-extra/events?spaceId=${spaceId}`);
                 setEvents(res.data);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error("Erro ao buscar linha do tempo:", err);
             } finally {
                 setLoading(false);

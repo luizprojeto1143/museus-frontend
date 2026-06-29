@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -57,7 +59,7 @@ export const AdminVisitors: React.FC = () => {
       setVisitors(res.data.data || []);
       setTotal(res.data.pagination?.total || 0);
     } catch (err) {
-      console.error("Erro ao carregar visitantes", err);
+      logger.error("Erro ao carregar visitantes", err);
       toast.error("Erro ao carregar lista de visitantes");
     } finally {
       setLoading(false);

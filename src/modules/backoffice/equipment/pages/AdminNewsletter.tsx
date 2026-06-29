@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Mail, Users, Download, Calendar } from "lucide-react";
@@ -26,7 +28,7 @@ export const AdminNewsletter: React.FC = () => {
             const res = await api.get(`/newsletter/list?tenantId=${tenantId}`);
             setSubscribers(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar inscritos");
         } finally {
             setLoading(false);

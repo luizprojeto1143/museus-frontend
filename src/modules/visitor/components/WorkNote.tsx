@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { storage } from "@/utils/storage";
+
 import { useTranslation } from "react-i18next";
 
 interface WorkNoteProps {
@@ -8,19 +10,19 @@ interface WorkNoteProps {
 export const WorkNote: React.FC<WorkNoteProps> = ({ workId }) => {
     const { t } = useTranslation();
     const [note, setNote] = useState(() => {
-        const allNotes = JSON.parse(localStorage.getItem("visitor_notes") || "{}");
+        const allNotes = storage.get("visitor_notes") || {};
         return allNotes[workId] || "";
     });
     const [saved, setSaved] = useState(false);
 
     const handleSave = () => {
-        const allNotes = JSON.parse(localStorage.getItem("visitor_notes") || "{}");
+        const allNotes = storage.get("visitor_notes") || {};
         if (note.trim()) {
             allNotes[workId] = note;
         } else {
             delete allNotes[workId];
         }
-        localStorage.setItem("visitor_notes", JSON.stringify(allNotes));
+        storage.set("visitor_notes", JSON.stringify(allNotes));
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
     };

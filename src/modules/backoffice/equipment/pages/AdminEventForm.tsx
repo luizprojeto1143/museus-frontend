@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
@@ -158,7 +160,7 @@ export const AdminEventForm: React.FC = () => {
           try {
             const ticketRes = await api.get(`/events/${id}/tickets`);
             setTickets(ticketRes.data);
-          } catch (e) { console.error(e); }
+          } catch (e) { logger.error(e); }
         })
         .finally(() => setLoading(false));
     }
@@ -178,7 +180,7 @@ export const AdminEventForm: React.FC = () => {
             state: data.uf
           }));
         }
-      } catch (e) { console.error(e); }
+      } catch (e) { logger.error(e); }
     }
   }
 
@@ -196,7 +198,7 @@ export const AdminEventForm: React.FC = () => {
         setter(res.data.url);
         toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
-        console.error(`Error uploading ${type}`, error);
+        logger.error(`Error uploading ${type}`, error);
         toast.error("Erro ao enviar arquivo");
       } finally {
         setIsUploading(false);
@@ -222,7 +224,7 @@ export const AdminEventForm: React.FC = () => {
     if (!tenantId) return;
     setSaving(true);
     try {
-      const payload: any = {
+      const payload: unknown = {
         title: formData.title,
         description: formData.description,
         format: formData.format,
@@ -275,7 +277,7 @@ export const AdminEventForm: React.FC = () => {
       toast.success(isEdit ? "Evento atualizado!" : "Evento criado!");
       navigate("/admin/eventos");
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       toast.error("Erro ao salvar.");
     } finally {
       setSaving(false);
@@ -721,7 +723,7 @@ export const AdminEventForm: React.FC = () => {
                                 label="Tipo"
                                 value={ticket.type}
                                 onChange={e => {
-                                  const n = [...tickets]; n[idx].type = e.target.value as any; setTickets(n);
+                                  const n = [...tickets]; n[idx].type = e.target.value as unknown; setTickets(n);
                                 }}
                                 className="bg-black/20"
                               >

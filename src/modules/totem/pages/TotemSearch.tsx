@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -25,7 +27,7 @@ export const TotemSearch: React.FC = () => {
             // Search registrations by code, guest name, visitor name
             const res = await api.get(`/registrations?tenantId=${tenantId}&q=${query}`);
             // Map backend format to frontend expectation
-            const mapped = res.data.data.map((reg: any) => ({
+            const mapped = res.data.data.map((reg: unknown) => ({
                 id: reg.id,
                 code: reg.code,
                 status: reg.status,
@@ -34,8 +36,8 @@ export const TotemSearch: React.FC = () => {
                 ticketName: reg.ticket?.name
             }));
             setResults(mapped);
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             toast.error(t("totem.search.search_error", "Erro ao buscar"));
             setResults([]);
         } finally {
@@ -48,8 +50,8 @@ export const TotemSearch: React.FC = () => {
             await api.post('/registrations/checkin', { code: ticketCode });
             toast.success(t("totem.search.checkin_success", "Check-in realizado!"));
             // Refresh results
-            handleSearch({ preventDefault: () => { } } as any);
-        } catch (error: any) {
+            handleSearch({ preventDefault: () => { } } as unknown);
+        } catch (error: unknown) {
             toast.error(error.response?.data?.error || t("totem.search.checkin_error", "Erro ao realizar check-in"));
         }
     };

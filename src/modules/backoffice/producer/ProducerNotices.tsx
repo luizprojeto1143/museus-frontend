@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
@@ -35,7 +37,7 @@ export const ProducerNotices: React.FC = () => {
                 .then(res => {
                     setCanSubmit(res.data.featureEditaisSubmission !== false);
                 })
-                .catch(err => console.error("Error fetching features", err));
+                .catch(err => logger.error("Error fetching features", err));
         }
 
         api.get("/notices/public")

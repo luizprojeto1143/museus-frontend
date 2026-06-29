@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { 
@@ -105,7 +107,7 @@ export const AdminCalendar: React.FC = () => {
                 setFormData(prev => ({ ...prev, spaceId: res.data[0].id }));
             }
         } catch (e) {
-            console.error("Erro ao carregar espaços", e);
+            logger.error("Erro ao carregar espaços", e);
         }
     }, [formData.spaceId]);
 
@@ -117,7 +119,7 @@ export const AdminCalendar: React.FC = () => {
             const res = await api.get("/bookings", { params: { year, month, tenantId } });
             setBookings(res.data);
         } catch (e) {
-            console.error("Erro ao carregar reservas", e);
+            logger.error("Erro ao carregar reservas", e);
             toast.error("Erro ao carregar reservas");
         } finally {
             setLoading(false);
@@ -164,7 +166,7 @@ export const AdminCalendar: React.FC = () => {
             setIsModalOpen(false);
             setEditingId(null);
             fetchBookings();
-        } catch (err: any) {
+        } catch (err: unknown) {
             const msg = err.response?.data?.message || "Erro ao salvar";
             toast.error(msg, { id: loadingToast });
         } finally {
@@ -197,7 +199,7 @@ export const AdminCalendar: React.FC = () => {
         const eTime = b.endTime ? new Date(b.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00";
 
         setFormData({
-            spaceId: (b as any).spaceId || spaces.find(s => s.name === b.space?.name)?.id || spaces[0]?.id || "",
+            spaceId: (b as unknown).spaceId || spaces.find(s => s.name === b.space?.name)?.id || spaces[0]?.id || "",
             startTime: sTime,
             endTime: eTime,
             purpose: b.purpose || ""

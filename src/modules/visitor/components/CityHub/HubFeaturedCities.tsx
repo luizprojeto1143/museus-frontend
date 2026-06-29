@@ -32,7 +32,7 @@ export const HubFeaturedCities: React.FC<HubFeaturedCitiesProps> = ({ filteredCi
                   alt={c.name} 
                   className="carousel-city-img" 
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600";
+                    (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
                   }}
                 />
                 <div className="carousel-city-overlay"></div>
@@ -53,7 +53,7 @@ export const HubFeaturedCities: React.FC<HubFeaturedCitiesProps> = ({ filteredCi
           >
             <div className="carousel-city-img-wrapper">
               <img 
-                src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?q=80&w=600" 
+                src="/placeholder-image.jpg" 
                 alt="Novas Cidades" 
                 className="carousel-city-img opacity-50" 
               />

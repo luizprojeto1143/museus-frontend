@@ -32,9 +32,9 @@ export const SubmitWorkModal: React.FC<SubmitWorkModalProps> = ({ spaceId, onClo
             });
             setIsSuccess(true);
             setTimeout(onClose, 3000);
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error("Erro ao submeter obra:", err);
-            alert("Erro ao enviar sua contribuição. Tente novamente.");
+            logger.warn("Alert:", "Erro ao enviar sua contribuição. Tente novamente.");
         } finally {
             setIsSubmitting(false);
         }

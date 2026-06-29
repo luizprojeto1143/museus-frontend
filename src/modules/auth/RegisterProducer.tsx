@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "./AuthContext";
@@ -70,14 +72,14 @@ export const RegisterProducer: React.FC = () => {
                 role: "PRODUCER",
                 parentTenantId: selectedCity || null // Optional city link
             });
-            alert(t("auth.registerproducer.success", "Cadastro realizado com sucesso! Entrando no sistema..."));
+            logger.warn("Alert:", t("auth.registerproducer.success", "Cadastro realizado com sucesso! Entrando no sistema..."));
             
             // Auto-login
             await login({ email: formData.email, password: formData.password });
             
             navigate("/producer");
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             setError(err.response?.data?.message || t("auth.registerproducer.error", "Erro ao realizar cadastro"));
         } finally {
             setLoading(false);

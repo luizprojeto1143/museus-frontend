@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Save, ArrowLeft, Building, MapPin, Phone, DollarSign } from 'lucide-react';
@@ -51,7 +53,7 @@ export const ServiceProviderForm: React.FC = () => {
       setLoading(false);
       navigate(`/admin/parceiros-roteiro`);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setLoading(false);
     }
   };

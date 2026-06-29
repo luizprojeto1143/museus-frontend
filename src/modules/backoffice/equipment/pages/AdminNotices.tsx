@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
@@ -45,7 +47,7 @@ export const AdminNotices: React.FC = () => {
         api.get("/notices", { params: { tenantId } })
             .then(res => setNotices(res.data))
             .catch(err => {
-                console.error("Erro ao carregar editais", err);
+                logger.error("Erro ao carregar editais", err);
                 setNotices([]);
                 addToast("Erro ao carregar editais", "error");
             })
@@ -62,7 +64,7 @@ export const AdminNotices: React.FC = () => {
             addToast("Edital publicado com sucesso!", "success");
             fetchNotices();
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             addToast("Erro ao publicar edital", "error");
         }
     };

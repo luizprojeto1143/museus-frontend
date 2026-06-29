@@ -70,7 +70,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
             setLoading(true);
             const res = await api.get("/accessibility/master");
             setRequests(res.data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Erro na sincronização de conformidade LBI.");
         } finally {
             setLoading(false);
@@ -135,7 +135,7 @@ export const MasterAccessibilityRequests: React.FC = () => {
             setAudioFile(null);
             setProgress(0);
             loadRequests();
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Falha no processamento da conformidade.");
         } finally {
             setUploading(false);

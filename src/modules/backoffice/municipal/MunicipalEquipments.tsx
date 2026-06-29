@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -50,7 +52,7 @@ export const MunicipalEquipments: React.FC = () => {
             const res = await api.get(`/tenants?parentId=${tenantId}`);
             setEquipments(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error(t("municipal.equipments.error_load", "Erro ao carregar rede de equipamentos."));
         } finally {
             setLoading(false);

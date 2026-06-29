@@ -68,7 +68,7 @@ export const AdminCollaboratorForm: React.FC = () => {
       };
 
       if (isEdit) {
-        if (!payload.password) delete (payload as any).password;
+        if (!payload.password) delete (payload as unknown).password;
         await api.put(`/users/${id}`, payload);
         toast.success("Usuário atualizado!");
       } else {
@@ -76,7 +76,7 @@ export const AdminCollaboratorForm: React.FC = () => {
         toast.success("Usuário criado com sucesso!");
       }
       navigate("/admin/usuarios");
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.response?.data?.message || "Erro ao salvar usuário");
     } finally {
       setLoading(false);
@@ -129,7 +129,7 @@ export const AdminCollaboratorForm: React.FC = () => {
                 <select 
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-gold outline-none transition-all"
                   value={formData.role}
-                  onChange={e => setFormData({ ...formData, role: e.target.value as any })}
+                  onChange={e => setFormData({ ...formData, role: e.target.value as unknown })}
                 >
                   <option value="COLLABORATOR">Colaborador (Equipe Interna)</option>
                   <option value="PRODUCER">Produtor Cultural (Exposições/Eventos)</option>

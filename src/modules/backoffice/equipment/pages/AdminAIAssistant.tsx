@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -70,9 +72,9 @@ export const AdminAIAssistant: React.FC = () => {
     setSaving(true);
     try {
       await api.post(`/persona/${tenantId}`, { ...persona });
-      alert(t("admin.aiAssistant.alerts.success"));
+      logger.warn("Alert:", t("admin.aiAssistant.alerts.success"));
     } catch {
-      alert(t("admin.aiAssistant.alerts.errorSave"));
+      logger.warn("Alert:", t("admin.aiAssistant.alerts.errorSave"));
     } finally {
       setSaving(false);
     }
@@ -80,7 +82,7 @@ export const AdminAIAssistant: React.FC = () => {
 
   const handleTest = async () => {
     if (!testMessage.trim()) {
-      alert(t("admin.aiAssistant.alerts.emptyTest"));
+      logger.warn("Alert:", t("admin.aiAssistant.alerts.emptyTest"));
       return;
     }
 

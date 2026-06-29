@@ -1,11 +1,15 @@
 import axios from "axios";
+import { storage } from "@/utils/storage";
+
+import { logger } from "@/utils/logger";
+
 import axiosRetry from "axios-retry";
 import toast from "react-hot-toast";
 
 export const baseURL = import.meta.env.VITE_API_URL as string;
 
 if (!baseURL) {
-  console.error("❌ CRITICAL: VITE_API_URL is not defined in environment variables!");
+  logger.error("❌ CRITICAL: VITE_API_URL is not defined in environment variables!");
 }
 
 export const api = axios.create({
@@ -20,14 +24,14 @@ export const api = axios.create({
 // C1: Request Interceptor — cookies HttpOnly already handle the auth
 api.interceptors.request.use((config) => {  // C2: Ensure x-tenant-id is ALWAYS sent for multi-tenant isolation
   try {
-    const rawAuth = localStorage.getItem("museus_auth_v1");
+    const rawAuth = storage.get("museus_auth_v1");
     if (rawAuth) {
       const parsed = JSON.parse(rawAuth);
       if (parsed.tenantId) {
         config.headers["x-tenant-id"] = parsed.tenantId;
       }
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     // Silent catch for parsing errors
   }
 
@@ -48,7 +52,7 @@ axiosRetry(api, {
     return axiosRetry.isNetworkOrIdempotentRequestError(error);
   },
   onRetry: (retryCount, error) => {
-    console.warn(`[API] Retry ${retryCount}/3 — ${error.config?.url} (${error.message})`);
+    logger.warn(`[API] Retry ${retryCount}/3 — ${error.config?.url} (${error.message})`);
   },
 });
 
@@ -101,7 +105,7 @@ api.interceptors.response.use(
         // Retry the original request
         return api(originalRequest);
       } catch (refreshError) {
-        console.warn("[API] Session expired or refresh failed.");
+        logger.warn("[API] Session expired or refresh failed.");
         isRefreshing = false;
         refreshSubscribers = [];
 
@@ -112,7 +116,7 @@ api.interceptors.response.use(
           || currentPath.startsWith("/p/");
 
         if (!isPublicRoute && !originalRequest.url?.includes("/auth/me")) {
-          console.warn("[API] Redirecting to login.");
+          logger.warn("[API] Redirecting to login.");
           window.location.href = "/login";
         }
 
@@ -121,7 +125,7 @@ api.interceptors.response.use(
     }
 
     if (error.response?.status !== 401 && error.response?.status !== 404) {
-      console.error("❌ API Error:", {
+      logger.error("❌ API Error:", {
         url: error.config?.url,
         method: error.config?.method,
         status: error.response?.status,
@@ -137,7 +141,7 @@ api.interceptors.response.use(
     // For 5xx errors, only show toast if it's not a generic background retry
     if (status !== 401 && error.config?.url) {
       if (status >= 500 && status < 600) {
-        console.error(`[API] Server error (5xx) on ${error.config.url}. Check backend logs.`);
+        logger.error(`[API] Server error (5xx) on ${error.config.url}. Check backend logs.`);
       } else {
         toast.error(errorMessage, { id: `api-error-${status}` });
       }

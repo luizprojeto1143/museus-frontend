@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -38,7 +40,7 @@ export const AdminQuizBuilder: React.FC = () => {
             setSpaces(s.data);
             setWorks(Array.isArray(w.data) ? w.data : (w.data.data || []));
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar dados");
         } finally {
             setLoading(false);
@@ -57,9 +59,9 @@ export const AdminQuizBuilder: React.FC = () => {
         setQuestions(questions.filter((_, i) => i !== idx));
     };
 
-    const updateQuestion = (idx: number, field: string, value: any) => {
+    const updateQuestion = (idx: number, field: string, value: unknown) => {
         const newQuestions = [...questions];
-        (newQuestions[idx] as any)[field] = value;
+        (newQuestions[idx] as unknown)[field] = value;
         setQuestions(newQuestions);
     };
 
@@ -84,7 +86,7 @@ export const AdminQuizBuilder: React.FC = () => {
             toast.success("Quiz criado com sucesso! 🏆");
             // Reset form or redirect
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             toast.error("Erro ao salvar quiz");
         } finally {
             setIsSaving(false);

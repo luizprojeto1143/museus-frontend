@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { QRCodeCanvas } from "qrcode.react";
 import { api } from "../../../../api/client";
@@ -151,7 +153,7 @@ export const AdminWorkForm: React.FC = () => {
             }
           }
         } catch (err) {
-          console.warn("Could not parse metadata translations", err);
+          logger.warn("Could not parse metadata translations", err);
         }
 
         setRadius(data.radius || 5);
@@ -172,7 +174,7 @@ export const AdminWorkForm: React.FC = () => {
         if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
         setVestigeImageUrl(data.vestigeImageUrl || "");
       }).catch(err => {
-        console.error(err);
+        logger.error(err);
         toast.error(`Erro ao carregar ${term.work.toLowerCase()}`);
       });
     }
@@ -259,7 +261,7 @@ export const AdminWorkForm: React.FC = () => {
         setter(res.data.url);
         toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
-        console.error(`Error uploading ${type}`, error);
+        logger.error(`Error uploading ${type}`, error);
         toast.error(t("common.errorUpload"));
       } finally {
         setIsUploading(false);
@@ -296,7 +298,7 @@ export const AdminWorkForm: React.FC = () => {
 
       toast.success("Tradução concluída com sucesso!");
     } catch (err) {
-      console.error("Erro na tradução:", err);
+      logger.error("Erro na tradução:", err);
       toast.error("Houve um erro ao gerar a tradução automática.");
     } finally {
       setIsTranslating(false);
@@ -333,7 +335,7 @@ export const AdminWorkForm: React.FC = () => {
 
         toast.success("Informações extraídas do PDF com sucesso!");
       } catch (err) {
-        console.error("Erro ao extrair PDF:", err);
+        logger.error("Erro ao extrair PDF:", err);
         toast.error("Houve um erro ao extrair informações do PDF.");
       } finally {
         setIsExtracting(false);
@@ -377,7 +379,7 @@ export const AdminWorkForm: React.FC = () => {
     setSaving(true);
 
     // Clean up payload (Zod schema expects undefined/null, not empty strings for optional UUIDs/URLs)
-    const payload: any = {
+    const payload: unknown = {
       title,
       artist: artist || undefined,
       year: year || undefined,
@@ -427,8 +429,8 @@ export const AdminWorkForm: React.FC = () => {
         toast.success(`${term.work} criada com sucesso!`);
         navigate(`/admin/obras/${res.data.id}`);
       }
-    } catch (err: any) {
-      console.error("Erro ao salvar obra", err);
+    } catch (err: unknown) {
+      logger.error("Erro ao salvar obra", err);
       toast.error("Erro ao salvar. Verifique os dados.");
     } finally {
       setSaving(false);
@@ -825,7 +827,7 @@ export const AdminWorkForm: React.FC = () => {
                            <span className="text-sm font-medium">Clique ou arraste para subir</span>
                         </div>
                       )}
-                      <input id="image-upload" type="file" accept="image/*" onChange={(e: any) => handleUpload(e, "image", setImageUrl)} className="hidden" />
+                      <input id="image-upload" type="file" accept="image/*" onChange={(e: unknown) => handleUpload(e, "image", setImageUrl)} className="hidden" />
                     </div>
                   </Card>
 
@@ -845,7 +847,7 @@ export const AdminWorkForm: React.FC = () => {
                        >
                          {audioUrl ? "Substituir Áudio" : "Subir Áudio (MP3)"}
                        </Button>
-                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e: any) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
+                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e: unknown) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
                     </Card>
 
                     <Card className="p-6 border-white/5 bg-black/20 rounded-3xl space-y-4">
@@ -863,7 +865,7 @@ export const AdminWorkForm: React.FC = () => {
                        >
                          {librasUrl ? "Substituir Vídeo" : "Subir Vídeo (MP4)"}
                        </Button>
-                       <input id="libras-upload" type="file" accept="video/*" onChange={(e: any) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
+                       <input id="libras-upload" type="file" accept="video/*" onChange={(e: unknown) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
                     </Card>
                   </div>
                 </div>
@@ -1089,7 +1091,7 @@ export const AdminWorkForm: React.FC = () => {
               <Select
                 label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
                 value={requestType}
-                onChange={(e: any) => setRequestType(e.target.value as any)}
+                onChange={(e: unknown) => setRequestType(e.target.value as unknown)}
                 className="bg-black/20"
               >
                 <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>

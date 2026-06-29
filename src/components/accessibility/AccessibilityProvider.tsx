@@ -1,4 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import { storage } from "@/utils/storage";
+
 
 interface AccessibilitySettings {
     fontSize: 'small' | 'normal' | 'large' | 'xlarge';
@@ -35,12 +37,12 @@ export const useAccessibility = () => {
 
 export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [settings, setSettings] = useState<AccessibilitySettings>(() => {
-        const saved = localStorage.getItem('accessibility-settings');
+        const saved = storage.get('accessibility-settings');
         return saved ? JSON.parse(saved) : defaultSettings;
     });
 
     useEffect(() => {
-        localStorage.setItem('accessibility-settings', JSON.stringify(settings));
+        storage.set('accessibility-settings', JSON.stringify(settings));
 
         // Apply to document
         const root = document.documentElement;

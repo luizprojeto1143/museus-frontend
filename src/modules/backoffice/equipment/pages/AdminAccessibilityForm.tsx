@@ -1,5 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -130,8 +132,8 @@ export const AdminAccessibilityForm: React.FC = () => {
             }
             navigate("/admin/acessibilidade");
         } catch (error) {
-            console.error("Erro ao salvar execução:", error);
-            alert("Erro ao salvar. Verifique os dados.");
+            logger.error("Erro ao salvar execução:", error);
+            logger.warn("Alert:", "Erro ao salvar. Verifique os dados.");
         } finally {
             setSaving(false);
         }

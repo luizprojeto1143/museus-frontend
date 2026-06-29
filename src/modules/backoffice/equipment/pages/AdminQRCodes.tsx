@@ -1,4 +1,6 @@
 import React, { useState, useRef } from "react";
+import { logger } from "@/utils/logger";
+
 import { QRCodeCanvas } from "qrcode.react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -62,10 +64,10 @@ export const AdminQRCodes: React.FC = () => {
       setGeneratedValue(newQr.code); // Or full URL if needed
       fetchQRCodes();
       setShowForm(false);
-      alert(t("common.success"));
+      logger.warn("Alert:", t("common.success"));
     } catch (err) {
-      console.error("Erro ao gerar QR Code", err);
-      alert(t("common.error"));
+      logger.error("Erro ao gerar QR Code", err);
+      logger.warn("Alert:", t("common.error"));
     }
   };
 
@@ -209,7 +211,7 @@ export const AdminQRCodes: React.FC = () => {
                           await api.delete(`/qrcodes/${qr.id}`);
                           fetchQRCodes();
                         } catch {
-                          alert(t("common.error"));
+                          logger.warn("Alert:", t("common.error"));
                         }
                       }
                     }}

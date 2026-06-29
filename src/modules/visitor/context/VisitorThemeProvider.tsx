@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { storage } from "@/utils/storage";
+
 
 interface ThemeSettings {
     primaryColor: string;
@@ -32,7 +34,7 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
     
     // Initialize with fallback but check localStorage first
     const getInitialTheme = (): ThemeSettings => {
-        const localMode = localStorage.getItem("visitor_theme_mode") as "light" | "dark" | null;
+        const localMode = storage.get("visitor_theme_mode") as "light" | "dark" | null;
         // Default to dark for cinematic experience
         const initialMode = localMode || "dark";
         return {
@@ -72,7 +74,7 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
     // Auto-sync theme from Tenant context if available (only if no local override)
     useEffect(() => {
         if (tenant) {
-            const localMode = localStorage.getItem("visitor_theme_mode");
+            const localMode = storage.get("visitor_theme_mode");
             
             // SECURITY: If the tenant colors are the old brown/bordeaux, 
             // we favor the cinematic lux colors unless it's a specific custom museum.
@@ -102,7 +104,7 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     const setThemeMode = (mode: "light" | "dark") => {
         setTheme(prev => ({ ...prev, theme: mode }));
-        localStorage.setItem("visitor_theme_mode", mode);
+        storage.set("visitor_theme_mode", mode);
     };
 
     const toggleTheme = () => {
@@ -112,7 +114,7 @@ export const VisitorThemeProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     const resetTheme = () => {
         setTheme(defaultTheme);
-        localStorage.removeItem("visitor_theme_mode");
+        storage.remove("visitor_theme_mode");
     };
 
     return (

@@ -102,8 +102,8 @@ export const AdminKidsMode: React.FC = () => {
                                 <p style={{ color: "white", fontSize: "0.85rem", fontWeight: 700 }}>{opt.label}</p>
                                 <p style={{ color: "#64748b", fontSize: "0.75rem" }}>{opt.desc}</p>
                             </div>
-                            <button onClick={() => setConfig({ ...config, [opt.key]: !(config as any)[opt.key] })}>
-                                {(config as any)[opt.key] ? <ToggleRight size={28} style={{ color: "#34d399" }} /> : <ToggleLeft size={28} style={{ color: "#475569" }} />}
+                            <button onClick={() => setConfig({ ...config, [opt.key]: !(config as unknown)[opt.key] })}>
+                                {(config as unknown)[opt.key] ? <ToggleRight size={28} style={{ color: "#34d399" }} /> : <ToggleLeft size={28} style={{ color: "#475569" }} />}
                             </button>
                         </div>
                     ))}

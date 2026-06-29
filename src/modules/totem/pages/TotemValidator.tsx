@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { UserCheck, AlertTriangle, ArrowLeft, RotateCcw } from 'lucide-react';
@@ -42,7 +44,7 @@ export const TotemValidator: React.FC = () => {
             });
             playSound('success');
             addToast(t("totem.validator.access_granted", "Acesso Liberado!"), "success");
-        } catch (err: any) {
+        } catch (err: unknown) {
             const axiosErr = err as AxiosError<{ error?: string }>;
             const errorMessage = axiosErr.response?.data?.error || t("totem.validator.invalid_ticket", "Ingresso inválido ou não encontrado");
             setError(errorMessage);
@@ -90,7 +92,7 @@ export const TotemValidator: React.FC = () => {
         );
 
         return () => {
-            scanner.clear().catch(e => console.error("Scanner clear error", e));
+            scanner.clear().catch(e => logger.error("Scanner clear error", e));
         };
     }, []); // Empty deps to prevent camera crash
 

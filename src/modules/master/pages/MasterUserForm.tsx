@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { api, isDemoMode } from "../../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -67,8 +69,8 @@ export const MasterUserForm: React.FC = () => {
             try {
                 const res = await api.get("/tenants");
                 setTenants(res.data || []);
-            } catch (err: any) {
-                console.error(err);
+            } catch (err: unknown) {
+                logger.error(err);
             }
         }
     }, []);
@@ -114,7 +116,7 @@ export const MasterUserForm: React.FC = () => {
             return;
         }
 
-        const payload: any = {
+        const payload: unknown = {
             email,
             name,
             role,
@@ -134,7 +136,7 @@ export const MasterUserForm: React.FC = () => {
                 toast.success("Nova autoridade integrada à malha MSV.");
             }
             navigate("/master/users");
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Falha no protocolo de salvamento de autoridade.");
         }
     };

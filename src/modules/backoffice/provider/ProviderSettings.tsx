@@ -1,6 +1,8 @@
 import {
 useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { 
     Settings, 
     Loader2, 
@@ -43,7 +45,7 @@ export const ProviderSettings: React.FC = () => {
             setLoading(true);
             await api.get("/providers/me"); // Just verifying session
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao sincronizar configurações.");
         } finally {
             setLoading(false);
@@ -107,7 +109,7 @@ export const ProviderSettings: React.FC = () => {
                 ].map(tab => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
+                        onClick={() => setActiveTab(tab.id as unknown)}
                         className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                             activeTab === tab.id 
                             ? 'bg-indigo-600 text-white shadow-lg' 

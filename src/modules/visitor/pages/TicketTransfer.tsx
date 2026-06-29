@@ -10,7 +10,7 @@ export const TicketTransfer: React.FC = () => {
     const { email } = useAuth();
     const [form, setForm] = useState({ registrationId: '', toName: '', toEmail: '' });
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState<any>(null);
+    const [success, setSuccess] = useState<unknown>(null);
 
     const onTransfer = async () => {
         if (!form.registrationId || !form.toName || !form.toEmail) return toast.error("Preencha todos os campos");
@@ -20,7 +20,7 @@ export const TicketTransfer: React.FC = () => {
             const res = await api.post("/ticket-transfers", form);
             setSuccess(res.data);
             toast.success("Ingresso transferido com sucesso!");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(err.response?.data?.message || "Erro ao transferir");
         } finally { setLoading(false); }
     };

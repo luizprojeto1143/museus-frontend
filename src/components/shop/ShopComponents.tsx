@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { storage } from "@/utils/storage";
+
+import { logger } from "@/utils/logger";
+
 import { ShoppingBag, Plus, Minus, Trash2, X, Copy, Check, QrCode, Ticket, Loader2, ArrowRight, Star, ShieldCheck, Truck, Search, Menu, Package, Clock, CreditCard } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
@@ -50,7 +54,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
 
     // Payment
     const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'BOLETO'>('PIX');
-    const [paymentResult, setPaymentResult] = useState<any>(null);
+    const [paymentResult, setPaymentResult] = useState<unknown>(null);
 
     // Coupons
     const [redeemedCoupons, setRedeemedCoupons] = useState<any[]>([]);
@@ -60,7 +64,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
         api.get('/coupons/available')
             .then(res => {
                 // filter only available
-                const availableToUse = res.data.redeemed.filter((rc: any) => !rc.usedAt);
+                const availableToUse = res.data.redeemed.filter((rc: unknown) => !rc.usedAt);
                 setRedeemedCoupons(availableToUse);
             })
             .catch(console.error);
@@ -105,8 +109,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
             setPaymentResult(res.data.payment);
             setStep('success');
             onSuccess();
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             toast.error(error.response?.data?.message || "Erro ao criar pedido.");
         } finally {
             setLoading(false);
@@ -677,7 +681,7 @@ export const ProductGrid: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [cart, setCart] = useState<CartItem[]>(() => {
         // Init from localStorage
-        const saved = localStorage.getItem(`cart_${tenantId}`);
+        const saved = storage.get(`cart_${tenantId}`);
         return saved ? JSON.parse(saved) : [];
     });
     const [loading, setLoading] = useState(true);
@@ -693,8 +697,8 @@ export const ProductGrid: React.FC = () => {
         try {
             const res = await api.get('/coupons/available');
             setAvailableCoupons(res.data.available || []);
-        } catch (error: any) {
-            console.error('Error fetching coupons:', error);
+        } catch (error: unknown) {
+            logger.error('Error fetching coupons:', error);
         }
     }, []);
 
@@ -707,7 +711,7 @@ export const ProductGrid: React.FC = () => {
             await api.post(`/coupons/${couponId}/redeem`);
             toast.success('Cupom resgatado com sucesso!');
             fetchCoupons(); // Refresh
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error(error.response?.data?.message || 'Erro ao resgatar cupom');
         }
     };
@@ -720,8 +724,8 @@ export const ProductGrid: React.FC = () => {
         try {
             const res = await api.get(`/shop/products?tenantId=${tenantId}`);
             setProducts(res.data);
-        } catch (error: any) {
-            console.error('Error fetching products:', error);
+        } catch (error: unknown) {
+            logger.error('Error fetching products:', error);
         } finally {
             setLoading(false);
         }
@@ -736,7 +740,7 @@ export const ProductGrid: React.FC = () => {
     // Persist cart
     useEffect(() => {
         if (tenantId) {
-            localStorage.setItem(`cart_${tenantId}`, JSON.stringify(cart));
+            storage.set(`cart_${tenantId}`, JSON.stringify(cart));
         }
     }, [cart, tenantId]);
 
@@ -997,7 +1001,7 @@ export const ProductGrid: React.FC = () => {
                         onClose={() => setShowCheckout(false)}
                         onSuccess={() => {
                             setCart([]);
-                            localStorage.removeItem(`cart_${tenantId}`);
+                            storage.remove(`cart_${tenantId}`);
                         }}
                     />
                 )}

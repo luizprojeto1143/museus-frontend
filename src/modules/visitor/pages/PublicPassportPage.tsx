@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export const PublicPassportPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const [visitor, setVisitor] = useState<any>(null);
+    const [visitor, setVisitor] = useState<unknown>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export const PublicPassportPage: React.FC = () => {
                 // Public route - doesn't need auth (needs to be created in backend)
                 const res = await api.get(`/visitors/public-passport/${id}`);
                 setVisitor(res.data);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error(err);
             } finally {
                 setLoading(false);
@@ -28,7 +28,7 @@ export const PublicPassportPage: React.FC = () => {
     if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Autenticando Passaporte...</div>;
     if (!visitor) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-red-500">Passaporte não encontrado.</div>;
 
-    const equippedSkin = visitor.skins?.find((s: any) => s.equipped)?.skin;
+    const equippedSkin = visitor.skins?.find((s: unknown) => s.equipped)?.skin;
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-[var(--accent-primary)]/30 overflow-x-hidden">
@@ -108,7 +108,7 @@ export const PublicPassportPage: React.FC = () => {
                 </div>
                 
                 <div className="grid grid-cols-4 gap-4 mb-16">
-                    {visitor.stamps?.map((stamp: any, idx: number) => (
+                    {visitor.stamps?.map((stamp: unknown, idx: number) => (
                         <motion.div 
                             key={idx} 
                             whileHover={{ scale: 1.1, rotate: 5 }}

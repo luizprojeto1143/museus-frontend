@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Plus, Trash2, Save, Clock, MapPin, Image as ImageIcon } from "lucide-react";
@@ -27,7 +29,7 @@ export const AdminTimelineBuilder: React.FC = () => {
             setSpaces(res.data);
             if (res.data.length > 0) setSelectedSpaceId(res.data[0].id);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar espaços");
         } finally {
             setLoading(false);
@@ -40,7 +42,7 @@ export const AdminTimelineBuilder: React.FC = () => {
             const res = await api.get(`/roadmap-extra/events?spaceId=${selectedSpaceId}`);
             setEvents(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         }
     }, [selectedSpaceId]);
 

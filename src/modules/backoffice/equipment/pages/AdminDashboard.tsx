@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
@@ -67,7 +69,7 @@ export const AdminDashboard: React.FC = () => {
       setData(dashRes.data);
       setUpcomingEvents(eventsRes.data.data || []);
     } catch (err) {
-      console.error("Erro ao carregar dashboard", err);
+      logger.error("Erro ao carregar dashboard", err);
       setData(null);
     } finally {
       setLoading(false);

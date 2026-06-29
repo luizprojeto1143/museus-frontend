@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
@@ -73,7 +75,7 @@ export const AdminEquipmentForm: React.FC = () => {
             setAtivo(data.ativo ?? true);
 
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             addToast("Erro ao carregar equipamento. Verifique suas permissões.", "error");
             navigate("/admin/equipamentos");
         } finally {
@@ -86,7 +88,7 @@ export const AdminEquipmentForm: React.FC = () => {
         setSaving(true);
 
         try {
-            const payload: any = {
+            const payload: unknown = {
                 nome,
                 slug,
                 tipo,
@@ -112,8 +114,8 @@ export const AdminEquipmentForm: React.FC = () => {
 
             navigate("/admin/equipamentos");
 
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             const msg = err.response?.data?.message || "Erro ao salvar equipamento";
             addToast(msg, "error");
         } finally {
@@ -178,7 +180,7 @@ export const AdminEquipmentForm: React.FC = () => {
                             <Select
                                 label="Tipo de Equipamento"
                                 value={tipo}
-                                onChange={e => setTipo(e.target.value as any)}
+                                onChange={e => setTipo(e.target.value as unknown)}
                             >
                                 {typeOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>

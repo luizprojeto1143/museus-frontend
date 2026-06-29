@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { 
   Star, 
@@ -82,7 +84,7 @@ export const AdminReviews: React.FC = () => {
             const res = await api.get(`/reviews?tenantId=${tenantId}&approved=${approved}`);
             setReviews(res.data.reviews || []);
         } catch (error) {
-            console.error('Error fetching reviews:', error);
+            logger.error('Error fetching reviews:', error);
             toast.error("Erro ao carregar avaliações");
         } finally {
             setLoading(false);
@@ -96,7 +98,7 @@ export const AdminReviews: React.FC = () => {
             const res = await api.get(`/guestbook?tenantId=${tenantId}&includeHidden=true`);
             setGuestbook(res.data);
         } catch (error) {
-            console.error('Error fetching guestbook:', error);
+            logger.error('Error fetching guestbook:', error);
             toast.error("Erro ao carregar livro de visitas");
         } finally {
             setLoading(false);

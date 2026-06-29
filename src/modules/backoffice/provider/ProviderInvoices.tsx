@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { FileText, Upload, CheckCircle, Clock, DollarSign } from "lucide-react";
@@ -22,7 +24,7 @@ export const ProviderInvoices: React.FC = () => {
             const res = await api.get('/providers/me/executions');
             setExecutions(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar serviços prestados.");
         } finally {
             setLoading(false);
@@ -53,14 +55,14 @@ export const ProviderInvoices: React.FC = () => {
             setNfNumber("");
             fetchExecutions();
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao enviar Nota Fiscal");
         } finally {
             setUploadingId(null);
         }
     };
 
-    const formatCurrency = (amount: any) => {
+    const formatCurrency = (amount: unknown) => {
         const num = Number(amount || 0);
         return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };

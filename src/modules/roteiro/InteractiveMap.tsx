@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from "@/utils/logger";
+
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,7 +30,7 @@ const defaultCenter: [number, number] = [-19.916681, -43.934493]; // Default to 
 export const InteractiveMap: React.FC = () => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams<{ tenantSlug: string }>();
-  const [selectedPin, setSelectedPin] = useState<any>(null);
+  const [selectedPin, setSelectedPin] = useState<unknown>(null);
   const [pins, setPins] = useState<any[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number]>(defaultCenter);
 
@@ -55,7 +57,7 @@ export const InteractiveMap: React.FC = () => {
         timeAvailable: 1440 // tempo ilimitado para listar todos
       });
       
-      const realPins = res.data.stops.map((stop: any) => ({
+      const realPins = res.data.stops.map((stop: unknown) => ({
         id: stop.targetId,
         type: stop.targetType,
         title: stop.name,
@@ -66,9 +68,9 @@ export const InteractiveMap: React.FC = () => {
       }));
 
       // Filtra itens sem coordenada válida
-      setPins(realPins.filter((p: any) => p.lat !== 0 && p.lng !== 0));
-    } catch (err: any) {
-      console.error("Erro ao carregar mapa", err);
+      setPins(realPins.filter((p: unknown) => p.lat !== 0 && p.lng !== 0));
+    } catch (err: unknown) {
+      logger.error("Erro ao carregar mapa", err);
     }
   };
 

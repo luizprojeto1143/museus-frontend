@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -72,7 +74,7 @@ export const AdminWorks: React.FC = () => {
       const worksList = responseData.data || [];
       const pagination = responseData.pagination || {};
 
-      const apiWorks = worksList.map((w: any) => ({
+      const apiWorks = worksList.map((w: unknown) => ({
         id: w.id,
         title: w.title,
         artist: w.artist ?? "",
@@ -86,7 +88,7 @@ export const AdminWorks: React.FC = () => {
       setTotal(pagination.total || 0);
       setTotalPages(pagination.totalPages || 1);
     } catch (err) {
-      console.error("Failed to fetch works", err);
+      logger.error("Failed to fetch works", err);
       toast.error("Não foi possível carregar o acervo.");
       setWorks([]);
     } finally {

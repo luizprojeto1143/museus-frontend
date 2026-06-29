@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -20,7 +22,7 @@ export const AdminVolunteers: React.FC = () => {
         try {
             const res = await api.get(`/volunteers?tenantId=${tenantId}`);
             setVolunteers(res.data);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -34,7 +36,7 @@ export const AdminVolunteers: React.FC = () => {
             setShowForm(false);
             setForm({ name: '', email: '', phone: '', availability: '', skills: '' });
             fetchData();
-        } catch (err: any) { toast.error(err.response?.data?.message || "Erro"); }
+        } catch (err: unknown) { toast.error(err.response?.data?.message || "Erro"); }
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
@@ -76,7 +78,7 @@ export const AdminVolunteers: React.FC = () => {
                         <tr><th className="px-6 py-3">{t("admin.volunteers.voluntrio", `Voluntário`)}</th><th className="px-6 py-3">Disponibilidade</th><th className="px-6 py-3">Habilidades</th><th className="px-6 py-3 text-center">Horas</th><th className="px-6 py-3 text-center">Turnos</th></tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {volunteers.map((v: any) => (
+                        {volunteers.map((v: unknown) => (
                             <tr key={v.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                 <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{v.name}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{v.email}</p></td>
                                 <td className="px-6 py-3 text-gray-300 text-sm">{v.availability || '—'}</td>

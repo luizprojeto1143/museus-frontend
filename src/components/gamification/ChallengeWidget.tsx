@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { logger } from "@/utils/logger";
+
 import { Star, Target, Check } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
@@ -33,8 +35,8 @@ export const DailyChallengeWidget: React.FC = () => {
         try {
             const res = await api.get(`/challenges/today?tenantId=${tenantId}`);
             setChallenge(res.data);
-        } catch (error: any) {
-            console.error('Error fetching challenge:', error);
+        } catch (error: unknown) {
+            logger.error('Error fetching challenge:', error);
         } finally {
             setLoading(false);
         }
@@ -44,8 +46,8 @@ export const DailyChallengeWidget: React.FC = () => {
         try {
             const res = await api.get(`/challenges/my-progress?tenantId=${tenantId}`);
             setProgress(res.data);
-        } catch (error: any) {
-            console.error('Error fetching progress:', error);
+        } catch (error: unknown) {
+            logger.error('Error fetching progress:', error);
         }
     }, [tenantId]);
 

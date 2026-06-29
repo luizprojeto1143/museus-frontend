@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../api/client";
@@ -24,7 +26,7 @@ export const GlobalEvents: React.FC = () => {
         // Fetch public events from all tenants with discovery=true
         api.get("/events?discovery=true")
             .then(res => setEvents(res.data.data || []))
-            .catch(err => console.error("Error fetching global events", err))
+            .catch(err => logger.error("Error fetching global events", err))
             .finally(() => setLoading(false));
     }, []);
 

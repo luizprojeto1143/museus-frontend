@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -9,7 +11,7 @@ import "./AdminShared.css";
 
 
 // Fix Leaflet Default Icon
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown)._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
     iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -62,7 +64,7 @@ export const AdminMapEditor: React.FC = () => {
                     setMapCenter([settingsRes.data.latitude, settingsRes.data.longitude]);
                 }
             } catch (error) {
-                console.error("Error loading data", error);
+                logger.error("Error loading data", error);
             } finally {
                 setLoading(false);
             }
@@ -90,10 +92,10 @@ export const AdminMapEditor: React.FC = () => {
             }));
 
             await Promise.all(updates);
-            alert("Localizações salvas com sucesso!");
+            logger.warn("Alert:", "Localizações salvas com sucesso!");
         } catch (error) {
-            console.error("Error saving pins", error);
-            alert("Erro ao salvar posições.");
+            logger.error("Error saving pins", error);
+            logger.warn("Alert:", "Erro ao salvar posições.");
         } finally {
             setSaving(false);
         }

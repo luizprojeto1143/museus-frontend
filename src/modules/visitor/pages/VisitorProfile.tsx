@@ -149,7 +149,7 @@ export const VisitorProfile: React.FC = () => {
             const res = await api.get('/coupons/available');
             setAvailableCoupons(res.data?.available || []);
             setRedeemedCoupons(res.data?.redeemed || []);
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error(error);
         } finally {
             setLoading(false);

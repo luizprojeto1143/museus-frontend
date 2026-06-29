@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -75,7 +77,7 @@ export const AdminNoticeProjects: React.FC = () => {
             setNotice(noticeRes.data);
             setProjects(projectsRes.data);
         }).catch(err => {
-            console.error(err);
+            logger.error(err);
             addToast("Erro ao carregar projetos do edital", "error");
         }).finally(() => setLoading(false));
     };
@@ -119,7 +121,7 @@ export const AdminNoticeProjects: React.FC = () => {
             addToast("Resultados publicados com sucesso!", "success");
             fetchAll();
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             addToast("Erro ao publicar resultados", "error");
         }
     };

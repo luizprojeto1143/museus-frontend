@@ -59,7 +59,7 @@ export const AdminReports: React.FC = () => {
             // Process notices
             const noticesByStatus: Record<string, number> = {};
             let totalBudget = 0;
-            notices.forEach((n: any) => {
+            notices.forEach((n: unknown) => {
                 noticesByStatus[n.status] = (noticesByStatus[n.status] || 0) + 1;
                 totalBudget += parseFloat(n.totalBudget) || 0;
             });
@@ -69,7 +69,7 @@ export const AdminReports: React.FC = () => {
             let totalRequested = 0;
             let totalApproved = 0;
             let totalAudience = 0;
-            projects.forEach((p: any) => {
+            projects.forEach((p: unknown) => {
                 projectsByStatus[p.status] = (projectsByStatus[p.status] || 0) + 1;
                 totalRequested += parseFloat(p.requestedBudget) || 0;
                 totalApproved += parseFloat(p.approvedBudget) || 0;
@@ -80,19 +80,19 @@ export const AdminReports: React.FC = () => {
             const accessibilityByService: Record<string, number> = {};
             const accessibilityByStatus: Record<string, number> = {};
             if (accessibilityData?.byService) {
-                accessibilityData.byService.forEach((s: any) => {
+                accessibilityData.byService.forEach((s: unknown) => {
                     accessibilityByService[s.serviceType] = s._count;
                 });
             }
             if (accessibilityData?.byStatus) {
-                accessibilityData.byStatus.forEach((s: any) => {
+                accessibilityData.byStatus.forEach((s: unknown) => {
                     accessibilityByStatus[s.status] = s._count;
                 });
             }
 
             // Process providers
-            const activeProviders = providers.filter((p: any) => p.active).length;
-            const totalJobs = providers.reduce((acc: number, p: any) => acc + (p.completedJobs || 0), 0);
+            const activeProviders = providers.filter((p: unknown) => p.active).length;
+            const totalJobs = providers.reduce((acc: number, p: unknown) => acc + (p.completedJobs || 0), 0);
 
             setData({
                 notices: {

@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff } from "lucide-react";
@@ -44,8 +46,8 @@ export const ResetPasswordPage: React.FC = () => {
     try {
       await api.post("/auth/reset-password", { token, newPassword: password });
       setSuccess(true);
-    } catch (err: any) {
-      console.error(err);
+    } catch (err: unknown) {
+      logger.error(err);
       setError(err.response?.data?.message || t("auth.resetpassword.errorReset", "Não foi possível redefinir a senha. O link pode ter expirado."));
     } finally {
       setLoading(false);

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../../api/client';
 
-const Button = ({ children, className, onClick }: any) => (
+const Button = ({ children, className, onClick }: unknown) => (
   <button className={className} onClick={onClick}>{children}</button>
 );
 
@@ -16,7 +18,7 @@ export function SponsorCheckout() {
   useEffect(() => {
     if (workId) {
       api.get(`/sponsor-portal/pricing?workId=${workId}`)
-        .then((res: any) => setPrices(res.data))
+        .then((res: unknown) => setPrices(res.data))
         .catch(console.error);
     }
   }, [workId]);
@@ -26,7 +28,7 @@ export function SponsorCheckout() {
       const res = await api.post('/sponsor-portal/subscribe', { ...form, workId });
       window.location.href = res.data.checkoutUrl;
     } catch (err) {
-      alert(t("sponsor.checkout.error", "Erro ao gerar checkout"));
+      logger.warn("Alert:", t("sponsor.checkout.error", "Erro ao gerar checkout"));
     }
   };
 

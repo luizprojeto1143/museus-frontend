@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { logger } from "@/utils/logger";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
@@ -67,8 +69,8 @@ export const MasterDashboard: React.FC = () => {
                     setHubSubtitle(res.data.subtitle || "");
                     setHubImageUrl(res.data.imageUrl || "");
                 }
-            } catch (err: any) {
-                console.error("Erro ao carregar configurações globais do Pulse Hub", err);
+            } catch (err: unknown) {
+                logger.error("Erro ao carregar configurações globais do Pulse Hub", err);
             }
         };
         fetchHubSettings();
@@ -91,7 +93,7 @@ export const MasterDashboard: React.FC = () => {
                 }
             });
             toast.success("Configurações do Pulse Hub atualizadas com sucesso!");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro ao salvar as configurações.");
         } finally {
             setSavingSettings(false);
@@ -117,7 +119,7 @@ export const MasterDashboard: React.FC = () => {
                 setHubImageUrl(res.data.url);
                 toast.success("Imagem de banner enviada com sucesso!");
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro ao enviar imagem de banner.");
         } finally {
             setUploading(false);
@@ -128,7 +130,7 @@ export const MasterDashboard: React.FC = () => {
         try {
             setLoading(true);
             const res = await api.get("/analytics/tenants-summary");
-            const data = res.data.map((item: any) => ({
+            const data = res.data.map((item: unknown) => ({
                 ...item,
                 worksCount: item.works,
                 trailsCount: item.trails,
@@ -138,7 +140,7 @@ export const MasterDashboard: React.FC = () => {
                 equipamentosCount: item.equipamentos || 0
             }));
             setSummaries(data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(t("master.dashboard.sync_error", "Erro na sincronização de dados globais."));
         } finally {
             setLoading(false);

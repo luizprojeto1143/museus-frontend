@@ -26,7 +26,7 @@ export const ScannerPage: React.FC = () => {
             try {
                 await scannerRef.current.stop();
                 scannerRef.current.clear();
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error("Error stopping scanner", err);
             }
         }
@@ -57,7 +57,7 @@ export const ScannerPage: React.FC = () => {
                 }
             );
             setIsScanning(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error("Error starting scanner", err);
             let errMsg = "Não foi possível acessar a câmera. Verifique se você permitiu o acesso.";
             if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
@@ -137,7 +137,7 @@ export const ScannerPage: React.FC = () => {
             } else {
                 navigate(`/obras/${workId}?scan=true`);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error("Erro ao validar scan", err);
             addToast("Código não identificado ou fora de contexto.", "error");
             setValidating(false);

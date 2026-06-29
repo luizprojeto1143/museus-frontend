@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
     Mail, 
@@ -71,7 +73,7 @@ export const ProviderInbox: React.FC = () => {
             const data = await inboxService.list();
             setConversations(data);
         } catch (error) {
-            console.error("Error loading conversations", error);
+            logger.error("Error loading conversations", error);
             toast.error("Erro ao carregar mensagens.");
         } finally {
             setLoading(false);
@@ -84,7 +86,7 @@ export const ProviderInbox: React.FC = () => {
             const fullConv = await inboxService.getById(id);
             setConversations(prev => prev.map(c => c.id === id ? fullConv : c));
         } catch (error) {
-            console.error("Error fetching details", error);
+            logger.error("Error fetching details", error);
         }
     };
 
@@ -108,7 +110,7 @@ export const ProviderInbox: React.FC = () => {
             }));
 
         } catch (error) {
-            console.error("Error sending message", error);
+            logger.error("Error sending message", error);
             toast.error("Falha ao enviar mensagem.");
         } finally {
             setSending(false);
@@ -130,7 +132,7 @@ export const ProviderInbox: React.FC = () => {
             setDescription("");
             handleSelectConversation(selectedId); // Refresh conversation
         } catch (error) {
-            console.error("Error creating payment", error);
+            logger.error("Error creating payment", error);
             toast.error("Erro ao gerar solicitação de pagamento.");
         } finally {
             setCreatingPayment(false);
@@ -152,7 +154,7 @@ export const ProviderInbox: React.FC = () => {
             setNfNumber("");
             handleSelectConversation(selectedId);
         } catch (error) {
-            console.error("Error delivering service", error);
+            logger.error("Error delivering service", error);
             toast.error("Erro ao registrar entrega.");
         } finally {
             setDelivering(false);

@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect } from 'react';
 import { api } from '../../../../api/client';
 import { useAuth } from '../../../auth/AuthContext';
@@ -53,7 +55,7 @@ export const AdminFinance: React.FC = () => {
             const res = await api.get('/finance/dashboard');
             setData(res.data);
         } catch (error) {
-            console.error('Error fetching finance data:', error);
+            logger.error('Error fetching finance data:', error);
             toast.error('Erro ao buscar dados financeiros.');
         } finally {
             setLoading(false);
@@ -171,7 +173,7 @@ export const AdminFinance: React.FC = () => {
                                         ))}
                                     </Pie>
                                     <RechartsTooltip
-                                        formatter={(value: any) => formatCurrency(Number(value))}
+                                        formatter={(value: unknown) => formatCurrency(Number(value))}
                                         contentStyle={{ backgroundColor: 'rgba(24, 24, 27, 0.95)', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)' }}
                                         itemStyle={{ color: '#fff' }}
                                     />
@@ -227,15 +229,15 @@ export const AdminFinance: React.FC = () => {
                                     dy={15}
                                 />
                                 <YAxis
-                                    tickFormatter={(val: any) => `R$${val}`}
+                                    tickFormatter={(val: unknown) => `R$${val}`}
                                     axisLine={false}
                                     tickLine={false}
                                     tick={{ fill: '#71717a', fontSize: 12, fontWeight: 500 }}
                                     dx={-10}
                                 />
                                 <RechartsTooltip
-                                    formatter={(value: any) => formatCurrency(Number(value))}
-                                    labelFormatter={(label: any) => `Data: ${formatDate(label)}`}
+                                    formatter={(value: unknown) => formatCurrency(Number(value))}
+                                    labelFormatter={(label: unknown) => `Data: ${formatDate(label)}`}
                                     contentStyle={{ backgroundColor: 'rgba(24, 24, 27, 0.95)', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)' }}
                                     itemStyle={{ color: '#fff', fontWeight: 600 }}
                                     labelStyle={{ color: '#a1a1aa', fontSize: '12px', marginBottom: '8px', fontWeight: 500 }}

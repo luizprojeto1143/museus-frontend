@@ -7,7 +7,7 @@ export interface NavLink {
   feature: string | null;
 }
 
-export const getVisitorLinks = (t: any, term: any, isCityMode: boolean): NavLink[] => {
+export const getVisitorLinks = (t: unknown, term: unknown, isCityMode: boolean): NavLink[] => {
   const _t = typeof t === 'function' ? t : (k: string, d: string) => d;
   return [
     { to: "/hub", label: _t("visitor.sidebar.home", "Início"), icon: "🏠", feature: null },

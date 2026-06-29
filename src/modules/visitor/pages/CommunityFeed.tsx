@@ -29,7 +29,7 @@ export const CommunityFeed: React.FC = () => {
         try {
             const res = await api.get(`/community?targetId=${targetId}`);
             setPosts(res.data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error("Erro ao carregar feed:", err);
         } finally {
             setLoading(false);
@@ -52,8 +52,8 @@ export const CommunityFeed: React.FC = () => {
                 targetType: "SPACE" // Or WORK depending on context
             });
             setNewPost("");
-            alert("Sua memória foi enviada para curadoria! ✨");
-        } catch (err: any) {
+            logger.warn("Alert:", "Sua memória foi enviada para curadoria! ✨");
+        } catch (err: unknown) {
             logger.error("Erro ao enviar post:", err);
         } finally {
             setIsSubmitting(false);

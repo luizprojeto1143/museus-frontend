@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { 
     Briefcase, 
@@ -81,7 +83,7 @@ const SERVICE_CONFIG: Record<string, { label: string; icon: React.ReactNode; des
 
 export const ProviderServices: React.FC = () => {
     const { t } = useTranslation();
-    const [provider, setProvider] = useState<any>(null);
+    const [provider, setProvider] = useState<unknown>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -91,7 +93,7 @@ export const ProviderServices: React.FC = () => {
             const res = await api.get("/providers/me");
             setProvider(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar catálogo de serviços.");
         } finally {
             setLoading(false);

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../../api/client';
 
-const Button = ({ children, className, onClick }: any) => (
+const Button = ({ children, className, onClick }: unknown) => (
   <button className={className} onClick={onClick}>{children}</button>
 );
 
@@ -12,7 +12,7 @@ export function SponsorBrowseWorks() {
   const [works, setWorks] = useState<any[]>([]);
 
   useEffect(() => {
-    api.get('/sponsor-portal/works').then((res: any) => setWorks(res.data));
+    api.get('/sponsor-portal/works').then((res: unknown) => setWorks(res.data));
   }, []);
 
   return (

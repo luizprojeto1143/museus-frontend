@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useAuth } from "../../../auth/AuthContext";
 import { api } from "../../../../api/client";
 import { useTranslation } from "react-i18next";
@@ -31,7 +33,7 @@ export const AdminInPersonServices: React.FC = () => {
             const res = await api.get(`/tenant-services/admin/${tenantId}`);
             setServices(res.data);
         } catch (error) {
-            console.error("Erro ao carregar serviços:", error);
+            logger.error("Erro ao carregar serviços:", error);
         } finally {
             setLoading(false);
         }
@@ -53,8 +55,8 @@ export const AdminInPersonServices: React.FC = () => {
             // Reload to ensure sync
             loadServices();
         } catch (error) {
-            console.error("Erro ao atualizar serviço:", error);
-            alert("Erro ao atualizar status do serviço.");
+            logger.error("Erro ao atualizar serviço:", error);
+            logger.warn("Alert:", "Erro ao atualizar status do serviço.");
             loadServices(); // Revert on error
         }
     };

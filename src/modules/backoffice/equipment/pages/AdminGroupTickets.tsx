@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -15,7 +17,7 @@ export const AdminGroupTickets: React.FC = () => {
         try {
             const res = await api.get(`/group-tickets?tenantId=${tenantId}`);
             setTickets(res.data);
-        } catch (error) { console.error(error); }
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -73,7 +75,7 @@ export const AdminGroupTickets: React.FC = () => {
             </div>
 
             {/* List */}
-            {tickets.map((item: any) => {
+            {tickets.map((item: unknown) => {
                 const st = statusConfig[item.status] || statusConfig.PENDING;
                 return (
                     <div key={item.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>

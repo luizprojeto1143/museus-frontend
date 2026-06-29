@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -32,7 +34,7 @@ export const ProducerNoticeResults: React.FC = () => {
         api.get(`/notices/public/${id}/results`)
             .then(res => setResults(res.data))
             .catch(err => {
-                console.error(err);
+                logger.error(err);
                 // addToast("Resultados não encontrados", "error");
             })
             .finally(() => setLoading(false));

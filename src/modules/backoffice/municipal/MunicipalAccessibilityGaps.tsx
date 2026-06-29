@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -34,7 +36,7 @@ import { toast } from "react-hot-toast";
 export const MunicipalAccessibilityGaps: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<unknown>(null);
     const [matrix, setMatrix] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,7 +50,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
             setData(dashboardRes.data);
             setMatrix(matrixRes.data.matrix || []);
         } catch (error) { 
-            console.error(error); 
+            logger.error(error); 
             toast.error(t("municipal.accessibility.error_fetch", "Erro ao consolidar matriz de conformidade."));
         } finally { 
             setLoading(false); 
@@ -66,7 +68,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
 
     const equipments = data?.equipmentAccessibility || [];
     const totalCount = equipments.length;
-    const okCount = equipments.filter((e: any) => e.hasAccessibility).length;
+    const okCount = equipments.filter((e: unknown) => e.hasAccessibility).length;
     const coverage = totalCount > 0 ? Math.round((okCount / totalCount) * 100) : 0;
 
     return (
@@ -159,7 +161,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {equipments.map((eq: any) => (
+                            {equipments.map((eq: unknown) => (
                                 <tr key={eq.id} className="hover:bg-white/[0.02] transition-all group">
                                     <td className="px-10 py-8">
                                         <div className="font-bold text-white group-hover:text-emerald-400 transition-colors text-lg">{eq.name}</div>

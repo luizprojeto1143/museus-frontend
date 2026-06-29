@@ -163,7 +163,7 @@ export const AdminEventReport: React.FC = () => {
                     </h2>
 
                     <div className="space-y-8">
-                        {survey.questions.map((q: any) => (
+                        {survey.questions.map((q: unknown) => (
                             <div key={q.id} className="border-b border-white/5 last:border-0 pb-6 last:pb-0 print:break-inside-avoid">
                                 <h3 className="font-semibold text-zinc-200 mb-4">{q.question}</h3>
 
@@ -182,7 +182,7 @@ export const AdminEventReport: React.FC = () => {
 
                                         {/* Simple Bar Chart */}
                                         <div className="space-y-2">
-                                            {Object.entries(q.aggregation.distribution).map(([key, count]: any) => (
+                                            {Object.entries(q.aggregation.distribution).map(([key, count]: unknown) => (
                                                 <div key={key} className="flex items-center gap-3 text-sm">
                                                     <span className="w-4 font-bold text-zinc-300">{key}</span>
                                                     <div className="flex-1 h-3 bg-zinc-800 rounded-full overflow-hidden">
@@ -200,7 +200,7 @@ export const AdminEventReport: React.FC = () => {
 
                                 {q.type === 'CHOICE' && (
                                     <div className="space-y-2">
-                                        {Object.entries(q.aggregation.distribution).map(([key, count]: any) => (
+                                        {Object.entries(q.aggregation.distribution).map(([key, count]: unknown) => (
                                             <div key={key} className="flex justify-between items-center p-3 bg-zinc-900/60 rounded border border-white/5">
                                                 <span>{key}</span>
                                                 <span className="font-bold bg-zinc-900/40 px-2 py-1 rounded shadow-md shadow-black/20 text-zinc-300">{count}</span>
@@ -211,7 +211,7 @@ export const AdminEventReport: React.FC = () => {
 
                                 {q.type === 'TEXT' && (
                                     <div className="space-y-2">
-                                        {q.aggregation.recentAnswers.map((ans: any, idx: number) => (
+                                        {q.aggregation.recentAnswers.map((ans: unknown, idx: number) => (
                                             <div key={idx} className="p-3 bg-yellow-50 text-yellow-900 rounded italic text-sm border-l-4 border-yellow-300">
                                                 "{ans.answer}"
                                             </div>
@@ -245,7 +245,7 @@ export const AdminEventReport: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="text-sm">
-                        {participants.map((p: any) => (
+                        {participants.map((p: unknown) => (
                             <tr key={p.id} className="border-b border-white/5 last:border-0 hover:">
                                 <td className="py-3 pl-2">
                                     <div className="font-medium text-white">{p.name}</div>

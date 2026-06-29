@@ -1,6 +1,6 @@
 import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -24,6 +24,7 @@ export const EventsList: React.FC = () => {
   const [filter, setFilter] = useState<'UPCOMING' | 'WEEK' | 'MONTH'>('UPCOMING');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const { tenantId, equipamentoId } = useAuth();
+  const { citySlug, equipmentSlug } = useParams<{ citySlug: string; equipmentSlug: string }>();
 
   const fetchEvents = useCallback(async () => {
     if (!tenantId) return;
@@ -95,7 +96,7 @@ export const EventsList: React.FC = () => {
               <button
                 key={f}
                 className={`filter-btn ${filter === f ? 'active' : ''}`}
-                onClick={() => setFilter(f as any)}
+                onClick={() => setFilter(f as unknown)}
               >
                 {f === 'UPCOMING' ? t('visitor.eventslist.setfilterupcomingPrximos') : f === 'WEEK' ? 'Esta Semana' : 'Este Mês'}
               </button>
@@ -140,7 +141,7 @@ export const EventsList: React.FC = () => {
 
                     <div className="timeline-events-premium">
                        {dayEvents.map(ev => (
-                         <Link key={ev.id} to={`/eventos/${ev.id}`} className="agenda-card-premium group">
+                         <Link key={ev.id} to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos/${ev.id}`} className="agenda-card-premium group">
                             <div className="card-time-premium">
                                <span className="strip-hour-premium">{new Date(ev.startDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                <span className="strip-label-premium">Início</span>

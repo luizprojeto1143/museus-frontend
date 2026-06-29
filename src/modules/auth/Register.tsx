@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
@@ -88,8 +90,8 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
 
       // Auto login or redirect
       navigate("/login");
-    } catch (err: any) {
-      console.error(err);
+    } catch (err: unknown) {
+      logger.error(err);
       setError(err.response?.data?.message || t("auth.errors.registerFailed", "Falha ao registrar."));
     } finally {
       setIsSubmitting(false);

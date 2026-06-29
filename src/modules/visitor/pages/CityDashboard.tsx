@@ -114,7 +114,7 @@ export const CityDashboard: React.FC = () => {
             setError("Cidade não encontrada no ecossistema municipal.");
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
         logger.error("Error loading city data", err);
         setError("Erro de rede ao carregar o ecossistema municipal.");
@@ -304,10 +304,10 @@ export const CityDashboard: React.FC = () => {
             <button className="sidebar-nav-item active" onClick={() => { setMobileTab("dashboard"); }}>
               <span className="sidebar-nav-icon">🏠</span> Início
             </button>
-            <button className="sidebar-nav-item" onClick={() => navigate("/select-museum")}>
+            <button className="sidebar-nav-item" onClick={() => navigate("/cidades")}>
               <span className="sidebar-nav-icon">🧭</span> Explorar
             </button>
-            <button className="sidebar-nav-item" onClick={() => navigate("/mapa")}>
+            <button className="sidebar-nav-item" onClick={() => navigate(`/cidades/${citySlug}/mapa`)}>
               <span className="sidebar-nav-icon">🗺️</span> Mapa Cultural
             </button>
             <button className="sidebar-nav-item" onClick={() => navigate("/favoritos")}>
@@ -319,7 +319,7 @@ export const CityDashboard: React.FC = () => {
             <button className="sidebar-nav-item" onClick={() => navigate("/conquistas")}>
               <span className="sidebar-nav-icon">🏆</span> Conquistas
             </button>
-            <button className="sidebar-nav-item" onClick={() => navigate("/roteiro")}>
+            <button className="sidebar-nav-item" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
               <span className="sidebar-nav-icon">🤝</span> Parceiros
             </button>
             <button className="sidebar-nav-item" onClick={() => navigate("/perfil")}>
@@ -328,7 +328,7 @@ export const CityDashboard: React.FC = () => {
           </nav>
 
           <div className="sidebar-footer">
-            <button className="sidebar-immersive-btn" onClick={() => navigate("/select-museum")}>
+            <button className="sidebar-immersive-btn" onClick={() => navigate("/cidades")}>
               <span className="immersive-icon">👓</span> Modo Imersivo
             </button>
             
@@ -422,7 +422,7 @@ export const CityDashboard: React.FC = () => {
                       if (firstMuseum) {
                         handleSelectMuseum(firstMuseum);
                       } else {
-                        navigate("/select-museum");
+                        navigate("/cidades");
                       }
                     }}
                   >
@@ -431,7 +431,7 @@ export const CityDashboard: React.FC = () => {
                   <Button 
                     variant="outline"
                     className="view-map-btn border-gold-400 text-gold-400 hover:bg-gold-400 hover:text-black font-black uppercase text-xs h-10 px-6 rounded-lg flex items-center gap-2"
-                    onClick={() => navigate("/mapa")}
+                    onClick={() => navigate(`/cidades/${citySlug}/mapa`)}
                   >
                     <Map size={14} /> Ver mapa da cidade
                   </Button>
@@ -459,42 +459,42 @@ export const CityDashboard: React.FC = () => {
           {/* Central Category Buttons row */}
           <section className="explore-categories-row my-8 text-left">
             <div className="categories-horizontal-grid flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
-              <button className="category-pill-btn" onClick={() => navigate("/select-museum")}>
+              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
                 <span className="emoji">🏛️</span>
                 <div>
                   <span className="title">Museus</span>
                   <span className="sub">{equipmentsCount} locais</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/agenda")}>
+              <button className="category-pill-btn" onClick={() => navigate(`/cidades/${citySlug}/agenda`)}>
                 <span className="emoji">📅</span>
                 <div>
                   <span className="title">Eventos</span>
                   <span className="sub">{activeEventsCount} ativos</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/roteiro")}>
+              <button className="category-pill-btn" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                 <span className="emoji">🧭</span>
                 <div>
                   <span className="title">Roteiros</span>
                   <span className="sub">{dbTrails.length} roteiros</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/select-museum")}>
+              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
                 <span className="emoji">🎨</span>
                 <div>
                   <span className="title">Arte Pública</span>
                   <span className="sub">Disponível</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/roteiro")}>
+              <button className="category-pill-btn" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                 <span className="emoji">🍴</span>
                 <div>
                   <span className="title">Gastronomia</span>
                   <span className="sub">Parceiros</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/select-museum")}>
+              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
                 <span className="emoji">✈️</span>
                 <div>
                   <span className="title">Turismo</span>
@@ -508,7 +508,7 @@ export const CityDashboard: React.FC = () => {
                   <span className="sub">Disponíveis</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/select-museum")}>
+              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
                 <span className="emoji">♿</span>
                 <div>
                   <span className="title">Acessibilidade</span>
@@ -524,7 +524,7 @@ export const CityDashboard: React.FC = () => {
             <section className="city-section-block text-left mb-8">
               <div className="section-header-flex flex justify-between items-center mb-4">
                 <h3 className="section-heading font-black text-white text-sm uppercase tracking-wider">Destaques da cidade</h3>
-                <button className="view-all-link text-xs text-gold-400 font-bold hover:underline" onClick={() => navigate("/select-museum")}>Ver todos</button>
+                <button className="view-all-link text-xs text-gold-400 font-bold hover:underline" onClick={() => navigate("/cidades")}>Ver todos</button>
               </div>
 
               <div className="highlights-grid grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -535,7 +535,7 @@ export const CityDashboard: React.FC = () => {
                     onClick={() => handleSelectMuseum(firstMuseum)}
                   >
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=600"} alt={firstMuseum.name} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "/placeholder-image.jpg"} alt={firstMuseum.name} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute uppercase">Destaque</span>
                     </div>
@@ -551,19 +551,19 @@ export const CityDashboard: React.FC = () => {
 
                 {/* Card 2: Festival de Inverno (Evento Real do Banco!) */}
                 {firstEvent && (
-                  <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate("/agenda")}>
+                  <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate(`/cidades/${citySlug}/agenda`)}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={(firstEvent as any)?.coverImageUrl ? getFullUrl((firstEvent as any).coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={(firstEvent as any).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={(firstEvent as unknown)?.coverImageUrl ? getFullUrl((firstEvent as unknown).coverImageUrl) : "/placeholder-image.jpg"} alt={(firstEvent as unknown).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute event-badge uppercase">Evento</span>
                     </div>
                     <div className="card-info p-4">
-                      <h4 className="card-title font-black text-white text-base">{(firstEvent as any).title}</h4>
+                      <h4 className="card-title font-black text-white text-base">{(firstEvent as unknown).title}</h4>
                       <p className="card-desc text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstEvent as any).description || "Programação completa disponível no portal."}
+                        {(firstEvent as unknown).description || "Programação completa disponível no portal."}
                       </p>
                       <span className="card-date-badge font-extrabold text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-4">
-                        {`${new Date((firstEvent as any).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as any).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                        {`${new Date((firstEvent as unknown).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as unknown).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
                       </span>
                     </div>
                   </Card>
@@ -571,16 +571,16 @@ export const CityDashboard: React.FC = () => {
 
                 {/* Card 3: Rota Histórica (Roteiro Real do Banco!) */}
                 {firstTrail && (
-                  <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate("/roteiro")}>
+                  <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={(firstTrail as any)?.imageUrl ? getFullUrl((firstTrail as any).imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={(firstTrail as any).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={(firstTrail as unknown)?.imageUrl ? getFullUrl((firstTrail as unknown).imageUrl) : "/placeholder-image.jpg"} alt={(firstTrail as unknown).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute route-badge uppercase">Roteiro</span>
                     </div>
                     <div className="card-info p-4">
-                      <h4 className="card-title font-black text-white text-base">{(firstTrail as any).title}</h4>
+                      <h4 className="card-title font-black text-white text-base">{(firstTrail as unknown).title}</h4>
                       <p className="card-desc text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstTrail as any).description || `Percorra os principais marcos históricos.`}
+                        {(firstTrail as unknown).description || `Percorra os principais marcos históricos.`}
                       </p>
                       <span className="card-action-btn font-extrabold text-gold-400 text-xs block mt-4 group-hover:translate-x-1 transition-transform">Ver roteiro &gt;</span>
                     </div>
@@ -595,13 +595,13 @@ export const CityDashboard: React.FC = () => {
             <section className="city-section-block text-left mb-6">
               <div className="section-header-flex flex justify-between items-center mb-4">
                 <h3 className="section-heading font-black text-white text-sm uppercase tracking-wider">Experiências em alta</h3>
-                <button className="view-all-link text-xs text-gold-400 font-bold hover:underline" onClick={() => navigate("/select-museum")}>Ver todos</button>
+                <button className="view-all-link text-xs text-gold-400 font-bold hover:underline" onClick={() => navigate("/cidades")}>Ver todos</button>
               </div>
 
               <div className="experiences-horizontal-grid flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
                 {city.equipments.map((eq) => (
                   <Card key={eq.id} className="experience-compact-item flex-shrink-0 cursor-pointer overflow-hidden relative" onClick={() => handleSelectMuseum(eq)}>
-                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "https://images.unsplash.com/photo-1566378246598-5b11a0d486cc?q=80&w=300"} alt={eq.name} />
+                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "/placeholder-image.jpg"} alt={eq.name} />
                     <div className="info-overlay flex flex-col justify-end p-3 text-left">
                       <span className="title font-bold text-white text-xs">{eq.name}</span>
                       <span className="count text-[9px] text-gray-400">{eq.worksCount} obras</span>
@@ -686,7 +686,7 @@ export const CityDashboard: React.FC = () => {
           <section className="right-panel-block p-5 border-b border-white/5 text-left">
             <div className="flex justify-between items-center mb-4">
               <span className="block-title text-[9px] text-gray-500 font-black uppercase">Ranking de exploradores</span>
-              <button className="block-action text-[9px] text-gold-400 font-bold hover:underline" onClick={() => navigate("/ranking")}>Ver ranking</button>
+              <button className="block-action text-[9px] text-gold-400 font-bold hover:underline" onClick={() => navigate(`/cidades/${citySlug}/ranking`)}>Ver ranking</button>
             </div>
 
             <div className="explorers-ranking-list space-y-3">
@@ -694,11 +694,11 @@ export const CityDashboard: React.FC = () => {
                 dbRankings.slice(0, 3).map((r, index) => {
                   const isMe = r.email === dbMyRank?.email;
                   return (
-                    <div key={(r as any).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
-                      <span className={`rank-num font-black text-sm ${(r as any).rank === 1 ? 'text-yellow-500' : (r as any).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as any).rank}</span>
-                      <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as any).name ? (r as any).name.charAt(0) : "V"}</div>
+                    <div key={(r as unknown).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
+                      <span className={`rank-num font-black text-sm ${(r as unknown).rank === 1 ? 'text-yellow-500' : (r as unknown).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as unknown).rank}</span>
+                      <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as unknown).name ? (r as unknown).name.charAt(0) : "V"}</div>
                       <div className="flex-1 min-w-0">
-                        <span className="name font-bold text-xs text-white block truncate">{(r as any).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                        <span className="name font-bold text-xs text-white block truncate">{(r as unknown).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                       </div>
                       <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                     </div>
@@ -711,7 +711,7 @@ export const CityDashboard: React.FC = () => {
               )}
             </div>
 
-            <span className="ranking-see-all text-[10px] text-gray-500 hover:text-gold-400 hover:underline font-bold text-center block mt-4 cursor-pointer" onClick={() => navigate("/ranking")}>Ver todos os exploradores &gt;</span>
+            <span className="ranking-see-all text-[10px] text-gray-500 hover:text-gold-400 hover:underline font-bold text-center block mt-4 cursor-pointer" onClick={() => navigate(`/cidades/${citySlug}/ranking`)}>Ver todos os exploradores &gt;</span>
           </section>
 
           {/* Conquistas da cidade (REAL DO BANCO DE DADOS!) */}
@@ -727,8 +727,8 @@ export const CityDashboard: React.FC = () => {
                   const colors = ["gold", "purple", "bronze", "dark"];
                   const color = colors[idx % 4];
                   return (
-                    <div key={ach.id} className={`achievement-badge-shield ${color}`} title={ach.description || (ach as any).title}>
-                      {(ach as any).title.includes("Pioneiro") ? "🥇" : (ach as any).title.includes("Mestre") ? "👑" : (ach as any).title.includes("Rotas") ? "🧭" : "🔒"}
+                    <div key={ach.id} className={`achievement-badge-shield ${color}`} title={ach.description || (ach as unknown).title}>
+                      {(ach as unknown).title.includes("Pioneiro") ? "🥇" : (ach as unknown).title.includes("Mestre") ? "👑" : (ach as unknown).title.includes("Rotas") ? "🧭" : "🔒"}
                     </div>
                   );
                 })
@@ -836,7 +836,7 @@ export const CityDashboard: React.FC = () => {
                         if (firstMuseum) {
                           handleSelectMuseum(firstMuseum);
                         } else {
-                          navigate("/select-museum");
+                          navigate("/cidades");
                         }
                       }}
                     >
@@ -875,36 +875,36 @@ export const CityDashboard: React.FC = () => {
             <section className="mobile-categories-section px-6 mt-8 text-left">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="mobile-section-heading font-black text-white text-xs uppercase tracking-wider">Explore a cidade</h3>
-                <span className="view-all-link text-xs text-gold-400 font-bold cursor-pointer" onClick={() => navigate("/select-museum")}>Ver todas</span>
+                <span className="view-all-link text-xs text-gold-400 font-bold cursor-pointer" onClick={() => navigate("/cidades")}>Ver todas</span>
               </div>
 
               <div className="mobile-categories-grid grid grid-cols-4 gap-3">
-                <button className="mob-category-btn" onClick={() => navigate("/select-museum")}>
+                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
                   <span className="emoji">🏛️</span>
                   <span className="lbl">Museus</span>
                   <span className="sub">{equipmentsCount} locais</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/agenda")}>
+                <button className="mob-category-btn" onClick={() => navigate(`/cidades/${citySlug}/agenda`)}>
                   <span className="emoji">📅</span>
                   <span className="lbl">Eventos</span>
                   <span className="sub">{activeEventsCount} ativos</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/roteiro")}>
+                <button className="mob-category-btn" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                   <span className="emoji">🧭</span>
                   <span className="lbl">Roteiros</span>
                   <span className="sub">{dbTrails.length} rotas</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/select-museum")}>
+                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
                   <span className="emoji">🎨</span>
                   <span className="lbl">Arte</span>
                   <span className="sub">{totalExperiences} obras</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/roteiro")}>
+                <button className="mob-category-btn" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                   <span className="emoji">🍴</span>
                   <span className="lbl">Gastron.</span>
                   <span className="sub">Parceiros</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/select-museum")}>
+                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
                   <span className="emoji">✈️</span>
                   <span className="lbl">Turismo</span>
                   <span className="sub">Atrações</span>
@@ -914,7 +914,7 @@ export const CityDashboard: React.FC = () => {
                   <span className="lbl">Guias</span>
                   <span className="sub">Disponív.</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/select-museum")}>
+                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
                   <span className="emoji">♿</span>
                   <span className="lbl">Acessib.</span>
                   <span className="sub">Ativa</span>
@@ -926,7 +926,7 @@ export const CityDashboard: React.FC = () => {
             <section className="mobile-highlights-section px-6 mt-8 text-left">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="mobile-section-heading font-black text-white text-xs uppercase tracking-wider">Destaques da cidade</h3>
-                <span className="view-all-link text-xs text-gold-400 font-bold cursor-pointer" onClick={() => navigate("/select-museum")}>Ver todos</span>
+                <span className="view-all-link text-xs text-gold-400 font-bold cursor-pointer" onClick={() => navigate("/cidades")}>Ver todos</span>
               </div>
 
               <div className="mobile-highlights-list flex flex-col gap-5">
@@ -937,7 +937,7 @@ export const CityDashboard: React.FC = () => {
                     onClick={() => handleSelectMuseum(firstMuseum)}
                   >
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=600"} alt={firstMuseum.name} className="w-full h-full object-cover" />
+                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "/placeholder-image.jpg"} alt={firstMuseum.name} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge uppercase">Museu em destaque</span>
                     </div>
@@ -953,19 +953,19 @@ export const CityDashboard: React.FC = () => {
 
                 {/* 2: Evento em destaque (REAL DO BANCO!) */}
                 {firstEvent && (
-                  <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/agenda")}>
+                  <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate(`/cidades/${citySlug}/agenda`)}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={(firstEvent as any).coverImageUrl ? getFullUrl((firstEvent as any).coverImageUrl) : "https://images.unsplash.com/photo-1507676184212-d0330a151f96?q=80&w=600"} alt={(firstEvent as any).title} className="w-full h-full object-cover" />
+                      <img src={(firstEvent as unknown).coverImageUrl ? getFullUrl((firstEvent as unknown).coverImageUrl) : "/placeholder-image.jpg"} alt={(firstEvent as unknown).title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge event uppercase">Evento em alta</span>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-black text-white text-base">{(firstEvent as any).title}</h4>
+                      <h4 className="font-black text-white text-base">{(firstEvent as unknown).title}</h4>
                       <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstEvent as any).description || "Programação completa disponível no portal."}
+                        {(firstEvent as unknown).description || "Programação completa disponível no portal."}
                       </p>
                       <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-3 font-extrabold">
-                        {`${new Date((firstEvent as any).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as any).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                        {`${new Date((firstEvent as unknown).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as unknown).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
                       </span>
                     </div>
                   </Card>
@@ -973,16 +973,16 @@ export const CityDashboard: React.FC = () => {
 
                 {/* 3: Roteiro em destaque (REAL DO BANCO!) */}
                 {firstTrail && (
-                  <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate("/roteiro")}>
+                  <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={(firstTrail as any).imageUrl ? getFullUrl((firstTrail as any).imageUrl) : "https://images.unsplash.com/photo-1523730205978-59fd1b2965e3?q=80&w=600"} alt={(firstTrail as any).title} className="w-full h-full object-cover" />
+                      <img src={(firstTrail as unknown).imageUrl ? getFullUrl((firstTrail as unknown).imageUrl) : "/placeholder-image.jpg"} alt={(firstTrail as unknown).title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge route uppercase">Roteiro sugerido</span>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-black text-white text-base">{(firstTrail as any).title}</h4>
+                      <h4 className="font-black text-white text-base">{(firstTrail as unknown).title}</h4>
                       <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstTrail as any).description || `Percorra os principais marcos históricos do município.`}
+                        {(firstTrail as unknown).description || `Percorra os principais marcos históricos do município.`}
                       </p>
                       <span className="text-xs text-gold-400 font-bold block mt-3">Ver roteiro &gt;</span>
                     </div>
@@ -1075,7 +1075,7 @@ export const CityDashboard: React.FC = () => {
             <div className="mobile-ranking-card p-5 border-white/5 bg-white/5 text-left mt-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-black text-white text-xs uppercase tracking-wider">Ranking de exploradores</h3>
-                <span className="text-[10px] text-gold-400 font-bold cursor-pointer" onClick={() => navigate("/ranking")}>Ver ranking</span>
+                <span className="text-[10px] text-gold-400 font-bold cursor-pointer" onClick={() => navigate(`/cidades/${citySlug}/ranking`)}>Ver ranking</span>
               </div>
 
               <div className="explorers-ranking-list space-y-3">
@@ -1083,11 +1083,11 @@ export const CityDashboard: React.FC = () => {
                   dbRankings.slice(0, 3).map((r, index) => {
                     const isMe = r.email === dbMyRank?.email;
                     return (
-                      <div key={(r as any).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
-                        <span className={`rank-num font-black text-sm ${(r as any).rank === 1 ? 'text-yellow-500' : (r as any).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as any).rank}</span>
-                        <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as any).name ? (r as any).name.charAt(0) : "V"}</div>
+                      <div key={(r as unknown).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
+                        <span className={`rank-num font-black text-sm ${(r as unknown).rank === 1 ? 'text-yellow-500' : (r as unknown).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as unknown).rank}</span>
+                        <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as unknown).name ? (r as unknown).name.charAt(0) : "V"}</div>
                         <div className="flex-1">
-                          <span className="name font-bold text-xs text-white block">{(r as any).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                          <span className="name font-bold text-xs text-white block">{(r as unknown).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                         </div>
                         <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                       </div>
@@ -1100,7 +1100,7 @@ export const CityDashboard: React.FC = () => {
                 )}
               </div>
 
-              <span className="ranking-see-all text-[10px] text-gray-500 font-bold text-center block mt-4 cursor-pointer" onClick={() => navigate("/ranking")}>Ver todos os exploradores &gt;</span>
+              <span className="ranking-see-all text-[10px] text-gray-500 font-bold text-center block mt-4 cursor-pointer" onClick={() => navigate(`/cidades/${citySlug}/ranking`)}>Ver todos os exploradores &gt;</span>
             </div>
 
             {/* Conquistas (REAL DO BANCO DE DADOS!) */}
@@ -1110,8 +1110,8 @@ export const CityDashboard: React.FC = () => {
                 <div className="flex gap-2">
                   {dbAchievements.length > 0 ? (
                     dbAchievements.slice(0, 4).map((ach) => (
-                      <span key={ach.id} className="text-xl" title={(ach as any).title}>
-                        {(ach as any).title.includes("Pioneiro") ? "🥇" : (ach as any).title.includes("Mestre") ? "👑" : (ach as any).title.includes("Rotas") ? "🧭" : "🔒"}
+                      <span key={ach.id} className="text-xl" title={(ach as unknown).title}>
+                        {(ach as unknown).title.includes("Pioneiro") ? "🥇" : (ach as unknown).title.includes("Mestre") ? "👑" : (ach as unknown).title.includes("Rotas") ? "🧭" : "🔒"}
                       </span>
                     ))
                   ) : (

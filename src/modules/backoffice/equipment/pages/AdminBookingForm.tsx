@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
 import { api } from "../../../../api/client";
@@ -61,7 +63,7 @@ export const AdminBookingForm: React.FC = () => {
                 setSpaces(Array.isArray(spacesRes.data) ? spacesRes.data : []);
                 setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : []);
             } catch (err) {
-                console.error("Erro ao carregar opções para o formulário:", err);
+                logger.error("Erro ao carregar opções para o formulário:", err);
                 setServices([]);
                 setSpaces([]);
                 setEvents([]);
@@ -76,7 +78,7 @@ export const AdminBookingForm: React.FC = () => {
     const handleSubmit = async () => {
         if (!tenantId) return;
         if (!formData.inPersonServiceId || !formData.date || !formData.startTime || !formData.endTime) {
-            return alert(`Por favor, preencha os campos obrigatórios (Serviço, ${t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).`);
+            return logger.warn("Alert:", `Por favor, preencha os campos obrigatórios (Serviço, ${t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).`);
         }
 
         setSaving(true);
@@ -98,13 +100,13 @@ export const AdminBookingForm: React.FC = () => {
             };
 
             await api.post("/bookings", payload);
-            alert("Solicitação de serviço presencial enviada com sucesso!");
+            logger.warn("Alert:", "Solicitação de serviço presencial enviada com sucesso!");
 
             // Navigate back to somewhere, maybe the calendar or dashboard
             navigate("/admin");
-        } catch (error: any) {
-            console.error("Erro ao solicitar serviço presencial:", error);
-            alert(error.response?.data?.message || "Erro ao solicitar serviço presencial.");
+        } catch (error: unknown) {
+            logger.error("Erro ao solicitar serviço presencial:", error);
+            logger.warn("Alert:", error.response?.data?.message || "Erro ao solicitar serviço presencial.");
         } finally {
             setSaving(false);
         }

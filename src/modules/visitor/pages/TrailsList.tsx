@@ -1,6 +1,6 @@
 import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -24,6 +24,7 @@ export const TrailsList: React.FC = () => {
   const [trails, setTrails] = useState<TrailItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { tenantId, equipamentoId } = useAuth();
+  const { citySlug, equipmentSlug } = useParams<{ citySlug: string; equipmentSlug: string }>();
 
   useEffect(() => {
     if (!tenantId) return;
@@ -35,7 +36,7 @@ export const TrailsList: React.FC = () => {
       .then((res) => {
         if (!mounted) return;
         const trailsData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
-        const apiTrails = trailsData.map((item: any) => ({
+        const apiTrails = trailsData.map((item: unknown) => ({
           id: item.id,
           name: item.title,
           description: item.description,
@@ -101,7 +102,7 @@ export const TrailsList: React.FC = () => {
                 key={trail.id}
                 variants={itemVariants}
               >
-                <Link to={`/trilhas/${trail.id}`} className="trail-card-premium group">
+                <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/trilhas/${trail.id}`} className="trail-card-premium group">
                   <div className="trail-icon-premium">🧭</div>
                   
                   <div className="trail-info-premium">
@@ -132,7 +133,7 @@ export const TrailsList: React.FC = () => {
             <span className="text-6xl mb-6 opacity-30">🧭</span>
             <h3 className="text-2xl font-fd text-white mb-4">Horizonte Vazio</h3>
             <p className="text-muted max-w-sm mx-auto mb-10">Nossa curadoria está preparando novas experiências guiadas para você.</p>
-            <Link to="/obras" className="gallery-cta !justify-center">
+            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`} className="gallery-cta !justify-center">
               Explorar Obras <ArrowRight size={14} />
             </Link>
           </div>

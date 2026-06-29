@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { storage } from "@/utils/storage";
+
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Sparkles } from "lucide-react";
@@ -24,7 +26,7 @@ export const SmartItineraryWizard: React.FC = () => {
     const handleBack = () => setStep(step - 1);
 
     const generateItinerary = () => {
-        localStorage.setItem("itinerary_preferences", JSON.stringify(preferences));
+        storage.set("itinerary_preferences", JSON.stringify(preferences));
         navigate("/roteiro-inteligente/resultado");
     };
 

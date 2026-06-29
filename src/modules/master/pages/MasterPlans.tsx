@@ -93,7 +93,7 @@ export const MasterPlans: React.FC = () => {
             setLoading(true);
             const response = await api.get("/plans");
             setPlans(response.data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro na sincronização de camadas de serviço.");
         } finally {
             setLoading(false);
@@ -110,7 +110,7 @@ export const MasterPlans: React.FC = () => {
             await api.delete(`/plans/${id}`);
             toast.success("Plano removido com sucesso.");
             fetchPlans();
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro ao excluir plano: verifique dependências ativas.");
         }
     };
@@ -367,7 +367,7 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                 toast.success("Nova camada de serviço provisionada.");
             }
             onSave();
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro na autorização do plano.");
         } finally {
             setSaving(false);

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { storage } from "@/utils/storage";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -26,9 +28,9 @@ export const WelcomeAnimation: React.FC<WelcomeAnimationProps> = ({
     const [showVideo, setShowVideo] = useState(false);
     const [isFirstTime] = useState(() => {
         const storageKey = `welcome_seen_${email}`;
-        const hasSeen = localStorage.getItem(storageKey);
+        const hasSeen = storage.get(storageKey);
         if (!hasSeen) {
-            localStorage.setItem(storageKey, "true");
+            storage.set(storageKey, "true");
             return true;
         }
         return false;

@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -60,7 +62,7 @@ const SecretaryDashboard: React.FC = () => {
             const response = await api.get("/secretary/dashboard", { params: { tenantId } });
             setData(response.data);
         } catch (err) {
-            console.error("Erro ao carregar dashboard", err);
+            logger.error("Erro ao carregar dashboard", err);
         } finally {
             setLoading(false);
         }
@@ -70,7 +72,7 @@ const SecretaryDashboard: React.FC = () => {
         try {
             window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank');
         } catch (err) {
-            console.error("Erro ao baixar PDF", err);
+            logger.error("Erro ao baixar PDF", err);
         }
     };
 

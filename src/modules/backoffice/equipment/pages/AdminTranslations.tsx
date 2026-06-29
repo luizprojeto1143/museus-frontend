@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -20,7 +22,7 @@ const languageOptions = [
 export const AdminTranslations: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<unknown>(null);
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -34,7 +36,7 @@ export const AdminTranslations: React.FC = () => {
             ]);
             setData(results_t.data);
             setWorks(Array.isArray(results_w.data) ? results_w.data : (results_w.data.data || []));
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -93,7 +95,7 @@ export const AdminTranslations: React.FC = () => {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
-                                <option value="">Selecione...</option>{works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                <option value="">Selecione...</option>{works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Idioma</label>
@@ -119,7 +121,7 @@ export const AdminTranslations: React.FC = () => {
                         <div key={workId} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem" }}>
                             <h3 className="text-white font-bold text-sm mb-3">{work?.title || workId}</h3>
                             <div className="flex gap-2 flex-wrap">
-                                {Array.isArray(translations) && translations.map((item: any) => {
+                                {Array.isArray(translations) && translations.map((item: unknown) => {
                                     if (!item) return null;
                                     const lang = languageOptions.find(o => o.code === item.language);
                                     return (

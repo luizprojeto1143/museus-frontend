@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -42,7 +44,7 @@ export const MunicipalPPA: React.FC = () => {
             const res = await api.get(`/ppa/consolidated?tenantId=${tenantId}&year=${year}`);
             setGoals(res.data);
         } catch (error) { 
-            console.error(error); 
+            logger.error(error); 
             toast.error(t("municipal.ppa.error_load", "Erro ao consolidar metas do PPA."));
         } finally { 
             setLoading(false); 
@@ -219,7 +221,7 @@ export const MunicipalPPA: React.FC = () => {
                                                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("municipal.ppa.execution_by_unit", "Execução por Unidade")}</span>
                                             </div>
                                             <div className="grid grid-cols-1 gap-3">
-                                                {g.goals.map((item: any, i: number) => (
+                                                {g.goals.map((item: unknown, i: number) => (
                                                     <div key={i} className="flex items-center justify-between p-4 bg-white/[0.01] hover:bg-white/[0.03] rounded-2xl border border-white/5 transition-all">
                                                         <div className="flex items-center gap-3">
                                                             <div className={`w-1.5 h-1.5 rounded-full ${item.currentValue >= item.targetValue ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-700'}`} />

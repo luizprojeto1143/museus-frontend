@@ -19,7 +19,7 @@ export const TeacherPortal: React.FC = () => {
         try {
             const res = await api.get(`/teachers/visits?tenantId=${tenantId}`);
             setVisits(Array.isArray(res.data) ? res.data : []);
-        } catch (error: any) { logger.error(error); }
+        } catch (error: unknown) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -33,7 +33,7 @@ export const TeacherPortal: React.FC = () => {
             setShowForm(false);
             setForm({ schoolName: '', grade: '', studentCount: '', preferredDate: '', objectives: '' });
             fetchData();
-        } catch (err: any) { toast.error("Erro"); }
+        } catch (err: unknown) { toast.error("Erro"); }
     };
 
     const educationalResources = [
@@ -83,7 +83,7 @@ export const TeacherPortal: React.FC = () => {
                     )}
 
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
-                        {visits.map((v: any) => (
+                        {visits.map((v: unknown) => (
                             <div key={v.id} style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', padding: '1rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <h3 style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>{v.schoolName || 'Escola'}</h3>

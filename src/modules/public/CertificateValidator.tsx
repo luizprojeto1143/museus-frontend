@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { api } from '../../api/client';
@@ -34,8 +36,8 @@ export const CertificateValidator: React.FC = () => {
             } else {
                 setStatus('invalid');
             }
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             const axiosErr = err as { response?: { status?: number } };
             if (axiosErr.response?.status === 404) {
                 setStatus('invalid');

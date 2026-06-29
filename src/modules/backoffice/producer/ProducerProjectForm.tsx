@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -89,8 +91,8 @@ export const ProducerProjectForm: React.FC = () => {
 
 
     const [showShareModal, setShowShareModal] = useState(false);
-    const [publishedEventData, setPublishedEventData] = useState<any>(null);
-    const [notice, setNotice] = useState<any>(null);
+    const [publishedEventData, setPublishedEventData] = useState<unknown>(null);
+    const [notice, setNotice] = useState<unknown>(null);
 
     useEffect(() => {
         if (id) {
@@ -153,8 +155,8 @@ export const ProducerProjectForm: React.FC = () => {
             }
 
             addToast("Salvo com sucesso!", "success");
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             addToast("Erro ao salvar.", "error");
         } finally {
             setSaving(false);
@@ -204,8 +206,8 @@ export const ProducerProjectForm: React.FC = () => {
             await api.post(`/projects/${id}/submit`);
             addToast("Projeto submetido com sucesso!", "success");
             setExtraData(prev => ({ ...prev, status: "SUBMITTED" }));
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             addToast(err.response?.data?.message || "Erro ao submeter projeto.", "error");
         } finally {
             setSubmitting(false);
@@ -223,7 +225,7 @@ export const ProducerProjectForm: React.FC = () => {
             setPublishedEventData(res.data);
             setShowShareModal(true);
             setExtraData(prev => ({ ...prev, status: "IN_EXECUTION", eventId: res.data.eventId }));
-        } catch (err: any) {
+        } catch (err: unknown) {
             addToast("Erro ao publicar.", "error");
         } finally {
             setSaving(false);
@@ -396,7 +398,7 @@ export const ProducerProjectForm: React.FC = () => {
                     ].map((step, idx, arr) => (
                         <React.Fragment key={step.id}>
                             <div 
-                                onClick={() => setActiveTab(step.id as any)}
+                                onClick={() => setActiveTab(step.id as unknown)}
                                 className={`flex flex-col items-center gap-3 cursor-pointer transition-all group ${activeTab === step.id ? 'scale-110' : 'opacity-40 hover:opacity-100'}`}
                             >
                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${activeTab === step.id ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20' : 'bg-black/20 border-white/10 text-white'}`}>

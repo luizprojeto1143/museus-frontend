@@ -43,10 +43,10 @@ export const CulturalAgenda: React.FC = () => {
         
         // Filter only tenants that are cities (or secretaria)
         const cityData = Array.isArray(citiesRes.data) ? citiesRes.data : [];
-        const cityTenants = cityData.filter((t: any) => t.type === 'CITY' || t.type === 'SECRETARIA');
+        const cityTenants = cityData.filter((t: unknown) => t.type === 'CITY' || t.type === 'SECRETARIA');
         setCities(cityTenants);
         setEvents(eventsRes.data.data || []);
-      } catch (err: any) {
+      } catch (err: unknown) {
         logger.error("Error fetching agenda data", err);
       } finally {
         setLoading(false);
@@ -58,12 +58,12 @@ export const CulturalAgenda: React.FC = () => {
   const fetchFilteredEvents = async (cityId: string) => {
     setLoading(true);
     try {
-      const params: any = { discovery: 'true' };
+      const params: unknown = { discovery: 'true' };
       if (cityId !== 'ALL') params.cityId = cityId;
       
       const res = await api.get("/events", { params });
       setEvents(res.data.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error("Error fetching filtered events", err);
     } finally {
       setLoading(false);

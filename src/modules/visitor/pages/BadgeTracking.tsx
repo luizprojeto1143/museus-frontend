@@ -14,7 +14,7 @@ interface BadgeRequest {
     skinImageUrl: string;
 }
 
-const statusConfig: Record<string, { label: string, color: string, icon: any }> = {
+const statusConfig: Record<string, { label: string, color: string, icon: unknown }> = {
     PENDING: { label: "Em Análise", color: "text-amber-500", icon: Clock },
     APPROVED: { label: "Aprovado", color: "text-[var(--accent-primary)]", icon: BadgeCheck },
     PRINTING: { label: "Em Impressão", color: "text-purple-500", icon: Package },
@@ -35,7 +35,7 @@ export const BadgeTracking: React.FC = () => {
             try {
                 const res = await api.get("/badges/my");
                 setRequests(res.data);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error(err);
             } finally {
                 setLoading(false);

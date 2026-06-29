@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -38,7 +40,7 @@ export const MunicipalDashboard: React.FC = () => {
     const navigate = useNavigate();
     const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<unknown>(null);
     const [period, setPeriod] = useState<"30" | "7" | "90" | "365">("30");
 
     const fetchData = useCallback(async () => {
@@ -47,7 +49,7 @@ export const MunicipalDashboard: React.FC = () => {
             const res = await api.get("/secretary/dashboard", { params: { periodDays: period, tenantId } });
             setData(res.data);
         } catch (err) {
-            console.error("Error fetching municipal dashboard", err);
+            logger.error("Error fetching municipal dashboard", err);
             toast.error(t("municipal.dashboard.sync_error", "Erro ao sincronizar dados executivos."));
         } finally {
             setLoading(false);
@@ -98,7 +100,7 @@ export const MunicipalDashboard: React.FC = () => {
                         {(Object.entries(periodLabels) as [keyof typeof periodLabels, string][]).map(([val, label]) => (
                             <button
                                 key={val}
-                                onClick={() => setPeriod(val as any)}
+                                onClick={() => setPeriod(val as unknown)}
                                 className={`flex-1 md:flex-none min-w-[60px] px-3 md:px-5 py-3 md:py-2.5 rounded-xl text-xs md:text-[10px] font-black uppercase tracking-widest transition-all ${
                                     period === val 
                                     ? 'bg-emerald-600 text-white shadow-lg' 
@@ -208,7 +210,7 @@ export const MunicipalDashboard: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {(data?.equipmentAccessibility || []).map((eq: any, idx: number) => (
+                                {(data?.equipmentAccessibility || []).map((eq: unknown, idx: number) => (
                                     <tr key={idx} className="hover:bg-white/[0.02] transition-all group">
                                         <td className="px-6 md:px-10 py-6 md:py-8">
                                             <div className="font-bold text-white group-hover:text-emerald-400 transition-colors text-base md:text-lg">{eq.name}</div>
@@ -266,7 +268,7 @@ export const MunicipalDashboard: React.FC = () => {
                             </div>
                             
                             <div className="space-y-4">
-                                {(data?.alerts || []).slice(0, 3).map((alert: any, idx: number) => (
+                                {(data?.alerts || []).slice(0, 3).map((alert: unknown, idx: number) => (
                                     <motion.div 
                                         key={idx}
                                         whileHover={{ x: 5 }}
@@ -299,7 +301,7 @@ export const MunicipalDashboard: React.FC = () => {
                             {/* Vertical Line */}
                             <div className="absolute left-4 top-2 bottom-2 w-px bg-white/5" />
                             
-                            {(data?.recentProjects || []).slice(0, 4).map((proj: any, idx: number) => (
+                            {(data?.recentProjects || []).slice(0, 4).map((proj: unknown, idx: number) => (
                                 <div key={idx} className="flex gap-6 group relative">
                                     <div className="relative z-10 flex flex-col items-center">
                                         <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center text-[10px] font-black shrink-0 transition-all group-hover:scale-110 ${

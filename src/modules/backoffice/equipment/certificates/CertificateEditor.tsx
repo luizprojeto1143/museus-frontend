@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useNavigate, useParams } from 'react-router-dom';
 // import { useTranslation } from 'react-i18next';
 import { api } from '../../../../api/client';
@@ -27,7 +29,7 @@ const CertificateEditorContent: React.FC = () => {
                 try {
                     const res = await api.get('/certificate-templates');
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const found = res.data.find((item: any) => item.id === id);
+                    const found = res.data.find((item: unknown) => item.id === id);
                     if (found) {
                         loadTemplate({
                             id: found.id,
@@ -38,7 +40,7 @@ const CertificateEditorContent: React.FC = () => {
                         });
                     }
                 } catch (err) {
-                    console.error("Failed to load template", err);
+                    logger.error("Failed to load template", err);
                 }
             };
             fetchTemplate();
@@ -62,8 +64,8 @@ const CertificateEditorContent: React.FC = () => {
             }
             navigate('/admin/certificates');
         } catch (err) {
-            console.error(err);
-            alert('Erro ao salvar modelo');
+            logger.error(err);
+            logger.warn("Alert:", 'Erro ao salvar modelo');
         } finally {
             setSaving(false);
         }

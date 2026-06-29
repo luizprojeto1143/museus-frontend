@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useAuth } from '../../../auth/AuthContext';
 import { api } from '../../../../api/client';
 import { DollarSign, Star, Package, MapPin, ExternalLink, Activity } from 'lucide-react';
@@ -6,7 +8,7 @@ import { motion } from 'framer-motion';
 
 export const ProviderDashboard: React.FC = () => {
   const { tenantSlug, user } = useAuth();
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<unknown>(null);
   const [loadingStripe, setLoadingStripe] = useState(false);
 
   // In a real scenario, the logged-in user would have a providerId linked.
@@ -28,7 +30,7 @@ export const ProviderDashboard: React.FC = () => {
       // Redirect to Stripe Connect URL
       window.location.href = response.data.url;
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setLoadingStripe(false);
     }
   };

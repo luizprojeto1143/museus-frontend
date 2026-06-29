@@ -75,7 +75,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
             });
 
             addToast("Áudio-guia gerado com sucesso!", "success");
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error("TTS Error", error);
             addToast(t('visitor.audioGuide.errorTTS', 'Erro ao gerar áudio.'), "error");
         } finally {

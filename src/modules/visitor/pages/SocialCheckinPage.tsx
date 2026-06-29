@@ -23,7 +23,7 @@ export const SocialCheckinPage: React.FC = () => {
         try {
             const res = await api.get(`/social-checkin?tenantId=${tenantId}`);
             setCheckins(res.data);
-        } catch (error: any) { logger.error(error); }
+        } catch (error: unknown) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -36,7 +36,7 @@ export const SocialCheckinPage: React.FC = () => {
             toast.success("Check-in realizado! 🎉");
             setMessage('');
             fetchData();
-        } catch (err: any) { toast.error("Erro"); }
+        } catch (err: unknown) { toast.error("Erro"); }
         finally { setPosting(false); }
     };
 
@@ -81,7 +81,7 @@ export const SocialCheckinPage: React.FC = () => {
 
             {/* Feed */}
             <div style={{ display: 'grid', gap: '0.75rem' }}>
-                {checkins.map((c: any) => (
+                {checkins.map((c: unknown) => (
                     <div key={c.id} style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', padding: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: '1.5rem' }}>{c.emoji || '🏛️'}</span>
                         <div style={{ flex: 1 }}>

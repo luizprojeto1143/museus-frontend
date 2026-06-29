@@ -22,7 +22,7 @@ export const TheaterCast: React.FC = () => {
         try {
             const res = await theaterApi.getMembers();
             setCastMembers(res.data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(t("theater.cast.load_error", "Erro ao carregar elenco"));
         } finally {
             setLoading(false);

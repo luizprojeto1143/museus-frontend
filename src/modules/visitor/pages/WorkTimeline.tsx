@@ -16,14 +16,14 @@ export const WorkTimeline: React.FC = () => {
             // Sort by yearNumeric or year field
             const rawData = Array.isArray(data) ? data : (data.data || []);
             const sorted = rawData
-                .filter((w: any) => w.year || w.yearNumeric)
-                .sort((a: any, b: any) => {
+                .filter((w: unknown) => w.year || w.yearNumeric)
+                .sort((a: unknown, b: unknown) => {
                     const yearA = a.yearNumeric || parseInt(a.year) || 0;
                     const yearB = b.yearNumeric || parseInt(b.year) || 0;
                     return yearA - yearB;
                 });
             setWorks(sorted);
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error(error);
         } finally {
             setLoading(false);

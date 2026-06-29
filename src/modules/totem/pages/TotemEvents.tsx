@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Calendar, Users, CheckCircle, Clock } from "lucide-react";
@@ -23,8 +25,8 @@ export const TotemEvents: React.FC = () => {
             // Ideally backend supports date filter. Using generic list for now.
             const res = await api.get(`/events?tenantId=${tenantId}`);
             setEvents(res.data);
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             toast.error(t("totem.events.load_error", "Erro ao carregar eventos"));
         } finally {
             setLoading(false);

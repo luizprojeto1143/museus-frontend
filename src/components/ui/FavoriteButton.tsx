@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { logger } from "@/utils/logger";
+
 import { Heart } from 'lucide-react';
 import { api } from '../../api/client';
 
@@ -25,8 +27,8 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         try {
             const res = await api.get(`/favorites/check/${workId}`);
             setIsFavorite(res.data.isFavorite);
-        } catch (error: any) {
-            console.error('Error checking favorite:', error);
+        } catch (error: unknown) {
+            logger.error('Error checking favorite:', error);
         }
     }, [workId]);
 
@@ -48,8 +50,8 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
                 setIsFavorite(true);
                 setCount(c => c + 1);
             }
-        } catch (error: any) {
-            console.error('Error toggling favorite:', error);
+        } catch (error: unknown) {
+            logger.error('Error toggling favorite:', error);
         } finally {
             setLoading(false);
         }

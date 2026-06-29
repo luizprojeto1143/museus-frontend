@@ -14,8 +14,8 @@ export interface Work {
 }
 
 interface WorksResponse {
-    data: any[];
-    pagination?: any;
+    data: unknown[];
+    pagination?: unknown;
 }
 
 export function useWorks(params?: { limit?: number; page?: number; search?: string }) {
@@ -32,7 +32,7 @@ export function useWorks(params?: { limit?: number; page?: number; search?: stri
 
             const rawData = Array.isArray(data) ? data : (data.data || []);
 
-            return rawData.map((w: any) => ({
+            return rawData.map((w: unknown) => ({
                 id: w.id,
                 title: w.title,
                 artist: w.artist ?? "Artista desconhecido",

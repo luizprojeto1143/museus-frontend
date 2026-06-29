@@ -57,7 +57,7 @@ export const Passport: React.FC = () => {
       const res = await api.get(`/vestiges/passport/${visitorId}`);
       const data = res.data;
       if (Array.isArray(data)) {
-        setStamps(data.map((s: any) => ({
+        setStamps(data.map((s: unknown) => ({
           id: s.work.id,
           title: s.work.title,
           artist: s.work.artist,
@@ -69,7 +69,7 @@ export const Passport: React.FC = () => {
           city: s.work.tenant?.address?.city || s.work.tenant?.city || "Geral"
         })));
       }
-    } catch (error: any) { logger.error(error); }
+    } catch (error: unknown) { logger.error(error); }
     finally { setLoading(false); }
   }, [visitorId]);
 
@@ -124,7 +124,7 @@ export const Passport: React.FC = () => {
            <button 
              key={tab.id}
              className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
-             onClick={() => setActiveTab(tab.id as any)}
+             onClick={() => setActiveTab(tab.id as unknown)}
            >
               {tab.icon}
               <span>{tab.label}</span>

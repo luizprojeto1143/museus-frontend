@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
@@ -136,7 +138,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     if (tenantId && role !== 'master') {
       api.get(`/tenants/${tenantId}/settings`)
         .then(res => setFeatures(res.data))
-        .catch(err => console.error("Error loading tenant features", err));
+        .catch(err => logger.error("Error loading tenant features", err));
     }
   }, [tenantId, role]);
 

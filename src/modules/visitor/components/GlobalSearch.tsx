@@ -34,7 +34,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
                 params: { q: searchQuery, tenantId }
             });
             setResults(res.data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error("Error searching items", error);
         }
     }, [tenantId]);

@@ -67,7 +67,7 @@ export const MasterSeeder: React.FC = () => {
             const data: TenantOption[] = Array.isArray(res.data) ? res.data : [];
             setTenants(data);
             if (data.length > 0 && !tenantId) setTenantId(data[0].id);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha ao sincronizar nodes de museus.");
         } finally {
             setLoadingTenants(false);
@@ -84,7 +84,7 @@ export const MasterSeeder: React.FC = () => {
         try {
             const res = await api.post('/seeder/generate', { tenantId, count });
             toast.success(`Protocolo Gênesis: ${res.data.message}`);
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Falha na injeção de visitantes.");
         } finally {
             setLoading(false);
@@ -98,7 +98,7 @@ export const MasterSeeder: React.FC = () => {
         try {
             const res = await api.delete('/seeder/bulk', { data: { tenantId } });
             toast.success(`Protocolo Expurgar: ${res.data.message}`);
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Erro no expurgo de dados sintéticos.");
         } finally {
             setLoading(false);
@@ -118,7 +118,7 @@ export const MasterSeeder: React.FC = () => {
             });
             toast.success(`Simulação de Tráfego Concluída.`);
             if (res.data.stats) setLastResult(res.data.stats);
-        } catch (e: any) {
+        } catch (e: unknown) {
             toast.error("Falha na simulação de tráfego.");
         } finally {
             setLoading(false);

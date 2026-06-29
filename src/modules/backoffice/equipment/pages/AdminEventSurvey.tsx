@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../../api/client';
@@ -45,7 +47,7 @@ export const AdminEventSurvey: React.FC = () => {
             const surveyRes = await api.get(`/events/${id}/survey`);
             setQuestions(surveyRes.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         } finally {
             setLoading(false);
         }
@@ -63,7 +65,7 @@ export const AdminEventSurvey: React.FC = () => {
         ]);
     };
 
-    const updateQuestion = (index: number, field: keyof SurveyQuestion, value: any) => {
+    const updateQuestion = (index: number, field: keyof SurveyQuestion, value: unknown) => {
         const newQuestions = [...questions];
         newQuestions[index] = { ...newQuestions[index], [field]: value };
         setQuestions(newQuestions);
@@ -100,10 +102,10 @@ export const AdminEventSurvey: React.FC = () => {
             // Fix order based on array index
             const payload = questions.map((q, idx) => ({ ...q, order: idx }));
             await api.post(`/events/${id}/survey`, { questions: payload });
-            alert('Pesquisa salva com sucesso!');
+            logger.warn("Alert:", 'Pesquisa salva com sucesso!');
         } catch (error) {
-            console.error(error);
-            alert('Erro ao salvar pesquisa.');
+            logger.error(error);
+            logger.warn("Alert:", 'Erro ao salvar pesquisa.');
         } finally {
             setSaving(false);
         }

@@ -13,7 +13,7 @@ export const InstallGuideModal: React.FC<InstallGuideModalProps> = ({ isOpen, on
 
     if (!isOpen) return null;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown).MSStream;
 
     return (
         <div className="install-guide-backdrop" onClick={onClose}>

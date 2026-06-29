@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -48,7 +50,7 @@ export const AdminMunicipalGaps: React.FC = () => {
   const [showHeatmap, setShowHeatmap] = useState(true);
   
   // Hovered item details
-  const [hoveredPoint, setHoveredPoint] = useState<any>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<unknown>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -62,7 +64,7 @@ export const AdminMunicipalGaps: React.FC = () => {
 
       setData({ equipments, events, checkins });
     } catch (error) { 
-      console.error("Erro ao carregar vazios culturais:", error); 
+      logger.error("Erro ao carregar vazios culturais:", error); 
     } finally { 
       setLoading(false); 
     }

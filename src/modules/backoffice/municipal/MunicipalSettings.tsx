@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -42,7 +44,7 @@ import { toast } from "react-hot-toast";
 export const MunicipalSettings: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [settings, setSettings] = useState<any>({});
+    const [settings, setSettings] = useState<unknown>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [activeSection, setActiveSection] = useState<'identity' | 'channels' | 'branding' | 'financeiro'>('identity');
@@ -53,7 +55,7 @@ export const MunicipalSettings: React.FC = () => {
             const res = await api.get(`/tenants/${tenantId}/settings`);
             setSettings(res.data || {});
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error(t("municipal.settings.error_load", "Erro ao carregar preferências."));
         } finally {
             setLoading(false);
@@ -76,8 +78,8 @@ export const MunicipalSettings: React.FC = () => {
         }
     };
 
-    const updateField = (field: string, value: any) => {
-        setSettings((prev: any) => ({ ...prev, [field]: value }));
+    const updateField = (field: string, value: unknown) => {
+        setSettings((prev: unknown) => ({ ...prev, [field]: value }));
     };
 
     if (loading) return (
@@ -118,7 +120,7 @@ export const MunicipalSettings: React.FC = () => {
                 {sections.map(section => (
                     <button
                         key={section.id}
-                        onClick={() => setActiveSection(section.id as any)}
+                        onClick={() => setActiveSection(section.id as unknown)}
                         className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                             activeSection === section.id 
                             ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' 

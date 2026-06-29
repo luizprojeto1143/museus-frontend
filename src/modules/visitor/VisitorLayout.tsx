@@ -1,4 +1,6 @@
 import { logger } from "@/utils/logger";
+import { storage } from "@/utils/storage";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -126,13 +128,13 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
               theme: (tenantSettings.theme as "light" | "dark") || "dark",
               historicalFont: tenantSettings.historicalFont
             });
-          } catch (apiErr: any) {
+          } catch (apiErr: unknown) {
             if (apiErr.response?.status !== 404) {
                logger.warn("Could not load tenant settings", apiErr);
             }
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Silently skip if it's just a non-existent public equipamento or tenant
         // console.debug("Settings not loaded", err);
       }
@@ -146,7 +148,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (name && email && settings) {
         const storageKey = `welcome_seen_${email}`;
-        if (!localStorage.getItem(storageKey)) {
+        if (!storage.get(storageKey)) {
             setShowWelcome(true);
         }
     }

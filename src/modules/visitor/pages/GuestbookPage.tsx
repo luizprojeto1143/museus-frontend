@@ -33,7 +33,7 @@ export const GuestbookPage: React.FC = () => {
         try {
             const res = await api.get(`/guestbook?tenantId=${tenantId}`);
             setEntries(res.data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error("Failed to fetch guestbook", error);
         } finally {
             setLoading(false);
@@ -59,7 +59,7 @@ export const GuestbookPage: React.FC = () => {
 
             setNewMessage("");
             fetchEntries();
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error("Failed to post message", error);
             setError(t("visitor.guestbook.error", "Erro ao enviar mensagem."));
         } finally {

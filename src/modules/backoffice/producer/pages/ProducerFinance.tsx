@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { DollarSign, ExternalLink, Activity, ArrowUpRight, TrendingUp, FileText } from "lucide-react";
@@ -19,7 +21,7 @@ export const ProducerFinance: React.FC = () => {
             const res = await api.get('/stripe/balance?type=PRODUCER');
             setBalance(res.data);
         } catch (error) {
-            console.error("Failed to fetch balance", error);
+            logger.error("Failed to fetch balance", error);
         } finally {
             setLoading(false);
         }
@@ -31,8 +33,8 @@ export const ProducerFinance: React.FC = () => {
             const res = await api.get('/stripe/onboarding-link?type=PRODUCER');
             window.location.href = res.data.url;
         } catch (error) {
-            console.error("Failed to connect", error);
-            alert("Erro ao conectar conta Stripe");
+            logger.error("Failed to connect", error);
+            logger.warn("Alert:", "Erro ao conectar conta Stripe");
         } finally {
             setActionLoading(false);
         }
@@ -44,7 +46,7 @@ export const ProducerFinance: React.FC = () => {
             const res = await api.get('/stripe/dashboard-link?type=PRODUCER');
             window.open(res.data.url, '_blank');
         } catch (error) {
-            console.error("Failed to open dashboard", error);
+            logger.error("Failed to open dashboard", error);
             // If they don't have an account, prompt to create
             if (window.confirm("Conta não configurada. Deseja configurar agora?")) {
                 handleConnect();
@@ -56,18 +58,18 @@ export const ProducerFinance: React.FC = () => {
 
     const handlePayout = async () => {
         if (balance.available <= 0) {
-            alert("Você não possui saldo disponível para saque no momento.");
+            logger.warn("Alert:", "Você não possui saldo disponível para saque no momento.");
             return;
         }
         try {
             setActionLoading(true);
             const res = await api.post('/stripe/payout?type=PRODUCER');
-            alert(res.data.message || "Saque solicitado com sucesso!");
+            logger.warn("Alert:", res.data.message || "Saque solicitado com sucesso!");
             fetchBalance();
-        } catch (error: any) {
-            console.error("Failed to process payout", error);
+        } catch (error: unknown) {
+            logger.error("Failed to process payout", error);
             const errMsg = error.response?.data?.message || "Erro ao solicitar saque";
-            alert(errMsg);
+            logger.warn("Alert:", errMsg);
         } finally {
             setActionLoading(false);
         }

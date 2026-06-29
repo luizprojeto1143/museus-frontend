@@ -1,4 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { storage } from "@/utils/storage";
+
+import { logger } from "@/utils/logger";
+
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import * as tf from "@tensorflow/tfjs";
@@ -77,7 +81,7 @@ export const AdminScannerTrainer: React.FC = () => {
                 if (isMounted) startCamera();
 
             } catch (err) {
-                console.error("Error init trainer", err);
+                logger.error("Error init trainer", err);
             }
         };
         init();
@@ -133,11 +137,11 @@ export const AdminScannerTrainer: React.FC = () => {
         // Let's try saving to localStorage first, but handle error.
         try {
             const jsonStr = JSON.stringify(datasetObj);
-            localStorage.setItem(`scanner_model_${tenantId}`, jsonStr);
-            alert("Modelo salvo localmente! (Visitante no mesmo navegador poderá usar)");
+            storage.set(`scanner_model_${tenantId}`, jsonStr);
+            logger.warn("Alert:", "Modelo salvo localmente! (Visitante no mesmo navegador poderá usar)");
         } catch (e) {
-            console.error(e);
-            alert("Erro ao salvar: modelo muito grande para localStorage. Em produção usaríamos IndexedDB ou upload.");
+            logger.error(e);
+            logger.warn("Alert:", "Erro ao salvar: modelo muito grande para localStorage. Em produção usaríamos IndexedDB ou upload.");
         }
     };
 

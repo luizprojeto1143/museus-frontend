@@ -44,7 +44,7 @@ export const SchedulingPage: React.FC = () => {
             ]);
             setBookings(bookingsRes.data);
             setInPersonServices(servicesRes.data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             logger.error("Failed to fetch data", error);
         } finally {
             setInitialLoading(false);

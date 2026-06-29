@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -35,7 +37,7 @@ export const ProducerEventForm: React.FC = () => {
     useEffect(() => {
         api.get("/categories", { params: { tenantId } })
             .then(res => setCategories(res.data))
-            .catch(err => console.error("Error fetching categories", err));
+            .catch(err => logger.error("Error fetching categories", err));
 
         if (id) {
             setLoading(true);
@@ -57,7 +59,7 @@ export const ProducerEventForm: React.FC = () => {
                     });
                 })
                 .catch(err => {
-                    console.error(err);
+                    logger.error(err);
                     addToast(t("producer.producerevent.loadError", "Erro ao carregar evento"), "error");
                 })
                 .finally(() => setLoading(false));
@@ -92,7 +94,7 @@ export const ProducerEventForm: React.FC = () => {
             addToast(t("producer.producerevent.saveSuccess", "Evento salvo com sucesso!"), "success");
             navigate("/producer/events");
         } catch (error) {
-            console.error("Error saving event", error);
+            logger.error("Error saving event", error);
             addToast(t("producer.producerevent.saveError", "Erro ao salvar evento. Verifique os dados."), "error");
         } finally {
             setSaving(false);

@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Calendar, MapPin, Clock, Users, ExternalLink } from "lucide-react";
@@ -20,7 +22,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
             const res = await api.get(`/events?tenantId=${tenantId}&limit=50`);
             const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
             setEvents(data);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -82,7 +84,7 @@ export const AdminMunicipalCalendar: React.FC = () => {
                         <div key={day}>
                             <h3 className="text-sm font-bold text-amber-500 uppercase tracking-wider mb-3">{day}</h3>
                             <div style={{ display: "grid", gap: "0.5rem" }}>
-                                {dayEvents.map((e: any) => (
+                                {dayEvents.map((e: unknown) => (
                                     <div key={e.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "all 0.2s" }}>
                                         <div className="w-14 text-center shrink-0">
                                             <p className="text-lg font-black text-white">{new Date(e.startDate).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</p>

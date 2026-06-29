@@ -27,7 +27,7 @@ type TrailDetailData = {
 export const TrailDetail: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const { id, citySlug, equipmentSlug } = useParams<{ id: string; citySlug: string; equipmentSlug: string }>();
   const { isGuest } = useAuth();
   const { playTrack, currentTrack } = useAudio();
 
@@ -49,7 +49,7 @@ export const TrailDetail: React.FC = () => {
     api.get(`/trails/${id}`)
       .then((res) => {
         const item = res.data;
-        const works = Array.isArray(item.works) ? item.works.map((tw: any) => ({
+        const works = Array.isArray(item.works) ? item.works.map((tw: unknown) => ({
           id: tw.work?.id ?? tw.id,
           title: tw.work?.title ?? tw.title ?? "Obra da trilha"
         })) : [];
@@ -79,7 +79,7 @@ export const TrailDetail: React.FC = () => {
         await api.post('/favorites', { type: "trail", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err: any) { logger.error(err); }
+    } catch (err: unknown) { logger.error(err); }
   };
 
   if (apiLoading) return (
@@ -141,7 +141,7 @@ export const TrailDetail: React.FC = () => {
                <h2 className="text-2xl font-fd text-white mb-8">Estações da Jornada</h2>
                <div className="journey-stations-grid">
                   {apiTrail.works.map((w, idx) => (
-                    <Link to={`/obras/${w.id}?trailId=${id}`} key={w.id} className="journey-station-card">
+                    <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${w.id}?trailId=${id}`} key={w.id} className="journey-station-card">
                        <div className="station-number">{idx + 1}</div>
                        <div className="station-info">
                           <span className="station-title">{w.title}</span>
@@ -180,7 +180,7 @@ export const TrailDetail: React.FC = () => {
                        coverUrl: undefined
                     });
                   }
-                  navigate(`/obras/${firstWorkId}?trailId=${id}`);
+                  navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${firstWorkId}?trailId=${id}`);
                 }
               }}
             >

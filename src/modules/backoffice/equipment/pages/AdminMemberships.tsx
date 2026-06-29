@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Crown, Users, TrendingUp, Plus, CreditCard } from "lucide-react";
@@ -11,7 +13,7 @@ import "./AdminShared.css";
 export const AdminMemberships: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<unknown>(null);
     const [members, setMembers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showPlanForm, setShowPlanForm] = useState(false);
@@ -25,7 +27,7 @@ export const AdminMemberships: React.FC = () => {
             ]);
             setStats(s.data);
             setMembers(m.data);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -78,7 +80,7 @@ export const AdminMemberships: React.FC = () => {
             {/* Plans */}
             {stats?.plans && stats.plans.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {stats.plans.map((p: any) => (
+                    {stats.plans.map((p: unknown) => (
                         <div key={p.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                             <Crown className="text-amber-500 mb-3" size={28} />
                             <h3 className="text-white font-bold text-lg">{p.name}</h3>
@@ -115,7 +117,7 @@ export const AdminMemberships: React.FC = () => {
                         <tr><th className="px-6 py-3">Membro</th><th className="px-6 py-3">Plano</th><th className="px-6 py-3">Status</th><th className="px-6 py-3">Desde</th></tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {members.map((m: any) => (
+                        {members.map((m: unknown) => (
                             <tr key={m.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                 <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{m.visitorName}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{m.visitorEmail}</p></td>
                                 <td className="px-6 py-3 text-gray-300 text-sm">{m.plan?.name || '—'}</td>

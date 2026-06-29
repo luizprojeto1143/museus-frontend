@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { api } from '../../../../api/client';
@@ -72,7 +74,7 @@ export const AdminScanner: React.FC = () => {
                 () => {} // Quiet failure
             );
         } catch (err) {
-            console.error("Error starting scanner", err);
+            logger.error("Error starting scanner", err);
         }
     };
 
@@ -81,7 +83,7 @@ export const AdminScanner: React.FC = () => {
             try {
                 await html5QrCode.current.stop();
             } catch (err) {
-                console.error("Error stopping scanner", err);
+                logger.error("Error stopping scanner", err);
             }
         }
     };
@@ -97,7 +99,7 @@ export const AdminScanner: React.FC = () => {
                 
                 html5QrCode.current = new Html5Qrcode("reader");
             } catch (err) {
-                console.error("Failed to get cameras", err);
+                logger.error("Failed to get cameras", err);
             }
         };
 
@@ -131,7 +133,7 @@ export const AdminScanner: React.FC = () => {
             if ('vibrate' in navigator) {
                 navigator.vibrate(100);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             setScanResult({
                 valid: false,
                 message: error.response?.data?.message || "Erro de conexão ao validar ingresso."

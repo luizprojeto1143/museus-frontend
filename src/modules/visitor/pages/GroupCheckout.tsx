@@ -19,7 +19,7 @@ export const GroupCheckout: React.FC = () => {
             await api.post("/group-tickets", { ...form, totalTickets: parseInt(form.totalTickets), tenantId });
             setSuccess(true);
             toast.success("Solicitação enviada!");
-        } catch (err: any) { toast.error("Erro ao enviar"); }
+        } catch (err: unknown) { toast.error("Erro ao enviar"); }
         finally { setLoading(false); }
     };
 

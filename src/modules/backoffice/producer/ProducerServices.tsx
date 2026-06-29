@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -47,7 +49,7 @@ export const ProducerServices: React.FC = () => {
         api.get("/providers")
             .then(res => setProviders(res.data))
             .catch(err => {
-                console.error("Error fetching providers", err);
+                logger.error("Error fetching providers", err);
                 addToast("Erro ao carregar prestadores.", "error");
             })
             .finally(() => setLoading(false));
@@ -79,7 +81,7 @@ export const ProducerServices: React.FC = () => {
                 navigate("/producer/inbox");
             }, 1000);
         } catch (error) {
-            console.error("Error creating conversation", error);
+            logger.error("Error creating conversation", error);
             addToast("Erro ao iniciar negociação via plataforma.", "error");
         }
     };

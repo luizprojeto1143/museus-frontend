@@ -7,7 +7,7 @@ export const CulturalPassport: React.FC = () => {
   const navigate = useNavigate();
 
   // Mocked state for the visitor's passport
-  const [passport, setPassport] = React.useState<any>(null);
+  const [passport, setPassport] = React.useState<unknown>(null);
   const [loading, setLoading] = React.useState(true);
   
   React.useEffect(() => {
@@ -17,7 +17,7 @@ export const CulturalPassport: React.FC = () => {
         setPassport({
           level: Math.floor(data.xp / 500) + 1,
           culturaCoins: data.xp,
-          stamps: data.stamps.map((s: any) => ({ id: s.id, name: s.work?.title || "Local Cultural", date: new Date(s.createdAt).toLocaleDateString("pt-BR"), icon: "🏛️" })),
+          stamps: data.stamps.map((s: unknown) => ({ id: s.id, name: s.work?.title || "Local Cultural", date: new Date(s.createdAt).toLocaleDateString("pt-BR"), icon: "🏛️" })),
           nextRewardAt: (Math.floor(data.xp / 500) + 1) * 500
         });
         setLoading(false);
@@ -89,7 +89,7 @@ export const CulturalPassport: React.FC = () => {
           <Star className="text-amber-500" /> Carimbos Conquistados
         </h2>
         <div className="space-y-4">
-          {passport.stamps.map((stamp: any, i: number) => (
+          {passport.stamps.map((stamp: unknown, i: number) => (
             <motion.div 
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}

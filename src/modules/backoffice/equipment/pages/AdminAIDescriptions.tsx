@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Wand2, RefreshCw, Check, Copy, Image as ImageIcon } from "lucide-react";
@@ -19,7 +21,7 @@ export const AdminAIDescriptions: React.FC = () => {
         try {
             const res = await api.get(`/works?tenantId=${tenantId}`);
             setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []));
-        } catch (error) { console.error(error); }
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -87,7 +89,7 @@ export const AdminAIDescriptions: React.FC = () => {
                     <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Selecione uma Obra</label>
                     <select value={selected || ''} onChange={e => { setSelected(e.target.value); setGenerated(''); }} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                         <option value="">Selecione...</option>
-                        {works.map((w: any) => (
+                        {works.map((w: unknown) => (
                             <option key={w.id} value={w.id}>{w.title} — {w.artist || 'Artista desconhecido'} {!w.description ? '⚠️' : '✅'}</option>
                         ))}
                     </select>
@@ -119,7 +121,7 @@ export const AdminAIDescriptions: React.FC = () => {
                 <div>
                     <h2 className="card-title">{t("admin.aidescriptions.obrasSemDescrio", `Obras sem Descrição`)}</h2>
                     <div style={{ display: "grid", gap: "0.5rem" }}>
-                        {worksWithoutDesc.slice(0, 10).map((w: any) => (
+                        {worksWithoutDesc.slice(0, 10).map((w: unknown) => (
                             <div key={w.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", borderColor: "rgba(212,175,55,0.1)", transition: "all 0.2s" }} onClick={() => { setSelected(w.id); setGenerated(''); }}>
                                 {w.imageUrl ? <img src={w.imageUrl} alt={w.title} style={{ width: "48px", height: "48px", borderRadius: "12px", objectFit: "cover", flexShrink: 0 }} /> : <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><ImageIcon size={18} style={{ color: "#475569" }} /></div>}
                                 <div style={{ flex: 1, minWidth: 0 }}>

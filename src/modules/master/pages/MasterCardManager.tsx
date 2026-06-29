@@ -82,7 +82,7 @@ export const MasterCardManager: React.FC = () => {
             ]);
             setCards(cardsRes.data || []);
             setWorks(worksRes.data.data || worksRes.data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro ao sincronizar grimório de ativos.");
         } finally {
             setLoading(false);
@@ -101,7 +101,7 @@ export const MasterCardManager: React.FC = () => {
             setShowForm(false);
             setFormData({ title: '', description: '', imageUrl: '', rarity: 'COMMON', workId: '', totalMinted: 100, xpReward: 50 });
             toast.success("Novo artefato forjado no grimório.");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha na criação do artefato.");
         }
     };
@@ -112,7 +112,7 @@ export const MasterCardManager: React.FC = () => {
             await api.delete(`/collectibles/${id}`);
             setCards(cards.filter(c => c.id !== id));
             toast.success("Artefato removido do registro histórico.");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha na remoção do ativo.");
         }
     };

@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Target, Plus, Trash2 } from "lucide-react";
@@ -19,7 +21,7 @@ export const AdminPPA: React.FC = () => {
         try {
             const res = await api.get(`/ppa?tenantId=${tenantId}&year=${year}`);
             setGoals(res.data);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar metas"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar metas"); }
         finally { setLoading(false); }
     }, [tenantId, year]);
 
@@ -94,7 +96,7 @@ export const AdminPPA: React.FC = () => {
                         <Target size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                         <p style={{ color: "#64748b" }}>Nenhuma meta definida para {year}</p>
                     </div>
-                ) : goals.map((g: any) => {
+                ) : goals.map((g: unknown) => {
                     const pct = g.targetValue > 0 ? Math.min(Math.round((g.currentValue / g.targetValue) * 100), 100) : 0;
                     const color = pct >= 100 ? 'bg-green-500' : pct >= 60 ? 'bg-amber-500' : 'bg-red-500';
                     const textColor = pct >= 100 ? 'text-green-400' : pct >= 60 ? 'text-amber-400' : 'text-red-400';

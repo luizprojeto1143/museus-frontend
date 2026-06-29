@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { 
@@ -52,7 +54,7 @@ const LegalCompliance: React.FC = () => {
             const response = await api.get("/secretary/legal-compliance");
             setData(response.data);
         } catch (err) {
-            console.error("Erro ao carregar conformidade", err);
+            logger.error("Erro ao carregar conformidade", err);
         } finally {
             setLoading(false);
         }

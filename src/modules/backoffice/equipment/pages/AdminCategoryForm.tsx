@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -43,7 +45,7 @@ export const AdminCategoryForm: React.FC = () => {
           setType(res.data.type || "WORK");
         })
         .catch(err => {
-          console.error(err);
+          logger.error(err);
           addToast("Erro ao carregar categoria", "error");
         })
         .finally(() => setLoading(false));
@@ -70,7 +72,7 @@ export const AdminCategoryForm: React.FC = () => {
       addToast(isEdit ? "Categoria atualizada com sucesso!" : "Categoria criada com sucesso!", "success");
       navigate("/admin/categorias");
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       addToast(t("common.error"), "error");
     } finally {
       setSaving(false);

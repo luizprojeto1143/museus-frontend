@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -57,7 +59,7 @@ export const AdminUploads: React.FC = () => {
       const res = await api.get(`/upload?tenantId=${tenantId}`);
       setFiles(res.data);
     } catch {
-      console.error("Erro ao carregar arquivos");
+      logger.error("Erro ao carregar arquivos");
     } finally {
       setLoading(false);
     }
@@ -72,7 +74,7 @@ export const AdminUploads: React.FC = () => {
     const validation = validateFile(file, UPLOAD_PRESETS.general);
 
     if (!validation.valid) {
-      alert(`❌ Arquivo inválido: ${validation.error}`);
+      logger.warn("Alert:", `❌ Arquivo inválido: ${validation.error}`);
       return;
     }
 
@@ -93,9 +95,9 @@ export const AdminUploads: React.FC = () => {
         headers: { "Content-Type": "multipart/form-data" }
       });
       loadFiles();
-      alert(t("admin.uploads.success"));
+      logger.warn("Alert:", t("admin.uploads.success"));
     } catch {
-      alert(t("common.error"));
+      logger.warn("Alert:", t("common.error"));
     } finally {
       setUploading(false);
     }
@@ -113,7 +115,7 @@ export const AdminUploads: React.FC = () => {
       await api.delete(`/upload/${id}`);
       loadFiles();
     } catch {
-      alert(t("common.error"));
+      logger.warn("Alert:", t("common.error"));
     }
   };
 
@@ -124,8 +126,8 @@ export const AdminUploads: React.FC = () => {
 
       await api.patch(`/upload/${id}`, { useInAi: !current });
     } catch (err) {
-      console.error(err);
-      alert("Erro ao atualizar status IA");
+      logger.error(err);
+      logger.warn("Alert:", "Erro ao atualizar status IA");
       loadFiles(); // Revert
     }
   };
@@ -215,7 +217,7 @@ export const AdminUploads: React.FC = () => {
             key={cat.id}
             variant={filter === cat.id ? "primary" : "ghost"}
             size="sm"
-            onClick={() => setFilter(cat.id as any)}
+            onClick={() => setFilter(cat.id as unknown)}
             className="rounded-xl h-12 px-6 font-bold uppercase tracking-widest text-[10px] whitespace-nowrap"
             leftIcon={cat.icon}
           >

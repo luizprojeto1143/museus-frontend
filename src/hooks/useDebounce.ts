@@ -26,7 +26,7 @@ export function useDebounce<T>(value: T, delay = 300): T {
  *   const handleSearch = useDebouncedCallback((q: string) => fetch(q), 400);
  *   <input onChange={e => handleSearch(e.target.value)} />
  */
-export function useDebouncedCallback<T extends (...args: any[]) => any>(
+export function useDebouncedCallback<T extends (...args: unknown[]) => any>(
   callback: T,
   delay = 300
 ): (...args: Parameters<T>) => void {
@@ -53,7 +53,7 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
  * Usage (form submission protection):
  *   const { call: safeSubmit, isLimited } = useRateLimit(handleSubmit, { maxCalls: 3, windowMs: 10000 });
  */
-export function useRateLimit<T extends (...args: any[]) => any>(
+export function useRateLimit<T extends (...args: unknown[]) => any>(
   fn: T,
   options: { maxCalls?: number; windowMs?: number } = {}
 ): {

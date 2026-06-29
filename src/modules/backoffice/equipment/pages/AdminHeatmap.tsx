@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, MapPin, Flame, Eye } from "lucide-react";
@@ -27,7 +29,7 @@ export const AdminHeatmap: React.FC = () => {
             const res = await api.get(`/analytics/heatmap?tenantId=${tenantId}&days=${days}`);
             setData(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar heatmap");
         } finally {
             setLoading(false);

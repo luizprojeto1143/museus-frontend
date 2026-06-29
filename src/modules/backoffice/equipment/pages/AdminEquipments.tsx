@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -34,7 +36,7 @@ export const AdminEquipments: React.FC = () => {
                 setEquipamentos(res.data);
             })
             .catch(err => {
-                console.error("Erro ao carregar equipamentos", err);
+                logger.error("Erro ao carregar equipamentos", err);
                 setEquipamentos([]);
             })
             .finally(() => setLoading(false));

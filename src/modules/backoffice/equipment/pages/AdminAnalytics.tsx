@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -71,7 +73,7 @@ export const AdminAnalytics: React.FC = () => {
       const res = await api.get(`/analytics/advanced/${tenantId}?range=${dateRange}`);
       setData(res.data);
     } catch (err) {
-      console.error("Erro ao carregar analytics", err);
+      logger.error("Erro ao carregar analytics", err);
       toast.error("Erro ao carregar dados analíticos");
     } finally {
       setLoading(false);
@@ -118,7 +120,7 @@ export const AdminAnalytics: React.FC = () => {
       link.remove();
       toast.success("Relatório PDF gerado!", { id: 'pdf-export' });
     } catch (error) {
-      console.error("Erro ao baixar PDF", error);
+      logger.error("Erro ao baixar PDF", error);
       toast.error("Erro ao gerar PDF", { id: 'pdf-export' });
     }
   };

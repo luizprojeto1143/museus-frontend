@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
@@ -30,7 +32,7 @@ export const ProducerEvents: React.FC = () => {
                 const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
                 setEvents(data);
             })
-            .catch(err => console.error("Error fetching events", err))
+            .catch(err => logger.error("Error fetching events", err))
             .finally(() => setLoading(false));
     }, [tenantId]);
 

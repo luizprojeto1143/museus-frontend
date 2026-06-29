@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, TrendingDown, TrendingUp, AlertTriangle, Star, Lightbulb } from "lucide-react";
@@ -33,7 +35,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
             const res = await api.get(`/sentiment/report?tenantId=${tenantId}`);
             setReport(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar análise");
         } finally {
             setLoading(false);

@@ -65,7 +65,7 @@ export const TenantsList: React.FC = () => {
             const res = await api.get("/tenants");
             const data = Array.isArray(res.data) ? res.data : [];
             setTenants(data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro na sincronização de instâncias.");
         } finally {
             setLoading(false);
@@ -92,7 +92,7 @@ export const TenantsList: React.FC = () => {
             await api.delete(`/tenants/${id}?hard=true&confirm=${tenant.slug}`);
             setTenants(prev => prev.filter(x => x.id !== id));
             toast.success(`Instância ${tenant.slug} eliminada.`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha no protocolo de exclusão.");
         }
     };
@@ -103,7 +103,7 @@ export const TenantsList: React.FC = () => {
             await api.delete("/tenants/utils/demo");
             fetchData();
             toast.success("Ambiente demo purgado.");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha na limpeza de infraestrutura.");
         }
     };

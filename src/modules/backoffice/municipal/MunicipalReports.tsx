@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -36,8 +38,8 @@ export const MunicipalReports: React.FC = () => {
     const navigate = useNavigate();
     const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
-    const [summary, setSummary] = useState<any>(null);
-    const [compliance, setCompliance] = useState<any>(null);
+    const [summary, setSummary] = useState<unknown>(null);
+    const [compliance, setCompliance] = useState<unknown>(null);
 
     const fetchData = useCallback(async () => {
         try {
@@ -49,7 +51,7 @@ export const MunicipalReports: React.FC = () => {
             setSummary(summaryRes.data);
             setCompliance(complianceRes.data);
         } catch (err) {
-            console.error("Error fetching report data", err);
+            logger.error("Error fetching report data", err);
             toast.error(t("municipal.reports.error_fetch", "Erro ao consolidar indicadores executivos."));
         } finally {
             setLoading(false);
@@ -65,7 +67,7 @@ export const MunicipalReports: React.FC = () => {
             window.open(`${api.defaults.baseURL}/executive-reports/pdf?tenantId=${tenantId}`, '_blank');
             toast.success(t("municipal.reports.generating_pdf", "Gerando relatório em PDF..."));
         } catch (err) {
-            console.error("Error downloading PDF", err);
+            logger.error("Error downloading PDF", err);
             toast.error(t("municipal.reports.error_pdf", "Erro ao gerar documento."));
         }
     };
@@ -234,7 +236,7 @@ export const MunicipalReports: React.FC = () => {
                         </div>
                         
                         <div className="p-10 space-y-6">
-                            {(compliance?.matrix || []).slice(0, 3).map((item: any, idx: number) => (
+                            {(compliance?.matrix || []).slice(0, 3).map((item: unknown, idx: number) => (
                                 <motion.div 
                                     key={idx}
                                     whileHover={{ x: 5 }}

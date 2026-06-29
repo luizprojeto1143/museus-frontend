@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Trophy, Medal, Star, TrendingUp } from "lucide-react";
@@ -18,7 +20,7 @@ export const AdminMuseumBattle: React.FC = () => {
             setLoading(true);
             const res = await api.get(`/museum-battle/ranking?month=${month}`);
             setRanking(res.data.ranking || []);
-        } catch (error) { console.error(error); }
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [month]);
 
@@ -67,7 +69,7 @@ export const AdminMuseumBattle: React.FC = () => {
                     </div>
                 ) : (
                     <div className="divide-y divide-white/5">
-                        {ranking.map((r: any) => {
+                        {ranking.map((r: unknown) => {
                             const isMe = r.tenantId === tenantId;
                             return (
                                 <div key={r.tenantId} className={`px-6 py-4 flex items-center gap-4 ${isMe ? 'bg-amber-500/5' : 'hover:bg-zinc-900/40 border border-gold/20/5'} transition-colors`}>

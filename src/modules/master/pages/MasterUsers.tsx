@@ -67,7 +67,7 @@ export const MasterUsers: React.FC = () => {
             setLoading(true);
             const res = await api.get("/users");
             setUsers(res.data || []);
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Erro ao sincronizar identidades globais.");
         } finally {
             setLoading(false);

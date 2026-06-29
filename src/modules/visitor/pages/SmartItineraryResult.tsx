@@ -1,4 +1,6 @@
 import { logger } from "@/utils/logger";
+import { storage } from "@/utils/storage";
+
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +28,7 @@ export const SmartItineraryResult: React.FC = () => {
 
     useEffect(() => {
         const generate = async () => {
-            const preferences = JSON.parse(localStorage.getItem("itinerary_preferences") || "{}");
+            const preferences = storage.get("itinerary_preferences") || {};
             if (!tenantId) return;
 
             try {
@@ -35,7 +37,7 @@ export const SmartItineraryResult: React.FC = () => {
                     preferences
                 });
                 setItinerary(res.data);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 logger.error("Failed to generate itinerary", error);
                 setItinerary([]);
             } finally {

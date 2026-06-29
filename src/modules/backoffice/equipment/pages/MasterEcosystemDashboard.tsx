@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 export const MasterEcosystemDashboard: React.FC = () => {
   const { tenantSlug } = useAuth();
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<unknown>(null);
 
   useEffect(() => {
     if (tenantSlug) {
@@ -69,7 +69,7 @@ export const MasterEcosystemDashboard: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Atividade em Tempo Real</h2>
           <div className="space-y-4">
-            {stats.recentActivity.map((act: any, i: number) => (
+            {stats.recentActivity.map((act: unknown, i: number) => (
               <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50">
                 <div className="w-2 h-2 mt-2 rounded-full bg-amber-500 animate-pulse"></div>
                 <div>

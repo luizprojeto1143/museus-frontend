@@ -1,4 +1,6 @@
 import { logger } from "@/utils/logger";
+import { storage } from "@/utils/storage";
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -17,8 +19,8 @@ export const VisualScannerPage: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState(t("visitor.visualScanner.loadingModel", "Carregando modelo de IA..."));
-    const [classifier, setClassifier] = useState<any>(null);
-    const [net, setNet] = useState<any>(null);
+    const [classifier, setClassifier] = useState<unknown>(null);
+    const [net, setNet] = useState<unknown>(null);
     const [scanning, setScanning] = useState(false);
     const [match, setMatch] = useState<{ label: string; conf: number } | null>(null);
 
@@ -53,7 +55,7 @@ export const VisualScannerPage: React.FC = () => {
                     setStatus(t("visitor.visualScanner.loadingWorks", "Carregando modelo treinado..."));
                 }
 
-                const savedModel = localStorage.getItem(`scanner_model_${tenantId}`);
+                const savedModel = storage.get(`scanner_model_${tenantId}`);
                 if (savedModel) {
                     try {
                         const datasetObj = JSON.parse(savedModel);
@@ -66,7 +68,7 @@ export const VisualScannerPage: React.FC = () => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
                         loadedClassifier.setClassifierDataset(dataset);
-                    } catch (e: any) {
+                    } catch (e: unknown) {
                         logger.error("Erro ao carregar modelo", e);
                     }
                 } else {
@@ -78,7 +80,7 @@ export const VisualScannerPage: React.FC = () => {
                     setStatus("");
                 }
 
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error("Error initializing scanner:", err);
                 if (isMounted) {
                     setStatus(t("common.error", "Erro ao inicializar scanner"));
@@ -102,7 +104,7 @@ export const VisualScannerPage: React.FC = () => {
                 videoRef.current.play();
                 setScanning(true);
                 requestAnimationFrame(scanLoop);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 logger.error("Error accessing camera:", err);
                 addToast(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"), "error");
             }
@@ -136,7 +138,7 @@ export const VisualScannerPage: React.FC = () => {
                     setMatch(null);
                 }
                 activation.dispose();
-            } catch (e: any) {
+            } catch (e: unknown) {
                 logger.error("Error predicting", e);
             }
         }

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -44,8 +46,8 @@ export const AdminVisitorProfile: React.FC = () => {
             api.get(`/visitors/${id}`)
                 .then(res => setVisitor(res.data))
                 .catch(err => {
-                    console.error("Erro ao carregar visitante", err);
-                    alert(t("common.errorLoad"));
+                    logger.error("Erro ao carregar visitante", err);
+                    logger.warn("Alert:", t("common.errorLoad"));
                     navigate("/admin/visitantes");
                 })
                 .finally(() => setLoading(false));

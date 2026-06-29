@@ -1,4 +1,6 @@
 import { initializeApp } from 'firebase/app';
+import { logger } from "@/utils/logger";
+
 import { getMessaging, getToken, onMessage, Messaging } from 'firebase/messaging';
 
 const firebaseConfig = {
@@ -20,8 +22,8 @@ let messaging: Messaging | null = null;
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     try {
         messaging = getMessaging(app);
-    } catch (error: any) {
-        console.warn('Firebase Messaging not supported:', error);
+    } catch (error: unknown) {
+        logger.warn('Firebase Messaging not supported:', error);
     }
 }
 
@@ -30,7 +32,7 @@ export { app, messaging };
 // Get FCM token for push notifications
 export const getFCMToken = async (): Promise<string | null> => {
     if (!messaging) {
-        console.warn('Firebase Messaging not available');
+        logger.warn('Firebase Messaging not available');
         return null;
     }
 
@@ -38,7 +40,7 @@ export const getFCMToken = async (): Promise<string | null> => {
         // Request notification permission
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
-            console.warn('Notification permission denied');
+            logger.warn('Notification permission denied');
             return null;
         }
 
@@ -48,8 +50,8 @@ export const getFCMToken = async (): Promise<string | null> => {
 
         // console.debug('FCM Token:', token);
         return token;
-    } catch (error: any) {
-        console.error('Error getting FCM token:', error);
+    } catch (error: unknown) {
+        logger.error('Error getting FCM token:', error);
         return null;
     }
 };

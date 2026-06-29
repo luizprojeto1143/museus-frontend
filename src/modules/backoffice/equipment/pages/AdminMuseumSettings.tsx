@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -134,7 +136,7 @@ export const AdminMuseumSettings: React.FC = () => {
       const res = await api.get("/floor-plans", { params: { tenantId } });
       setFloorPlans(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("Erro ao carregar plantas", err);
+      logger.error("Erro ao carregar plantas", err);
     }
   }, [tenantId]);
 
@@ -143,7 +145,7 @@ export const AdminMuseumSettings: React.FC = () => {
       const res = await api.get(`/tenants/${tenantId}/settings`);
       if (res.data) setSettings(res.data);
     } catch {
-      console.error("Erro ao carregar configurações");
+      logger.error("Erro ao carregar configurações");
     } finally {
       setLoading(false);
     }

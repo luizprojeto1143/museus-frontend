@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { logger } from "@/utils/logger";
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Star, MapPin, Play, CheckCircle, CreditCard } from 'lucide-react';
@@ -9,10 +11,10 @@ export const ProviderDetail: React.FC = () => {
   const { providerId } = useParams<{ providerId: string }>();
   const [activeTab, setActiveTab] = useState<'PRODUCTS' | 'REVIEWS'>('PRODUCTS');
   const [showCheckout, setShowCheckout] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<unknown>(null);
 
   // Mocked data for the provider
-  const [provider, setProvider] = useState<any>(null);
+  const [provider, setProvider] = useState<unknown>(null);
 
   const [products, setProducts] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -34,7 +36,7 @@ export const ProviderDetail: React.FC = () => {
 
   if (isLoading || !provider) return <div className="min-h-screen bg-[#121212] text-white p-6 pb-24">Carregando Prestador...</div>;
 
-  const handleBuy = (product: any) => {
+  const handleBuy = (product: unknown) => {
     setSelectedProduct(product);
     setShowCheckout(true);
   };
@@ -157,7 +159,7 @@ export const ProviderDetail: React.FC = () => {
 
               <button 
                 onClick={() => {
-                  alert('Pagamento via Stripe processado com sucesso! Split automático realizado.');
+                  logger.warn("Alert:", 'Pagamento via Stripe processado com sucesso! Split automático realizado.');
                   setShowCheckout(false);
                 }}
                 className="w-full bg-[#635BFF] hover:bg-[#4B44E6] text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition"

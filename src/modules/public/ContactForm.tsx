@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState } from "react";
 import { Mail, Send, CheckCircle, AlertCircle } from "lucide-react";
 import { api } from "@/api/client";
@@ -24,8 +26,8 @@ export const ContactForm: React.FC = () => {
             setName("");
             setEmail("");
             setMessage("");
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             setStatus("error");
         }
     };

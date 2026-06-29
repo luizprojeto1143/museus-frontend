@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import {
     MessageSquare,
     ArrowUpRight,
@@ -33,7 +35,7 @@ import { toast } from "react-hot-toast";
 export const ProviderDashboard: React.FC = () => {
     const { name } = useAuth();
     const navigate = useNavigate();
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<unknown>(null);
     const [activities, setActivities] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [onboardingLoading, setOnboardingLoading] = useState(false);
@@ -48,7 +50,7 @@ export const ProviderDashboard: React.FC = () => {
             setStats(statsRes.data);
             setActivities(activitiesRes.data.slice(0, 5));
         } catch (err) {
-            console.error("Error fetching provider dashboard data", err);
+            logger.error("Error fetching provider dashboard data", err);
             toast.error("Erro ao sincronizar dados do painel.");
         } finally {
             setLoading(false);
@@ -65,7 +67,7 @@ export const ProviderDashboard: React.FC = () => {
             const { data } = await api.get("/stripe/onboarding-link");
             window.location.href = data.url;
         } catch (err) {
-            console.error("Error generating onboarding link", err);
+            logger.error("Error generating onboarding link", err);
             toast.error("Erro ao conectar com o gateway de pagamento.");
         } finally {
             setOnboardingLoading(false);
@@ -77,7 +79,7 @@ export const ProviderDashboard: React.FC = () => {
             const { data } = await api.get("/stripe/dashboard-link");
             window.open(data.url, "_blank");
         } catch (err) {
-            console.error("Error generating dashboard link", err);
+            logger.error("Error generating dashboard link", err);
             toast.error("Não foi possível abrir o painel financeiro.");
         }
     };

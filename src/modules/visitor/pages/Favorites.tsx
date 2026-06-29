@@ -35,7 +35,7 @@ export const Favorites: React.FC = () => {
     try {
       await api.delete(`/favorites/${type}/${itemId}`);
       setFavorites(prev => prev.filter(f => f.id !== itemId));
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error("Erro ao remover favorito", err);
     }
   };

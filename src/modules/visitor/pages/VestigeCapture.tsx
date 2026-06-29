@@ -16,17 +16,17 @@ export const VestigeCapture: React.FC = () => {
   const { userLocation } = useGeoFencing();
   const { refreshGamification } = useGamification();
 
-  const [work, setWork] = useState<any>(null);
+  const [work, setWork] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [captureResult, setCaptureResult] = useState<any>(null);
+  const [captureResult, setCaptureResult] = useState<unknown>(null);
 
   const fetchWork = useCallback(async () => {
     try {
       const res = await api.get(`/works/${workId}`);
       setWork(res.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Não foi possível localizar este vestígio.");
     } finally {
       setLoading(false);
@@ -50,7 +50,7 @@ export const VestigeCapture: React.FC = () => {
       if (typeof refreshGamification === 'function') {
         refreshGamification();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.response?.data?.message || "Erro na captura.");
     } finally {
       setIsCapturing(false);

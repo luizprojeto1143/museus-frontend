@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { 
@@ -75,7 +77,7 @@ const AIUsageDashboard: React.FC = () => {
             setUsage(usageRes.data);
             setLimits(limitsRes.data);
         } catch (err) {
-            console.error("Erro ao carregar dados de IA", err);
+            logger.error("Erro ao carregar dados de IA", err);
         } finally {
             setLoading(false);
         }

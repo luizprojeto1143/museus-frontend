@@ -5,6 +5,10 @@ import React, {
   ReactNode
 } from "react";
 import { api, baseURL, isDemoMode } from "../../api/client";
+import { storage } from "@/utils/storage";
+
+import { logger } from "@/utils/logger";
+
 
 export type Role = "visitor" | "admin" | "master" | "producer" | "collaborator" | "theater";
 
@@ -90,7 +94,7 @@ const STORAGE_KEY = "museus_auth_v1";
 
 function readStoredAuth(): AuthState {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = storage.get(STORAGE_KEY);
     if (!raw) return EMPTY_STATE;
     const parsed = JSON.parse(raw) as Partial<StoredAuth>;
     return {
@@ -111,7 +115,7 @@ function persistAuth(state: AuthState): void {
       cityId: state.cityId,
       tenantId: state.tenantId, // Safe to keep for context routing
     };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+    storage.set(STORAGE_KEY, JSON.stringify(toStore));
   } catch {
     // Ignore storage errors (private/incognito)
   }
@@ -158,8 +162,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         userId: data.user?.id ?? null,
         hasProviderProfile: data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false,
         isGuest: false,
-        cityId: (data as any).cityId ?? (data.user as any)?.cityId ?? null,
-        permissions: (data as any).permissions ?? (data.user as any)?.permissions ?? null,
+        cityId: (data as unknown).cityId ?? (data.user as unknown)?.cityId ?? null,
+        permissions: (data as unknown).permissions ?? (data.user as unknown)?.permissions ?? null,
       };
 
       dispatch({ type: "LOGIN", payload: newState });
@@ -169,7 +173,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { role: newState.role!, tenantType: newState.tenantType, hasProviderProfile: newState.hasProviderProfile };
     } catch (err: unknown) {
-      const message = err instanceof Error ? (err as any).response?.data?.message || err.message : "Erro de conexão";
+      const message = err instanceof Error ? (err as unknown).response?.data?.message || err.message : "Erro de conexão";
       throw new Error(message);
     }
   } else {
@@ -203,13 +207,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       await api.post("/auth/logout");
     } catch (e: unknown) {
-      console.error("Erro ao notificar logout", e);
+      logger.error("Erro ao notificar logout", e);
     }
 
     dispatch({ type: "LOGOUT" });
-    window.localStorage.removeItem(STORAGE_KEY);
-    window.localStorage.removeItem("museus_access_token");
-    window.localStorage.removeItem("museus_refresh_token");
+    storage.remove(STORAGE_KEY);
+    storage.remove("museus_access_token");
+    storage.remove("museus_refresh_token");
 
   };
 
@@ -281,13 +285,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       } catch (e: unknown) {
         // Not authenticated or error, clear storage
-        if ((e as any).response?.status !== 401) {
-          console.log("Session restore failed, treating as guest/logged out.");
+        if ((e as unknown).response?.status !== 401) {
+          logger.info("Session restore failed, treating as guest/logged out.");
         }
         dispatch({ type: "LOGOUT" });
-        window.localStorage.removeItem(STORAGE_KEY);
-        window.localStorage.removeItem("museus_access_token");
-        window.localStorage.removeItem("museus_refresh_token");
+        storage.remove(STORAGE_KEY);
+        storage.remove("museus_access_token");
+        storage.remove("museus_refresh_token");
       } finally {
         setIsRestoring(false);
       }

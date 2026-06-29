@@ -210,12 +210,12 @@ export const VisitorHub: React.FC = () => {
             <span>Passaporte</span>
           </button>
           <button
-            id="hub-btn-agenda"
+            id="hub-btn-perfil"
             className="hub-action-btn"
-            onClick={() => navigate("/agenda")}
+            onClick={() => navigate("/perfil")}
           >
-            <Calendar size={22} />
-            <span>Agenda</span>
+            <Compass size={22} />
+            <span>Meu Perfil</span>
           </button>
         </motion.section>
 
@@ -254,9 +254,9 @@ export const VisitorHub: React.FC = () => {
           ) : filteredCities.length === 0 ? (
             <div className="hub-empty-state">
               <MapPin size={48} />
-              <p>Nenhuma cidade encontrada</p>
-              <button onClick={() => navigate("/cidades")} className="hub-empty-cta">
-                Indicar minha cidade
+              <p>Nenhuma cidade encontrada.</p>
+              <button onClick={() => navigate("/cidades?indicar=true")} className="hub-empty-cta">
+                Indicar uma cidade
               </button>
             </div>
           ) : (

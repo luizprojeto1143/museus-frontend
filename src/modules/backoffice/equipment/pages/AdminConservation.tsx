@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Wrench, Plus, ArrowLeftRight, AlertTriangle, CheckCircle } from "lucide-react";
@@ -29,7 +31,7 @@ export const AdminConservation: React.FC = () => {
             setRecords(r.data);
             setLoans(l.data);
             setWorks(Array.isArray(w.data) ? w.data : (w.data.data || []));
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -77,7 +79,7 @@ export const AdminConservation: React.FC = () => {
                             <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione...</option>
-                                {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div>
@@ -104,7 +106,7 @@ export const AdminConservation: React.FC = () => {
 
             {tab === 'conservation' && (
                 <div style={{ display: "grid", gap: "0.75rem" }}>
-                    {records.map((r: any) => {
+                    {records.map((r: unknown) => {
                         const work = works.find(w => w.id === r.workId);
                         return (
                             <div key={r.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "1rem" }}>
@@ -136,7 +138,7 @@ export const AdminConservation: React.FC = () => {
                             <ArrowLeftRight size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                             <p style={{ color: "#64748b" }}>{t("admin.conservation.nenhumEmprstimoRegistrado", `Nenhum empréstimo registrado`)}</p>
                         </div>
-                    ) : loans.map((l: any) => {
+                    ) : loans.map((l: unknown) => {
                         const work = works.find(w => w.id === l.workId);
                         const isOverdue = l.expectedReturn && new Date(l.expectedReturn) < new Date() && l.status === 'ACTIVE';
                         return (

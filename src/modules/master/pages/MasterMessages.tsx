@@ -61,7 +61,7 @@ export const MasterMessages: React.FC = () => {
             setLoading(true);
             const res = await api.get("/contact");
             setMessages(res.data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro ao sincronizar terminal de mensagens.");
         } finally {
             setLoading(false);
@@ -75,9 +75,9 @@ export const MasterMessages: React.FC = () => {
     const updateStatus = async (id: string, newStatus: string) => {
         try {
             await api.patch(`/contact/${id}`, { status: newStatus });
-            setMessages(prev => prev.map(m => m.id === id ? { ...m, status: newStatus as any } : m));
+            setMessages(prev => prev.map(m => m.id === id ? { ...m, status: newStatus as unknown } : m));
             toast.success(`Protocolo: Mensagem ${newStatus === 'ARCHIVED' ? 'arquivada' : 'processada'}.`);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha no protocolo de atualização de status.");
         }
     };
@@ -142,7 +142,7 @@ export const MasterMessages: React.FC = () => {
                     ].map(f => (
                         <button
                             key={f.id}
-                            onClick={() => setFilter(f.id as any)}
+                            onClick={() => setFilter(f.id as unknown)}
                             className={`px-10 py-5 rounded-[22px] text-[10px] font-black uppercase tracking-[0.2em] italic transition-all duration-500 shadow-lg flex items-center gap-4 ${filter === f.id ? 'bg-blue-600 text-white shadow-blue-600/20' : 'bg-white/5 text-slate-500 hover:bg-white/10 hover:text-white border border-white/5'}`}
                         >
                             {f.label} <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black ${filter === f.id ? 'bg-white/20 text-white' : 'bg-white/5 text-slate-600'}`}>{f.count}</span>

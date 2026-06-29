@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
@@ -13,7 +15,7 @@ export const TotemEventDetails: React.FC = () => {
     const { tenantId } = useAuth();
     const navigate = useNavigate();
 
-    const [event, setEvent] = useState<any>(null);
+    const [event, setEvent] = useState<unknown>(null);
     const [attendees, setAttendees] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("");
@@ -32,8 +34,8 @@ export const TotemEventDetails: React.FC = () => {
             ]);
             setEvent(eventRes.data);
             setAttendees(attendeesRes.data.data);
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             toast.error(t("totem.event_details.load_error", "Erro ao carregar detalhes"));
         } finally {
             setLoading(false);
@@ -48,7 +50,7 @@ export const TotemEventDetails: React.FC = () => {
             setAttendees(prev => prev.map(att =>
                 att.code === code ? { ...att, status: 'CHECKED_IN' } : att
             ));
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error(error.response?.data?.error || t("totem.event_details.checkin_error", "Erro no check-in"));
         }
     };

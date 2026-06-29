@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, UserPlus, Trash2, Save, Users, Calendar, Music } from "lucide-react";
@@ -41,7 +43,7 @@ export const AdminFamilyBuilder: React.FC = () => {
             setProfiles(p.data);
             if (p.data.length > 0) setSelectedProfileId(p.data[0].id);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
         } finally {
             setLoading(false);
         }
@@ -179,7 +181,7 @@ export const AdminFamilyBuilder: React.FC = () => {
                                         <Calendar size={14} /> Histórico Registrado
                                     </h4>
                                     <div className="space-y-2">
-                                        {selectedProfile.events?.map((e: any) => (
+                                        {selectedProfile.events?.map((e: unknown) => (
                                             <div key={e.id} className="p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl flex justify-between items-center group">
                                                 <div>
                                                     <span className="text-[10px] font-bold text-[var(--accent-primary)]">{e.year}</span>

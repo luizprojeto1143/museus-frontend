@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { logger } from "@/utils/logger";
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Zap, Clock, Wallet, Heart, ArrowRight, Loader } from 'lucide-react';
@@ -33,12 +35,12 @@ export const SmartRouteGenerator: React.FC = () => {
         budget,
         interests
       });
-      console.log("Roteiro Gerado:", response.data);
+      logger.info("Roteiro Gerado:", response.data);
       setIsGenerating(false);
       navigate(`/${tenantSlug}/roteiro/map`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsGenerating(false);
-      console.error(err);
+      logger.error(err);
     }
   };
 

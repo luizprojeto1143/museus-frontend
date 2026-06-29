@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { X, ChevronDown, ChevronUp, LogOut, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
@@ -15,6 +15,7 @@ interface GlobalMenuProps {
 export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, currentPath }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { citySlug, equipmentSlug } = useParams();
 
   React.useEffect(() => {
     if (isOpen) {
@@ -71,112 +72,96 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, current
                 <span className="item-icon">🏠</span>
                 <span className="item-label">Início</span>
               </Link>
-
-              {/* 2. EXPLORAR (Sub-menu) */}
-              <div className="menu-section-wrapper">
-                <button className={`menu-item-header ${expandedSection === 'explorar' ? 'active-header' : ''}`} onClick={() => toggleSection('explorar')}>
-                  <span className="item-icon">🔍</span>
-                  <span className="item-label">Explorar</span>
-                  {expandedSection === 'explorar' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </button>
-                <AnimatePresence>
-                  {expandedSection === 'explorar' && (
-                    <motion.div 
-                      className="menu-submenu-items"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
-                    >
-                      <Link to="/cidades" className="submenu-item" onClick={onClose}>
-                        <span>🏙️ Cidades</span>
-                      </Link>
-                      <Link to="/obras" className="submenu-item" onClick={onClose}>
-                        <span>🎨 Obras</span>
-                      </Link>
-                      <Link to="/eventos" className="submenu-item" onClick={onClose}>
-                        <span>📅 Eventos</span>
-                      </Link>
-                      <Link to="/trilhas" className="submenu-item" onClick={onClose}>
-                        <span>🗺️ Trilhas</span>
-                      </Link>
-                      <Link to="/loja" className="submenu-item" onClick={onClose}>
-                        <span>🛒 Lojas</span>
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* 3. MAPA */}
-              <Link to="/mapa" className={`menu-item ${currentPath === '/mapa' ? 'active' : ''}`} onClick={onClose}>
-                <span className="item-icon">📍</span>
-                <span className="item-label">Mapa</span>
+              
+              {/* 2. CIDADES */}
+              <Link to="/cidades" className={`menu-item ${currentPath.startsWith('/cidades') && !citySlug ? 'active' : ''}`} onClick={onClose}>
+                <span className="item-icon">🏙️</span>
+                <span className="item-label">Cidades</span>
               </Link>
 
-              {/* 4. AGENDA */}
-              <Link to="/agenda" className={`menu-item ${currentPath === '/agenda' ? 'active' : ''}`} onClick={onClose}>
-                <span className="item-icon">🎟️</span>
-                <span className="item-label">Agenda</span>
-              </Link>
+              {/* 3. CONTEXTO (CIDADE OU MUSEU) */}
+              {(citySlug || equipmentSlug) && (
+                <div className="menu-section-wrapper">
+                  <button className={`menu-item-header ${expandedSection === 'contexto' ? 'active-header' : ''}`} onClick={() => toggleSection('contexto')}>
+                    <span className="item-icon">{equipmentSlug ? '🏛️' : '📍'}</span>
+                    <span className="item-label">{equipmentSlug ? 'No Museu' : 'Na Cidade'}</span>
+                    {expandedSection === 'contexto' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </button>
+                  <AnimatePresence>
+                    {expandedSection === 'contexto' && (
+                      <motion.div 
+                        className="menu-submenu-items"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
+                      >
+                        {equipmentSlug ? (
+                          <>
+                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}`} className="submenu-item" onClick={onClose}>
+                              <span>🏛️ Início do Museu</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`} className="submenu-item" onClick={onClose}>
+                              <span>🎨 Obras</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos`} className="submenu-item" onClick={onClose}>
+                              <span>📅 Eventos</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/trilhas`} className="submenu-item" onClick={onClose}>
+                              <span>🗺️ Trilhas</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/mapa`} className="submenu-item" onClick={onClose}>
+                              <span>📍 Mapa Interno</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/scanner`} className="submenu-item" onClick={onClose}>
+                              <span>📷 Scanner</span>
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link to={`/cidades/${citySlug}`} className="submenu-item" onClick={onClose}>
+                              <span>📍 Hub da Cidade</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/mapa`} className="submenu-item" onClick={onClose}>
+                              <span>🗺️ Mapa Cultural</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/agenda`} className="submenu-item" onClick={onClose}>
+                              <span>📅 Agenda</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/roteiros`} className="submenu-item" onClick={onClose}>
+                              <span>🛤️ Roteiros</span>
+                            </Link>
+                            <Link to={`/cidades/${citySlug}/ranking`} className="submenu-item" onClick={onClose}>
+                              <span>🏆 Ranking</span>
+                            </Link>
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
 
-              {/* 5. ROTEIROS */}
-              <Link to="/roteiro" className={`menu-item ${currentPath === '/roteiro' ? 'active' : ''}`} onClick={onClose}>
-                <span className="item-icon">🗺️</span>
-                <span className="item-label">Roteiros</span>
-              </Link>
-
-              {/* 6. SCANNER */}
-              <Link to="/scanner" className={`menu-item ${currentPath.startsWith('/scanner') ? 'active' : ''}`} onClick={onClose}>
+              {/* 4. SCANNER GLOBAL */}
+              <Link to="/scanner" className={`menu-item ${currentPath === '/scanner' ? 'active' : ''}`} onClick={onClose}>
                 <span className="item-icon">📷</span>
-                <span className="item-label">Scanner</span>
+                <span className="item-label">Scanner Universal</span>
               </Link>
 
-              {/* 7. PASSAPORTE (Sub-menu) */}
-              <div className="menu-section-wrapper">
-                <button className={`menu-item-header ${expandedSection === 'passaporte' ? 'active-header' : ''}`} onClick={() => toggleSection('passaporte')}>
-                  <span className="item-icon">🎫</span>
-                  <span className="item-label">Passaporte</span>
-                  {expandedSection === 'passaporte' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </button>
-                <AnimatePresence>
-                  {expandedSection === 'passaporte' && (
-                    <motion.div 
-                      className="menu-submenu-items"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
-                    >
-                      <Link to="/passaporte" className="submenu-item" onClick={onClose}>
-                        <span>🎫 Selos</span>
-                      </Link>
-                      <Link to="/conquistas" className="submenu-item" onClick={onClose}>
-                        <span>✨ Conquistas</span>
-                      </Link>
-                      <Link to="/ranking" className="submenu-item" onClick={onClose}>
-                        <span>🏆 Ranking</span>
-                      </Link>
-                      <Link to="/meus-certificados" className="submenu-item" onClick={onClose}>
-                        <span>🏅 Certificados</span>
-                      </Link>
-                      <Link to="/desafios" className="submenu-item" onClick={onClose}>
-                        <span>🎯 Desafios</span>
-                      </Link>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* 8. INGRESSOS */}
-              <Link to="/meus-ingressos" className={`menu-item ${currentPath === '/meus-ingressos' ? 'active' : ''}`} onClick={onClose}>
+              {/* 5. PASSAPORTE GLOBAL */}
+              <Link to="/passaporte" className={`menu-item ${currentPath === '/passaporte' ? 'active' : ''}`} onClick={onClose}>
                 <span className="item-icon">🎫</span>
+                <span className="item-label">Passaporte</span>
+              </Link>
+
+              {/* 6. INGRESSOS */}
+              <Link to="/meus-ingressos" className={`menu-item ${currentPath === '/meus-ingressos' ? 'active' : ''}`} onClick={onClose}>
+                <span className="item-icon">🎟️</span>
                 <span className="item-label">Ingressos</span>
               </Link>
 
-              {/* 9. PERFIL (Sub-menu) */}
+              {/* 7. PERFIL (Sub-menu) */}
               <div className="menu-section-wrapper">
                 <button className={`menu-item-header ${expandedSection === 'perfil' ? 'active-header' : ''}`} onClick={() => toggleSection('perfil')}>
                   <span className="item-icon">👤</span>
@@ -195,12 +180,6 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, current
                     >
                       <Link to="/favoritos" className="submenu-item" onClick={onClose}>
                         <span>❤️ Favoritos</span>
-                      </Link>
-                      <Link to="/perfil" className="submenu-item" onClick={onClose}>
-                        <span>⏳ Histórico</span>
-                      </Link>
-                      <Link to="/meus-ingressos" className="submenu-item" onClick={onClose}>
-                        <span>🎫 Ingressos</span>
                       </Link>
                       <Link to="/meus-certificados" className="submenu-item" onClick={onClose}>
                         <span>🏅 Certificados</span>

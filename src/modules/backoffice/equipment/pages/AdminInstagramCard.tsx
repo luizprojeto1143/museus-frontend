@@ -1,4 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api, baseURL } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -20,7 +22,7 @@ export const AdminInstagramCard: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [works, setWorks] = useState<any[]>([]);
-    const [selectedWork, setSelectedWork] = useState<any>(null);
+    const [selectedWork, setSelectedWork] = useState<unknown>(null);
     const [template, setTemplate] = useState(templates[0]);
     const [loading, setLoading] = useState(true);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,7 +49,7 @@ export const AdminInstagramCard: React.FC = () => {
                 img.crossOrigin = "anonymous";
                 img.onload = () => resolve(img);
                 img.onerror = (e) => {
-                    console.error("Image load failed for URL:", url, e);
+                    logger.error("Image load failed for URL:", url, e);
                     reject(e);
                 };
                 const fullUrl = getFullUrl(url);
@@ -95,13 +97,13 @@ export const AdminInstagramCard: React.FC = () => {
 
         let img: HTMLImageElement | null = null;
         if (selectedWork.imageUrl) {
-            console.log("Attempting to load image from:", selectedWork.imageUrl);
+            logger.info("Attempting to load image from:", selectedWork.imageUrl);
             try {
                 img = await loadImage(selectedWork.imageUrl);
-                console.log("Image loaded successfully:", img.width, "x", img.height);
-            } catch (e) { console.error("Canvas failed to load image:", e); }
+                logger.info("Image loaded successfully:", img.width, "x", img.height);
+            } catch (e) { logger.error("Canvas failed to load image:", e); }
         } else {
-            console.log("No imageUrl present in selectedWork", selectedWork);
+            logger.info("No imageUrl present in selectedWork", selectedWork);
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -135,9 +137,9 @@ export const AdminInstagramCard: React.FC = () => {
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 24px sans-serif';
-            try { (ctx as any).letterSpacing = "4px"; } catch (e) { }
+            try { (ctx as unknown).letterSpacing = "4px"; } catch (e) { }
             ctx.fillText('MUSEU CULTURA VIVA', 80, 80);
-            try { (ctx as any).letterSpacing = "0px"; } catch (e) { }
+            try { (ctx as unknown).letterSpacing = "0px"; } catch (e) { }
         }
 
         // --- Template: dark (Cyber Neon / Floating Image) ---
@@ -151,7 +153,7 @@ export const AdminInstagramCard: React.FC = () => {
             if (img) {
                 ctx.save();
                 ctx.beginPath();
-                if ((ctx as any).roundRect) (ctx as any).roundRect(80, 80, 920, 500, 40);
+                if ((ctx as unknown).roundRect) (ctx as unknown).roundRect(80, 80, 920, 500, 40);
                 else ctx.rect(80, 80, 920, 500);
                 ctx.clip();
                 drawImageCover(img, 80, 80, 920, 500);
@@ -286,7 +288,7 @@ export const AdminInstagramCard: React.FC = () => {
                             <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={selectedWork?.id || ''} onChange={e => setSelectedWork(works.find(w => w.id === e.target.value))} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione uma obra...</option>
-                                {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
 

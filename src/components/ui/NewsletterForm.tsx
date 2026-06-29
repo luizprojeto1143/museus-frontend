@@ -35,9 +35,9 @@ export const NewsletterForm: React.FC<{ variant?: 'inline' | 'card' }> = ({
                 tenantId
             });
             setSuccess(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setError((err as any).response?.data?.message || 'Erro ao inscrever');
+            setError((err as unknown).response?.data?.message || 'Erro ao inscrever');
         } finally {
             setLoading(false);
         }

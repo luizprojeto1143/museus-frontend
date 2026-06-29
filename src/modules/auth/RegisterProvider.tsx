@@ -60,7 +60,7 @@ export const RegisterProvider: React.FC = () => {
                 
                 navigate("/provider");
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             addToast(err.response?.data?.message || t("auth.registerprovider.error", "Erro ao realizar cadastro."), "error");
         } finally {
             setLoading(false);

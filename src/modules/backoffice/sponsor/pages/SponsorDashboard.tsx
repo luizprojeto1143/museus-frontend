@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../../api/client';
 
-const Button = ({ children, className, onClick }: any) => (
+const Button = ({ children, className, onClick }: unknown) => (
   <button className={className} onClick={onClick}>{children}</button>
 );
 
@@ -11,7 +11,7 @@ export function SponsorDashboard() {
   const [sponsorships, setSponsorships] = useState<any[]>([]);
 
   useEffect(() => {
-    api.get('/sponsor-portal/my-sponsorships').then((res: any) => setSponsorships(res.data));
+    api.get('/sponsor-portal/my-sponsorships').then((res: unknown) => setSponsorships(res.data));
   }, []);
 
   return (

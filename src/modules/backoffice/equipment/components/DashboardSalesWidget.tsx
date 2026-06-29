@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from 'react';
 import { DollarSign, Ticket, Users, TrendingUp } from 'lucide-react';
 import { api } from '../../../../api/client';
@@ -16,7 +18,7 @@ export const DashboardSalesWidget: React.FC = () => {
     useEffect(() => {
         api.get('/analytics/sales-summary')
             .then(res => setStats(res.data))
-            .catch(err => console.error("Failed to load sales stats", err))
+            .catch(err => logger.error("Failed to load sales stats", err))
             .finally(() => setLoading(false));
     }, []);
 

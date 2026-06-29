@@ -329,7 +329,7 @@ export const AdminAchievementForm: React.FC = () => {
                     <Select
                       label="Tipo de Gatilho"
                       value={form.triggerType}
-                      onChange={(e) => setForm({ ...form, triggerType: e.target.value as any })}
+                      onChange={(e) => setForm({ ...form, triggerType: e.target.value as unknown })}
                     >
                       {TRIGGER_TYPES.map(item => (
                         <option key={item.value} value={item.value}>{item.label}</option>

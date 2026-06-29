@@ -6,19 +6,19 @@
 class Logger {
     private isProduction = process.env.NODE_ENV === 'production';
 
-    info(message: string, ...optionalParams: any[]) {
+    info(message: string, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
             console.log(`[INFO] ${message}`, ...optionalParams);
         }
     }
 
-    warn(message: string, ...optionalParams: any[]) {
+    warn(message: string, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
             console.warn(`[WARN] ${message}`, ...optionalParams);
         }
     }
 
-    error(message: string, ...optionalParams: any[]) {
+    error(message: string, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
             console.error(`[ERROR] ${message}`, ...optionalParams);
         } else {
@@ -27,7 +27,7 @@ class Logger {
         }
     }
 
-    debug(message: string, ...optionalParams: any[]) {
+    debug(message: string, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
             console.debug(`[DEBUG] ${message}`, ...optionalParams);
         }

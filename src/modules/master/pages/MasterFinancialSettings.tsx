@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -20,7 +22,7 @@ import { toast } from "react-hot-toast";
 export const MasterFinancialSettings: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [settings, setSettings] = useState<any>({});
+    const [settings, setSettings] = useState<unknown>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -29,8 +31,8 @@ export const MasterFinancialSettings: React.FC = () => {
             setLoading(true);
             const res = await api.get(`/tenants/${tenantId}/settings`);
             setSettings(res.data || {});
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             toast.error(t("master.financial.error_load", "Erro ao carregar configurações financeiras."));
         } finally {
             setLoading(false);
@@ -46,7 +48,7 @@ export const MasterFinancialSettings: React.FC = () => {
         try {
             await api.put(`/tenants/${tenantId}/settings`, settings);
             toast.success(t("master.financial.save_success", "Configurações financeiras salvas!"));
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error(t("master.financial.save_error", "Erro ao salvar configurações."));
         } finally {
             setSaving(false);
@@ -169,7 +171,7 @@ export const MasterFinancialSettings: React.FC = () => {
                                         try {
                                             const { data } = await api.get('/stripe/onboarding-link?type=MASTER');
                                             if (data && data.url) window.location.href = data.url;
-                                        } catch (err: any) {
+                                        } catch (err: unknown) {
                                             toast.error(t("master.financial.stripe_error", "Erro ao gerar link do Stripe"));
                                         }
                                     }}

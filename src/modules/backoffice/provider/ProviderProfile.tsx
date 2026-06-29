@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { 
     User, 
@@ -37,7 +39,7 @@ export const ProviderProfile: React.FC = () => {
     const { name: authName } = useAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [profile, setProfile] = useState<any>({
+    const [profile, setProfile] = useState<unknown>({
         id: "",
         name: "",
         email: "",
@@ -64,7 +66,7 @@ export const ProviderProfile: React.FC = () => {
                 rating: res.data.rating || 4.9
             });
         } catch (err) {
-            console.error("Error fetching provider profile", err);
+            logger.error("Error fetching provider profile", err);
             toast.error("Erro ao carregar dados do perfil.");
         } finally {
             setLoading(false);
@@ -86,7 +88,7 @@ export const ProviderProfile: React.FC = () => {
             await api.put(`/providers/${profile.id || 'me'}`, profile);
             toast.success("Portfólio atualizado com sucesso!");
         } catch (err) {
-            console.error("Error saving profile", err);
+            logger.error("Error saving profile", err);
             toast.error("Erro ao salvar alterações.");
         } finally {
             setSaving(false);
@@ -135,7 +137,7 @@ export const ProviderProfile: React.FC = () => {
                 <div className="h-64 md:h-80 rounded-[48px] overflow-hidden relative group border border-white/5 shadow-2xl">
                     <div className="absolute inset-0 bg-gradient-to-t from-[#05050a] via-transparent to-transparent z-10 opacity-80" />
                     <img 
-                        src={profile.bannerUrl || "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2000&auto=format&fit=crop"} 
+                        src={profile.bannerUrl || "/placeholder-image.jpg"} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                         alt="Banner"
                     />

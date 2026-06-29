@@ -62,7 +62,7 @@ type EventDetailType = {
 
 export const EventDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { id } = useParams<{ id: string }>();
+  const { id, citySlug, equipmentSlug } = useParams<{ id: string; citySlug: string; equipmentSlug: string }>();
   const navigate = useNavigate();
   const { addToast } = useToast();
   const { isGuest } = useAuth();
@@ -133,7 +133,7 @@ export const EventDetail: React.FC = () => {
         await api.post('/favorites', { type: 'event', itemId: id });
         setIsFavorite(true);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error("Erro ao favoritar", err);
     }
   };
@@ -158,7 +158,7 @@ export const EventDetail: React.FC = () => {
         addToast("Inscrição realizada com sucesso!", "success");
         fetchEventData();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error("Registration failed", err);
       addToast(t("common.error", "Erro ao realizar inscrição"), "error");
     } finally {
@@ -175,7 +175,7 @@ export const EventDetail: React.FC = () => {
   if (!event) return (
     <div className="work-error p-20 text-center">
       <h2 className="text-2xl font-fd text-gold-hi mb-6">{t("visitor.eventdetail.not_found", "Espetáculo não encontrado")}</h2>
-      <button onClick={() => navigate('/eventos')} className="gallery-cta">
+      <button onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos`)} className="gallery-cta">
         {t("visitor.eventdetail.back_to_agenda", "Voltar para Agenda")}
       </button>
     </div>
@@ -193,7 +193,7 @@ export const EventDetail: React.FC = () => {
     >
       <header className="event-hero-premium">
         <img
-          src={event.coverImageUrl || "https://images.unsplash.com/photo-1540575467063-178a50c2df87"}
+          src={event.coverImageUrl || "/placeholder-image.jpg"}
           className="event-hero-img-premium"
           alt={event.title}
         />

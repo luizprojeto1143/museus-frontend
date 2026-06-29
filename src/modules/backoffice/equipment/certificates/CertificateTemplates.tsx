@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/client';
 import { Plus, Edit, Trash, FileText } from 'lucide-react';
@@ -19,7 +21,7 @@ export const CertificateTemplates: React.FC = () => {
             const res = await api.get('/certificate-templates');
             setTemplates(res.data);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }, []);
 
@@ -34,7 +36,7 @@ export const CertificateTemplates: React.FC = () => {
             await api.delete(`/certificate-templates/${id}`);
             loadTemplates(); // Reload
         } catch {
-            alert('Erro ao excluir');
+            logger.warn("Alert:", 'Erro ao excluir');
         }
     };
 

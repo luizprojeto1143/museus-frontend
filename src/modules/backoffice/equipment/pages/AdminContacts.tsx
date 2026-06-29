@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../../api/client";
+import { logger } from "@/utils/logger";
+
 import { Loader2, Mail, Eye, Archive, MessageSquare, User, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
@@ -25,7 +27,7 @@ export const AdminContacts: React.FC = () => {
             const res = await api.get("/contact");
             setMessages(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar mensagens");
         } finally {
             setLoading(false);

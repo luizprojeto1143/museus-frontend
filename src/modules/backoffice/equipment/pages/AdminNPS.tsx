@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, ThumbsUp, ThumbsDown, Minus, TrendingUp, MessageCircle } from "lucide-react";
@@ -32,7 +34,7 @@ export const AdminNPS: React.FC = () => {
             const res = await api.get(`/nps/report?tenantId=${tenantId}&months=${months}`);
             setReport(res.data);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar NPS");
         } finally {
             setLoading(false);

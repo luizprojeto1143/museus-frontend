@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { ArrowRight, Search, SlidersHorizontal } from "lucide-react";
@@ -13,6 +13,7 @@ export const WorksList: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const { data: works = [], isLoading: loading } = useWorks();
+  const { citySlug, equipmentSlug } = useParams<{ citySlug: string; equipmentSlug: string }>();
 
   const [filter, setFilter] = React.useState("all");
 
@@ -38,11 +39,11 @@ export const WorksList: React.FC = () => {
 
   const filteredWorks = filter === "all" 
     ? works 
-    : works.filter((w: any) => {
+    : works.filter((w: unknown) => {
         const catName = typeof w.category === 'object' ? w.category?.name : w.category;
         return catName?.toLowerCase() === filter.toLowerCase();
       });
-  const categories = ["all", ...new Set(works.map((w: any) => typeof w.category === 'object' ? w.category?.name : w.category).filter(Boolean))];
+  const categories = ["all", ...new Set(works.map((w: unknown) => typeof w.category === 'object' ? w.category?.name : w.category).filter(Boolean))];
 
   return (
     <motion.div 
@@ -60,7 +61,7 @@ export const WorksList: React.FC = () => {
         
         <div className="workslist-controls">
           <div className="workslist-filter-pill">
-            {categories.map((cat: any) => (
+            {categories.map((cat: unknown) => (
               <button 
                 key={cat}
                 onClick={() => setFilter(cat)}
@@ -88,7 +89,7 @@ export const WorksList: React.FC = () => {
       ) : (
         <div className="workslist-grid-premium">
           <AnimatePresence mode="popLayout">
-            {filteredWorks.map((work: any) => (
+            {filteredWorks.map((work: unknown) => (
               <motion.div
                 key={work.id}
                 layout
@@ -97,7 +98,7 @@ export const WorksList: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
               >
-                <Link to={`/obras/${work.id}`} className="work-card-premium">
+                <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${work.id}`} className="work-card-premium">
                   <div className="work-visual-premium">
                     <img
                       src={getFullUrl(work.imageUrl)}

@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, DollarSign, Plus, ExternalLink, Image as ImageIcon } from "lucide-react";
@@ -20,14 +22,14 @@ export const AdminSponsorships: React.FC = () => {
         try {
             const res = await api.get(`/works?tenantId=${tenantId}`);
             setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []));
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
     // Filter works that have sponsorship data
-    const sponsoredWorks = works.filter((w: any) => w.sponsorships && w.sponsorships.length > 0);
+    const sponsoredWorks = works.filter((w: unknown) => w.sponsorships && w.sponsorships.length > 0);
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
@@ -66,7 +68,7 @@ export const AdminSponsorships: React.FC = () => {
                             <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione...</option>
-                                {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome do Patrocinador</label><input value={form.sponsorName} onChange={e => setForm({ ...form, sponsorName: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
@@ -83,7 +85,7 @@ export const AdminSponsorships: React.FC = () => {
 
             {/* Works list with sponsorship status */}
             <div style={{ display: "grid", gap: "0.75rem" }}>
-                {works.slice(0, 20).map((w: any) => (
+                {works.slice(0, 20).map((w: unknown) => (
                     <div key={w.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
                         {w.imageUrl ? (
                             <img src={w.imageUrl} alt={w.title} className="w-14 h-14 rounded-xl object-cover shrink-0" />

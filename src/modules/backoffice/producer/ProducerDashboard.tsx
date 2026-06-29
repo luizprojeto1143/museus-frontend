@@ -1,4 +1,6 @@
 import React from "react";
+import { logger } from "@/utils/logger";
+
 import { DollarSign, Ticket, Calendar, TrendingUp, Plus, ExternalLink, BarChart3, AlertCircle, Briefcase, Rocket, Sparkles, ListChecks, ArrowRight, Wand2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -47,11 +49,11 @@ export const ProducerDashboard: React.FC = () => {
                 const raised = salesRes.data.raisedAmount || 0;
 
                 // Notices (Recent & Active)
-                const notices = (noticesRes.data.data ? noticesRes.data.data : noticesRes.data) as any[];
+                const notices = (noticesRes.data.data ? noticesRes.data.data : noticesRes.data) as unknown[];
                 setOpenNotices(notices.filter(n => new Date(n.inscriptionEnd) >= new Date()).slice(0, 3));
 
                 // Projects Summary
-                const projects = (projectsRes.data.data ? projectsRes.data.data : projectsRes.data) as any[];
+                const projects = (projectsRes.data.data ? projectsRes.data.data : projectsRes.data) as unknown[];
                 setProjectSummary({
                     drafts: projects.filter(p => p.status === 'DRAFT').length,
                     submitted: projects.filter(p => p.status === 'SUBMITTED' || p.status === 'UNDER_REVIEW').length,
@@ -59,7 +61,7 @@ export const ProducerDashboard: React.FC = () => {
                 });
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const allEvents = (eventsRes.data.data ? eventsRes.data.data : eventsRes.data) as any[];
+                const allEvents = (eventsRes.data.data ? eventsRes.data.data : eventsRes.data) as unknown[];
 
                 const activeCount = allEvents.filter(e => e.status !== 'INACTIVE').length;
 
@@ -68,7 +70,7 @@ export const ProducerDashboard: React.FC = () => {
                     .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
                     .slice(0, 3);
 
-                const upcoming = await Promise.all(upcomingRaw.map(async (e: any) => {
+                const upcoming = await Promise.all(upcomingRaw.map(async (e: unknown) => {
                     try {
                         const reportRes = await api.get(`/events/${e.id}/report`);
                         return {
@@ -101,7 +103,7 @@ export const ProducerDashboard: React.FC = () => {
                 });
                 setNextEvents(upcoming);
             } catch (err) {
-                console.error("Error fetching producer dashboard", err);
+                logger.error("Error fetching producer dashboard", err);
             } finally {
                 setLoading(false);
             }

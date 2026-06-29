@@ -77,7 +77,7 @@ export const MasterSystemHealth: React.FC = () => {
             const res = await api.get('/health');
             setHealth(res.data);
             setLastUpdate(new Date());
-        } catch (error: any) {
+        } catch (error: unknown) {
             setHealth({
                 status: 'unhealthy',
                 timestamp: new Date().toISOString(),

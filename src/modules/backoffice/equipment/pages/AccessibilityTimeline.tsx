@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { 
@@ -73,7 +75,7 @@ const AccessibilityTimeline: React.FC = () => {
             const response = await api.get("/secretary/accessibility-timeline");
             setTimeline(response.data);
         } catch (err) {
-            console.error("Erro ao carregar linha do tempo", err);
+            logger.error("Erro ao carregar linha do tempo", err);
         } finally {
             setLoading(false);
         }

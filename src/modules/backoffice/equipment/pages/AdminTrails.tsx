@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -57,7 +59,7 @@ export const AdminTrails: React.FC = () => {
     try {
       setLoading(true);
       const res = await api.get("/trails", { params: { tenantId } });
-      const apiTrails = (res.data as any[]).map((tr) => ({
+      const apiTrails = (res.data as unknown[]).map((tr) => ({
         id: tr.id,
         name: tr.title ?? tr.name ?? "Sem nome",
         worksCount: tr.workIds?.length ?? 0,
@@ -66,7 +68,7 @@ export const AdminTrails: React.FC = () => {
       }));
       setTrails(apiTrails);
     } catch (err) {
-      console.error("Failed to fetch trails", err);
+      logger.error("Failed to fetch trails", err);
       toast.error("Erro ao carregar trilhas");
     } finally {
       setLoading(false);
@@ -84,7 +86,7 @@ export const AdminTrails: React.FC = () => {
       fetchTrails();
       setShowDeleteModal(null);
     } catch (err) {
-      console.error("Failed to delete trail", err);
+      logger.error("Failed to delete trail", err);
       toast.error("Erro ao excluir trilha");
     }
   };

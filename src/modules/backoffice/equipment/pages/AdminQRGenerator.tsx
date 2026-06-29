@@ -86,7 +86,7 @@ export const AdminQRGenerator: React.FC = () => {
         note: note || undefined,
       });
       setGenerated(res.data);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err?.response?.data?.message || "Erro ao gerar QR Code. Tente novamente.");
     } finally {
       setLoading(false);

@@ -32,13 +32,13 @@ export const VisitorCollectibles: React.FC = () => {
             ]);
             setAllCards(all.data);
             setMyCards(my.data);
-        } catch (error: any) { logger.error(error); toast.error("Erro ao carregar"); }
+        } catch (error: unknown) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
-    const myCardIds = new Set(myCards.map((c: any) => c.cardId));
+    const myCardIds = new Set(myCards.map((c: unknown) => c.cardId));
     const totalCards = allCards.length;
     const ownedCount = myCards.length;
     const pct = totalCards > 0 ? Math.round((ownedCount / totalCards) * 100) : 0;
@@ -77,7 +77,7 @@ export const VisitorCollectibles: React.FC = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                {(tab === 'collection' ? myCards.map((mc: any) => ({ ...mc.card, owned: true })) : allCards.map((c: any) => ({ ...c, owned: myCardIds.has(c.id) }))).map((card: any) => {
+                {(tab === 'collection' ? myCards.map((mc: unknown) => ({ ...mc.card, owned: true })) : allCards.map((c: unknown) => ({ ...c, owned: myCardIds.has(c.id) }))).map((card: unknown) => {
                     const r = rarityConfig[card.rarity] || rarityConfig.COMMON;
                     return (
                         <div key={card.id} style={{

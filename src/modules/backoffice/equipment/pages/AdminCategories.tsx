@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -24,7 +26,7 @@ export const AdminCategories: React.FC = () => {
         setCategories(res.data);
       })
       .catch(err => {
-        console.error("Erro ao buscar categorias", err);
+        logger.error("Erro ao buscar categorias", err);
       })
       .finally(() => setLoading(false));
   }, [tenantId]);
@@ -38,7 +40,7 @@ export const AdminCategories: React.FC = () => {
       await api.delete(`/categories/${id}`);
       setCategories(categories.filter(c => c.id !== id));
     } catch {
-      alert(t("common.error"));
+      logger.warn("Alert:", t("common.error"));
     }
   };
 

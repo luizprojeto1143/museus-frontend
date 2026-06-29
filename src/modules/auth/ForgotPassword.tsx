@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
@@ -19,8 +21,8 @@ export const ForgotPassword: React.FC = () => {
     try {
       await api.post("/auth/recover-password", { email });
       setSent(true);
-    } catch (err: any) {
-      console.error(err);
+    } catch (err: unknown) {
+      logger.error(err);
       setError(t("auth.forgotpassword.error", "Não foi possível enviar o e-mail. Verifique se o endereço está correto."));
     } finally {
       setLoading(false);

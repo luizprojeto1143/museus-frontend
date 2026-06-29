@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -57,7 +59,7 @@ export const AdminProviderForm: React.FC = () => {
                     active: res.data.active ?? true
                 }))
                 .catch(err => {
-                    console.error("Erro ao carregar prestador", err);
+                    logger.error("Erro ao carregar prestador", err);
                     addToast("Não foi possível carregar os dados.", "error");
                     navigate("/admin/prestadores");
                 })
@@ -90,8 +92,8 @@ export const AdminProviderForm: React.FC = () => {
                 addToast("Prestador cadastrado com sucesso!", "success");
             }
             navigate("/admin/prestadores");
-        } catch (err: any) {
-            console.error("Erro ao salvar prestador", err);
+        } catch (err: unknown) {
+            logger.error("Erro ao salvar prestador", err);
             addToast(err.response?.data?.error || "Ocorreu um erro ao salvar.", "error");
         } finally {
             setSaving(false);
@@ -249,7 +251,7 @@ export const AdminProviderForm: React.FC = () => {
                             min="0"
                             max="5"
                             value={formData.rating}
-                            onChange={handleChange as any}
+                            onChange={handleChange as unknown}
                             placeholder="4.5"
                             leftIcon={<Star size={16} className="text-zinc-500" />}
                             className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
@@ -261,7 +263,7 @@ export const AdminProviderForm: React.FC = () => {
                             name="completedJobs"
                             min="0"
                             value={formData.completedJobs}
-                            onChange={handleChange as any}
+                            onChange={handleChange as unknown}
                             className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
                     </div>

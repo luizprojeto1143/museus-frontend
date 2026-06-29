@@ -1,4 +1,6 @@
 import { logger } from "@/utils/logger";
+import { storage } from "@/utils/storage";
+
 import { useTranslation } from "react-i18next";
 import React, { useState } from 'react';
 import { X, Minus, Plus, Calendar, CreditCard, Ticket as TicketIcon } from 'lucide-react';
@@ -55,7 +57,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
 
     const handleCheckout = async () => {
         if (!isAuthenticated) {
-            localStorage.setItem('redirect_after_login', `/eventos/${event.id}`);
+            storage.set('redirect_after_login', `/eventos/${event.id}`);
             onClose();
             navigate('/login');
             return;
@@ -79,9 +81,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
             }
 
             onSuccess();
-        } catch (e: any) {
+        } catch (e: unknown) {
             logger.error(e);
-            alert(t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
+            logger.warn("Alert:", t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
         } finally {
             setLoading(false);
         }

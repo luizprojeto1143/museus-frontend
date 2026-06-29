@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState } from "react";
 import { Bell, Send, Loader2, Smartphone, Globe, Info } from "lucide-react";
 import { api } from "../../../../api/client";
@@ -34,8 +36,8 @@ export const AdminNotifications: React.FC = () => {
             setTitle("");
             setBody("");
             setUrl("/");
-        } catch (error: any) {
-            console.error(error);
+        } catch (error: unknown) {
+            logger.error(error);
             const msg = error.response?.data?.error || "Erro ao enviar notificação";
             toast.error(msg);
         } finally {
@@ -48,7 +50,7 @@ export const AdminNotifications: React.FC = () => {
             setSending(true);
             await api.post("/notifications/test");
             toast.success("Notificação de teste enviada para seus dispositivos!");
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Erro ao enviar teste. Certifique-se de ter um dispositivo registrado.");
         } finally {
             setSending(false);

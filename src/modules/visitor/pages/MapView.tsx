@@ -45,7 +45,7 @@ export const MapView: React.FC = () => {
         nome: s.nome || s.name
       });
 
-      setPois(works.map((w: any) => ({
+      setPois(works.map((w: unknown) => ({
         id: w.id,
         title: w.title,
         lat: w.lat || w.latitude,
@@ -54,7 +54,7 @@ export const MapView: React.FC = () => {
         vestigeActive: w.vestigeActive,
         description: w.vestigeActive ? t('vestige.admin.active', 'Vestígio Ativo') : (w.room ? `${w.room} • ${w.floor || ""}` : w.artist || t('common.poi', 'Ponto de Interesse'))
       })));
-    } catch (err: any) {
+    } catch (err: unknown) {
       logger.error("Erro ao carregar dados do mapa", err);
     } finally {
       setLoading(false);

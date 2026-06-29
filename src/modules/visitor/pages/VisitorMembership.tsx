@@ -19,7 +19,7 @@ export const VisitorMembership: React.FC = () => {
         try {
             const res = await api.get(`/memberships/plans?tenantId=${tenantId}`);
             setPlans(res.data);
-        } catch (error: any) { logger.error(error); }
+        } catch (error: unknown) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -32,7 +32,7 @@ export const VisitorMembership: React.FC = () => {
             await api.post("/memberships", { planId, visitorEmail: email, visitorName: name || "Visitante", tenantId });
             toast.success("Assinatura realizada! 🎉");
             fetchPlans();
-        } catch (err: any) { toast.error("Erro ao assinar"); }
+        } catch (err: unknown) { toast.error("Erro ao assinar"); }
         finally { setSubscribing(null); }
     };
 
@@ -57,7 +57,7 @@ export const VisitorMembership: React.FC = () => {
             </div>
 
             <div style={{ display: 'grid', gap: '1.5rem' }}>
-                {plans.map((plan: any) => (
+                {plans.map((plan: unknown) => (
                     <div key={plan.id} style={{
                         background: 'rgba(30,32,38,0.9)',
                         border: '1px solid rgba(255,255,255,0.08)',

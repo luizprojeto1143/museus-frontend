@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -47,7 +49,7 @@ export const AdminEventCheckIn: React.FC = () => {
         });
 
         return () => {
-            scanner.clear().catch(e => console.error("Scanner clear error", e));
+            scanner.clear().catch(e => logger.error("Scanner clear error", e));
         };
     }, [handleCheckIn]);
 

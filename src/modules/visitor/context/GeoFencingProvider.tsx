@@ -162,7 +162,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                     ? worksRes.data
                     : (worksRes.data?.data || worksRes.data?.works || []);
 
-                worksArray.forEach((w: any) => {
+                worksArray.forEach((w: unknown) => {
                     const finalLat = w.lat ?? w.latitude;
                     const finalLng = w.lng ?? w.longitude;
 
@@ -183,7 +183,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             }
 
             setGeoPoints(points);
-        } catch (err: any) {
+        } catch (err: unknown) {
             logger.error("Failed to load geo points", err);
             setGeoPoints([]);
         }

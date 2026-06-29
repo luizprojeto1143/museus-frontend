@@ -163,7 +163,7 @@ export const AdminEventDashboard: React.FC = () => {
                             `)}</div>
                         ) : (
                             <div className="divide-y divide-white/5">
-                                {stats.recentRegistrations.map((reg: any) => (
+                                {stats.recentRegistrations.map((reg: unknown) => (
                                     <div key={reg.id} className="p-4 flex justify-between items-center hover:">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-blue-100 text-[var(--accent-primary)] flex items-center justify-center font-bold text-sm">

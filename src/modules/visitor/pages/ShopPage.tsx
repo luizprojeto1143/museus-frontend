@@ -21,7 +21,7 @@ export const ShopPage: React.FC = () => {
                 {/* Hero Banner Image */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="https://images.unsplash.com/photo-1554188248-986adbb73be4?q=80&w=2070&auto=format&fit=crop"
+                        src="/placeholder-image.jpg"
                         alt="Museum Shop Hero"
                         className="w-full h-full object-cover opacity-20 scale-110 blur-[2px]"
                     />
@@ -79,7 +79,7 @@ export const ShopPage: React.FC = () => {
                     >
                         <div className="w-80 h-96 rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-2xl relative group">
                             <img
-                                src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2070&auto=format&fit=crop"
+                                src="/placeholder-image.jpg"
                                 alt="Featured item"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             />

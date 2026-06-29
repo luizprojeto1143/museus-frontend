@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -64,7 +66,7 @@ export const AdminEvents: React.FC = () => {
       const rawData = Array.isArray(responseData) ? responseData : (responseData.data || []);
       const meta = responseData.meta || {};
 
-      const eventsData = rawData.map((e: any) => {
+      const eventsData = rawData.map((e: unknown) => {
         const d = e.startDate ? new Date(e.startDate) : null;
         return {
           id: e.id,
@@ -82,7 +84,7 @@ export const AdminEvents: React.FC = () => {
       setEvents(eventsData);
       setTotalPages(meta.totalPages || 1);
     } catch (err) {
-      console.error("Failed to fetch events", err);
+      logger.error("Failed to fetch events", err);
       toast.error("Erro ao carregar eventos");
     } finally {
       setLoading(false);

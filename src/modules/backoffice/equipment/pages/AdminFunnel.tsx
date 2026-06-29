@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Filter, Users, QrCode, CalendarCheck, ShoppingBag, RefreshCw } from "lucide-react";
@@ -23,7 +25,7 @@ export const AdminFunnel: React.FC = () => {
             setLoading(true);
             const res = await api.get(`/analytics/funnel?tenantId=${tenantId}&days=${days}`);
             setFunnel(res.data.funnel || []);
-        } catch (error) { console.error(error); toast.error("Erro ao carregar funil"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar funil"); }
         finally { setLoading(false); }
     }, [tenantId, days]);
 

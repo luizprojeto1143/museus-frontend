@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/client';
@@ -19,7 +21,7 @@ export const CertificateRuleForm: React.FC = () => {
     const [triggerType, setTriggerType] = useState('TRAIL_COMPLETED');
     const [templateId, setTemplateId] = useState('');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [conditions, setConditions] = useState<any>({});
+    const [conditions, setConditions] = useState<unknown>({});
 
     const loadData = async () => {
         try {
@@ -30,7 +32,7 @@ export const CertificateRuleForm: React.FC = () => {
             setTemplates(tplRes.data);
             setTrails(trailRes.data);
         } catch (err) {
-            console.error("Failed to load data", err);
+            logger.error("Failed to load data", err);
         }
     };
 
@@ -50,8 +52,8 @@ export const CertificateRuleForm: React.FC = () => {
             });
             navigate('/admin/certificates/rules');
         } catch (err) {
-            console.error(err);
-            alert("Erro ao salvar regra");
+            logger.error(err);
+            logger.warn("Alert:", "Erro ao salvar regra");
         }
     };
 

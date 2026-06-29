@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -53,13 +55,13 @@ export const AdminProjects: React.FC = () => {
         if (!tenantId) return;
 
         setLoading(true);
-        const params: any = { tenantId };
+        const params: unknown = { tenantId };
         if (filter) params.status = filter;
 
         api.get("/projects", { params })
             .then(res => setProjects(res.data))
             .catch(err => {
-                console.error("Erro ao carregar projetos", err);
+                logger.error("Erro ao carregar projetos", err);
                 setProjects([]);
                 addToast("Erro ao carregar projetos", "error");
             })

@@ -10,8 +10,8 @@ export const theaterApi = {
     getAnalytics: () => api.get("/theater/analytics"),
     // Cast & Crew
     getMembers: () => api.get("/theater/members"),
-    saveMember: (data: any) => api.post("/theater/members", data),
+    saveMember: (data: unknown) => api.post("/theater/members", data),
     // Cues
     getCues: (sessionId: string) => api.get(`/theater/sessions/${sessionId}/cues`),
-    saveCue: (sessionId: string, data: any) => api.post(`/theater/sessions/${sessionId}/cues`, data),
+    saveCue: (sessionId: string, data: unknown) => api.post(`/theater/sessions/${sessionId}/cues`, data),
 };

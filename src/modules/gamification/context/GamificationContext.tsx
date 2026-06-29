@@ -1,4 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from "react";
+import { storage } from "@/utils/storage";
+
+import { logger } from "@/utils/logger";
+
 import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
 import { AchievementModal } from "../components/AchievementModal";
@@ -28,12 +32,12 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     const { addToast } = useToast();
     const { isAuthenticated, email, tenantId } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [unlockedAchievement, setUnlockedAchievement] = useState<any>(null);
+    const [unlockedAchievement, setUnlockedAchievement] = useState<unknown>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     const [stats, setStats] = useState<UserStats>(() => {
         try {
-            const stored = localStorage.getItem(STORAGE_KEY);
+            const stored = storage.get(STORAGE_KEY);
             if (stored) {
                 return JSON.parse(stored);
             }
@@ -85,8 +89,8 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                     achievements: mergedAchievements,
                 };
             });
-        } catch (error: any) {
-            console.error("Error fetching gamification data", error);
+        } catch (error: unknown) {
+            logger.error("Error fetching gamification data", error);
         } finally {
             setLoading(false);
         }
@@ -105,7 +109,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     useEffect(() => {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+            storage.set(STORAGE_KEY, JSON.stringify(stats));
         } catch {
             // Ignore storage errors
         }

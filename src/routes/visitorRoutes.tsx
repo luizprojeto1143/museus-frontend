@@ -114,15 +114,41 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
                 <Route path="obras/timeline" element={vr(WorkTimeline, RequireRole)} />
                 <Route path="obras/comparar" element={vr(WorkComparator, RequireRole)} />
             </Route>
+
+            {/* Hub do Visitante — tela raiz após login */}
+            <Route path="/hub" element={vr(VisitorHub, RequireRole)} />
+            {/* Compatibilidade reversa */}
+            <Route path="/hub-cidades" element={<Navigate to="/hub" replace />} />
+            <Route path="/home" element={<Navigate to="/hub" replace />} />
+            <Route path="/select-museum" element={<Navigate to="/cidades" replace />} />
+
+            {/* Busca de cidades */}
+            <Route path="/cidades" element={vr(CitySearch, RequireRole)} />
             
-            <Route path="/home" element={vr(Home, RequireRole)} />
+            {/* Hub da Cidade e suas rotas contextuais */}
+            <Route path="/cidades/:citySlug">
+                <Route index element={vr(CityDashboard, RequireRole)} />
+                <Route path="mapa" element={vr(MapView, RequireRole)} />
+                <Route path="agenda" element={vr(CulturalAgenda, RequireRole)} />
+                <Route path="roteiros" element={vr(TrailsList, RequireRole)} />
+                <Route path="ranking" element={vr(LeaderboardPage, RequireRole)} />
+                <Route path="passaporte" element={vr(Passport, RequireRole)} />
+                {/* A rota de equipamentos seria a listagem, mas por hora podemos apontar para o hub ou criar uma */}
+            </Route>
+
+            {/* Rotas Globais do Visitante */}
+            <Route path="/scanner" element={vr(ScannerHub, RequireRole)} />
+            <Route path="/scanner/qr" element={vr(ScannerPage, RequireRole)} />
+            <Route path="/scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
+            <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
+
+            
             <Route path="/meus-ingressos" element={vr(MyTickets, RequireRole)} />
             <Route path="/favoritos" element={vr(Favorites, RequireRole)} />
             <Route path="/perfil" element={vr(VisitorProfile, RequireRole)} />
             <Route path="/chat" element={vr(ChatAI, RequireRole)} />
             <Route path="/roteiro-inteligente" element={vr(SmartItineraryWizard, RequireRole)} />
             <Route path="/roteiro-inteligente/resultado" element={vr(SmartItineraryResult, RequireRole)} />
-            <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
             <Route path="/assinatura" element={vr(VisitorMembership, RequireRole)} />
             <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
@@ -135,18 +161,10 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/rota/:routeId" element={vr(RouteMap, RequireRole)} />
             <Route path="/familia/:profileId" element={vr(FamilyTimeline, RequireRole)} />
             <Route path="/meus-certificados" element={vr(CertificateList, RequireRole)} />
-            <Route path="/wardrobe" element={vr(VisitorWardrobe, RequireRole)} />
+            <Route path="/guarda-roupa" element={vr(VisitorWardrobe, RequireRole)} />
+            <Route path="/wardrobe" element={<Navigate to="/guarda-roupa" replace />} />
             <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
-
-            {/* Hub do Visitante — tela raiz após login */}
-            <Route path="/hub" element={vr(VisitorHub, RequireRole)} />
-            {/* Compatibilidade reversa */}
-            <Route path="/hub-cidades" element={<Navigate to="/hub" replace />} />
-            {/* Busca de cidades */}
-            <Route path="/cidades" element={vr(CitySearch, RequireRole)} />
-            {/* Hub da Cidade */}
-            <Route path="/cidades/:citySlug" element={vr(CityDashboard, RequireRole)} />
         </>
     );
 }

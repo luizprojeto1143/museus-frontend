@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { 
     AlertTriangle, 
@@ -52,8 +54,8 @@ interface AuditLogEntry {
     userId: string | null;
     userEmail: string | null;
     tenantId: string;
-    oldData: any | null;
-    newData: any | null;
+    oldData: unknown | null;
+    newData: unknown | null;
     ipAddress: string | null;
     userAgent: string | null;
     createdAt: string;
@@ -79,8 +81,8 @@ export const MasterErrorMonitor: React.FC = () => {
             
             setLogs(technicalLogs);
             lastFetchRef.current = Date.now();
-        } catch (error: any) {
-            console.error('Failed to fetch technical logs:', error);
+        } catch (error: unknown) {
+            logger.error('Failed to fetch technical logs:', error);
         } finally {
             setLoading(false);
         }

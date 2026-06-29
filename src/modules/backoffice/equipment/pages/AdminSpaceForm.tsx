@@ -81,7 +81,7 @@ export const AdminSpaceForm: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const payload: any = {
+            const payload: unknown = {
                 ...formData,
                 resources: formData.resources // Backend handles serialization if needed
             };

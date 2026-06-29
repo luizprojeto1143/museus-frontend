@@ -102,7 +102,7 @@ export const MasterSkinManager: React.FC = () => {
             ]);
             setSkins(skinsRes.data || []);
             setTenants(tenantsRes.data || []);
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro ao sincronizar ateliê de identidades.");
         } finally {
             setLoading(false);
@@ -129,7 +129,7 @@ export const MasterSkinManager: React.FC = () => {
             }
             resetForms();
             loadData();
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Falha no protocolo de salvamento cosmético.");
         }
     };
@@ -146,7 +146,7 @@ export const MasterSkinManager: React.FC = () => {
             await api.delete(`/skins/${id}`);
             toast.success("Identidade removida do grimório visual.");
             loadData();
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error("Erro na remoção do ativo cosmético.");
         }
     };
@@ -285,7 +285,7 @@ export const MasterSkinManager: React.FC = () => {
                                                             const res = await api.post("/upload", formData, { headers: { "Content-Type": "multipart/form-data" } });
                                                             setSkinForm({ ...skinForm, imageUrl: res.data.url });
                                                             toast.success("Ativo carregado na malha.");
-                                                        } catch (err: any) { toast.error("Falha no upload do ativo."); }
+                                                        } catch (err: unknown) { toast.error("Falha no upload do ativo."); }
                                                     }}
                                                 />
                                             </label>

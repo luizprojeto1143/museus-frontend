@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { 
     Users, Ticket, TrendingUp, Calendar, Layout, 
     Music, Sparkles, Mic2, Tv, Map as MapIcon, 
@@ -26,8 +28,8 @@ export const TheaterDashboard: React.FC = () => {
             try {
                 const res = await theaterApi.getAnalytics();
                 setStats(res.data);
-            } catch (err: any) {
-                console.error("Error fetching theater stats", err);
+            } catch (err: unknown) {
+                logger.error("Error fetching theater stats", err);
             } finally {
                 setLoading(false);
             }
@@ -48,7 +50,7 @@ export const TheaterDashboard: React.FC = () => {
             {/* ═══ THEATER HERO ═══════════ */}
             <header className="relative p-12 rounded-[48px] overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-950 via-black to-slate-900 z-0"></div>
-                <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1503095396549-80705a61066d?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center z-0 group-hover:scale-105 transition-transform duration-1000"></div>
+                <div className="absolute inset-0 opacity-20 bg-[url('/placeholder-image.jpg')] bg-cover bg-center z-0 group-hover:scale-105 transition-transform duration-1000"></div>
                 
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
                     <div>

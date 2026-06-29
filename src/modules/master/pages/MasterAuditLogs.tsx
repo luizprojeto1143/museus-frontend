@@ -77,7 +77,7 @@ export const MasterAuditLogs: React.FC = () => {
             const res = await api.get(`/audit-logs?${params}`);
             setLogs(res.data.logs || []);
             setTotal(res.data.total || 0);
-        } catch (error: any) {
+        } catch (error: unknown) {
             toast.error("Falha na sincronização forense.");
         } finally {
             setLoading(false);

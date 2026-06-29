@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { FileText, Download, TrendingUp, DollarSign, Ticket, Users, BarChart3, PieChart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -38,7 +40,7 @@ export const ProducerReports: React.FC = () => {
                     requests: accessRes.data.requests || 0
                 });
             }
-        }).catch(err => console.error("Error fetching reports", err));
+        }).catch(err => logger.error("Error fetching reports", err));
 
     }, [tenantId]);
 

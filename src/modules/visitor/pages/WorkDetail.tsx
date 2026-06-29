@@ -1,4 +1,6 @@
 import { logger } from "@/utils/logger";
+import { storage } from "@/utils/storage";
+
 import { Work } from "../types/domain";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams, Link } from "react-router-dom";
@@ -43,11 +45,11 @@ type WorkDetailData = {
   modelUrl?: string | null;
   latitude?: number;
   longitude?: number;
-  collectibleCards?: any[];
+  collectibleCards?: unknown[];
 };
 
 export const WorkDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, citySlug, equipmentSlug } = useParams<{ id: string; citySlug: string; equipmentSlug: string }>();
   const navigate = useNavigate();
   const { tenantId, equipamentoId, email, isGuest } = useAuth();
   const { t, i18n } = useTranslation();
@@ -70,7 +72,7 @@ export const WorkDetail: React.FC = () => {
   useEffect(() => {
     if (id) {
        api.get(`/sponsor-portal/works/${id}/sponsorships`)
-         .then((res: any) => setSponsorships(res.data))
+         .then((res: unknown) => setSponsorships(res.data))
          .catch(logger.error);
     }
   }, [id]);
@@ -96,7 +98,7 @@ export const WorkDetail: React.FC = () => {
   const nextWorkId = currentIndex >= 0 && currentIndex < trailWorks.length - 1 ? trailWorks[currentIndex + 1] : null;
 
   const navigateToWork = (targetId: string) => {
-    navigate(`/obras/${targetId}?trailId=${trailId}`);
+    navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${targetId}?trailId=${trailId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -131,12 +133,12 @@ export const WorkDetail: React.FC = () => {
         visitWork(w.id);
 
         // Treasure logic
-        const clues = JSON.parse(localStorage.getItem("treasure_clues") || "[]");
-        const solved = JSON.parse(localStorage.getItem("treasure_solved") || "[]");
-        const matchedClue = clues.find((c: any) => c.isActive && c.targetWorkId === w.id && !solved.includes(c.id));
+        const clues = storage.get("treasure_clues") || [];
+        const solved = storage.get("treasure_solved") || [];
+        const matchedClue = clues.find((c: unknown) => c.isActive && c.targetWorkId === w.id && !solved.includes(c.id));
         if (matchedClue) {
           solved.push(matchedClue.id);
-          localStorage.setItem("treasure_solved", JSON.stringify(solved));
+          storage.set("treasure_solved", JSON.stringify(solved));
           addXp(matchedClue.xpReward);
           setTreasureFound({ found: true, xp: matchedClue.xpReward });
         }
@@ -156,7 +158,7 @@ export const WorkDetail: React.FC = () => {
       api.get(`/works/${id}/related?tenantId=${tenantId}&equipamentoId=${equipamentoId}`)
         .then((res) => {
           const works = Array.isArray(res.data) ? res.data : [];
-          setRelatedWorks(works.map((w: any) => ({
+          setRelatedWorks(works.map((w: unknown) => ({
              ...w,
              imageUrl: getFullUrl(w.imageUrl)
           })));
@@ -175,7 +177,7 @@ export const WorkDetail: React.FC = () => {
         await api.post('/favorites', { type: "work", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err: any) { logger.error(err); }
+    } catch (err: unknown) { logger.error(err); }
   };
 
   if (loading) return <PageLoader label="Preparando curadoria..." />;
@@ -183,7 +185,7 @@ export const WorkDetail: React.FC = () => {
   if (error || !work) return (
     <div className="work-error">
       <h1>Obra não encontrada</h1>
-      <Link to="/obras" className="back-btn">Explorar Galeria</Link>
+      <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`} className="back-btn">Explorar Galeria</Link>
     </div>
   );
 
@@ -359,7 +361,7 @@ export const WorkDetail: React.FC = () => {
                        <Sparkles size={14} className="text-[var(--accent-primary)]" />
                        <span className="sidebar-label-premium !text-[var(--accent-primary)] !mb-0">Card Colecionável</span>
                    </div>
-                   {work.collectibleCards.map((card: any) => (
+                   {work.collectibleCards.map((card: unknown) => (
                        <div key={card.id} className="mt-4 p-4 rounded-xl bg-[var(--bg-surface-hover)] border border-[var(--border-subtle)] text-center">
                            <div className="w-20 h-24 mx-auto mb-3 rounded-lg overflow-hidden border-2 border-[var(--accent-primary)]/30">
                                <img src={getFullUrl(card.imageUrl || work.imageUrl)} alt={card.title} className="w-full h-full object-cover" />
@@ -397,7 +399,7 @@ export const WorkDetail: React.FC = () => {
                   <span className="sidebar-label-premium !text-gold-500">Patrocinadores Culturais</span>
                   <div className="flex flex-col gap-3 mt-4">
                      {sponsorships.map((sponsor) => {
-                        const Wrapper: any = sponsor.sponsorUrl ? 'a' : 'div';
+                        const Wrapper: unknown = sponsor.sponsorUrl ? 'a' : 'div';
                         const wrapperProps = sponsor.sponsorUrl ? { href: sponsor.sponsorUrl, target: "_blank", rel: "noopener noreferrer" } : {};
                         return (
                            <Wrapper key={sponsor.id} {...wrapperProps} className={`flex items-center gap-3 bg-black/40 p-3 rounded-lg border border-gold-500/10 transition-colors ${sponsor.sponsorUrl ? 'hover:border-gold-500/50 cursor-pointer' : ''}`}>
@@ -427,7 +429,7 @@ export const WorkDetail: React.FC = () => {
            <span className="sidebar-label-premium">Obras de Ressonância</span>
            <div className="related-grid-premium">
               {relatedWorks.slice(0, 4).map(rw => (
-                <Link to={`/obras/${rw.id}`} key={rw.id} className="related-card-premium group">
+                <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${rw.id}`} key={rw.id} className="related-card-premium group">
                    <div className="overflow-hidden aspect-square">
                       <img src={rw.imageUrl || ''} alt={rw.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                    </div>

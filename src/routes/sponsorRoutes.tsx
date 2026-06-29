@@ -7,7 +7,7 @@ const SponsorCheckout = React.lazy(() => import('../modules/backoffice/sponsor')
 const SponsorDashboard = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorDashboard })));
 const SponsorSuccess = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorSuccess })));
 
-export const sponsorRoutes = (RequireRole: any) => (
+export const sponsorRoutes = (RequireRole: unknown) => (
   <>
     <Route path="/patrocinar" element={<SponsorLanding />} />
     <Route path="/patrocinar/obras" element={<SponsorBrowseWorks />} />

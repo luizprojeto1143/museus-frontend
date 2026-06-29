@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -69,14 +71,14 @@ export const AdminProjectForm: React.FC = () => {
         status: "DRAFT",
         noticeId: searchParams.get("noticeId") || "",
         proponentId: "",
-        proponent: null as any,
-        attachments: [] as any[],
+        proponent: null as unknown,
+        attachments: [] as unknown[],
         accessibilityPlan: {
             hasAccessibility: false,
             services: [] as string[],
             description: ""
         },
-        aiAnalysis: null as any,
+        aiAnalysis: null as unknown,
         aiAnalyzedAt: null as string | null,
         reviewNotes: "",
         humanScore: "",
@@ -143,7 +145,7 @@ export const AdminProjectForm: React.FC = () => {
         }
 
         // Polling if AI analysis is missing and project is submitted
-        let pollInterval: any;
+        let pollInterval: unknown;
         if (isEdit) {
             pollInterval = setInterval(() => {
                 if (!formData.aiAnalyzedAt && formData.status !== 'DRAFT') {
@@ -189,7 +191,7 @@ export const AdminProjectForm: React.FC = () => {
             addToast("Projeto salvo com sucesso!", "success");
             navigate("/admin/projetos");
         } catch (error) {
-            console.error("Erro ao salvar projeto:", error);
+            logger.error("Erro ao salvar projeto:", error);
             addToast("Erro ao salvar projeto. Verifique os dados.", "error");
         } finally {
             setSaving(false);
@@ -219,8 +221,8 @@ export const AdminProjectForm: React.FC = () => {
                 aiAnalyzedAt: new Date().toISOString()
             }));
             addToast("Análise IA concluída!", "success");
-        } catch (err: any) {
-            console.error(err);
+        } catch (err: unknown) {
+            logger.error(err);
             addToast("Falha na análise IA.", "error");
         } finally {
             setAnalyzing(false);
@@ -240,7 +242,7 @@ export const AdminProjectForm: React.FC = () => {
             setFormData(prev => ({ ...prev, status: newStatus }));
             addToast(`Status atualizado para ${newStatus}`, "success");
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             addToast("Erro ao atualizar status.", "error");
         } finally {
             setSaving(false);
@@ -516,7 +518,7 @@ export const AdminProjectForm: React.FC = () => {
                                             <div>
                                                 <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-3">Checklist do Edital</div>
                                                 <div className="space-y-2">
-                                                    {formData.aiAnalysis.requirementsCheck.map((req: any, i: number) => (
+                                                    {formData.aiAnalysis.requirementsCheck.map((req: unknown, i: number) => (
                                                         <div key={i} className="flex items-start gap-3 p-3 bg-black/10 rounded-xl border border-white/5">
                                                             {req.met ? <CheckCircle2 size={16} className="text-emerald-400 mt-0.5" /> : <AlertTriangle size={16} className="text-red-400 mt-0.5" />}
                                                             <div>

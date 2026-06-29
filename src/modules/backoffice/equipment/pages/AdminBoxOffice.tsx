@@ -17,16 +17,16 @@ export const AdminBoxOffice: React.FC = () => {
     const [events, setEvents] = useState<any[]>([]);
     
     // Selection state
-    const [selectedEvent, setSelectedEvent] = useState<any>(null);
+    const [selectedEvent, setSelectedEvent] = useState<unknown>(null);
     
     // Theater specific state
-    const [seatsLayout, setSeatsLayout] = useState<any>(null);
+    const [seatsLayout, setSeatsLayout] = useState<unknown>(null);
     const [reservations, setReservations] = useState<any[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
     
     // General Event specific state
     const [tickets, setTickets] = useState<any[]>([]);
-    const [selectedTicket, setSelectedTicket] = useState<any>(null);
+    const [selectedTicket, setSelectedTicket] = useState<unknown>(null);
     const [ticketQuantity, setTicketQuantity] = useState<number>(1);
 
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export const AdminBoxOffice: React.FC = () => {
         fetchEvents();
     }, []);
 
-    const handleSelectEvent = async (event: any) => {
+    const handleSelectEvent = async (event: unknown) => {
         setSelectedEvent(event);
         setSelectedSeats([]);
         setSelectedTicket(null);
@@ -96,7 +96,7 @@ export const AdminBoxOffice: React.FC = () => {
             }
             setStep("SUCCESS");
             toast.success("Venda realizada com sucesso!");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast.error(err.response?.data?.message || "Erro ao finalizar venda");
         } finally {
             setLoading(false);
@@ -199,7 +199,7 @@ export const AdminBoxOffice: React.FC = () => {
                                 </div>
 
                                 <div className="space-y-4 max-w-2xl mx-auto overflow-y-auto max-h-[400px] p-4">
-                                    {seatsLayout?.rows?.map((row: any) => (
+                                    {seatsLayout?.rows?.map((row: unknown) => (
                                         <div key={row.name} className="flex items-center gap-4">
                                             <div className="w-6 text-[10px] font-black text-slate-600">{row.name}</div>
                                             <div className="flex flex-wrap gap-2 flex-1">

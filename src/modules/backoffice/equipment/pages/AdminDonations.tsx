@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -39,7 +41,7 @@ export const AdminDonations: React.FC = () => {
             setStats(statsRes.data);
             setDonations(wallRes.data.donations || []);
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             toast.error("Erro ao carregar doações");
         } finally {
             setLoading(false);

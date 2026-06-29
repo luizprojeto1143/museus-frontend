@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
@@ -26,7 +28,7 @@ export const ProducerAudience: React.FC = () => {
         api.get("/registrations")
             .then(res => {
                 // Map API response to Participant type
-                const data = res.data.map((reg: any) => ({
+                const data = res.data.map((reg: unknown) => ({
                     id: reg.id,
                     name: reg.visitor?.name || reg.guestName || t("producer.produceraudience.visitor", "Visitante"),
                     email: reg.visitor?.email || reg.guestEmail || "",
@@ -37,7 +39,7 @@ export const ProducerAudience: React.FC = () => {
                 }));
                 setParticipants(data);
             })
-            .catch(err => console.error("Error fetching audience", err))
+            .catch(err => logger.error("Error fetching audience", err))
             .finally(() => setLoading(false));
     }, []);
 

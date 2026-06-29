@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
@@ -98,7 +100,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
             setProjects(projectsRes.data);
             if (noticeRes) setNotice(noticeRes.data);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
             toast.error(t("municipal.projects.error_load", "Erro ao carregar pipeline de projetos."));
         } finally {
             setLoading(false);

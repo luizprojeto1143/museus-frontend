@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { logger } from "@/utils/logger";
+
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -28,7 +30,7 @@ export const AdminAchievements: React.FC = () => {
       const res = await api.get(`/achievements?tenantId=${tenantId}`);
       setAchievements(res.data);
     } catch {
-      console.error("Erro ao carregar conquistas");
+      logger.error("Erro ao carregar conquistas");
     } finally {
       setLoading(false);
     }
@@ -45,7 +47,7 @@ export const AdminAchievements: React.FC = () => {
       await api.delete(`/achievements/${id}`);
       loadAchievements();
     } catch {
-      alert(t("admin.achievements.alerts.errorDelete"));
+      logger.warn("Alert:", t("admin.achievements.alerts.errorDelete"));
     }
   };
 
@@ -54,7 +56,7 @@ export const AdminAchievements: React.FC = () => {
       await api.patch(`/achievements/${id}`, { active: !currentStatus });
       loadAchievements();
     } catch {
-      alert(t("admin.achievements.alerts.errorUpdate"));
+      logger.warn("Alert:", t("admin.achievements.alerts.errorUpdate"));
     }
   };
 

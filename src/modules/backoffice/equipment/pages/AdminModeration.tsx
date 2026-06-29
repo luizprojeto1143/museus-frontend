@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -32,7 +34,7 @@ export const AdminModeration: React.FC = () => {
     const { tenantId } = useAuth();
     
     const [reviews, setReviews] = useState<any[]>([]);
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<unknown>(null);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
 
@@ -46,7 +48,7 @@ export const AdminModeration: React.FC = () => {
             setReviews(r.data);
             setStats(s.data);
         } catch (error) { 
-            console.error(error); 
+            logger.error(error); 
             toast.error("Erro ao carregar dados de moderação."); 
         } finally { 
             setLoading(false); 

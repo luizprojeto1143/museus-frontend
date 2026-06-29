@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -20,7 +22,7 @@ export const AdminCollectibles: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [cards, setCards] = useState<any[]>([]);
-    const [stats, setStats] = useState<any>(null);
+    const [stats, setStats] = useState<unknown>(null);
     const [works, setWorks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -36,7 +38,7 @@ export const AdminCollectibles: React.FC = () => {
             setCards(c.data);
             setStats(s.data);
             setWorks(Array.isArray(w.data) ? w.data : (w.data.data || []));
-        } catch (error) { console.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -79,7 +81,7 @@ export const AdminCollectibles: React.FC = () => {
                     </div>
                     <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", marginBottom: "0.5rem" }}>Por Raridade</p>
-                        {stats.byRarity?.map((r: any) => (
+                        {stats.byRarity?.map((r: unknown) => (
                             <div key={r.rarity} className="flex items-center justify-between text-sm">
                                 <span className={rarityConfig[r.rarity]?.color || 'text-gray-400'}>{rarityConfig[r.rarity]?.label || r.rarity}</span>
                                 <span style={{ color: "white", fontWeight: 700 }}>{r.count}</span>
@@ -102,7 +104,7 @@ export const AdminCollectibles: React.FC = () => {
                         <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra Vinculada</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Nenhuma</option>
-                                {works.map((w: any) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
@@ -120,7 +122,7 @@ export const AdminCollectibles: React.FC = () => {
 
             {/* Card Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
-                {cards.map((card: any) => {
+                {cards.map((card: unknown) => {
                     const r = rarityConfig[card.rarity] || rarityConfig.COMMON;
                     return (
                         <div key={card.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", textAlign: "center" }}>

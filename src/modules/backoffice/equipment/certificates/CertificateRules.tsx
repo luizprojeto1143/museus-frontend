@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { logger } from "@/utils/logger";
+
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/client';
@@ -23,7 +25,7 @@ export const CertificateRules: React.FC = () => {
             const res = await api.get('/certificate-rules');
             setRules(res.data);
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
     }, []);
 

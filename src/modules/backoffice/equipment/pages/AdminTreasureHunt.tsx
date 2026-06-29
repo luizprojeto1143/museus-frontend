@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -61,7 +63,7 @@ export const AdminTreasureHunt: React.FC = () => {
             setClues(Array.isArray(cluesRes.data) ? cluesRes.data : (cluesRes.data.data || []));
             setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         } catch (error) {
-            console.error("Erro ao carregar dados", error);
+            logger.error("Erro ao carregar dados", error);
         } finally {
             setLoading(false);
         }
@@ -73,7 +75,7 @@ export const AdminTreasureHunt: React.FC = () => {
             await api.delete(`/clues/${id}`);
             loadData();
         } catch {
-            alert(t("admin.errors.delete"));
+            logger.warn("Alert:", t("admin.errors.delete"));
         }
     };
 
@@ -101,7 +103,7 @@ export const AdminTreasureHunt: React.FC = () => {
             setFormData({ riddle: "", answer: "", workId: "", order: 0 });
             loadData();
         } catch {
-            alert(t("admin.errors.save"));
+            logger.warn("Alert:", t("admin.errors.save"));
         }
     };
 

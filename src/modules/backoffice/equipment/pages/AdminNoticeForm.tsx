@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { logger } from "@/utils/logger";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
@@ -96,7 +98,7 @@ export const AdminNoticeForm: React.FC = () => {
             setFormData(prev => ({ ...prev, documentUrl: res.data.url }));
             addToast("PDF enviado com sucesso!", "success");
         } catch (error) {
-            console.error(error);
+            logger.error(error);
             addToast("Erro ao enviar PDF", "error");
         } finally {
             setUploading(false);
@@ -136,7 +138,7 @@ export const AdminNoticeForm: React.FC = () => {
                         });
                     })
                     .catch(err => {
-                        console.error(err);
+                        logger.error(err);
                         addToast("Erro ao carregar edital", "error");
                     })
                     .finally(() => setLoading(false));
@@ -203,7 +205,7 @@ export const AdminNoticeForm: React.FC = () => {
             addToast(isEdit ? "Edital atualizado com sucesso!" : "Edital criado com sucesso!", "success");
             navigate("/admin/editais");
         } catch (error) {
-            console.error("Erro ao salvar edital:", error);
+            logger.error("Erro ao salvar edital:", error);
             addToast("Erro ao salvar edital. Verifique os dados.", "error");
         } finally {
             setSaving(false);
@@ -557,7 +559,7 @@ export const AdminNoticeForm: React.FC = () => {
                                         <Tag size={16} className="text-gold" /> Categorias Culturais
                                     </label>
                                     <div className="flex flex-wrap gap-2">
-                                        {(categories.length > 0 ? categories : CULTURAL_CATEGORIES.map(c => ({ name: c }))).map((cat: any) => {
+                                        {(categories.length > 0 ? categories : CULTURAL_CATEGORIES.map(c => ({ name: c }))).map((cat: unknown) => {
                                             const catName = cat.name || cat;
                                             const isSelected = formData.culturalCategories.includes(catName);
                                             return (

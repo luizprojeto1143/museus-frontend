@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { logger } from "@/utils/logger";
+
 import {
 useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -29,7 +31,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
     const { logout, name, tenantId } = useAuth();
     const location = useLocation();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [features, setFeatures] = useState<any>({
+    const [features, setFeatures] = useState<unknown>({
         featureProjects: true,
         featureTickets: false,
         featureServices: true,
@@ -42,7 +44,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
         if (tenantId) {
             api.get(`/tenants/${tenantId}/features`).then(res => {
                 setFeatures(res.data);
-            }).catch(err => console.warn("Could not load producer features", err));
+            }).catch(err => logger.warn("Could not load producer features", err));
         }
     }, [tenantId]);
 

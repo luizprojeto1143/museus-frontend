@@ -383,7 +383,7 @@ export const LandingPage: React.FC = () => {
                         <div className="relative">
                              <div className="absolute -inset-4 bg-[#9f7aea]/20 blur-3xl rounded-full opacity-50" />
                              <img 
-                                src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1000&auto=format&fit=crop" 
+                                src="/placeholder-image.jpg" 
                                 alt="Service Provider" 
                                 className="relative rounded-[40px] border border-white/10 shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
                              />
