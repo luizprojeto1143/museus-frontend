@@ -101,7 +101,7 @@ const RootRedirector: React.FC = () => {
   if (role === "producer") return <Navigate to="/producer" replace />;
   if (role === "collaborator") return <Navigate to="/admin" replace />;
 
-  return <Navigate to="/hub-cidades" replace />;
+  return <Navigate to="/hub" replace />;
 };
 
 const App: React.FC = () => {

@@ -15,6 +15,10 @@ type QRCodeData = {
   title: string;
   xpReward: number;
   tenantId: string;
+  // Campos de navegação semântica (retornados pelo backend)
+  slug?: string;
+  citySlug?: string;
+  equipmentSlug?: string;
 };
 
 export const QrVisit: React.FC = () => {
@@ -71,12 +75,23 @@ export const QrVisit: React.FC = () => {
     } else if (data.type === "EVENT" && data.referenceId) {
       navigate(`/eventos/${data.referenceId}`);
     } else if (data.type === "TENANT" && data.referenceId) {
-      navigate(`/?select=${data.referenceId}`);
+      // Redireciona para Hub da Cidade se tiver slug, senao busca de cidades
+      if (data.slug) {
+        navigate(`/cidades/${data.slug}`);
+      } else {
+        navigate(`/cidades`);
+      }
     } else if (data.type === "EQUIPAMENTO" && data.referenceId) {
       if (isAuthenticated) {
         updateSession(role || "visitor", data.tenantId, name, data.referenceId);
       }
-      navigate("/home");
+      // Navegar para Hub do Museu com URL semântica
+      if (data.citySlug && (data.equipmentSlug || data.slug)) {
+        navigate(`/cidades/${data.citySlug}/equipamentos/${data.equipmentSlug || data.slug}`);
+      } else {
+        // Fallback: usa o referenceId como slug
+        navigate(`/cidades/_/equipamentos/${data.referenceId}`);
+      }
     }
   }
 

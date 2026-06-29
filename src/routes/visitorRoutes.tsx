@@ -56,6 +56,9 @@ const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTra
 const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
 const CityHub = React.lazy(() => import("../modules/visitor/pages/CityHub").then(m => ({ default: m.CityHub })));
 const CityDashboard = React.lazy(() => import("../modules/visitor/pages/CityDashboard").then(m => ({ default: m.CityDashboard })));
+const VisitorHub = React.lazy(() => import("../modules/visitor/pages/VisitorHub").then(m => ({ default: m.VisitorHub })));
+const CitySearch = React.lazy(() => import("../modules/visitor/pages/CitySearch").then(m => ({ default: m.CitySearch })));
+const MuseumHub = React.lazy(() => import("../modules/visitor/pages/MuseumHub").then(m => ({ default: m.MuseumHub })));
 
 // Roteiro Cultural (Turismo Inteligente)
 const RoteiroHome = React.lazy(() => import("../modules/roteiro/RoteiroHome").then(m => ({ default: m.RoteiroHome })));
@@ -129,8 +132,16 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
-            <Route path="/hub-cidades" element={vr(CityHub, RequireRole)} />
-            <Route path="/cidades/:tenantSlug" element={vr(CityDashboard, RequireRole)} />
+            {/* Hub do Visitante — tela raiz após login */}
+            <Route path="/hub" element={vr(VisitorHub, RequireRole)} />
+            {/* Compatibilidade reversa */}
+            <Route path="/hub-cidades" element={<Navigate to="/hub" replace />} />
+            {/* Busca de cidades */}
+            <Route path="/cidades" element={vr(CitySearch, RequireRole)} />
+            {/* Hub da Cidade */}
+            <Route path="/cidades/:citySlug" element={vr(CityDashboard, RequireRole)} />
+            {/* Hub do Museu/Equipamento */}
+            <Route path="/cidades/:citySlug/equipamentos/:equipmentSlug" element={vr(MuseumHub, RequireRole)} />
             
             {/* Roteiro Cultural */}
             <Route path="/roteiro" element={vr(RoteiroHome, RequireRole)} />

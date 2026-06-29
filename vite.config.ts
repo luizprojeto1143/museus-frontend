@@ -165,16 +165,26 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core React runtime
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // UI / Animation
           'vendor-ui': ['lucide-react', 'framer-motion'],
+          // Maps
           'vendor-maps': ['leaflet', 'react-leaflet'],
-          'vendor-utils': ['axios', 'i18next', 'react-i18next'],
+          // Data fetching / state
+          'vendor-query': ['@tanstack/react-query'],
+          // i18n
+          'vendor-i18n': ['i18next', 'react-i18next'],
+          // HTTP
+          'vendor-http': ['axios'],
+          // 3D (heavy — only loaded on demand)
           'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+          // AI / TensorFlow (heaviest — only on scanner pages)
           'vendor-tf': ['@tensorflow/tfjs', '@tensorflow-models/mobilenet', '@tensorflow-models/knn-classifier']
         }
       }
     },
-    chunkSizeWarningLimit: 1000
+    chunkSizeWarningLimit: 1500
   },
   server: {
     port: 5173

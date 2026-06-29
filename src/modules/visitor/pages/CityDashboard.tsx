@@ -57,7 +57,7 @@ interface CityData {
 
 export const CityDashboard: React.FC = () => {
   const { t } = useTranslation();
-  const { tenantSlug } = useParams<{ tenantSlug: string }>();
+  const { citySlug } = useParams<{ citySlug: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, updateSession, isGuest, enterAsGuest, role, name: authName } = useAuth();
 
@@ -90,16 +90,16 @@ export const CityDashboard: React.FC = () => {
         if (res.data && res.data.cities) {
           // Robust slug matching (e.g. betim or betim-cultura)
           const found = res.data.cities.find((c: CityData) => 
-            c.slug === tenantSlug
+            c.slug === (citySlug || tenantSlug)
           );
           if (found) {
-            const enrichedEquipments = found.equipments.map((eq: CityEquipment, index: number) => ({
+            const enrichedEquipments = found.equipments.map((eq: CityEquipment) => ({
               ...eq,
               missao: eq.missao || "Espaço dedicado à preservação da história, arte e memória municipal com acervo conectado.",
               horarios: eq.horarios || "09h às 18h",
               endereco: eq.endereco || "Centro Histórico",
-              latitude: eq.latitude || (-19.96 + index * 0.012),
-              longitude: eq.longitude || (-44.20 - index * 0.008),
+              latitude: eq.latitude ?? null,
+              longitude: eq.longitude ?? null,
               acessibilidade: eq.acessibilidade || "Disponível",
               ingresso: eq.ingresso || "Gratuito",
             }));
@@ -122,7 +122,7 @@ export const CityDashboard: React.FC = () => {
         setLoading(false);
       }
     };
-    if (tenantSlug) {
+    if (tenantSlug || citySlug) {
       fetchCityData();
     }
 
@@ -191,19 +191,20 @@ export const CityDashboard: React.FC = () => {
     }
   }, [city]);
 
-  // Session selector logic - Switches visitor session to specific child equipment & loads home
+  // Session selector logic - Navega para o Hub do Museu com URL semântica
   const handleSelectMuseum = async (equip: CityEquipment) => {
+    const slug = equip.slug || equip.id;
+    const cs = citySlug || tenantSlug || "";
     if (isAuthenticated && !isGuest) {
       try {
         updateSession(role || "visitor", equip.id, authName, equip.id, city?.id || null);
-        navigate("/home");
-        return;
       } catch (err) {
         logger.error("Error switching tenant session", err);
       }
+    } else {
+      enterAsGuest(equip.id, equip.id, city?.id || null);
     }
-    enterAsGuest(equip.id, equip.id, city?.id || null);
-    navigate("/home");
+    navigate(`/cidades/${cs}/equipamentos/${slug}`);
   };
 
   const cityName = city?.name || "";
