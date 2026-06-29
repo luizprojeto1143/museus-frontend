@@ -10,7 +10,7 @@ export interface NavLink {
 export const getVisitorLinks = (t: any, term: any, isCityMode: boolean): NavLink[] => {
   const _t = typeof t === 'function' ? t : (k: string, d: string) => d;
   return [
-    { to: "/home", label: _t("visitor.sidebar.home", "Início"), icon: "🏠", feature: null },
+    { to: "/hub", label: _t("visitor.sidebar.home", "Início"), icon: "🏠", feature: null },
   { to: "/obras", label: term.works, icon: isCityMode ? "🏛️" : "🎨", feature: "featureWorks" },
   { to: "/trilhas", label: term.trails, icon: "🗺️", feature: "featureTrails" },
     { to: "/mapa", label: _t("visitor.sidebar.map", "Mapa"), icon: "📍", feature: null },

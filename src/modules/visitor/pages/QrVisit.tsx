@@ -89,8 +89,8 @@ export const QrVisit: React.FC = () => {
       if (data.citySlug && (data.equipmentSlug || data.slug)) {
         navigate(`/cidades/${data.citySlug}/equipamentos/${data.equipmentSlug || data.slug}`);
       } else {
-        // Fallback: usa o referenceId como slug
-        navigate(`/cidades/_/equipamentos/${data.referenceId}`);
+        // Fallback: redireciona para o hub principal (se não tiver slug da cidade)
+        navigate(`/hub`);
       }
     }
   }

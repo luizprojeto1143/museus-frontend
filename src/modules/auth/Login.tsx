@@ -159,7 +159,7 @@ export const Login: React.FC = () => {
               <button
                 type="button"
                 className="text-gold-400 font-black uppercase tracking-tighter hover:underline px-2"
-                onClick={() => navigate("/select-museum?mode=register")}
+                onClick={() => navigate("/register")}
               >
                 {t("auth.login.registerNow", "Cadastre-se agora")}
               </button>

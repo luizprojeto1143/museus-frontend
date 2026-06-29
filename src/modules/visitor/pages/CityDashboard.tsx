@@ -90,7 +90,7 @@ export const CityDashboard: React.FC = () => {
         if (res.data && res.data.cities) {
           // Robust slug matching (e.g. betim or betim-cultura)
           const found = res.data.cities.find((c: CityData) => 
-            c.slug === (citySlug || tenantSlug)
+            c.slug === citySlug
           );
           if (found) {
             const enrichedEquipments = found.equipments.map((eq: CityEquipment) => ({
@@ -122,14 +122,14 @@ export const CityDashboard: React.FC = () => {
         setLoading(false);
       }
     };
-    if (tenantSlug || citySlug) {
+    if (citySlug) {
       fetchCityData();
     }
 
     return () => {
       abortController.abort();
     };
-  }, [tenantSlug]);
+  }, [citySlug]);
 
   // Dynamic Database Fetching for Rankings, Achievements, Events, and Trails
   useEffect(() => {
@@ -194,7 +194,7 @@ export const CityDashboard: React.FC = () => {
   // Session selector logic - Navega para o Hub do Museu com URL semântica
   const handleSelectMuseum = async (equip: CityEquipment) => {
     const slug = equip.slug || equip.id;
-    const cs = citySlug || tenantSlug || "";
+    const cs = citySlug || "";
     if (isAuthenticated && !isGuest) {
       try {
         updateSession(role || "visitor", equip.id, authName, equip.id, city?.id || null);
