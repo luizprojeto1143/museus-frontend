@@ -1,0 +1,62 @@
+.totem-layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #030201;
+  color: #f7f3ed;
+  font-family: system-ui, sans-serif;
+  user-select: none;
+}
+
+.totem-top-bar {
+  height: 70px;
+  background-color: #0d0804;
+  border-bottom: 1px solid #22140a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.totem-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.totem-title {
+  font-weight: 900;
+  letter-spacing: 2px;
+  font-size: 1.1rem;
+  color: #d4af37;
+}
+
+.totem-exit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: #ef4444;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.totem-exit-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.totem-main-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.text-gold {
+  color: #d4af37;
+}

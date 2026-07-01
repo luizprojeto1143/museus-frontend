@@ -6,12 +6,9 @@ import React, {
 } from "react";
 import { api, baseURL, isDemoMode } from "../../api/client";
 import { storage } from "@/utils/storage";
+import { Role, TenantType, normalizeRole, normalizeTenantType } from "@/types/auth";
 
 import { logger } from "@/utils/logger";
-
-
-export type Role = "visitor" | "admin" | "master" | "producer" | "collaborator" | "theater";
-
 // ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
   isGuest?: boolean;
@@ -23,7 +20,7 @@ interface AuthState {
   role: Role | null;
   tenantId: string | null;
   equipamentoId: string | null;
-  tenantType: "MUSEUM" | "PRODUCER" | "THEATER" | null;
+  tenantType: TenantType | null;
   email: string | null;
   name: string | null;
   userId: string | null;
@@ -39,7 +36,7 @@ interface AuthContextValue extends AuthState {
   isAuthenticated: boolean;
   login: (params: { email: string; password: string }) => Promise<{
     role: Role;
-    tenantType: "MUSEUM" | "PRODUCER" | "THEATER" | null;
+    tenantType: TenantType | null;
     hasProviderProfile: boolean;
   }>;
   enterAsGuest: (selectedTenantId?: string | null, selectedEquipamentoId?: string | null, selectedCityId?: string | null) => void;
@@ -121,15 +118,7 @@ function persistAuth(state: AuthState): void {
   }
 }
 
-function mapRole(raw: string): Role {
-  const upper = (raw || "").toLowerCase();
-  if (upper === "master") return "master";
-  if (upper === "admin") return "admin";
-  if (upper === "producer") return "producer";
-  if (upper === "collaborator") return "collaborator";
-  if (upper === "theater") return "theater";
-  return "visitor";
-}
+
 
 // ─── Context ──────────────────────────────────────────────────────
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -147,16 +136,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         role?: string;
         tenantId?: string | null;
         equipamentoId?: string | null;
-        tenantType?: "MUSEUM" | "PRODUCER" | null;
+        tenantType?: string | null;
         hasProviderProfile?: boolean;
         user?: { email: string; name?: string; id?: string; hasProviderProfile?: boolean };
       };
 
       const newState: AuthState = {
-        role: mapRole(data.role ?? ""),
+        role: normalizeRole(data.role),
         tenantId: data.tenantId ?? null,
         equipamentoId: data.equipamentoId ?? null,
-        tenantType: data.tenantType ?? "MUSEUM",
+        tenantType: normalizeTenantType(data.tenantType),
         email: data.user?.email ?? email,
         name: data.user?.name ?? null,
         userId: data.user?.id ?? null,
@@ -178,8 +167,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   } else {
     // Modo demo
-      const simulatedRole: Role = email.includes("master") ? "master" : "admin";
-      const simulatedTenantType = email.includes("producer") ? "PRODUCER" : "MUSEUM";
+      const simulatedRole: Role = email.includes("master") ? "master" : normalizeRole("admin");
+      const simulatedTenantType = email.includes("producer") ? normalizeTenantType("PRODUCER") : normalizeTenantType("MUSEUM");
 
       const newState: AuthState = {
         role: simulatedRole,
@@ -246,7 +235,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     newCityId?: string | null
   ) => {
     const partial: Partial<AuthState> = {
-      role: mapRole(newRole),
+      role: normalizeRole(newRole),
       tenantId: newTenantId,
       equipamentoId: newEquipamentoId ?? null,
       cityId: newCityId ?? null,
@@ -269,10 +258,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (res.data) {
           const user = res.data;
           const restoredState: AuthState = {
-            role: mapRole(user.role),
+            role: normalizeRole(user.role),
             tenantId: user.tenantId,
             equipamentoId: user.equipamentoId,
-            tenantType: user.tenantType || "MUSEUM",
+            tenantType: normalizeTenantType(user.tenantType),
             email: user.email,
             name: user.name,
             userId: user.id,
@@ -305,7 +294,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const hasPermission = (flag?: string) => {
-    if (state.role === 'master' || state.role === 'admin') return true;
+    if (state.role === 'master' || state.role === 'equipment_admin' || state.role === 'municipal_admin') return true;
     if (!flag) return false;
     return !!state.permissions?.[flag];
   };

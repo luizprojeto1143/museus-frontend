@@ -205,13 +205,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: isCityMode ? t("admin.sidebar.gestOMunicipal", "Gestão Municipal") : t("admin.sidebar.gestOInstitucional", "Gestão Institucional"),
       links: [
-        { to: "/admin/editais", label: t("admin.sidebar.editais", "Editais"), icon: "ClipboardList", show: (features?.featureEditais ?? false) && hasPermission("manage_institutional") },
-        { to: "/admin/projetos", label: t("admin.sidebar.projetosCulturais", "Projetos Culturais"), icon: "Palette", show: (features?.featureProjects ?? false) && hasPermission("manage_institutional") },
-        { to: "/admin/prestadores", label: t("admin.sidebar.prestadores", "Prestadores"), icon: "HardHat", show: (features?.featureProviders ?? false) && hasPermission("manage_institutional") },
         { to: "/admin/agendamentos/novo", label: t("admin.sidebar.solicitarServiOPresencial", "Solicitar Serviço Presencial"), icon: "Handshake", show: true },
         { to: "/admin/acessibilidade-gestao", label: t("admin.sidebar.gestOAcessibilidade", "Gestão Acessibilidade"), icon: "Accessibility", show: (features?.featureAccessibilityMgmt ?? false) && hasPermission("manage_institutional") },
         { to: "/admin/relatorios", label: t("admin.sidebar.relatRiosInstitucionais", "Relatórios Institucionais"), icon: "BarChart", show: (features?.featureInstitutionalReports ?? false) && hasPermission("manage_institutional") },
-        { to: "/admin/equipamentos", label: t("admin.sidebar.equipamentosCulturais", "Equipamentos Culturais"), icon: "Building2", show: ((features?.type === "CITY" || features?.type === "SECRETARIA") ?? false) && hasPermission("manage_institutional") },
       ],
       showGroup: (features?.featureGroupInstitutional ?? true) && role !== 'theater'
     },
@@ -267,15 +263,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       showGroup: (features?.featureGroupSocial ?? true) && role !== 'theater'
     },
     {
-      label: t("admin.sidebar.municipalAvanAdo", "Gestão e Preservação"),
+      label: t("admin.sidebar.municipalAvanAdo", "Gestão Avançada"),
       links: [
         { to: "/admin/voluntarios", label: t("admin.sidebar.voluntRios", "Voluntários"), icon: "Users", show: hasPermission("manage_institutional") },
         { to: "/admin/conservacao", label: t("admin.sidebar.conservaO", "Conservação"), icon: "Wrench", show: hasPermission("manage_works") },
-        { to: "/admin/metas-ppa", label: t("admin.sidebar.metasPPA", "Indicadores de Gestão"), icon: "Target", show: hasPermission("view_analytics") },
-        { to: "/admin/patrimonio", label: t("admin.sidebar.patrimNioImaterial", "Patrimônio Imaterial"), icon: "Scroll", show: hasPermission("manage_works") },
-        { to: "/admin/calendario-municipal", label: t("admin.sidebar.calendRioCultural", "Calendário Cultural"), icon: "CalendarDays", show: hasPermission("manage_events") },
-        { to: "/admin/tce", label: t("admin.sidebar.exportaOTCE", "Relatórios Externos"), icon: "FileSearch", show: hasPermission("view_analytics") },
-        { to: "/admin/vazios", label: t("admin.sidebar.vaziosCulturais", "Impacto Territorial"), icon: "MapIcon", show: hasPermission("view_analytics") },
       ],
       showGroup: (features?.featureGroupPreservation ?? true) && role !== 'theater'
     },

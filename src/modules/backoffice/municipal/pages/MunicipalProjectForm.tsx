@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Input, Textarea, Button, Select } from "../../../../components/ui";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 const STATUS_OPTIONS = [
     { value: "DRAFT", label: "Rascunho", icon: <Clock size={16} />, color: "text-zinc-500", bg: "0/10", border: "border-slate-500/20" },
@@ -44,7 +44,7 @@ interface Notice {
     title: string;
 }
 
-export const AdminProjectForm: React.FC = () => {
+export const MunicipalProjectForm: React.FC = () => {
     const { t } = useTranslation();
     const { addToast } = useToast();
     const { id } = useParams<{ id: string }>();
@@ -189,7 +189,7 @@ export const AdminProjectForm: React.FC = () => {
                 await api.post("/projects", payload);
             }
             addToast("Projeto salvo com sucesso!", "success");
-            navigate("/admin/projetos");
+            navigate("/municipal/projetos");
         } catch (error) {
             logger.error("Erro ao salvar projeto:", error);
             addToast("Erro ao salvar projeto. Verifique os dados.", "error");
@@ -266,7 +266,7 @@ export const AdminProjectForm: React.FC = () => {
             <div className="admin-wizard-header">
                 <Button
                     variant="ghost"
-                    onClick={() => navigate('/admin/projetos')}
+                    onClick={() => navigate('/municipal/projetos')}
                     className="p-0 text-[var(--fg-muted)] hover:text-white"
                 >
                     <ArrowLeft size={20} />
@@ -781,7 +781,7 @@ export const AdminProjectForm: React.FC = () => {
                         <Button
                             variant="ghost"
                             type="button"
-                            onClick={() => navigate('/admin/projetos')}
+                            onClick={() => navigate('/municipal/projetos')}
                             className="text-[var(--fg-muted)] hover:text-white"
                         >
                             Cancelar

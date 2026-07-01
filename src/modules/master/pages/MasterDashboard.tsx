@@ -130,13 +130,24 @@ export const MasterDashboard: React.FC = () => {
         try {
             setLoading(true);
             const res = await api.get("/analytics/tenants-summary");
-            const data = res.data.map((item: unknown) => ({
+            interface RawTenantSummary {
+                tenantId: string;
+                name: string;
+                slug: string;
+                works?: number;
+                trails?: number;
+                events?: number;
+                visitors?: number;
+                visits?: number;
+                equipamentos?: number;
+            }
+            const data = res.data.map((item: RawTenantSummary) => ({
                 ...item,
-                worksCount: item.works,
-                trailsCount: item.trails,
-                eventsCount: item.events,
-                visitorsCount: item.visitors,
-                visitsCount: item.visits,
+                worksCount: item.works || 0,
+                trailsCount: item.trails || 0,
+                eventsCount: item.events || 0,
+                visitorsCount: item.visitors || 0,
+                visitsCount: item.visits || 0,
                 equipamentosCount: item.equipamentos || 0
             }));
             setSummaries(data);
@@ -215,7 +226,6 @@ export const MasterDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* AI Insight Bar - Deep Blue & Gold */}
             <Card className="p-6 md:p-10 bg-gradient-to-r from-blue-600/10 via-amber-500/5 to-transparent border-amber-500/20 rounded-[48px] flex flex-col md:flex-row items-center gap-6 md:gap-10 group relative overflow-hidden shadow-2xl">
                 <div className="w-16 h-16 md:w-20 md:h-20 shrink-0 bg-amber-500 rounded-[24px] md:rounded-[32px] flex items-center justify-center text-white shadow-2xl shadow-amber-500/40 group-hover:rotate-12 transition-transform duration-700">
                     <Sparkles size={40} />
@@ -225,7 +235,7 @@ export const MasterDashboard: React.FC = () => {
                         Master Intelligence <Badge className="bg-amber-500/20 text-amber-500 border-none text-[9px] uppercase tracking-widest font-black">Elite Level</Badge>
                     </h3>
                     <p className="text-base text-slate-400 leading-relaxed font-medium italic">
-                        "Governança global está estável. Detectei um crescimento de <strong className="text-amber-500">18.5% na emissão de selos</strong> no último ciclo. Recomendo auditar o node de <strong>{summaries[0]?.name || 'suas cidades'}</strong> pelo alto volume de tráfego orgânico detectado."
+                        "Governança global está estável. Recomendo auditar o node de <strong>{summaries[0]?.name || 'suas cidades'}</strong> pelo alto volume de tráfego orgânico detectado neste ciclo."
                     </p>
                 </div>
                 <div className="absolute top-[-50%] right-[-10%] w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none" />

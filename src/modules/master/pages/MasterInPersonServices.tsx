@@ -43,7 +43,8 @@ import {
     Card, 
     Badge, 
     AnimateIn,
-    AnimatedCounter
+    AnimatedCounter,
+    DangerZoneConfirmModal
 } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -79,19 +80,22 @@ export const MasterInPersonServices: React.FC = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editService, setEditService] = useState<InPersonService | null>(null);
 
+    const [deleteServiceId, setDeleteServiceId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const [formData, setFormData] = useState({
         name: "",
         description: "",
         active: true,
-        tenantId: "8cc9b546-7f7d-4908-a6cf-acdd7b86982b" // QS Inclusão default
+        tenantId: ""
     });
 
     const loadData = useCallback(async () => {
         try {
             setLoading(true);
             const [servicesRes, requestsRes] = await Promise.all([
-                api.get("/in-person-services?tenantId=8cc9b546-7f7d-4908-a6cf-acdd7b86982b"),
-                api.get("/bookings/in-person?tenantId=8cc9b546-7f7d-4908-a6cf-acdd7b86982b")
+                api.get("/in-person-services"),
+                api.get("/bookings/in-person")
             ]);
             setServices(servicesRes.data || []);
             setRequests(requestsRes.data || []);
@@ -119,7 +123,7 @@ export const MasterInPersonServices: React.FC = () => {
             }
             setIsAddModalOpen(false);
             setEditService(null);
-            setFormData({ name: "", description: "", active: true, tenantId: "8cc9b546-7f7d-4908-a6cf-acdd7b86982b" });
+            setFormData({ name: "", description: "", active: true, tenantId: "" });
             loadData();
         } catch (error: unknown) {
             toast.error("Erro no protocolo de salvamento tático.");
@@ -127,19 +131,22 @@ export const MasterInPersonServices: React.FC = () => {
     };
 
     const handleDeleteService = async (id: string) => {
-        if (!window.confirm("PROTOCOL: Deseja desativar permanentemente este serviço do node?")) return;
+        setIsDeleting(true);
         try {
             await api.delete(`/in-person-services/${id}`);
             toast.success("Serviço removido do inventário operacional.");
+            setDeleteServiceId(null);
             loadData();
         } catch (error: unknown) {
             toast.error("Falha na desativação do protocolo.");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
     const openEditModal = (service: InPersonService) => {
         setEditService(service);
-        setFormData({ name: service.name, description: service.description || "", active: service.active, tenantId: service.tenantId });
+        setFormData({ name: service.name, description: service.description || "", active: service.active, tenantId: service.tenantId || "" });
         setIsAddModalOpen(true);
     };
 
@@ -245,7 +252,7 @@ export const MasterInPersonServices: React.FC = () => {
                                             <button onClick={() => openEditModal(srv)} className="w-10 h-10 rounded-xl bg-blue-600/10 text-blue-400 flex items-center justify-center border border-blue-500/20 hover:bg-blue-600 hover:text-white transition-all shadow-xl group/btn">
                                                 <Edit size={16} className="group-hover/btn:scale-110" />
                                             </button>
-                                            <button onClick={() => handleDeleteService(srv.id)} className="w-10 h-10 rounded-xl bg-rose-600/10 text-rose-500/50 flex items-center justify-center border border-rose-500/20 hover:bg-rose-600 hover:text-white transition-all shadow-xl group/btn">
+                                            <button onClick={() => setDeleteServiceId(srv.id)} className="w-10 h-10 rounded-xl bg-rose-600/10 text-rose-500/50 flex items-center justify-center border border-rose-500/20 hover:bg-rose-600 hover:text-white transition-all shadow-xl group/btn">
                                                 <Trash2 size={16} className="group-hover/btn:scale-110" />
                                             </button>
                                         </div>
@@ -503,6 +510,20 @@ export const MasterInPersonServices: React.FC = () => {
                     </div>
                 )}
             </AnimatePresence>
+
+            <DangerZoneConfirmModal
+                isOpen={!!deleteServiceId}
+                onClose={() => setDeleteServiceId(null)}
+                onConfirm={() => {
+                    if (deleteServiceId) handleDeleteService(deleteServiceId);
+                }}
+                title="Desativar Serviço"
+                message="Esta ação irá remover este serviço do inventário operacional. Digite o nome do serviço para confirmar."
+                expectedText={services.find(s => s.id === deleteServiceId)?.name || ''}
+                confirmText="Desativar Serviço"
+                cancelText="Cancelar"
+                loading={isDeleting}
+            />
         </AnimateIn>
     );
 };

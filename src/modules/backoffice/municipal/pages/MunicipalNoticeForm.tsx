@@ -13,7 +13,7 @@ import {
     MousePointerClick, Accessibility, Tag, Upload, TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 const STATUS_OPTIONS = [
     { value: "DRAFT", label: "Rascunho" },
@@ -38,7 +38,7 @@ const STEPS = [
     { id: 3, title: "Revisão", icon: CheckCircle, description: "Finalização" }
 ];
 
-export const AdminNoticeForm: React.FC = () => {
+export const MunicipalNoticeForm: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -203,7 +203,7 @@ export const AdminNoticeForm: React.FC = () => {
                 await api.post("/notices", payload);
             }
             addToast(isEdit ? "Edital atualizado com sucesso!" : "Edital criado com sucesso!", "success");
-            navigate("/admin/editais");
+            navigate("/municipal/editais");
         } catch (error) {
             logger.error("Erro ao salvar edital:", error);
             addToast("Erro ao salvar edital. Verifique os dados.", "error");
@@ -268,7 +268,7 @@ export const AdminNoticeForm: React.FC = () => {
         <div className="admin-form-container">
             {/* Header */}
             <div className="admin-wizard-header">
-                <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="p-0 hover:bg-transparent text-zinc-400 hover:text-white transition-colors">
+                <Button variant="ghost" onClick={() => navigate("/municipal/editais")} className="p-0 hover:bg-transparent text-zinc-400 hover:text-white transition-colors">
                     <ArrowLeft size={24} />
                 </Button>
                 <div>
@@ -709,7 +709,7 @@ export const AdminNoticeForm: React.FC = () => {
                 <div className="admin-wizard-footer-inner">
                     <Button
                         variant="ghost"
-                        onClick={currentStep === 0 ? () => navigate("/admin/editais") : prevStep}
+                        onClick={currentStep === 0 ? () => navigate("/municipal/editais") : prevStep}
                         className="text-zinc-400 hover:text-white"
                     >
                         {currentStep === 0 ? "Cancelar" : "Voltar"}

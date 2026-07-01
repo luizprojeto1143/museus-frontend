@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import { AdminLayout } from "../modules/backoffice/equipment/AdminLayout";
 import { Role } from "../modules/auth/AuthContext";
 
@@ -15,7 +15,6 @@ const AdminEventForm = React.lazy(() => import("../modules/backoffice/equipment/
 const AdminEventDashboard = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventDashboard").then(m => ({ default: m.AdminEventDashboard })));
 const AdminEventCheckIn = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventCheckIn").then(m => ({ default: m.AdminEventCheckIn })));
 const AdminQRCodes = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminQRCodes").then(m => ({ default: m.AdminQRCodes })));
-const AdminQRGenerator = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminQRGenerator").then(m => ({ default: m.AdminQRGenerator })));
 const AdminCategories = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminCategories").then(m => ({ default: m.AdminCategories })));
 const AdminCategoryForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminCategoryForm").then(m => ({ default: m.AdminCategoryForm })));
 const AdminVisitors = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminVisitors").then(m => ({ default: m.AdminVisitors })));
@@ -41,15 +40,12 @@ const AdminMapEditor = React.lazy(() => import("../modules/backoffice/equipment/
 const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTicketVerifier").then(m => ({ default: m.AdminTicketVerifier })));
 const AdminEventSurvey = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventSurvey").then(m => ({ default: m.AdminEventSurvey })));
 const AdminEventReport = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventReport").then(m => ({ default: m.AdminEventReport })));
-const AdminNotices = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNotices").then(m => ({ default: m.AdminNotices })));
-
+const AdminSponsorships = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminSponsorships").then(m => ({ default: m.AdminSponsorships })));
 
 const AdminAccessibilityForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAccessibilityForm").then(m => ({ default: m.AdminAccessibilityForm })));
 const AdminEquipments = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipments").then(m => ({ default: m.AdminEquipments })));
 const AdminEquipmentForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipmentForm").then(m => ({ default: m.AdminEquipmentForm })));
 
-
-const AccessibilityTimeline = React.lazy(() => import("../modules/backoffice/equipment/pages/AccessibilityTimeline"));
 const AIUsageDashboard = React.lazy(() => import("../modules/backoffice/equipment/pages/AIUsageDashboard"));
 const AdminScannerTrainer = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminScannerTrainer").then(module => ({ default: module.AdminScannerTrainer })));
 const AdminScanner = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminScanner").then(module => ({ default: module.AdminScanner })));
@@ -128,7 +124,6 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/equipamentos/:id" element={ar(AdminEquipmentForm, RequireRole)} />
             <Route path="/admin/calendario" element={ar(AdminCalendar, RequireRole)} />
             <Route path="/admin/qrcodes" element={ar(AdminQRCodes, RequireRole)} />
-            <Route path="/admin/qr-generator" element={ar(AdminQRGenerator, RequireRole)} />
             <Route path="/admin/categorias" element={ar(AdminCategories, RequireRole)} />
             <Route path="/admin/categorias/nova" element={ar(AdminCategoryForm, RequireRole)} />
             <Route path="/admin/categorias/:id" element={ar(AdminCategoryForm, RequireRole)} />
@@ -139,6 +134,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/treasure-hunt" element={ar(AdminTreasureHunt, RequireRole)} />
             <Route path="/admin/conquistas" element={ar(AdminAchievements, RequireRole)} />
             <Route path="/admin/patrocinio" element={ar(AdminSponsorshipSettings, RequireRole)} />
+            <Route path="/admin/patrocinios-gestao" element={ar(AdminSponsorships, RequireRole)} />
             <Route path="/admin/conquistas/nova" element={ar(AdminAchievementForm, RequireRole)} />
             <Route path="/admin/conquistas/:id" element={ar(AdminAchievementForm, RequireRole)} />
             <Route path="/admin/ia" element={ar(AdminAIAssistant, RequireRole)} />
@@ -158,8 +154,6 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/notificacoes" element={ar(AdminNotifications, RequireRole)} />
             <Route path="/admin/certificates/*" element={ar(AdminCertificates, RequireRole)} />
 
-
-            <Route path="/admin/timeline-acessibilidade" element={ar(AccessibilityTimeline, RequireRole)} />
             <Route path="/admin/uso-ia" element={ar(AIUsageDashboard, RequireRole)} />
             <Route path="/admin/doacoes" element={ar(AdminDonations, RequireRole)} />
             <Route path="/admin/contatos" element={ar(AdminContacts, RequireRole)} />

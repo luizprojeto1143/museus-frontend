@@ -8,7 +8,7 @@ import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Button, Input } from "../../../../components/ui";
 import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2, CheckCircle, Users } from "lucide-react";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 
 type Notice = {
@@ -32,7 +32,7 @@ const statusLabels: Record<string, { label: string; color: string; bg: string; b
     FINISHED: { label: "Finalizado", color: "text-zinc-500", bg: "bg-zinc-500/10", border: "border-zinc-500/20" }
 };
 
-export const AdminNotices: React.FC = () => {
+export const MunicipalNotices: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
     const { addToast } = useToast();
@@ -101,7 +101,7 @@ export const AdminNotices: React.FC = () => {
                         Gerencie processos seletivos e editais de cultura.
                     </p>
                 </div>
-                <Link to="/admin/editais/novo">
+                <Link to="/municipal/editais/novo">
                     <Button className="btn-primary rounded-full px-6 py-3 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:scale-105 transition-transform">
                         <Plus size={20} className="mr-2" /> Novo Edital
                     </Button>
@@ -181,7 +181,7 @@ export const AdminNotices: React.FC = () => {
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-2">Nenhum edital encontrado</h3>
                         <p className="mb-8 max-w-md text-zinc-400">{t("admin.notices.comeceCriandoSeuPrimeiroEditalDeFomentoC", `Comece criando seu primeiro edital de fomento cultural para receber inscrições.`)}</p>
-                        <Link to="/admin/editais/novo">
+                        <Link to="/municipal/editais/novo">
                             <Button className="btn-secondary hover:text-white border-white/10 hover:border-gold/30 transition-all">
                                 Criar Primeiro Edital
                             </Button>
@@ -255,14 +255,14 @@ export const AdminNotices: React.FC = () => {
                                             <Button
                                                 variant="ghost"
                                                 className="btn-ghost w-full md:w-auto justify-center hover:bg-zinc-900/40 border border-gold/20/5 border border-transparent hover:border-white/10"
-                                                onClick={() => navigate(`/admin/editais/${notice.id}/projetos`)}
+                                                onClick={() => navigate(`/municipal/editais/${notice.id}/projetos`)}
                                             >
                                                 <Users size={16} className="mr-2" /> Projetos
                                             </Button>
                                             <Button
                                                 variant="ghost"
                                                 className="btn-ghost w-full md:w-auto justify-center hover:bg-zinc-900/40 border border-gold/20/5 border border-transparent hover:border-white/10"
-                                                onClick={() => navigate(`/admin/editais/${notice.id}`)}
+                                                onClick={() => navigate(`/municipal/editais/${notice.id}`)}
                                             >
                                                 <Edit size={16} className="mr-2" /> Gerenciar
                                             </Button>

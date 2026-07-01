@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import { buildCityUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Calendar } from "lucide-react";
@@ -271,7 +272,7 @@ export const VisitorHub: React.FC = () => {
                   transition={{ duration: 0.3, delay: i * 0.05 }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => navigate(`/cidades/${city.slug}`)}
+                  onClick={() => navigate(buildCityUrl(city.slug))}
                 >
                   {city.logoUrl ? (
                     <img src={city.logoUrl} alt={city.nome} className="hub-city-logo" />
@@ -309,7 +310,7 @@ export const VisitorHub: React.FC = () => {
                 <button
                   key={visit.id}
                   className="hub-recent-item"
-                  onClick={() => navigate(`/cidades/${visit.citySlug}/equipamentos/${visit.equipamentoSlug}`)}
+                  onClick={() => navigate(buildEquipmentUrl(visit.citySlug, visit.equipamentoSlug))}
                 >
                   <div className="hub-recent-icon">
                     <MapPin size={20} />

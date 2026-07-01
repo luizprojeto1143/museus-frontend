@@ -63,6 +63,68 @@ const STEPS = [
   { id: 3, title: "Revisão", icon: CheckCircle, description: "Manifesto de Node" }
 ];
 
+interface TenantOption {
+  id: string;
+  name: string;
+  type?: string;
+  isCityMode?: boolean;
+}
+
+interface PlanOption {
+  id: string;
+  name: string;
+}
+
+interface TenantFeatures {
+  featureWorks: boolean;
+  featureTrails: boolean;
+  featureEvents: boolean;
+  featureGamification: boolean;
+  featureQRCodes: boolean;
+  featureChatAI: boolean;
+  featureShop: boolean;
+  featureDonations: boolean;
+  featureCertificates: boolean;
+  featureReviews: boolean;
+  featureGuestbook: boolean;
+  featureAccessibility: boolean;
+  featureEditais: boolean;
+  featureMinigames: boolean;
+  featureProviders: boolean;
+  featureTickets: boolean;
+  featureProjects: boolean;
+  featureAccessibilityMgmt: boolean;
+  featureInstitutionalReports: boolean;
+  featureEditaisSubmission: boolean;
+  featureGroupContent: boolean;
+  featureGroupEvents: boolean;
+  featureGroupEngagement: boolean;
+  featureGroupGamification: boolean;
+  featureGroupInstitutional: boolean;
+  featureGroupTools: boolean;
+  featureGroupAnalytics: boolean;
+  featureGroupSocial: boolean;
+  featureGroupPreservation: boolean;
+  featureGroupAI: boolean;
+  featureGroupRoadmap: boolean;
+}
+
+interface TenantPayload extends TenantFeatures {
+  name: string;
+  slug: string;
+  type: string;
+  parentId: string | null;
+  isCityMode: boolean;
+  plan: string;
+  maxWorks: number;
+  termsOfUse: string;
+  privacyPolicy: string;
+  isPublicInstitution: boolean;
+  adminEmail?: string;
+  adminName?: string;
+  adminPassword?: string;
+}
+
 export const TenantForm: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
@@ -80,8 +142,8 @@ export const TenantForm: React.FC = () => {
 
   const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA">("MUSEUM");
   const [parentId, setParentId] = useState<string | null>(null);
-  const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
-  const [availablePlans, setAvailablePlans] = useState<any[]>([]);
+  const [cities, setCities] = useState<TenantOption[]>([]);
+  const [availablePlans, setAvailablePlans] = useState<PlanOption[]>([]);
 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminName, setAdminName] = useState("");
@@ -192,7 +254,7 @@ export const TenantForm: React.FC = () => {
 
   useEffect(() => {
     api.get("/tenants").then(res => {
-        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: unknown) =>
+        const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: TenantOption) =>
           item.type === "CITY" || item.type === "SECRETARIA" || item.isCityMode === true
         );
         setCities(cityTenants);
@@ -241,7 +303,7 @@ export const TenantForm: React.FC = () => {
     }
 
     setSaving(true);
-    const payload: unknown = {
+    const payload: TenantPayload = {
       name, slug, type: tenantType, parentId: parentId || null,
       isCityMode: tenantType === "CITY" || tenantType === "SECRETARIA",
       plan, maxWorks,
@@ -288,7 +350,15 @@ export const TenantForm: React.FC = () => {
     { value: "CULTURAL_SPACE", icon: <Tent size={28} />, label: "Espaço Cultural", desc: "Galerias e centros comunitários." }
   ];
 
-  const FeatureToggle = ({ label, state, setter, premium, icon: Icon }: unknown) => (
+  interface FeatureToggleProps {
+      label: string;
+      state: boolean;
+      setter: React.Dispatch<React.SetStateAction<boolean>>;
+      premium?: boolean;
+      icon?: React.FC<{ size?: number }>;
+  }
+
+  const FeatureToggle: React.FC<FeatureToggleProps> = ({ label, state, setter, premium, icon: Icon }) => (
     <div
       onClick={() => setter(!state)}
       className={`p-6 rounded-3xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${state ? 'bg-blue-600/10 border-blue-500/30' : 'bg-white/[0.02] border-white/5 opacity-50 hover:opacity-100'}`}

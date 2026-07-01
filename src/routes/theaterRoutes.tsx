@@ -1,6 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { AdminLayout } from "../modules/backoffice/equipment/AdminLayout";
+import { TheaterLayout } from "../modules/theater/layouts/TheaterLayout";
 import { Role } from "../modules/auth/AuthContext";
 
 const TheaterDashboard = React.lazy(() => import("../modules/theater/pages/TheaterDashboard").then(m => ({ default: m.TheaterDashboard })));
@@ -18,9 +18,9 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
             path="/theater"
             element={
                 <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
+                    <TheaterLayout>
                         <TheaterDashboard />
-                    </AdminLayout>
+                    </TheaterLayout>
                 </RequireRole>
             }
         />
@@ -33,62 +33,62 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
             }
         />
         <Route
-            path="/admin/assentos"
+            path="/theater/assentos"
             element={
                 <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
+                    <TheaterLayout>
                         <TheaterSeatEditor />
-                    </AdminLayout>
+                    </TheaterLayout>
                 </RequireRole>
             }
         />
         <Route
-            path="/admin/sessoes"
+            path="/theater/sessoes"
             element={
                 <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
+                    <TheaterLayout>
                         <AdminBoxOffice />
-                    </AdminLayout>
+                    </TheaterLayout>
                 </RequireRole>
             }
         />
         <Route
-            path="/admin/playbill"
+            path="/theater/sessoes/:id/cue-master"
             element={
                 <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
-                        <TheaterPlaybill />
-                    </AdminLayout>
-                </RequireRole>
-            }
-        />
-        <Route
-            path="/admin/elenco"
-            element={
-                <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
-                        <TheaterCast />
-                    </AdminLayout>
-                </RequireRole>
-            }
-        />
-        <Route
-            path="/admin/cue-master"
-            element={
-                <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
+                    <TheaterLayout>
                         <TheaterCueMaster />
-                    </AdminLayout>
+                    </TheaterLayout>
                 </RequireRole>
             }
         />
         <Route
-            path="/admin/theater-club"
+            path="/theater/playbill"
             element={
                 <RequireRole allowed={["theater", "admin"]}>
-                    <AdminLayout>
+                    <TheaterLayout>
+                        <TheaterPlaybill />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+        <Route
+            path="/theater/elenco"
+            element={
+                <RequireRole allowed={["theater", "admin"]}>
+                    <TheaterLayout>
+                        <TheaterCast />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+        <Route
+            path="/theater/theater-club"
+            element={
+                <RequireRole allowed={["theater", "admin"]}>
+                    <TheaterLayout>
                         <TheaterSubscriptions />
-                    </AdminLayout>
+                    </TheaterLayout>
                 </RequireRole>
             }
         />

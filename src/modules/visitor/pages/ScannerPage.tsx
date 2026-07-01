@@ -8,6 +8,7 @@ import { Input, Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import { extractQRCode } from "../../../utils/qrHelpers";
 import "./Scanner.css";
 
 export const ScannerPage: React.FC = () => {
@@ -78,68 +79,32 @@ export const ScannerPage: React.FC = () => {
         setValidating(true);
 
         try {
-            // 1. Detect Type based on URL/Prefix
-            if (decodedText.includes("/eventos/")) {
-                const eventId = decodedText.split("/eventos/")[1].split("?")[0];
-                navigate(`/eventos/${eventId}?scan=true`);
-                return;
+            const code = extractQRCode(decodedText);
+            if (!code) {
+                throw new Error("Código inválido");
             }
 
-            if (decodedText.includes("/registrations/") || decodedText.includes("/checkin/")) {
-                const regCode = (decodedText.includes("/registrations/") 
-                    ? decodedText.split("/registrations/")[1] 
-                    : decodedText.split("/checkin/")[1]).split("?")[0];
-                // Registrations might need a specific view or just show the ticket
-                addToast("Ingresso identificado. Redirecionando...", "info");
-                navigate(`/my-tickets?code=${regCode}`);
-                return;
-            }
+            const res = await api.get(`/qrcodes/${code}/resolve`);
+            const data = res.data;
 
-            // 2. Default to Work logic
-            let workId = decodedText;
-            try {
-                const data = JSON.parse(decodedText);
-                if (data.id) workId = data.id;
-            } catch { /* Not JSON */ }
+            if (data.redirectUrl) {
+                // Registrar o scan silenciosamente
+                api.post(`/qrcodes/${code}/scan`).catch(err => {
+                    logger.warn("Erro ao registrar scan silencioso", err);
+                });
 
-            if (workId.includes("/works/")) workId = workId.split("/works/")[1];
-            else if (workId.includes("/obras/")) workId = workId.split("/obras/")[1];
-            else if (workId.includes("/qr/")) workId = workId.split("/qr/")[1];
-            
-            if (workId.startsWith("http")) {
-                workId = workId.split("/").filter(Boolean).pop() || "";
-            }
-
-            // Clean query params
-            workId = workId.split("?")[0];
-
-            // Validate work context
-            const res = await api.get(`/works/${workId}`);
-            const work = res.data;
-
-            if (work.equipamentoId && work.equipamentoId !== equipamentoId) {
-                const change = window.confirm(`Esta obra pertence ao espaço "${work.equipamento?.nome || 'outro local'}". Deseja entrar neste espaço para ver os detalhes?`);
-                if (change) {
-                    if (isAuthenticated) {
-                        updateSession(role || "visitor", work.tenantId, name, work.equipamentoId);
-                    } else {
-                        enterAsGuest(work.tenantId, work.equipamentoId);
-                    }
-                    addToast("Boas-vindas ao novo espaço!", "success");
-                } else {
-                    setValidating(false);
-                    return;
+                if (data.xpReward) {
+                    addToast(`Você ganhou ${data.xpReward} XP!`, "success");
                 }
-            }
-            
-            if (decodedText.includes("/qr/")) {
-                navigate(`/qr/${workId}?scan=true`);
+                
+                navigate(data.redirectUrl + (data.redirectUrl.includes('?') ? '&scan=true' : '?scan=true'));
             } else {
-                navigate(`/obras/${workId}?scan=true`);
+                throw new Error("Destino não encontrado");
             }
         } catch (err: unknown) {
             logger.error("Erro ao validar scan", err);
-            addToast("Código não identificado ou fora de contexto.", "error");
+            const msg = (err as any)?.response?.data?.message || "QR Code não identificado ou expirado.";
+            addToast(msg, "error");
             setValidating(false);
         }
     };

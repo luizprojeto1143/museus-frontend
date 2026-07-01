@@ -18,7 +18,9 @@ import {
     Zap,
     X,
     Bell,
-    Globe
+    Globe,
+    Map,
+    Landmark
 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
@@ -31,10 +33,11 @@ export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ child
 
     const links = [
         { to: "/municipal", label: t("municipal.layout.link_dashboard", "Dashboard Executivo"), icon: <LayoutDashboard size={18} /> },
+        { to: "/municipal/vazios-culturais", label: t("municipal.layout.link_gaps", "Vazios Culturais"), icon: <Map size={18} /> },
+        { to: "/municipal/patrimonio", label: t("municipal.layout.link_heritage", "Patrimônio Cultural"), icon: <Landmark size={18} /> },
         { to: "/municipal/equipments", label: t("municipal.layout.link_equipments", "Equipamentos Culturais"), icon: <Building2 size={18} /> },
         { to: "/municipal/projects", label: t("municipal.layout.link_projects", "Gestão de Projetos"), icon: <FileText size={18} /> },
         { to: "/municipal/reports", label: t("municipal.layout.link_reports", "Relatórios de Impacto"), icon: <BarChart3 size={18} /> },
-        { to: "/municipal/compliance", label: t("municipal.layout.link_compliance", "Conformidade Legal"), icon: <ShieldCheck size={18} /> },
         { to: "/municipal/ppa", label: t("municipal.layout.link_ppa", "Metas PPA"), icon: <TrendingUp size={18} /> },
         { to: "/municipal/settings", label: t("municipal.layout.link_settings", "Configurações da Cidade"), icon: <Settings size={18} /> },
     ];

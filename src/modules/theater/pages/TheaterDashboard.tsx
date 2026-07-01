@@ -39,7 +39,7 @@ export const TheaterDashboard: React.FC = () => {
 
     const seats = Array.from({ length: 60 }, (_, i) => ({
         id: i,
-        status: Math.random() > 0.3 ? "occupied" : "available",
+        status: i % 3 === 0 ? "occupied" : "available",
         type: i < 20 ? "vip" : "standard"
     }));
 

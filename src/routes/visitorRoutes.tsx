@@ -56,6 +56,7 @@ const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTra
 const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
 const CityHub = React.lazy(() => import("../modules/visitor/pages/CityHub").then(m => ({ default: m.CityHub })));
 const CityDashboard = React.lazy(() => import("../modules/visitor/pages/CityDashboard").then(m => ({ default: m.CityDashboard })));
+const CityEquipments = React.lazy(() => import("../modules/visitor/pages/CityEquipments").then(m => ({ default: m.CityEquipments })));
 const VisitorHub = React.lazy(() => import("../modules/visitor/pages/VisitorHub").then(m => ({ default: m.VisitorHub })));
 const CitySearch = React.lazy(() => import("../modules/visitor/pages/CitySearch").then(m => ({ default: m.CitySearch })));
 const MuseumHub = React.lazy(() => import("../modules/visitor/pages/MuseumHub").then(m => ({ default: m.MuseumHub })));
@@ -117,10 +118,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
 
             {/* Hub do Visitante — tela raiz após login */}
             <Route path="/hub" element={vr(VisitorHub, RequireRole)} />
-            {/* Compatibilidade reversa */}
-            <Route path="/hub-cidades" element={<Navigate to="/hub" replace />} />
-            <Route path="/home" element={<Navigate to="/hub" replace />} />
-            <Route path="/select-museum" element={<Navigate to="/cidades" replace />} />
+
 
             {/* Busca de cidades */}
             <Route path="/cidades" element={vr(CitySearch, RequireRole)} />
@@ -133,7 +131,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
                 <Route path="roteiros" element={vr(TrailsList, RequireRole)} />
                 <Route path="ranking" element={vr(LeaderboardPage, RequireRole)} />
                 <Route path="passaporte" element={vr(Passport, RequireRole)} />
-                {/* A rota de equipamentos seria a listagem, mas por hora podemos apontar para o hub ou criar uma */}
+                <Route path="equipamentos" element={vr(CityEquipments, RequireRole)} />
             </Route>
 
             {/* Rotas Globais do Visitante */}

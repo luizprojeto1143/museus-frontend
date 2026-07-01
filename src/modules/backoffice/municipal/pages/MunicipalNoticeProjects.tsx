@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -12,7 +12,7 @@ import {
     ExternalLink, MapPin, DollarSign, CheckCircle2, Download, Share, CheckCircle,
     Filter, SortAsc, SortDesc, TrendingUp
 } from "lucide-react";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 type Project = {
     id: string;
@@ -42,15 +42,15 @@ type Notice = {
 const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
     DRAFT: { label: "Rascunho", color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" },
     SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
-    UNDER_REVIEW: { label: "Em Análise", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+    UNDER_REVIEW: { label: "Em An�lise", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
     APPROVED: { label: "Aprovado", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     REJECTED: { label: "Reprovado", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" },
-    IN_EXECUTION: { label: "Em Execução", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-    COMPLETED: { label: "Concluído", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
+    IN_EXECUTION: { label: "Em Execu��o", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+    COMPLETED: { label: "Conclu�do", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
     CANCELED: { label: "Cancelado", color: "text-zinc-500", bg: "bg-zinc-500/10", border: "border-zinc-500/20" }
 };
 
-export const AdminNoticeProjects: React.FC = () => {
+export const MunicipalNoticeProjects: React.FC = () => {
   const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const { tenantId } = useAuth();
@@ -89,7 +89,7 @@ export const AdminNoticeProjects: React.FC = () => {
     const handleExportCSV = () => {
         if (projects.length === 0) return;
 
-        const headers = ["ID", "Título", "Proponente", "Status", "Categoria", "Região", "Valor Solicitado", "Score IA", "Nota Humana", "Score Final", "Recomendação IA"];
+        const headers = ["ID", "T�tulo", "Proponente", "Status", "Categoria", "Regi�o", "Valor Solicitado", "Score IA", "Nota Humana", "Score Final", "Recomenda��o IA"];
         const rows = projects.map(p => [
             p.id,
             p.title,
@@ -114,7 +114,7 @@ export const AdminNoticeProjects: React.FC = () => {
     };
 
     const handlePublishResults = async () => {
-        if (!window.confirm("Deseja publicar os resultados finais deste edital? Isso oficializará as decisões tomadas.")) return;
+        if (!window.confirm("Deseja publicar os resultados finais deste edital? Isso oficializar� as decis�es tomadas.")) return;
 
         try {
             await api.put(`/notices/${id}/publish-results`);
@@ -145,7 +145,7 @@ export const AdminNoticeProjects: React.FC = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                 <div className="flex items-start gap-4">
-                    <Button variant="ghost" onClick={() => navigate("/admin/editais")} className="mt-1 p-1 hover:bg-zinc-900/40 border border-gold/20/5">
+                    <Button variant="ghost" onClick={() => navigate("/municipal/editais")} className="mt-1 p-1 hover:bg-zinc-900/40 border border-gold/20/5">
                         <ArrowLeft size={24} className="text-zinc-500" />
                     </Button>
                     <div>
@@ -169,7 +169,7 @@ export const AdminNoticeProjects: React.FC = () => {
                         >
                             <option value="ALL">Todos Status</option>
                             <option value="SUBMITTED">Novos</option>
-                            <option value="UNDER_REVIEW">{t("admin.noticeprojects.emAnlise", `Em Análise`)}</option>
+                            <option value="UNDER_REVIEW">{t("admin.noticeprojects.emAnlise", `Em An�lise`)}</option>
                             <option value="APPROVED">Aprovados</option>
                             <option value="REJECTED">Reprovados</option>
                         </select>
@@ -184,8 +184,8 @@ export const AdminNoticeProjects: React.FC = () => {
                         >
                             <option value="ALL">Todas IA</option>
                             <option value="APPROVE">Recomendados</option>
-                            <option value="REVIEW">{t("admin.noticeprojects.paraReviso", `Para Revisão`)}</option>
-                            <option value="REJECT">{t("admin.noticeprojects.reprovaoIa", `Reprovação IA`)}</option>
+                            <option value="REVIEW">{t("admin.noticeprojects.paraReviso", `Para Revis�o`)}</option>
+                            <option value="REJECT">{t("admin.noticeprojects.reprovaoIa", `Reprova��o IA`)}</option>
                         </select>
                     </div>
 
@@ -270,7 +270,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                             ) : (
                                                 <>
                                                     <div className="text-zinc-700 font-black text-3xl">--</div>
-                                                    <div className="text-[10px] text-zinc-600 uppercase font-bold">{t("admin.noticeprojects.semAnlise", `Sem Análise`)}</div>
+                                                    <div className="text-[10px] text-zinc-600 uppercase font-bold">{t("admin.noticeprojects.semAnlise", `Sem An�lise`)}</div>
                                                 </>
                                             )}
                                         </div>
@@ -302,7 +302,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                                     <Users size={12} className="text-gold/50" /> {project.proponent?.name || 'Proponente'}
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
-                                                    <MapPin size={12} className="text-zinc-600" /> {project.targetRegion || 'Região não informada'}
+                                                    <MapPin size={12} className="text-zinc-600" /> {project.targetRegion || 'Regi�o n�o informada'}
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
                                                     <DollarSign size={12} className="text-zinc-600" /> {formatCurrency(project.requestedBudget)}
@@ -317,7 +317,7 @@ export const AdminNoticeProjects: React.FC = () => {
                                         <div className="flex items-center justify-end md:pl-6 border-t md:border-t-0 md:border-l border-white/5 pt-4 md:pt-0">
                                             <Button
                                                 variant="ghost"
-                                                onClick={() => navigate(`/admin/projetos/${project.id}`)}
+                                                onClick={() => navigate(`/municipal/projetos/${project.id}`)}
                                                 className="hover:bg-gold/10 hover:text-gold group/btn"
                                             >
                                                 Avaliar Projeto <ExternalLink size={16} className="ml-2 transition-transform group-hover/btn:translate-x-1" />

@@ -49,23 +49,15 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
     }, [tenantId]);
 
     const links = [
-        { to: "/producer", label: t("producer.layout.menu.overview"), icon: <LayoutDashboard size={20} />, show: true },
-        {to: "/producer/projects", label: "Meus Projetos", icon: <FileText size={20} />, show: features.featureProjects},
-        {to: "/producer/events", label: "Meus Eventos", icon: <Calendar size={20} />, show: features.featureEvents},
-        {to: "/producer/documents", label: "Cofre de Documentos", icon: <Folder size={20} />, show: features.featureDocuments || true},
-        {to: "/producer/providers", label: "Encontrar Prestadores", icon: <Users size={20} />, show: true},
-        {to: "/producer/editais", label: "Editais Disponíveis", icon: <Briefcase size={20} />, show: features.featureEditaisSubmission},
-
-        // Museum Features provided to Producer (Guarded by Flags)
-        { to: "/producer/works", label: "Acervo", icon: <Image size={20} />, show: features.featureWorks },
-        { to: "/producer/gamification", label: "Gamificação", icon: <Trophy size={20} />, show: features.featureGamification },
-
-        { to: "/producer/tickets", label: t("producer.layout.menu.tickets"), icon: <Ticket size={20} />, show: features.featureTickets },
-        { to: "/producer/audience", label: t("producer.layout.menu.audience"), icon: <Users size={20} />, show: features.featureTickets }, // Audience usually tied to tickets/events
-        { to: "/producer/services", label: t("producer.layout.menu.services"), icon: <Briefcase size={20} />, show: features.featureServices },
-        { to: "/producer/reports", label: t("producer.layout.menu.reports"), icon: <FileText size={20} />, show: features.featureEvents || features.featureTickets },
-        { to: "/producer/profile", label: "Meu Perfil", icon: <Users size={20} />, show: true },
-        { to: "/producer/inbox", label: "Inbox & Mensagens", icon: <MessageSquare size={20} />, show: true },
+        { to: "/producer", label: "Dashboard", icon: <LayoutDashboard size={20} />, show: true },
+        { to: "/producer/editais", label: "Editais Abertos", icon: <Briefcase size={20} />, show: true },
+        { to: "/producer/projects", label: "Meus Projetos", icon: <FileText size={20} />, show: true },
+        { to: "/producer/providers", label: "Prestadores / Orçamentos", icon: <Users size={20} />, show: true },
+        { to: "/producer/events", label: "Eventos", icon: <Calendar size={20} />, show: true },
+        { to: "/producer/finance", label: "Financeiro", icon: <Briefcase size={20} />, show: true },
+        { to: "/producer/documents", label: "Documentos", icon: <Folder size={20} />, show: true },
+        { to: "/producer/inbox", label: "Mensagens", icon: <MessageSquare size={20} />, show: true },
+        { to: "/producer/profile", label: "Perfil", icon: <Users size={20} />, show: true },
         { to: "/producer/settings", label: "Configurações", icon: <Settings size={20} />, show: true },
     ].filter(l => l.show);
 

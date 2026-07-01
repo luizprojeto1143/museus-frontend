@@ -51,27 +51,26 @@ export const Passport: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchPassport = useCallback(async () => {
-    if (!visitorId) return;
     setLoading(true);
     try {
-      const res = await api.get(`/vestiges/passport/${visitorId}`);
-      const data = res.data;
+      const res = await api.get("/visitors/me/passport");
+      const data = res.data?.stamps;
       if (Array.isArray(data)) {
-        setStamps(data.map((s: unknown) => ({
-          id: s.work.id,
-          title: s.work.title,
-          artist: s.work.artist,
-          imageUrl: s.work.vestigeImageUrl || s.work.imageUrl,
+        setStamps(data.map((s: any) => ({
+          id: s.workId || s.work?.id,
+          title: s.work?.title || "Obra",
+          artist: s.work?.artist || "",
+          imageUrl: s.work?.imageUrl,
           visitedAt: s.stampedAt,
-          isRelic: s.isRelic,
-          raridade: s.raridade,
-          numeroCaptura: s.numeroCaptura,
-          city: s.work.tenant?.address?.city || s.work.tenant?.city || "Geral"
+          isRelic: s.isRelic || false,
+          raridade: s.raridade || "COMMON",
+          numeroCaptura: s.numeroCaptura || 0,
+          city: s.work?.tenant?.address?.city || s.work?.tenant?.city || "Geral"
         })));
       }
     } catch (error: unknown) { logger.error(error); }
     finally { setLoading(false); }
-  }, [visitorId]);
+  }, []);
 
   useEffect(() => {
     fetchPassport();

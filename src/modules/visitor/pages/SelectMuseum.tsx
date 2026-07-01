@@ -179,7 +179,7 @@ export const SelectMuseum: React.FC = () => {
         // Reutilizamos switch-tenant mas agora focando em equipamento contextualmente se necessario,
         // ou apenas atualizamos localmente o ID
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
-        navigate("/home");
+        navigate("/hub");
         return;
       } catch (err: unknown) {
         logger.error(err);
@@ -199,7 +199,7 @@ export const SelectMuseum: React.FC = () => {
     }
 
     enterAsGuest(equip.tenantId, equip.id, equip.cityId || null);
-    navigate("/home");
+    navigate("/hub");
   };
 
   const formatDistance = (dist?: number) => {
@@ -545,7 +545,7 @@ export const SelectMuseum: React.FC = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                     className="flex-1 h-14 text-lg font-bold"
-                    onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null); navigate("/home"); }}
+                    onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null); navigate("/hub"); }}
                     rightIcon={<Zap size={20} />}
                 >
                   {t("visitor.selectMuseum.modal.enter")}

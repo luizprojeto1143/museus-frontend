@@ -1,4 +1,4 @@
-Ôªøimport React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -7,10 +7,10 @@ import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, FileText, Download, Calendar } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 
-export const AdminTCEExport: React.FC = () => {
+export const MunicipalTCEExport: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [stats, setStats] = useState<unknown>(null);
@@ -44,14 +44,14 @@ export const AdminTCEExport: React.FC = () => {
             observacoes: ''
         };
         const csv = Object.entries(data).map(([k, v]) => `${k};${v}`).join('\n');
-        const blob = new Blob([`Relat√≥rio TCE-MG\n${csv}`], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([`RelatÛrio TCE-MG\n${csv}`], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `tce_${year}_Q${quarter}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-        toast.success("Relat√≥rio exportado!");
+        toast.success("RelatÛrio exportado!");
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
@@ -60,8 +60,8 @@ export const AdminTCEExport: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.tceexport.exportaoTcemg", `Exporta√ß√£o TCE-MG`)}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.tceexport.relatrioFormatadoParaOTribunalDeContas", `Relat√≥rio formatado para o Tribunal de Contas`)}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.tceexport.exportaoTcemg", `ExportaÁ„o TCE-MG`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.tceexport.relatrioFormatadoParaOTribunalDeContas", `RelatÛrio formatado para o Tribunal de Contas`)}</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <select value={year} onChange={e => setYear(Number(e.target.value))} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -78,7 +78,7 @@ export const AdminTCEExport: React.FC = () => {
             <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                 <div className="px-6 py-4 border-b border-white/5 flex items-center gap-2">
                     <FileText size={18} className="text-amber-500" />
-                    <h2 className="card-title" style={{ margin: 0 }}>Pr√©via do Relat√≥rio ‚Äî {year} Q{quarter}</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>PrÈvia do RelatÛrio ó {year} Q{quarter}</h2>
                 </div>
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
@@ -86,11 +86,11 @@ export const AdminTCEExport: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {[
-                            { label: 'Visitantes no Per√≠odo', value: stats?.totalVisitors?.toLocaleString("pt-BR") || '0' },
+                            { label: 'Visitantes no PerÌodo', value: stats?.totalVisitors?.toLocaleString("pt-BR") || '0' },
                             { label: 'Eventos Realizados', value: stats?.totalEvents || '0' },
                             { label: 'Total de Obras no Acervo', value: stats?.totalWorks || '0' },
-                            { label: 'Avalia√ß√µes Recebidas', value: stats?.totalReviews || '0' },
-                            { label: 'Nota M√©dia do P√∫blico', value: stats?.avgRating ? `${stats.avgRating.toFixed(1)}/5` : 'N/A' },
+                            { label: 'AvaliaÁıes Recebidas', value: stats?.totalReviews || '0' },
+                            { label: 'Nota MÈdia do P˙blico', value: stats?.avgRating ? `${stats.avgRating.toFixed(1)}/5` : 'N/A' },
                             { label: 'Receita Registrada', value: stats?.totalRevenue ? `R$ ${stats.totalRevenue.toLocaleString("pt-BR")}` : 'R$ 0,00' }
                         ].map((row, i) => (
                             <tr key={i} className="hover:bg-zinc-900/40 border border-gold/20/5">
@@ -103,8 +103,8 @@ export const AdminTCEExport: React.FC = () => {
             </div>
 
             <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5">
-                <p className="text-amber-400 text-sm font-bold mb-1">‚ö†Ô∏è Nota</p>
-                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.tceexport.esteUmRelatrioSimplificadoParaAtenderAoF", `Este √© um relat√≥rio simplificado. Para atender ao formato exato do TCE-MG, ajuste os campos conforme o modelo oficial do seu munic√≠pio.`)}</p>
+                <p className="text-amber-400 text-sm font-bold mb-1">?? Nota</p>
+                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.tceexport.esteUmRelatrioSimplificadoParaAtenderAoF", `Este È um relatÛrio simplificado. Para atender ao formato exato do TCE-MG, ajuste os campos conforme o modelo oficial do seu municÌpio.`)}</p>
             </div>
         </div>
     );

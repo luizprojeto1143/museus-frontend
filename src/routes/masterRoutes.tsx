@@ -1,7 +1,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import { MasterLayout } from "../modules/master/MasterLayout";
-import { Role } from "../modules/auth/AuthContext";
+import { Role } from "../types/auth";
 
 import { MasterDashboard } from "../modules/master/pages/MasterDashboard";
 import { TenantsList } from "../modules/master/pages/TenantsList";
@@ -24,6 +24,14 @@ import { MasterBadgeQueue } from "../modules/master/pages/MasterBadgeQueue";
 import { MasterErrorMonitor } from "../modules/master/pages/MasterErrorMonitor";
 import { MasterCardManager } from "../modules/master/pages/MasterCardManager";
 import { MasterFinancialSettings } from "../modules/master/pages/MasterFinancialSettings";
+import { MasterFinancialFees } from "../modules/master/pages/MasterFinancialFees";
+
+import { MasterMonitoring } from "../modules/master/pages/MasterMonitoring";
+import { MasterErrorLogs } from "../modules/master/pages/MasterErrorLogs";
+import { MasterSecurityEvents } from "../modules/master/pages/MasterSecurityEvents";
+import { MasterIntegrationLogs } from "../modules/master/pages/MasterIntegrationLogs";
+import { MasterJobLogs } from "../modules/master/pages/MasterJobLogs";
+import { MasterTenantActivity } from "../modules/master/pages/MasterTenantActivity";
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -62,6 +70,16 @@ export function masterRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/master/error-monitor" element={mr(MasterErrorMonitor, RequireRole)} />
             <Route path="/master/cards" element={mr(MasterCardManager, RequireRole)} />
             <Route path="/master/financeiro" element={mr(MasterFinancialSettings, RequireRole)} />
+            <Route path="/master/financeiro/taxas" element={mr(MasterFinancialFees, RequireRole)} />
+
+            {/* Sprint 14 Observability Routes */}
+            <Route path="/master/monitoramento" element={mr(MasterMonitoring, RequireRole)} />
+            <Route path="/master/monitoramento/erros" element={mr(MasterErrorLogs, RequireRole)} />
+            <Route path="/master/monitoramento/auditoria" element={mr(MasterAuditLogs, RequireRole)} />
+            <Route path="/master/monitoramento/seguranca" element={mr(MasterSecurityEvents, RequireRole)} />
+            <Route path="/master/monitoramento/integracoes" element={mr(MasterIntegrationLogs, RequireRole)} />
+            <Route path="/master/monitoramento/jobs" element={mr(MasterJobLogs, RequireRole)} />
+            <Route path="/master/tenants/:tenantId/activity" element={mr(MasterTenantActivity, RequireRole)} />
         </>
     );
 }

@@ -12,17 +12,18 @@ import { MunicipalAccessibilityGaps } from "../modules/backoffice/municipal/Muni
 import { MunicipalPPA } from "../modules/backoffice/municipal/MunicipalPPA";
 
 // Moved from Admin
-const AdminNotices = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNotices").then(m => ({ default: m.AdminNotices })));
-const AdminNoticeForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNoticeForm").then(m => ({ default: m.AdminNoticeForm })));
-const AdminNoticeProjects = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminNoticeProjects").then(m => ({ default: m.AdminNoticeProjects })));
-const AdminProjects = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProjects").then(m => ({ default: m.AdminProjects })));
-const AdminProjectForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProjectForm").then(m => ({ default: m.AdminProjectForm })));
-const AdminProviders = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProviders").then(m => ({ default: m.AdminProviders })));
-const AdminProviderForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminProviderForm").then(m => ({ default: m.AdminProviderForm })));
-const AdminTCEExport = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTCEExport").then(m => ({ default: m.AdminTCEExport })));
-const AdminMunicipalGaps = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMunicipalGaps").then(m => ({ default: m.AdminMunicipalGaps })));
-const AdminHeritage = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminHeritage").then(m => ({ default: m.AdminHeritage })));
-const AdminMunicipalCalendar = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMunicipalCalendar").then(m => ({ default: m.AdminMunicipalCalendar })));
+const MunicipalNotices = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNotices").then(m => ({ default: m.MunicipalNotices })));
+const MunicipalNoticeForm = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNoticeForm").then(m => ({ default: m.MunicipalNoticeForm })));
+const MunicipalNoticeProjects = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNoticeProjects").then(m => ({ default: m.MunicipalNoticeProjects })));
+const MunicipalProjects = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProjects").then(m => ({ default: m.MunicipalProjects })));
+const MunicipalProjectForm = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProjectForm").then(m => ({ default: m.MunicipalProjectForm })));
+const MunicipalProviders = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProviders").then(m => ({ default: m.MunicipalProviders })));
+const MunicipalProviderForm = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProviderForm").then(m => ({ default: m.MunicipalProviderForm })));
+const MunicipalTCEExport = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalTCEExport").then(m => ({ default: m.MunicipalTCEExport })));
+const MunicipalGaps = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalGaps").then(m => ({ default: m.MunicipalGaps })));
+const MunicipalHeritage = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalHeritage").then(m => ({ default: m.MunicipalHeritage })));
+const MunicipalCalendar = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalCalendar").then(m => ({ default: m.MunicipalCalendar })));
+const MunicipalSponsorships = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalSponsorships").then(m => ({ default: m.MunicipalSponsorships })));
 
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 
@@ -38,29 +39,30 @@ export function municipalRoutes(RequireRole: React.FC<RequireRoleProps>) {
     return (
         <>
             <Route path="/municipal" element={mun(MunicipalDashboard)} />
-            <Route path="/municipal/equipments" element={mun(MunicipalEquipments)} />
+            <Route path="/municipal/equipamentos" element={mun(MunicipalEquipments)} />
             <Route path="/municipal/projects" element={mun(MunicipalNoticeProjects)} />
             <Route path="/municipal/reports" element={mun(MunicipalReports)} />
-            <Route path="/municipal/compliance" element={mun(MunicipalAccessibilityGaps)} />
+            <Route path="/municipal/acessibilidade" element={mun(MunicipalAccessibilityGaps)} />
             <Route path="/municipal/ppa" element={mun(MunicipalPPA)} />
             <Route path="/municipal/settings" element={mun(MunicipalSettings)} />
 
             {/* Rotas migradas do Admin */}
-            <Route path="/municipal/editais" element={mun(AdminNotices)} />
-            <Route path="/municipal/editais/novo" element={mun(AdminNoticeForm)} />
-            <Route path="/municipal/editais/:id" element={mun(AdminNoticeForm)} />
-            <Route path="/municipal/editais/:id/projetos" element={mun(AdminNoticeProjects)} />
-            <Route path="/municipal/projetos" element={mun(AdminProjects)} />
-            <Route path="/municipal/projetos/novo" element={mun(AdminProjectForm)} />
-            <Route path="/municipal/projetos/:id" element={mun(AdminProjectForm)} />
-            <Route path="/municipal/prestadores" element={mun(AdminProviders)} />
-            <Route path="/municipal/prestadores/novo" element={mun(AdminProviderForm)} />
-            <Route path="/municipal/prestadores/:id" element={mun(AdminProviderForm)} />
+            <Route path="/municipal/editais" element={mun(MunicipalNotices)} />
+            <Route path="/municipal/editais/novo" element={mun(MunicipalNoticeForm)} />
+            <Route path="/municipal/editais/:id" element={mun(MunicipalNoticeForm)} />
+            <Route path="/municipal/editais/:id/projetos" element={mun(MunicipalNoticeProjects)} />
+            <Route path="/municipal/projetos" element={mun(MunicipalProjects)} />
+            <Route path="/municipal/projetos/novo" element={mun(MunicipalProjectForm)} />
+            <Route path="/municipal/projetos/:id" element={mun(MunicipalProjectForm)} />
+            <Route path="/municipal/prestadores" element={mun(MunicipalProviders)} />
+            <Route path="/municipal/prestadores/novo" element={mun(MunicipalProviderForm)} />
+            <Route path="/municipal/prestadores/:id" element={mun(MunicipalProviderForm)} />
             
-            <Route path="/municipal/tce" element={mun(AdminTCEExport)} />
-            <Route path="/municipal/vazios-culturais" element={mun(AdminMunicipalGaps)} />
-            <Route path="/municipal/patrimonio" element={mun(AdminHeritage)} />
-            <Route path="/municipal/calendario" element={mun(AdminMunicipalCalendar)} />
+            <Route path="/municipal/tce" element={mun(MunicipalTCEExport)} />
+            <Route path="/municipal/vazios-culturais" element={mun(MunicipalGaps)} />
+            <Route path="/municipal/patrimonio" element={mun(MunicipalHeritage)} />
+            <Route path="/municipal/calendario" element={mun(MunicipalCalendar)} />
+            <Route path="/municipal/patrocinios" element={mun(MunicipalSponsorships)} />
         </>
     );
 }

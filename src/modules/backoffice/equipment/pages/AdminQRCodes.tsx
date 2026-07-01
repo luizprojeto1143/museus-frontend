@@ -1,235 +1,393 @@
-import React, { useState, useRef } from "react";
-import { logger } from "@/utils/logger";
-
-import { QRCodeCanvas } from "qrcode.react";
-import { useTranslation } from "react-i18next";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { api } from "../../../../api/client";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  QrCode, Download, Copy, Link2,
+  RefreshCcw, CheckCircle, AlertCircle, Loader2, List
+} from "lucide-react";
 import { useAuth } from "../../../auth/AuthContext";
+import { QRCodeCanvas } from "qrcode.react";
+import "./AdminQRCodes.css";
 
+type QRType =
+  | "CITY" | "EQUIPMENT" | "WORK" | "EVENT"
+  | "EXHIBITION" | "TRAIL" | "ROOM" | "AUDIOGUIDE"
+  | "TICKET" | "SPONSORSHIP" | "FEEDBACK";
 
-type QRCodeItem = {
+interface GeneratedQR {
   id: string;
   code: string;
-  type: string;
+  type: QRType;
+  referenceId: string | null;
   title: string;
   xpReward: number;
-  referenceId?: string;
-};
+}
+
+const QR_TYPE_OPTIONS: { value: QRType; label: string; icon: string }[] = [
+  { value: "EQUIPMENT", label: "Museu / Equipamento", icon: "🏛️" },
+  { value: "WORK", label: "Obra de Arte", icon: "🎨" },
+  { value: "EVENT", label: "Evento", icon: "📅" },
+  { value: "EXHIBITION", label: "Exposição", icon: "🖼️" },
+  { value: "TRAIL", label: "Roteiro / Trilha", icon: "🗺️" },
+  { value: "ROOM", label: "Espaço", icon: "📍" },
+  { value: "CITY", label: "Cidade / Tenant", icon: "🏙️" },
+];
+
+const COLOR_PRESETS = [
+  { label: "Preto", fg: "#000000", bg: "#ffffff" },
+  { label: "Dourado", fg: "#b8860b", bg: "#fffbf0" },
+  { label: "Museu Azul", fg: "#1a3a6e", bg: "#f0f5ff" },
+];
 
 export const AdminQRCodes: React.FC = () => {
-  const { t } = useTranslation();
-
-
   const { tenantId } = useAuth();
-  const [qrcodes, setQrcodes] = useState<QRCodeItem[]>([]);
-  const [showForm, setShowForm] = useState(false);
+  
+  const [qrcodes, setQrcodes] = useState<GeneratedQR[]>([]);
+  
+  const [qrType, setQrType] = useState<QRType>("EQUIPMENT");
+  const [qrName, setQrName] = useState("");
+  const [referenceId, setReferenceId] = useState("");
+  const [colorFg, setColorFg] = useState("#000000");
+  const [colorBg, setColorBg] = useState("#ffffff");
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const [generated, setGenerated] = useState<GeneratedQR | null>(null);
+  const [copied, setCopied] = useState(false);
+  const qrCanvasRef = useRef<HTMLDivElement>(null);
 
-  const fetchQRCodes = React.useCallback(() => {
+  // Seletores de contexto
+  const [options, setOptions] = useState<{id: string, name: string}[]>([]);
+  const [loadingOptions, setLoadingOptions] = useState(false);
+
+  const fetchQRCodes = useCallback(() => {
     if (!tenantId) return;
     api.get("/qrcodes", { params: { tenantId } })
       .then(res => setQrcodes(res.data))
       .catch(console.error);
   }, [tenantId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchQRCodes();
   }, [fetchQRCodes]);
 
-  // Dados do formulário
-  const [type, setType] = useState("WORK");
-  const [referenceId, setReferenceId] = useState("");
-  const [customUrl, setCustomUrl] = useState("");
+  useEffect(() => {
+    setReferenceId(""); // Reset ref
+    if (["CITY", "EQUIPMENT", "ROOM"].includes(qrType)) {
+        setOptions([]);
+        return;
+    }
 
-  // Resultado
-  const [generatedValue, setGeneratedValue] = useState("");
-  const qrRef = useRef<HTMLDivElement>(null);
+    setLoadingOptions(true);
+    let endpoint = "";
+    if (qrType === "WORK") endpoint = "/works";
+    else if (qrType === "EVENT") endpoint = "/events";
+    else if (qrType === "TRAIL") endpoint = "/trails";
+    else if (qrType === "EXHIBITION") endpoint = "/exhibitions";
 
+    if (endpoint) {
+        api.get(endpoint, { params: { tenantId } })
+            .then(res => {
+                const data = res.data.works || res.data.events || res.data.trails || res.data.exhibitions || res.data || [];
+                setOptions(data.map((item: any) => ({
+                    id: item.id,
+                    name: item.title || item.name || item.id
+                })));
+            })
+            .catch(() => setOptions([]))
+            .finally(() => setLoadingOptions(false));
+    } else {
+        setOptions([]);
+        setLoadingOptions(false);
+    }
+  }, [qrType, tenantId]);
 
-
-
-
-  const handleGenerate = async () => {
-    if (!tenantId) return;
-
+  const handleGenerate = useCallback(async () => {
+    if (!qrName.trim()) {
+      setError("Informe um nome para o QR Code.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
     try {
       const res = await api.post("/qrcodes", {
-        type,
-        referenceId: type === "CUSTOM" ? null : referenceId,
-        title: type === "CUSTOM" ? customUrl : `${type} ${referenceId}`,
-        tenantId,
-        code: type === "CUSTOM" ? undefined : undefined // Let backend generate code
+        type: qrType,
+        title: qrName.trim(),
+        referenceId: referenceId || null,
+        tenantId
       });
-
-      const newQr = res.data;
-      setGeneratedValue(newQr.code); // Or full URL if needed
+      setGenerated(res.data);
       fetchQRCodes();
-      setShowForm(false);
-      logger.warn("Alert:", t("common.success"));
-    } catch (err) {
-      logger.error("Erro ao gerar QR Code", err);
-      logger.warn("Alert:", t("common.error"));
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Erro ao gerar QR Code. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  }, [qrType, qrName, referenceId, tenantId, fetchQRCodes]);
+
+  const getQRUrl = () => {
+    if (!generated) return "";
+    return `${window.location.origin}/qr/${generated.code}`;
+  };
+
+  const handleCopyUrl = async () => {
+    const url = getQRUrl();
+    if (!url) return;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadPNG = () => {
+    if (!generated) return;
+    const canvas = qrCanvasRef.current?.querySelector("canvas");
+    if (!canvas) return;
+    
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `qr-${generated.code}.png`;
+    a.click();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Tem certeza que deseja excluir este QR Code?")) {
+      try {
+        await api.delete(`/qrcodes/${id}`);
+        fetchQRCodes();
+        if (generated?.id === id) setGenerated(null);
+      } catch (err) {
+        console.error("Erro ao excluir QR Code", err);
+      }
     }
   };
 
-  const handleDownload = () => {
-    const canvas = qrRef.current?.querySelector("canvas");
-    if (canvas) {
-      const url = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `qrcode-${type}-${referenceId || "custom"}.png`;
-      a.click();
-    }
-  };
-
-  const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    const canvas = qrRef.current?.querySelector("canvas");
-    if (printWindow && canvas) {
-      const imgUrl = canvas.toDataURL("image/png");
-      printWindow.document.write(`
-        <html>
-          <head><title>Print QR Code</title></head>
-          <body style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh;">
-            <h1>QR Code</h1>
-            <img src="${imgUrl}" style="width:300px; height:300px;" />
-            <p>${generatedValue}</p>
-            <script>window.print();</script>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-    }
+  const handleReset = () => {
+    setGenerated(null);
+    setQrName("");
+    setReferenceId("");
+    setError(null);
   };
 
   return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
+    <div className="aqr-page">
+      <div className="aqr-header">
+        <QrCode size={24} />
         <div>
-          <h1 className="section-title">{t("admin.qrCodes.title")}</h1>
-
+          <h1>Gerenciador de QR Codes</h1>
+          <p>Crie e gerencie QR Codes inteligentes para o ecossistema</p>
         </div>
-        <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={() => setShowForm(!showForm)}>
-          {showForm ? t("admin.qrCodes.cancel") : t("admin.qrCodes.new")}
-        </button>
       </div>
 
-      {showForm && (
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ maxWidth: 600, marginBottom: "2rem" }}>
-          <div className="form-group">
-            <label htmlFor="type">{t("admin.qrCodes.labels.type")}</label>
-            <select
-              id="type"
-              className="input"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-            >
-              <option value="WORK">{t("admin.qrCodes.types.work")}</option>
-              <option value="TRAIL">{t("admin.qrCodes.types.trail")}</option>
-              <option value="EVENT">{t("admin.qrCodes.types.event")}</option>
-              <option value="SPACE">{t("admin.qrCodes.types.space")}</option>
-              <option value="CUSTOM">{t("admin.qrCodes.types.custom")}</option>
-            </select>
-          </div>
+      <div className="aqr-layout">
+        {/* Formulário */}
+        <div className="aqr-form-col">
+          <div className="aqr-card">
+            <h2>Configurar QR Code</h2>
 
-          {type !== "CUSTOM" ? (
-            <div className="form-group">
-              <label htmlFor="refId">{t("admin.qrCodes.labels.reference")}</label>
-              <input
-                id="refId"
-                className="input"
-                value={referenceId}
-                onChange={(e) => setReferenceId(e.target.value)}
-                placeholder="ID (ex: 123)"
-              />
-              <small style={{ color: "var(--text-secondary)" }}>
-                {t("admin.qrCodes.helper")}
-              </small>
-            </div>
-          ) : (
-            <div className="form-group">
-              <label htmlFor="customUrl">{t("admin.qrCodes.labels.customUrl")}</label>
-              <input
-                id="customUrl"
-                className="input"
-                value={customUrl}
-                onChange={(e) => setCustomUrl(e.target.value)}
-                placeholder="https://..."
-              />
-            </div>
-          )}
-
-          <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--accent-primary)] text-[var(--fg-inverse)] border-transparent shadow-[var(--shadow-glow)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handleGenerate}>
-            {t("admin.qrCodes.generate")}
-          </button>
-        </div>
-      )}
-
-      {generatedValue && (
-        <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
-          <div ref={qrRef} style={{ padding: "1rem", background: "#fff", borderRadius: "8px" }}>
-            <QRCodeCanvas value={generatedValue} size={256} level="H" />
-          </div>
-          <p style={{ fontFamily: "monospace", wordBreak: "break-all" }}>{generatedValue}</p>
-
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handleDownload}>
-              {t("admin.qrCodes.download")}
-            </button>
-            <button className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]" onClick={handlePrint}>
-              {t("admin.qrCodes.print")}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Lista de QR Codes existentes (apenas visualização por enquanto) */}
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors overflow-x-auto">
-        <h3 className="card-title" style={{ marginBottom: "1rem" }}>{t("admin.qrCodes.listTitle")}</h3>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{t("admin.qrCodes.table.code")}</th>
-              <th>{t("admin.qrCodes.table.type")}</th>
-              <th>{t("admin.qrCodes.table.reference")}</th>
-              <th style={{ textAlign: "right" }}>{t("common.actions")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {qrcodes.map((qr) => (
-              <tr key={qr.id}>
-                <td>{qr.code}</td>
-                <td>{qr.type}</td>
-                <td>{qr.referenceId || "-"}</td>
-                <td style={{ textAlign: "right" }}>
+            {/* Tipo */}
+            <div className="aqr-field">
+              <label>Tipo de Destino</label>
+              <div className="aqr-type-grid">
+                {QR_TYPE_OPTIONS.map(opt => (
                   <button
-                    className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--glass-bg-light)] text-[var(--fg-main)] border-[var(--border-default)] backdrop-blur-sm text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
-                    style={{ color: "#ef4444", borderColor: "#ef4444", padding: "0.25rem 0.5rem" }}
-                    onClick={async () => {
-                      if (confirm(t("common.confirmDelete"))) {
-                        try {
-                          await api.delete(`/qrcodes/${qr.id}`);
-                          fetchQRCodes();
-                        } catch {
-                          logger.warn("Alert:", t("common.error"));
-                        }
-                      }
-                    }}
+                    key={opt.value}
+                    id={`aqr-type-${opt.value.toLowerCase()}`}
+                    className={`aqr-type-btn ${qrType === opt.value ? "active" : ""}`}
+                    onClick={() => setQrType(opt.value)}
                   >
-                    🗑️
+                    <span className="aqr-type-icon">{opt.icon}</span>
+                    <span className="aqr-type-label">{opt.label}</span>
                   </button>
-                </td>
-              </tr>
-            ))}
-            {qrcodes.length === 0 && (
-              <tr>
-                <td colSpan={4} style={{ textAlign: "center", padding: "1rem" }}>
-                  {t("common.noData")}
-                </td>
-              </tr>
+                ))}
+              </div>
+            </div>
+
+            {/* Nome */}
+            <div className="aqr-field">
+              <label htmlFor="aqr-name">Nome / Título do QR</label>
+              <input
+                id="aqr-name"
+                type="text"
+                className="aqr-input"
+                placeholder="Ex: Escultura O Pensador"
+                value={qrName}
+                onChange={e => setQrName(e.target.value)}
+                maxLength={80}
+              />
+            </div>
+
+            {/* Referência */}
+            {options.length > 0 ? (
+                <div className="aqr-field">
+                <label htmlFor="aqr-ref">Vincular a:</label>
+                <select
+                    id="aqr-ref"
+                    className="aqr-input"
+                    value={referenceId}
+                    onChange={e => setReferenceId(e.target.value)}
+                >
+                    <option value="">-- Selecione (Opcional) --</option>
+                    {options.map(opt => (
+                        <option key={opt.id} value={opt.id}>{opt.name}</option>
+                    ))}
+                </select>
+                </div>
+            ) : loadingOptions ? (
+                <div className="aqr-field">
+                    <p className="text-sm text-gray-400"><Loader2 size={14} className="inline animate-spin mr-1" /> Carregando opções...</p>
+                </div>
+            ) : (
+                <div className="aqr-field">
+                    <label htmlFor="aqr-ref">ID do Destino (opcional)</label>
+                    <input
+                        id="aqr-ref"
+                        type="text"
+                        className="aqr-input"
+                        placeholder="ID ou URL caso customizado"
+                        value={referenceId}
+                        onChange={e => setReferenceId(e.target.value)}
+                    />
+                </div>
             )}
-          </tbody>
-        </table>
+
+            {/* Cores */}
+            <div className="aqr-field">
+              <label>Cores</label>
+              <div className="aqr-color-presets">
+                {COLOR_PRESETS.map(preset => (
+                  <button
+                    key={preset.label}
+                    className={`aqr-color-preset ${colorFg === preset.fg ? "active" : ""}`}
+                    onClick={() => { setColorFg(preset.fg); setColorBg(preset.bg); }}
+                    title={preset.label}
+                    style={{ background: preset.bg, border: `2px solid ${preset.fg}` }}
+                  >
+                    <span style={{ color: preset.fg, fontWeight: 700, fontSize: 11 }}>{preset.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {error && (
+              <div className="aqr-error">
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <button
+              id="aqr-generate-btn"
+              className="aqr-generate-btn"
+              onClick={handleGenerate}
+              disabled={loading}
+            >
+              {loading ? (
+                <><Loader2 size={18} className="aqr-spin" /> Gerando...</>
+              ) : (
+                <><QrCode size={18} /> Gerar QR Code</>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Preview */}
+        <div className="aqr-preview-col">
+          <AnimatePresence mode="wait">
+            {!generated ? (
+              <motion.div
+                key="placeholder"
+                className="aqr-card aqr-preview-placeholder"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <QrCode size={80} strokeWidth={1} />
+                <p>Configure e clique em <strong>Gerar QR Code</strong></p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="generated"
+                className="aqr-card"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="aqr-result-header">
+                  <CheckCircle size={20} className="aqr-success-icon" />
+                  <h3>QR Code Gerado!</h3>
+                </div>
+
+                <div className="aqr-qr-preview" style={{ background: colorBg }}>
+                    <div ref={qrCanvasRef} className="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm">
+                        <QRCodeCanvas value={getQRUrl()} size={200} fgColor={colorFg} bgColor={colorBg} level="H" />
+                    </div>
+                </div>
+
+                <div className="aqr-result-info">
+                  <strong>{generated.title}</strong>
+                  <small>Código: {generated.code}</small>
+                </div>
+
+                <div className="aqr-result-url">
+                  <Link2 size={14} />
+                  <span>{getQRUrl()}</span>
+                </div>
+
+                {/* Ações */}
+                <div className="aqr-result-actions">
+                  <button id="aqr-download-png" className="aqr-result-btn" onClick={handleDownloadPNG}>
+                    <Download size={16} /> PNG
+                  </button>
+                  <button id="aqr-copy-url" className="aqr-result-btn" onClick={handleCopyUrl}>
+                    {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
+                    {copied ? "Copiado!" : "URL"}
+                  </button>
+                  <button id="aqr-new" className="aqr-result-btn aqr-result-btn-outline" onClick={handleReset}>
+                    <RefreshCcw size={16} /> Novo
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Listagem */}
+          <div className="aqr-card mt-6">
+            <h3 className="flex items-center gap-2 mb-4 font-bold"><List size={18}/> Meus QR Codes</h3>
+            <div className="overflow-y-auto max-h-[300px]">
+                <table className="w-full text-left text-sm">
+                    <thead>
+                        <tr className="border-b border-gray-800 text-gray-400">
+                            <th className="pb-2 font-medium">Nome</th>
+                            <th className="pb-2 font-medium">Tipo</th>
+                            <th className="pb-2 font-medium text-right">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {qrcodes.map(qr => (
+                            <tr key={qr.id} className="border-b border-gray-800/50 hover:bg-white/5">
+                                <td className="py-3 pr-2 text-white">{qr.title}</td>
+                                <td className="py-3 text-gray-400 text-xs">{qr.type}</td>
+                                <td className="py-3 text-right">
+                                    <button 
+                                        className="text-red-400 hover:text-red-300 transition-colors px-2 py-1 bg-red-400/10 rounded"
+                                        onClick={() => handleDelete(qr.id)}
+                                    >
+                                        Excluir
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        {qrcodes.length === 0 && (
+                            <tr>
+                                <td colSpan={3} className="py-4 text-center text-gray-500">Nenhum QR Code gerado ainda.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,113 +1,191 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
-import { logger } from "@/utils/logger";
-
+import React, { useState, useEffect } from "react";
 import { api } from "../../../../api/client";
-import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, DollarSign, Plus, ExternalLink, Image as ImageIcon } from "lucide-react";
-import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
-import "./AdminShared.css";
+import { Award, CheckCircle, XCircle, FileText, Landmark, ShieldCheck } from "lucide-react";
+import { Button } from "../../../../components/ui";
 
+interface Contract {
+  id: string;
+  sponsorName: string;
+  sponsorCNPJ: string;
+  sponsorEmail: string;
+  status: string;
+  monthlyAmount: string;
+  opportunity: {
+    title: string;
+    targetType: string;
+  };
+  assets: Array<{
+    id: string;
+    type: string;
+    url: string;
+    status: string;
+  }>;
+}
 
 export const AdminSponsorships: React.FC = () => {
-  const { t } = useTranslation();
-    const { tenantId } = useAuth();
-    const [works, setWorks] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [showForm, setShowForm] = useState(false);
-    const [form, setForm] = useState({ workId: '', sponsorName: '', sponsorUrl: '', message: '', amount: '' });
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [reviewingAsset, setReviewingAsset] = useState<any>(null);
+  const [rejectionReason, setRejectionReason] = useState("");
+  const [actioning, setActioning] = useState(false);
 
-    const fetchData = useCallback(async () => {
-        try {
-            const res = await api.get(`/works?tenantId=${tenantId}`);
-            setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []));
-        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
-        finally { setLoading(false); }
-    }, [tenantId]);
+  useEffect(() => {
+    fetchContracts();
+  }, []);
 
-    useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
+  const fetchContracts = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/sponsor-portal/admin/list");
+      setContracts(res.data);
+    } catch (err) {
+      toast.error("Erro ao carregar contratos.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Filter works that have sponsorship data
-    const sponsoredWorks = works.filter((w: unknown) => w.sponsorships && w.sponsorships.length > 0);
+  const handleReview = async (assetId: string, status: "APPROVED" | "REJECTED") => {
+    if (status === "REJECTED" && !rejectionReason) {
+      toast.error("Por favor, informe a justificativa da rejeição.");
+      return;
+    }
 
-    if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
+    setActioning(true);
+    try {
+      await api.post(`/municipal/sponsorship-assets/${assetId}/review`, {
+        status,
+        rejectionReason: status === "REJECTED" ? rejectionReason : undefined
+      });
+      toast.success(status === "APPROVED" ? "Ativo de marca aprovado!" : "Ativo rejeitado.");
+      setReviewingAsset(null);
+      setRejectionReason("");
+      fetchContracts();
+    } catch (err) {
+      toast.error("Erro ao revisar ativo.");
+    } finally {
+      setActioning(false);
+    }
+  };
 
-    return (
-        <div style={{ display: "grid", gap: "2rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.sponsorships.patrocnios", `Patrocínios`)}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.sponsorships.gestoDePatrocniosEApoiosAObrasEspecficas", `Gestão de patrocínios e apoios a obras específicas`)}</p>
+  const handleIssueCertificate = async (contractId: string) => {
+    try {
+      await api.post(`/sponsor-portal/contracts/${contractId}/issue-certificate`, {
+        title: "Certificado de Reconhecimento de Incentivo Cultural",
+        description: "Reconhecimento oficial de incentivo aos projetos e espaços culturais locais."
+      });
+      toast.success("Certificado emitido e registrado no livro oficial da prefeitura!");
+      fetchContracts();
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "Erro ao emitir certificado.");
+    }
+  };
+
+  return (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div>
+        <h1 className="text-4xl font-black text-white italic tracking-tight">Gestão de Patrocínios (Equipamento)</h1>
+        <p className="text-slate-400 mt-1">Acompanhe contratos de fomento, aprove logotipos de patrocinadores e emita certificados.</p>
+      </div>
+
+      {loading ? (
+        <div className="p-20 text-center animate-pulse text-amber-500 font-bold italic">Carregando painel de patrocínios...</div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6">
+          {contracts.length > 0 ? (
+            contracts.map(contract => (
+              <div key={contract.id} className="p-6 rounded-[32px] bg-white/5 border border-white/5 space-y-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div>
+                    <span className="bg-amber-500/20 text-amber-400 text-[10px] px-2.5 py-1 rounded-full uppercase font-black tracking-wider mb-2 inline-block">
+                      {contract.opportunity.targetType}
+                    </span>
+                    <h3 className="text-xl font-bold text-white mt-1">{contract.sponsorName}</h3>
+                    <p className="text-xs text-slate-400 mt-1">Cota: {contract.opportunity.title} | E-mail: {contract.sponsorEmail}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className={`text-xs px-3 py-1.5 rounded-xl font-bold ${contract.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                      {contract.status}
+                    </span>
+                    {contract.status === 'ACTIVE' && (
+                      <Button
+                        onClick={() => handleIssueCertificate(contract.id)}
+                        className="bg-amber-500 hover:bg-amber-600 text-black font-black text-xs px-4 py-2 rounded-xl flex items-center gap-1.5"
+                      >
+                        <Award size={14} /> Emitir Certificado
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <Button onClick={() => setShowForm(true)} leftIcon={<Plus size={16} />}>Novo Patrocínio</Button>
-            </div>
 
-            {/* Stats */}
-            <div className="card-grid">
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <DollarSign className="mx-auto text-green-500 mb-2" size={24} />
-                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{sponsoredWorks.length}</p>
-                    <p className="stat-label">Obras Patrocinadas</p>
-                </div>
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent" style={{ color: "var(--accent-primary)" }}>{works.length}</p>
-                    <p className="stat-label">Total de Obras</p>
-                </div>
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
-                    <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{works.length > 0 ? Math.round((sponsoredWorks.length / works.length) * 100) : 0}%</p>
-                    <p className="stat-label">Cobertura</p>
-                </div>
-            </div>
-
-            {showForm && (
-                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
-                    <h2 className="card-title" style={{ margin: 0 }}>{t("admin.sponsorships.novoPatrocnio", `Novo Patrocínio`)}</h2>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div>
-                            <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
-                            <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
-                                <option value="">Selecione...</option>
-                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
-                            </select>
-                        </div>
-                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Nome do Patrocinador</label><input value={form.sponsorName} onChange={e => setForm({ ...form, sponsorName: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Site do Patrocinador</label><input value={form.sponsorUrl} onChange={e => setForm({ ...form, sponsorUrl: e.target.value })} placeholder="https://..." style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Valor (R$)</label><input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                    </div>
-                    <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Mensagem do Patrocinador</label><textarea value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} rows={2} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none", resize: "none" }} /></div>
-                    <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
-                        <Button variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
-                        <Button onClick={() => { toast.success("Patrocínio salvo!"); setShowForm(false); }}>Salvar</Button>
-                    </div>
-                </div>
-            )}
-
-            {/* Works list with sponsorship status */}
-            <div style={{ display: "grid", gap: "0.75rem" }}>
-                {works.slice(0, 20).map((w: unknown) => (
-                    <div key={w.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem" }}>
-                        {w.imageUrl ? (
-                            <img src={w.imageUrl} alt={w.title} className="w-14 h-14 rounded-xl object-cover shrink-0" />
-                        ) : (
-                            <div className="w-14 h-14 rounded-xl bg-zinc-900/40 border border-gold/20/5 flex items-center justify-center shrink-0">
-                                <ImageIcon size={20} style={{ color: "#475569" }} />
+                {contract.assets && contract.assets.length > 0 && (
+                  <div className="pt-4 border-t border-white/5 space-y-3">
+                    <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest">Ativos Enviados para Aprovação</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {contract.assets.map(asset => (
+                        <div key={asset.id} className="p-4 bg-black/40 rounded-2xl border border-white/5 flex justify-between items-center">
+                          <div className="space-y-1">
+                            <span className="text-[10px] text-slate-500 font-bold uppercase">{asset.type}</span>
+                            <a href={asset.url} target="_blank" rel="noreferrer" className="text-xs text-amber-400 font-bold block hover:underline">
+                              Visualizar Arquivo
+                            </a>
+                          </div>
+                          {asset.status === 'PENDING' ? (
+                            <div className="flex gap-2">
+                              <button 
+                                onClick={() => handleReview(asset.id, "APPROVED")}
+                                className="p-2 bg-green-500/20 hover:bg-green-500/35 text-green-400 rounded-xl"
+                              >
+                                <CheckCircle size={16} />
+                              </button>
+                              <button 
+                                onClick={() => setReviewingAsset(asset)}
+                                className="p-2 bg-red-500/20 hover:bg-red-500/35 text-red-400 rounded-xl"
+                              >
+                                <XCircle size={16} />
+                              </button>
                             </div>
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{w.title}</p>
-                            <p style={{ color: "#64748b", fontSize: "0.75rem" }}>{w.artist || 'Artista desconhecido'}</p>
+                          ) : (
+                            <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${asset.status === 'APPROVED' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                              {asset.status}
+                            </span>
+                          )}
                         </div>
-                        <div style={{ flexShrink: 0 }}>
-                            {w.sponsorships?.length > 0 ? (
-                                <span className="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded-md font-bold">PATROCINADO</span>
-                            ) : (
-                                <span className="text-[10px] bg-zinc-900/40 border border-gold/20/5 text-zinc-400 px-2 py-0.5 rounded-md font-bold">{t("admin.sponsorships.disponvel", `DISPONÍVEL`)}</span>
-                            )}
-                        </div>
+                      ))}
                     </div>
-                ))}
-            </div>
+                  </div>
+                )}
+              </div>
+            ))
+          ) : (
+            <div className="p-10 text-center text-slate-500 italic font-bold">Nenhum contrato de patrocínio registrado.</div>
+          )}
         </div>
-    );
+      )}
+
+      {/* Rejection Modal */}
+      {reviewingAsset && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[2000] flex items-center justify-center p-4">
+          <div className="premium-glass p-8 rounded-[40px] border-white/5 max-w-md w-full space-y-6">
+            <h3 className="text-xl font-black text-white italic">Rejeitar Ativo de Marca</h3>
+            <p className="text-slate-400 text-xs">Informe a justificativa ou correção necessária para o patrocinador ajustar.</p>
+            
+            <textarea
+              required
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white text-sm focus:border-red-500 outline-none h-28 resize-none"
+              placeholder="Ex: Resolução baixa ou formato incorreto..."
+            />
+
+            <div className="flex gap-4">
+              <Button onClick={() => setReviewingAsset(null)} className="flex-1 bg-white/10 hover:bg-white/15 text-white font-bold py-3 rounded-2xl">Cancelar</Button>
+              <Button onClick={() => handleReview(reviewingAsset.id, "REJECTED")} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-2xl">Confirmar Rejeição</Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };

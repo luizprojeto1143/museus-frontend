@@ -8,7 +8,7 @@ import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Input, Button } from "../../../../components/ui";
 import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle, Briefcase, FileText, CheckCircle2 } from "lucide-react";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 
 const ACCESSIBILITY_SERVICES = [
@@ -20,7 +20,7 @@ const ACCESSIBILITY_SERVICES = [
     { value: "EASY_READING", label: "Leitura Fácil", icon: "📖" }
 ];
 
-export const AdminProviderForm: React.FC = () => {
+export const MunicipalProviderForm: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -61,7 +61,7 @@ export const AdminProviderForm: React.FC = () => {
                 .catch(err => {
                     logger.error("Erro ao carregar prestador", err);
                     addToast("Não foi possível carregar os dados.", "error");
-                    navigate("/admin/prestadores");
+                    navigate("/municipal/prestadores");
                 })
                 .finally(() => setLoading(false));
         }
@@ -91,7 +91,7 @@ export const AdminProviderForm: React.FC = () => {
                 await api.post('/providers', { ...formData, tenantId });
                 addToast("Prestador cadastrado com sucesso!", "success");
             }
-            navigate("/admin/prestadores");
+            navigate("/municipal/prestadores");
         } catch (err: unknown) {
             logger.error("Erro ao salvar prestador", err);
             addToast(err.response?.data?.error || "Ocorreu um erro ao salvar.", "error");
@@ -295,7 +295,7 @@ export const AdminProviderForm: React.FC = () => {
                         <Button
                             variant="ghost"
                             type="button"
-                            onClick={() => navigate("/admin/prestadores")}
+                            onClick={() => navigate("/municipal/prestadores")}
                             className="text-zinc-400 hover:text-white px-4 h-12 hover:bg-zinc-900/40"
                             disabled={saving}
                         >

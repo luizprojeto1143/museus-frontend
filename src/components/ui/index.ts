@@ -11,6 +11,7 @@ export { Select } from './Select';
 export type { SelectProps } from './Select';
 export { Checkbox } from './Checkbox';
 export { ConfirmModal } from './ConfirmModal';
+export { DangerZoneConfirmModal } from './DangerZoneConfirmModal';
 export { EmptyState } from './EmptyState';
 export { PageLoader } from './PageLoader';
 export { Skeleton, CardSkeleton, ListSkeleton } from './Skeleton';

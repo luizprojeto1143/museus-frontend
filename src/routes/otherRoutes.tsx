@@ -22,23 +22,28 @@ import { TotemSearch } from "../modules/totem/pages/TotemSearch";
 type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
 type RequireProviderProps = { children: React.ReactElement };
 
-export function providerRoutes(RequireProvider: React.FC<RequireProviderProps>) {
+export function providerRoutes(RequireRole: React.FC<RequireRoleProps>) {
     const pvr = (Component: React.ComponentType) => (
-        <RequireProvider>
+        <RequireRole allowed={["provider"]}>
             <ProviderLayout>
                 <Component />
             </ProviderLayout>
-        </RequireProvider>
+        </RequireRole>
     );
 
     return (
         <>
             <Route path="/provider" element={pvr(ProviderDashboard)} />
-            <Route path="/provider/inbox" element={pvr(ProviderInbox)} />
-            <Route path="/provider/profile" element={pvr(ProviderProfile)} />
-            <Route path="/provider/services" element={pvr(ProviderServices)} />
-            <Route path="/provider/invoices" element={pvr(ProviderInvoices)} />
-            <Route path="/provider/settings" element={pvr(ProviderSettings)} />
+            <Route path="/provider/chamados" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/orcamentos" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/execucoes" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/servicos" element={pvr(ProviderServices)} />
+            <Route path="/provider/carteira" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/notas-fiscais" element={pvr(ProviderInvoices)} />
+            <Route path="/provider/mensagens" element={pvr(ProviderInbox)} />
+            <Route path="/provider/perfil" element={pvr(ProviderProfile)} />
+            <Route path="/provider/configuracoes" element={pvr(ProviderSettings)} />
+            <Route path="/provider/*" element={pvr(ProviderDashboard)} />
         </>
     );
 }

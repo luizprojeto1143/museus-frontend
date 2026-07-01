@@ -34,7 +34,7 @@ interface GeoPoint {
   tenantName?: string;
 }
 
-export const AdminMunicipalGaps: React.FC = () => {
+export const MunicipalGaps: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [data, setData] = useState<{

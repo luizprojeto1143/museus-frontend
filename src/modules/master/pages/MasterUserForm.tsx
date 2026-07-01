@@ -116,7 +116,15 @@ export const MasterUserForm: React.FC = () => {
             return;
         }
 
-        const payload: unknown = {
+        interface UserPayload {
+            email: string;
+            name: string;
+            role: string;
+            tenantId: string | null;
+            password?: string;
+        }
+
+        const payload: UserPayload = {
             email,
             name,
             role,

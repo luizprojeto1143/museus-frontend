@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -8,7 +8,7 @@ import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Button, Input, Select } from "../../../../components/ui";
 import { Search, Filter, Briefcase, MapPin, DollarSign, FileText, ExternalLink, Calendar, Sparkles, TrendingUp } from "lucide-react";
-import "./AdminShared.css";
+import "../../equipment/pages/AdminShared.css";
 
 
 type Project = {
@@ -31,15 +31,15 @@ type Project = {
 const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
     DRAFT: { label: "Rascunho", color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/20" },
     SUBMITTED: { label: "Enviado", color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
-    UNDER_REVIEW: { label: "Em Análise", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
+    UNDER_REVIEW: { label: "Em An�lise", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/20" },
     APPROVED: { label: "Aprovado", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
     REJECTED: { label: "Reprovado", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" },
-    IN_EXECUTION: { label: "Em Execução", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-    COMPLETED: { label: "Concluído", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
+    IN_EXECUTION: { label: "Em Execu��o", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
+    COMPLETED: { label: "Conclu�do", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/20" },
     CANCELED: { label: "Cancelado", color: "text-zinc-500", bg: "bg-zinc-500/10", border: "border-zinc-500/20" }
 };
 
-export const AdminProjects: React.FC = () => {
+export const MunicipalProjects: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
     const { addToast } = useToast();
@@ -96,7 +96,7 @@ export const AdminProjects: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 flex items-center gap-3">
-                        🎨 Projetos Culturais
+                        ?? Projetos Culturais
                     </h1>
                     <p className="text-zinc-400 text-sm font-medium mt-1">
                         Acompanhe os projetos inscritos e seus status.
@@ -168,7 +168,7 @@ export const AdminProjects: React.FC = () => {
                         <div className="hidden md:grid grid-cols-12 gap-4 p-4 border-b border-white/5 text-xs font-bold text-zinc-500 uppercase tracking-wider">
                             <div className="col-span-4">Projeto</div>
                             <div className="col-span-3">Edital/Categoria</div>
-                            <div className="col-span-2">{t("admin.projects.oramento", `Orçamento`)}</div>
+                            <div className="col-span-2">{t("admin.projects.oramento", `Or�amento`)}</div>
                             <div className="col-span-2">Status</div>
                             <div className="col-span-1 text-right"></div>
                         </div>
@@ -201,7 +201,7 @@ export const AdminProjects: React.FC = () => {
                                                         <MapPin size={12} /> {project.targetRegion}
                                                     </div>
                                                 )}
-                                                {project.createdAt && <span className="mx-1">• {formatDate(project.createdAt)}</span>}
+                                                {project.createdAt && <span className="mx-1">� {formatDate(project.createdAt)}</span>}
                                                 {project.aiAnalysis && project.aiAnalysis.scores && (
                                                     <div className="flex items-center gap-1 ml-2 text-purple-400 font-bold bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">
                                                         <Sparkles size={10} /> {Math.round(Object.values(project.aiAnalysis.scores).reduce((a, b) => a + b, 0) / Object.values(project.aiAnalysis.scores).length)}
@@ -238,7 +238,7 @@ export const AdminProjects: React.FC = () => {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={() => navigate(`/admin/projetos/${project.id}`)}
+                                                onClick={() => navigate(`/municipal/projetos/${project.id}`)}
                                                 className="text-zinc-500 hover:text-white hover:bg-zinc-900/40 border border-gold/20/10"
                                             >
                                                 <ExternalLink size={18} />

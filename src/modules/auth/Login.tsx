@@ -29,20 +29,25 @@ export const Login: React.FC = () => {
     try {
       const { role: userRole, tenantType, hasProviderProfile } = await login({ email, password });
 
-      // Redirecionar baseado no role após login
       let redirectPath = "/";
 
-      if (hasProviderProfile) {
-        redirectPath = "/provider";
-      } else if (userRole === "master") {
+      if (userRole === "master") {
         redirectPath = "/master";
-      } else if (userRole === "admin") {
-        if (tenantType === "PRODUCER") {
-          redirectPath = "/producer";
-        } else {
-          redirectPath = "/admin";
-        }
-      } else if (userRole === "visitor") {
+      } else if (userRole === "municipal_admin" || userRole === "municipal_secretary") {
+        redirectPath = "/municipal";
+      } else if (userRole === "equipment_admin" || userRole === "equipment_collaborator" || userRole === "collaborator") {
+        redirectPath = "/admin";
+      } else if (userRole === "producer") {
+        redirectPath = "/producer";
+      } else if (userRole === "sponsor") {
+        redirectPath = "/patrocinar/dashboard";
+      } else if (userRole === "theater_admin") {
+        redirectPath = "/theater";
+      } else if (userRole === "provider" || hasProviderProfile) {
+        redirectPath = "/provider";
+      } else if (userRole === "totem_operator") {
+        redirectPath = "/totem";
+      } else {
         redirectPath = "/hub";
       }
 

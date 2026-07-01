@@ -5,98 +5,85 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { CheckCircle, AlertTriangle } from "lucide-react";
+import { extractQRCode } from "../../../utils/qrHelpers";
+import { useGamification } from "../../gamification/context/GamificationContext";
+import { XpToast } from "../components/XpToast";
 import "./QrVisit.css";
 
-type QRCodeData = {
-  id: string;
+type ResolveResponse = {
   code: string;
-  type: "WORK" | "TRAIL" | "EVENT" | "SPACE" | "TENANT" | "EQUIPAMENTO" | "CUSTOM";
-  referenceId?: string | null;
+  type: string;
+  status: string;
+  redirectUrl: string;
   title: string;
+  trackScan: boolean;
   xpReward: number;
-  tenantId: string;
-  // Campos de navegação semântica (retornados pelo backend)
-  slug?: string;
-  citySlug?: string;
-  equipmentSlug?: string;
 };
 
 export const QrVisit: React.FC = () => {
   const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
-  const { email, updateSession, role, name, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  const [data, setData] = useState<QRCodeData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [registering, setRegistering] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const { stats, refreshGamification } = useGamification();
+  const [scanResult, setScanResult] = useState<{
+    xpGained: number;
+    newTotalXp: number;
+    level: number;
+    stampCreated: boolean;
+    achievementsUnlocked: Array<{ id: string; title: string; iconUrl?: string | null }>;
+  } | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     if (!code) return;
 
-    async function load() {
+    async function resolveCode() {
       try {
-        const res = await api.get(`/qr/${code}`);
+        const cleanCode = extractQRCode(code);
+        if (!cleanCode) throw new Error("Código inválido");
+
+        const res = await api.get(`/qrcodes/${cleanCode}/resolve`);
         setData(res.data);
       } catch (err: unknown) {
         logger.error(err);
-        setError(t("visitor.qr.invalid"));
+        const msg = (err as any)?.response?.data?.message || t("visitor.qr.invalid", "Não foi possível identificar este código.");
+        setError(msg);
       } finally {
         setLoading(false);
       }
     }
 
-    load();
+    resolveCode();
   }, [code, t]);
 
   async function handleRegisterAndOpen() {
     if (!data) return;
 
     setRegistering(true);
-    setFeedback(null);
-    setError(null);
 
     try {
-      await api.post("/visitors/visit-from-qr", { code: data.code, email });
-      setFeedback(t("visitor.qr.success", { xp: data.xpReward }));
+      if (data.trackScan) {
+        const scanRes = await api.post(`/qrcodes/${data.code}/scan`);
+        if (scanRes.data && scanRes.data.success) {
+          setScanResult(scanRes.data);
+          setShowToast(true);
+          if (refreshGamification) {
+            refreshGamification();
+          }
+          // Delay navigation by 3 seconds to let user celebrate and read achievements
+          setTimeout(() => {
+            navigate(data.redirectUrl + (data.redirectUrl.includes('?') ? '&scan=true' : '?scan=true'));
+          }, 3200);
+          return;
+        }
+      }
+      navigate(data.redirectUrl + (data.redirectUrl.includes('?') ? '&scan=true' : '?scan=true'));
     } catch (err: unknown) {
-      logger.error(err);
-      setError(t("visitor.qr.error"));
-    } finally {
-      setRegistering(false);
-    }
-
-    let basePath = "";
-    if (data.citySlug && (data.equipmentSlug || data.slug)) {
-      basePath = `/cidades/${data.citySlug}/equipamentos/${data.equipmentSlug || data.slug}`;
-    }
-
-    if (data.type === "WORK" && data.referenceId) {
-      navigate(basePath ? `${basePath}/obras/${data.referenceId}` : `/obras/${data.referenceId}`);
-    } else if (data.type === "TRAIL" && data.referenceId) {
-      navigate(basePath ? `${basePath}/trilhas/${data.referenceId}` : `/trilhas/${data.referenceId}`);
-    } else if (data.type === "EVENT" && data.referenceId) {
-      navigate(basePath ? `${basePath}/eventos/${data.referenceId}` : `/eventos/${data.referenceId}`);
-    } else if (data.type === "TENANT" && data.referenceId) {
-      // Redireciona para Hub da Cidade se tiver slug, senao busca de cidades
-      if (data.slug) {
-        navigate(`/cidades/${data.slug}`);
-      } else {
-        navigate(`/cidades`);
-      }
-    } else if (data.type === "EQUIPAMENTO" && data.referenceId) {
-      if (isAuthenticated) {
-        updateSession(role || "visitor", data.tenantId, name, data.referenceId);
-      }
-      // Navegar para Hub do Museu com URL semântica
-      if (basePath) {
-        navigate(basePath);
-      } else {
-        // Fallback: redireciona para o hub principal (se não tiver slug da cidade)
-        navigate(`/hub`);
-      }
+      logger.error("Erro ao registrar scan", err);
+      // Navega mesmo com erro de scan
+      navigate(data.redirectUrl);
     }
   }
 
@@ -115,7 +102,7 @@ export const QrVisit: React.FC = () => {
         <div className="qr-visit-error-card">
           <div className="qr-visit-error-icon"><AlertTriangle size={64} /></div>
           <h1>{t("visitor.qr.title", "QR Code Inválido")}</h1>
-          <p>{error || t("visitor.qr.invalid", "Não foi possível identificar este código.")}</p>
+          <p>{error}</p>
           <button className="qr-visit-retry-btn" onClick={() => navigate("/scanner")}>
             {t("visitor.qr.tryAgain", "Tentar Novamente")}
           </button>
@@ -126,12 +113,14 @@ export const QrVisit: React.FC = () => {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case "WORK": return t("visitor.favorites.typeWork");
-      case "TRAIL": return t("visitor.favorites.typeTrail");
-      case "EVENT": return t("visitor.favorites.typeEvent");
-      case "TENANT": return "Instituição/Monumento";
-      case "EQUIPAMENTO": return "Equipamento Cultural";
-      default: return t("visitor.qr.typeCustom");
+      case "WORK": return t("visitor.favorites.typeWork", "Obra");
+      case "TRAIL": return t("visitor.favorites.typeTrail", "Roteiro");
+      case "EVENT": return t("visitor.favorites.typeEvent", "Evento");
+      case "CITY": return "Cidade";
+      case "EQUIPMENT": return "Equipamento Cultural";
+      case "ROOM": return "Espaço";
+      case "TICKET": return "Ingresso";
+      default: return type;
     }
   };
 
@@ -140,32 +129,33 @@ export const QrVisit: React.FC = () => {
       <header className="qr-visit-header">
         <h1 className="qr-visit-title">
           <CheckCircle size={28} />
-          {t("visitor.qr.scanned")}
+          {t("visitor.qr.scanned", "QR Code Encontrado")}
         </h1>
         <p className="qr-visit-subtitle">
-          {data.title} • <span className="qr-visit-reward">{t("visitor.qr.reward", { xp: data.xpReward })}</span>
+          {data.title} 
+          {data.xpReward > 0 && ` • +${data.xpReward} XP`}
         </p>
       </header>
 
       <div className="qr-visit-card">
         <p className="qr-visit-type">
-          <strong>{t("visitor.qr.type")}:</strong> {getTypeLabel(data.type)}
+          <strong>{t("visitor.qr.type", "Tipo")}:</strong> {getTypeLabel(data.type)}
         </p>
-        {data.referenceId && (
-          <p className="qr-visit-hint">
-            {t("visitor.qr.redirectHint")}
+        
+        {scanResult ? (
+          <div className="qr-visit-success-summary mt-4 p-4 rounded-lg bg-green-950/20 border border-green-500/30 text-green-300">
+            <p className="font-bold mb-1">✓ Leitura Registrada!</p>
+            <p className="text-sm">Obtido: +{scanResult.xpGained} XP (Total: {scanResult.newTotalXp} XP)</p>
+            {scanResult.stampCreated && <p className="text-xs text-green-400 mt-1">★ Novo carimbo adicionado ao seu passaporte.</p>}
+          </div>
+        ) : (
+          <p className="qr-visit-hint mt-2 text-sm text-gray-400">
+            Você será redirecionado para o destino.
           </p>
         )}
 
-        {feedback && (
-          <div className="qr-visit-feedback success">{feedback}</div>
-        )}
-        {error && (
-          <div className="qr-visit-feedback error">{error}</div>
-        )}
-
         <button
-          className="qr-visit-register-btn"
+          className="qr-visit-register-btn mt-6"
           type="button"
           onClick={handleRegisterAndOpen}
           disabled={registering}
@@ -173,11 +163,20 @@ export const QrVisit: React.FC = () => {
           {registering ? (
             <>
               <span className="qr-visit-register-spinner"></span>
-              {t("visitor.qr.registering", "Registrando...")}
+              {scanResult ? "Carregando destino..." : "Registrando..."}
             </>
-          ) : t("visitor.qr.register", "Registrar Visita")}
+          ) : (isAuthenticated ? "Registrar e Abrir" : "Abrir")}
         </button>
       </div>
+
+      {showToast && scanResult && (
+        <XpToast
+          xpGained={scanResult.xpGained}
+          stampCreated={scanResult.stampCreated}
+          achievements={scanResult.achievementsUnlocked}
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };

@@ -19,17 +19,21 @@ import { Button, Badge, AnimateIn, Card } from "@/components/ui";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
+interface FinancialSettings {
+    stripeConnectId?: string;
+    platformFee?: number;
+}
+
 export const MasterFinancialSettings: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId } = useAuth();
-    const [settings, setSettings] = useState<unknown>({});
+    const [settings, setSettings] = useState<FinancialSettings>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     const fetchSettings = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/tenants/${tenantId}/settings`);
+            const res = await api.get(`/platform/settings/financial`);
             setSettings(res.data || {});
         } catch (error: unknown) {
             logger.error(error);
@@ -37,7 +41,7 @@ export const MasterFinancialSettings: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [tenantId]);
+    }, [t]);
 
     useEffect(() => {
         fetchSettings();
@@ -46,7 +50,7 @@ export const MasterFinancialSettings: React.FC = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await api.put(`/tenants/${tenantId}/settings`, settings);
+            await api.put(`/platform/settings/financial`, settings);
             toast.success(t("master.financial.save_success", "Configurações financeiras salvas!"));
         } catch (error: unknown) {
             toast.error(t("master.financial.save_error", "Erro ao salvar configurações."));

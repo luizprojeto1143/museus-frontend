@@ -30,11 +30,15 @@ export const ProviderLayout: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const links = [
         { to: "/provider", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
-        { to: "/provider/inbox", label: "Mensagens", icon: <MessageSquare size={18} /> },
-        { to: "/provider/profile", label: "Perfil Público", icon: <User size={18} /> },
-        { to: "/provider/services", label: "Meus Serviços", icon: <Briefcase size={18} /> },
-        { to: "/provider/invoices", label: "Notas Fiscais", icon: <FileText size={18} /> },
-        { to: "/provider/settings", label: "Configurações", icon: <Settings size={18} /> },
+        { to: "/provider/chamados", label: "Chamados / Contratações", icon: <Briefcase size={18} /> },
+        { to: "/provider/orcamentos", label: "Orçamentos", icon: <FileText size={18} /> },
+        { to: "/provider/execucoes", label: "Execuções", icon: <Star size={18} /> },
+        { to: "/provider/servicos", label: "Serviços", icon: <Settings size={18} /> },
+        { to: "/provider/carteira", label: "Carteira / Financeiro", icon: <LayoutDashboard size={18} /> },
+        { to: "/provider/notas-fiscais", label: "Notas Fiscais", icon: <FileText size={18} /> },
+        { to: "/provider/mensagens", label: "Mensagens", icon: <MessageSquare size={18} /> },
+        { to: "/provider/perfil", label: "Perfil Público", icon: <User size={18} /> },
+        { to: "/provider/configuracoes", label: "Configurações", icon: <Settings size={18} /> },
     ];
 
     return (
@@ -120,7 +124,7 @@ export const ProviderLayout: React.FC<{ children: React.ReactNode }> = ({ childr
                         <LogOut size={16} /> Sair da Conta
                     </button>
                     
-                    <Link to="/home" className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-400 transition-colors">
+                    <Link to="/hub" className="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:text-indigo-400 transition-colors">
                         <ExternalLink size={12} /> Visão do Visitante
                     </Link>
                 </div>

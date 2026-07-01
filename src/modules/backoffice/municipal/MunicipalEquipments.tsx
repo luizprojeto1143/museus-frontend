@@ -160,7 +160,22 @@ export const MunicipalEquipments: React.FC = () => {
                                         <Button
                                             variant="glass"
                                             className="h-12 px-6 rounded-2xl bg-white/5 border-white/5 text-emerald-400 font-black uppercase text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all flex items-center gap-2"
-                                            onClick={() => navigate(`/admin?tenantId=${eq.id}`)}
+                                            onClick={async () => {
+                                                const loadingToast = toast.loading(t("municipal.equipments.switching_context", "Trocando contexto e registrando auditoria..."));
+                                                try {
+                                                    await api.post('/auth/switch-tenant', { targetTenantId: eq.id });
+                                                    
+                                                    // Armazenar localmente caso o frontend precise do tenant original depois (opcional)
+                                                    localStorage.setItem("cultura_viva_switch_tenantId", eq.id);
+                                                    
+                                                    toast.success(t("municipal.equipments.context_switched", "Contexto alterado com sucesso! Redirecionando..."), { id: loadingToast });
+                                                    
+                                                    // Redirecionamento completo da página (força recarregar auth context e atualizar session no front)
+                                                    window.location.href = "/admin";
+                                                } catch (err) {
+                                                    toast.error(t("municipal.equipments.switch_failed", "Falha ao trocar contexto. Sem permissão ou erro de servidor."), { id: loadingToast });
+                                                }
+                                            }}
                                         >
                                             {t("municipal.equipments.manage", "Gerenciar")} <ArrowUpRight size={16} />
                                         </Button>

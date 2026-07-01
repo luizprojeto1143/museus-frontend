@@ -99,7 +99,7 @@ export const TheaterMobileBoxOffice: React.FC = () => {
                             <div className="grid grid-cols-8 gap-2">
                                 {Array.from({ length: 48 }).map((_, i) => {
                                     const id = i + 1;
-                                    const isOccupied = Math.random() > 0.7;
+                                    const isOccupied = id % 5 === 0;
                                     const isSelected = selectedSeats.includes(id);
                                     return (
                                         <button

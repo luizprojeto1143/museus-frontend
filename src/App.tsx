@@ -1,8 +1,11 @@
 import React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { useAuth, Role } from "./modules/auth/AuthContext";
+import { useAuth } from "./modules/auth/AuthContext";
+import { useIsCityMode } from "./modules/auth/TenantContext";
+import { Role } from "./types/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 import { VisitorLayout } from "./modules/visitor/VisitorLayout";
 import { GamificationProvider } from "./modules/gamification/context/GamificationContext";
@@ -32,6 +35,7 @@ const CertificateValidator = React.lazy(() => import("./modules/public/Certifica
 const GlobalEvents = React.lazy(() => import("./modules/public/GlobalEvents").then(m => ({ default: m.GlobalEvents })));
 const Home = React.lazy(() => import("./modules/visitor/pages/Home").then(m => ({ default: m.Home })));
 const PublicPassportPage = React.lazy(() => import("./modules/visitor/pages/PublicPassportPage").then(m => ({ default: m.PublicPassportPage })));
+const AccessDeniedPage = React.lazy(() => import("./modules/public/AccessDeniedPage").then(m => ({ default: m.AccessDeniedPage })));
 
 // Route groups
 import { visitorRoutes } from "./routes/visitorRoutes";
@@ -42,6 +46,7 @@ import { theaterRoutes } from "./routes/theaterRoutes";
 import { providerRoutes, totemRoutes } from "./routes/otherRoutes";
 import { municipalRoutes } from "./routes/municipalRoutes";
 import { sponsorRoutes } from "./routes/sponsorRoutes";
+import { legacyRedirects } from "./routes/legacyRedirects";
 
 // QueryClient — with exponential retry backoff
 const queryClient = new QueryClient({
@@ -79,27 +84,20 @@ const RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }> =
   return children;
 };
 
-const RequireProvider: React.FC<{ children: React.ReactElement }> = ({ children }) => {
-  const { isAuthenticated, hasProviderProfile } = useAuth();
-  const location = useLocation();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/welcome" replace state={{ from: location }} />;
-  }
-
-  if (!hasProviderProfile) {
-    return <Navigate to="/" replace />;
-  }
-
-  return children;
-};
 
 const RootRedirector: React.FC = () => {
   const { role } = useAuth();
+  const isCityMode = useIsCityMode();
+
   if (role === "master") return <Navigate to="/master" replace />;
-  if (role === "admin") return <Navigate to="/admin" replace />;
-  if (role === "theater") return <Navigate to="/theater" replace />;
+  if (role === "admin" || role === "municipal_admin" || role === "municipal_secretary") {
+    if (isCityMode || role.startsWith("municipal")) return <Navigate to="/municipal" replace />;
+    return <Navigate to="/admin" replace />;
+  }
+  if (role === "theater" || role === "theater_admin") return <Navigate to="/theater" replace />;
   if (role === "producer") return <Navigate to="/producer" replace />;
+  if (role === "provider") return <Navigate to="/provider" replace />;
   if (role === "collaborator") return <Navigate to="/admin" replace />;
 
   return <Navigate to="/hub" replace />;
@@ -113,7 +111,8 @@ const App: React.FC = () => {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -150,6 +149,7 @@ const App: React.FC = () => {
                       <RootRedirector />
                     </RequireRole>
                   } />
+                  {legacyRedirects()}
 
                   {/* VISITOR ROUTES */}
                   {visitorRoutes(RequireRole)}
@@ -167,7 +167,7 @@ const App: React.FC = () => {
                   {theaterRoutes(RequireRole)}
 
                   {/* PROVIDER ROUTES */}
-                  {providerRoutes(RequireProvider)}
+                  {providerRoutes(RequireRole)}
 
                   {/* MUNICIPAL ROUTES */}
                   {municipalRoutes(RequireRole)}
@@ -178,7 +178,8 @@ const App: React.FC = () => {
                   {/* SPONSOR ROUTES */}
                   {sponsorRoutes(RequireRole)}
 
-                  {/* 404 */}
+                  {/* 403 & 404 */}
+                  <Route path="/403" element={<AccessDeniedPage />} />
                   <Route path="*" element={<Navigate to="/welcome" replace />} />
                 </Routes>
               </React.Suspense>
@@ -188,6 +189,7 @@ const App: React.FC = () => {
       </VisitorThemeProvider>
     </GamificationProvider>
     </QueryClientProvider >
+    </ErrorBoundary>
   );
 };
 

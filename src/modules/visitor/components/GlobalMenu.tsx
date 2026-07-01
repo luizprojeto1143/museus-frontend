@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { X, ChevronDown, ChevronUp, LogOut, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
+import { getCityContextLinks, getEquipmentContextLinks } from '../../../config/visitorNavigation.config';
 import './GlobalMenu.css';
 
 interface GlobalMenuProps {
@@ -98,44 +99,17 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, current
                         style={{ overflow: 'hidden', paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}
                       >
                         {equipmentSlug ? (
-                          <>
-                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}`} className="submenu-item" onClick={onClose}>
-                              <span>🏛️ Início do Museu</span>
+                          getEquipmentContextLinks(citySlug || '', equipmentSlug).map(link => (
+                            <Link key={link.id} to={link.path} className="submenu-item" onClick={onClose}>
+                              <span>{link.label}</span>
                             </Link>
-                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`} className="submenu-item" onClick={onClose}>
-                              <span>🎨 Obras</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos`} className="submenu-item" onClick={onClose}>
-                              <span>📅 Eventos</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/trilhas`} className="submenu-item" onClick={onClose}>
-                              <span>🗺️ Trilhas</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/mapa`} className="submenu-item" onClick={onClose}>
-                              <span>📍 Mapa Interno</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/scanner`} className="submenu-item" onClick={onClose}>
-                              <span>📷 Scanner</span>
-                            </Link>
-                          </>
+                          ))
                         ) : (
-                          <>
-                            <Link to={`/cidades/${citySlug}`} className="submenu-item" onClick={onClose}>
-                              <span>📍 Hub da Cidade</span>
+                          getCityContextLinks(citySlug || '').map(link => (
+                            <Link key={link.id} to={link.path} className="submenu-item" onClick={onClose}>
+                              <span>{link.label}</span>
                             </Link>
-                            <Link to={`/cidades/${citySlug}/mapa`} className="submenu-item" onClick={onClose}>
-                              <span>🗺️ Mapa Cultural</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/agenda`} className="submenu-item" onClick={onClose}>
-                              <span>📅 Agenda</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/roteiros`} className="submenu-item" onClick={onClose}>
-                              <span>🛤️ Roteiros</span>
-                            </Link>
-                            <Link to={`/cidades/${citySlug}/ranking`} className="submenu-item" onClick={onClose}>
-                              <span>🏆 Ranking</span>
-                            </Link>
-                          </>
+                          ))
                         )}
                       </motion.div>
                     )}

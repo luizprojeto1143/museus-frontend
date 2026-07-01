@@ -46,6 +46,52 @@
   margin-top: 8px;
 }
 
+.museum-hub-error-icon {
+  font-size: 4rem;
+  filter: grayscale(0.5) opacity(0.6);
+}
+
+.museum-hub-error-msg {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.9rem;
+  max-width: 320px;
+}
+
+.museum-hub-error-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.mh-error-btn-primary {
+  background: rgba(212,175,55,0.15);
+  border: 1px solid rgba(212,175,55,0.35);
+  border-radius: 12px;
+  color: #d4af37;
+  font-weight: 700;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.mh-error-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.mh-error-btn-primary:hover { background: rgba(212,175,55,0.25); }
+.mh-error-btn-secondary:hover { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.75); }
+
+
 /* Cover */
 .mh-cover {
   position: relative;

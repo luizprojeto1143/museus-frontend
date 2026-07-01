@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
+import { buildCityUrl, buildWorkUrl, buildEventUrl, buildTrailUrl, buildScannerUrl, buildMuseumMapUrl, buildPassportUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import {
@@ -65,14 +66,15 @@ export const MuseumHub: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"obras" | "eventos" | "trilhas" | "info">("obras");
 
+  const [error, setError] = useState<string | null>(null);
+
   const fetchMuseum = useCallback(async () => {
     if (!equipmentSlug) return;
     try {
       setLoading(true);
-      // Tenta carregar por slug; fallback para id
-      const res = await api.get(`/equipamentos/public/${equipmentSlug}`).catch(() =>
-        api.get(`/equipamentos/slug/${equipmentSlug}`)
-      );
+      setError(null);
+      // O endpoint /public/:identifier aceita slug ou UUID — chamada única sem fallback
+      const res = await api.get(`/equipamentos/public/${equipmentSlug}`);
       if (res?.data) {
         setMuseum(res.data);
         // Atualiza sessão com esse equipamento
@@ -99,8 +101,8 @@ export const MuseumHub: React.FC = () => {
           setTrails(Array.isArray(d) ? d : d.data || []);
         }
       }
-    } catch (_err) {
-      // Will show empty state
+    } catch (_err: unknown) {
+      setError("Equipamento não encontrado ou indisponível.");
     } finally {
       setLoading(false);
     }
@@ -119,13 +121,24 @@ export const MuseumHub: React.FC = () => {
     );
   }
 
-  if (!museum) {
+  if (error || !museum) {
     return (
       <div className="museum-hub-error">
+        <div className="museum-hub-error-icon">🏛️</div>
         <h2>Equipamento não encontrado</h2>
-        <button onClick={() => navigate(`/cidades/${citySlug}`)}>
-          <ArrowLeft size={18} /> Voltar para a cidade
-        </button>
+        <p className="museum-hub-error-msg">
+          {error || "Este espaço cultural pode não estar disponível no momento."}
+        </p>
+        <div className="museum-hub-error-actions">
+          {citySlug && (
+            <button onClick={() => navigate(buildCityUrl(citySlug))} className="mh-error-btn-secondary">
+              <ArrowLeft size={16} /> Voltar para a cidade
+            </button>
+          )}
+          <button onClick={() => navigate("/hub")} className="mh-error-btn-primary">
+            Ir para o Hub
+          </button>
+        </div>
       </div>
     );
   }
@@ -149,7 +162,7 @@ export const MuseumHub: React.FC = () => {
 
           <button
             className="mh-back-btn"
-            onClick={() => navigate(`/cidades/${citySlug}`)}
+            onClick={() => navigate(buildCityUrl(citySlug || ''))}
             aria-label="Voltar"
           >
             <ArrowLeft size={20} />
@@ -195,7 +208,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-checkin"
             className="mh-action-btn mh-action-primary"
-            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/scanner`)}
+            onClick={() => navigate(buildScannerUrl(citySlug || '', equipmentSlug || ''))}
           >
             <QrCode size={20} />
             <span>Check-in QR</span>
@@ -211,7 +224,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-mapa"
             className="mh-action-btn"
-            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/mapa`)}
+            onClick={() => navigate(buildMuseumMapUrl(citySlug || '', equipmentSlug || ''))}
           >
             <Map size={20} />
             <span>Mapa</span>
@@ -219,7 +232,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-passaporte"
             className="mh-action-btn"
-            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/passaporte`)}
+            onClick={() => navigate(buildPassportUrl(citySlug || '', equipmentSlug || ''))}
           >
             <Award size={20} />
             <span>Passaporte</span>
@@ -292,7 +305,7 @@ export const MuseumHub: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.06 }}
-                      onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${work.id}`)}
+                      onClick={() => navigate(buildWorkUrl(citySlug || '', equipmentSlug || '', work.id))}
                     >
                       {work.imageUrl ? (
                         <img src={getFullUrl(work.imageUrl)} alt={work.title} className="mh-work-img" />
@@ -311,7 +324,7 @@ export const MuseumHub: React.FC = () => {
               )}
               <button
                 className="mh-see-all-btn"
-                onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras`)}
+                onClick={() => navigate(`${buildEquipmentUrl(citySlug || '', equipmentSlug || '')}/obras`)}
               >
                 Ver todas as obras <ChevronRight size={16} />
               </button>
@@ -332,7 +345,7 @@ export const MuseumHub: React.FC = () => {
                     <button
                       key={ev.id}
                       className="mh-event-card"
-                      onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/eventos/${ev.id}`)}
+                      onClick={() => navigate(buildEventUrl(citySlug || '', equipmentSlug || '', ev.id))}
                     >
                       {ev.imageUrl && (
                         <img src={getFullUrl(ev.imageUrl)} alt={ev.title} className="mh-event-img" />
@@ -363,7 +376,7 @@ export const MuseumHub: React.FC = () => {
                     <button
                       key={trail.id}
                       className="mh-trail-card"
-                      onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/trilhas/${trail.id}`)}
+                      onClick={() => navigate(buildTrailUrl(citySlug || '', equipmentSlug || '', trail.id))}
                     >
                       <div className="mh-trail-icon"><Map size={20} /></div>
                       <div className="mh-trail-info">
@@ -435,7 +448,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-loja"
             className="mh-footer-btn"
-            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/loja`)}
+            onClick={() => navigate(`${buildEquipmentUrl(citySlug || '', equipmentSlug || '')}/loja`)}
           >
             <ShoppingBag size={18} />
             Loja Cultural
@@ -443,7 +456,7 @@ export const MuseumHub: React.FC = () => {
           <button
             id="mh-btn-agendar"
             className="mh-footer-btn mh-footer-primary"
-            onClick={() => navigate(`/cidades/${citySlug}/equipamentos/${equipmentSlug}/agendar`)}
+            onClick={() => navigate(`${buildEquipmentUrl(citySlug || '', equipmentSlug || '')}/agendar`)}
           >
             <Calendar size={18} />
             Agendar Visita
