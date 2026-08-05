@@ -7,6 +7,30 @@ import { api } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+interface BroadcastResponse {
+    totalDevices?: number;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const notificationSchema = z.object({
+    title: z.string().trim().min(2, "Informe o titulo da notificacao."),
+    body: z.string().trim().min(2, "Informe o corpo da notificacao."),
+    url: z.string().trim().min(1).transform(value => value.startsWith("/") ? value : `/${value}`)
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 
 export const AdminNotifications: React.FC = () => {
@@ -19,27 +43,23 @@ export const AdminNotifications: React.FC = () => {
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!title || !body) {
-            toast.error("Título e corpo são obrigatórios");
+        const validation = notificationSchema.safeParse({ title, body, url });
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise a notificacao.");
             return;
         }
 
         try {
             setSending(true);
-            const res = await api.post("/notifications/broadcast", {
-                title,
-                body,
-                url
-            });
+            const res = await api.post<BroadcastResponse>("/notifications/broadcast", validation.data);
 
             toast.success(`Notificação enviada! Dispositivos: ${res.data.totalDevices || "Processando..."}`);
             setTitle("");
             setBody("");
             setUrl("/");
         } catch (error: unknown) {
-            logger.error(error);
-            const msg = error.response?.data?.error || "Erro ao enviar notificação";
-            toast.error(msg);
+            logger.error("Error sending broadcast notification", error);
+            toast.error(getApiErrorMessage(error, "Erro ao enviar notificacao"));
         } finally {
             setSending(false);
         }
@@ -51,7 +71,7 @@ export const AdminNotifications: React.FC = () => {
             await api.post("/notifications/test");
             toast.success("Notificação de teste enviada para seus dispositivos!");
         } catch (error: unknown) {
-            toast.error("Erro ao enviar teste. Certifique-se de ter um dispositivo registrado.");
+            toast.error(getApiErrorMessage(error, "Erro ao enviar teste. Certifique-se de ter um dispositivo registrado."));
         } finally {
             setSending(false);
         }
@@ -159,3 +179,4 @@ export const AdminNotifications: React.FC = () => {
         </div>
     );
 };
+

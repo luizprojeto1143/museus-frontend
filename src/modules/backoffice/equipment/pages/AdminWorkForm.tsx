@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -17,23 +17,184 @@ import {
   Dialog,
   AnimateIn
 } from "@/components/ui";
-import {
-  Save, ArrowLeft, Trash2, Upload, Volume2, Video,
-  Image as ImageIcon, Accessibility, CheckCircle,
-  ChevronRight, ChevronLeft, MapPin, FileText,
-  MonitorPlay, Share2, Languages, Sparkles,
-  Info, AlertCircle, X, QrCode, Target, CheckCircle2
-} from "lucide-react";
+import { Save, ArrowLeft, Upload, Volume2, Video, Image as ImageIcon, Accessibility, CheckCircle, ChevronRight, MapPin, FileText, MonitorPlay, Share2, Languages, Sparkles, Info, QrCode, Target, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { useTerminology } from "../../../../hooks/useTerminology";
 import { useIsCityMode, useTenant } from "../../../auth/TenantContext";
 import { validateFileAsync, UPLOAD_PRESETS } from "../../../../utils/uploadValidator";
 import "./AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 // Steps Configuration
 // Note: We move STEPS inside the component or make it a function to use terminology, 
 // but for simplicity we will rename labels inside the component render.
+
+type AccessibilityRequestType = "LIBRAS" | "AUDIO_DESC" | "BOTH";
+
+interface CategoryOption {
+  id: string;
+  name: string;
+}
+
+interface EquipmentOption {
+  id: string;
+  nome: string;
+  lat?: number;
+  lng?: number;
+}
+
+interface WorkTranslations {
+  translations?: {
+    en?: {
+      title?: string;
+      description?: string;
+    };
+    es?: {
+      title?: string;
+      description?: string;
+    };
+  };
+}
+
+interface WorkResponse {
+  title?: string;
+  artist?: string | null;
+  year?: string | number | null;
+  categoryId?: string | null;
+  description?: string | null;
+  room?: string | null;
+  floor?: string | null;
+  imageUrl?: string | null;
+  audioUrl?: string | null;
+  librasUrl?: string | null;
+  published?: boolean | null;
+  equipamentoId?: string | null;
+  metadata?: WorkTranslations | string | null;
+  radius?: number | null;
+  technique?: string | null;
+  period?: string | null;
+  medium?: string | null;
+  dimensions?: string | null;
+  qrCode?: {
+    code?: string;
+  } | null;
+  vestigeActive?: boolean | null;
+  lat?: number | string | null;
+  lng?: number | string | null;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
+  captureRadiusM?: number | null;
+  vestigeType?: string | null;
+  vestigeExpiresAt?: string | null;
+  vestigeImageUrl?: string | null;
+}
+
+interface UploadResponse {
+  url?: string;
+}
+
+interface TranslationResponse {
+  en?: {
+    title?: string;
+    description?: string;
+  };
+  es?: {
+    title?: string;
+    description?: string;
+  };
+}
+
+interface PdfExtractResponse {
+  title?: string;
+  artist?: string;
+  year?: string | number;
+  description?: string;
+  technique?: string;
+  period?: string;
+  medium?: string;
+  dimensions?: string;
+  room?: string;
+  floor?: string;
+}
+
+interface WorkPayload {
+  title: string;
+  artist?: string;
+  year?: string;
+  description?: string;
+  room?: string;
+  floor?: string;
+  technique?: string;
+  period?: string;
+  medium?: string;
+  dimensions?: string;
+  tenantId: string;
+  equipamentoId?: string;
+  code?: string;
+  published: boolean;
+  radius: number;
+  metadata: WorkTranslations;
+  categoryId?: string;
+  imageUrl?: string;
+  audioUrl?: string;
+  librasUrl?: string;
+  vestigeActive: boolean;
+  lat?: number;
+  lng?: number;
+  latitude?: number | string;
+  longitude?: number | string;
+  captureRadiusM: number;
+  vestigeType: string;
+  vestigeExpiresAt?: string;
+  vestigeImageUrl?: string;
+}
+
+interface CreateWorkResponse {
+  id?: string;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const workSchema = z.object({
+  title: z.string().trim().min(2, "Informe o titulo."),
+  code: z.string().trim().min(1, "Informe o codigo do discador."),
+  equipamentoId: z.string().trim().min(1, "Selecione o equipamento responsavel."),
+  radius: z.number().min(1, "O raio de deteccao precisa ser maior que zero."),
+  captureRadius: z.number().min(1, "O raio de captura precisa ser maior que zero."),
+  vestigeActive: z.boolean(),
+  vestigeLat: z.union([z.string(), z.number()]),
+  vestigeLng: z.union([z.string(), z.number()])
+}).refine((data) => {
+  if (!data.vestigeActive) return true;
+  return data.vestigeLat !== "" && data.vestigeLng !== "";
+}, {
+  message: "Informe latitude e longitude para ativar o modo vestigio.",
+  path: ["vestigeLat"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
+function parseMetadata(metadata: WorkResponse["metadata"]): WorkTranslations | null {
+  if (!metadata) return null;
+  if (typeof metadata === "string") {
+    try {
+      return JSON.parse(metadata) as WorkTranslations;
+    } catch {
+      return null;
+    }
+  }
+  return metadata;
+}
 
 export const AdminWorkForm: React.FC = () => {
   const { t } = useTranslation();
@@ -62,7 +223,7 @@ export const AdminWorkForm: React.FC = () => {
 
   // Modal State
   const [showAccessModal, setShowAccessModal] = useState(false);
-  const [requestType, setRequestType] = useState<"LIBRAS" | "AUDIO_DESC" | "BOTH">("BOTH");
+  const [requestType, setRequestType] = useState<AccessibilityRequestType>("BOTH");
   const [requestNotes, setRequestNotes] = useState("");
   const [isRequesting, setIsRequesting] = useState(false);
 
@@ -70,8 +231,8 @@ export const AdminWorkForm: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
-  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
-  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string; lat?: number; lng?: number }>>([]);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [equipamentos, setEquipamentos] = useState<EquipmentOption[]>([]);
 
   // Form Fields
   const [code, setCode] = useState("");
@@ -111,21 +272,21 @@ export const AdminWorkForm: React.FC = () => {
   // Fetch Data
   useEffect(() => {
     if (tenantId) {
-      api.get(`/categories`, { params: { tenantId } })
+      api.get<CategoryOption[]>(`/categories`, { params: { tenantId } })
         .then(res => setCategories(res.data))
         .catch(console.error);
 
-      api.get(`/equipamentos`)
+      api.get<EquipmentOption[]>(`/equipamentos`)
         .then(res => setEquipamentos(res.data))
         .catch(console.error);
     }
 
     if (id && tenantId) {
-      api.get(`/works/${id}`).then((res) => {
+      api.get<WorkResponse>(`/works/${id}`).then((res) => {
         const data = res.data;
-        setTitle(data.title);
+        setTitle(data.title || "");
         setArtist(data.artist || "");
-        setYear(data.year || "");
+        setYear(data.year?.toString() || "");
         setCategory(data.categoryId || "");
         setDescription(data.description || "");
         setRoom(data.room || "");
@@ -138,7 +299,7 @@ export const AdminWorkForm: React.FC = () => {
 
         try {
           if (data?.metadata) {
-            const meta = typeof data.metadata === 'string' ? JSON.parse(data.metadata) : data.metadata;
+            const meta = parseMetadata(data.metadata);
             const trans = meta?.translations;
             
             if (trans) {
@@ -161,7 +322,7 @@ export const AdminWorkForm: React.FC = () => {
         setPeriod(data.period || "");
         setWorkMedium(data.medium || "");
         setDimensions(data.dimensions || "");
-        if (data.qrCode) setCode(data.qrCode.code);
+        if (data.qrCode?.code) setCode(data.qrCode.code);
 
         // Vestige Data
         setVestigeActive(!!data.vestigeActive);
@@ -173,12 +334,12 @@ export const AdminWorkForm: React.FC = () => {
         setVestigeType(data.vestigeType || "WORK");
         if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
         setVestigeImageUrl(data.vestigeImageUrl || "");
-      }).catch(err => {
-        logger.error(err);
-        toast.error(`Erro ao carregar ${term.work.toLowerCase()}`);
+      }).catch((err: unknown) => {
+        logger.error(`Erro ao carregar ${term.work.toLowerCase()}`, err);
+        toast.error(getApiErrorMessage(err, `Erro ao carregar ${term.work.toLowerCase()}`));
       });
     }
-  }, [id, tenantId]);
+  }, [id, tenantId, term.work]);
   
   const handleDownloadQR = () => {
     const originalCanvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
@@ -187,39 +348,87 @@ export const AdminWorkForm: React.FC = () => {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      const padding = 40;
-      const bottomTextHeight = 100;
-      const minWidth = 360;
-      canvas.width = Math.max(originalCanvas.width + (padding * 2), minWidth);
-      canvas.height = originalCanvas.height + (padding * 2) + bottomTextHeight;
+      const roundRect = (x: number, y: number, width: number, height: number, radius: number) => {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+        ctx.closePath();
+      };
 
-      // Background
-      ctx.fillStyle = "#0f172a"; // dark premium background
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      canvas.width = 720;
+      canvas.height = 940;
 
-      // Premium Gold/Dark Border
-      ctx.strokeStyle = "#1e293b"; // slate-800 outer border
-      ctx.lineWidth = 10;
-      ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-      ctx.strokeStyle = "#fbbf24"; // gold inner border
+      const woodGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      woodGradient.addColorStop(0, "#efd4a4");
+      woodGradient.addColorStop(0.55, "#d5a160");
+      woodGradient.addColorStop(1, "#bd8241");
+      ctx.fillStyle = woodGradient;
+      roundRect(34, 34, 652, 872, 42);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(90, 55, 24, 0.45)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = "#fbf6eb";
+      roundRect(84, 92, 552, 744, 34);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(85, 53, 24, 0.25)";
       ctx.lineWidth = 2;
-      ctx.strokeRect(15, 15, canvas.width - 30, canvas.height - 30);
+      ctx.stroke();
 
-      // Draw QR Code
-      const qrX = (canvas.width - originalCanvas.width) / 2;
-      // Preencher um quadrado branco para garantir opacidade do QR se original for transparente
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(qrX - 5, padding - 5, originalCanvas.width + 10, originalCanvas.height + 10);
-      ctx.drawImage(originalCanvas, qrX, padding);
-
-      // Draw Text
-      ctx.fillStyle = "#f8fafc"; // white text
-      ctx.font = "bold 32px 'Inter', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText(`CÓDIGO: ${code}`, canvas.width / 2, originalCanvas.height + padding + 40);
-      ctx.font = "normal 14px 'Inter', sans-serif";
-      ctx.fillStyle = "#94a3b8"; // slate-400
-      ctx.fillText("Escaneie ou digite no app", canvas.width / 2, originalCanvas.height + padding + 75);
+      ctx.fillStyle = "#7b4b1e";
+      ctx.font = "32px Georgia, serif";
+      ctx.fillText("Cultura Viva", canvas.width / 2, 156);
+
+      ctx.strokeStyle = "#8b5a2b";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(240, 205);
+      ctx.lineTo(480, 205);
+      ctx.stroke();
+      ctx.fillStyle = "#9a672f";
+      ctx.save();
+      ctx.translate(canvas.width / 2, 205);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-8, -8, 16, 16);
+      ctx.restore();
+
+      const safeTitle = (title || "Nome da Obra").slice(0, 42);
+      ctx.fillStyle = "#2b2118";
+      ctx.font = safeTitle.length > 24 ? "44px Georgia, serif" : "58px Georgia, serif";
+      ctx.fillText(safeTitle, canvas.width / 2, 288, 500);
+
+      ctx.font = "34px Georgia, serif";
+      ctx.fillText(`Obra n° ${code}`, canvas.width / 2, 358);
+
+      ctx.strokeStyle = "#8b5a2b";
+      ctx.beginPath();
+      ctx.moveTo(188, 396);
+      ctx.lineTo(532, 396);
+      ctx.stroke();
+
+      const qrSize = 300;
+      const qrX = (canvas.width - qrSize) / 2;
+      const qrY = 430;
+      ctx.fillStyle = "#fbf6eb";
+      ctx.fillRect(qrX - 14, qrY - 14, qrSize + 28, qrSize + 28);
+      ctx.drawImage(originalCanvas, qrX, qrY, qrSize, qrSize);
+
+      ctx.fillStyle = "#3a2b1f";
+      ctx.font = "25px Inter, Arial, sans-serif";
+      ctx.fillText("Aponte a camera para acessar", canvas.width / 2, 790);
+
+      ctx.strokeStyle = "#7b4b1e";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(260, 868);
+      ctx.quadraticCurveTo(360, 840, 460, 868);
+      ctx.stroke();
 
       const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
@@ -255,14 +464,14 @@ export const AdminWorkForm: React.FC = () => {
 
       try {
         setIsUploading(true);
-        const res = await api.post(`/upload/${type}`, formData, {
+        const res = await api.post<UploadResponse>(`/upload/${type}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
-        setter(res.data.url);
+        setter(res.data.url || "");
         toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
         logger.error(`Error uploading ${type}`, error);
-        toast.error(t("common.errorUpload"));
+        toast.error(getApiErrorMessage(error, t("common.errorUpload")));
       } finally {
         setIsUploading(false);
       }
@@ -279,7 +488,7 @@ export const AdminWorkForm: React.FC = () => {
 
     try {
       setIsTranslating(true);
-      const res = await api.post("/ai/translate", {
+      const res = await api.post<TranslationResponse>("/ai/translate", {
         title,
         description
       });
@@ -297,7 +506,7 @@ export const AdminWorkForm: React.FC = () => {
       }
 
       toast.success("Tradução concluída com sucesso!");
-    } catch (err) {
+    } catch (err: unknown) {
       logger.error("Erro na tradução:", err);
       toast.error("Houve um erro ao gerar a tradução automática.");
     } finally {
@@ -314,14 +523,14 @@ export const AdminWorkForm: React.FC = () => {
 
       try {
         setIsExtracting(true);
-        const res = await api.post("/ai/extract-pdf", formData, {
+        const res = await api.post<PdfExtractResponse>("/ai/extract-pdf", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
 
         const data = res.data;
         if (data.title) setTitle(data.title);
         if (data.artist) setArtist(data.artist);
-        if (data.year) setYear(data.year);
+        if (data.year) setYear(data.year.toString());
         if (data.description) setDescription(data.description);
         if (data.technique) setTechnique(data.technique);
         if (data.period) setPeriod(data.period);
@@ -334,7 +543,7 @@ export const AdminWorkForm: React.FC = () => {
         if (data.floor) setFloor(data.floor);
 
         toast.success("Informações extraídas do PDF com sucesso!");
-      } catch (err) {
+      } catch (err: unknown) {
         logger.error("Erro ao extrair PDF:", err);
         toast.error("Houve um erro ao extrair informações do PDF.");
       } finally {
@@ -376,10 +585,25 @@ export const AdminWorkForm: React.FC = () => {
   const handleSubmit = async () => {
     if (!tenantId) return;
 
+    const validation = workSchema.safeParse({
+      title,
+      code,
+      equipamentoId,
+      radius: Number(radius),
+      captureRadius: Number(captureRadius),
+      vestigeActive,
+      vestigeLat,
+      vestigeLng
+    });
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || "Revise os dados da obra.");
+      return;
+    }
+
     setSaving(true);
 
     // Clean up payload (Zod schema expects undefined/null, not empty strings for optional UUIDs/URLs)
-    const payload: unknown = {
+    const payload: WorkPayload = {
       title,
       artist: artist || undefined,
       year: year || undefined,
@@ -400,7 +624,16 @@ export const AdminWorkForm: React.FC = () => {
           en: { title: titleEn, description: descriptionEn },
           es: { title: titleEs, description: descriptionEs }
         }
-      }
+      },
+      vestigeActive,
+      lat: vestigeLat ? Number(vestigeLat) : undefined,
+      lng: vestigeLng ? Number(vestigeLng) : undefined,
+      latitude: latitude || (vestigeLat ? Number(vestigeLat) : undefined),
+      longitude: longitude || (vestigeLng ? Number(vestigeLng) : undefined),
+      captureRadiusM: Number(captureRadius),
+      vestigeType,
+      vestigeExpiresAt: vestigeExpiresAt || undefined,
+      vestigeImageUrl: vestigeImageUrl || undefined
     };
 
     if (category) payload.categoryId = category;
@@ -408,30 +641,19 @@ export const AdminWorkForm: React.FC = () => {
     if (audioUrl) payload.audioUrl = audioUrl;
     if (librasUrl) payload.librasUrl = librasUrl;
 
-    // Vestige payload
-    payload.vestigeActive = vestigeActive;
-    payload.lat = vestigeLat ? Number(vestigeLat) : undefined;
-    payload.lng = vestigeLng ? Number(vestigeLng) : undefined;
-    payload.latitude = latitude || (vestigeLat ? Number(vestigeLat) : undefined);
-    payload.longitude = longitude || (vestigeLng ? Number(vestigeLng) : undefined);
-    payload.captureRadiusM = Number(captureRadius);
-    payload.vestigeType = vestigeType;
-    payload.vestigeExpiresAt = vestigeExpiresAt || undefined;
-    payload.vestigeImageUrl = vestigeImageUrl || undefined;
-
     try {
       if (id) {
         await api.put(`/works/${id}`, payload);
         toast.success(`${term.work} atualizada com sucesso!`);
         navigate("/admin/obras");
       } else {
-        const res = await api.post("/works", payload);
+        const res = await api.post<CreateWorkResponse>("/works", payload);
         toast.success(`${term.work} criada com sucesso!`);
-        navigate(`/admin/obras/${res.data.id}`);
+        navigate(`/admin/obras/${res.data.id || ""}`);
       }
     } catch (err: unknown) {
       logger.error("Erro ao salvar obra", err);
-      toast.error("Erro ao salvar. Verifique os dados.");
+      toast.error(getApiErrorMessage(err, "Erro ao salvar. Verifique os dados."));
     } finally {
       setSaving(false);
     }
@@ -827,7 +1049,7 @@ export const AdminWorkForm: React.FC = () => {
                            <span className="text-sm font-medium">Clique ou arraste para subir</span>
                         </div>
                       )}
-                      <input id="image-upload" type="file" accept="image/*" onChange={(e: unknown) => handleUpload(e, "image", setImageUrl)} className="hidden" />
+                      <input id="image-upload" type="file" accept="image/*" onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpload(e, "image", setImageUrl)} className="hidden" />
                     </div>
                   </Card>
 
@@ -847,7 +1069,7 @@ export const AdminWorkForm: React.FC = () => {
                        >
                          {audioUrl ? "Substituir Áudio" : "Subir Áudio (MP3)"}
                        </Button>
-                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e: unknown) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
+                       <input id="audio-upload" type="file" accept="audio/*" onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpload(e, "audio", setAudioUrl)} className="hidden" />
                     </Card>
 
                     <Card className="p-6 border-white/5 bg-black/20 rounded-3xl space-y-4">
@@ -865,7 +1087,7 @@ export const AdminWorkForm: React.FC = () => {
                        >
                          {librasUrl ? "Substituir Vídeo" : "Subir Vídeo (MP4)"}
                        </Button>
-                       <input id="libras-upload" type="file" accept="video/*" onChange={(e: unknown) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
+                       <input id="libras-upload" type="file" accept="video/*" onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUpload(e, "video", setLibrasUrl)} className="hidden" />
                     </Card>
                   </div>
                 </div>
@@ -1091,7 +1313,7 @@ export const AdminWorkForm: React.FC = () => {
               <Select
                 label={t("admin.work.tipoDeServio", `Tipo de Serviço`)}
                 value={requestType}
-                onChange={(e: unknown) => setRequestType(e.target.value as unknown)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRequestType(e.target.value as AccessibilityRequestType)}
                 className="bg-black/20"
               >
                 <option value="LIBRAS">{t("admin.work.apenasVdeoEmLibras", `Apenas Vídeo em Libras`)}</option>
@@ -1129,7 +1351,8 @@ export const AdminWorkForm: React.FC = () => {
                     await api.post("/accessibility", { workId: id, type: requestType, notes: requestNotes });
                     toast.success("Solicitação enviada com sucesso!");
                     setShowAccessModal(false);
-                  } catch (error) {
+                  } catch (error: unknown) {
+                    logger.error("Erro ao enviar solicitação de acessibilidade.", error);
                     toast.error("Erro ao enviar solicitação.");
                   } finally {
                     setIsRequesting(false);

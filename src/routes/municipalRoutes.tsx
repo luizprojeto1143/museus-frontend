@@ -14,7 +14,7 @@ import { MunicipalPPA } from "../modules/backoffice/municipal/MunicipalPPA";
 // Moved from Admin
 const MunicipalNotices = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNotices").then(m => ({ default: m.MunicipalNotices })));
 const MunicipalNoticeForm = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNoticeForm").then(m => ({ default: m.MunicipalNoticeForm })));
-const MunicipalNoticeProjects = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNoticeProjects").then(m => ({ default: m.MunicipalNoticeProjects })));
+const MunicipalNoticeProjectsPage = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalNoticeProjects").then(m => ({ default: m.MunicipalNoticeProjects })));
 const MunicipalProjects = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProjects").then(m => ({ default: m.MunicipalProjects })));
 const MunicipalProjectForm = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProjectForm").then(m => ({ default: m.MunicipalProjectForm })));
 const MunicipalProviders = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalProviders").then(m => ({ default: m.MunicipalProviders })));
@@ -24,12 +24,13 @@ const MunicipalGaps = React.lazy(() => import("../modules/backoffice/municipal/p
 const MunicipalHeritage = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalHeritage").then(m => ({ default: m.MunicipalHeritage })));
 const MunicipalCalendar = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalCalendar").then(m => ({ default: m.MunicipalCalendar })));
 const MunicipalSponsorships = React.lazy(() => import("../modules/backoffice/municipal/pages/MunicipalSponsorships").then(m => ({ default: m.MunicipalSponsorships })));
+const NoticeTransparency = React.lazy(() => import("../modules/backoffice/producer/ProducerNoticeTransparency").then(m => ({ default: m.ProducerNoticeTransparency })));
 
-type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
+type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 export function municipalRoutes(RequireRole: React.FC<RequireRoleProps>) {
     const mun = (Component: React.ComponentType) => (
-        <RequireRole allowed={["admin", "master"]}>
+        <RequireRole allowed={["master", "municipal_admin", "municipal_secretary"]}>
             <MunicipalLayout>
                 <Component />
             </MunicipalLayout>
@@ -50,7 +51,8 @@ export function municipalRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/municipal/editais" element={mun(MunicipalNotices)} />
             <Route path="/municipal/editais/novo" element={mun(MunicipalNoticeForm)} />
             <Route path="/municipal/editais/:id" element={mun(MunicipalNoticeForm)} />
-            <Route path="/municipal/editais/:id/projetos" element={mun(MunicipalNoticeProjects)} />
+            <Route path="/municipal/editais/:id/projetos" element={mun(MunicipalNoticeProjectsPage)} />
+            <Route path="/municipal/editais/:id/transparencia" element={mun(NoticeTransparency)} />
             <Route path="/municipal/projetos" element={mun(MunicipalProjects)} />
             <Route path="/municipal/projetos/novo" element={mun(MunicipalProjectForm)} />
             <Route path="/municipal/projetos/:id" element={mun(MunicipalProjectForm)} />

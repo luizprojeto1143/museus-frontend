@@ -1,16 +1,20 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Filter, Users, QrCode, CalendarCheck, ShoppingBag, RefreshCw } from "lucide-react";
+import { Loader2, Users, QrCode, CalendarCheck, ShoppingBag, RefreshCw } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 interface FunnelStage {
     stage: string;
     count: number;
     pct: number;
+}
+
+interface FunnelResponse {
+    funnel?: FunnelStage[];
 }
 
 export const AdminFunnel: React.FC = () => {
@@ -23,7 +27,7 @@ export const AdminFunnel: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/analytics/funnel?tenantId=${tenantId}&days=${days}`);
+            const res = await api.get<FunnelResponse>(`/analytics/funnel?tenantId=${tenantId}&days=${days}`);
             setFunnel(res.data.funnel || []);
         } catch (error) { logger.error(error); toast.error("Erro ao carregar funil"); }
         finally { setLoading(false); }

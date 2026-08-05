@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -9,13 +9,40 @@ import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
+type ConservationRecord = {
+    id: string;
+    workId: string;
+    type: string;
+    condition: string;
+    responsibleName: string;
+    performedAt: string;
+    notes?: string | null;
+    nextScheduled?: string | null;
+};
+
+type ConservationLoan = {
+    id: string;
+    workId: string;
+    borrowerName: string;
+    purpose: string;
+    departureDate: string;
+    expectedReturn?: string | null;
+    status: string;
+};
+
+type WorkOption = {
+    id: string;
+    title: string;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
 
 export const AdminConservation: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [records, setRecords] = useState<any[]>([]);
-    const [loans, setLoans] = useState<any[]>([]);
-    const [works, setWorks] = useState<any[]>([]);
+    const [records, setRecords] = useState<ConservationRecord[]>([]);
+    const [loans, setLoans] = useState<ConservationLoan[]>([]);
+    const [works, setWorks] = useState<WorkOption[]>([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<'conservation' | 'loans'>('conservation');
     const [showForm, setShowForm] = useState(false);
@@ -24,12 +51,12 @@ export const AdminConservation: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             const [r, l, w] = await Promise.all([
-                api.get(`/conservation?tenantId=${tenantId}`),
-                api.get(`/conservation/loans?tenantId=${tenantId}`),
-                api.get(`/works?tenantId=${tenantId}`)
+                api.get<ListResponse<ConservationRecord>>(`/conservation?tenantId=${tenantId}`),
+                api.get<ListResponse<ConservationLoan>>(`/conservation/loans?tenantId=${tenantId}`),
+                api.get<ListResponse<WorkOption>>(`/works?tenantId=${tenantId}`)
             ]);
-            setRecords(r.data);
-            setLoans(l.data);
+            setRecords(Array.isArray(r.data) ? r.data : r.data.data || []);
+            setLoans(Array.isArray(l.data) ? l.data : l.data.data || []);
             setWorks(Array.isArray(w.data) ? w.data : (w.data.data || []));
         } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
@@ -44,7 +71,7 @@ export const AdminConservation: React.FC = () => {
             toast.success("Registro criado!");
             setShowForm(false);
             fetchData();
-        } catch (err) { toast.error("Erro ao criar registro"); }
+        } catch (_err) { toast.error("Erro ao criar registro"); }
     };
 
     const conditionColor: Record<string, string> = { BOM: 'text-green-400', REGULAR: 'text-amber-400', RUIM: 'text-orange-400', CRITICO: 'text-red-400' };
@@ -79,7 +106,7 @@ export const AdminConservation: React.FC = () => {
                             <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione...</option>
-                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div>
@@ -106,7 +133,7 @@ export const AdminConservation: React.FC = () => {
 
             {tab === 'conservation' && (
                 <div style={{ display: "grid", gap: "0.75rem" }}>
-                    {records.map((r: unknown) => {
+                    {records.map((r) => {
                         const work = works.find(w => w.id === r.workId);
                         return (
                             <div key={r.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "1rem" }}>
@@ -138,7 +165,7 @@ export const AdminConservation: React.FC = () => {
                             <ArrowLeftRight size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                             <p style={{ color: "#64748b" }}>{t("admin.conservation.nenhumEmprstimoRegistrado", `Nenhum empréstimo registrado`)}</p>
                         </div>
-                    ) : loans.map((l: unknown) => {
+                    ) : loans.map((l) => {
                         const work = works.find(w => w.id === l.workId);
                         const isOverdue = l.expectedReturn && new Date(l.expectedReturn) < new Date() && l.status === 'ACTIVE';
                         return (

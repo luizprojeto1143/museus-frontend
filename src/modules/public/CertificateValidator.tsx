@@ -3,6 +3,7 @@ import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 import { api } from '../../api/client';
 import { CheckCircle, XCircle, AlertTriangle, Download, Calendar, User, MapPin } from 'lucide-react';
 
@@ -18,6 +19,11 @@ interface CertificateData {
     description: string;
 }
 
+type CertificateValidationResponse = {
+    valid: boolean;
+    data?: CertificateData;
+};
+
 export const CertificateValidator: React.FC = () => {
   const { t } = useTranslation();
     const { code } = useParams();
@@ -29,17 +35,16 @@ export const CertificateValidator: React.FC = () => {
             // Note: Use baseURL-less request or ensure API client handles relative paths correctly 
             // if this page is rendered outside the main app context. 
             // Assuming standard api client works for now.
-            const res = await api.get(`/public/certificates/${code}`);
+            const res = await api.get<CertificateValidationResponse>(`/public/certificates/${code}`);
             if (res.data.valid) {
-                setData(res.data.data);
+                setData(res.data.data || null);
                 setStatus('valid');
             } else {
                 setStatus('invalid');
             }
         } catch (err: unknown) {
             logger.error(err);
-            const axiosErr = err as { response?: { status?: number } };
-            if (axiosErr.response?.status === 404) {
+            if (isAxiosError(err) && err.response?.status === 404) {
                 setStatus('invalid');
             } else {
                 setStatus('error');

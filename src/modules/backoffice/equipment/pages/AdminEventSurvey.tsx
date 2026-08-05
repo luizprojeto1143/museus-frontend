@@ -1,15 +1,12 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../../api/client';
 import { useAuth } from '../../../auth/AuthContext';
-import {
-    Plus, Trash2, Save, ArrowDown, ArrowUp,
-    CheckCircle2, AlertCircle, Copy, Check,
-    Star, Type, List, CheckSquare, MessageSquare, ChevronLeft
-} from 'lucide-react';
+import { Plus, Trash2, Save, ArrowDown, ArrowUp, MessageSquare, ChevronLeft } from 'lucide-react';
+import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
 interface SurveyQuestion {
@@ -19,6 +16,10 @@ interface SurveyQuestion {
     options?: string[];
     required: boolean;
     order: number;
+}
+
+interface EventResponse {
+    title?: string;
 }
 
 export const AdminEventSurvey: React.FC = () => {
@@ -34,18 +35,19 @@ export const AdminEventSurvey: React.FC = () => {
         if (id && tenantId) {
             loadData();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, tenantId]);
 
     const loadData = async () => {
         setLoading(true);
         try {
             // Get Event Info
-            const eventRes = await api.get(`/events/${id}`);
-            setTitle(eventRes.data.title);
+            const eventRes = await api.get<EventResponse>(`/events/${id}`);
+            setTitle(eventRes.data.title || "");
 
             // Get Survey
-            const surveyRes = await api.get(`/events/${id}/survey`);
-            setQuestions(surveyRes.data);
+            const surveyRes = await api.get<SurveyQuestion[]>(`/events/${id}/survey`);
+            setQuestions(Array.isArray(surveyRes.data) ? surveyRes.data : []);
         } catch (error) {
             logger.error(error);
         } finally {
@@ -65,13 +67,13 @@ export const AdminEventSurvey: React.FC = () => {
         ]);
     };
 
-    const updateQuestion = (index: number, field: keyof SurveyQuestion, value: unknown) => {
+    const updateQuestion = (index: number, field: keyof SurveyQuestion, value: SurveyQuestion[keyof SurveyQuestion]) => {
         const newQuestions = [...questions];
         newQuestions[index] = { ...newQuestions[index], [field]: value };
         setQuestions(newQuestions);
     };
 
-    const updateOptions = (index: number, optionsNum: number) => {
+    const _updateOptions = (_index: number, _optionsNum: number) => {
         // Simple logic to just resizing options array for now if needed, 
         // but for CHOICE usually we edit the array strings. 
         // Let's implement options input as a comma separated string for simplicity or dynamic tags.
@@ -102,10 +104,10 @@ export const AdminEventSurvey: React.FC = () => {
             // Fix order based on array index
             const payload = questions.map((q, idx) => ({ ...q, order: idx }));
             await api.post(`/events/${id}/survey`, { questions: payload });
-            logger.warn("Alert:", 'Pesquisa salva com sucesso!');
+            toast.success("Pesquisa salva com sucesso!");
         } catch (error) {
             logger.error(error);
-            logger.warn("Alert:", 'Erro ao salvar pesquisa.');
+            toast.error("Erro ao salvar pesquisa.");
         } finally {
             setSaving(false);
         }

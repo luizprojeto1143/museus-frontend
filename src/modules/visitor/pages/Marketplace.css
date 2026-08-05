@@ -134,8 +134,32 @@
   line-height: 1.5;
 }
 
-.market-buy-btn-premium {
+.market-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.market-meta-row span {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  font-family: var(--fm);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.market-actions-stack {
+  display: grid;
+  gap: 10px;
   margin-top: 15px;
+}
+
+.market-buy-btn-premium {
   height: 54px;
   border-radius: 20px;
   display: flex;
@@ -164,6 +188,17 @@
   color: var(--muted);
   border: 1px solid var(--border);
   cursor: not-allowed;
+}
+
+.market-buy-btn-premium.money {
+  background: rgba(59, 130, 246, 0.16);
+  color: #dbeafe;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+}
+
+.market-buy-btn-premium.money:hover {
+  background: rgba(59, 130, 246, 0.26);
+  transform: scale(1.03);
 }
 
 .market-owned-badge {

@@ -8,8 +8,60 @@ import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Input, Button } from "../../../../components/ui";
 import { ArrowLeft, Save, User, Phone, Mail, Star, CheckCircle, Briefcase, FileText, CheckCircle2 } from "lucide-react";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 import "../../equipment/pages/AdminShared.css";
 
+type ProviderType = "INDIVIDUAL" | "COMPANY";
+type AccessibilityService = typeof ACCESSIBILITY_SERVICES[number]["value"];
+
+interface ProviderFormData {
+    name: string;
+    email: string;
+    phone: string;
+    document: string;
+    type: ProviderType;
+    services: AccessibilityService[];
+    rating: number;
+    completedJobs: number;
+    active: boolean;
+}
+
+type ProviderResponse = ProviderFormData;
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const providerTypeSchema = z.enum(["INDIVIDUAL", "COMPANY"]);
+const accessibilityServiceSchema = z.enum([
+    "LIBRAS_INTERPRETATION",
+    "AUDIO_DESCRIPTION",
+    "CAPTIONING",
+    "BRAILLE",
+    "TACTILE_MODEL",
+    "EASY_READING"
+]);
+
+const providerSchema = z.object({
+    name: z.string().trim().min(2, "Informe o nome ou raz�o social."),
+    email: z.string().trim().email("Informe um email v�lido.").or(z.literal("")),
+    phone: z.string().trim().optional(),
+    document: z.string().trim().optional(),
+    type: providerTypeSchema,
+    services: z.array(accessibilityServiceSchema).min(1, "Selecione ao menos um servi�o."),
+    rating: z.number().min(0).max(5),
+    completedJobs: z.number().int().min(0),
+    active: z.boolean()
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 const ACCESSIBILITY_SERVICES = [
     { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: "🤟" },
@@ -18,7 +70,7 @@ const ACCESSIBILITY_SERVICES = [
     { value: "BRAILLE", label: "Material em Braille", icon: "⠿" },
     { value: "TACTILE_MODEL", label: "Maquete Tátil", icon: "🖐️" },
     { value: "EASY_READING", label: "Leitura Fácil", icon: "📖" }
-];
+] as const;
 
 export const MunicipalProviderForm: React.FC = () => {
     const { t } = useTranslation();
@@ -31,13 +83,13 @@ export const MunicipalProviderForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ProviderFormData>({
         name: "",
         email: "",
         phone: "",
         document: "", // CNPJ/CPF
         type: "COMPANY", // INDIVIDUAL, COMPANY
-        services: [] as string[],
+        services: [],
         rating: 0,
         completedJobs: 0,
         active: true
@@ -46,21 +98,21 @@ export const MunicipalProviderForm: React.FC = () => {
     useEffect(() => {
         if (isEdit) {
             setLoading(true);
-            api.get(`/providers/${id}`)
+            api.get<ProviderResponse>(`/providers/${id}`)
                 .then(res => setFormData({
                     name: res.data.name || "",
                     email: res.data.email || "",
                     phone: res.data.phone || "",
                     document: res.data.document || "",
                     type: res.data.type || "COMPANY",
-                    services: res.data.services || [],
+                    services: Array.isArray(res.data.services) ? res.data.services : [],
                     rating: res.data.rating || 0,
                     completedJobs: res.data.completedJobs || 0,
                     active: res.data.active ?? true
                 }))
                 .catch(err => {
                     logger.error("Erro ao carregar prestador", err);
-                    addToast("Não foi possível carregar os dados.", "error");
+                    addToast(getApiErrorMessage(err, "N�o foi poss�vel carregar os dados."), "error");
                     navigate("/municipal/prestadores");
                 })
                 .finally(() => setLoading(false));
@@ -68,10 +120,24 @@ export const MunicipalProviderForm: React.FC = () => {
     }, [id, isEdit, navigate, addToast]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        if (name === "rating") {
+            setFormData({ ...formData, rating: value === "" ? 0 : Number(value) });
+            return;
+        }
+        if (name === "completedJobs") {
+            setFormData({ ...formData, completedJobs: value === "" ? 0 : Number(value) });
+            return;
+        }
+        if (name === "type") {
+            const parsed = providerTypeSchema.safeParse(value);
+            if (parsed.success) setFormData({ ...formData, type: parsed.data });
+            return;
+        }
+        setFormData({ ...formData, [name]: value });
     };
 
-    const toggleService = (service: string) => {
+    const toggleService = (service: AccessibilityService) => {
         setFormData(prev => ({
             ...prev,
             services: prev.services.includes(service)
@@ -82,19 +148,25 @@ export const MunicipalProviderForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const validation = providerSchema.safeParse(formData);
+        if (!validation.success) {
+            addToast(validation.error.issues[0]?.message || "Revise os dados do prestador.", "error");
+            return;
+        }
+
         setSaving(true);
         try {
             if (isEdit) {
-                await api.put(`/providers/${id}`, formData);
+                await api.put(`/providers/${id}`, validation.data);
                 addToast("Prestador atualizado com sucesso!", "success");
             } else {
-                await api.post('/providers', { ...formData, tenantId });
+                await api.post('/providers', { ...validation.data, tenantId });
                 addToast("Prestador cadastrado com sucesso!", "success");
             }
             navigate("/municipal/prestadores");
-        } catch (err: unknown) {
+        } catch (err) {
             logger.error("Erro ao salvar prestador", err);
-            addToast(err.response?.data?.error || "Ocorreu um erro ao salvar.", "error");
+            addToast(getApiErrorMessage(err, "Ocorreu um erro ao salvar."), "error");
         } finally {
             setSaving(false);
         }
@@ -251,7 +323,7 @@ export const MunicipalProviderForm: React.FC = () => {
                             min="0"
                             max="5"
                             value={formData.rating}
-                            onChange={handleChange as unknown}
+                            onChange={handleChange}
                             placeholder="4.5"
                             leftIcon={<Star size={16} className="text-zinc-500" />}
                             className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
@@ -263,7 +335,7 @@ export const MunicipalProviderForm: React.FC = () => {
                             name="completedJobs"
                             min="0"
                             value={formData.completedJobs}
-                            onChange={handleChange as unknown}
+                            onChange={handleChange}
                             className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
                         />
                     </div>
@@ -317,3 +389,4 @@ export const MunicipalProviderForm: React.FC = () => {
         </div>
     );
 };
+

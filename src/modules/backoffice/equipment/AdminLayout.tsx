@@ -8,6 +8,7 @@ import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
 import { api } from "../../../api/client";
 import { useTerminology } from "../../../hooks/useTerminology";
 import { 
+  type LucideIcon,
   LayoutDashboard, 
   Image, 
   Map as MapIcon, 
@@ -65,8 +66,7 @@ import {
   Menu,
   ChevronLeft,
   ChevronRight,
-  LogOut,
-  X
+  LogOut
 } from "lucide-react";
 import { useIsCityMode } from "../../auth/TenantContext";
 
@@ -133,6 +133,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   // City Mode hooks
   const isCityMode = useIsCityMode();
   const term = useTerminology();
+  const isTheaterRole = role === "theater_admin";
+  const isAdminManager = role === "equipment_admin" || role === "master";
 
   useEffect(() => {
     if (tenantId && role !== 'master') {
@@ -143,9 +145,9 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [tenantId, role]);
 
   const themeStyles = features ? {
-    "--accent-primary": role === 'theater' ? "#dc2626" : (features.primaryColor || (isCityMode ? "var(--accent-primary)" : "var(--accent-primary)")),
-    "--accent-secondary": role === 'theater' ? "#7f1d1d" : (features.secondaryColor || (isCityMode ? "#0ea5e9" : "var(--accent-secondary)")),
-  } as React.CSSProperties : (role === 'theater' ? {
+    "--accent-primary": isTheaterRole ? "#dc2626" : (features.primaryColor || (isCityMode ? "var(--accent-primary)" : "var(--accent-primary)")),
+    "--accent-secondary": isTheaterRole ? "#7f1d1d" : (features.secondaryColor || (isCityMode ? "#0ea5e9" : "var(--accent-secondary)")),
+  } as React.CSSProperties : (isTheaterRole ? {
     "--accent-primary": "#dc2626",
     "--accent-secondary": "#7f1d1d",
   } : {});
@@ -154,7 +156,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     {
       label: t("admin.sidebar.painel", "Painel"),
       links: [
-        { to: role === 'theater' ? "/theater" : "/admin", label: role === 'theater' ? t("admin.sidebar.stage_dashboard", "Dashboard Palco") : (isCityMode ? t("admin.sidebar.culture_dept", "Secretaria de Cultura") : t("admin.sidebar.dashboard")), icon: "LayoutDashboard", show: true },
+        { to: isTheaterRole ? "/theater" : "/admin", label: isTheaterRole ? t("admin.sidebar.stage_dashboard", "Dashboard Palco") : (isCityMode ? t("admin.sidebar.culture_dept", "Secretaria de Cultura") : t("admin.sidebar.dashboard")), icon: "LayoutDashboard", show: true },
       ],
       showGroup: true
     },
@@ -166,7 +168,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/categorias", label: t("admin.sidebar.categories"), icon: "Tag", show: hasPermission("manage_works") },
         { to: "/admin/uploads", label: t("admin.sidebar.uploads", "Arquivos"), icon: "FolderOpen", show: hasPermission("manage_works") },
       ],
-      showGroup: (features?.featureGroupContent ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupContent ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.eventosEspaOs", "Eventos & Espaços"),
@@ -179,7 +181,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/sessoes", label: t("admin.sidebar.box_office", "Bilheteria (PDV)"), icon: "Ticket", show: hasPermission("manage_events") },
         { to: "/admin/certificates", label: t("admin.sidebar.certificados", "Certificados"), icon: "GraduationCap", show: (features?.featureCertificates ?? true) && hasPermission("manage_events") },
       ],
-      showGroup: (features?.featureGroupEvents ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupEvents ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.visitantesEngajamento", "Visitantes & Engajamento"),
@@ -188,7 +190,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/reviews", label: t("admin.sidebar.reviews", "Moderação"), icon: "Star", show: ((features?.featureReviews || features?.featureGuestbook) ?? true) && hasPermission("manage_guestbook") },
         { to: "/admin/loja", label: t("admin.sidebar.shop", "Loja"), icon: "ShoppingCart", show: (features?.featureShop ?? true) && hasPermission("manage_shop") },
       ],
-      showGroup: (features?.featureGroupEngagement ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupEngagement ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.gamificaO", "Gamificação"),
@@ -200,7 +202,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/colecao", label: t("admin.sidebar.cardsColecionVeis", "Cards Colecionáveis"), icon: "Diamond", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
         { to: "/admin/battle", label: t("admin.sidebar.batalhaDeMuseus", "Batalha de Museus"), icon: "Sword", show: (features?.featureGamification ?? true) && hasPermission("manage_gamification") },
       ],
-      showGroup: (features?.featureGroupGamification ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupGamification ?? true) && !isTheaterRole
     },
     {
       label: isCityMode ? t("admin.sidebar.gestOMunicipal", "Gestão Municipal") : t("admin.sidebar.gestOInstitucional", "Gestão Institucional"),
@@ -209,20 +211,20 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/acessibilidade-gestao", label: t("admin.sidebar.gestOAcessibilidade", "Gestão Acessibilidade"), icon: "Accessibility", show: (features?.featureAccessibilityMgmt ?? false) && hasPermission("manage_institutional") },
         { to: "/admin/relatorios", label: t("admin.sidebar.relatRiosInstitucionais", "Relatórios Institucionais"), icon: "BarChart", show: (features?.featureInstitutionalReports ?? false) && hasPermission("manage_institutional") },
       ],
-      showGroup: (features?.featureGroupInstitutional ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupInstitutional ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.theater_operations", "Operações de Teatro"),
       links: [
         { to: "/theater", label: t("admin.sidebar.stage_dashboard", "Dashboard Palco"), icon: "Theater", show: hasPermission("manage_operations") },
         { to: "/theater/mobile", label: t("admin.sidebar.fast_sale", "Venda Rápida (Mobile)"), icon: "Smartphone", show: hasPermission("manage_operations") },
-        { to: "/admin/assentos", label: t("admin.sidebar.seat_map", "Mapa de Assentos"), icon: "Armchair", show: hasPermission("manage_operations") },
-        { to: "/admin/elenco", label: t("admin.sidebar.cast_backstage", "Elenco & Backstage"), icon: "Users2", show: hasPermission("manage_operations") },
-        { to: "/admin/playbill", label: t("admin.sidebar.digital_program", "Programa Digital"), icon: "BookOpen", show: hasPermission("manage_operations") },
-        { to: "/admin/cue-master", label: t("admin.sidebar.backstage_console", "Console Backstage"), icon: "Zap", show: hasPermission("manage_operations") },
-        { to: "/admin/theater-club", label: t("admin.sidebar.members_club", "Clube de Membros"), icon: "Diamond", show: hasPermission("manage_operations") },
+        { to: "/theater/assentos", label: t("admin.sidebar.seat_map", "Mapa de Assentos"), icon: "Armchair", show: hasPermission("manage_operations") },
+        { to: "/theater/elenco", label: t("admin.sidebar.cast_backstage", "Elenco & Backstage"), icon: "Users2", show: hasPermission("manage_operations") },
+        { to: "/theater/playbill", label: t("admin.sidebar.digital_program", "Programa Digital"), icon: "BookOpen", show: hasPermission("manage_operations") },
+        { to: "/theater/sessoes", label: t("admin.sidebar.backstage_console", "Console Backstage"), icon: "Zap", show: hasPermission("manage_operations") },
+        { to: "/theater/theater-club", label: t("admin.sidebar.members_club", "Clube de Membros"), icon: "Diamond", show: hasPermission("manage_operations") },
       ],
-      showGroup: (features?.type === "THEATER" || role === "theater") && hasPermission("manage_operations")
+      showGroup: (features?.type === "THEATER" || isTheaterRole) && hasPermission("manage_operations")
     },
     {
       label: t("admin.sidebar.ferramentasConfig", "Ferramentas & Config"),
@@ -233,12 +235,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/mapa-editor", label: t("admin.sidebar.mapaDePinos", "Mapa de Pinos"), icon: "MapPin", show: hasPermission("manage_works") },
         { to: "/admin/notificacoes", label: t("admin.sidebar.notificaEsPush", "Notificações Push"), icon: "Bell", show: hasPermission("manage_events") },
         { to: "/admin/financeiro", label: t("admin.sidebar.dashboardFinanceiro", "Dashboard Financeiro"), icon: "CircleDollarSign", show: hasPermission("view_analytics") },
-        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "Handshake", show: role === 'admin' || role === 'master' },
-        { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "Settings", show: role === 'admin' || role === 'master' },
-        { to: "/admin/patrocinio", label: t("admin.sidebar.sponsorship", "Patrocínio"), icon: "CircleDollarSign", show: role === 'admin' || role === 'master' },
-        { to: "/admin/usuarios", label: t("admin.sidebar.team", "Equipe"), icon: "Users", show: role === 'admin' || role === 'master' },
+        { to: "/admin/configuracoes/servicos", label: t("admin.sidebar.serviOsOferecidos", "Serviços Oferecidos"), icon: "Handshake", show: isAdminManager },
+        { to: "/admin/configuracoes", label: t("admin.sidebar.settings"), icon: "Settings", show: isAdminManager },
+        { to: "/admin/patrocinio", label: t("admin.sidebar.sponsorship", "Patrocínio"), icon: "CircleDollarSign", show: isAdminManager },
+        { to: "/admin/usuarios", label: t("admin.sidebar.team", "Equipe"), icon: "Users", show: isAdminManager },
       ],
-      showGroup: (features?.featureGroupTools ?? true) && (role === 'admin' || hasPermission("view_analytics") || hasPermission("manage_works") || hasPermission("manage_events") || hasPermission("manage_chat_ai"))
+      showGroup: (features?.featureGroupTools ?? true) && (isAdminManager || hasPermission("view_analytics") || hasPermission("manage_works") || hasPermission("manage_events") || hasPermission("manage_chat_ai"))
     },
     {
       label: t("admin.sidebar.analyticsAvanAdo", "Analytics Avançado"),
@@ -250,7 +252,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/funil", label: t("admin.sidebar.funilDeConversO", "Funil de Conversão"), icon: "Filter", show: hasPermission("view_analytics") },
         { to: "/admin/moderacao", label: t("admin.sidebar.moderaO", "Moderação"), icon: "ShieldCheck", show: hasPermission("manage_guestbook") },
       ],
-      showGroup: (features?.featureGroupAnalytics ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupAnalytics ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.educaOSocial", "Educação & Social"),
@@ -260,7 +262,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/modo-crianca", label: t("admin.sidebar.modoCrianA", "Modo Criança"), icon: "Baby", show: hasPermission("manage_works") },
         { to: "/admin/assinaturas", label: t("admin.sidebar.amigoDoMuseu", "Amigo do Museu"), icon: "Diamond", show: hasPermission("manage_shop") },
       ],
-      showGroup: (features?.featureGroupSocial ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupSocial ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.municipalAvanAdo", "Gestão Avançada"),
@@ -268,7 +270,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/voluntarios", label: t("admin.sidebar.voluntRios", "Voluntários"), icon: "Users", show: hasPermission("manage_institutional") },
         { to: "/admin/conservacao", label: t("admin.sidebar.conservaO", "Conservação"), icon: "Wrench", show: hasPermission("manage_works") },
       ],
-      showGroup: (features?.featureGroupPreservation ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupPreservation ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.iAMarketing", "IA & Marketing"),
@@ -277,7 +279,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/instagram", label: t("admin.sidebar.cardInstagram", "Card Instagram"), icon: "Camera", show: hasPermission("manage_marketing") },
         { to: "/admin/traducoes", label: t("admin.sidebar.traduEs", "Traduções"), icon: "Globe", show: hasPermission("manage_marketing") },
       ],
-      showGroup: (features?.featureGroupAI ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupAI ?? true) && !isTheaterRole
     },
     {
       label: t("admin.sidebar.roadmap_2026", "Roadmap 2026"),
@@ -288,7 +290,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         { to: "/admin/submissoes", label: t("admin.sidebar.art_curation", "Curadoria de Obras"), icon: "Inbox", show: hasPermission("manage_roadmap") },
         { to: "/admin/familia", label: t("admin.sidebar.family_memory", "Memória Familiar"), icon: "TreePine", show: hasPermission("manage_roadmap") },
       ],
-      showGroup: (features?.featureGroupRoadmap ?? true) && role !== 'theater'
+      showGroup: (features?.featureGroupRoadmap ?? true) && !isTheaterRole
     }
   ];
 
@@ -404,7 +406,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                   <div className="space-y-1">
                     {group.links.map((link: SidebarLink) => {
                        // Map string icons to components
-                       const IconMap: Record<string, any> = {
+                       const IconMap: Record<string, LucideIcon> = {
                          LayoutDashboard, Image, MapIcon, Tag, FolderOpen, Theater, QrCode, Ticket, Smartphone, Building2, Calendar, GraduationCap, Users, Star, ShoppingCart, Compass, Trophy, Sword, ClipboardList, Palette, HardHat, Handshake, Accessibility, BarChart, Armchair, Users2, BookOpen, Zap, Diamond, Bot, Eye, MapPin, Bell, CircleDollarSign, Settings, FileText, MessageSquare, CheckCircle2, Smile, Flame, Filter, ShieldCheck, Baby, Wrench, Target, Scroll, CalendarDays, FileSearch, Wand2, Camera, Globe, History, Inbox, TreePine
                        };
                        const Icon = IconMap[link.icon] || LayoutDashboard;
@@ -477,3 +479,4 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     </div>
   );
 };
+

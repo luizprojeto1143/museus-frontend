@@ -1,68 +1,34 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
-import { 
-    AlertTriangle, 
-    Terminal, 
-    Activity, 
-    RefreshCw, 
-    Search, 
-    ChevronDown, 
-    ChevronRight, 
-    Database, 
-    ShieldAlert,
-    Trash2,
-    Pause,
-    Play,
-    Zap,
-    Layers,
-    Cpu,
-    Globe,
-    Lock,
-    X,
-    CheckCircle2,
-    Bug,
-    ShieldX,
-    Server,
-    Radio,
-    FileCode,
-    History,
-    AlertCircle,
-    HardDrive,
-    Unplug,
-    ZapOff,
-    MonitorDot,
-    Braces
-} from 'lucide-react';
+import { Terminal, RefreshCw, ChevronRight, ShieldAlert, Trash2, Pause, Play, Layers, Globe, Lock, CheckCircle2, Server, FileCode, HardDrive, MonitorDot, Braces } from 'lucide-react';
 import { api } from '../../../api/client';
-import { 
-    Button, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
+import { Button, Card, Badge, AnimateIn } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+
+interface AuditMetadata {
+    message?: string;
+    stack?: string;
+    [key: string]: unknown;
+}
 
 interface AuditLogEntry {
     id: string;
     action: string;
-    entity: string;
+    entityType: string | null;
     entityId: string | null;
     userId: string | null;
-    userEmail: string | null;
-    tenantId: string;
-    oldData: unknown | null;
-    newData: unknown | null;
+    tenantId: string | null;
+    metadata: AuditMetadata | null;
     ipAddress: string | null;
     userAgent: string | null;
     createdAt: string;
 }
 
 export const MasterErrorMonitor: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [logs, setLogs] = useState<AuditLogEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [autoRefresh, setAutoRefresh] = useState(true);
@@ -72,16 +38,16 @@ export const MasterErrorMonitor: React.FC = () => {
 
     const fetchLogs = useCallback(async () => {
         try {
-            const res = await api.get('/ops/error-logs');
+            const res = await api.get<AuditLogEntry[]>('/ops/error-logs');
             const technicalLogs = (res.data || []).filter((log: AuditLogEntry) => {
                 if (filter === 'CRITICAL') return log.action === 'SERVER_ERROR';
-                if (filter === 'DATABASE') return log.newData?.message?.includes('Prisma') || log.newData?.message?.includes('database');
+                if (filter === 'DATABASE') return log.metadata?.message?.includes('Prisma') || log.metadata?.message?.toLowerCase().includes('database');
                 return true;
             });
             
             setLogs(technicalLogs);
             lastFetchRef.current = Date.now();
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error('Failed to fetch technical logs:', error);
         } finally {
             setLoading(false);
@@ -241,7 +207,7 @@ export const MasterErrorMonitor: React.FC = () => {
                                             </div>
                                             <div className="flex-1 font-mono text-sm text-slate-400 truncate group-hover:text-white transition-colors flex items-center gap-3">
                                                 <ChevronRight size={14} className={`text-slate-700 transition-transform ${expandedLog === log.id ? 'rotate-90 text-rose-500' : ''}`} />
-                                                <span className="italic uppercase tracking-tight">{log.newData?.message || log.action}</span>
+                                                <span className="italic uppercase tracking-tight">{log.metadata?.message || log.action}</span>
                                                 <Badge variant="glass" className="bg-white/5 border-none text-[8px] font-black text-slate-700 uppercase tracking-widest ml-4">
                                                     NODE: {log.entityId || 'SYS_ENGINE'}
                                                 </Badge>
@@ -274,7 +240,7 @@ export const MasterErrorMonitor: React.FC = () => {
                                                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 border border-white/5">
                                                                         <Layers size={14} />
                                                                     </div>
-                                                                    <p className="font-mono text-sm text-white font-black uppercase italic">{log.entity}</p>
+                                                                    <p className="font-mono text-sm text-white font-black uppercase italic">{log.entityType || 'SYSTEM'}</p>
                                                                 </div>
                                                             </div>
                                                             <div className="space-y-2">
@@ -283,7 +249,7 @@ export const MasterErrorMonitor: React.FC = () => {
                                                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 border border-white/5">
                                                                         <Lock size={14} />
                                                                     </div>
-                                                                    <p className="font-mono text-sm text-white font-black italic">{log.userEmail || 'INTERNAL/SOC_ENGINE'}</p>
+                                                                    <p className="font-mono text-sm text-white font-black italic">{log.userId || 'INTERNAL/SOC_ENGINE'}</p>
                                                                 </div>
                                                             </div>
                                                             <div className="space-y-2">
@@ -305,7 +271,7 @@ export const MasterErrorMonitor: React.FC = () => {
                                                                 <button 
                                                                     className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-[9px] font-black uppercase text-slate-500 hover:text-white transition-all italic tracking-widest"
                                                                     onClick={() => {
-                                                                        navigator.clipboard.writeText(JSON.stringify(log.newData, null, 2));
+                                                                        navigator.clipboard.writeText(JSON.stringify(log.metadata, null, 2));
                                                                         toast.success("Stack trace copiada p/ análise externa.");
                                                                     }}
                                                                 >
@@ -317,7 +283,7 @@ export const MasterErrorMonitor: React.FC = () => {
                                                                     <FileCode size={24} className="text-rose-500/20" />
                                                                 </div>
                                                                 <pre className="text-xs font-mono text-slate-500 leading-loose border-l-4 border-rose-600/30 pl-10">
-                                                                    {log.newData?.stack || JSON.stringify(log.newData || log.oldData, null, 4)}
+                                                                    {log.metadata?.stack || JSON.stringify(log.metadata, null, 4)}
                                                                 </pre>
                                                             </div>
                                                         </div>

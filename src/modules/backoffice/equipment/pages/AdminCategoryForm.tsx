@@ -7,12 +7,50 @@ import { useAuth } from "../../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Input, Select, Textarea, Button } from "../../../../components/ui";
-import { ArrowLeft, Save, Tag, FileText, Layers } from "lucide-react";
+import { ArrowLeft, Save, Tag } from "lucide-react";
 import { useTerminology } from "../../../../hooks/useTerminology";
 import "./AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 
-const CATEGORY_TYPES = [
+const categoryTypeValues = ["WORK", "EVENT", "SPACE", "POST", "PRODUCT"] as const;
+type CategoryType = typeof categoryTypeValues[number];
+
+interface CategoryResponse {
+  id: string;
+  name: string;
+  description?: string | null;
+  type?: CategoryType;
+}
+
+interface CategoryPayload {
+  name: string;
+  description: string;
+  type: CategoryType;
+  tenantId: string;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const categorySchema = z.object({
+  name: z.string().trim().min(2, "Informe o nome da categoria."),
+  description: z.string().trim().optional().default(""),
+  type: z.enum(categoryTypeValues),
+  tenantId: z.string().trim().min(1)
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
+const CATEGORY_TYPES: Array<{ value: CategoryType; label: string }> = [
   { value: "WORK", label: "Obras" },
   { value: "EVENT", label: "Eventos" },
   { value: "SPACE", label: "Espaços" },
@@ -25,32 +63,32 @@ export const AdminCategoryForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { tenantId } = useAuth();
   const { addToast } = useToast();
-  const term = useTerminology();
+  const _term = useTerminology();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("WORK");
+  const [type, setType] = useState<CategoryType>("WORK");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (isEdit && id) {
       setLoading(true);
-      api.get(`/categories/${id}`)
+      api.get<CategoryResponse>(`/categories/${id}`)
         .then(res => {
-          setName(res.data.name);
+          setName(res.data.name || "");
           setDescription(res.data.description || "");
-          setType(res.data.type || "WORK");
+          setType(categoryTypeValues.includes(res.data.type as CategoryType) ? res.data.type as CategoryType : "WORK");
         })
-        .catch(err => {
-          logger.error(err);
-          addToast("Erro ao carregar categoria", "error");
+        .catch((err: unknown) => {
+          logger.error("Error loading category", err);
+          addToast(getApiErrorMessage(err, "Erro ao carregar categoria"), "error");
         })
         .finally(() => setLoading(false));
     }
-  }, [id, isEdit]);
+  }, [id, isEdit, addToast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,19 +99,25 @@ export const AdminCategoryForm: React.FC = () => {
     }
 
     setSaving(true);
-    const payload = { name, description, type, tenantId };
+    const payload: CategoryPayload = { name, description, type, tenantId };
+    const validation = categorySchema.safeParse(payload);
+    if (!validation.success) {
+      addToast(validation.error.issues[0]?.message || t("common.error"), "error");
+      setSaving(false);
+      return;
+    }
 
     try {
       if (isEdit && id) {
-        await api.put(`/categories/${id}`, payload);
+        await api.put<CategoryResponse>(`/categories/${id}`, validation.data);
       } else {
-        await api.post("/categories", payload);
+        await api.post<CategoryResponse>("/categories", validation.data);
       }
       addToast(isEdit ? "Categoria atualizada com sucesso!" : "Categoria criada com sucesso!", "success");
       navigate("/admin/categorias");
-    } catch (err) {
-      logger.error(err);
-      addToast(t("common.error"), "error");
+    } catch (err: unknown) {
+      logger.error("Error saving category", err);
+      addToast(getApiErrorMessage(err, t("common.error")), "error");
     } finally {
       setSaving(false);
     }
@@ -133,7 +177,7 @@ export const AdminCategoryForm: React.FC = () => {
             <Select
               label={t("admin.category.tipoDeContedo", `Tipo de Conteúdo`)}
               value={type}
-              onChange={(e) => setType(e.target.value)}
+              onChange={(e) => setType(e.target.value as CategoryType)}
               className="bg-zinc-900/50 border-white/10 text-white focus:border-gold/50"
             >
               {CATEGORY_TYPES.map(item => (
@@ -181,3 +225,4 @@ export const AdminCategoryForm: React.FC = () => {
     </div>
   );
 };
+

@@ -1,26 +1,7 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-    Shield, 
-    Smartphone, 
-    Globe, 
-    Ear, 
-    Eye, 
-    ArrowRight, 
-    Menu, 
-    X, 
-    Layout, 
-    ChevronDown, 
-    Zap,
-    Users,
-    Activity,
-    Mail,
-    Trophy,
-    Landmark,
-    Briefcase as BriefcaseIcon,
-    CheckCircle
-} from "lucide-react";
+import { Shield, Smartphone, Globe, Ear, Eye, Menu, X, Zap, Users, Activity, Mail, Trophy, Landmark, Briefcase as BriefcaseIcon, CheckCircle } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 import { useTenant } from "../auth/TenantContext";
 import { useAuth } from "../auth/AuthContext";
@@ -32,7 +13,7 @@ import {
     AnimatedCounter
 } from "@/components/ui";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
-import { staggerContainer, staggerItem, fadeInUp, scaleIn } from "@/lib/motion";
+import { staggerContainer, fadeInUp, scaleIn } from "@/lib/motion";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/cn";
 
@@ -48,8 +29,8 @@ export const LandingPage: React.FC = () => {
     useEffect(() => {
         if (isAuthenticated && role) {
             if (role === "master") navigate("/master");
-            else if (role === "admin") navigate("/admin");
-            else if (role === "theater") navigate("/theater");
+            else if (role === "equipment_admin") navigate("/admin");
+            else if (role === "theater_admin") navigate("/theater");
             else if (role === "producer") navigate("/producer");
             else if (role === "collaborator") navigate("/admin");
         }
@@ -57,7 +38,6 @@ export const LandingPage: React.FC = () => {
 
     // Track scroll for header transition
     useEffect(() => {
-        let lastScrollY = window.scrollY;
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
             const isScrolled = currentScrollY > 50;
@@ -66,7 +46,6 @@ export const LandingPage: React.FC = () => {
                 if (prev !== isScrolled) return isScrolled;
                 return prev;
             });
-            lastScrollY = currentScrollY;
         };
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
@@ -115,6 +94,13 @@ export const LandingPage: React.FC = () => {
 
                 {/* Desktop Menu */}
                 <div className="hidden lg:flex items-center gap-10 text-sm font-bold tracking-widest uppercase">
+                    <button
+                        onClick={() => navigate("/nacional")}
+                        className="relative group transition-colors hover:text-[var(--accent-primary)]"
+                    >
+                        Nacional
+                        <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[var(--accent-primary)] transition-all group-hover:w-full" />
+                    </button>
                     {["editais", "prestadores", "solucoes", "acessibilidade", "casos", "contato"].map((item) => (
                         <button 
                             key={item}
@@ -167,6 +153,15 @@ export const LandingPage: React.FC = () => {
                                 {item.charAt(0).toUpperCase() + item.slice(1)}
                             </button>
                         ))}
+                        <button
+                            onClick={() => {
+                                navigate("/nacional");
+                                setMobileMenuOpen(false);
+                            }}
+                            className="text-left hover:text-[var(--accent-primary)] transition-colors"
+                        >
+                            Nacional
+                        </button>
                         <hr className="border-white/5 my-4" />
                         <Button variant="outline" size="lg" onClick={async () => {
                             await logout();
@@ -383,7 +378,7 @@ export const LandingPage: React.FC = () => {
                         <div className="relative">
                              <div className="absolute -inset-4 bg-[#9f7aea]/20 blur-3xl rounded-full opacity-50" />
                              <img 
-                                src="/placeholder-image.jpg" 
+                                src="/placeholder-image.svg" 
                                 alt="Service Provider" 
                                 className="relative rounded-[40px] border border-white/10 shadow-2xl grayscale hover:grayscale-0 transition-all duration-700"
                              />
@@ -591,3 +586,6 @@ export const LandingPage: React.FC = () => {
         </div>
     );
 };
+
+
+

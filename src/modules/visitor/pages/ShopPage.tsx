@@ -1,6 +1,6 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import React from 'react';
-import { ShoppingBag, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { ProductGrid } from '../../../components/shop/ShopComponents';
 import { motion } from 'framer-motion';
 
@@ -21,7 +21,7 @@ export const ShopPage: React.FC = () => {
                 {/* Hero Banner Image */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="/placeholder-image.jpg"
+                        src="/placeholder-image.svg"
                         alt="Museum Shop Hero"
                         className="w-full h-full object-cover opacity-20 scale-110 blur-[2px]"
                     />
@@ -79,7 +79,7 @@ export const ShopPage: React.FC = () => {
                     >
                         <div className="w-80 h-96 rounded-3xl overflow-hidden border-2 border-amber-500/30 shadow-2xl relative group">
                             <img
-                                src="/placeholder-image.jpg"
+                                src="/placeholder-image.svg"
                                 alt="Featured item"
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             />
@@ -99,3 +99,4 @@ export const ShopPage: React.FC = () => {
         </div>
     );
 };
+

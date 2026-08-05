@@ -5,16 +5,22 @@ import { api } from "../../../api/client";
 import { buildCityUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Calendar } from "lucide-react";
+import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy } from "lucide-react";
 import "./VisitorHub.css";
 
-interface City {
+interface Equipamento {
   id: string;
-  slug: string;
   nome: string;
-  estado?: string;
-  logoUrl?: string;
-  equipamentosCount?: number;
+  slug: string;
+  tipo: string;
+  cidade: string;
+  estado: string;
+  imagemUrl?: string;
+}
+
+interface EstadoGroup {
+  nome: string;
+  equipamentosCount: number;
 }
 
 interface RecentVisit {
@@ -41,11 +47,19 @@ interface UserStats {
   trailsCompleted: number;
 }
 
+
+type ListResponse<T> = T[] | {
+  data?: T[];
+};
+
+const unwrapList = <T,>(payload: ListResponse<T>): T[] => {
+  return Array.isArray(payload) ? payload : payload.data || [];
+};
 export const VisitorHub: React.FC = () => {
   const navigate = useNavigate();
   const { name, role } = useAuth();
 
-  const [cities, setCities] = useState<City[]>([]);
+  const [estados, setEstados] = useState<EstadoGroup[]>([]);
   const [recentVisits, setRecentVisits] = useState<RecentVisit[]>([]);
   const [activeTickets, setActiveTickets] = useState<ActiveTicket[]>([]);
   const [stats, setStats] = useState<UserStats>({ xp: 0, level: 1, visitsCount: 0, badgesCount: 0, trailsCompleted: 0 });
@@ -55,57 +69,67 @@ export const VisitorHub: React.FC = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      let citiesQuery = "/public/cities?limit=8";
-      
+      let equipamentosQuery = "/equipamentos/public";
       try {
         if ("geolocation" in navigator) {
           const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
             navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 3000 });
           });
-          citiesQuery += `&lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;
+          equipamentosQuery += `?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`;
         }
       } catch {
         // Fallback to standard fetch without coordinates
       }
 
       const results = await Promise.allSettled([
-        api.get(citiesQuery),
-        api.get("/visitors/me/recent-visits?limit=3"),
-        api.get("/visitors/me/active-tickets?limit=3"),
-        api.get("/visitors/me/stats"),
+        api.get<ListResponse<Equipamento>>(equipamentosQuery),
+        api.get<ListResponse<RecentVisit>>("/visitors/me/recent-visits?limit=3"),
+        api.get<ListResponse<ActiveTicket>>("/visitors/me/active-tickets?limit=3"),
+        api.get<Partial<UserStats>>("/visitors/me/stats"),
       ]);
 
       if (results[0].status === "fulfilled") {
-        const data = results[0].value.data;
-        setCities(Array.isArray(data) ? data : data.data || []);
+        const eqData = unwrapList(results[0].value.data);
+        
+        const estMap = new Map<string, number>();
+        eqData.forEach(eq => {
+          if (eq.estado) {
+            estMap.set(eq.estado, (estMap.get(eq.estado) || 0) + 1);
+          }
+        });
+        
+        const estList: EstadoGroup[] = Array.from(estMap.entries()).map(([nome, count]) => ({
+          nome,
+          equipamentosCount: count
+        })).sort((a, b) => a.nome.localeCompare(b.nome));
+        
+        setEstados(estList);
       }
       if (results[1].status === "fulfilled") {
-        const data = results[1].value.data;
-        setRecentVisits(Array.isArray(data) ? data : data.data || []);
+        setRecentVisits(unwrapList(results[1].value.data));
       }
       if (results[2].status === "fulfilled") {
-        const data = results[2].value.data;
-        setActiveTickets(Array.isArray(data) ? data : data.data || []);
+        setActiveTickets(unwrapList(results[2].value.data));
       }
-      if (results[3].status === "fulfilled") {
-        setStats(results[3].value.data || stats);
+      const statsResult = results[3];
+      if (statsResult.status === "fulfilled") {
+        setStats(prev => ({ ...prev, ...statsResult.value.data }));
       }
     } catch (_err) {
-      // Silently handle — UI shows empty states gracefully
+      // UI shows empty states gracefully if optional hub calls fail.
     } finally {
       setLoading(false);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (role === "master") { navigate("/master", { replace: true }); return; }
-    if (role === "admin") { navigate("/admin", { replace: true }); return; }
+    if (role === "equipment_admin") { navigate("/admin", { replace: true }); return; }
     fetchData();
   }, [role, navigate, fetchData]);
 
-  const filteredCities = cities.filter(c =>
-    c.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (c.estado || "").toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredEstados = estados.filter(e =>
+    e.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const firstName = name?.split(" ")[0] || "Visitante";
@@ -252,41 +276,34 @@ export const VisitorHub: React.FC = () => {
                 <div key={i} className="hub-city-card hub-city-skeleton" />
               ))}
             </div>
-          ) : filteredCities.length === 0 ? (
+          ) : filteredEstados.length === 0 ? (
             <div className="hub-empty-state">
               <MapPin size={48} />
-              <p>Nenhuma cidade encontrada.</p>
+              <p>Nenhum estado encontrado.</p>
               <button onClick={() => navigate("/cidades?indicar=true")} className="hub-empty-cta">
                 Indicar uma cidade
               </button>
             </div>
           ) : (
             <div className="hub-cities-grid">
-              {filteredCities.map((city, i) => (
+              {filteredEstados.map((estado, i) => (
                 <motion.button
-                  key={city.id}
-                  id={`hub-city-${city.slug}`}
+                  key={estado.nome}
+                  id={`hub-estado-${estado.nome.toLowerCase()}`}
                   className="hub-city-card"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => navigate(buildCityUrl(city.slug))}
+                  onClick={() => navigate("/cidades")}
                 >
-                  {city.logoUrl ? (
-                    <img src={city.logoUrl} alt={city.nome} className="hub-city-logo" />
-                  ) : (
-                    <div className="hub-city-placeholder">
-                      <MapPin size={24} />
-                    </div>
-                  )}
+                  <div className="hub-city-placeholder">
+                    <MapPin size={24} />
+                  </div>
                   <div className="hub-city-info">
-                    <strong>{city.nome}</strong>
-                    {city.estado && <small>{city.estado}</small>}
-                    {city.equipamentosCount !== undefined && (
-                      <small>{city.equipamentosCount} equipamentos</small>
-                    )}
+                    <strong>{estado.nome}</strong>
+                    <small>{estado.equipamentosCount} equipamentos</small>
                   </div>
                 </motion.button>
               ))}
@@ -357,3 +374,6 @@ export const VisitorHub: React.FC = () => {
     </>
   );
 };
+
+
+

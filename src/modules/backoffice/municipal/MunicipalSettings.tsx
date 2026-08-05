@@ -1,36 +1,10 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { 
-    Loader2, 
-    Plus, 
-    Building2, 
-    FileText, 
-    Calendar, 
-    Users, 
-    Star, 
-    ArrowRight, 
-    MapPin, 
-    Globe, 
-    Phone, 
-    Mail, 
-    Clock, 
-    Image, 
-    Shield, 
-    Hash, 
-    LayoutDashboard, 
-    Settings as SettingsIcon,
-    Save,
-    Palette,
-    Zap,
-    ShieldCheck,
-    Smartphone,
-    CreditCard,
-    CheckCircle
-} from "lucide-react";
+import { Building2, Globe, Save, Palette, Zap, ShieldCheck, Smartphone, CreditCard, CheckCircle } from "lucide-react";
 import { 
     Button, 
     Badge, 
@@ -40,19 +14,38 @@ import {
 } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+type MunicipalSettingsSection = 'identity' | 'channels' | 'branding' | 'financeiro';
 
+type MunicipalSettingsData = {
+    name?: string;
+    address?: string;
+    mission?: string;
+    cnpj?: string;
+    legalNature?: string;
+    typology?: string;
+    foundationYear?: string | number;
+    email?: string;
+    whatsapp?: string;
+    website?: string;
+    primaryColor?: string;
+    stripeConnectId?: string;
+};
+
+type StripeLinkResponse = {
+    url?: string;
+};
 export const MunicipalSettings: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [settings, setSettings] = useState<unknown>({});
+    const [settings, setSettings] = useState<MunicipalSettingsData>({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activeSection, setActiveSection] = useState<'identity' | 'channels' | 'branding' | 'financeiro'>('identity');
+    const [activeSection, setActiveSection] = useState<MunicipalSettingsSection>('identity');
 
     const fetchSettings = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/tenants/${tenantId}/settings`);
+            const res = await api.get<MunicipalSettingsData>(`/tenants/${tenantId}/settings`);
             setSettings(res.data || {});
         } catch (error) {
             logger.error(error);
@@ -60,7 +53,7 @@ export const MunicipalSettings: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [tenantId]);
+    }, [tenantId, t]);
 
     useEffect(() => {
         fetchSettings();
@@ -71,15 +64,15 @@ export const MunicipalSettings: React.FC = () => {
         try {
             await api.put(`/tenants/${tenantId}/settings`, settings);
             toast.success(t("municipal.settings.save_success", "Parâmetros salvos com sucesso!"));
-        } catch (error) {
+        } catch (_error) {
             toast.error(t("municipal.settings.save_error", "Erro ao salvar alterações."));
         } finally {
             setSaving(false);
         }
     };
 
-    const updateField = (field: string, value: unknown) => {
-        setSettings((prev: unknown) => ({ ...prev, [field]: value }));
+    const updateField = (field: keyof MunicipalSettingsData, value: string | number) => {
+        setSettings((prev) => ({ ...prev, [field]: value }));
     };
 
     if (loading) return (
@@ -120,7 +113,7 @@ export const MunicipalSettings: React.FC = () => {
                 {sections.map(section => (
                     <button
                         key={section.id}
-                        onClick={() => setActiveSection(section.id as unknown)}
+                        onClick={() => setActiveSection(section.id as MunicipalSettingsSection)}
                         className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                             activeSection === section.id 
                             ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' 
@@ -360,9 +353,9 @@ export const MunicipalSettings: React.FC = () => {
                                                     className="w-full bg-emerald-600 text-white font-black rounded-xl h-12"
                                                     onClick={async () => {
                                                         try {
-                                                            const { data } = await api.get('/stripe/onboarding-link?type=MUNICIPAL');
+                                                            const { data } = await api.get<StripeLinkResponse>('/stripe/onboarding-link?type=MUNICIPAL');
                                                             if (data && data.url) window.location.href = data.url;
-                                                        } catch (err) {
+                                                        } catch (_err) {
                                                             toast.error(t("municipal.settings.stripe_error", "Erro ao gerar link do Stripe"));
                                                         }
                                                     }}

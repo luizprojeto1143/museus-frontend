@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { 
-    Users, Search, Filter, Mail, Phone, Star, 
-    CheckCircle2, AlertCircle, MessageSquare, 
-    ChevronRight, Briefcase, Info, X
-} from "lucide-react";
-import { Button, Input, Badge } from "../../../components/ui";
+import { Users, Search, Star, MessageSquare, Briefcase, Info, X } from "lucide-react";
+import { Button, Badge } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 
 interface Provider {
@@ -24,7 +20,7 @@ interface Provider {
 }
 
 export const ProducerProviders: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { addToast } = useToast();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
@@ -47,6 +43,7 @@ export const ProducerProviders: React.FC = () => {
 
     useEffect(() => {
         fetchProviders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchProviders = async () => {
@@ -54,7 +51,7 @@ export const ProducerProviders: React.FC = () => {
         try {
             const res = await api.get("/providers", { params: { active: true } });
             setProviders(res.data);
-        } catch (err) {
+        } catch (_err) {
             addToast("Erro ao carregar prestadores.", "error");
         } finally {
             setLoading(false);
@@ -69,7 +66,7 @@ export const ProducerProviders: React.FC = () => {
             addToast("Solicitação de orçamento enviada com sucesso!", "success");
             setSelectedProvider(null);
             setQuoteMessage("");
-        } catch (err) {
+        } catch (_err) {
             addToast("Erro ao enviar solicitação.", "error");
         } finally {
             setSendingQuote(false);

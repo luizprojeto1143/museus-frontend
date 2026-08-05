@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
+import { isAxiosError } from "axios";
+import html2canvas from "html2canvas";
 import { api } from "../../../../api/client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,6 +9,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../../auth/AuthContext";
 import { QRCodeCanvas } from "qrcode.react";
+import { QRCodeArtCard } from "../../../../components/qrcode/QRCodeArtCard";
 import "./AdminQRCodes.css";
 
 type QRType =
@@ -22,6 +25,20 @@ interface GeneratedQR {
   title: string;
   xpReward: number;
 }
+
+interface SelectOption {
+  id: string;
+  name: string;
+}
+
+interface ResourceOptionResponse {
+  works?: Array<Partial<SelectOption> & { title?: string }>;
+  events?: Array<Partial<SelectOption> & { title?: string }>;
+  trails?: Array<Partial<SelectOption> & { title?: string }>;
+  exhibitions?: Array<Partial<SelectOption> & { title?: string }>;
+}
+
+type ResourceOptionItem = Partial<SelectOption> & { title?: string };
 
 const QR_TYPE_OPTIONS: { value: QRType; label: string; icon: string }[] = [
   { value: "EQUIPMENT", label: "Museu / Equipamento", icon: "🏛️" },
@@ -56,14 +73,16 @@ export const AdminQRCodes: React.FC = () => {
   const [generated, setGenerated] = useState<GeneratedQR | null>(null);
   const [copied, setCopied] = useState(false);
   const qrCanvasRef = useRef<HTMLDivElement>(null);
+  const qrArtRef = useRef<HTMLDivElement>(null);
+  const [deleteTarget, setDeleteTarget] = useState<GeneratedQR | null>(null);
 
   // Seletores de contexto
-  const [options, setOptions] = useState<{id: string, name: string}[]>([]);
+  const [options, setOptions] = useState<SelectOption[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(false);
 
   const fetchQRCodes = useCallback(() => {
     if (!tenantId) return;
-    api.get("/qrcodes", { params: { tenantId } })
+    api.get<GeneratedQR[]>("/qrcodes", { params: { tenantId } })
       .then(res => setQrcodes(res.data))
       .catch(console.error);
   }, [tenantId]);
@@ -87,12 +106,14 @@ export const AdminQRCodes: React.FC = () => {
     else if (qrType === "EXHIBITION") endpoint = "/exhibitions";
 
     if (endpoint) {
-        api.get(endpoint, { params: { tenantId } })
+        api.get<ResourceOptionResponse | ResourceOptionItem[]>(endpoint, { params: { tenantId } })
             .then(res => {
-                const data = res.data.works || res.data.events || res.data.trails || res.data.exhibitions || res.data || [];
-                setOptions(data.map((item: any) => ({
-                    id: item.id,
-                    name: item.title || item.name || item.id
+                const data = Array.isArray(res.data)
+                  ? res.data
+                  : res.data.works || res.data.events || res.data.trails || res.data.exhibitions || [];
+                setOptions(data.map((item: ResourceOptionItem) => ({
+                    id: String(item.id || ""),
+                    name: String(item.title || item.name || item.id || "")
                 })));
             })
             .catch(() => setOptions([]))
@@ -111,7 +132,7 @@ export const AdminQRCodes: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.post("/qrcodes", {
+      const res = await api.post<GeneratedQR>("/qrcodes", {
         type: qrType,
         title: qrName.trim(),
         referenceId: referenceId || null,
@@ -119,8 +140,11 @@ export const AdminQRCodes: React.FC = () => {
       });
       setGenerated(res.data);
       fetchQRCodes();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Erro ao gerar QR Code. Tente novamente.");
+    } catch (err) {
+      const message = isAxiosError<{ message?: string }>(err)
+        ? err.response?.data?.message
+        : undefined;
+      setError(message || "Erro ao gerar QR Code. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -150,15 +174,28 @@ export const AdminQRCodes: React.FC = () => {
     a.click();
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir este QR Code?")) {
-      try {
-        await api.delete(`/qrcodes/${id}`);
-        fetchQRCodes();
-        if (generated?.id === id) setGenerated(null);
-      } catch (err) {
-        console.error("Erro ao excluir QR Code", err);
-      }
+  const handleDownloadArtPNG = async () => {
+    if (!generated || !qrArtRef.current) return;
+    const canvas = await html2canvas(qrArtRef.current, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+    });
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png", 1);
+    a.download = `qrcode-placa-${generated.code}.png`;
+    a.click();
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await api.delete(`/qrcodes/${deleteTarget.id}`);
+      fetchQRCodes();
+      if (generated?.id === deleteTarget.id) setGenerated(null);
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error("Erro ao excluir QR Code", err);
     }
   };
 
@@ -324,6 +361,20 @@ export const AdminQRCodes: React.FC = () => {
                     </div>
                 </div>
 
+                <div className="aqr-art-preview">
+                  <div className="aqr-art-scale">
+                    <QRCodeArtCard
+                      ref={qrArtRef}
+                      title={generated.title}
+                      subtitle={generated.type === "EQUIPMENT" ? "Entrada do equipamento" : undefined}
+                      code={generated.code}
+                      url={getQRUrl()}
+                      typeLabel={generated.type === "WORK" ? "Obra" : generated.type === "EQUIPMENT" ? "Entrada" : "QR"}
+                      instruction={generated.type === "EQUIPMENT" ? "Aponte a camera para entrar" : "Aponte a camera para acessar"}
+                    />
+                  </div>
+                </div>
+
                 <div className="aqr-result-info">
                   <strong>{generated.title}</strong>
                   <small>Código: {generated.code}</small>
@@ -338,6 +389,9 @@ export const AdminQRCodes: React.FC = () => {
                 <div className="aqr-result-actions">
                   <button id="aqr-download-png" className="aqr-result-btn" onClick={handleDownloadPNG}>
                     <Download size={16} /> PNG
+                  </button>
+                  <button id="aqr-download-art-png" className="aqr-result-btn" onClick={handleDownloadArtPNG}>
+                    <Download size={16} /> Placa
                   </button>
                   <button id="aqr-copy-url" className="aqr-result-btn" onClick={handleCopyUrl}>
                     {copied ? <CheckCircle size={16} /> : <Copy size={16} />}
@@ -371,7 +425,7 @@ export const AdminQRCodes: React.FC = () => {
                                 <td className="py-3 text-right">
                                     <button 
                                         className="text-red-400 hover:text-red-300 transition-colors px-2 py-1 bg-red-400/10 rounded"
-                                        onClick={() => handleDelete(qr.id)}
+                                        onClick={() => setDeleteTarget(qr)}
                                     >
                                         Excluir
                                     </button>
@@ -389,6 +443,24 @@ export const AdminQRCodes: React.FC = () => {
           </div>
         </div>
       </div>
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-white">Excluir QR Code?</h3>
+            <p className="mt-2 text-sm text-slate-400">
+              Esta acao remove o QR Code "{deleteTarget.title}" e nao pode ser desfeita.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button className="rounded-lg bg-white/10 px-4 py-2 text-sm font-bold text-white" onClick={() => setDeleteTarget(null)}>
+                Cancelar
+              </button>
+              <button className="rounded-lg bg-red-500 px-4 py-2 text-sm font-bold text-white" onClick={handleDelete}>
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

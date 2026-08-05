@@ -1,35 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { 
-  Plus, 
-  Map as MapIcon, 
-  Edit3, 
-  Trash2, 
-  Search, 
-  MoreHorizontal,
-  Route,
-  Layers,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Info,
-  ChevronRight,
-  Navigation
-} from "lucide-react";
-import { 
-  Button, 
-  Input, 
-  Card, 
-  Badge, 
-  AnimateIn,
-  ConfirmModal,
-  AnimatedCounter
-} from "@/components/ui";
+import { Plus, Map as MapIcon, Trash2, Search, Route, Layers, CheckCircle, ChevronRight, Navigation } from "lucide-react";
+import { Button, Card, Badge, AnimateIn, ConfirmModal, AnimatedCounter } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { useTerminology } from "../../../../hooks/useTerminology";
@@ -42,6 +19,17 @@ type AdminTrailItem = {
   active: boolean;
   description?: string;
 };
+
+type RawTrailItem = {
+  id: string;
+  title?: string | null;
+  name?: string | null;
+  workIds?: string[] | null;
+  active?: boolean | null;
+  description?: string | null;
+};
+
+type TrailsResponse = RawTrailItem[] | { data?: RawTrailItem[] };
 
 export const AdminTrails: React.FC = () => {
   const { t } = useTranslation();
@@ -58,13 +46,14 @@ export const AdminTrails: React.FC = () => {
 
     try {
       setLoading(true);
-      const res = await api.get("/trails", { params: { tenantId } });
-      const apiTrails = (res.data as unknown[]).map((tr) => ({
+      const res = await api.get<TrailsResponse>("/trails", { params: { tenantId } });
+      const rawTrails = Array.isArray(res.data) ? res.data : res.data.data || [];
+      const apiTrails = rawTrails.map((tr) => ({
         id: tr.id,
         name: tr.title ?? tr.name ?? "Sem nome",
         worksCount: tr.workIds?.length ?? 0,
         active: tr.active ?? true,
-        description: tr.description
+        description: tr.description || undefined
       }));
       setTrails(apiTrails);
     } catch (err) {

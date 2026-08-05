@@ -1,22 +1,66 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useToast } from "../../../../contexts/ToastContext";
-import {
-    Landmark, Save, ArrowLeft, Building2, MapPin,
-    Tent, Music, Mail, Lock, User, Globe, CheckCircle2,
-    FileText, Image as ImageIcon
-} from "lucide-react";
+import { Landmark, Save, ArrowLeft, Building2, MapPin, Music, Globe, CheckCircle2, FileText, Image as ImageIcon } from "lucide-react";
 import { Button, Input, Select, Checkbox, Textarea } from "../../../../components/ui";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 import "./AdminShared.css";
 
 type EquipmentType = "MUSEUM" | "CULTURAL_SPACE" | "PRODUCER" | "THEATER" | "GALLERY";
 
+interface EquipmentResponse {
+    nome: string;
+    slug: string;
+    tipo: EquipmentType;
+    descricao?: string | null;
+    missao?: string | null;
+    endereco?: string | null;
+    cidade?: string | null;
+    estado?: string | null;
+    lat?: number | null;
+    lng?: number | null;
+    fotoCapaUrl?: string | null;
+    logoUrl?: string | null;
+    ativo?: boolean | null;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const equipmentTypeSchema = z.enum(["MUSEUM", "CULTURAL_SPACE", "PRODUCER", "THEATER", "GALLERY"]);
+
+const equipmentSchema = z.object({
+    nome: z.string().trim().min(2, "Informe o nome do equipamento."),
+    slug: z.string().trim().min(2, "Informe o slug.").regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use um slug em minúsculas, sem espaços ou acentos."),
+    tipo: equipmentTypeSchema,
+    descricao: z.string().trim().optional(),
+    missao: z.string().trim().optional(),
+    endereco: z.string().trim().optional(),
+    cidade: z.string().trim().optional(),
+    estado: z.string().trim().min(2, "Informe o estado.").max(2, "Use a UF com 2 letras."),
+    lat: z.number().min(-90).max(90).nullable(),
+    lng: z.number().min(-180).max(180).nullable(),
+    fotoCapaUrl: z.string().trim().url("Informe uma URL válida para a capa.").or(z.literal("")),
+    logoUrl: z.string().trim().url("Informe uma URL válida para o logotipo.").or(z.literal("")),
+    ativo: z.boolean()
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const AdminEquipmentForm: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { id } = useParams();
     const navigate = useNavigate();
     const { addToast } = useToast();
@@ -52,12 +96,13 @@ export const AdminEquipmentForm: React.FC = () => {
         if (!isNew && id) {
             loadEquipment();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, isNew]);
 
     const loadEquipment = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/equipamentos/public/${id}`);
+            const res = await api.get<EquipmentResponse>(`/equipamentos/public/${id}`);
             const data = res.data;
 
             setNome(data.nome);
@@ -68,15 +113,15 @@ export const AdminEquipmentForm: React.FC = () => {
             setEndereco(data.endereco || "");
             setCidade(data.cidade || "");
             setEstado(data.estado || "MG");
-            setLat(data.lat);
-            setLng(data.lng);
+            setLat(data.lat ?? null);
+            setLng(data.lng ?? null);
             setFotoCapaUrl(data.fotoCapaUrl || "");
             setLogoUrl(data.logoUrl || "");
             setAtivo(data.ativo ?? true);
 
         } catch (error) {
-            logger.error(error);
-            addToast("Erro ao carregar equipamento. Verifique suas permissões.", "error");
+            logger.error("Erro ao carregar equipamento", error);
+            addToast(getApiErrorMessage(error, "Erro ao carregar equipamento. Verifique suas permissões."), "error");
             navigate("/admin/equipamentos");
         } finally {
             setLoading(false);
@@ -88,7 +133,7 @@ export const AdminEquipmentForm: React.FC = () => {
         setSaving(true);
 
         try {
-            const payload: unknown = {
+            const validation = equipmentSchema.safeParse({
                 nome,
                 slug,
                 tipo,
@@ -102,22 +147,25 @@ export const AdminEquipmentForm: React.FC = () => {
                 fotoCapaUrl,
                 logoUrl,
                 ativo
-            };
+            });
+            if (!validation.success) {
+                addToast(validation.error.issues[0]?.message || "Revise os dados do equipamento.", "error");
+                return;
+            }
 
             if (isNew) {
-                await api.post("/equipamentos", payload);
+                await api.post("/equipamentos", validation.data);
                 addToast("Equipamento criado com sucesso!", "success");
             } else {
-                await api.put(`/equipamentos/${id}`, payload);
+                await api.put(`/equipamentos/${id}`, validation.data);
                 addToast("Equipamento atualizado com sucesso!", "success");
             }
 
             navigate("/admin/equipamentos");
 
-        } catch (err: unknown) {
-            logger.error(err);
-            const msg = err.response?.data?.message || "Erro ao salvar equipamento";
-            addToast(msg, "error");
+        } catch (err) {
+            logger.error("Erro ao salvar equipamento", err);
+            addToast(getApiErrorMessage(err, "Erro ao salvar equipamento"), "error");
         } finally {
             setSaving(false);
         }
@@ -180,7 +228,10 @@ export const AdminEquipmentForm: React.FC = () => {
                             <Select
                                 label="Tipo de Equipamento"
                                 value={tipo}
-                                onChange={e => setTipo(e.target.value as unknown)}
+                                onChange={e => {
+                                    const parsed = equipmentTypeSchema.safeParse(e.target.value);
+                                    if (parsed.success) setTipo(parsed.data);
+                                }}
                             >
                                 {typeOptions.map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -264,8 +315,8 @@ export const AdminEquipmentForm: React.FC = () => {
                                 label="Latitude"
                                 type="number"
                                 step="any"
-                                value={lat || ''}
-                                onChange={e => setLat(e.target.value ? parseFloat(e.target.value) : null)}
+                                value={lat ?? ''}
+                                onChange={e => setLat(e.target.value === "" ? null : Number(e.target.value))}
                                 placeholder="-20.38..."
                             />
                         </div>
@@ -274,8 +325,8 @@ export const AdminEquipmentForm: React.FC = () => {
                                 label="Longitude"
                                 type="number"
                                 step="any"
-                                value={lng || ''}
-                                onChange={e => setLng(e.target.value ? parseFloat(e.target.value) : null)}
+                                value={lng ?? ''}
+                                onChange={e => setLng(e.target.value === "" ? null : Number(e.target.value))}
                                 placeholder="-43.50..."
                             />
                         </div>

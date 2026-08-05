@@ -1,10 +1,10 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useState, useEffect } from 'react';
 import { Mail, Send, Paperclip, DollarSign, Search, MoreVertical } from 'lucide-react';
-import { Button, Input, Textarea } from '../../../components/ui';
-import { inboxService, Conversation, Message } from '../../../services/inboxService';
+import { Button, Input } from '../../../components/ui';
+import { inboxService, Conversation } from '../../../services/inboxService';
 
 export const ProducerInbox: React.FC = () => {
     const { t } = useTranslation();
@@ -22,6 +22,7 @@ export const ProducerInbox: React.FC = () => {
 
     useEffect(() => {
         loadConversations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadConversations = async () => {
@@ -94,7 +95,7 @@ export const ProducerInbox: React.FC = () => {
             setPaymentAmount("");
             setReceiptUrl("");
             logger.warn("Alert:", t("producer.producerinbox.paymentRegistered", "Pagamento registrado e comprovante enviado!"));
-        } catch (error) {
+        } catch (_error) {
             logger.warn("Alert:", t("producer.producerinbox.paymentError", "Erro ao registrar pagamento"));
         } finally {
             setProcessingPayment(false);
@@ -210,7 +211,7 @@ export const ProducerInbox: React.FC = () => {
                                                     </div>
                                                     <p>{msg.content}</p>
                                                     <Button size="sm" className="mt-2 w-full bg-[#1a1108] text-[var(--accent-primary)] border border-[var(--accent-primary)]">
-                                                        {t("producer.producerinbox.payNow", "Pagar Agora (Simulado)")}
+                                                        {t("producer.producerinbox.payNow", "Registrar Pagamento")}
                                                     </Button>
                                                 </div>
                                             ) : (

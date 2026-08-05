@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "./AuthContext";
 import { api } from "../../api/client";
 import { User, Building2, Mail, Phone, Globe, Lock, ArrowRight, Check } from "lucide-react";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface City {
     id: string;
@@ -13,12 +15,50 @@ interface City {
     type: string;
 }
 
+interface ProducerFormData {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    cpf: string;
+    phone: string;
+    bio: string;
+    website: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const producerSchema = z.object({
+    name: z.string().trim().min(2, "Informe o nome ou razao social."),
+    email: z.string().trim().email("Informe um e-mail valido."),
+    password: z.string().min(10, "A senha deve ter pelo menos 10 caracteres."),
+    confirmPassword: z.string().min(10),
+    cpf: z.string().trim().min(5, "Informe CPF ou CNPJ."),
+    phone: z.string().trim().optional().default(""),
+    bio: z.string().trim().optional().default(""),
+    website: z.string().trim().url("Informe uma URL valida.").or(z.literal("")),
+    parentTenantId: z.string().nullable()
+}).refine(data => data.password === data.confirmPassword, {
+    message: "Senhas nao conferem.",
+    path: ["confirmPassword"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const RegisterProducer: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { login } = useAuth();
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ProducerFormData>({
         name: "",
         email: "",
         password: "",
@@ -43,7 +83,7 @@ export const RegisterProducer: React.FC = () => {
     useEffect(() => {
         api.get("/tenants/public")
             .then(res => {
-                const cityTenants = res.data.filter((item: City) => item.type === "CITY");
+                const cityTenants = Array.isArray(res.data) ? res.data.filter((item: City) => item.type === "CITY") : [];
                 setCities(cityTenants);
                 if (urlTenantId) {
                     setSelectedCity(urlTenantId);
@@ -53,13 +93,20 @@ export const RegisterProducer: React.FC = () => {
     }, [urlTenantId]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value } as ProducerFormData);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-            setError(t("auth.registerproducer.passwordsDontMatch", "Senhas não conferem"));
+        const validation = producerSchema.safeParse({
+            ...formData,
+            parentTenantId: selectedCity || null
+        });
+        if (!validation.success) {
+            const issue = validation.error.issues[0];
+            setError(issue?.path[0] === "confirmPassword"
+                ? t("auth.registerproducer.passwordsDontMatch", "Senhas nao conferem")
+                : issue?.message || t("auth.registerproducer.error", "Erro ao realizar cadastro"));
             return;
         }
 
@@ -68,19 +115,18 @@ export const RegisterProducer: React.FC = () => {
 
         try {
             await api.post("/auth/register", {
-                ...formData,
-                role: "PRODUCER",
-                parentTenantId: selectedCity || null // Optional city link
+                ...validation.data,
+                role: "PRODUCER"
             });
             logger.warn("Alert:", t("auth.registerproducer.success", "Cadastro realizado com sucesso! Entrando no sistema..."));
             
             // Auto-login
-            await login({ email: formData.email, password: formData.password });
+            await login({ email: validation.data.email, password: validation.data.password });
             
             navigate("/producer");
         } catch (err: unknown) {
-            logger.error(err);
-            setError(err.response?.data?.message || t("auth.registerproducer.error", "Erro ao realizar cadastro"));
+            logger.error("Error registering producer", err);
+            setError(getApiErrorMessage(err, t("auth.registerproducer.error", "Erro ao realizar cadastro")));
         } finally {
             setLoading(false);
         }
@@ -442,3 +488,4 @@ const secondaryButtonStyle: React.CSSProperties = {
 };
 
 export default RegisterProducer;
+

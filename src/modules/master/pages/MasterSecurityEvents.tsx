@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
-import { ShieldAlert, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { ShieldAlert, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../../../components/ui";
 
 interface SecurityEvent {
@@ -12,7 +12,7 @@ interface SecurityEvent {
   userAgent: string | null;
   path: string | null;
   method: string | null;
-  metadata: any;
+  metadata: unknown;
   createdAt: string;
   tenant: { name: string } | null;
   user: { name: string; email: string } | null;
@@ -29,11 +29,7 @@ export const MasterSecurityEvents: React.FC = () => {
   const [severity, setSeverity] = useState("");
   const [selectedLog, setSelectedLog] = useState<SecurityEvent | null>(null);
 
-  useEffect(() => {
-    fetchLogs();
-  }, [page, severity]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/master/monitoring/security-events", {
@@ -45,12 +41,16 @@ export const MasterSecurityEvents: React.FC = () => {
       });
       setLogs(res.data.data);
       setTotal(res.data.total);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar logs de segurança.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, page, severity]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

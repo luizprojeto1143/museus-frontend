@@ -24,8 +24,33 @@ type TrailDetailData = {
   works: { id: string; title: string }[];
 };
 
+type FavoriteCheckResponse = {
+  isFavorite?: boolean;
+};
+
+type TrailWorkRelation = {
+  id: string;
+  title?: string | null;
+  work?: {
+    id?: string | null;
+    title?: string | null;
+  } | null;
+};
+
+type TrailApiData = {
+  id: string;
+  name?: string | null;
+  title?: string | null;
+  description?: string | null;
+  duration?: string | number | null;
+  durationLabel?: string | null;
+  audioUrl?: string | null;
+  videoUrl?: string | null;
+  works?: TrailWorkRelation[] | null;
+};
+
 export const TrailDetail: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const navigate = useNavigate();
   const { id, citySlug, equipmentSlug } = useParams<{ id: string; citySlug: string; equipmentSlug: string }>();
   const { isGuest } = useAuth();
@@ -38,29 +63,29 @@ export const TrailDetail: React.FC = () => {
 
   useEffect(() => {
     if (!id || isGuest) return;
-    api.get(`/favorites/check?type=trail&id=${id}`)
-      .then(res => setIsFavorite(res.data.isFavorite))
+    api.get<FavoriteCheckResponse>(`/favorites/check?type=trail&id=${id}`)
+      .then(res => setIsFavorite(Boolean(res.data.isFavorite)))
       .catch(err => logger.error("Error checking favorite status", err));
   }, [id, isGuest]);
 
   useEffect(() => {
     if (!id) return;
     setApiLoading(true);
-    api.get(`/trails/${id}`)
+    api.get<TrailApiData>(`/trails/${id}`)
       .then((res) => {
         const item = res.data;
-        const works = Array.isArray(item.works) ? item.works.map((tw: unknown) => ({
+        const works = Array.isArray(item.works) ? item.works.map((tw) => ({
           id: tw.work?.id ?? tw.id,
           title: tw.work?.title ?? tw.title ?? "Obra da trilha"
         })) : [];
 
         setApiTrail({
           id: item.id,
-          name: item.title || item.name,
-          title: item.title || item.name,
+          name: item.title || item.name || "Roteiro cultural",
+          title: item.title || item.name || "Roteiro cultural",
           description: item.description ?? "",
-          duration: item.durationLabel || item.duration || "45 min",
-          audioUrl: getFullUrl(item.audioUrl),
+          duration: String(item.durationLabel || item.duration || "45 min"),
+          audioUrl: item.audioUrl ? getFullUrl(item.audioUrl) : undefined,
           videoUrl: getFullUrl(item.videoUrl),
           works
         });
@@ -79,7 +104,7 @@ export const TrailDetail: React.FC = () => {
         await api.post('/favorites', { type: "trail", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err: unknown) { logger.error(err); }
+    } catch (err) { logger.error(err); }
   };
 
   if (apiLoading) return (

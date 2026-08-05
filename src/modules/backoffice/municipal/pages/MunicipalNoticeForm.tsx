@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useParams, useNavigate } from "react-router-dom";
@@ -6,16 +6,28 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
-import { Input, Select, Textarea, Button } from "../../../../components/ui";
-import {
-    ArrowLeft, Save, Calendar, DollarSign, FileText,
-    MapPin, X, Plus, CheckCircle, ChevronRight, ClipboardList, ChevronDown,
-    MousePointerClick, Accessibility, Tag, Upload, TrendingUp
-} from "lucide-react";
+import { Input, Textarea, Button } from "../../../../components/ui";
+import { ArrowLeft, Save, Calendar, DollarSign, FileText, MapPin, X, Plus, CheckCircle, ChevronRight, ChevronDown, MousePointerClick, Accessibility, Tag, Upload, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "../../equipment/pages/AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
-const STATUS_OPTIONS = [
+type NoticeStatus =
+    | "DRAFT"
+    | "PUBLISHED"
+    | "INSCRIPTIONS_OPEN"
+    | "INSCRIPTIONS_CLOSED"
+    | "EVALUATION"
+    | "RESULTS_PUBLISHED"
+    | "FINISHED";
+
+interface StatusOption {
+    value: NoticeStatus;
+    label: string;
+}
+
+const STATUS_OPTIONS: StatusOption[] = [
     { value: "DRAFT", label: "Rascunho" },
     { value: "PUBLISHED", label: "Publicado" },
     { value: "INSCRIPTIONS_OPEN", label: "Inscrições Abertas" },
@@ -38,6 +50,103 @@ const STEPS = [
     { id: 3, title: "Revisão", icon: CheckCircle, description: "Finalização" }
 ];
 
+interface CategoryOption {
+    id?: string;
+    name: string;
+}
+
+interface NoticeFormData {
+    title: string;
+    description: string;
+    objectives: string;
+    requirements: string;
+    inscriptionStart: string;
+    inscriptionEnd: string;
+    resultsDate: string;
+    executionEnd: string;
+    totalBudget: string;
+    minPerProject: string;
+    maxPerProject: string;
+    culturalCategories: string[];
+    targetRegions: string[];
+    status: NoticeStatus;
+    documentUrl: string;
+    requiresAccessibilityPlan: boolean;
+    showScoresInResults: boolean;
+}
+
+interface NoticeResponse {
+    title?: string;
+    description?: string;
+    objectives?: string;
+    requirements?: string;
+    inscriptionStart?: string | null;
+    inscriptionEnd?: string | null;
+    resultsDate?: string | null;
+    executionEnd?: string | null;
+    totalBudget?: number | null;
+    minPerProject?: number | null;
+    maxPerProject?: number | null;
+    culturalCategories?: string[];
+    targetRegions?: string[];
+    status?: NoticeStatus;
+    documentUrl?: string | null;
+    requiresAccessibilityPlan?: boolean | null;
+    showScoresInResults?: boolean | null;
+}
+
+interface UploadDocumentResponse {
+    url?: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const numberStringSchema = z.string().refine((value) => value === "" || Number.isFinite(Number(value)), "Informe um numero valido.");
+const nonNegativeNumberStringSchema = numberStringSchema.refine((value) => value === "" || Number(value) >= 0, "Informe um valor maior ou igual a zero.");
+
+const noticeFormSchema = z.object({
+    title: z.string().trim().min(3, "O titulo do edital e obrigatorio."),
+    description: z.string().trim().min(10, "A descricao do edital precisa ser mais completa."),
+    objectives: z.string().trim().min(10, "Informe os objetivos do edital."),
+    requirements: z.string().trim().min(10, "Informe os requisitos do edital."),
+    inscriptionStart: z.string().min(1, "Data de inicio das inscricoes e obrigatoria."),
+    inscriptionEnd: z.string().min(1, "Data de fim das inscricoes e obrigatoria."),
+    resultsDate: z.string(),
+    executionEnd: z.string(),
+    totalBudget: nonNegativeNumberStringSchema,
+    minPerProject: nonNegativeNumberStringSchema,
+    maxPerProject: nonNegativeNumberStringSchema
+}).refine((data) => new Date(data.inscriptionStart).getTime() <= new Date(data.inscriptionEnd).getTime(), {
+    message: "A abertura das inscricoes precisa ser anterior ao encerramento.",
+    path: ["inscriptionEnd"]
+}).refine((data) => {
+    if (!data.minPerProject || !data.maxPerProject) return true;
+    return Number(data.minPerProject) <= Number(data.maxPerProject);
+}, {
+    message: "O valor minimo por projeto nao pode ser maior que o maximo.",
+    path: ["maxPerProject"]
+}).refine((data) => {
+    if (!data.totalBudget || !data.maxPerProject) return true;
+    return Number(data.maxPerProject) <= Number(data.totalBudget);
+}, {
+    message: "O valor maximo por projeto nao pode passar do orcamento total.",
+    path: ["maxPerProject"]
+});
+
+function parseOptionalNumber(value: string) {
+    return value === "" ? null : Number(value);
+}
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const MunicipalNoticeForm: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
@@ -53,7 +162,7 @@ export const MunicipalNoticeForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<NoticeFormData>({
         title: "",
         description: "",
         objectives: "",
@@ -75,7 +184,7 @@ export const MunicipalNoticeForm: React.FC = () => {
 
     const [newRegion, setNewRegion] = useState("");
 
-    const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+    const [categories, setCategories] = useState<CategoryOption[]>([]);
     const [uploading, setUploading] = useState(false);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,14 +201,14 @@ export const MunicipalNoticeForm: React.FC = () => {
         formDataUpload.append("file", file);
 
         try {
-            const res = await api.post("/upload/document", formDataUpload, {
+            const res = await api.post<UploadDocumentResponse>("/upload/document", formDataUpload, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            setFormData(prev => ({ ...prev, documentUrl: res.data.url }));
+            setFormData(prev => ({ ...prev, documentUrl: res.data.url || "" }));
             addToast("PDF enviado com sucesso!", "success");
-        } catch (error) {
-            logger.error(error);
-            addToast("Erro ao enviar PDF", "error");
+        } catch (error: unknown) {
+            logger.error("Erro ao enviar PDF.", error);
+            addToast(getApiErrorMessage(error, "Erro ao enviar PDF"), "error");
         } finally {
             setUploading(false);
         }
@@ -109,12 +218,12 @@ export const MunicipalNoticeForm: React.FC = () => {
         if (tenantId) {
             setLoading(true);
             // Fetch Categories
-            api.get(`/categories?tenantId=${tenantId}`)
+            api.get<CategoryOption[]>(`/categories?tenantId=${tenantId}`)
                 .then(res => setCategories(res.data))
                 .catch(console.error);
 
             if (id) {
-                api.get(`/notices/${id}`)
+                api.get<NoticeResponse>(`/notices/${id}`)
                     .then(res => {
                         const data = res.data;
                         setFormData({
@@ -137,16 +246,16 @@ export const MunicipalNoticeForm: React.FC = () => {
                             showScoresInResults: data.showScoresInResults ?? true
                         });
                     })
-                    .catch(err => {
-                        logger.error(err);
-                        addToast("Erro ao carregar edital", "error");
+                    .catch((err: unknown) => {
+                        logger.error("Erro ao carregar edital.", err);
+                        addToast(getApiErrorMessage(err, "Erro ao carregar edital"), "error");
                     })
                     .finally(() => setLoading(false));
             } else {
                 setLoading(false);
             }
         }
-    }, [id, tenantId]);
+    }, [id, tenantId, addToast]);
 
     const validateStep = (stepIndex: number) => {
         switch (stepIndex) {
@@ -183,6 +292,12 @@ export const MunicipalNoticeForm: React.FC = () => {
             return;
         }
 
+        const validation = noticeFormSchema.safeParse(formData);
+        if (!validation.success) {
+            addToast(validation.error.issues[0]?.message || "Revise os dados do edital.", "error");
+            return;
+        }
+
         setSaving(true);
         try {
             const payload = {
@@ -192,9 +307,9 @@ export const MunicipalNoticeForm: React.FC = () => {
                 inscriptionEnd: formData.inscriptionEnd ? new Date(formData.inscriptionEnd).toISOString() : null,
                 resultsDate: formData.resultsDate ? new Date(formData.resultsDate).toISOString() : null,
                 executionEnd: formData.executionEnd ? new Date(formData.executionEnd).toISOString() : null,
-                totalBudget: formData.totalBudget ? parseFloat(formData.totalBudget) : null,
-                minPerProject: formData.minPerProject ? parseFloat(formData.minPerProject) : null,
-                maxPerProject: formData.maxPerProject ? parseFloat(formData.maxPerProject) : null
+                totalBudget: parseOptionalNumber(formData.totalBudget),
+                minPerProject: parseOptionalNumber(formData.minPerProject),
+                maxPerProject: parseOptionalNumber(formData.maxPerProject)
             };
 
             if (isEdit) {
@@ -206,7 +321,7 @@ export const MunicipalNoticeForm: React.FC = () => {
             navigate("/municipal/editais");
         } catch (error) {
             logger.error("Erro ao salvar edital:", error);
-            addToast("Erro ao salvar edital. Verifique os dados.", "error");
+            addToast(getApiErrorMessage(error, "Erro ao salvar edital. Verifique os dados."), "error");
         } finally {
             setSaving(false);
         }
@@ -365,7 +480,7 @@ export const MunicipalNoticeForm: React.FC = () => {
                                         <div className="relative">
                                             <select
                                                 value={formData.status}
-                                                onChange={e => setFormData({ ...formData, status: e.target.value })}
+                                                onChange={e => setFormData({ ...formData, status: e.target.value as NoticeStatus })}
                                                 className="w-full bg-zinc-900/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold/50 appearance-none cursor-pointer"
                                             >
                                                 {STATUS_OPTIONS.map(opt => (
@@ -559,12 +674,12 @@ export const MunicipalNoticeForm: React.FC = () => {
                                         <Tag size={16} className="text-gold" /> Categorias Culturais
                                     </label>
                                     <div className="flex flex-wrap gap-2">
-                                        {(categories.length > 0 ? categories : CULTURAL_CATEGORIES.map(c => ({ name: c }))).map((cat: unknown) => {
-                                            const catName = cat.name || cat;
+                                        {(categories.length > 0 ? categories : CULTURAL_CATEGORIES.map(c => ({ name: c })) as CategoryOption[]).map((cat) => {
+                                            const catName = cat.name;
                                             const isSelected = formData.culturalCategories.includes(catName);
                                             return (
                                                 <button
-                                                    key={cat.id || cat}
+                                                    key={cat.id || cat.name}
                                                     type="button"
                                                     onClick={() => toggleCategory(catName)}
                                                     className={`

@@ -11,38 +11,9 @@ import {
   Badge, 
   AnimateIn 
 } from "@/components/ui";
-import { 
-  TrendingUp, 
-  Users, 
-  Clock, 
-  MapPin, 
-  Download, 
-  FileText, 
-  Calendar,
-  Flame,
-  ArrowUpRight,
-  Filter,
-  PieChart as PieChartIcon,
-  BarChart3,
-  MousePointer2
-} from "lucide-react";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area,
-  BarChart,
-  Bar,
-  Cell,
-  PieChart,
-  Pie
-} from "recharts";
-import { motion, AnimatePresence } from "framer-motion";
+import { TrendingUp, Users, Download, FileText, Flame, ArrowUpRight, PieChart as PieChartIcon, BarChart3, MousePointer2 } from "lucide-react";
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, Cell, PieChart, Pie } from "recharts";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
 interface AnalyticsData {
@@ -59,8 +30,8 @@ interface AnalyticsData {
 }
 
 export const AdminAnalytics: React.FC = () => {
-  const { t } = useTranslation();
-  const term = useTerminology();
+  const { t: _t } = useTranslation();
+  const _term = useTerminology();
   const { tenantId } = useAuth();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);

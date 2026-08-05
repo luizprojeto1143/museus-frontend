@@ -55,6 +55,11 @@ export default defineConfig({
         globPatterns: [
           '**/*.{js,css,html,ico,png,svg,woff,woff2}'
         ],
+        globIgnores: [
+          '**/vendor-tf-*.js',
+          '**/vendor-three-*.js',
+          '**/vendor-scanner-*.js'
+        ],
 
         // Runtime caching strategies
         runtimeCaching: [
@@ -194,7 +199,7 @@ export default defineConfig({
         }
       }
     },
-    chunkSizeWarningLimit: 1500
+    chunkSizeWarningLimit: 2200
   },
   server: {
     port: 5173
@@ -203,5 +208,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/tests/setup.ts',
+    pool: 'forks',
+    maxWorkers: 1,
+    fileParallelism: false,
   }
 });

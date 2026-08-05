@@ -126,12 +126,9 @@ export const GlobalEvents: React.FC = () => {
                                     </div>
                                 </div>
                                 <div style={{ marginTop: "auto" }}>
-                                    {/* Note: This assumes deep linking logic - ideally we route to museum specific event page */}
-                                    {/* Since we don't have multi-tenant routing perfectly setup in frontend (e.g. subdomains), we might need to route to a generic public event view or handle tenant switching */}
-                                    {/* For MVP: Just link to login or standard event details if logged in */}
-                                    <button style={{ width: "100%", padding: "0.8rem", background: "var(--primary-color)", color: "white", border: "none", borderRadius: "0.5rem", fontWeight: "bold", cursor: "pointer" }}>
+                                    <Link to={`/eventos/${event.id}`} style={{ display: "block", width: "100%", padding: "0.8rem", background: "var(--primary-color)", color: "white", border: "none", borderRadius: "0.5rem", fontWeight: "bold", cursor: "pointer", textAlign: "center", textDecoration: "none" }}>
                                         {t("public.globalevents.viewDetails", "Ver Detalhes")}
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

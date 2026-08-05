@@ -8,10 +8,26 @@ import { Loader2, Wand2, RefreshCw, Check, Copy, Image as ImageIcon } from "luci
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 
+type WorkItem = {
+    id: string;
+    title: string;
+    artist?: string | null;
+    year?: string | number | null;
+    description?: string | null;
+    imageUrl?: string | null;
+    category?: { name?: string | null } | null;
+};
+
+type WorksResponse = WorkItem[] | { data?: WorkItem[] };
+
+type DescriptionResponse = {
+    description?: string;
+};
+
 export const AdminAIDescriptions: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [works, setWorks] = useState<any[]>([]);
+    const [works, setWorks] = useState<WorkItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [selected, setSelected] = useState<string | null>(null);
     const [generated, setGenerated] = useState<string>('');
@@ -19,7 +35,7 @@ export const AdminAIDescriptions: React.FC = () => {
 
     const fetchData = useCallback(async () => {
         try {
-            const res = await api.get(`/works?tenantId=${tenantId}`);
+            const res = await api.get<WorksResponse>(`/works?tenantId=${tenantId}`);
             setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []));
         } catch (error) { logger.error(error); }
         finally { setLoading(false); }
@@ -31,14 +47,15 @@ export const AdminAIDescriptions: React.FC = () => {
         if (!selected) return toast.error("Selecione uma obra");
         setGenerating(true);
         try {
-            const res = await api.post('/ai/generate-description', { workId: selected, tenantId });
-            setGenerated(res.data.description || 'Descrição gerada pela IA...');
-        } catch (err) {
-            // Fallback: generate locally (não bloqueia a feature)
-            const work = works.find(w => w.id === selected);
-            if (work) {
-                setGenerated(`${work.title} é uma obra fascinante de ${work.artist || 'artista desconhecido'}${work.year ? `, datada de ${work.year}` : ''}. ${work.category?.name ? `Pertencente à categoria ${work.category.name}, esta peça` : 'Esta peça'} destaca-se pela riqueza de detalhes e expressividade artística. Ao observar esta obra, o visitante é convidado a refletir sobre os temas centrais da composição, que dialogam com o contexto histórico-cultural da época em que foi criada.`);
+            const res = await api.post<DescriptionResponse>('/ai/generate-description', { workId: selected, tenantId });
+            if (!res.data.description) {
+                toast.error("A IA não retornou uma descrição.");
+                return;
             }
+            setGenerated(res.data.description);
+        } catch (err) {
+            logger.error("Erro ao gerar descrição por IA", err);
+            toast.error("Não foi possível gerar a descrição por IA agora.");
         } finally { setGenerating(false); }
     };
 
@@ -50,7 +67,7 @@ export const AdminAIDescriptions: React.FC = () => {
             setGenerated('');
             setSelected(null);
             fetchData();
-        } catch (err) { toast.error("Erro ao salvar"); }
+        } catch (_err) { toast.error("Erro ao salvar"); }
     };
 
     const worksWithoutDesc = works.filter(w => !w.description || w.description.length < 50);
@@ -89,7 +106,7 @@ export const AdminAIDescriptions: React.FC = () => {
                     <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Selecione uma Obra</label>
                     <select value={selected || ''} onChange={e => { setSelected(e.target.value); setGenerated(''); }} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                         <option value="">Selecione...</option>
-                        {works.map((w: unknown) => (
+                        {works.map((w) => (
                             <option key={w.id} value={w.id}>{w.title} — {w.artist || 'Artista desconhecido'} {!w.description ? '⚠️' : '✅'}</option>
                         ))}
                     </select>
@@ -108,7 +125,7 @@ export const AdminAIDescriptions: React.FC = () => {
                             <p style={{ color: "#d1d5db", fontSize: "0.85rem", lineHeight: 1.7 }}>{generated}</p>
                         </div>
                         <div style={{ display: "flex", gap: "0.5rem" }}>
-                            <Button onClick={onApply} leftIcon={<Check size={16} />}>Aplicar à Obra</Button>
+                            <Button onClick={onApply} leftIcon={<Check size={16} />}>Aplicar a Obra</Button>
                             <Button variant="outline" onClick={onGenerate} leftIcon={<RefreshCw size={16} />}>Regerar</Button>
                             <Button variant="outline" onClick={() => { navigator.clipboard.writeText(generated); toast.success("Copiado!"); }} leftIcon={<Copy size={16} />}>Copiar</Button>
                         </div>
@@ -121,7 +138,7 @@ export const AdminAIDescriptions: React.FC = () => {
                 <div>
                     <h2 className="card-title">{t("admin.aidescriptions.obrasSemDescrio", `Obras sem Descrição`)}</h2>
                     <div style={{ display: "grid", gap: "0.5rem" }}>
-                        {worksWithoutDesc.slice(0, 10).map((w: unknown) => (
+                        {worksWithoutDesc.slice(0, 10).map((w) => (
                             <div key={w.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", borderColor: "rgba(212,175,55,0.1)", transition: "all 0.2s" }} onClick={() => { setSelected(w.id); setGenerated(''); }}>
                                 {w.imageUrl ? <img src={w.imageUrl} alt={w.title} style={{ width: "48px", height: "48px", borderRadius: "12px", objectFit: "cover", flexShrink: 0 }} /> : <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><ImageIcon size={18} style={{ color: "#475569" }} /></div>}
                                 <div style={{ flex: 1, minWidth: 0 }}>

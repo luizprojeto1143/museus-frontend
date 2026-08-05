@@ -1,39 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { 
-    Folder, Upload, FileText, Trash2, Download, Search, 
-    Plus, Filter, AlertCircle, CheckCircle2, MoreVertical,
-    File, FileArchive, FileImage, ShieldCheck
-} from "lucide-react";
+import { Folder, Upload, FileText, Trash2, Download, Search, Filter, File, FileArchive, FileImage, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
-import { Button, Input } from "../../../components/ui";
+import { Button } from "../../../components/ui";
 
+type ProducerDocument = {
+    id: string;
+    originalName: string;
+    mimeType: string;
+    url: string;
+    size: number;
+    createdAt: string;
+};
 export const ProducerDocuments: React.FC = () => {
     const { t } = useTranslation();
     const { addToast } = useToast();
     
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
-    const [documents, setDocuments] = useState<any[]>([]);
+    const [documents, setDocuments] = useState<ProducerDocument[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filterType, setFilterType] = useState("all");
+    const [documentToDelete, setDocumentToDelete] = useState<ProducerDocument | null>(null);
+    const [_filterType, _setFilterType] = useState("all");
 
     useEffect(() => {
         fetchDocuments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchDocuments = async () => {
         setLoading(true);
         try {
             // Buscamos arquivos do tipo 'document' enviados pelo usuário logado
-            const res = await api.get("/upload", { params: { type: "document" } });
+            const res = await api.get<ProducerDocument[]>("/upload", { params: { type: "document" } });
             // Filtramos no frontend para garantir que o produtor veja apenas o que ele subiu 
             // (ou o que pertence ao tenant dele se for o caso)
             const allDocs = Array.isArray(res.data) ? res.data : [];
             setDocuments(allDocs);
-        } catch (err) {
+        } catch (_err) {
             addToast(t("producer.documents.loadError", "Erro ao carregar documentos."), "error");
         } finally {
             setLoading(false);
@@ -54,7 +59,7 @@ export const ProducerDocuments: React.FC = () => {
             });
             addToast(t("producer.documents.uploadSuccess", "Documento guardado no cofre!"), "success");
             fetchDocuments();
-        } catch (err) {
+        } catch (_err) {
             addToast(t("producer.documents.uploadError", "Erro no upload do documento."), "error");
         } finally {
             setUploading(false);
@@ -62,12 +67,12 @@ export const ProducerDocuments: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm(t("producer.documents.confirmDelete", "Deseja realmente excluir este documento do seu cofre?"))) return;
         try {
             await api.delete(`/upload/${id}`);
             addToast(t("producer.documents.deleteSuccess", "Documento removido."), "success");
             setDocuments(prev => prev.filter(d => d.id !== id));
-        } catch (err) {
+            setDocumentToDelete(null);
+        } catch (_err) {
             addToast(t("producer.documents.deleteError", "Erro ao excluir."), "error");
         }
     };
@@ -172,7 +177,7 @@ export const ProducerDocuments: React.FC = () => {
                                         <Download size={18} />
                                     </a>
                                     <button 
-                                        onClick={() => handleDelete(doc.id)}
+                                        onClick={() => setDocumentToDelete(doc)}
                                         className="p-2 hover:bg-red-500/10 rounded-xl text-[#B0A090] hover:text-red-400 transition-all"
                                         title={t("producer.documents.delete", "Excluir")}
                                     >
@@ -214,6 +219,36 @@ export const ProducerDocuments: React.FC = () => {
                     >
                         {t("producer.documents.uploadFirst", "Subir meu primeiro arquivo")}
                     </label>
+                </div>
+            )}
+
+            {documentToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#2c1e10] p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold text-[#EAE0D5] mb-3">
+                            {t("producer.documents.delete", "Excluir")}
+                        </h2>
+                        <p className="text-sm text-[#B0A090] mb-6">
+                            {t("producer.documents.confirmDelete", "Deseja realmente excluir este documento do seu cofre?")} {documentToDelete.originalName}
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setDocumentToDelete(null)}
+                                className="border-[#463420] text-[#B0A090] rounded-xl"
+                            >
+                                {t("common.cancel", "Cancelar")}
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={() => void handleDelete(documentToDelete.id)}
+                                className="bg-red-600 text-white rounded-xl"
+                            >
+                                {t("common.confirm", "Confirmar")}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

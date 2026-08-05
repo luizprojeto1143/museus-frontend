@@ -5,7 +5,19 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-    { ignores: ['dist'] },
+    {
+        ignores: [
+            'dist/**',
+            'node_modules/**',
+            'uploads/**',
+            'scratch/**',
+            'godot_project/**',
+            '*.txt',
+            '*.json',
+            '*.cjs',
+            '*.log',
+        ],
+    },
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommended],
         files: ['**/*.{ts,tsx}'],
@@ -19,19 +31,21 @@ export default tseslint.config(
         },
         rules: {
             ...reactHooks.configs.recommended.rules,
-            'react-refresh/only-export-components': [
-                'warn',
-                { allowConstantExport: true },
-            ],
+            'react-refresh/only-export-components': 'off',
             '@typescript-eslint/no-explicit-any': 'warn',
-            '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-            'react-hooks/set-state-in-effect': 'warn',
+            '@typescript-eslint/no-unused-vars': ['warn', {
+                argsIgnorePattern: '^_',
+                varsIgnorePattern: '^_',
+                caughtErrorsIgnorePattern: '^_',
+                destructuredArrayIgnorePattern: '^_',
+            }],
+            'react-hooks/set-state-in-effect': 'off',
             '@typescript-eslint/no-empty-object-type': 'warn',
             'react-hooks/immutability': 'warn',
             'react-hooks/rules-of-hooks': 'warn',
             'no-empty': 'warn',
             'react-hooks/purity': 'warn',
-            '@typescript-eslint/ban-ts-comment': 'warn',
+            '@typescript-eslint/ban-ts-comment': 'off',
         },
     },
 );

@@ -2,8 +2,8 @@ import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Package, Truck, CheckCircle, Clock, AlertCircle, ChevronRight, BadgeCheck } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Package, Truck, CheckCircle, Clock, AlertCircle, ChevronRight, BadgeCheck, type LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface BadgeRequest {
     id: string;
@@ -14,7 +14,7 @@ interface BadgeRequest {
     skinImageUrl: string;
 }
 
-const statusConfig: Record<string, { label: string, color: string, icon: unknown }> = {
+const statusConfig: Record<string, { label: string, color: string, icon: LucideIcon }> = {
     PENDING: { label: "Em Análise", color: "text-amber-500", icon: Clock },
     APPROVED: { label: "Aprovado", color: "text-[var(--accent-primary)]", icon: BadgeCheck },
     PRINTING: { label: "Em Impressão", color: "text-purple-500", icon: Package },
@@ -33,9 +33,9 @@ export const BadgeTracking: React.FC = () => {
     useEffect(() => {
         const load = async () => {
             try {
-                const res = await api.get("/badges/my");
+                const res = await api.get<BadgeRequest[]>("/badges/my");
                 setRequests(res.data);
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error(err);
             } finally {
                 setLoading(false);

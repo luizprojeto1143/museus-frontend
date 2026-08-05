@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { Calendar, Plus, MapPin, Clock, Edit, MoreHorizontal } from "lucide-react";
+import { Calendar, Plus, MapPin, Edit } from "lucide-react";
 
 type Event = {
     id: string;

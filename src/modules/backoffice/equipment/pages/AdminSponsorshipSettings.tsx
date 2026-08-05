@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
 import { Card, Button } from "@/components/ui";
-import { DollarSign, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { useAuth } from "../../../auth/AuthContext";
+
+type SponsorshipSettings = {
+    sponsorSharedPrice?: number | string | null;
+    sponsorExclusivePrice?: number | string | null;
+};
 
 export function AdminSponsorshipSettings() {
     const { tenantId } = useAuth();
@@ -17,12 +22,13 @@ export function AdminSponsorshipSettings() {
 
     useEffect(() => {
         if (tenantId) fetchSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId]);
 
     const fetchSettings = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/tenants/${tenantId}/settings`);
+            const res = await api.get<SponsorshipSettings>(`/tenants/${tenantId}/settings`);
             if (res.data.sponsorSharedPrice) setSponsorSharedPrice(res.data.sponsorSharedPrice.toString());
             if (res.data.sponsorExclusivePrice) setSponsorExclusivePrice(res.data.sponsorExclusivePrice.toString());
         } catch (error) {

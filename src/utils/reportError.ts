@@ -4,7 +4,7 @@ interface FrontendErrorPayload {
   message: string;
   stack?: string;
   path?: string;
-  metadata?: any;
+  metadata?: unknown;
 }
 
 export async function reportFrontendError(payload: FrontendErrorPayload) {

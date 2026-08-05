@@ -4,19 +4,23 @@ import { useAuth } from "./AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
 
-import { 
-  Button, 
-  AnimateIn, 
-  Badge
-} from "@/components/ui";
+import { Button, AnimateIn } from "@/components/ui";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
-import { Zap, Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 
 export const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectParam = searchParams.get("redirect");
+  const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")
+    ? redirectParam
+    : null;
+  const qrTenantId = searchParams.get("tenantId") || undefined;
+  const qrTenantName = searchParams.get("tenantName") || undefined;
+  const qrEquipamentoId = searchParams.get("equipamentoId") || undefined;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,7 +31,7 @@ export const Login: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const { role: userRole, tenantType, hasProviderProfile } = await login({ email, password });
+      const { role: userRole, tenantType: _tenantType, hasProviderProfile } = await login({ email, password });
 
       let redirectPath = "/";
 
@@ -53,7 +57,7 @@ export const Login: React.FC = () => {
 
 
 
-      const from = location.state?.from?.pathname;
+      const from = safeRedirect || location.state?.from?.pathname;
       navigate(from || redirectPath, { replace: true, state: { justLoggedIn: true } });
     } catch (err: unknown) {
       setError(
@@ -164,7 +168,16 @@ export const Login: React.FC = () => {
               <button
                 type="button"
                 className="text-gold-400 font-black uppercase tracking-tighter hover:underline px-2"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate(
+                  safeRedirect ? `/register?redirect=${encodeURIComponent(safeRedirect)}` : "/register",
+                  {
+                    state: {
+                      tenantId: qrTenantId || location.state?.tenantId,
+                      tenantName: qrTenantName || location.state?.tenantName,
+                      equipamentoId: qrEquipamentoId || location.state?.equipamentoId
+                    }
+                  }
+                )}
               >
                 {t("auth.login.registerNow", "Cadastre-se agora")}
               </button>

@@ -1,30 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { 
-    Trophy, 
-    PlusCircle, 
-    Edit, 
-    Trash2, 
-    Image as ImageIcon,
-    Target,
-    Zap,
-    ShieldCheck,
-    Globe,
-    Layers,
-    ArrowUpRight,
-    Search,
-    ChevronRight,
-    Star,
-    Award,
-    Crown,
-    Medal,
-    Gem,
-    Sparkles,
-    SearchCode,
-    Settings2
-} from "lucide-react";
+import { Trophy, PlusCircle, Trash2, ShieldCheck, Globe, ChevronRight, Award, Crown, Medal, Gem, Sparkles, Settings2 } from "lucide-react";
 import { 
     Button, 
     Card, 
@@ -49,23 +27,25 @@ interface Achievement {
 }
 
 export const MasterAchievements: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const navigate = useNavigate();
     const [tenants, setTenants] = useState<Tenant[]>([]);
     const [selectedTenantId, setSelectedTenantId] = useState<string>("");
     const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const [achievementToDelete, setAchievementToDelete] = useState<Achievement | null>(null);
     const [loading, setLoading] = useState(false);
     const [tenantsLoading, setTenantsLoading] = useState(true);
 
     const loadTenants = useCallback(async () => {
         try {
             setTenantsLoading(true);
-            const res = await api.get("/tenants");
-            setTenants(res.data);
-            if (res.data.length > 0) {
-                setSelectedTenantId(res.data[0].id);
+            const res = await api.get<Tenant[]>("/tenants");
+            const data = Array.isArray(res.data) ? res.data : [];
+            setTenants(data);
+            if (data.length > 0) {
+                setSelectedTenantId(data[0].id);
             }
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro ao sincronizar domínios municipais.");
         } finally {
             setTenantsLoading(false);
@@ -75,9 +55,9 @@ export const MasterAchievements: React.FC = () => {
     const loadAchievements = useCallback(async (tenantId: string) => {
         setLoading(true);
         try {
-            const res = await api.get(`/achievements?tenantId=${tenantId}`);
-            setAchievements(res.data);
-        } catch (err: unknown) {
+            const res = await api.get<Achievement[]>(`/achievements?tenantId=${tenantId}`);
+            setAchievements(Array.isArray(res.data) ? res.data : []);
+        } catch (_err: unknown) {
             toast.error("Erro na leitura do cofre de medalhas.");
         } finally {
             setLoading(false);
@@ -97,12 +77,12 @@ export const MasterAchievements: React.FC = () => {
     }, [selectedTenantId, loadAchievements]);
 
     const handleDelete = async (id: string) => {
-        if (!confirm("PROTOCOL: Deseja expurgar esta medalha do registro histórico?")) return;
         try {
             await api.delete(`/achievements/${id}`);
+            setAchievementToDelete(null);
             toast.success("Medalha removida do cofre.");
             if (selectedTenantId) loadAchievements(selectedTenantId);
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro no protocolo de remoção.");
         }
     };
@@ -225,7 +205,7 @@ export const MasterAchievements: React.FC = () => {
                                             <Settings2 size={18} />
                                         </button>
                                         <button 
-                                            onClick={() => handleDelete(ach.id)}
+                                            onClick={() => setAchievementToDelete(ach)}
                                             className="w-12 h-12 rounded-2xl bg-white/5 text-rose-500/40 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center border border-white/10 shadow-2xl backdrop-blur-md"
                                         >
                                             <Trash2 size={18} />
@@ -303,6 +283,50 @@ export const MasterAchievements: React.FC = () => {
                 </div>
                 <div className="absolute top-[-50%] right-[-10%] w-[700px] h-[700px] bg-amber-500/5 rounded-full blur-[180px] pointer-events-none" />
             </div>
+
+            <AnimatePresence>
+                {achievementToDelete && (
+                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/85 backdrop-blur-xl">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                            className="w-full max-w-lg"
+                        >
+                            <Card className="p-10 bg-[#0b1120] border-2 border-rose-500/20 rounded-[40px] shadow-2xl">
+                                <div className="flex items-start gap-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
+                                        <Trash2 size={26} />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tight">Remover medalha</h2>
+                                        <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                                            Deseja remover a medalha "{achievementToDelete.title}" do registro historico?
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                                    <Button
+                                        type="button"
+                                        variant="glass"
+                                        onClick={() => setAchievementToDelete(null)}
+                                        className="h-14 flex-1 rounded-2xl border-white/10 text-slate-400 font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={() => handleDelete(achievementToDelete.id)}
+                                        className="h-14 flex-1 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Confirmar
+                                    </Button>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </AnimateIn>
     );
 };

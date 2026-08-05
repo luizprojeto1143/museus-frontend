@@ -1,51 +1,56 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { 
-    Loader2, 
-    AlertTriangle, 
-    Building, 
-    Calendar, 
-    TrendingUp,
-    Accessibility,
-    CheckCircle2,
-    XCircle,
-    Info,
-    ShieldCheck,
-    FileCheck,
-    MapPin,
-    Search,
-    ArrowUpRight,
-    HandMetal,
-    Volume2,
-    Activity,
-    Scale
-} from "lucide-react";
+import { AlertTriangle, Building, Accessibility, CheckCircle2, Info, MapPin, Search, ArrowUpRight, HandMetal, Volume2, Activity, Scale } from "lucide-react";
 import { 
     Card, 
     Badge, 
     Button, 
     AnimateIn 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+type EquipmentAccessibility = {
+    id: string;
+    name: string;
+    type?: string | null;
+    hasAccessibility?: boolean;
+    hasLibras?: boolean;
+    hasAudioDescription?: boolean;
+    hasRamps?: boolean;
+};
 
+type LegalComplianceItem = {
+    law?: string | null;
+    requirement: string;
+    compliant: boolean;
+    evidence?: string | null;
+    howWeComply?: string | null;
+};
+
+type SecretaryDashboardResponse = {
+    equipmentAccessibility?: EquipmentAccessibility[];
+};
+
+type LegalComplianceResponse = {
+    matrix?: LegalComplianceItem[];
+};
 export const MunicipalAccessibilityGaps: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [data, setData] = useState<unknown>(null);
-    const [matrix, setMatrix] = useState<any[]>([]);
+    const [data, setData] = useState<SecretaryDashboardResponse | null>(null);
+    const [matrix, setMatrix] = useState<LegalComplianceItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [dashboardRes, matrixRes] = await Promise.all([
-                api.get("/secretary/dashboard", { params: { tenantId, consolidated: true } }),
-                api.get("/secretary/legal-compliance", { params: { tenantId } })
+                api.get<SecretaryDashboardResponse>("/secretary/dashboard", { params: { tenantId, consolidated: true } }),
+                api.get<LegalComplianceResponse>("/secretary/legal-compliance", { params: { tenantId } })
             ]);
             setData(dashboardRes.data);
             setMatrix(matrixRes.data.matrix || []);
@@ -55,7 +60,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
         } finally { 
             setLoading(false); 
         }
-    }, [tenantId]);
+    }, [tenantId, t]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -68,7 +73,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
 
     const equipments = data?.equipmentAccessibility || [];
     const totalCount = equipments.length;
-    const okCount = equipments.filter((e: unknown) => e.hasAccessibility).length;
+    const okCount = equipments.filter((e) => e.hasAccessibility).length;
     const coverage = totalCount > 0 ? Math.round((okCount / totalCount) * 100) : 0;
 
     return (
@@ -161,7 +166,7 @@ export const MunicipalAccessibilityGaps: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {equipments.map((eq: unknown) => (
+                            {equipments.map((eq) => (
                                 <tr key={eq.id} className="hover:bg-white/[0.02] transition-all group">
                                     <td className="px-10 py-8">
                                         <div className="font-bold text-white group-hover:text-emerald-400 transition-colors text-lg">{eq.name}</div>

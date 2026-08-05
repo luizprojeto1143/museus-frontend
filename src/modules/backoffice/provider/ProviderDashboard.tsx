@@ -1,24 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
-import {
-    MessageSquare,
-    ArrowUpRight,
-    Clock,
-    DollarSign,
-    CheckCircle,
-    CreditCard,
-    ShieldCheck,
-    TrendingUp,
-    Banknote,
-    ExternalLink,
-    Zap,
-    Briefcase,
-    Activity,
-    ChevronRight,
-    Sparkles,
-    AlertCircle
-} from "lucide-react";
+import { MessageSquare, ArrowUpRight, Clock, DollarSign, CheckCircle, CreditCard, ShieldCheck, TrendingUp, Banknote, ExternalLink, Zap, Activity, Sparkles, AlertCircle } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { useNavigate } from "react-router-dom";
@@ -32,23 +15,58 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
+interface ProviderStats {
+    pendingQuotes?: number;
+    activeConversations?: number;
+    completedExecutions?: number;
+    totalFaturamento?: number;
+    active?: boolean;
+    subscriptionStatus?: string;
+    subscriptionMonthlyPriceBRL?: string;
+    canSendProposals?: boolean;
+    hasStripeConnect?: boolean;
+    nextBillingDate?: string | null;
+    profileViewsGrowth?: number;
+    profileViews?: number;
+    profileViewsProgress?: number;
+}
+
+interface InboxMessage {
+    content?: string | null;
+    senderType?: string | null;
+}
+
+interface InboxConversation {
+    id: string;
+    lastMessageAt?: string | null;
+    producer?: {
+        name?: string | null;
+    } | null;
+    messages?: InboxMessage[];
+}
+
+interface LinkResponse {
+    url: string;
+}
+
 export const ProviderDashboard: React.FC = () => {
     const { name } = useAuth();
     const navigate = useNavigate();
-    const [stats, setStats] = useState<unknown>(null);
-    const [activities, setActivities] = useState<any[]>([]);
+    const [stats, setStats] = useState<ProviderStats | null>(null);
+    const [activities, setActivities] = useState<InboxConversation[]>([]);
     const [loading, setLoading] = useState(true);
     const [onboardingLoading, setOnboardingLoading] = useState(false);
+    const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [statsRes, activitiesRes] = await Promise.all([
-                api.get("/providers/me/stats"),
-                api.get("/inbox")
+                api.get<ProviderStats>("/providers/me/stats"),
+                api.get<InboxConversation[]>("/inbox")
             ]);
             setStats(statsRes.data);
-            setActivities(activitiesRes.data.slice(0, 5));
+            setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data.slice(0, 5) : []);
         } catch (err) {
             logger.error("Error fetching provider dashboard data", err);
             toast.error("Erro ao sincronizar dados do painel.");
@@ -64,7 +82,7 @@ export const ProviderDashboard: React.FC = () => {
     const handleStripeOnboarding = async () => {
         try {
             setOnboardingLoading(true);
-            const { data } = await api.get("/stripe/onboarding-link");
+            const { data } = await api.get<LinkResponse>("/stripe/onboarding-link");
             window.location.href = data.url;
         } catch (err) {
             logger.error("Error generating onboarding link", err);
@@ -76,11 +94,24 @@ export const ProviderDashboard: React.FC = () => {
 
     const handleStripeDashboard = async () => {
         try {
-            const { data } = await api.get("/stripe/dashboard-link");
+            const { data } = await api.get<LinkResponse>("/stripe/dashboard-link");
             window.open(data.url, "_blank");
         } catch (err) {
             logger.error("Error generating dashboard link", err);
             toast.error("Não foi possível abrir o painel financeiro.");
+        }
+    };
+
+    const handleSubscriptionCheckout = async () => {
+        try {
+            setSubscriptionLoading(true);
+            const { data } = await api.post<{ checkoutUrl: string }>("/providers/me/subscription/checkout");
+            window.location.href = data.checkoutUrl;
+        } catch (err) {
+            logger.error("Error generating subscription checkout", err);
+            toast.error("Nao foi possivel iniciar a assinatura.");
+        } finally {
+            setSubscriptionLoading(false);
         }
     };
 
@@ -107,10 +138,10 @@ export const ProviderDashboard: React.FC = () => {
                         Olá, <span className="text-indigo-500">{name?.split(" ")[0]}!</span>
                     </h1>
                     <p className="text-slate-500 font-medium text-lg">
-                        {stats?.pendingQuotes > 0 ? (
+                        {(stats?.pendingQuotes || 0) > 0 ? (
                             <span className="flex items-center gap-2">
                                 <Sparkles size={18} className="text-amber-400" />
-                                Você tem <span className="text-white font-bold">{stats.pendingQuotes} novas solicitações</span> pendentes.
+                                Você tem <span className="text-white font-bold">{stats?.pendingQuotes || 0} novas solicitações</span> pendentes.
                             </span>
                         ) : (
                             "Sua agenda estratégica está em dia."
@@ -118,13 +149,13 @@ export const ProviderDashboard: React.FC = () => {
                     </p>
                 </div>
                 <div className="flex gap-3">
-                    {!stats?.active && (
+                    {!stats?.canSendProposals && (
                          <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                             <AlertCircle size={14} /> Perfil Pendente de Ativação
+                             <AlertCircle size={14} /> Propostas Bloqueadas
                          </Badge>
                     )}
                     <Button
-                        onClick={() => navigate("/provider/inbox")}
+                        onClick={() => navigate("/provider/mensagens")}
                         className="h-14 px-8 rounded-2xl bg-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-600/20 active:scale-95"
                         rightIcon={<ArrowUpRight size={18} />}
                     >
@@ -134,23 +165,24 @@ export const ProviderDashboard: React.FC = () => {
             </div>
 
             {/* Inactive Profile Banner */}
-            {!stats?.active && (
+            {!stats?.canSendProposals && (
                 <Card className="p-8 bg-amber-500/5 border-amber-500/20 rounded-[32px] border-dashed">
                     <div className="flex flex-col md:flex-row items-center gap-6">
                         <div className="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
                             <Zap size={32} />
                         </div>
                         <div className="flex-1 space-y-2 text-center md:text-left">
-                            <h3 className="text-xl font-black text-white tracking-tight">Ativação de Perfil Necessária</h3>
+                            <h3 className="text-xl font-black text-white tracking-tight">Assinatura Necessaria para Propostas</h3>
                             <p className="text-slate-400 text-sm font-medium">
-                                Seu cadastro foi recebido com sucesso! Para começar a receber solicitações de museus e produtores, é necessário concluir o pagamento da assinatura ou aguardar a validação administrativa.
+                                Seu cadastro e sua vitrine inicial estao liberados. Para responder conversas comerciais, enviar propostas em projetos aprovados e solicitar pagamentos, ative a mensalidade do prestador.
                             </p>
                         </div>
                         <Button
                             className="bg-amber-500 text-black font-black uppercase tracking-widest text-[10px] h-12 px-8 rounded-xl hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20"
-                            onClick={() => window.location.reload()} // Just reload for now or link to stripe if we have session info
+                            onClick={handleSubscriptionCheckout}
+                            isLoading={subscriptionLoading}
                         >
-                            Verificar Status
+                            Ativar Mensalidade
                         </Button>
                     </div>
                 </Card>
@@ -195,7 +227,7 @@ export const ProviderDashboard: React.FC = () => {
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Últimas interações com produtores</p>
                             </div>
                         </div>
-                        <Button variant="glass" className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border-white/5" onClick={() => navigate("/provider/inbox")}>
+                        <Button variant="glass" className="h-10 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest border-white/5" onClick={() => navigate("/provider/mensagens")}>
                             Ver Todas
                         </Button>
                     </div>
@@ -207,7 +239,7 @@ export const ProviderDashboard: React.FC = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: i * 0.1 }}
-                                onClick={() => navigate(`/provider/inbox?id=${conv.id}`)}
+                                onClick={() => navigate(`/provider/mensagens?id=${conv.id}`)}
                                 className="p-6 flex items-center justify-between group hover:bg-white/[0.02] transition-all cursor-pointer"
                             >
                                 <div className="flex items-center gap-5">
@@ -223,7 +255,7 @@ export const ProviderDashboard: React.FC = () => {
                                 </div>
                                 <div className="text-right flex flex-col items-end gap-2">
                                     <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest">
-                                        {new Date(conv.lastMessageAt).toLocaleDateString("pt-BR")}
+                                        {conv.lastMessageAt ? new Date(conv.lastMessageAt).toLocaleDateString("pt-BR") : "--"}
                                     </div>
                                     <Badge className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
                                         conv.messages?.[0]?.senderType === "PRODUCER" 
@@ -299,26 +331,31 @@ export const ProviderDashboard: React.FC = () => {
                         <div className="relative z-10 space-y-6">
                             <div className="flex items-center justify-between">
                                 <Badge className={`uppercase text-[8px] font-black tracking-widest px-3 py-1 ${
-                                    stats?.active 
+                                    stats?.canSendProposals
                                     ? "bg-green-500/10 text-green-400 border-green-500/20" 
                                     : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                                 }`}>
-                                    {stats?.active ? "Assinatura Ativa" : "Aguardando Ativação"}
+                                    {stats?.canSendProposals ? "Propostas Liberadas" : "Assinatura Pendente"}
                                 </Badge>
-                                <CreditCard size={18} className={stats?.active ? "text-indigo-400" : "text-slate-500"} />
+                                <CreditCard size={18} className={stats?.canSendProposals ? "text-indigo-400" : "text-slate-500"} />
                             </div>
                             
                             <div>
-                                <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Plano Mensal Elite</h4>
-                                <div className="text-4xl font-black text-white tracking-tighter">R$ 50,00</div>
+                                <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Mensalidade do Prestador</h4>
+                                <div className="text-4xl font-black text-white tracking-tighter">R$ {stats?.subscriptionMonthlyPriceBRL || "50.00"}</div>
+                                <p className="text-slate-500 text-[11px] mt-3 leading-relaxed">
+                                    Cadastro gratuito. A mensalidade libera respostas comerciais, propostas para projetos aprovados e solicitacoes de pagamento.
+                                </p>
                             </div>
                             
-                            <div className="text-slate-500 text-[10px] font-medium italic">
-                                Renovação automática em 12 de Junho, 2026
-                            </div>
+                            {stats?.nextBillingDate && (
+                                <div className="text-slate-500 text-[10px] font-medium italic">
+                                    Renovacao automatica em {new Date(stats.nextBillingDate).toLocaleDateString("pt-BR")}
+                                </div>
+                            )}
                             
-                            <Button variant="glass" className="w-full h-12 rounded-xl border-white/5 text-white/60 font-black text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors">
-                                Gerenciar Faturamento
+                            <Button onClick={stats?.canSendProposals ? handleStripeDashboard : handleSubscriptionCheckout} isLoading={subscriptionLoading} variant="glass" className="w-full h-12 rounded-xl border-white/5 text-white/60 font-black text-[9px] uppercase tracking-[0.2em] hover:text-white transition-colors">
+                                {stats?.canSendProposals ? "Gerenciar Faturamento" : "Ativar Mensalidade"}
                             </Button>
                         </div>
                     </Card>
@@ -331,19 +368,19 @@ export const ProviderDashboard: React.FC = () => {
                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Visibilidade</span>
                             </div>
                             <div className="text-green-400 text-[10px] font-black flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded-lg">
-                                +12% <ArrowUpRight size={10} />
+                                {Number(stats?.profileViewsGrowth ?? 0) >= 0 ? "+" : ""}{stats?.profileViewsGrowth ?? 0}% <ArrowUpRight size={10} />
                             </div>
                         </div>
                         
                         <div>
                             <div className="flex justify-between items-end mb-4">
-                                <div className="text-3xl font-black text-white leading-none">428</div>
+                                <div className="text-3xl font-black text-white leading-none">{stats?.profileViews ?? 0}</div>
                                 <div className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Views este mês</div>
                             </div>
                             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                                 <motion.div 
                                     initial={{ width: 0 }}
-                                    animate={{ width: '65%' }}
+                                    animate={{ width: `${Math.min(100, Number(stats?.profileViewsProgress ?? 0))}%` }}
                                     className="h-full bg-gradient-to-r from-indigo-600 to-indigo-400 shadow-[0_0_10px_rgba(79,70,229,0.3)]" 
                                 />
                             </div>

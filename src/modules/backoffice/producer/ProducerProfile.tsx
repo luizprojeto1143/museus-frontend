@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../api/client";
@@ -6,14 +6,39 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { useToast } from "../../../contexts/ToastContext";
 import { Input, Textarea, Button } from "../../../components/ui";
-import { User, Mail, Phone, Globe, FileText, Save, Briefcase } from "lucide-react";
+import { User, Mail, Phone, Globe, FileText, Save } from "lucide-react";
+import { isAxiosError } from "axios";
+
+type ProducerProfileForm = {
+    name: string;
+    email: string;
+    cpf: string;
+    phone: string;
+    bio: string;
+    website: string;
+};
+
+type AuthMeResponse = {
+    user?: Partial<ProducerProfileForm>;
+} & Partial<ProducerProfileForm>;
+
+type ApiErrorResponse = {
+    message?: string;
+};
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || fallback;
+    }
+    return fallback;
+}
 
 export const ProducerProfile: React.FC = () => {
     const { t } = useTranslation();
     const { name, email, updateSession, role, tenantId } = useAuth();
     const { addToast } = useToast();
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ProducerProfileForm>({
         name: name || "",
         email: email || "",
         cpf: "",
@@ -24,7 +49,7 @@ export const ProducerProfile: React.FC = () => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        api.get("/auth/me").then(res => {
+        api.get<AuthMeResponse>("/auth/me").then(res => {
             const u = res.data.user || res.data;
             setFormData({
                 name: u.name || "",
@@ -38,7 +63,7 @@ export const ProducerProfile: React.FC = () => {
             logger.error(err);
             addToast("Erro ao carregar perfil", "error");
         });
-    }, []);
+    }, [addToast]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,7 +82,7 @@ export const ProducerProfile: React.FC = () => {
             }
         } catch (err: unknown) {
             logger.error(err);
-            addToast("Erro ao atualizar perfil: " + (err.response?.data?.message || err.message), "error");
+            addToast(getApiErrorMessage(err, "Erro ao atualizar perfil."), "error");
         } finally {
             setLoading(false);
         }

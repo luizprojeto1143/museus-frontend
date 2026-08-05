@@ -1,34 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { validateFile, UPLOAD_PRESETS, formatFileSize, getFileTypeLabel } from "../../../../utils/uploadValidator";
-import { 
-  Button, 
-  Card, 
-  Badge, 
-  AnimatedCounter, 
-  AnimateIn,
-  ModelViewer,
-  EmptyState
-} from "@/components/ui";
-import { 
-  Plus, 
-  Search, 
-  Trash2, 
-  ExternalLink, 
-  Image as ImageIcon, 
-  Music, 
-  Video, 
-  Box, 
-  Brain, 
-  HardDrive
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { Button, Card, Badge, AnimatedCounter, ModelViewer } from "@/components/ui";
+import { Plus, Trash2, ExternalLink, Image as ImageIcon, Music, Video, Box, Brain, HardDrive } from "lucide-react";
+import { motion } from "framer-motion";
+import { staggerContainer, staggerItem } from "@/lib/motion";
+import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface UploadedFile {
   id: string;
@@ -44,22 +27,57 @@ interface UploadedFile {
   useInAi?: boolean;
 }
 
+type UploadFilter = "all" | "image" | "audio" | "video" | "model";
+
+interface UploadResponse {
+  id?: string;
+  url?: string;
+  file?: UploadedFile;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const uploadContextSchema = z.object({
+  tenantId: z.string().trim().min(1, "Tenant não identificado para upload.")
+});
+
+const uploadIdSchema = z.string().trim().min(1, "Arquivo inválido.");
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(error)) {
+    return error.response?.data?.message || error.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
 export const AdminUploads: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [filter, setFilter] = useState<"all" | "image" | "audio" | "video" | "model">("all");
+  const [filter, setFilter] = useState<UploadFilter>("all");
+  const [pendingUpload, setPendingUpload] = useState<{ file: File; warning: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<UploadedFile | null>(null);
 
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const loadFiles = React.useCallback(async () => {
     try {
-      const res = await api.get(`/upload?tenantId=${tenantId}`);
-      setFiles(res.data);
-    } catch {
-      logger.error("Erro ao carregar arquivos");
+      const validation = uploadContextSchema.safeParse({ tenantId });
+      if (!validation.success) {
+        setFiles([]);
+        return;
+      }
+
+      const res = await api.get<UploadedFile[]>("/upload", { params: { tenantId: validation.data.tenantId } });
+      setFiles(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      logger.error("Erro ao carregar arquivos", error);
+      toast.error(getApiErrorMessage(error, "Erro ao carregar arquivos."));
     } finally {
       setLoading(false);
     }
@@ -69,66 +87,72 @@ export const AdminUploads: React.FC = () => {
     loadFiles();
   }, [loadFiles]);
 
-  const handleUpload = async (file: File) => {
-    // ─── Validate before sending ────────────────────────────
+  const handleUpload = async (file: File, force = false) => {
     const validation = validateFile(file, UPLOAD_PRESETS.general);
 
     if (!validation.valid) {
-      logger.warn("Alert:", `❌ Arquivo inválido: ${validation.error}`);
+      toast.error(`Arquivo inválido: ${validation.error}`);
       return;
     }
 
-    if (validation.warning) {
-      const proceed = window.confirm(
-        `⚠️ ${validation.warning}\n\nDeseja continuar com o upload?`
-      );
-      if (!proceed) return;
+    if (validation.warning && !force) {
+      setPendingUpload({ file, warning: validation.warning });
+      return;
+    }
+
+    setPendingUpload(null);
+    const context = uploadContextSchema.safeParse({ tenantId });
+    if (!context.success) {
+      toast.error(context.error.issues[0]?.message || "Tenant não identificado para upload.");
+      return;
     }
 
     setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("tenantId", tenantId || "");
+    formData.append("tenantId", context.data.tenantId);
 
     try {
-      await api.post("/upload", formData, {
+      const res = await api.post<UploadResponse>("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
+      if (!res.data.url && !res.data.id && !res.data.file) throw new Error("Upload sem confirmação de retorno.");
       loadFiles();
-      logger.warn("Alert:", t("admin.uploads.success"));
-    } catch {
-      logger.warn("Alert:", t("common.error"));
+      toast.success(t("admin.uploads.success"));
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, t("common.error")));
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = async (id: string, usedIn?: string | null) => {
-    if (usedIn) {
-      const confirm = window.confirm(
-        t("admin.uploads.deleteConfirmUsed")
-      );
-      if (!confirm) return;
-    }
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    const validation = uploadIdSchema.safeParse(deleteTarget.id);
+    if (!validation.success) return toast.error(validation.error.issues[0]?.message || "Arquivo inválido.");
 
     try {
-      await api.delete(`/upload/${id}`);
+      await api.delete(`/upload/${validation.data}`);
       loadFiles();
-    } catch {
-      logger.warn("Alert:", t("common.error"));
+      setDeleteTarget(null);
+      toast.success("Arquivo excluído.");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, t("common.error")));
     }
   };
 
   const handleToggleAi = async (id: string, current: boolean) => {
-    try {
-      // Otimistic Update
-      setFiles(prev => prev.map(f => f.id === id ? { ...f, useInAi: !current } : f));
+    const validation = uploadIdSchema.safeParse(id);
+    if (!validation.success) return toast.error(validation.error.issues[0]?.message || "Arquivo inválido.");
 
-      await api.patch(`/upload/${id}`, { useInAi: !current });
+    try {
+      setFiles(prev => prev.map(f => f.id === validation.data ? { ...f, useInAi: !current } : f));
+      await api.patch(`/upload/${validation.data}`, { useInAi: !current });
+      toast.success(!current ? "Arquivo ativado para IA." : "Arquivo removido do treino de IA.");
     } catch (err) {
-      logger.error(err);
-      logger.warn("Alert:", "Erro ao atualizar status IA");
-      loadFiles(); // Revert
+      logger.error(err instanceof Error ? err.message : "Erro ao atualizar status IA");
+      toast.error(getApiErrorMessage(err, "Erro ao atualizar status IA"));
+      loadFiles();
     }
   };
 
@@ -138,7 +162,7 @@ export const AdminUploads: React.FC = () => {
   });
 
   const totalSize = files.reduce((acc, f) => acc + f.size, 0);
-  const formatSize = (bytes: number) => {
+  const _formatSize = (bytes: number) => {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
@@ -176,7 +200,7 @@ export const AdminUploads: React.FC = () => {
                 onChange={(e) => {
                     const selected = Array.from(e.target.files || []);
                     const valid = selected.filter(f => f.size > 0);
-                    valid.forEach(handleUpload);
+                    valid.forEach(file => handleUpload(file));
                     e.target.value = "";
                 }}
             />
@@ -217,7 +241,7 @@ export const AdminUploads: React.FC = () => {
             key={cat.id}
             variant={filter === cat.id ? "primary" : "ghost"}
             size="sm"
-            onClick={() => setFilter(cat.id as unknown)}
+            onClick={() => setFilter(cat.id as UploadFilter)}
             className="rounded-xl h-12 px-6 font-bold uppercase tracking-widest text-[10px] whitespace-nowrap"
             leftIcon={cat.icon}
           >
@@ -306,7 +330,7 @@ export const AdminUploads: React.FC = () => {
                                     variant="ghost"
                                     size="sm"
                                     className="h-10 w-10 p-0 text-red-500 hover:bg-red-500/10 hover:text-red-500 border-none"
-                                    onClick={() => handleDelete(file.id, file.usedIn)}
+                                    onClick={() => setDeleteTarget(file)}
                                  >
                                     <Trash2 size={16} />
                                  </Button>
@@ -320,6 +344,34 @@ export const AdminUploads: React.FC = () => {
           })}
         </motion.div>
       )}
+      {(pendingUpload || deleteTarget) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-slate-950 p-6 shadow-2xl">
+            {pendingUpload ? (
+              <>
+                <h3 className="text-lg font-bold text-white">Continuar upload?</h3>
+                <p className="mt-2 text-sm text-slate-400">{pendingUpload.warning}</p>
+                <div className="mt-6 flex justify-end gap-3">
+                  <Button variant="glass" onClick={() => setPendingUpload(null)}>Cancelar</Button>
+                  <Button onClick={() => handleUpload(pendingUpload.file, true)}>Continuar</Button>
+                </div>
+              </>
+            ) : deleteTarget ? (
+              <>
+                <h3 className="text-lg font-bold text-white">Excluir arquivo?</h3>
+                <p className="mt-2 text-sm text-slate-400">
+                  {deleteTarget.usedIn ? t("admin.uploads.deleteConfirmUsed") : `Remover ${deleteTarget.filename}?`}
+                </p>
+                <div className="mt-6 flex justify-end gap-3">
+                  <Button variant="glass" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+                  <Button variant="danger" onClick={handleDelete}>Excluir</Button>
+                </div>
+              </>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

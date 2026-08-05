@@ -5,6 +5,24 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import { api } from "../../api/client";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const forgotPasswordSchema = z.object({
+  email: z.string().trim().email("Informe um e-mail valido.")
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
 
 export const ForgotPassword: React.FC = () => {
   const { t } = useTranslation();
@@ -18,12 +36,19 @@ export const ForgotPassword: React.FC = () => {
     setLoading(true);
     setError("");
 
+    const validation = forgotPasswordSchema.safeParse({ email });
+    if (!validation.success) {
+      setError(validation.error.issues[0]?.message || t("auth.forgotpassword.error", "E-mail invalido."));
+      setLoading(false);
+      return;
+    }
+
     try {
-      await api.post("/auth/recover-password", { email });
+      await api.post("/auth/recover-password", validation.data);
       setSent(true);
     } catch (err: unknown) {
-      logger.error(err);
-      setError(t("auth.forgotpassword.error", "Não foi possível enviar o e-mail. Verifique se o endereço está correto."));
+      logger.error("Error requesting password recovery", err);
+      setError(getApiErrorMessage(err, t("auth.forgotpassword.error", "Nao foi possivel enviar o e-mail. Verifique se o endereco esta correto.")));
     } finally {
       setLoading(false);
     }
@@ -134,3 +159,4 @@ export const ForgotPassword: React.FC = () => {
     </div>
   );
 };
+

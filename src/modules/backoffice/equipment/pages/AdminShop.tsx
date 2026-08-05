@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { Package, Plus, Edit, Trash2, DollarSign, Archive, Search, CheckCircle2, XCircle, Image as ImageIcon, TrendingUp, AlertTriangle, Filter } from 'lucide-react';
 import { api } from '../../../../api/client';
 import { useAuth } from '../../../auth/AuthContext';
-import { Input, Button } from '../../../../components/ui';
+import { Button } from '../../../../components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isAxiosError } from 'axios';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
 import "./AdminShared.css";
 
 interface Product {
@@ -24,7 +27,7 @@ interface Product {
 interface Order {
     id: string;
     total: number;
-    status: string;
+    status: OrderStatus;
     createdAt: string;
     customerName: string;
     customerEmail: string;
@@ -38,6 +41,44 @@ interface Order {
     }>;
 }
 
+type OrderStatus = 'PENDING' | 'PAID' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+interface ProductFormState {
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+    category: string;
+    sku: string;
+    stock: number;
+    active: boolean;
+}
+
+const productSchema = z.object({
+    name: z.string().trim().min(2, 'Informe o nome do produto.'),
+    description: z.string().trim().optional(),
+    price: z.number().finite('Informe um preço válido.').min(0, 'O preço não pode ser negativo.'),
+    imageUrl: z.string().trim().url('Informe uma URL de imagem válida.').or(z.literal('')),
+    category: z.string().trim().optional(),
+    sku: z.string().trim().optional(),
+    stock: z.number().int('O estoque precisa ser um número inteiro.').min(0, 'O estoque não pode ser negativo.'),
+    active: z.boolean()
+});
+
+const orderStatusSchema = z.enum(['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED']);
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const AdminShop: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
@@ -49,36 +90,43 @@ export const AdminShop: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterCategory, setFilterCategory] = useState('all');
     const [activeView, setActiveView] = useState<'products' | 'orders'>('products');
+    const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
 
     useEffect(() => {
         if (tenantId) {
             fetchData();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId]);
 
     const fetchData = async () => {
         setLoading(true);
         try {
             const [productsRes, ordersRes] = await Promise.all([
-                api.get(`/shop/products?tenantId=${tenantId}&active=all`),
-                api.get(`/shop/orders?tenantId=${tenantId}`)
+                api.get<Product[]>('/shop/products', { params: { tenantId, active: 'all' } }),
+                api.get<Order[]>('/shop/orders', { params: { tenantId } })
             ]);
-            setProducts(productsRes.data);
-            setOrders(ordersRes.data || []);
+            setProducts(Array.isArray(productsRes.data) ? productsRes.data : []);
+            setOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
         } catch (error) {
             logger.error('Error fetching shop data:', error);
+            toast.error(getApiErrorMessage(error, 'Erro ao carregar loja.'));
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+    const handleDelete = async () => {
+        if (!deleteTarget) return;
+
         try {
-            await api.delete(`/shop/products/${id}`);
-            setProducts(prev => prev.filter(p => p.id !== id));
+            await api.delete(`/shop/products/${deleteTarget.id}`);
+            setProducts(prev => prev.filter(p => p.id !== deleteTarget.id));
+            setDeleteTarget(null);
+            toast.success('Produto excluído.');
         } catch (error) {
             logger.error('Error deleting product:', error);
+            toast.error(getApiErrorMessage(error, 'Erro ao excluir produto.'));
         }
     };
 
@@ -86,8 +134,10 @@ export const AdminShop: React.FC = () => {
         try {
             await api.put(`/shop/products/${product.id}`, { active: !product.active });
             setProducts(prev => prev.map(p => p.id === product.id ? { ...p, active: !p.active } : p));
+            toast.success(!product.active ? 'Produto ativado.' : 'Produto desativado.');
         } catch (error) {
             logger.error('Error toggling product:', error);
+            toast.error(getApiErrorMessage(error, 'Erro ao atualizar produto.'));
         }
     };
 
@@ -106,12 +156,20 @@ export const AdminShop: React.FC = () => {
 
     const lowStockCount = products.filter(p => p.active && p.stock > 0 && p.stock < 10).length;
 
-    const updateOrderStatus = async (orderId: string, status: string) => {
+    const updateOrderStatus = async (orderId: string, status: OrderStatus) => {
+        const validation = orderStatusSchema.safeParse(status);
+        if (!validation.success) {
+            toast.error('Status de pedido inválido.');
+            return;
+        }
+
         try {
-            await api.patch(`/shop/orders/${orderId}/status`, { status });
-            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+            await api.patch(`/shop/orders/${orderId}/status`, { status: validation.data });
+            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: validation.data } : o));
+            toast.success('Status do pedido atualizado.');
         } catch (error) {
             logger.error('Error updating order status:', error);
+            toast.error(getApiErrorMessage(error, 'Erro ao atualizar pedido.'));
         }
     };
 
@@ -283,7 +341,7 @@ export const AdminShop: React.FC = () => {
                                                 {product.active ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(product.id)}
+                                                onClick={() => setDeleteTarget(product)}
                                                 className="w-10 h-10 bg-black/60 backdrop-blur-md text-red-400 rounded-xl flex items-center justify-center hover:bg-red-400 hover:text-black transition-all"
                                                 title="Excluir"
                                             >
@@ -405,7 +463,7 @@ export const AdminShop: React.FC = () => {
                                             <td className="px-6 py-4">
                                                 <select
                                                     value={order.status}
-                                                    onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                                                    onChange={(e) => updateOrderStatus(order.id, e.target.value as OrderStatus)}
                                                     className="bg-black/40 border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:border-amber-500 focus:outline-none"
                                                 >
                                                     <option value="PENDING">Pendente</option>
@@ -423,6 +481,42 @@ export const AdminShop: React.FC = () => {
                     )}
                 </div>
             )}
+
+            <AnimatePresence>
+                {deleteTarget && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+                            onClick={() => setDeleteTarget(null)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.94, opacity: 0, y: 12 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.94, opacity: 0, y: 12 }}
+                            className="relative w-full max-w-md rounded-3xl border border-white/10 bg-zinc-950 p-7 shadow-2xl"
+                        >
+                            <div className="mb-6 flex items-start gap-4">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-300">
+                                    <Trash2 size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-white">Excluir produto</h3>
+                                    <p className="mt-1 text-sm leading-relaxed text-zinc-400">
+                                        "{deleteTarget.name}" será removido da loja e não ficará disponível para venda.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Button type="button" variant="ghost" onClick={() => setDeleteTarget(null)} className="h-12 rounded-xl border border-white/10">Cancelar</Button>
+                                <Button type="button" onClick={handleDelete} className="h-12 rounded-xl bg-red-500 text-white font-extrabold hover:bg-red-400">Excluir</Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             {/* Form Modal */}
             <AnimatePresence>
@@ -472,7 +566,7 @@ const ProductForm: React.FC<{
     onSave: () => void;
 }> = ({ product, tenantId, onClose, onSave }) => {
     const { t } = useTranslation();
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<ProductFormState>({
         name: product?.name || '',
         description: product?.description || '',
         price: product?.price || 0,
@@ -486,16 +580,24 @@ const ProductForm: React.FC<{
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const validation = productSchema.safeParse(form);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || 'Revise os dados do produto.');
+            return;
+        }
+
         setSaving(true);
         try {
             if (product) {
-                await api.put(`/shop/products/${product.id}`, form);
+                await api.put(`/shop/products/${product.id}`, validation.data);
             } else {
-                await api.post('/shop/products', { ...form, tenantId });
+                await api.post('/shop/products', { ...validation.data, tenantId });
             }
+            toast.success(product ? 'Produto atualizado.' : 'Produto cadastrado.');
             onSave();
         } catch (error) {
             logger.error('Error saving product:', error);
+            toast.error(getApiErrorMessage(error, 'Erro ao salvar produto.'));
         } finally {
             setSaving(false);
         }
@@ -522,7 +624,7 @@ const ProductForm: React.FC<{
                             type="number"
                             step="0.01"
                             value={form.price}
-                            onChange={(e) => setForm(f => ({ ...f, price: e.target.value === "" ? 0 : parseFloat(e.target.value) }))}
+                            onChange={(e) => setForm(f => ({ ...f, price: e.target.value === "" ? 0 : Number(e.target.value) }))}
                             required
                             className="w-full bg-black/40 border border-white/10 rounded-xl p-4 pl-12 text-white focus:border-amber-500 focus:outline-none"
                         />
@@ -554,7 +656,7 @@ const ProductForm: React.FC<{
                     <input
                         type="number"
                         value={form.stock}
-                        onChange={(e) => setForm(f => ({ ...f, stock: e.target.value === "" ? 0 : parseInt(e.target.value) }))}
+                        onChange={(e) => setForm(f => ({ ...f, stock: e.target.value === "" ? 0 : Number(e.target.value) }))}
                         className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-amber-500 focus:outline-none"
                     />
                 </div>

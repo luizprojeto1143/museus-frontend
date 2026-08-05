@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import React from "react";
 import { Link } from "react-router-dom";
-import { QrCode, Ticket, Calendar, Search } from "lucide-react";
+import { QrCode, Calendar, Search } from "lucide-react";
 
 export const TotemDashboard: React.FC = () => {
   const { t } = useTranslation();

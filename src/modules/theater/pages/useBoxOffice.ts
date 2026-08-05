@@ -1,74 +1,143 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { theaterApi } from "../../../api/theater";
 
 export type BoxOfficeStep = "LIST" | "SEATS" | "EXTRAS" | "PAY" | "DONE";
 
 export interface ExtraItem {
-    id: number;
+    id: number | string;
     name: string;
     price: number;
-    icon: string;
+    icon?: string;
 }
 
 export interface SessionItem {
-    id: number;
+    id: number | string;
     title: string;
     time: string;
     price: number;
-    occupancy: number;
+    occupancy?: number;
+    extras?: ExtraItem[];
 }
 
-const mockExtras: ExtraItem[] = [
-    { id: 101, name: "Combo Pipoca G + Refri", price: 45, icon: "🍿" },
-    { id: 102, name: "Camiseta Oficial", price: 80, icon: "👕" },
-    { id: 103, name: "Programa de Luxo (Físico)", price: 25, icon: "📖" },
-];
+export interface SeatItem {
+    id: number | string;
+    label?: string;
+    number?: number | string;
+    status?: string;
+    available?: boolean;
+    price?: number;
+}
 
-const mockSessions: SessionItem[] = [
-    { id: 1, title: "O Fantasma da Ópera", time: "20:00", price: 120, occupancy: 85 },
-    { id: 2, title: "O Fantasma da Ópera", time: "22:30", price: 100, occupancy: 40 },
-    { id: 3, title: "Les Misérables", time: "19:00", price: 150, occupancy: 95 },
-];
+const normalizeArray = <T,>(data: unknown): T[] => {
+    if (Array.isArray(data)) return data as T[];
+    if (Array.isArray((data as { data?: unknown[] })?.data)) return (data as { data: T[] }).data;
+    return [];
+};
 
 export function useBoxOffice() {
     const [step, setStep] = useState<BoxOfficeStep>("LIST");
-    const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
+    const [selectedSession, setSelectedSession] = useState<SessionItem | null>(null);
+    const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
     const [selectedExtras, setSelectedExtras] = useState<ExtraItem[]>([]);
     const [online, setOnline] = useState(true);
+    const [sessions, setSessions] = useState<SessionItem[]>([]);
+    const [seats, setSeats] = useState<SeatItem[]>([]);
+    const [loadingSessions, setLoadingSessions] = useState(true);
+    const [loadingSeats, setLoadingSeats] = useState(false);
+    const [selling, setSelling] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        setLoadingSessions(true);
+        theaterApi.getSessions()
+            .then(res => {
+                setSessions(normalizeArray<SessionItem>(res.data));
+                setOnline(true);
+            })
+            .catch(() => {
+                setError("Nao foi possivel carregar as sessoes.");
+                setOnline(false);
+            })
+            .finally(() => setLoadingSessions(false));
+    }, []);
+
+    const selectSession = async (session: SessionItem) => {
+        setSelectedSession(session);
+        setSelectedSeats([]);
+        setSelectedExtras([]);
+        setStep("SEATS");
+        setLoadingSeats(true);
+        try {
+            const res = await theaterApi.getSessionSeats(String(session.id));
+            setSeats(normalizeArray<SeatItem>(res.data));
+            setOnline(true);
+        } catch {
+            setSeats([]);
+            setError("Nao foi possivel carregar o mapa de assentos.");
+            setOnline(false);
+        } finally {
+            setLoadingSeats(false);
+        }
+    };
+
+    const extras = useMemo(() => selectedSession?.extras || [], [selectedSession]);
 
     const toggleExtra = (item: ExtraItem) => {
-        if (selectedExtras.find(e => e.id === item.id)) {
-            setSelectedExtras(selectedExtras.filter(e => e.id !== item.id));
+        if (selectedExtras.find(e => String(e.id) === String(item.id))) {
+            setSelectedExtras(selectedExtras.filter(e => String(e.id) !== String(item.id)));
         } else {
             setSelectedExtras([...selectedExtras, item]);
         }
     };
 
-    const toggleSeat = (id: number) => {
-        if (selectedSeats.includes(id)) {
-            setSelectedSeats(selectedSeats.filter(s => s !== id));
+    const toggleSeat = (id: number | string) => {
+        const seatId = String(id);
+        if (selectedSeats.includes(seatId)) {
+            setSelectedSeats(selectedSeats.filter(s => s !== seatId));
         } else {
-            setSelectedSeats([...selectedSeats, id]);
+            setSelectedSeats([...selectedSeats, seatId]);
+        }
+    };
+
+    const sell = async (paymentMethod: string) => {
+        if (!selectedSession || selectedSeats.length === 0) return;
+        setSelling(true);
+        try {
+            await theaterApi.sellSeats(String(selectedSession.id), {
+                seatIds: selectedSeats,
+                paymentMethod,
+            });
+            setStep("DONE");
+        } finally {
+            setSelling(false);
         }
     };
 
     const resetSale = () => {
         setStep("LIST");
+        setSelectedSession(null);
         setSelectedSeats([]);
         setSelectedExtras([]);
+        setSeats([]);
     };
 
-    const seatsTotal = selectedSeats.length * 120; // Hardcoded seat price for now
-    const extrasTotal = selectedExtras.reduce((acc, curr) => acc + curr.price, 0);
+    const seatPrice = selectedSession?.price ?? 0;
+    const seatsTotal = selectedSeats.reduce((total, seatId) => {
+        const seat = seats.find(item => String(item.id) === seatId);
+        return total + Number(seat?.price ?? seatPrice);
+    }, 0);
+    const extrasTotal = selectedExtras.reduce((acc, curr) => acc + Number(curr.price || 0), 0);
     const grandTotal = seatsTotal + extrasTotal;
 
     return {
         step, setStep,
+        selectedSession, selectSession,
         selectedSeats, toggleSeat,
         selectedExtras, toggleExtra,
         online, setOnline,
-        sessions: mockSessions,
-        extras: mockExtras,
+        sessions, seats, extras,
+        loadingSessions, loadingSeats, selling, error,
         seatsTotal, extrasTotal, grandTotal,
-        resetSale
+        sell, resetSale
     };
 }

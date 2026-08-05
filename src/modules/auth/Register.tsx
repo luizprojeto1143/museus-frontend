@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { logger } from "@/utils/logger";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface RegisterProps {
   tenantId: string;
@@ -12,9 +14,47 @@ interface RegisterProps {
   equipamentoId?: string;
 }
 
+interface TenantSettingsResponse {
+  termsOfUse?: string | null;
+  privacyPolicy?: string | null;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const visitorRegisterSchema = z.object({
+  tenantId: z.string().trim().min(1),
+  cityId: z.string().optional(),
+  equipamentoId: z.string().optional(),
+  name: z.string().trim().min(2, "Informe seu nome."),
+  email: z.string().trim().email("Informe um e-mail valido."),
+  password: z.string().min(10, "A senha deve ter no minimo 10 caracteres."),
+  confirmPassword: z.string().min(10),
+  age: z.number().int().min(1).max(120),
+  photoUrl: z.string().nullable(),
+  isTeacher: z.boolean()
+}).refine(data => data.password === data.confirmPassword, {
+  message: "As senhas nao conferem.",
+  path: ["confirmPassword"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
 export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId, equipamentoId }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
+  const redirectParam = new URLSearchParams(location.search).get("redirect");
+  const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")
+    ? redirectParam
+    : null;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +73,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
 
   React.useEffect(() => {
     if (tenantId) {
-      api.get(`/tenants/${tenantId}/settings`)
+      api.get<TenantSettingsResponse>(`/tenants/${tenantId}/settings`)
         .then(res => {
           setTermsText(res.data.termsOfUse || "");
           setPrivacyText(res.data.privacyPolicy || "");
@@ -62,37 +102,47 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
       return;
     }
 
-    if (password.length < 6) {
-      setError(t("auth.errors.passwordShort", "A senha deve ter no mínimo 6 caracteres."));
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError(t("auth.errors.passwordMismatch", "As senhas não conferem."));
+    const numericAge = Number(age);
+    const validation = visitorRegisterSchema.safeParse({
+      tenantId,
+      cityId,
+      equipamentoId,
+      name,
+      email,
+      password,
+      confirmPassword,
+      age: Number.isFinite(numericAge) ? Math.trunc(numericAge) : 0,
+      photoUrl: photoPreview,
+      isTeacher
+    });
+    if (!validation.success) {
+      const issue = validation.error.issues[0];
+      setError(issue?.path[0] === "confirmPassword"
+        ? t("auth.errors.passwordMismatch", "As senhas nao conferem.")
+        : issue?.message || t("auth.errors.registerFailed", "Falha ao registrar."));
       return;
     }
 
     try {
       setIsSubmitting(true);
 
-      // Register User
       await api.post("/auth/register", {
-        tenantId,
-        cityId,
-        equipamentoId,
-        name,
-        email,
-        password,
-        age: age ? parseInt(age) : undefined,
-        photoUrl: photoPreview, // Note: In a real app, upload first. Assuming base64 or handled by backend for now.
-        isTeacher
+        tenantId: validation.data.tenantId,
+        cityId: validation.data.cityId,
+        equipamentoId: validation.data.equipamentoId,
+        name: validation.data.name,
+        email: validation.data.email,
+        password: validation.data.password,
+        age: validation.data.age,
+        photoUrl: validation.data.photoUrl,
+        isTeacher: validation.data.isTeacher
       });
 
-      // Auto login or redirect
-      navigate("/login");
+      // Return to login preserving the QR destination, when present.
+      navigate(safeRedirect ? `/login?redirect=${encodeURIComponent(safeRedirect)}` : "/login");
     } catch (err: unknown) {
-      logger.error(err);
-      setError(err.response?.data?.message || t("auth.errors.registerFailed", "Falha ao registrar."));
+      logger.error("Error registering visitor", err);
+      setError(getApiErrorMessage(err, t("auth.errors.registerFailed", "Falha ao registrar.")));
     } finally {
       setIsSubmitting(false);
     }
@@ -440,7 +490,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
             <p style={{ color: "#c9b58c", fontSize: "0.9rem" }}>
               {t("auth.register.hasAccount")}
               <span
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(safeRedirect ? `/login?redirect=${encodeURIComponent(safeRedirect)}` : "/login")}
                 style={{
                   color: "var(--accent-primary)",
                   cursor: "pointer",
@@ -506,3 +556,4 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
     </div>
   );
 };
+

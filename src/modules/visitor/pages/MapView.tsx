@@ -1,13 +1,57 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { MuseumMap } from "../components/MuseumMap";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Map, MapPin, Compass, Search, Filter } from "lucide-react";
+import { Map, MapPin, Compass } from "lucide-react";
 import { motion } from "framer-motion";
 import "./MapView.css";
+type MapSettings = {
+  outdoorCenter: [number, number];
+  indoorImageUrl?: string;
+  nome?: string;
+};
+
+type SettingsResponse = {
+  lat?: number | null;
+  latitude?: number | null;
+  lng?: number | null;
+  longitude?: number | null;
+  plantaUrl?: string | null;
+  fotoMapaUrl?: string | null;
+  mapImageUrl?: string | null;
+  nome?: string | null;
+  name?: string | null;
+};
+
+type WorkMapItem = {
+  id: string;
+  title?: string | null;
+  artist?: string | null;
+  room?: string | null;
+  floor?: string | null;
+  lat?: number | null;
+  latitude?: number | null;
+  lng?: number | null;
+  longitude?: number | null;
+  vestigeActive?: boolean | null;
+};
+
+type WorksResponse = WorkMapItem[] | {
+  data?: WorkMapItem[];
+};
+
+type MapPoi = {
+  id: string;
+  title: string;
+  lat: number;
+  lng: number;
+  description: string;
+  type?: string;
+  vestigeActive?: boolean;
+};
 
 export const MapView: React.FC = () => {
   const { t } = useTranslation();
@@ -15,13 +59,9 @@ export const MapView: React.FC = () => {
   const initialWorkId = searchParams.get("workId");
   const { tenantId, equipamentoId } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [mapSettings, setMapSettings] = useState<{
-    outdoorCenter: [number, number];
-    indoorImageUrl?: string;
-    nome?: string;
-  } | null>(null);
+  const [mapSettings, setMapSettings] = useState<MapSettings | null>(null);
 
-  const [pois, setPois] = useState<{ id: string; title: string; lat: number; lng: number; description: string; type?: string; vestigeActive?: boolean }[]>([]);
+  const [pois, setPois] = useState<MapPoi[]>([]);
 
   const fetchMapData = useCallback(async () => {
     if (!tenantId) {
@@ -32,34 +72,41 @@ export const MapView: React.FC = () => {
     setLoading(true);
     try {
       const [settingsRes, worksRes] = await Promise.all([
-        equipamentoId ? api.get(`/equipamentos/public/${equipamentoId}`) : api.get(`/tenants/${tenantId}/settings`),
-        api.get(`/works`, { params: { tenantId, equipamentoId } })
+        equipamentoId ? api.get<SettingsResponse>(`/equipamentos/public/${equipamentoId}`) : api.get<SettingsResponse>(`/tenants/${tenantId}/settings`),
+        api.get<WorksResponse>(`/works`, { params: { tenantId, equipamentoId } })
       ]);
 
       const s = settingsRes.data;
       const works = Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []);
 
       setMapSettings({
-        outdoorCenter: [s.lat || s.latitude || -20.385574, s.lng || s.longitude || -43.503578],
-        indoorImageUrl: s.plantaUrl || s.fotoMapaUrl || s.mapImageUrl,
-        nome: s.nome || s.name
+        outdoorCenter: [s.lat ?? s.latitude ?? -20.385574, s.lng ?? s.longitude ?? -43.503578],
+        indoorImageUrl: s.plantaUrl || s.fotoMapaUrl || s.mapImageUrl || undefined,
+        nome: s.nome || s.name || undefined
       });
 
-      setPois(works.map((w: unknown) => ({
-        id: w.id,
-        title: w.title,
-        lat: w.lat || w.latitude,
-        lng: w.lng || w.longitude,
-        type: w.vestigeActive ? 'vestige' : 'work',
-        vestigeActive: w.vestigeActive,
-        description: w.vestigeActive ? t('vestige.admin.active', 'Vestígio Ativo') : (w.room ? `${w.room} • ${w.floor || ""}` : w.artist || t('common.poi', 'Ponto de Interesse'))
-      })));
-    } catch (err: unknown) {
+      setPois(works.flatMap((w): MapPoi[] => {
+        const lat = w.lat ?? w.latitude;
+        const lng = w.lng ?? w.longitude;
+
+        if (typeof lat !== "number" || typeof lng !== "number") return [];
+
+        return [{
+          id: w.id,
+          title: w.title || t('common.poi', 'Ponto de Interesse'),
+          lat,
+          lng,
+          type: w.vestigeActive ? 'vestige' : 'work',
+          vestigeActive: Boolean(w.vestigeActive),
+          description: w.vestigeActive ? t('vestige.admin.active', 'Vestígio Ativo') : (w.room ? `${w.room} - ${w.floor || ""}` : w.artist || t('common.poi', 'Ponto de Interesse'))
+        }];
+      }));
+    } catch (err) {
       logger.error("Erro ao carregar dados do mapa", err);
     } finally {
       setLoading(false);
     }
-  }, [tenantId, equipamentoId]);
+  }, [tenantId, equipamentoId, t]);
 
   useEffect(() => {
     fetchMapData();
@@ -99,16 +146,6 @@ export const MapView: React.FC = () => {
              Navegue pelos andares e encontre obras neste equipamento.
            </p>
         </div>
-
-        <div className="flex gap-2">
-            <button className="h-12 w-12 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-all">
-               <Search size={20} />
-            </button>
-            <button className="h-12 px-6 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3 text-sm font-bold text-slate-400 hover:text-white transition-all">
-               <Filter size={18} />
-               Filtros
-            </button>
-        </div>
       </header>
 
       <div className="map-view-map-wrapper relative group">
@@ -128,16 +165,15 @@ export const MapView: React.FC = () => {
             initialPoiId={initialWorkId}
           />
         )}
-        
-        {/* MAP OVERLAY UI */}
+
         <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
            <div className="bg-black/60 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-4 text-white shadow-2xl">
               <div className="h-10 w-10 bg-gold-400/20 border border-gold-400/40 rounded-full flex items-center justify-center text-gold-400">
                  <MapPin size={18} />
               </div>
               <div>
-                 <span className="block text-[10px] uppercase font-black tracking-widest text-gold-400/80">Localização Atual</span>
-                 <span className="text-sm font-bold">Galeria das Américas, Piso 2</span>
+                 <span className="block text-[10px] uppercase font-black tracking-widest text-gold-400/80">Pontos mapeados</span>
+                 <span className="text-sm font-bold">{pois.length} registros com coordenadas</span>
               </div>
            </div>
         </div>
@@ -147,19 +183,20 @@ export const MapView: React.FC = () => {
         <div className="legend-card">
            <h3 className="text-white"><Compass className="text-gold-400" size={18} /> Pontos de Interesse</h3>
            <ul className="legend-list">
-              <li className="legend-item"><div className="legend-icon" /> Obras de Arte Destacadas</li>
-              <li className="legend-item"><div className="legend-icon !bg-blue-400 !shadow-blue-400" /> Áreas de Acessibilidade</li>
-              <li className="legend-item"><div className="legend-icon !bg-amber-400 !shadow-amber-400" /> Totens de Realidade Aumentada</li>
+              <li className="legend-item"><div className="legend-icon" /> Obras com coordenadas cadastradas</li>
+              <li className="legend-item"><div className="legend-icon !bg-amber-400 !shadow-amber-400" /> Vestígios ativos</li>
            </ul>
         </div>
         
         <div className="legend-card">
-           <h3 className="text-white"><Map className="text-gold-400" size={18} /> Informações de Prédio</h3>
+           <h3 className="text-white"><Map className="text-gold-400" size={18} /> Informações do Mapa</h3>
            <p className="text-sm text-slate-400 leading-relaxed">
-             Nosso sistema de navegação indoor utiliza sensores Bluetooth para precisão milimétrica. Siga a linha azul no mapa para rotas de trilhas guiadas.
+             Os pontos exibidos vêm do cadastro de obras e vestígios com latitude e longitude válidas. A planta indoor aparece quando estiver cadastrada no equipamento.
            </p>
         </div>
       </div>
     </motion.div>
   );
 };
+
+

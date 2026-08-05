@@ -18,7 +18,7 @@ import {
 import { motion } from "framer-motion";
 
 export const MunicipalCulturalGaps: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState("");
 
     const gaps = [

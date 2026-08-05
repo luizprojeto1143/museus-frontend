@@ -3,31 +3,14 @@ import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
-import { 
-  Clock, 
-  CheckCircle2, 
-  XCircle, 
-  AlertCircle, 
-  Ear, 
-  Volume2, 
-  Type, 
-  HandMetal, 
-  BookOpen, 
-  Eye,
-  History,
-  ShieldCheck,
-  User,
-  ExternalLink,
-  ChevronRight,
-  Accessibility
-} from "lucide-react";
+import { Clock, CheckCircle2, XCircle, AlertCircle, Volume2, Type, HandMetal, BookOpen, Eye, History, ShieldCheck, User, ExternalLink, ChevronRight, Accessibility } from "lucide-react";
 import { 
   Card, 
   Badge, 
   AnimateIn,
   Button 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 type TimelineItem = {
     id: string;
@@ -65,7 +48,7 @@ function ActivityIcon() {
 }
 
 const AccessibilityTimeline: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [loading, setLoading] = useState(true);
 

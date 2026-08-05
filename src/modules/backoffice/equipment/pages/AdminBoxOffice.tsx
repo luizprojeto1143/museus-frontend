@@ -1,36 +1,79 @@
 import React, { useState, useEffect } from "react";
-import { 
-    Ticket, Users, CreditCard, Banknote, QrCode, 
-    Printer, Search, ShoppingCart, Trash2, 
-    ChevronRight, CheckCircle2, Info, Sparkles, X
-} from "lucide-react";
+import { Ticket, Users, CreditCard, Banknote, QrCode, Printer, ShoppingCart, Trash2, ChevronRight, CheckCircle2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../../../components/ui";
 import { toast } from "react-hot-toast";
 
 import { api } from "../../../../api/client";
 import { theaterApi } from "../../../../api/theater";
+import { isAxiosError } from "axios";
+
+interface BoxOfficeShift {
+    id: string;
+    openedValue: number | string;
+}
+
+interface POSSession {
+    id: string;
+    title: string;
+    startDate: string;
+    location?: string | null;
+    price?: number | null;
+    isTheaterSession?: boolean;
+    space?: {
+        name?: string | null;
+    } | null;
+}
+
+interface SeatReservation {
+    seatId: string;
+    status: "SOLD" | "RESERVED" | string;
+}
+
+interface TheaterSeatsResponse {
+    layout?: unknown;
+    reservations?: SeatReservation[];
+}
+
+interface TicketOption {
+    id: string;
+    name: string;
+    type: "FREE" | "PAID" | string;
+    price: number;
+}
+
+interface ApiErrorResponse {
+    message?: string;
+    error?: string;
+}
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 export const AdminBoxOffice: React.FC = () => {
     const [step, setStep] = useState<"SESSION" | "SELECTION" | "PAYMENT" | "SUCCESS">("SESSION");
     const [loading, setLoading] = useState(false);
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<POSSession[]>([]);
     
     // Selection state
-    const [selectedEvent, setSelectedEvent] = useState<unknown>(null);
+    const [selectedEvent, setSelectedEvent] = useState<POSSession | null>(null);
     
     // Theater specific state
-    const [seatsLayout, setSeatsLayout] = useState<unknown>(null);
-    const [reservations, setReservations] = useState<any[]>([]);
+    const [_seatsLayout, setSeatsLayout] = useState<unknown>(null);
+    const [reservations, setReservations] = useState<SeatReservation[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
     
     // General Event specific state
-    const [tickets, setTickets] = useState<any[]>([]);
-    const [selectedTicket, setSelectedTicket] = useState<unknown>(null);
+    const [tickets, setTickets] = useState<TicketOption[]>([]);
+    const [selectedTicket, setSelectedTicket] = useState<TicketOption | null>(null);
     const [ticketQuantity, setTicketQuantity] = useState<number>(1);
 
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
-    const [activeShift, setActiveShift] = useState<any>(null);
+    const [activeShift, setActiveShift] = useState<BoxOfficeShift | null>(null);
     const [openingVal, setOpeningVal] = useState<number>(0);
     const [closingVal, setClosingVal] = useState<number>(0);
     const [shiftNotes, setShiftNotes] = useState<string>("");
@@ -40,7 +83,7 @@ export const AdminBoxOffice: React.FC = () => {
     const fetchCurrentShift = async () => {
         setCheckingShift(true);
         try {
-            const res = await api.get("/theater/box-office/current");
+            const res = await api.get<BoxOfficeShift | null>("/theater/box-office/current");
             setActiveShift(res.data);
         } catch (err) {
             console.error("Erro ao carregar caixa ativo", err);
@@ -53,9 +96,9 @@ export const AdminBoxOffice: React.FC = () => {
         const fetchEvents = async () => {
             setLoading(true);
             try {
-                const res = await api.get("/events/pos/sessions");
+                const res = await api.get<POSSession[]>("/events/pos/sessions");
                 setEvents(res.data);
-            } catch (err) {
+            } catch (_err) {
                 toast.error("Erro ao carregar eventos do PDV");
             } finally {
                 setLoading(false);
@@ -67,21 +110,21 @@ export const AdminBoxOffice: React.FC = () => {
 
     const handleOpenShift = async () => {
         try {
-            const res = await api.post("/theater/box-office/open", {
+            const res = await api.post<BoxOfficeShift>("/theater/box-office/open", {
                 openedValue: Number(openingVal),
                 notes: shiftNotes
             });
             setActiveShift(res.data);
             toast.success("Caixa aberto com sucesso!");
             setShiftNotes("");
-        } catch (err: any) {
-            toast.error(err.response?.data?.message || "Erro ao abrir caixa.");
+        } catch (err: unknown) {
+            toast.error(getApiErrorMessage(err, "Erro ao abrir caixa."));
         }
     };
 
     const handleCloseShift = async () => {
         try {
-            const res = await api.post("/theater/box-office/close", {
+            const _res = await api.post("/theater/box-office/close", {
                 closedValue: Number(closingVal),
                 notes: shiftNotes
             });
@@ -90,12 +133,12 @@ export const AdminBoxOffice: React.FC = () => {
             toast.success(`Caixa fechado com sucesso!`);
             setShiftNotes("");
             setClosingVal(0);
-        } catch (err: any) {
-            toast.error(err.response?.data?.message || "Erro ao fechar caixa.");
+        } catch (err: unknown) {
+            toast.error(getApiErrorMessage(err, "Erro ao fechar caixa."));
         }
     };
 
-    const handleSelectEvent = async (event: unknown) => {
+    const handleSelectEvent = async (event: POSSession) => {
         setSelectedEvent(event);
         setSelectedSeats([]);
         setSelectedTicket(null);
@@ -104,15 +147,15 @@ export const AdminBoxOffice: React.FC = () => {
 
         try {
             if (event.isTheaterSession) {
-                const res = await theaterApi.getSessionSeats(event.id);
+                const res = await theaterApi.getSessionSeats(event.id) as { data: TheaterSeatsResponse };
                 setSeatsLayout(res.data.layout);
-                setReservations(res.data.reservations);
+                setReservations(res.data.reservations || []);
             } else {
-                const res = await api.get(`/tickets/events/${event.id}/tickets`);
+                const res = await api.get<TicketOption[]>(`/tickets/events/${event.id}/tickets`);
                 setTickets(res.data);
             }
             setStep("SELECTION");
-        } catch (err) {
+        } catch (_err) {
             toast.error("Erro ao carregar mapa de assentos/ingressos");
         } finally {
             setLoading(false);
@@ -131,12 +174,14 @@ export const AdminBoxOffice: React.FC = () => {
         if (!paymentMethod) return;
         setLoading(true);
         try {
+            if (!selectedEvent) return;
             if (selectedEvent.isTheaterSession) {
                 await theaterApi.sellSeats(selectedEvent.id, {
                     seatIds: selectedSeats,
                     paymentMethod
                 });
             } else {
+                if (!selectedTicket) return;
                 await api.post(`/events/${selectedEvent.id}/pos-sell`, {
                     ticketId: selectedTicket.id,
                     quantity: ticketQuantity,
@@ -146,7 +191,7 @@ export const AdminBoxOffice: React.FC = () => {
             setStep("SUCCESS");
             toast.success("Venda realizada com sucesso!");
         } catch (err: unknown) {
-            toast.error(err.response?.data?.message || "Erro ao finalizar venda");
+            toast.error(getApiErrorMessage(err, "Erro ao finalizar venda"));
         } finally {
             setLoading(false);
         }

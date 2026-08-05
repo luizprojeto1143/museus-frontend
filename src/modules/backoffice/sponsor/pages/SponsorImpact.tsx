@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
-import { BarChart3, Eye, MousePointerClick, QrCode, Ticket, CheckSquare } from "lucide-react";
+import { Eye, MousePointerClick, QrCode, Ticket } from "lucide-react";
 
 interface ImpactStats {
   views: number;
@@ -32,7 +32,7 @@ export const SponsorImpact: React.FC = () => {
     try {
       const res = await api.get("/sponsor-portal/dashboard");
       setStats(res.data);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar dados de impacto real.");
     } finally {
       setLoading(false);

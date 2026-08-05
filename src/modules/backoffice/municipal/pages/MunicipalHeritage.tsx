@@ -11,16 +11,11 @@ import {
     Hammer,
     ArrowRight
 } from "lucide-react";
-import { 
-    Button, 
-    Badge, 
-    AnimateIn, 
-    Card 
-} from "@/components/ui";
+import { Button, AnimateIn, Card } from "@/components/ui";
 import { motion } from "framer-motion";
 
 export const MunicipalHeritage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState("");
 
     // Mock data for Heritage

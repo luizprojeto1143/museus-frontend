@@ -62,6 +62,99 @@
   color: #d4af37;
 }
 
+.passport-cover-showcase {
+  display: grid;
+  grid-template-columns: minmax(160px, 260px) 1fr;
+  gap: 28px;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(255,255,255,0.025));
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 34px;
+  padding: 22px;
+  margin-bottom: 32px;
+  overflow: hidden;
+  position: relative;
+}
+
+.passport-cover-showcase::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background: radial-gradient(circle at 20% 15%, rgba(212, 175, 55, 0.18), transparent 38%);
+  pointer-events: none;
+}
+
+.passport-cover-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 28px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(212, 175, 55, 0.25);
+  background: #111;
+}
+
+.passport-cover-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.passport-cover-copy {
+  position: relative;
+  max-width: 640px;
+}
+
+.passport-cover-copy span {
+  color: #d4af37;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.passport-cover-copy h2 {
+  margin: 10px 0;
+  color: white;
+  font-size: clamp(28px, 5vw, 54px);
+  line-height: 0.95;
+  font-weight: 950;
+  font-style: italic;
+}
+
+.passport-cover-copy p {
+  margin: 0;
+  max-width: 520px;
+  color: rgba(255,255,255,0.58);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.passport-cover-stats {
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto;
+  gap: 8px 10px;
+  align-items: end;
+  margin-top: 20px;
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.24);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+}
+
+.passport-cover-stats strong {
+  color: white;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.passport-cover-stats small {
+  color: rgba(255,255,255,0.42);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 /* NAVIGATION */
 .passport-navigation {
   display: flex;
@@ -93,6 +186,18 @@
   color: black;
   border-radius: 14px;
   box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+@media (max-width: 720px) {
+  .passport-cover-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .passport-cover-frame {
+    max-width: 220px;
+    margin: 0 auto;
+    width: 100%;
+  }
 }
 
 /* CONTENT */
@@ -178,6 +283,213 @@
 .s-order {
   font-size: 9px;
   color: rgba(255,255,255,0.4);
+  font-weight: 800;
+}
+
+.passport-place-page {
+  background:
+    linear-gradient(135deg, rgba(251, 246, 235, 0.98), rgba(230, 214, 178, 0.94)),
+    radial-gradient(circle at 15% 15%, rgba(212, 175, 55, 0.22), transparent 34%);
+  color: #24180d;
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  border-radius: 28px;
+  padding: 14px;
+  margin-bottom: 34px;
+  box-shadow: 0 26px 70px rgba(0,0,0,0.38);
+  overflow: hidden;
+}
+
+.place-page-hero {
+  position: relative;
+  min-height: 260px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #20160f;
+}
+
+.place-page-hero > img {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+.place-page-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.78));
+}
+
+.place-page-title {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
+  color: white;
+}
+
+.place-page-title img {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: rgba(255,255,255,0.9);
+  padding: 6px;
+  margin-bottom: 12px;
+}
+
+.place-page-title span {
+  display: inline-flex;
+  color: #f1d681;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.place-page-title h3 {
+  margin: 6px 0 4px;
+  font-size: clamp(28px, 5vw, 52px);
+  line-height: 0.95;
+  font-weight: 950;
+  font-style: italic;
+}
+
+.place-page-title p {
+  margin: 0;
+  color: rgba(255,255,255,0.72);
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.place-page-body {
+  padding: 22px 8px 8px;
+}
+
+.place-page-summary {
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto;
+  gap: 6px 10px;
+  align-items: end;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(72, 43, 16, 0.08);
+  border: 1px solid rgba(72, 43, 16, 0.1);
+}
+
+.place-page-summary strong {
+  font-size: 24px;
+  line-height: 1;
+  color: #7a4b1f;
+}
+
+.place-page-summary small {
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(36, 24, 13, 0.55);
+  text-transform: uppercase;
+}
+
+.passport-place-page .stamp-frame {
+  background: #f8ecd3;
+  border-color: rgba(122, 75, 31, 0.22);
+}
+
+.passport-place-page .s-title {
+  color: #24180d;
+}
+
+.passport-place-page .s-order {
+  color: rgba(36, 24, 13, 0.48);
+}
+
+/* FRAGMENTS */
+.fragments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.fragment-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 24px;
+  padding: 16px;
+  min-height: 280px;
+}
+
+.fragment-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 0%, rgba(212, 175, 55, 0.22), transparent 45%);
+  pointer-events: none;
+}
+
+.fragment-card.rare { border-color: rgba(96, 165, 250, 0.32); }
+.fragment-card.epic { border-color: rgba(167, 139, 250, 0.36); }
+.fragment-card.legendary { border-color: rgba(212, 175, 55, 0.48); box-shadow: 0 18px 40px rgba(212, 175, 55, 0.12); }
+
+.fragment-image {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4af37;
+}
+
+.fragment-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fragment-info {
+  position: relative;
+  padding-top: 14px;
+}
+
+.fragment-rarity {
+  display: inline-flex;
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.fragment-info h3 {
+  margin: 10px 0 4px;
+  color: white;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.fragment-info p {
+  margin: 0 0 8px;
+  color: rgba(255,255,255,0.45);
+  font-size: 11px;
+}
+
+.fragment-info small {
+  color: rgba(255,255,255,0.35);
+  font-size: 10px;
   font-weight: 800;
 }
 
@@ -268,7 +580,7 @@
 
 .stats-mini-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 

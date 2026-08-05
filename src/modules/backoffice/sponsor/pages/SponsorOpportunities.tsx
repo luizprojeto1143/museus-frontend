@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
-import { Handshake, Landmark, FileText, CheckCircle } from "lucide-react";
+import { Handshake } from "lucide-react";
 import { Button } from "../../../../components/ui";
+
+const sponsorOpportunitySchema = z.object({
+  sponsorName: z.string().trim().min(2, "Informe o nome da marca."),
+  sponsorCNPJ: z.string().trim().min(14, "Informe um CNPJ valido."),
+  sponsorEmail: z.string().trim().email("Informe um e-mail valido."),
+  sponsorWebsite: z.string().trim().url("Informe uma URL valida.").or(z.literal(""))
+});
 
 interface Opportunity {
   id: string;
@@ -15,6 +24,10 @@ interface Opportunity {
   currency: string;
   startsAt: string | null;
   endsAt: string | null;
+}
+
+interface ApplyResponse {
+  checkoutUrl?: string | null;
 }
 
 export const SponsorOpportunities: React.FC = () => {
@@ -36,9 +49,9 @@ export const SponsorOpportunities: React.FC = () => {
   const fetchOpportunities = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/sponsor-portal/opportunities");
+      const res = await api.get<Opportunity[]>("/sponsor-portal/opportunities");
       setOpportunities(res.data);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar oportunidades de patrocínio");
     } finally {
       setLoading(false);
@@ -49,18 +62,22 @@ export const SponsorOpportunities: React.FC = () => {
     e.preventDefault();
     if (!selectedOpp) return;
 
-    if (!sponsorName || !sponsorCNPJ || !sponsorEmail) {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+    const parsed = sponsorOpportunitySchema.safeParse({
+      sponsorName,
+      sponsorCNPJ,
+      sponsorEmail,
+      sponsorWebsite
+    });
+
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message || "Por favor, revise os dados do patrocinador.");
       return;
     }
 
     setSubmitting(true);
     try {
-      const res = await api.post(`/sponsor-portal/opportunities/${selectedOpp.id}/apply`, {
-        sponsorName,
-        sponsorCNPJ,
-        sponsorEmail,
-        sponsorWebsite
+      const res = await api.post<ApplyResponse>(`/sponsor-portal/opportunities/${selectedOpp.id}/apply`, {
+        ...parsed.data
       });
 
       if (res.data.checkoutUrl) {
@@ -69,8 +86,11 @@ export const SponsorOpportunities: React.FC = () => {
       } else {
         toast.error("Não foi possível gerar a sessão de checkout.");
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || "Erro ao solicitar patrocínio.");
+    } catch (err) {
+      const message = isAxiosError<{ error?: string }>(err)
+        ? err.response?.data?.error
+        : undefined;
+      toast.error(message || "Erro ao solicitar patrocínio.");
     } finally {
       setSubmitting(false);
     }
@@ -196,3 +216,4 @@ export const SponsorOpportunities: React.FC = () => {
     </div>
   );
 };
+

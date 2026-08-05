@@ -8,15 +8,24 @@ import './SmartRouteGenerator.css';
 
 import { api } from '../../api/client';
 
+type RouteBudget = 'LOW' | 'MEDIUM' | 'HIGH';
+
+interface SmartRouteResponse {
+  id?: string;
+  stops?: unknown[];
+}
+
+const budgetOptions: RouteBudget[] = ['LOW', 'MEDIUM', 'HIGH'];
+
 export const SmartRouteGenerator: React.FC = () => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams<{ tenantSlug: string }>();
-  const [step, setStep] = useState(1);
+  const [_step, _setStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // States
-  const [timeAvailable, setTimeAvailable] = useState('120'); // in minutes
-  const [budget, setBudget] = useState('MEDIUM');
+  const [timeAvailable, setTimeAvailable] = useState(120);
+  const [budget, setBudget] = useState<RouteBudget>('MEDIUM');
   const [interests, setInterests] = useState<string[]>([]);
 
   const handleInterestToggle = (interest: string) => {
@@ -28,19 +37,20 @@ export const SmartRouteGenerator: React.FC = () => {
   };
 
   const handleGenerate = async () => {
+    if (!tenantSlug) return;
     setIsGenerating(true);
     try {
-      const response = await api.post(`/${tenantSlug}/roteiro/ai-generate`, {
-        timeAvailable: parseInt(timeAvailable),
+      const response = await api.post<SmartRouteResponse>(`/${tenantSlug}/roteiro/ai-generate`, {
+        timeAvailable,
         budget,
         interests
       });
       logger.info("Roteiro Gerado:", response.data);
-      setIsGenerating(false);
       navigate(`/${tenantSlug}/roteiro/map`);
     } catch (err: unknown) {
+      logger.error("Error generating smart route", err);
+    } finally {
       setIsGenerating(false);
-      logger.error(err);
     }
   };
 
@@ -87,11 +97,11 @@ export const SmartRouteGenerator: React.FC = () => {
                 max="480" 
                 step="30"
                 value={timeAvailable} 
-                onChange={e => setTimeAvailable(e.target.value)} 
+                onChange={e => setTimeAvailable(Number(e.target.value))} 
               />
               <div className="range-labels">
                 <span>1h</span>
-                <span className="current-val">{parseInt(timeAvailable) / 60}h</span>
+                <span className="current-val">{timeAvailable / 60}h</span>
                 <span>8h</span>
               </div>
             </div>
@@ -99,7 +109,7 @@ export const SmartRouteGenerator: React.FC = () => {
             <div className="form-section">
               <label><Wallet size={16} /> Orçamento Planejado</label>
               <div className="budget-selector">
-                {['LOW', 'MEDIUM', 'HIGH'].map(b => (
+                {budgetOptions.map(b => (
                   <button 
                     key={b}
                     className={`budget-btn ${budget === b ? 'active' : ''}`}

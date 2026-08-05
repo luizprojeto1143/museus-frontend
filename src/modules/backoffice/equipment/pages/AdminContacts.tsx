@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../../api/client";
 import { logger } from "@/utils/logger";
 
@@ -17,6 +17,8 @@ interface ContactMessage {
     createdAt: string;
 }
 
+type ContactListResponse = ContactMessage[] | { data?: ContactMessage[] };
+
 export const AdminContacts: React.FC = () => {
     const [messages, setMessages] = useState<ContactMessage[]>([]);
     const [loading, setLoading] = useState(true);
@@ -24,8 +26,8 @@ export const AdminContacts: React.FC = () => {
 
     const fetchMessages = useCallback(async () => {
         try {
-            const res = await api.get("/contact");
-            setMessages(res.data);
+            const res = await api.get<ContactListResponse>("/contact");
+            setMessages(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao carregar mensagens");
@@ -43,7 +45,7 @@ export const AdminContacts: React.FC = () => {
             await api.patch(`/contact/${id}`, { status });
             setMessages(prev => prev.map(m => m.id === id ? { ...m, status } : m));
             toast.success(status === "READ" ? "Marcado como lido" : "Arquivado");
-        } catch (error) {
+        } catch (_error) {
             toast.error("Erro ao atualizar status");
         }
     };

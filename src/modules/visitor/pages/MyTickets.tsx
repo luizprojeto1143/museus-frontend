@@ -1,10 +1,10 @@
 import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
-import { api } from "../../../api/client";
+import { api, baseURL } from "../../../api/client";
 import { QRCodeSVG } from "qrcode.react";
 import { Ticket, Calendar, MapPin, QrCode, Clock, Info, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Badge, Button, Card, PageLoader } from "@/components/ui";
+import { Badge, Button, PageLoader } from "@/components/ui";
 import { useAuth } from "../../auth/AuthContext";
 import "./CulturalAgenda.css"; // Reuse some styles
 
@@ -31,14 +31,11 @@ interface Registration {
 export const MyTickets: React.FC = () => {
   const { isGuest } = useAuth();
   const [registrations, setRegistrations] = useState<Registration[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isGuest);
   const [selectedTicket, setSelectedTicket] = useState<Registration | null>(null);
 
   useEffect(() => {
-    if (isGuest) {
-      setLoading(false);
-      return;
-    }
+    if (isGuest) return;
     api.get("/registrations/my-registrations")
       .then(res => setRegistrations(res.data))
       .catch(err => logger.error("Error fetching tickets", err))
@@ -231,13 +228,11 @@ const TicketCard: React.FC<{ registration: Registration, onShowQR: () => void }>
             className="btn-qr !bg-black border border-white/10 hover:bg-gray-900" 
             onClick={(e) => {
                e.stopPropagation();
-               // Call the backend endpoint to download the .pkpass file
-               const baseURL = import.meta.env.VITE_API_URL || "https://museus-backend-1.onrender.com";
                window.open(`${baseURL.replace(/\/$/, "")}/registrations/${registration.code}/wallet/apple`, '_blank');
             }}
-            title="Adicionar à Carteira da Apple"
+            title="Adicionar a Carteira da Apple"
           >
-            🍎 Wallet
+            Wallet
           </button>
 
           <button className="btn-qr" onClick={onShowQR}>

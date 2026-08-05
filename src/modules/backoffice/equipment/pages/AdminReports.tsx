@@ -29,6 +29,35 @@ interface ReportData {
     };
 }
 
+interface NoticeReportItem {
+    status?: string;
+    totalBudget?: number | string | null;
+}
+
+interface ProjectReportItem {
+    status?: string;
+    requestedBudget?: number | string | null;
+    approvedBudget?: number | string | null;
+    actualAudience?: number | null;
+    expectedAudience?: number | null;
+}
+
+interface AccessibilityAggregateItem {
+    serviceType?: string;
+    status?: string;
+    _count?: number;
+}
+
+interface AccessibilityDashboardResponse {
+    byService?: AccessibilityAggregateItem[];
+    byStatus?: AccessibilityAggregateItem[];
+}
+
+interface ProviderReportItem {
+    active?: boolean;
+    completedJobs?: number | null;
+}
+
 export const AdminReports: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
@@ -46,10 +75,10 @@ export const AdminReports: React.FC = () => {
 
         // Fetch all data in parallel
         Promise.all([
-            api.get("/notices", { params: { tenantId } }).catch(() => ({ data: [] })),
-            api.get("/projects", { params: { tenantId } }).catch(() => ({ data: [] })),
-            api.get("/accessibility-execution/dashboard", { params: { tenantId } }).catch(() => ({ data: null })),
-            api.get("/providers", { params: { tenantId } }).catch(() => ({ data: [] }))
+            api.get<NoticeReportItem[]>("/notices", { params: { tenantId } }).catch(() => ({ data: [] })),
+            api.get<ProjectReportItem[]>("/projects", { params: { tenantId } }).catch(() => ({ data: [] })),
+            api.get<AccessibilityDashboardResponse | null>("/accessibility-execution/dashboard", { params: { tenantId } }).catch(() => ({ data: null })),
+            api.get<ProviderReportItem[]>("/providers", { params: { tenantId } }).catch(() => ({ data: [] }))
         ]).then(([noticesRes, projectsRes, accessibilityRes, providersRes]) => {
             const notices = Array.isArray(noticesRes.data) ? noticesRes.data : [];
             const projects = Array.isArray(projectsRes.data) ? projectsRes.data : [];
@@ -59,9 +88,10 @@ export const AdminReports: React.FC = () => {
             // Process notices
             const noticesByStatus: Record<string, number> = {};
             let totalBudget = 0;
-            notices.forEach((n: unknown) => {
-                noticesByStatus[n.status] = (noticesByStatus[n.status] || 0) + 1;
-                totalBudget += parseFloat(n.totalBudget) || 0;
+            notices.forEach((n) => {
+                const status = n.status || "UNKNOWN";
+                noticesByStatus[status] = (noticesByStatus[status] || 0) + 1;
+                totalBudget += Number(n.totalBudget || 0);
             });
 
             // Process projects
@@ -69,10 +99,11 @@ export const AdminReports: React.FC = () => {
             let totalRequested = 0;
             let totalApproved = 0;
             let totalAudience = 0;
-            projects.forEach((p: unknown) => {
-                projectsByStatus[p.status] = (projectsByStatus[p.status] || 0) + 1;
-                totalRequested += parseFloat(p.requestedBudget) || 0;
-                totalApproved += parseFloat(p.approvedBudget) || 0;
+            projects.forEach((p) => {
+                const status = p.status || "UNKNOWN";
+                projectsByStatus[status] = (projectsByStatus[status] || 0) + 1;
+                totalRequested += Number(p.requestedBudget || 0);
+                totalApproved += Number(p.approvedBudget || 0);
                 totalAudience += p.actualAudience || p.expectedAudience || 0;
             });
 
@@ -80,19 +111,19 @@ export const AdminReports: React.FC = () => {
             const accessibilityByService: Record<string, number> = {};
             const accessibilityByStatus: Record<string, number> = {};
             if (accessibilityData?.byService) {
-                accessibilityData.byService.forEach((s: unknown) => {
-                    accessibilityByService[s.serviceType] = s._count;
+                accessibilityData.byService.forEach((s) => {
+                    if (s.serviceType) accessibilityByService[s.serviceType] = s._count || 0;
                 });
             }
             if (accessibilityData?.byStatus) {
-                accessibilityData.byStatus.forEach((s: unknown) => {
-                    accessibilityByStatus[s.status] = s._count;
+                accessibilityData.byStatus.forEach((s) => {
+                    if (s.status) accessibilityByStatus[s.status] = s._count || 0;
                 });
             }
 
             // Process providers
-            const activeProviders = providers.filter((p: unknown) => p.active).length;
-            const totalJobs = providers.reduce((acc: number, p: unknown) => acc + (p.completedJobs || 0), 0);
+            const activeProviders = providers.filter((p) => p.active).length;
+            const totalJobs = providers.reduce((acc: number, p) => acc + (p.completedJobs || 0), 0);
 
             setData({
                 notices: {

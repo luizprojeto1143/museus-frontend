@@ -1,26 +1,8 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { 
-    User, 
-    Mail, 
-    Phone, 
-    FileText, 
-    CheckCircle, 
-    Tag, 
-    Save, 
-    TrendingUp, 
-    Sparkles, 
-    ArrowUpRight, 
-    Camera, 
-    Eye, 
-    ShieldCheck, 
-    Award,
-    Briefcase,
-    MapPin,
-    Globe
-} from "lucide-react";
+import { FileText, Tag, Save, Sparkles, Camera, Eye, ShieldCheck, Award, MapPin, Globe } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { 
@@ -32,14 +14,39 @@ import {
     AnimateIn 
 } from "@/components/ui";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
+
+interface ProviderProfileData {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    document: string;
+    description: string;
+    services: string[];
+    bannerUrl: string;
+    avatarUrl: string;
+    completedJobs: number;
+    rating: number;
+    location: string;
+    website: string;
+}
+
+const ACCESSIBILITY_SERVICES = [
+    { value: "LIBRAS_INTERPRETATION", label: "LIBRAS" },
+    { value: "AUDIO_DESCRIPTION", label: "AUDIODESCRICAO" },
+    { value: "CAPTIONING", label: "LEGENDAGEM" },
+    { value: "BRAILLE", label: "BRAILLE" },
+    { value: "TACTILE_MODEL", label: "MODELO TATIL" },
+    { value: "EASY_READING", label: "LEITURA FACIL" },
+    { value: "OTHER", label: "OUTROS" }
+];
 
 export const ProviderProfile: React.FC = () => {
-    const { t } = useTranslation();
-    const { name: authName } = useAuth();
+    const { t: _t } = useTranslation();
+    const { name: _authName } = useAuth();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [profile, setProfile] = useState<unknown>({
+    const [profile, setProfile] = useState<ProviderProfileData>({
         id: "",
         name: "",
         email: "",
@@ -58,13 +65,13 @@ export const ProviderProfile: React.FC = () => {
     const fetchProfile = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/providers/me");
-            setProfile({
-                ...profile,
+            const res = await api.get<Partial<ProviderProfileData>>("/providers/me");
+            setProfile((currentProfile) => ({
+                ...currentProfile,
                 ...res.data,
-                completedJobs: res.data.completedJobs || 12, // Mock if null
-                rating: res.data.rating || 4.9
-            });
+                completedJobs: res.data.completedJobs ?? 0,
+                rating: res.data.rating ?? 0
+            }));
         } catch (err) {
             logger.error("Error fetching provider profile", err);
             toast.error("Erro ao carregar dados do perfil.");
@@ -85,7 +92,14 @@ export const ProviderProfile: React.FC = () => {
 
         try {
             setSaving(true);
-            await api.put(`/providers/${profile.id || 'me'}`, profile);
+            await api.put(`/providers/${profile.id}`, {
+                name: profile.name,
+                document: profile.document,
+                email: profile.email,
+                phone: profile.phone,
+                description: profile.description,
+                services: profile.services
+            });
             toast.success("Portfólio atualizado com sucesso!");
         } catch (err) {
             logger.error("Error saving profile", err);
@@ -137,7 +151,7 @@ export const ProviderProfile: React.FC = () => {
                 <div className="h-64 md:h-80 rounded-[48px] overflow-hidden relative group border border-white/5 shadow-2xl">
                     <div className="absolute inset-0 bg-gradient-to-t from-[#05050a] via-transparent to-transparent z-10 opacity-80" />
                     <img 
-                        src={profile.bannerUrl || "/placeholder-image.jpg"} 
+                        src={profile.bannerUrl || "/placeholder-image.svg"} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                         alt="Banner"
                     />
@@ -303,21 +317,21 @@ export const ProviderProfile: React.FC = () => {
                                 <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Especialidades Estratégicas</label>
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                {["LIBRAS", "AUDIODESCRICAO", "LEGENDA", "ADAPTACAO_FISICA", "CONSULTORIA", "TREINAMENTO"].map(service => (
+                                {ACCESSIBILITY_SERVICES.map((service) => (
                                     <button
-                                        key={service}
+                                        key={service.value}
                                         onClick={() => {
-                                            const services = profile.services.includes(service)
-                                                ? profile.services.filter((s: string) => s !== service)
-                                                : [...profile.services, service];
+                                            const services = profile.services.includes(service.value)
+                                                ? profile.services.filter((item) => item !== service.value)
+                                                : [...profile.services, service.value];
                                             setProfile({ ...profile, services });
                                         }}
-                                        className={`px-6 py-3 rounded-2xl text-[10px] font-black transition-all border duration-300 ${profile.services.includes(service)
+                                        className={`px-6 py-3 rounded-2xl text-[10px] font-black transition-all border duration-300 ${profile.services.includes(service.value)
                                                 ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-600/20'
                                                 : 'bg-white/5 border-white/5 text-slate-500 hover:border-indigo-500/30 hover:text-indigo-400'
                                             }`}
                                     >
-                                        {service.replace('_', ' ')}
+                                        {service.label}
                                     </button>
                                 ))}
                             </div>
@@ -350,3 +364,4 @@ function Star({ size, className }: { size: number, className?: string }) {
         </svg>
     );
 }
+

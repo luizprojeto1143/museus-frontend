@@ -1,25 +1,9 @@
-import {
-useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
-import { 
-    Settings, 
-    Loader2, 
-    Save, 
-    User as UserIcon, 
-    Lock, 
-    Bell, 
-    Shield, 
-    Trash2, 
-    Globe, 
-    Eye, 
-    Smartphone,
-    Activity,
-    ShieldCheck,
-    Key,
-    Mail, Briefcase, DollarSign,
-} from "lucide-react";
+import { isAxiosError } from "axios";
+import { User as UserIcon, Lock, Bell, Trash2, Smartphone, ShieldCheck, Key, Mail, Briefcase, DollarSign } from "lucide-react";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
 import { 
@@ -31,11 +15,24 @@ import {
 } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 
+type ProviderSettingsTab = 'account' | 'security' | 'notifications';
+
+type ApiErrorResponse = {
+    message?: string;
+};
+
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || fallback;
+    }
+    return fallback;
+};
+
 export const ProviderSettings: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [activeTab, setActiveTab] = useState<'account' | 'security' | 'notifications'>('account');
+    const [activeTab, setActiveTab] = useState<ProviderSettingsTab>('account');
 
     // Password State
     const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
@@ -62,14 +59,20 @@ export const ProviderSettings: React.FC = () => {
             toast.error("As senhas não coincidem.");
             return;
         }
+        if (!passwords.current || passwords.new.length < 6) {
+            toast.error("Informe a senha atual e uma nova senha com pelo menos 6 caracteres.");
+            return;
+        }
         try {
             setSaving(true);
-            // Simulating API call as we don't have the endpoint details here, but keeping it ready
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await api.put("/users/me/password", {
+                currentPassword: passwords.current,
+                newPassword: passwords.new
+            });
             toast.success("Senha atualizada com sucesso!");
             setPasswords({ current: "", new: "", confirm: "" });
-        } catch (error) {
-            toast.error("Erro ao atualizar senha.");
+        } catch (error: unknown) {
+            toast.error(getApiErrorMessage(error, "Erro ao atualizar senha."));
         } finally {
             setSaving(false);
         }
@@ -109,7 +112,7 @@ export const ProviderSettings: React.FC = () => {
                 ].map(tab => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as unknown)}
+                        onClick={() => setActiveTab(tab.id as ProviderSettingsTab)}
                         className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
                             activeTab === tab.id 
                             ? 'bg-indigo-600 text-white shadow-lg' 

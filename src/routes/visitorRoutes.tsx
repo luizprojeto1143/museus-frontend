@@ -12,7 +12,6 @@ const ScannerHub = React.lazy(() => import("../modules/visitor/pages/ScannerHub"
 const ScannerPage = React.lazy(() => import("../modules/visitor/pages/ScannerPage").then(module => ({ default: module.ScannerPage })));
 
 // Standard imports (converted to lazy)
-const Home = React.lazy(() => import("../modules/visitor/pages/Home").then(m => ({ default: m.Home })));
 const WorksList = React.lazy(() => import("../modules/visitor/pages/WorksList").then(m => ({ default: m.WorksList })));
 const WorkDetail = React.lazy(() => import("../modules/visitor/pages/WorkDetail").then(m => ({ default: m.WorkDetail })));
 const TrailsList = React.lazy(() => import("../modules/visitor/pages/TrailsList").then(m => ({ default: m.TrailsList })));
@@ -51,10 +50,7 @@ const FamilyTimeline = React.lazy(() => import("../modules/visitor/pages/FamilyT
 const CertificateList = React.lazy(() => import("../modules/visitor/pages/CertificateList").then(m => ({ default: m.CertificateList })));
 const VisitorWardrobe = React.lazy(() => import("../modules/visitor/pages/VisitorWardrobe").then(m => ({ default: m.VisitorWardrobe })));
 const SkinMarketplace = React.lazy(() => import("../modules/visitor/pages/SkinMarketplace").then(m => ({ default: m.SkinMarketplace })));
-const BadgeRequestPage = React.lazy(() => import("../modules/visitor/pages/BadgeRequestPage").then(m => ({ default: m.BadgeRequestPage })));
-const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTracking").then(m => ({ default: m.BadgeTracking })));
 const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
-const CityHub = React.lazy(() => import("../modules/visitor/pages/CityHub").then(m => ({ default: m.CityHub })));
 const CityDashboard = React.lazy(() => import("../modules/visitor/pages/CityDashboard").then(m => ({ default: m.CityDashboard })));
 const CityEquipments = React.lazy(() => import("../modules/visitor/pages/CityEquipments").then(m => ({ default: m.CityEquipments })));
 const VisitorHub = React.lazy(() => import("../modules/visitor/pages/VisitorHub").then(m => ({ default: m.VisitorHub })));
@@ -68,11 +64,11 @@ const SmartRouteGenerator = React.lazy(() => import("../modules/roteiro/SmartRou
 const CulturalPassport = React.lazy(() => import("../modules/roteiro/CulturalPassport").then(m => ({ default: m.CulturalPassport })));
 const ProviderDetail = React.lazy(() => import("../modules/roteiro/ProviderDetail").then(m => ({ default: m.ProviderDetail })));
 
-type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
+type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 /** Helper to wrap a visitor page with layout + role guard */
 const vr = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
-    <RequireRole allowed={["visitor", "admin", "master"]}>
+    <RequireRole allowed={["visitor", "admin", "equipment_admin", "equipment_collaborator", "master"]}>
         <VisitorLayout>
             <Component />
         </VisitorLayout>

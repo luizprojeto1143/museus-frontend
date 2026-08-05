@@ -7,22 +7,24 @@ interface WorkNoteProps {
     workId: string;
 }
 
+type VisitorNotes = Record<string, string>;
+
 export const WorkNote: React.FC<WorkNoteProps> = ({ workId }) => {
     const { t } = useTranslation();
     const [note, setNote] = useState(() => {
-        const allNotes = storage.get("visitor_notes") || {};
+        const allNotes = storage.get<VisitorNotes>("visitor_notes") || {};
         return allNotes[workId] || "";
     });
     const [saved, setSaved] = useState(false);
 
     const handleSave = () => {
-        const allNotes = storage.get("visitor_notes") || {};
+        const allNotes = storage.get<VisitorNotes>("visitor_notes") || {};
         if (note.trim()) {
             allNotes[workId] = note;
         } else {
             delete allNotes[workId];
         }
-        storage.set("visitor_notes", JSON.stringify(allNotes));
+        storage.set("visitor_notes", allNotes);
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
     };

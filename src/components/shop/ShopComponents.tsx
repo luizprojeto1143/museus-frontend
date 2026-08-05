@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { storage } from "@/utils/storage";
 
 import { logger } from "@/utils/logger";
 
-import { ShoppingBag, Plus, Minus, Trash2, X, Copy, Check, QrCode, Ticket, Loader2, ArrowRight, Star, ShieldCheck, Truck, Search, Menu, Package, Clock, CreditCard } from 'lucide-react';
+import { ShoppingBag, Plus, Minus, Trash2, X, Copy, Check, CreditCard, Ticket, Loader2, ArrowRight, Star, ShieldCheck, Truck } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
 import { toast } from 'react-hot-toast';
@@ -26,6 +26,51 @@ interface CartItem {
     quantity: number;
 }
 
+interface Coupon {
+    id: string;
+    code: string;
+    discountType: 'PERCENTAGE' | 'FIXED';
+    discountValue: number | string;
+    xpCost?: number;
+    description?: string | null;
+    usedAt?: string | null;
+}
+
+interface RedeemedCoupon {
+    id: string;
+    usedAt?: string | null;
+    coupon: Coupon;
+}
+
+interface CouponsResponse {
+    available?: Coupon[];
+    redeemed?: RedeemedCoupon[];
+}
+
+interface PaymentResult {
+    checkoutUrl?: string;
+    pixQrCode?: string;
+    pixPayload?: string;
+    bankSlipUrl?: string;
+    invoiceUrl?: string;
+}
+
+interface ShopOrderResponse {
+    payment?: PaymentResult;
+}
+
+interface ApiError {
+    response?: {
+        data?: {
+            message?: string;
+        };
+    };
+}
+
+type ProductsResponse = Product[] | {
+    data?: Product[];
+};
+
 interface CheckoutModalProps {
     items: CartItem[];
     total: number;
@@ -42,29 +87,29 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
     const [name, setName] = useState(authName || '');
     const [email, setEmail] = useState(authEmail || '');
     const [phone, setPhone] = useState('');
-    const [cpf, setCpf] = useState('');
+    const [cpf, _setCpf] = useState('');
 
     // Shipping
     const [cep, setCep] = useState('');
     const [street, setStreet] = useState('');
     const [number, setNumber] = useState('');
-    const [complement, setComplement] = useState('');
+    const [complement, _setComplement] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
 
     // Payment
-    const [paymentMethod, setPaymentMethod] = useState<'PIX' | 'BOLETO'>('PIX');
-    const [paymentResult, setPaymentResult] = useState<unknown>(null);
+    const [paymentMethod] = useState<'CHECKOUT'>('CHECKOUT');
+    const [paymentResult, setPaymentResult] = useState<PaymentResult | null>(null);
 
     // Coupons
-    const [redeemedCoupons, setRedeemedCoupons] = useState<any[]>([]);
+    const [redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>([]);
     const [selectedCouponCode, setSelectedCouponCode] = useState<string>('');
 
     useEffect(() => {
-        api.get('/coupons/available')
+        api.get<CouponsResponse>('/coupons/available')
             .then(res => {
                 // filter only available
-                const availableToUse = res.data.redeemed.filter((rc: unknown) => !rc.usedAt);
+                const availableToUse = (res.data.redeemed || []).filter((rc) => !rc.usedAt);
                 setRedeemedCoupons(availableToUse);
             })
             .catch(console.error);
@@ -105,13 +150,20 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                 shippingAddress: `${street}, ${number}${complement ? ` - ${complement}` : ''}, ${city} - ${state}, CEP: ${cep}`
             };
 
-            const res = await api.post('/shop/orders', payload);
-            setPaymentResult(res.data.payment);
+            const res = await api.post<ShopOrderResponse>('/shop/orders', payload);
+            if (res.data.payment?.checkoutUrl) {
+                toast.success("Pedido criado. Redirecionando para o pagamento seguro...");
+                onSuccess();
+                window.location.href = res.data.payment.checkoutUrl;
+                return;
+            }
+            setPaymentResult(res.data.payment || null);
             setStep('success');
             onSuccess();
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
-            toast.error(error.response?.data?.message || "Erro ao criar pedido.");
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.message || "Erro ao criar pedido.");
         } finally {
             setLoading(false);
         }
@@ -259,27 +311,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
 
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-white">Pagamento</h3>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <button
-                                        onClick={() => setPaymentMethod('PIX')}
-                                        className={`flex items-center justify-center gap-2 p-4 rounded-xl border transition-all ${paymentMethod === 'PIX'
-                                            ? 'bg-green-500/10 border-green-500 text-green-400'
-                                            : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
-                                            }`}
-                                    >
-                                        <QrCode size={20} />
-                                        <span className="font-medium">Pix</span>
-                                    </button>
-                                    <button
-                                        onClick={() => setPaymentMethod('BOLETO')}
-                                        className={`flex items-center justify-center gap-2 p-4 rounded-xl border transition-all ${paymentMethod === 'BOLETO'
-                                            ? 'bg-blue-500/10 border-blue-500 text-blue-400'
-                                            : 'bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700'
-                                            }`}
-                                    >
-                                        <Ticket size={20} />
-                                        <span className="font-medium">Boleto</span>
-                                    </button>
+                                <div className="grid grid-cols-1 gap-3">
+                                    <div className="flex items-center justify-center gap-2 p-4 rounded-xl border bg-blue-500/10 border-blue-500 text-blue-300">
+                                        <CreditCard size={20} />
+                                        <span className="font-medium">Checkout seguro</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -301,7 +337,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                             <h2 className="text-2xl font-bold text-white mb-2">Pedido Criado!</h2>
                             <p className="text-gray-400 mb-8">Realize o pagamento para confirmar sua compra.</p>
 
-                            {paymentMethod === 'PIX' && paymentResult.pixQrCode && (
+                            {paymentResult.checkoutUrl && (
+                                <a
+                                    href={paymentResult.checkoutUrl}
+                                    className="inline-flex items-center gap-2 bg-amber-500 text-black px-6 py-3 rounded-xl font-bold hover:bg-amber-400 transition-colors mb-6"
+                                >
+                                    <CreditCard size={24} /> Ir para pagamento
+                                </a>
+                            )}
+
+                            {paymentResult.pixQrCode && (
                                 <div className="bg-white p-6 rounded-xl mb-6 inline-block">
                                     <img
                                         src={`data:image/png;base64,${paymentResult.pixQrCode}`}
@@ -315,7 +360,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                             className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm text-gray-600 w-full font-mono truncate"
                                         />
                                         <button
-                                            onClick={() => copyToClipboard(paymentResult.pixPayload)}
+                                            onClick={() => copyToClipboard(paymentResult.pixPayload || '')}
                                             className="bg-gray-900 text-white px-3 py-2 rounded text-sm font-medium hover:bg-black transition-colors"
                                         >
                                             <Copy size={16} />
@@ -324,7 +369,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ items, total, onClose, on
                                 </div>
                             )}
 
-                            {paymentMethod === 'BOLETO' && (
+                            {(paymentResult.bankSlipUrl || paymentResult.invoiceUrl) && (
                                 <a
                                     href={paymentResult.bankSlipUrl || paymentResult.invoiceUrl}
                                     target="_blank"
@@ -437,9 +482,6 @@ const ProductDetailDrawer: React.FC<ProductDetailDrawerProps> = ({ product, onCl
                             <div className="text-gray-300 leading-relaxed space-y-4">
                                 <p>{product.description}</p>
                                 {product.longDescription && <p>{product.longDescription}</p>}
-                                {!product.longDescription && (
-                                    <p>Este item exclusivo da nossa loja foi cuidadosamente selecionado para representar a história e a cultura preservadas em nosso museu. Cada detalhe foi pensado para oferecer não apenas um produto, mas uma parte da experiência do visitante para levar para casa.</p>
-                                )}
                             </div>
                         </div>
 
@@ -681,8 +723,9 @@ export const ProductGrid: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [cart, setCart] = useState<CartItem[]>(() => {
         // Init from localStorage
-        const saved = storage.get(`cart_${tenantId}`);
-        return saved ? JSON.parse(saved) : [];
+        const saved = storage.get<CartItem[] | string>(`cart_${tenantId}`);
+        if (typeof saved === 'string') return JSON.parse(saved) as CartItem[];
+        return saved || [];
     });
     const [loading, setLoading] = useState(true);
     const [showCart, setShowCart] = useState(false);
@@ -691,13 +734,13 @@ export const ProductGrid: React.FC = () => {
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     // Coupon Store state
-    const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
+    const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
 
     const fetchCoupons = useCallback(async () => {
         try {
-            const res = await api.get('/coupons/available');
+            const res = await api.get<CouponsResponse>('/coupons/available');
             setAvailableCoupons(res.data.available || []);
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error('Error fetching coupons:', error);
         }
     }, []);
@@ -711,8 +754,9 @@ export const ProductGrid: React.FC = () => {
             await api.post(`/coupons/${couponId}/redeem`);
             toast.success('Cupom resgatado com sucesso!');
             fetchCoupons(); // Refresh
-        } catch (error: unknown) {
-            toast.error(error.response?.data?.message || 'Erro ao resgatar cupom');
+        } catch (error) {
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.message || 'Erro ao resgatar cupom');
         }
     };
 
@@ -722,9 +766,9 @@ export const ProductGrid: React.FC = () => {
 
     const fetchProducts = useCallback(async () => {
         try {
-            const res = await api.get(`/shop/products?tenantId=${tenantId}`);
-            setProducts(res.data);
-        } catch (error: unknown) {
+            const res = await api.get<ProductsResponse>(`/shop/products?tenantId=${tenantId}`);
+            setProducts(Array.isArray(res.data) ? res.data : res.data.data || []);
+        } catch (error) {
             logger.error('Error fetching products:', error);
         } finally {
             setLoading(false);
@@ -740,7 +784,7 @@ export const ProductGrid: React.FC = () => {
     // Persist cart
     useEffect(() => {
         if (tenantId) {
-            storage.set(`cart_${tenantId}`, JSON.stringify(cart));
+            storage.set(`cart_${tenantId}`, cart);
         }
     }, [cart, tenantId]);
 
@@ -750,7 +794,7 @@ export const ProductGrid: React.FC = () => {
             if (existing) {
                 return prev.map(item =>
                     item.product.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
+                        ? { ...item, quantity: Math.min(item.quantity + 1, product.stock) }
                         : item
                 );
             }
@@ -767,7 +811,7 @@ export const ProductGrid: React.FC = () => {
         setCart(prev =>
             prev.map(item =>
                 item.product.id === productId
-                    ? { ...item, quantity }
+                    ? { ...item, quantity: Math.min(quantity, item.product.stock) }
                     : item
             )
         );
@@ -930,7 +974,7 @@ export const ProductGrid: React.FC = () => {
                                                         </span>
                                                     </div>
                                                     <h4 className="text-white font-bold mb-1 group-hover:text-amber-400 transition-colors uppercase tracking-tight">{coupon.code}</h4>
-                                                    <p className="text-gray-400 text-xs mb-4">Válido em toda a loja virtual do museu.</p>
+                                                    <p className="text-gray-400 text-xs mb-4">{coupon.description || "Confira as regras de uso no checkout."}</p>
                                                 </div>
                                                 <Button
                                                     onClick={() => handleRedeemCoupon(coupon.id)}
@@ -1009,3 +1053,4 @@ export const ProductGrid: React.FC = () => {
         </div>
     );
 };
+

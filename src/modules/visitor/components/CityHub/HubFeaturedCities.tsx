@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { getFullUrl } from "../../../../utils/url";
@@ -32,7 +32,7 @@ export const HubFeaturedCities: React.FC<HubFeaturedCitiesProps> = ({ filteredCi
                   alt={c.name} 
                   className="carousel-city-img" 
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
+                    (e.target as HTMLImageElement).src = "/placeholder-image.svg";
                   }}
                 />
                 <div className="carousel-city-overlay"></div>
@@ -53,7 +53,7 @@ export const HubFeaturedCities: React.FC<HubFeaturedCitiesProps> = ({ filteredCi
           >
             <div className="carousel-city-img-wrapper">
               <img 
-                src="/placeholder-image.jpg" 
+                src="/placeholder-image.svg" 
                 alt="Novas Cidades" 
                 className="carousel-city-img opacity-50" 
               />
@@ -72,3 +72,4 @@ export const HubFeaturedCities: React.FC<HubFeaturedCitiesProps> = ({ filteredCi
     </section>
   );
 };
+

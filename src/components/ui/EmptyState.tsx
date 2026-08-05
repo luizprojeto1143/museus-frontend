@@ -6,7 +6,7 @@ import {
     Ticket, Trophy
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
-import { springs, fadeInUp, staggerContainer, staggerItem } from '../../lib/motion';
+import { springs, staggerContainer, staggerItem } from '../../lib/motion';
 
 type EmptyStateType =
     | 'works' | 'events' | 'tickets' | 'favorites'

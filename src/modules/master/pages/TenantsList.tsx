@@ -1,30 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
-import { 
-    PlusCircle, 
-    Trash2, 
-    Edit, 
-    Building2, 
-    Search, 
-    ChevronRight, 
-    Database, 
-    ShieldAlert, 
-    Activity, 
-    Calendar,
-    Globe,
-    ExternalLink,
-    Zap,
-    Filter,
-    Layers,
-    MapPin,
-    ArrowUpRight,
-    Server,
-    ShieldCheck,
-    Terminal,
-    Settings2
-} from "lucide-react";
+import { api } from "../../../api/client";
+import { PlusCircle, Trash2, Search, Database, Activity, Calendar, Globe, Zap, Filter, Layers, MapPin, Server, Terminal, Settings2 } from "lucide-react";
 import { 
     Button, 
     Card, 
@@ -44,13 +22,19 @@ type TenantItem = {
     plan?: string;
 };
 
+type ConfirmAction =
+    | { type: "deleteTenant"; tenant: TenantItem }
+    | { type: "cleanDemo" }
+    | null;
+
 export const TenantsList: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const navigate = useNavigate();
     const [tenants, setTenants] = useState<TenantItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+    const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -62,10 +46,10 @@ export const TenantsList: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/tenants");
+            const res = await api.get<TenantItem[]>("/tenants");
             const data = Array.isArray(res.data) ? res.data : [];
             setTenants(data);
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro na sincronização de instâncias.");
         } finally {
             setLoading(false);
@@ -83,29 +67,35 @@ export const TenantsList: React.FC = () => {
         );
     }, [tenants, debouncedSearchTerm]);
 
-    const handleDelete = async (id: string) => {
-        const tenant = tenants.find(t => t.id === id);
-        if (!tenant) return;
-        if (!window.confirm(`PROTOCOL DE SEGURANÇA: Tem certeza que deseja eliminar a instância "${tenant.name}"? Esta ação é IRREVERSÍVEL.`)) return;
-
+    const handleDelete = async (tenant: TenantItem) => {
         try {
-            await api.delete(`/tenants/${id}?hard=true&confirm=${tenant.slug}`);
-            setTenants(prev => prev.filter(x => x.id !== id));
+            await api.delete(`/tenants/${tenant.id}?hard=true&confirm=${tenant.slug}`);
+            setTenants(prev => prev.filter(x => x.id !== tenant.id));
+            setConfirmAction(null);
             toast.success(`Instância ${tenant.slug} eliminada.`);
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Falha no protocolo de exclusão.");
         }
     };
 
     const handleCleanDemo = async () => {
-        if (!window.confirm("MANUTENÇÃO: Deseja purgar todas as instâncias de demonstração?")) return;
         try {
             await api.delete("/tenants/utils/demo");
-            fetchData();
+            setConfirmAction(null);
+            await fetchData();
             toast.success("Ambiente demo purgado.");
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Falha na limpeza de infraestrutura.");
         }
+    };
+
+    const executeConfirmedAction = () => {
+        if (!confirmAction) return;
+        if (confirmAction.type === "cleanDemo") {
+            void handleCleanDemo();
+            return;
+        }
+        void handleDelete(confirmAction.tenant);
     };
 
     if (loading) return (
@@ -136,7 +126,7 @@ export const TenantsList: React.FC = () => {
                 <div className="flex flex-wrap gap-4">
                     <Button 
                         variant="glass"
-                        onClick={handleCleanDemo}
+                        onClick={() => setConfirmAction({ type: "cleanDemo" })}
                         className="h-16 px-8 rounded-2xl border-white/5 text-rose-500 font-black uppercase text-[10px] tracking-widest hover:bg-rose-500/10 transition-all active:scale-95 shadow-xl"
                     >
                         <Database size={18} className="mr-3" /> Purgar Demos
@@ -271,7 +261,7 @@ export const TenantsList: React.FC = () => {
                                                     <Settings2 size={16} />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDelete(tenant.id)}
+                                                    onClick={() => setConfirmAction({ type: "deleteTenant", tenant })}
                                                     className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-rose-500/50 border border-white/5 hover:bg-rose-600 hover:text-white hover:border-rose-500 transition-all active:scale-95 shadow-lg"
                                                 >
                                                     <Trash2 size={16} />
@@ -318,6 +308,59 @@ export const TenantsList: React.FC = () => {
                 </div>
                 <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px] pointer-events-none" />
             </div>
+
+            <AnimatePresence>
+                {confirmAction && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-xl p-6"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                            className="w-full max-w-lg"
+                        >
+                            <Card className="p-10 bg-[#0b1120] border-2 border-rose-500/20 rounded-[40px] shadow-2xl">
+                                <div className="flex items-start gap-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
+                                        <Trash2 size={26} />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tight">
+                                            {confirmAction.type === "cleanDemo" ? "Purgar demos" : "Eliminar node"}
+                                        </h2>
+                                        <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                                            {confirmAction.type === "cleanDemo"
+                                                ? "Deseja purgar todas as instancias de demonstracao? Esta operacao altera a infraestrutura imediatamente."
+                                                : `Deseja eliminar permanentemente a instancia "${confirmAction.tenant.name}"? Esta acao e irreversivel.`}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                                    <Button
+                                        type="button"
+                                        variant="glass"
+                                        onClick={() => setConfirmAction(null)}
+                                        className="h-14 flex-1 rounded-2xl border-white/10 text-slate-400 font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={executeConfirmedAction}
+                                        className="h-14 flex-1 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Confirmar
+                                    </Button>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </AnimateIn>
     );
 };

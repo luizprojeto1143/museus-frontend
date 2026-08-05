@@ -4,22 +4,26 @@ import { logger } from "@/utils/logger";
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/client';
 import { Plus, Edit, Trash, FileText } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface CertificateTemplate {
     id: string;
     name: string;
     backgroundUrl?: string;
-    elements?: unknown[];
+    elements?: Array<Record<string, unknown>>;
 }
+
+type TemplateListResponse = CertificateTemplate[] | { data?: CertificateTemplate[] };
 
 export const CertificateTemplates: React.FC = () => {
     const navigate = useNavigate();
     const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
+    const [templateToDelete, setTemplateToDelete] = useState<CertificateTemplate | null>(null);
 
     const loadTemplates = useCallback(async () => {
         try {
-            const res = await api.get('/certificate-templates');
-            setTemplates(res.data);
+            const res = await api.get<TemplateListResponse>('/certificate-templates');
+            setTemplates(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (err) {
             logger.error(err);
         }
@@ -31,12 +35,12 @@ export const CertificateTemplates: React.FC = () => {
     }, [loadTemplates]);
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Deseja excluir este modelo?')) return;
         try {
             await api.delete(`/certificate-templates/${id}`);
+            setTemplateToDelete(null);
             loadTemplates(); // Reload
         } catch {
-            logger.warn("Alert:", 'Erro ao excluir');
+            toast.error('Erro ao excluir');
         }
     };
 
@@ -78,7 +82,7 @@ export const CertificateTemplates: React.FC = () => {
                                 <Edit size={16} className="mr-2" /> Editar
                             </button>
                             <button
-                                onClick={() => handleDelete(template.id)}
+                                onClick={() => setTemplateToDelete(template)}
                                 className="p-2 btn btn-secondary text-red-500 hover:bg-red-500/20 border-red-500/30"
                             >
                                 <Trash size={16} />
@@ -96,6 +100,23 @@ export const CertificateTemplates: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            {templateToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[var(--bg-surface)] p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold mb-3">Excluir modelo</h2>
+                        <p className="text-sm opacity-80 mb-6">Deseja excluir este modelo? {templateToDelete.name}</p>
+                        <div className="flex justify-end gap-3">
+                            <button type="button" className="btn btn-secondary" onClick={() => setTemplateToDelete(null)}>
+                                Cancelar
+                            </button>
+                            <button type="button" className="btn btn-primary bg-red-600" onClick={() => void handleDelete(templateToDelete.id)}>
+                                Confirmar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

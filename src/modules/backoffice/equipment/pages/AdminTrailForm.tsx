@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -23,16 +23,64 @@ import {
   Badge, 
   AnimateIn
 } from "@/components/ui";
-import {
-  ArrowLeft, Save, Plus, GripVertical, X, Music, Video,
-  ToggleLeft, ToggleRight, Map, CheckCircle2, FileText,
-  MapPin, CheckCircle, ChevronRight, Upload, Play, MonitorPlay,
-  Sparkles, Info, Target, ListOrdered
-} from "lucide-react";
+import { ArrowLeft, Save, Plus, GripVertical, X, Music, Video, Map, CheckCircle2, FileText, MapPin, CheckCircle, ChevronRight, Upload, MonitorPlay, Sparkles, Target, ListOrdered } from "lucide-react";
 import { useTerminology } from "../../../../hooks/useTerminology";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+interface WorkOption {
+  id: string;
+  title: string;
+}
+
+interface WorksResponse {
+  data?: WorkOption[];
+}
+
+interface EquipmentOption {
+  id: string;
+  nome: string;
+}
+
+interface TrailResponse {
+  title?: string;
+  description?: string;
+  active?: boolean;
+  audioUrl?: string | null;
+  videoUrl?: string | null;
+  equipamentoId?: string | null;
+  works?: WorkOption[];
+}
+
+interface UploadResponse {
+  url?: string;
+}
+
+interface PdfExtractionResponse {
+  title?: string;
+  description?: string;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const trailSchema = z.object({
+  title: z.string().trim().min(3, "Informe um nome com pelo menos 3 caracteres."),
+  description: z.string(),
+  equipamentoId: z.string().min(1, "Selecione o equipamento responsavel.")
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
 
 // Componente auxiliar para item ordenável
 function SortableItem({ id, title, onRemove }: { id: string; title: string; onRemove: () => void }) {
@@ -68,8 +116,8 @@ function SortableItem({ id, title, onRemove }: { id: string; title: string; onRe
       </div>
       <button
         type="button"
-        onPointerDown={(e: unknown) => e.stopPropagation()}
-        onClick={(e: unknown) => {
+        onPointerDown={(e: React.PointerEvent<HTMLButtonElement>) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           e.stopPropagation();
           onRemove();
         }}
@@ -95,13 +143,13 @@ export const AdminTrailForm: React.FC = () => {
   const [active, setActive] = useState(true);
   const [audioUrl, setAudioUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [allWorks, setAllWorks] = useState<{ id: string; title: string }[]>([]);
-  const [selectedWorks, setSelectedWorks] = useState<{ id: string; title: string }[]>([]);
+  const [allWorks, setAllWorks] = useState<WorkOption[]>([]);
+  const [selectedWorks, setSelectedWorks] = useState<WorkOption[]>([]);
   const [workToAdd, setWorkToAdd] = useState("");
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
-  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
+  const [equipamentos, setEquipamentos] = useState<EquipmentOption[]>([]);
   const [equipamentoId, setEquipamentoId] = useState("");
 
   // Wizard State
@@ -116,22 +164,22 @@ export const AdminTrailForm: React.FC = () => {
 
   useEffect(() => {
     if (tenantId) {
-      api.get("/works", { params: { tenantId } }).then(res => {
+      api.get<WorkOption[] | WorksResponse>("/works", { params: { tenantId } }).then(res => {
         const worksData = Array.isArray(res.data) ? res.data : (res.data.data || []);
-        setAllWorks((worksData as { id: string; title: string }[]).map(w => ({ id: w.id, title: w.title })));
+        setAllWorks(worksData.map(w => ({ id: w.id, title: w.title })));
       });
 
-      api.get("/equipamentos").then(res => {
+      api.get<EquipmentOption[]>("/equipamentos").then(res => {
         setEquipamentos(res.data);
       });
     }
 
     if (isEdit) {
-      api.get(`/trails/${id}`)
+      api.get<TrailResponse>(`/trails/${id}`)
         .then(res => {
-          const trail = res.data as { title: string; description: string; active?: boolean; audioUrl?: string; videoUrl?: string; equipamentoId?: string; works?: { id: string; title: string }[] };
-          setName(trail.title);
-          setDescription(trail.description);
+          const trail = res.data;
+          setName(trail.title || "");
+          setDescription(trail.description || "");
           setActive(trail.active !== false);
           setAudioUrl(trail.audioUrl || "");
           setVideoUrl(trail.videoUrl || "");
@@ -206,6 +254,16 @@ export const AdminTrailForm: React.FC = () => {
       return;
     }
 
+    const validation = trailSchema.safeParse({
+      title: name,
+      description,
+      equipamentoId
+    });
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || "Revise os dados da trilha.");
+      return;
+    }
+
     setSaving(true);
     const payload = {
       title: name,
@@ -228,7 +286,7 @@ export const AdminTrailForm: React.FC = () => {
       navigate("/admin/trilhas");
     } catch (error) {
       logger.error("Erro ao salvar trilha", error);
-      toast.error("Erro ao salvar trilha. Verifique os dados.");
+      toast.error(getApiErrorMessage(error, "Erro ao salvar trilha. Verifique os dados."));
     } finally {
       setSaving(false);
     }
@@ -242,14 +300,14 @@ export const AdminTrailForm: React.FC = () => {
 
       try {
         setIsUploading(true);
-        const res = await api.post(`/upload/${type}`, formData, {
+        const res = await api.post<UploadResponse>(`/upload/${type}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
-        setter(res.data.url);
+        setter(res.data.url || "");
         toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
         logger.error(`Error uploading ${type}`, error);
-        toast.error("Erro ao enviar arquivo.");
+        toast.error(getApiErrorMessage(error, "Erro ao enviar arquivo."));
       } finally {
         setIsUploading(false);
       }
@@ -265,7 +323,7 @@ export const AdminTrailForm: React.FC = () => {
 
       try {
         setIsExtracting(true);
-        const res = await api.post("/ai/extract-pdf", formData, {
+        const res = await api.post<PdfExtractionResponse>("/ai/extract-pdf", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
 
@@ -274,7 +332,7 @@ export const AdminTrailForm: React.FC = () => {
         if (data.description) setDescription(data.description);
 
         toast.success("Informações extraídas do PDF com sucesso!");
-      } catch (err) {
+      } catch (err: unknown) {
         logger.error("Erro ao extrair PDF:", err);
         toast.error("Houve um erro ao extrair informações do PDF.");
       } finally {
@@ -408,7 +466,7 @@ export const AdminTrailForm: React.FC = () => {
                     <Input
                       label={t("admin.trailForm.labels.name")}
                       value={name}
-                      onChange={(e: unknown) => setName(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                       placeholder={t("admin.trailForm.placeholders.name")}
                       required
                     />
@@ -449,7 +507,7 @@ export const AdminTrailForm: React.FC = () => {
                 <Textarea
                   label={t("admin.trailForm.labels.description")}
                   value={description}
-                  onChange={(e: unknown) => setDescription(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                   rows={4}
                   placeholder="Descreva o objetivo e o percurso deste roteiro..."
                 />
@@ -490,7 +548,7 @@ export const AdminTrailForm: React.FC = () => {
                         type="file"
                         accept="audio/*"
                         className="hidden"
-                        onChange={(e: unknown) => handleFileUpload(e, "audio", setAudioUrl)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFileUpload(e, "audio", setAudioUrl)}
                       />
                     </div>
                   </Card>
@@ -508,7 +566,7 @@ export const AdminTrailForm: React.FC = () => {
                       
                       <Input
                         value={videoUrl}
-                        onChange={(e: unknown) => setVideoUrl(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoUrl(e.target.value)}
                         placeholder="https://youtube.com/watch?v=..."
                         className="bg-black/20 h-14"
                         leftIcon={<Video size={20} className="text-slate-500" />}
@@ -557,7 +615,7 @@ export const AdminTrailForm: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-4 mb-8">
                     <Select
                       value={workToAdd}
-                      onChange={(e: unknown) => setWorkToAdd(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setWorkToAdd(e.target.value)}
                       containerClassName="flex-1 mb-0"
                       className="h-14 bg-black/20"
                     >
@@ -580,7 +638,7 @@ export const AdminTrailForm: React.FC = () => {
                   <div className="space-y-2 min-h-[200px]">
                     <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                       <SortableContext items={selectedWorks} strategy={verticalListSortingStrategy}>
-                        {selectedWorks.map((work: unknown) => (
+                        {selectedWorks.map((work) => (
                           <SortableItem
                             key={work.id}
                             id={work.id}
@@ -650,7 +708,7 @@ export const AdminTrailForm: React.FC = () => {
                        Sequência de Visitação
                     </h3>
                     <div className="max-h-[300px] overflow-y-auto pr-2 custom-scrollbar space-y-3">
-                       {selectedWorks.map((work: unknown, idx: unknown) => (
+                       {selectedWorks.map((work, idx) => (
                          <div key={work.id} className="flex items-center gap-4 p-3 bg-white/5 rounded-2xl border border-white/5">
                             <div className="w-8 h-8 rounded-lg bg-gold-400/10 flex items-center justify-center text-gold-400 text-xs font-black">
                                {idx + 1}

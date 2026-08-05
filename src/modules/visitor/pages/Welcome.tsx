@@ -5,7 +5,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { useTenant } from "../../auth/TenantContext";
 import { TenantLogo } from "../../../components/Branding/TenantLogo";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
-import { Smartphone, Eye, Lock, Zap } from "lucide-react";
+import { Smartphone, Eye, Lock } from "lucide-react";
 import { Button } from "@/components/ui";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { motion } from "framer-motion";

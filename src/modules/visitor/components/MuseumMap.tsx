@@ -8,12 +8,10 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import L from "leaflet";
 import "leaflet.markercluster";
-import { Building, Map as MapIcon, Navigation, Target, Zap, Waves } from "lucide-react";
+import { Building, Map as MapIcon, Target } from "lucide-react";
 import "./MuseumMap.css";
 import { Button, Badge, AnimateIn } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
-import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
-import { cn } from "@/lib/cn";
+import { motion, AnimatePresence } from "framer-motion";import { cn } from "@/lib/cn";
 
 // Local assets from public folder
 const icon = "/images/leaflet/marker-icon.png";
@@ -199,7 +197,7 @@ export const MuseumMap: React.FC<MuseumMapProps> = ({
         if (indoorImageUrl && mode === "outdoor") {
             setMode("indoor");
         }
-    }, [indoorImageUrl]);
+    }, [indoorImageUrl, mode]);
 
     useEffect(() => {
         if (initialPoiId) {

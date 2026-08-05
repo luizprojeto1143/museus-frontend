@@ -1,8 +1,8 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 import React, { useState, useCallback, useEffect } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { UserCheck, AlertTriangle, RotateCcw, Wifi, WifiOff, CloudLightning } from 'lucide-react';
+import { UserCheck, AlertTriangle, Wifi, WifiOff, CloudLightning } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useToast } from '../../../contexts/ToastContext';
 
@@ -15,6 +15,31 @@ type ScanResult = {
   status: string;
   message?: string;
 };
+
+interface OfflineValidation {
+  clientValidationId: string;
+  ticketCode: string;
+  validatedAt: string;
+}
+
+interface OfflineSyncResponse {
+  success?: boolean;
+}
+
+interface TotemValidationResponse {
+  success?: boolean;
+  status?: string;
+  message?: string;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+      error?: string;
+    };
+  };
+}
 
 // Simple helper to interact with IndexedDB for offline validation queue
 const openDB = (): Promise<IDBDatabase> => {
@@ -34,7 +59,7 @@ const openDB = (): Promise<IDBDatabase> => {
 const saveOfflineValidation = async (ticketCode: string): Promise<string> => {
   const db = await openDB();
   const clientValidationId = `offline-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-  const item = {
+  const item: OfflineValidation = {
     clientValidationId,
     ticketCode,
     validatedAt: new Date().toISOString()
@@ -49,13 +74,13 @@ const saveOfflineValidation = async (ticketCode: string): Promise<string> => {
   });
 };
 
-const getOfflineValidations = async (): Promise<any[]> => {
+const getOfflineValidations = async (): Promise<OfflineValidation[]> => {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const transaction = db.transaction("validations", "readonly");
     const store = transaction.objectStore("validations");
     const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => resolve(request.result as OfflineValidation[]);
     request.onerror = () => reject(request.error);
   });
 };
@@ -84,7 +109,7 @@ const clearOfflineValidations = async (ids: string[]): Promise<void> => {
 };
 
 export const TotemValidator: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
@@ -93,8 +118,34 @@ export const TotemValidator: React.FC = () => {
   const [syncing, setSyncing] = useState(false);
   const { addToast } = useToast();
 
-  const deviceId = localStorage.getItem("totem_device_id");
+  const _deviceId = localStorage.getItem("totem_device_id");
   const deviceToken = localStorage.getItem("totem_device_token");
+
+  const triggerOfflineSync = useCallback(async () => {
+    const items = await getOfflineValidations();
+    if (items.length === 0 || syncing || !deviceToken) return;
+
+    setSyncing(true);
+    addToast(`Sincronizando ${items.length} validacoes offline...`, "info");
+
+    try {
+      const res = await api.post<OfflineSyncResponse>("/totem/offline-sync",
+        { logs: items },
+        { headers: { "X-Totem-Token": deviceToken } }
+      );
+      if (res.data.success) {
+        const syncedIds = items.map(i => i.clientValidationId);
+        await clearOfflineValidations(syncedIds);
+        setOfflineCount(0);
+        addToast("Sincronizacao offline concluida com sucesso!", "success");
+      }
+    } catch (err) {
+      logger.error("Error during offline sync", err);
+      addToast("Falha ao sincronizar lote offline. Tentando mais tarde.", "error");
+    } finally {
+      setSyncing(false);
+    }
+  }, [addToast, deviceToken, syncing]);
 
   // Keep track of online status
   useEffect(() => {
@@ -111,7 +162,7 @@ export const TotemValidator: React.FC = () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, []);
+  }, [triggerOfflineSync]);
 
   // Check offline count on mount
   useEffect(() => {
@@ -126,31 +177,6 @@ export const TotemValidator: React.FC = () => {
     checkCount();
   }, []);
 
-  const triggerOfflineSync = async () => {
-    const items = await getOfflineValidations();
-    if (items.length === 0 || syncing || !deviceToken) return;
-
-    setSyncing(true);
-    addToast(`Sincronizando ${items.length} validações offline...`, "info");
-
-    try {
-      const res = await api.post("/totem/offline-sync", 
-        { logs: items },
-        { headers: { "X-Totem-Token": deviceToken } }
-      );
-      if (res.data.success) {
-        const syncedIds = items.map(i => i.clientValidationId);
-        await clearOfflineValidations(syncedIds);
-        setOfflineCount(0);
-        addToast("Sincronização offline concluída com sucesso!", "success");
-      }
-    } catch (err) {
-      logger.error("Error during offline sync", err);
-      addToast("Falha ao sincronizar lote offline. Tentando mais tarde.", "error");
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const handleCheckIn = useCallback(async (code: string) => {
     if (!code || processing) return;
@@ -172,7 +198,7 @@ export const TotemValidator: React.FC = () => {
           message: "Validação offline registrada. Será confirmada na sincronização."
         });
         addToast("Modo Offline: Validação salva localmente", "info");
-      } catch (err) {
+      } catch (_err) {
         setError("Erro ao armazenar validação offline.");
       } finally {
         setProcessing(false);
@@ -182,7 +208,7 @@ export const TotemValidator: React.FC = () => {
 
     // 2. Online path
     try {
-      const res = await api.post("/totem/validations", 
+      const res = await api.post<TotemValidationResponse>("/totem/validations", 
         { ticketCode: code.trim(), clientValidationId },
         { headers: { "X-Totem-Token": deviceToken } }
       );
@@ -190,7 +216,7 @@ export const TotemValidator: React.FC = () => {
       if (res.data.success) {
         setScanResult({
           code,
-          status: res.data.status,
+          status: res.data.status || "ERROR",
           message: res.data.message
         });
         addToast("Acesso Liberado!", "success");
@@ -198,8 +224,9 @@ export const TotemValidator: React.FC = () => {
         setError(res.data.message || "Ingresso inválido ou já utilizado.");
         addToast(res.data.message || "Erro na validação", "error");
       }
-    } catch (err: any) {
-      const msg = err.response?.data?.message || "Erro de conexão com o servidor.";
+    } catch (err) {
+      const apiError = err as ApiError;
+      const msg = apiError.response?.data?.message || apiError.response?.data?.error || "Erro de conexão com o servidor.";
       setError(msg);
       addToast(msg, "error");
     } finally {
@@ -303,3 +330,4 @@ export const TotemValidator: React.FC = () => {
     </div>
   );
 };
+

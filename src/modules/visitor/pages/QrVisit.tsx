@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,23 @@ type ResolveResponse = {
   title: string;
   trackScan: boolean;
   xpReward: number;
+  requiresAuth?: boolean;
+  tenantId?: string;
+  tenantName?: string;
+  equipmentId?: string | null;
+};
+
+type ScanResponse = {
+  success?: boolean;
+  xpGained: number;
+  newTotalXp: number;
+  level: number;
+  stampCreated: boolean;
+  achievementsUnlocked: Array<{ id: string; title: string; iconUrl?: string | null }>;
+};
+
+type ApiError = {
+  response?: { data?: { message?: string } };
 };
 
 export const QrVisit: React.FC = () => {
@@ -26,29 +43,43 @@ export const QrVisit: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  const { stats, refreshGamification } = useGamification();
-  const [scanResult, setScanResult] = useState<{
-    xpGained: number;
-    newTotalXp: number;
-    level: number;
-    stampCreated: boolean;
-    achievementsUnlocked: Array<{ id: string; title: string; iconUrl?: string | null }>;
-  } | null>(null);
+  const { stats: _stats, refreshGamification } = useGamification();
+  const [data, setData] = useState<ResolveResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [registering, setRegistering] = useState(false);
+  const [scanResult, setScanResult] = useState<ScanResponse | null>(null);
   const [showToast, setShowToast] = useState(false);
+
+  const needsLogin = Boolean(data?.requiresAuth && !isAuthenticated);
+
+  function getRedirectWithScan(url: string) {
+    return url + (url.includes('?') ? '&scan=true' : '?scan=true');
+  }
+
+  function buildLoginUrl() {
+    if (!data) return "/login";
+    const params = new URLSearchParams({ redirect: data.redirectUrl });
+    if (data.tenantId) params.set("tenantId", data.tenantId);
+    if (data.tenantName) params.set("tenantName", data.tenantName);
+    if (data.equipmentId) params.set("equipamentoId", data.equipmentId);
+    return `/login?${params.toString()}`;
+  }
 
   useEffect(() => {
     if (!code) return;
 
     async function resolveCode() {
       try {
+        if (!code) throw new Error("Código ausente");
         const cleanCode = extractQRCode(code);
         if (!cleanCode) throw new Error("Código inválido");
 
-        const res = await api.get(`/qrcodes/${cleanCode}/resolve`);
+        const res = await api.get<ResolveResponse>(`/qrcodes/${cleanCode}/resolve`);
         setData(res.data);
-      } catch (err: unknown) {
+      } catch (err) {
         logger.error(err);
-        const msg = (err as any)?.response?.data?.message || t("visitor.qr.invalid", "Não foi possível identificar este código.");
+        const msg = (err as ApiError)?.response?.data?.message || t("visitor.qr.invalid", "Não foi possível identificar este código.");
         setError(msg);
       } finally {
         setLoading(false);
@@ -64,8 +95,20 @@ export const QrVisit: React.FC = () => {
     setRegistering(true);
 
     try {
+      if (needsLogin) {
+        navigate(buildLoginUrl(), {
+          state: {
+            from: { pathname: data.redirectUrl },
+            tenantId: data.tenantId,
+            tenantName: data.tenantName,
+            equipamentoId: data.equipmentId || undefined
+          }
+        });
+        return;
+      }
+
       if (data.trackScan) {
-        const scanRes = await api.post(`/qrcodes/${data.code}/scan`);
+        const scanRes = await api.post<ScanResponse>(`/qrcodes/${data.code}/scan`);
         if (scanRes.data && scanRes.data.success) {
           setScanResult(scanRes.data);
           setShowToast(true);
@@ -74,13 +117,13 @@ export const QrVisit: React.FC = () => {
           }
           // Delay navigation by 3 seconds to let user celebrate and read achievements
           setTimeout(() => {
-            navigate(data.redirectUrl + (data.redirectUrl.includes('?') ? '&scan=true' : '?scan=true'));
+            navigate(getRedirectWithScan(data.redirectUrl));
           }, 3200);
           return;
         }
       }
-      navigate(data.redirectUrl + (data.redirectUrl.includes('?') ? '&scan=true' : '?scan=true'));
-    } catch (err: unknown) {
+      navigate(getRedirectWithScan(data.redirectUrl));
+    } catch (err) {
       logger.error("Erro ao registrar scan", err);
       // Navega mesmo com erro de scan
       navigate(data.redirectUrl);
@@ -150,7 +193,9 @@ export const QrVisit: React.FC = () => {
           </div>
         ) : (
           <p className="qr-visit-hint mt-2 text-sm text-gray-400">
-            Você será redirecionado para o destino.
+            {needsLogin
+              ? "Entre ou cadastre-se para acessar o painel deste equipamento."
+              : "Você será redirecionado para o destino."}
           </p>
         )}
 
@@ -165,7 +210,7 @@ export const QrVisit: React.FC = () => {
               <span className="qr-visit-register-spinner"></span>
               {scanResult ? "Carregando destino..." : "Registrando..."}
             </>
-          ) : (isAuthenticated ? "Registrar e Abrir" : "Abrir")}
+          ) : (needsLogin ? "Entrar ou Cadastrar" : (isAuthenticated ? "Registrar e Abrir" : "Abrir"))}
         </button>
       </div>
 

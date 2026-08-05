@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { springs, fadeIn } from "../../lib/motion";
-
-const loadingMessages = [
+import { motion, AnimatePresence } from "framer-motion";const loadingMessages = [
   "Carregando...",
   "Preparando interface...",
   "Quase lá...",

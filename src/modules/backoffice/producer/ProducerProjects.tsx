@@ -16,7 +16,7 @@ interface Project {
 export const ProducerProjects: React.FC = () => {
     const { t } = useTranslation();
     const router = useNavigate();
-    const { tenantId } = useAuth();
+    const { tenantId: _tenantId } = useAuth();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
 

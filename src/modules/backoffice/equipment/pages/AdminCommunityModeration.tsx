@@ -4,21 +4,36 @@ import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, MessageSquare, Check, X, AlertCircle, Clock } from "lucide-react";
+import { Loader2, MessageSquare, Check, X, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
 
+type CommunityStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+type CommunityPost = {
+    id: string;
+    content: string;
+    mediaUrl?: string | null;
+    status: CommunityStatus;
+    createdAt: string;
+    targetType: string;
+    targetId: string;
+    user: { name: string };
+};
+
+type CommunityListResponse = CommunityPost[] | { data?: CommunityPost[] };
+
 export const AdminCommunityModeration: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
-    const [posts, setPosts] = useState<any[]>([]);
+    const [posts, setPosts] = useState<CommunityPost[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState("PENDING");
+    const [filter, setFilter] = useState<CommunityStatus>("PENDING");
 
     const fetchPosts = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/community/admin?tenantId=${tenantId}&status=${filter}`);
-            setPosts(res.data);
+            const res = await api.get<CommunityListResponse>(`/community/admin?tenantId=${tenantId}&status=${filter}`);
+            setPosts(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao carregar posts");
@@ -36,7 +51,7 @@ export const AdminCommunityModeration: React.FC = () => {
             await api.put(`/community/${postId}/status`, { status });
             toast.success(status === "APPROVED" ? "Post aprovado!" : "Post rejeitado!");
             fetchPosts();
-        } catch (err) {
+        } catch (_err) {
             toast.error("Erro ao moderar");
         }
     };
@@ -53,7 +68,7 @@ export const AdminCommunityModeration: React.FC = () => {
                 </div>
 
                 <div className="flex bg-zinc-900 p-1 rounded-lg">
-                    {["PENDING", "APPROVED", "REJECTED"].map((s) => (
+                    {(["PENDING", "APPROVED", "REJECTED"] as CommunityStatus[]).map((s) => (
                         <button
                             key={s}
                             onClick={() => setFilter(s)}

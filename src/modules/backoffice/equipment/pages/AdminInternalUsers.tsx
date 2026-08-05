@@ -19,18 +19,19 @@ interface InternalUser {
 }
 
 export const AdminInternalUsers: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { tenantId, role: currentUserRole } = useAuth();
   const [users, setUsers] = useState<InternalUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [passwordResetUser, setPasswordResetUser] = useState<InternalUser | null>(null);
+  const [newPassword, setNewPassword] = useState("");
   const isMaster = currentUserRole === "master";
 
   const loadUsers = React.useCallback(async () => {
     try {
       const endpoint = isMaster ? "/users" : `/users?tenantId=${tenantId}`;
-      const res = await api.get(endpoint);
-      const usersData = res.data as InternalUser[];
-      setUsers(usersData);
+      const res = await api.get<InternalUser[]>(endpoint);
+      setUsers(Array.isArray(res.data) ? res.data : []);
     } catch {
       toast.error("Erro ao carregar usuários");
     } finally {
@@ -52,35 +53,20 @@ export const AdminInternalUsers: React.FC = () => {
     }
   };
 
-  const handleResetPassword = async (userId: string) => {
-    const newPassword = prompt("Digite a nova senha (mínimo 6 caracteres):");
-    if (!newPassword || newPassword.length < 6) {
-      if (newPassword) toast.error("Senha muito curta");
+  const handleResetPassword = async () => {
+    if (!passwordResetUser) return;
+    if (newPassword.length < 6) {
+      toast.error("Senha muito curta");
       return;
     }
 
     try {
-      await api.put(`/users/${userId}`, { password: newPassword });
+      await api.put(`/users/${passwordResetUser.id}`, { password: newPassword });
+      setPasswordResetUser(null);
+      setNewPassword("");
       toast.success("Senha redefinida com sucesso!");
     } catch {
       toast.error("Erro ao redefinir senha");
-    }
-  };
-
-  const handleDelete = async (userId: string, userRole: string) => {
-    if (userRole === "MASTER" && !isMaster) {
-      toast.error("Apenas MASTER pode remover outros MASTER");
-      return;
-    }
-
-    if (!confirm("Tem certeza que deseja excluir este usuário?")) return;
-
-    try {
-      await api.delete(`/users/${userId}`);
-      toast.success("Usuário excluído");
-      loadUsers();
-    } catch {
-      toast.error("Erro ao excluir usuário");
     }
   };
 
@@ -178,7 +164,10 @@ export const AdminInternalUsers: React.FC = () => {
                       <Link to={`/admin/usuarios/${user.id}`} className="p-2 hover:bg-white/5 rounded-lg text-gold transition-colors" title="Editar">
                         <Settings size={16} />
                       </Link>
-                      <button onClick={() => handleResetPassword(user.id)} className="p-2 hover:bg-white/5 rounded-lg text-muted transition-colors" title="Reset Senha">
+                      <button onClick={() => {
+                        setPasswordResetUser(user);
+                        setNewPassword("");
+                      }} className="p-2 hover:bg-white/5 rounded-lg text-muted transition-colors" title="Reset Senha">
                         <Key size={16} />
                       </button>
                       <button 
@@ -194,6 +183,44 @@ export const AdminInternalUsers: React.FC = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {passwordResetUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+          <div className="w-full max-w-md rounded-2xl border border-gold/30 bg-[#111827] p-6 shadow-2xl">
+            <h2 className="text-xl font-bold text-white mb-3">Redefinir senha</h2>
+            <p className="text-sm text-muted mb-5">
+              Nova senha para {passwordResetUser.name}. Use no minimo 6 caracteres.
+            </p>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(event) => setNewPassword(event.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none focus:border-gold/60"
+              placeholder="Nova senha"
+              autoFocus
+            />
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setPasswordResetUser(null);
+                  setNewPassword("");
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={newPassword.length < 6}
+                onClick={() => void handleResetPassword()}
+              >
+                Redefinir
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

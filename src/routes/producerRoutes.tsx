@@ -18,6 +18,7 @@ const ProducerNotices = React.lazy(() => import("../modules/backoffice/producer/
 const ProducerProfile = React.lazy(() => import("../modules/backoffice/producer/ProducerProfile").then(m => ({ default: m.ProducerProfile })));
 const ProducerSettings = React.lazy(() => import("../modules/backoffice/producer/ProducerSettings").then(m => ({ default: m.ProducerSettings })));
 const ProducerNoticeResults = React.lazy(() => import("../modules/backoffice/producer/ProducerNoticeResults").then(m => ({ default: m.ProducerNoticeResults })));
+const ProducerNoticeTransparency = React.lazy(() => import("../modules/backoffice/producer/ProducerNoticeTransparency").then(m => ({ default: m.ProducerNoticeTransparency })));
 const ProducerDocuments = React.lazy(() => import("../modules/backoffice/producer/ProducerDocuments").then(m => ({ default: m.ProducerDocuments })));
 const ProducerProviders = React.lazy(() => import("../modules/backoffice/producer/ProducerProviders").then(m => ({ default: m.ProducerProviders })));
 const ProducerFinance = React.lazy(() => import("../modules/backoffice/producer/pages/ProducerFinance").then(m => ({ default: m.ProducerFinance })));
@@ -37,7 +38,7 @@ const AdminWorkForm = React.lazy(() => import("../modules/backoffice/equipment/p
 const AdminAchievements = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAchievements").then(m => ({ default: m.AdminAchievements })));
 const AdminCalendar = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminCalendar").then(m => ({ default: m.AdminCalendar })));
 
-type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
+type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 const pr = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
     <RequireRole allowed={["producer"]}>
@@ -56,6 +57,7 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/projects/:id" element={pr(ProducerProjectForm, RequireRole)} />
             <Route path="/producer/editais" element={pr(ProducerNotices, RequireRole)} />
             <Route path="/producer/editais/:id/results" element={pr(ProducerNoticeResults, RequireRole)} />
+            <Route path="/producer/editais/:id/transparencia" element={pr(ProducerNoticeTransparency, RequireRole)} />
             <Route path="/producer/documents" element={pr(ProducerDocuments, RequireRole)} />
             <Route path="/producer/providers" element={pr(ProducerProviders, RequireRole)} />
             <Route path="/producer/profile" element={pr(ProducerProfile, RequireRole)} />

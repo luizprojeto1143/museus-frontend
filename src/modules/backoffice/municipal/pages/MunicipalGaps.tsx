@@ -4,22 +4,7 @@ import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { 
-  Loader2, 
-  AlertTriangle, 
-  Building, 
-  Calendar, 
-  TrendingUp, 
-  Map as MapIcon, 
-  Layers, 
-  Eye, 
-  EyeOff, 
-  Compass, 
-  MapPin,
-  Flame,
-  CheckCircle2,
-  HelpCircle
-} from "lucide-react";
+import { Loader2, AlertTriangle, Building, Calendar, TrendingUp, Map as MapIcon, Layers, Eye, EyeOff, Compass, Flame, CheckCircle2 } from "lucide-react";
 
 interface GeoPoint {
   id: string;
@@ -28,14 +13,21 @@ interface GeoPoint {
   name?: string;
   title?: string;
   type?: string;
+  date?: string;
   source?: string;
   createdAt?: string;
   equipmentName?: string;
   tenantName?: string;
 }
 
+interface TerritorialGapsResponse {
+  equipments?: GeoPoint[];
+  events?: GeoPoint[];
+  checkins?: GeoPoint[];
+}
+
 export const MunicipalGaps: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { tenantId } = useAuth();
   const [data, setData] = useState<{
     equipments: GeoPoint[];
@@ -50,12 +42,12 @@ export const MunicipalGaps: React.FC = () => {
   const [showHeatmap, setShowHeatmap] = useState(true);
   
   // Hovered item details
-  const [hoveredPoint, setHoveredPoint] = useState<unknown>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<GeoPoint | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/analytics/territorial-gaps?tenantId=${tenantId}`);
+      const res = await api.get<TerritorialGapsResponse>(`/analytics/territorial-gaps?tenantId=${tenantId}`);
       
       // Use real data from the database only - no demo fallbacks
       const equipments = res.data?.equipments || [];

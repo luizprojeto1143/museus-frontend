@@ -1,31 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+﻿import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { logger } from "@/utils/logger";
 
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { api, isDemoMode } from "../../../api/client";
-import { 
-    BarChart3, 
-    Users, 
-    Eye, 
-    Star, 
-    BadgeCheck, 
-    ArrowUpRight, 
-    Landmark, 
-    Sparkles,
-    Activity,
-    Globe,
-    Zap,
-    TrendingUp,
-    ShieldAlert,
-    Cpu,
-    Target,
-    Layers,
-    Terminal,
-    ShieldCheck,
-    Navigation,
-    Compass
-} from "lucide-react";
+import { api } from "../../../api/client";
+import { BarChart3, Users, Eye, Landmark, Sparkles, Activity, Globe, TrendingUp, Cpu, Terminal, ShieldCheck, Navigation } from "lucide-react";
 import { 
     Button, 
     Card, 
@@ -33,7 +12,7 @@ import {
     AnimateIn, 
     AnimatedCounter 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
 type TenantSummary = {
@@ -93,7 +72,7 @@ export const MasterDashboard: React.FC = () => {
                 }
             });
             toast.success("Configurações do Pulse Hub atualizadas com sucesso!");
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro ao salvar as configurações.");
         } finally {
             setSavingSettings(false);
@@ -119,7 +98,7 @@ export const MasterDashboard: React.FC = () => {
                 setHubImageUrl(res.data.url);
                 toast.success("Imagem de banner enviada com sucesso!");
             }
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro ao enviar imagem de banner.");
         } finally {
             setUploading(false);
@@ -151,12 +130,12 @@ export const MasterDashboard: React.FC = () => {
                 equipamentosCount: item.equipamentos || 0
             }));
             setSummaries(data);
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error(t("master.dashboard.sync_error", "Erro na sincronização de dados globais."));
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         fetchData();
@@ -336,7 +315,7 @@ export const MasterDashboard: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-6 gap-4 relative z-10">
-                        {summaries.map((s, idx) => {
+                        {summaries.map((s, _idx) => {
                             const intensity = Math.min(100, (s.equipamentosCount / 5) * 100);
                             return (
                                 <motion.div

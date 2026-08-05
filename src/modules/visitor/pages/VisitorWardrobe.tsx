@@ -1,8 +1,7 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
-import { useTranslation } from "react-i18next";
-import { User, Shield, Gem, Check, LayoutGrid } from "lucide-react";
+import { User, Gem, Check, LayoutGrid } from "lucide-react";
 import { Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +24,7 @@ interface CharacterProfile {
     } | null;
     baseAvatarUrl?: string | null;
     avatarStatus?: string;
+    equippedSkinId?: string;
 }
 
 interface OwnedSkin {
@@ -38,6 +38,18 @@ interface OwnedSkin {
     generatedAvatarUrl?: string | null;
 }
 
+
+interface RpgProfileResponse {
+    characters: CharacterProfile[];
+}
+
+interface VisitorMeResponse {
+    id: string;
+}
+
+interface SkinStatusResponse {
+    status: 'GENERATING' | 'READY' | 'ERROR' | string;
+}
 export const VisitorWardrobe: React.FC = () => {
     const { addToast } = useToast();
     const { isAuthenticated, isGuest } = useAuth();
@@ -57,24 +69,24 @@ export const VisitorWardrobe: React.FC = () => {
             }
             try {
                 const [rpgRes, profileRes] = await Promise.all([
-                    api.get("/rpg/me"),
-                    api.get("/visitors/me")
+                    api.get<RpgProfileResponse>("/rpg/me"),
+                    api.get<VisitorMeResponse>("/visitors/me")
                 ]);
                 
                 const vid = profileRes.data.id;
                 setVisitorId(vid);
                 
-                const skinsRes = await api.get(`/visitors/${vid}/skins`);
+                const skinsRes = await api.get<OwnedSkin[]>("/visitors/me/skins");
                 
-                setCharacters(rpgRes.data.characters);
-                setOwnedSkins(skinsRes.data);
+                setCharacters(rpgRes.data.characters || []);
+                setOwnedSkins(Array.isArray(skinsRes.data) ? skinsRes.data : []);
                 
                 // Select active character by default
-                const active = rpgRes.data.characters.find((c: unknown) => c.isActive);
+                const active = rpgRes.data.characters.find((c) => c.isActive);
                 if (active) setSelectedCharId(active.id);
                 else if (rpgRes.data.characters.length > 0) setSelectedCharId(rpgRes.data.characters[0].id);
                 
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error(err);
             } finally {
                 setLoading(false);
@@ -99,19 +111,19 @@ export const VisitorWardrobe: React.FC = () => {
             }
 
             try {
-                const res = await api.get(`/rpg/skin-status/${generatingSkin}`);
+                const res = await api.get<SkinStatusResponse>(`/rpg/skin-status/${generatingSkin}`);
                 if (res.data.status !== 'GENERATING') {
                     setGeneratingSkin(null);
                     if (res.data.status === 'READY') {
                         addToast("Skin aplicada com sucesso pela IA! ✨", "success");
                         // Refresh to get the new generatedAvatarUrl
-                        const skinsRes = await api.get(`/visitors/${visitorId}/skins`);
-                        setOwnedSkins(skinsRes.data);
+                        const skinsRes = await api.get<OwnedSkin[]>("/visitors/me/skins");
+                        setOwnedSkins(Array.isArray(skinsRes.data) ? skinsRes.data : []);
                     } else if (res.data.status === 'ERROR') {
                         addToast("Erro na geração da IA pela skin.", "error");
                     }
                 }
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error("Polling skin error", err);
             }
         }, 4000);
@@ -124,9 +136,9 @@ export const VisitorWardrobe: React.FC = () => {
             await api.post("/rpg/retry-avatar");
             addToast("Status resetado. Você pode tentar gerar novamente!", "success");
             // Refresh character data
-            const rpgRes = await api.get("/rpg/me");
-            setCharacters(rpgRes.data.characters);
-        } catch (err: unknown) {
+            const rpgRes = await api.get<RpgProfileResponse>("/rpg/me");
+            setCharacters(rpgRes.data.characters || []);
+        } catch (_err) {
             addToast("Erro ao resetar status", "error");
         }
     };
@@ -144,10 +156,10 @@ export const VisitorWardrobe: React.FC = () => {
             // Update local state
             setCharacters(prev => prev.map(c => 
                 c.id === selectedCharId 
-                    ? { ...c, equippedSkinId: skinId, equippedSkin: ownedSkins.find(s => s.skin.id === skinId)?.skin } 
+                    ? { ...c, equippedSkinId: skinId || undefined, equippedSkin: skinId ? ownedSkins.find(s => s.skin.id === skinId)?.skin : null } 
                     : c
             ));
-        } catch (err: unknown) {
+        } catch (_err) {
             addToast("Erro ao equipar", "error");
         } finally {
             setEquipping(null);
@@ -159,7 +171,7 @@ export const VisitorWardrobe: React.FC = () => {
                 setGeneratingSkin(skinId);
                 await api.post(`/rpg/apply-skin/${skinId}`);
                 addToast("IA está aplicando a skin ao seu avatar...", "info");
-            } catch (err: unknown) {
+            } catch (err) {
                 setGeneratingSkin(null);
                 logger.error("AI Skin start error", err);
             }
@@ -362,3 +374,4 @@ export const VisitorWardrobe: React.FC = () => {
     </div>
 );
 };
+

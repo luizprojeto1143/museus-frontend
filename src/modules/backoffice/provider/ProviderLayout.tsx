@@ -1,29 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../auth/AuthContext";
-import { api } from "../../../api/client";
-import {
-    LayoutDashboard,
-    MessageSquare,
-    User,
-    Settings,
-    LogOut,
-    Menu,
-    ExternalLink,
-    Briefcase,
-    Star,
-    ChevronRight,
-    Zap,
-    ShieldCheck,
-    X,
-    FileText
-} from "lucide-react";
-import { Badge, Button } from "@/components/ui";
+import { useAuth } from "../../auth/AuthContext";import { LayoutDashboard, MessageSquare, User, Settings, LogOut, Menu, ExternalLink, Briefcase, Star, ChevronRight, Zap, X, FileText } from "lucide-react";
+import { Badge } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const ProviderLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { logout, name } = useAuth();
     const location = useLocation();
     const [isSidebarOpen, setSidebarOpen] = useState(false);

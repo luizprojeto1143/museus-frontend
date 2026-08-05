@@ -6,8 +6,30 @@ import { Shield, Award, Zap, AlertCircle, CheckCircle2, ChevronLeft } from "luci
 import { api } from "../../../api/client";
 import { useGeoFencing } from "../context/GeoFencingProvider";
 import { useGamification } from "../../gamification/context/GamificationContext";
-import { Badge, Button, PageLoader } from "@/components/ui";
 import "./VestigeCapture.css";
+
+type VestigeWork = {
+  id: string;
+  title?: string | null;
+  artist?: string | null;
+  imageUrl?: string | null;
+};
+
+type CaptureResult = {
+  raridade: string;
+  stamp: {
+    numeroCaptura: number;
+  };
+  xp: number;
+};
+
+type ApiError = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
 
 export const VestigeCapture: React.FC = () => {
   const { workId } = useParams();
@@ -16,17 +38,17 @@ export const VestigeCapture: React.FC = () => {
   const { userLocation } = useGeoFencing();
   const { refreshGamification } = useGamification();
 
-  const [work, setWork] = useState<unknown>(null);
+  const [work, setWork] = useState<VestigeWork | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [captureResult, setCaptureResult] = useState<unknown>(null);
+  const [captureResult, setCaptureResult] = useState<CaptureResult | null>(null);
 
   const fetchWork = useCallback(async () => {
     try {
-      const res = await api.get(`/works/${workId}`);
+      const res = await api.get<VestigeWork>(`/works/${workId}`);
       setWork(res.data);
-    } catch (err: unknown) {
+    } catch (_err) {
       setError("Não foi possível localizar este vestígio.");
     } finally {
       setLoading(false);
@@ -40,7 +62,7 @@ export const VestigeCapture: React.FC = () => {
   const handleCapture = async () => {
     setIsCapturing(true);
     try {
-      const res = await api.post("/vestiges/capture", {
+      const res = await api.post<CaptureResult>("/vestiges/capture", {
         workId,
         lat: userLocation?.lat || null,
         lng: userLocation?.lng || null,
@@ -50,8 +72,9 @@ export const VestigeCapture: React.FC = () => {
       if (typeof refreshGamification === 'function') {
         refreshGamification();
       }
-    } catch (err: unknown) {
-      setError(err.response?.data?.message || "Erro na captura.");
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.response?.data?.message || "Erro na captura.");
     } finally {
       setIsCapturing(false);
     }
@@ -137,7 +160,7 @@ export const VestigeCapture: React.FC = () => {
             <div className={`result-card ${captureResult.raridade.toLowerCase()}`}>
                <div className="rarity-badge">{captureResult.raridade}</div>
                <div className="result-img-wrapper">
-                 <img src={work?.imageUrl} alt={work?.title} className="result-img" />
+                 <img src={work?.imageUrl || "/placeholder-work.png"} alt={work?.title || "Vestígio"} className="result-img" />
                </div>
                <h3 className="result-title">{t('vestige.capture.captured', 'CONQUISTADO!')}</h3>
                <p className="result-order">{t('vestige.capture.rank', 'Ordem #')}{captureResult.stamp.numeroCaptura}</p>

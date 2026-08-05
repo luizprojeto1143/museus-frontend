@@ -1,27 +1,47 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { Loader2, Send, ArrowRightLeft, Check } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../auth/AuthContext";
 
+type TransferForm = {
+    registrationId: string;
+    toName: string;
+    toEmail: string;
+};
+
+type TicketTransferResponse = {
+    toName: string;
+    newCode: string;
+};
+
+type ApiError = {
+    response?: {
+        data?: {
+            message?: string;
+        };
+    };
+};
+
 export const TicketTransfer: React.FC = () => {
   const { t } = useTranslation();
     const { email } = useAuth();
-    const [form, setForm] = useState({ registrationId: '', toName: '', toEmail: '' });
+    const [form, setForm] = useState<TransferForm>({ registrationId: '', toName: '', toEmail: '' });
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState<unknown>(null);
+    const [success, setSuccess] = useState<TicketTransferResponse | null>(null);
 
     const onTransfer = async () => {
         if (!form.registrationId || !form.toName || !form.toEmail) return toast.error("Preencha todos os campos");
-        if (form.toEmail === email) return toast.error("Não pode transferir para você mesmo");
+        if (email && form.toEmail.trim().toLowerCase() === email.trim().toLowerCase()) return toast.error("Não pode transferir para você mesmo");
         setLoading(true);
         try {
-            const res = await api.post("/ticket-transfers", form);
+            const res = await api.post<TicketTransferResponse>("/ticket-transfers", form);
             setSuccess(res.data);
             toast.success("Ingresso transferido com sucesso!");
-        } catch (err: unknown) {
-            toast.error(err.response?.data?.message || "Erro ao transferir");
+        } catch (err) {
+            const apiError = err as ApiError;
+            toast.error(apiError.response?.data?.message || "Erro ao transferir");
         } finally { setLoading(false); }
     };
 
@@ -74,3 +94,5 @@ export const TicketTransfer: React.FC = () => {
         </div>
     );
 };
+
+

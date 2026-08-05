@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -26,7 +26,7 @@ export const AdminHeatmap: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/analytics/heatmap?tenantId=${tenantId}&days=${days}`);
+            const res = await api.get<HeatmapData>(`/analytics/heatmap?tenantId=${tenantId}&days=${days}`);
             setData(res.data);
         } catch (error) {
             logger.error(error);

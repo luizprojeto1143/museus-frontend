@@ -1,34 +1,7 @@
 import {
 useTranslation } from "react-i18next";
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { 
-    Activity, 
-    Server, 
-    Database, 
-    Cpu, 
-    HardDrive, 
-    RefreshCw, 
-    CheckCircle, 
-    XCircle,
-    ShieldCheck,
-    Zap,
-    Globe,
-    Lock,
-    Terminal,
-    Layers,
-    ArrowUpRight,
-    Search,
-    AlertCircle,
-    ActivitySquare,
-    Signal,
-    Box,
-    Gauge,
-    Binary,
-    Code,
-    History,
-    Network,
-    MonitorCheck
-} from "lucide-react";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Server, Database, Cpu, HardDrive, RefreshCw, CheckCircle, ShieldCheck, Terminal, AlertCircle, ActivitySquare, Signal, Network, MonitorCheck } from "lucide-react";
 import { api } from '../../../api/client';
 import { 
     Button, 
@@ -37,7 +10,7 @@ import {
     AnimateIn,
     AnimatedCounter
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
 interface HealthData {
@@ -65,7 +38,7 @@ interface HealthData {
 }
 
 export const MasterSystemHealth: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [health, setHealth] = useState<HealthData | null>(null);
     const [loading, setLoading] = useState(true);
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -77,7 +50,7 @@ export const MasterSystemHealth: React.FC = () => {
             const res = await api.get('/health');
             setHealth(res.data);
             setLastUpdate(new Date());
-        } catch (error: unknown) {
+        } catch (_error: unknown) {
             setHealth({
                 status: 'unhealthy',
                 timestamp: new Date().toISOString(),

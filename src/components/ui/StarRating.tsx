@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
+import { isAxiosError } from 'axios';
 import { Star } from 'lucide-react';
+
+type ApiErrorResponse = {
+    message?: string;
+};
+
+const getApiErrorMessage = (err: unknown, fallback: string) => {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || fallback;
+    }
+    return fallback;
+};
 
 interface StarRatingProps {
     rating?: number;
@@ -170,8 +182,7 @@ export const ReviewForm: React.FC<ReviewFormProps> = ({
             setComment('');
             onSubmit?.();
         } catch (err: unknown) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setError((err as unknown).response?.data?.message || 'Erro ao enviar avaliação');
+            setError(getApiErrorMessage(err, 'Erro ao enviar avaliacao'));
         } finally {
             setLoading(false);
         }

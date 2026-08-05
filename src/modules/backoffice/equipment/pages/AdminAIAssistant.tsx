@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { logger } from "@/utils/logger";
-
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { XCircle } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 interface ChatPersona {
   systemPrompt: string;
@@ -19,6 +18,7 @@ interface ChatPersona {
 export const AdminAIAssistant: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId, hasPermission } = useAuth();
+  const canManageChatAi = hasPermission("manage_chat_ai");
   const [persona, setPersona] = useState<ChatPersona>({
     systemPrompt: "",
     tone: "formal-educativo",
@@ -29,17 +29,6 @@ export const AdminAIAssistant: React.FC = () => {
     maxTokens: 500
   });
 
-  if (!hasPermission("manage_chat_ai")) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
-        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
-          <XCircle size={40} className="text-red-500 opacity-50" />
-        </div>
-        <h2 className="text-2xl font-black text-white mb-2">Treinamento Restrito</h2>
-        <p className="text-zinc-500 max-w-sm">Apenas usuários com a flag <strong>manage_chat_ai</strong> podem configurar a base de conhecimento da IA.</p>
-      </div>
-    );
-  }
   const [testMessage, setTestMessage] = useState("");
   const [testResponse, setTestResponse] = useState("");
   const [testing, setTesting] = useState(false);
@@ -65,16 +54,20 @@ export const AdminAIAssistant: React.FC = () => {
   }, [tenantId]);
 
   useEffect(() => {
+    if (!canManageChatAi) {
+      setLoading(false);
+      return;
+    }
     loadPersona();
-  }, [loadPersona]);
+  }, [canManageChatAi, loadPersona]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await api.post(`/persona/${tenantId}`, { ...persona });
-      logger.warn("Alert:", t("admin.aiAssistant.alerts.success"));
+      toast.success(t("admin.aiAssistant.alerts.success"));
     } catch {
-      logger.warn("Alert:", t("admin.aiAssistant.alerts.errorSave"));
+      toast.error(t("admin.aiAssistant.alerts.errorSave"));
     } finally {
       setSaving(false);
     }
@@ -82,7 +75,7 @@ export const AdminAIAssistant: React.FC = () => {
 
   const handleTest = async () => {
     if (!testMessage.trim()) {
-      logger.warn("Alert:", t("admin.aiAssistant.alerts.emptyTest"));
+      toast.error(t("admin.aiAssistant.alerts.emptyTest"));
       return;
     }
 
@@ -105,6 +98,18 @@ export const AdminAIAssistant: React.FC = () => {
 
   if (loading) {
     return <p>{t("common.loading")}</p>;
+  }
+
+  if (!canManageChatAi) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+        <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
+          <XCircle size={40} className="text-red-500 opacity-50" />
+        </div>
+        <h2 className="text-2xl font-black text-white mb-2">Treinamento Restrito</h2>
+        <p className="text-zinc-500 max-w-sm">Apenas usuarios com a flag <strong>manage_chat_ai</strong> podem configurar a base de conhecimento da IA.</p>
+      </div>
+    );
   }
 
   return (
@@ -299,3 +304,4 @@ export const AdminAIAssistant: React.FC = () => {
     </div>
   );
 };
+

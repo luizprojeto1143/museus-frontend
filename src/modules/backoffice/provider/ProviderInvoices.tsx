@@ -3,12 +3,31 @@ import { logger } from "@/utils/logger";
 
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { FileText, Upload, CheckCircle, Clock, DollarSign } from "lucide-react";
+import { Upload, CheckCircle, Clock, DollarSign } from "lucide-react";
 import { toast } from "react-hot-toast";
 
+interface ProviderExecution {
+    id: string;
+    serviceType: string;
+    status: string;
+    approvedBudget?: number | string | null;
+    notaFiscalUrl?: string | null;
+    notaFiscalNumber?: string | null;
+    culturalProject?: {
+        title?: string | null;
+    } | null;
+    project?: {
+        title?: string | null;
+    } | null;
+}
+
+interface UploadResponse {
+    url: string;
+}
+
 export const ProviderInvoices: React.FC = () => {
-    const { userId } = useAuth();
-    const [executions, setExecutions] = useState<any[]>([]);
+    const { userId: _userId } = useAuth();
+    const [executions, setExecutions] = useState<ProviderExecution[]>([]);
     const [loading, setLoading] = useState(true);
 
     const [uploadingId, setUploadingId] = useState<string | null>(null);
@@ -21,8 +40,8 @@ export const ProviderInvoices: React.FC = () => {
     const fetchExecutions = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/providers/me/executions');
-            setExecutions(res.data);
+            const res = await api.get<ProviderExecution[]>('/providers/me/executions');
+            setExecutions(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao carregar serviços prestados.");
@@ -42,18 +61,21 @@ export const ProviderInvoices: React.FC = () => {
         try {
             setUploadingId(executionId);
             
-            // Dummy upload logic (in real life, upload to S3 first)
-            const fakeUrl = `https://storage.culturaviva.gov.br/nfs/${file.name}`;
+            const formData = new FormData();
+            formData.append("file", file);
+            const upload = await api.post<UploadResponse>("/upload/document", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
             
             await api.put(`/accessibility-execution/${executionId}/nota-fiscal`, {
-                notaFiscalUrl: fakeUrl,
+                notaFiscalUrl: upload.data.url,
                 notaFiscalNumber: nfNumber,
                 notaFiscalDate: new Date().toISOString()
             });
 
             toast.success("Nota Fiscal enviada com sucesso!");
             setNfNumber("");
-            fetchExecutions();
+            void fetchExecutions();
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao enviar Nota Fiscal");
@@ -80,10 +102,10 @@ export const ProviderInvoices: React.FC = () => {
                         Nenhum serviço prestado encontrado.
                     </div>
                 ) : (
-                    executions.map(exec => (
+                    executions.map((exec) => (
                         <div key={exec.id} className="bg-[#1a1108] border border-white/10 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div>
-                                <h3 className="text-white font-bold text-lg">{exec.project?.title || "Serviço LBI"}</h3>
+                                <h3 className="text-white font-bold text-lg">{exec.culturalProject?.title || exec.project?.title || "Serviço LBI"}</h3>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                     <span className="text-xs bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">
                                         {exec.serviceType}

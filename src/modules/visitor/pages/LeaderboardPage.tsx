@@ -59,7 +59,7 @@ export const LeaderboardPage: React.FC = () => {
 
     const rest = entries.slice(3);
 
-    const renderPodiumItem = (entry: LeaderboardEntry, place: number) => {
+    const _renderPodiumItem = (entry: LeaderboardEntry, place: number) => {
         const placeClass = place === 1 ? 'first' : place === 2 ? 'second' : 'third';
 
         return (
@@ -82,7 +82,7 @@ export const LeaderboardPage: React.FC = () => {
         );
     };
 
-    const renderListItem = (entry: LeaderboardEntry, isMe: boolean = false) => (
+    const _renderListItem = (entry: LeaderboardEntry, isMe: boolean = false) => (
         <div key={entry.id} className={`ranking-item ${isMe ? 'is-current-user' : ''}`}>
             <div className="ranking-position">
                 #{entry.rank}

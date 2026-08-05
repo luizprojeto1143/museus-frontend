@@ -57,7 +57,7 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
     ref
   ) => {
     return (
-      <DialogPrimitive.Portal forceMount>
+      <DialogPrimitive.Portal>
         <AnimatePresence>
           <DialogPrimitive.Overlay asChild>
             <motion.div

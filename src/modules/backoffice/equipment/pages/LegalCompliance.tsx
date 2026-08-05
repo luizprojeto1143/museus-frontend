@@ -3,20 +3,7 @@ import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
-import { 
-  ShieldCheck, 
-  Scale, 
-  CheckCircle2, 
-  XCircle, 
-  AlertTriangle, 
-  BookOpen, 
-  FileText, 
-  Info,
-  ExternalLink,
-  ChevronRight,
-  Gavel,
-  Library
-} from "lucide-react";
+import { ShieldCheck, Scale, CheckCircle2, AlertTriangle, ExternalLink, Gavel, Library } from "lucide-react";
 import { 
   Card, 
   Badge, 
@@ -24,7 +11,7 @@ import {
   Button,
   AnimatedCounter 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 type ComplianceItem = {
     law: string;
@@ -44,7 +31,7 @@ type ComplianceData = {
 };
 
 const LegalCompliance: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [data, setData] = useState<ComplianceData | null>(null);
     const [loading, setLoading] = useState(true);
 

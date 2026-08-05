@@ -1,55 +1,91 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { 
-    Plus, 
-    Trash2, 
-    Edit3, 
-    Image as ImageIcon, 
-    Star, 
-    Zap, 
-    Crown, 
-    Diamond, 
-    Loader2,
-    Layers,
-    ArrowUpRight,
-    Globe,
-    ShieldCheck,
-    Briefcase,
-    Search,
-    X,
-    Sparkles,
-    Database,
-    Palette,
-    Coins,
-    Gem,
-    Workflow,
-    Fingerprint,
-    ShieldAlert,
-    Box,
-    Terminal,
-    Code,
-    Cpu,
-    ZapOff,
-    RefreshCw,
-    SearchCheck,
-    Lock
-} from "lucide-react";
-import { 
-    Button, 
-    Input, 
-    Select, 
-    Textarea, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
+import { Plus, Trash2, Image as ImageIcon, Star, Zap, Crown, Diamond, ArrowUpRight, Globe, X, Sparkles, Palette, Coins, Gem, Workflow, ZapOff, Lock } from "lucide-react";
+import { Button, Input, Select, Textarea, Card, Badge, AnimateIn } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { getFullUrl } from "../../../utils/url";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
-const rarities = [
+const rarityValues = ["COMMON", "RARE", "EPIC", "LEGENDARY"] as const;
+type Rarity = typeof rarityValues[number];
+
+interface TenantOption {
+    id: string;
+    name: string;
+}
+
+interface WorkOption {
+    id: string;
+    title: string;
+    imageUrl?: string | null;
+}
+
+interface CollectibleCard {
+    id: string;
+    title: string;
+    description?: string | null;
+    imageUrl?: string | null;
+    rarity: Rarity;
+    workId?: string | null;
+    work?: WorkOption | null;
+    totalMinted: number;
+    xpReward: number;
+    _count?: {
+        owners?: number;
+    };
+}
+
+interface CardFormData {
+    title: string;
+    description: string;
+    imageUrl: string;
+    rarity: Rarity;
+    workId: string;
+    totalMinted: number;
+    xpReward: number;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+interface PaginatedWorksResponse {
+    data?: WorkOption[];
+}
+
+const cardSchema = z.object({
+    title: z.string().trim().min(2, "Informe o titulo do cartao."),
+    description: z.string().trim().optional().default(""),
+    imageUrl: z.string().trim().url("Informe uma URL valida para a imagem.").or(z.literal("")),
+    rarity: z.enum(rarityValues),
+    workId: z.string(),
+    totalMinted: z.number().int().min(1, "A emissao minima e 1."),
+    xpReward: z.number().int().min(0, "A recompensa de XP nao pode ser negativa."),
+    tenantId: z.string().trim().min(1)
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
+const emptyCardForm: CardFormData = {
+    title: "",
+    description: "",
+    imageUrl: "",
+    rarity: "COMMON",
+    workId: "",
+    totalMinted: 100,
+    xpReward: 50
+};
+
+const rarities: Array<{ value: Rarity; label: string; icon: React.ReactNode; color: string; bg: string; border: string; shadow: string; glow: string }> = [
   { value: 'COMMON', label: 'Comum', icon: <Star size={14} />, color: 'text-slate-400', bg: 'bg-slate-400/10', border: 'border-slate-400/20', shadow: 'shadow-slate-400/5', glow: 'rgba(148, 163, 184, 0.1)' },
   { value: 'RARE', label: 'Raro', icon: <Zap size={14} />, color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/20', shadow: 'shadow-blue-400/5', glow: 'rgba(96, 165, 250, 0.1)' },
   { value: 'EPIC', label: 'Épico', icon: <Crown size={14} />, color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/20', shadow: 'shadow-purple-400/5', glow: 'rgba(192, 132, 252, 0.1)' },
@@ -57,37 +93,53 @@ const rarities = [
 ];
 
 export const MasterCardManager: React.FC = () => {
-    const { tenantId } = useAuth();
-    const [cards, setCards] = useState<any[]>([]);
-    const [works, setWorks] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [showForm, setShowForm] = useState(false);
+    const { tenantId: userTenantId, role } = useAuth();
+    const isMaster = role === "master";
+    const [selectedTenantId, setSelectedTenantId] = useState<string>(userTenantId || "");
+    const [tenants, setTenants] = useState<TenantOption[]>([]);
     
-    const [formData, setFormData] = useState({
-        title: '',
-        description: '',
-        imageUrl: '',
-        rarity: 'COMMON',
-        workId: '',
-        totalMinted: 100,
-        xpReward: 50
-    });
+    const [cards, setCards] = useState<CollectibleCard[]>([]);
+    const [works, setWorks] = useState<WorkOption[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [showForm, setShowForm] = useState(false);
+    const [cardToDelete, setCardToDelete] = useState<CollectibleCard | null>(null);
+    
+    const [formData, setFormData] = useState<CardFormData>(emptyCardForm);
+
+    const loadTenants = useCallback(async () => {
+        if (!isMaster) return;
+        try {
+            const res = await api.get<TenantOption[]>("/tenants/list/options");
+            setTenants(res.data || []);
+            if (res.data && res.data.length > 0 && !selectedTenantId) {
+                setSelectedTenantId(res.data[0].id);
+            }
+        } catch (err: unknown) {
+            toast.error(getApiErrorMessage(err, "Erro ao carregar lista de museus."));
+        }
+    }, [isMaster, selectedTenantId]);
 
     const loadData = useCallback(async () => {
+        const targetTenant = selectedTenantId || userTenantId;
+        if (!targetTenant) return;
         try {
             setLoading(true);
             const [cardsRes, worksRes] = await Promise.all([
-                api.get(`/collectibles?tenantId=${tenantId}`),
-                api.get(`/works?tenantId=${tenantId}&limit=1000`)
+                api.get<CollectibleCard[]>(`/collectibles?tenantId=${targetTenant}`),
+                api.get<PaginatedWorksResponse | WorkOption[]>(`/works?tenantId=${targetTenant}&limit=1000`)
             ]);
             setCards(cardsRes.data || []);
-            setWorks(worksRes.data.data || worksRes.data || []);
+            setWorks(Array.isArray(worksRes.data) ? worksRes.data : worksRes.data.data || []);
         } catch (err: unknown) {
-            toast.error("Erro ao sincronizar grimório de ativos.");
+            toast.error(getApiErrorMessage(err, "Erro ao sincronizar grimorio de ativos."));
         } finally {
             setLoading(false);
         }
-    }, [tenantId]);
+    }, [selectedTenantId, userTenantId]);
+
+    useEffect(() => {
+        loadTenants();
+    }, [loadTenants]);
 
     useEffect(() => {
         loadData();
@@ -95,25 +147,32 @@ export const MasterCardManager: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const targetTenant = selectedTenantId || userTenantId;
+        if (!targetTenant) return toast.error("Por favor, selecione um museu.");
+        const validation = cardSchema.safeParse({ ...formData, tenantId: targetTenant });
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados do cartao.");
+            return;
+        }
         try {
-            const res = await api.post('/collectibles', { ...formData, tenantId });
+            const res = await api.post<CollectibleCard>('/collectibles', validation.data);
             setCards([res.data, ...cards]);
             setShowForm(false);
-            setFormData({ title: '', description: '', imageUrl: '', rarity: 'COMMON', workId: '', totalMinted: 100, xpReward: 50 });
+            setFormData(emptyCardForm);
             toast.success("Novo artefato forjado no grimório.");
         } catch (err: unknown) {
-            toast.error("Falha na criação do artefato.");
+            toast.error(getApiErrorMessage(err, "Falha na criacao do artefato."));
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm("PROTOCOL: Deseja expurgar este artefato do grimório? Esta ação é imutável.")) return;
         try {
             await api.delete(`/collectibles/${id}`);
             setCards(cards.filter(c => c.id !== id));
-            toast.success("Artefato removido do registro histórico.");
+            setCardToDelete(null);
+            toast.success("Artefato removido do registro historico.");
         } catch (err: unknown) {
-            toast.error("Falha na remoção do ativo.");
+            toast.error(getApiErrorMessage(err, "Falha na remocao do ativo."));
         }
     };
 
@@ -142,12 +201,30 @@ export const MasterCardManager: React.FC = () => {
                     </p>
                 </div>
                 
-                <Button 
-                    onClick={() => setShowForm(!showForm)}
-                    className={`h-16 px-10 rounded-2xl font-black uppercase text-xs tracking-widest transition-all shadow-2xl active:scale-95 flex items-center gap-4 ${showForm ? 'bg-white/5 text-slate-400 border-2 border-white/10 hover:text-white' : 'bg-amber-600 text-white hover:bg-amber-500 shadow-amber-600/30'}`}
-                >
-                    {showForm ? <><X size={20} /> Abortar Forja</> : <><Plus size={20} /> Forjar Artefato</>}
-                </Button>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6">
+                    {isMaster && (
+                        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-2">
+                            <Globe size={18} className="text-amber-500" />
+                            <select
+                                value={selectedTenantId}
+                                onChange={(e) => setSelectedTenantId(e.target.value)}
+                                className="bg-transparent text-white font-bold text-sm focus:outline-none cursor-pointer"
+                            >
+                                <option value="" disabled className="bg-[#0b1120] text-slate-500">Selecione o Museu...</option>
+                                {tenants.map((t) => (
+                                    <option key={t.id} value={t.id} className="bg-[#0b1120] text-white font-bold">{t.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <Button 
+                        onClick={() => setShowForm(!showForm)}
+                        className={`h-16 px-10 rounded-2xl font-black uppercase text-xs tracking-widest transition-all shadow-2xl active:scale-95 flex items-center gap-4 ${showForm ? 'bg-white/5 text-slate-400 border-2 border-white/10 hover:text-white' : 'bg-amber-600 text-white hover:bg-amber-500 shadow-amber-600/30'}`}
+                    >
+                        {showForm ? <><X size={20} /> Abortar Forja</> : <><Plus size={20} /> Forjar Artefato</>}
+                    </Button>
+                </div>
             </div>
 
             {/* Creation Chamber Overlay */}
@@ -198,7 +275,10 @@ export const MasterCardManager: React.FC = () => {
                                             <Input 
                                                 type="number" 
                                                 value={formData.totalMinted} 
-                                                onChange={e => setFormData({...formData, totalMinted: parseInt(e.target.value)})}
+                                                onChange={e => {
+                                                    const value = Number(e.target.value);
+                                                    setFormData({...formData, totalMinted: Number.isFinite(value) ? Math.max(1, Math.trunc(value)) : 1});
+                                                }}
                                                 className="h-16 bg-white/5 border-white/10 rounded-2xl px-8 font-black text-amber-500"
                                             />
                                         </div>
@@ -207,7 +287,10 @@ export const MasterCardManager: React.FC = () => {
                                             <Input 
                                                 type="number" 
                                                 value={formData.xpReward} 
-                                                onChange={e => setFormData({...formData, xpReward: parseInt(e.target.value)})}
+                                                onChange={e => {
+                                                    const value = Number(e.target.value);
+                                                    setFormData({...formData, xpReward: Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0});
+                                                }}
                                                 className="h-16 bg-white/5 border-white/10 rounded-2xl px-8 font-black text-blue-400"
                                             />
                                         </div>
@@ -338,7 +421,7 @@ export const MasterCardManager: React.FC = () => {
                                             {r.icon} <span className="ml-2">{r.label}</span>
                                         </Badge>
                                         <button 
-                                            onClick={() => handleDelete(card.id)} 
+                                            onClick={() => setCardToDelete(card)} 
                                             className="w-12 h-12 rounded-2xl bg-white/5 text-rose-500/30 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center opacity-0 group-hover/card:opacity-100 border-2 border-white/5 shadow-xl group/del"
                                         >
                                             <Trash2 size={20} className="group-hover/del:scale-110 transition-transform" />
@@ -401,6 +484,56 @@ export const MasterCardManager: React.FC = () => {
                 )}
             </div>
 
+            <AnimatePresence>
+                {cardToDelete && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                            className="w-full max-w-md rounded-[32px] border border-rose-500/20 bg-[#0b1120] p-8 shadow-2xl"
+                        >
+                            <div className="space-y-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-400">
+                                        <Trash2 size={22} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black uppercase italic tracking-tight text-white">Remover cartao</h3>
+                                        <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Acao permanente</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm leading-relaxed text-slate-400">
+                                    Deseja remover o artefato <span className="font-black text-white">{cardToDelete.title}</span> do registro?
+                                </p>
+                                <div className="flex justify-end gap-3">
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => setCardToDelete(null)}
+                                        className="rounded-2xl px-6"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={() => handleDelete(cardToDelete.id)}
+                                        className="rounded-2xl bg-rose-600 px-6 text-white hover:bg-rose-500"
+                                    >
+                                        Remover
+                                    </Button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Asset Governance SOC Footer */}
             <div className="bg-[#0f172a]/80 p-14 rounded-[64px] border-2 border-amber-500/10 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group shadow-2xl border-t-white/10">
                 <div className="flex items-center gap-10 relative z-10">
@@ -426,3 +559,5 @@ export const MasterCardManager: React.FC = () => {
         </AnimateIn>
     );
 };
+
+

@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import { 
-    Users, UserPlus, Search, Filter, 
-    Star, Phone, Mail, Award, 
-    Calendar, CheckCircle2, XCircle, Clock,
-    Sparkles, ArrowUpRight, MoreVertical
-} from "lucide-react";
+import { UserPlus, Search, Star, Phone, Mail, Award, Sparkles, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button, Input } from "../../../components/ui";
 
@@ -12,31 +7,86 @@ import { theaterApi } from "../../../api/theater";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
+type CastStatus = "READY" | "REHEARSING" | "AWAY";
+
+interface CastMember {
+    id: string;
+    name: string;
+    role: string;
+    status: CastStatus;
+    rating: number;
+    tags: string[];
+    phone?: string | null;
+    email?: string | null;
+}
+
+interface CastMemberForm {
+    name: string;
+    role: string;
+    email: string;
+    phone: string;
+    tags: string;
+}
+
 export const TheaterCast: React.FC = () => {
     const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState("");
-    const [castMembers, setCastMembers] = useState<any[]>([]);
+    const [castMembers, setCastMembers] = useState<CastMember[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showForm, setShowForm] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [statusFilter, setStatusFilter] = useState<"ALL" | CastStatus>("ALL");
+    const [form, setForm] = useState<CastMemberForm>({ name: "", role: "", email: "", phone: "", tags: "" });
 
-    const loadMembers = async () => {
+    const loadMembers = React.useCallback(async () => {
         try {
             const res = await theaterApi.getMembers();
-            setCastMembers(res.data);
-        } catch (err: unknown) {
+            setCastMembers(res.data as CastMember[]);
+        } catch {
             toast.error(t("theater.cast.load_error", "Erro ao carregar elenco"));
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
 
     React.useEffect(() => {
         loadMembers();
-    }, []);
+    }, [loadMembers]);
 
-    const filteredMembers = castMembers.filter(m => 
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.role.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const saveMember = async () => {
+        if (!form.name.trim() || !form.role.trim()) {
+            toast.error("Nome e função são obrigatórios.");
+            return;
+        }
+        setSaving(true);
+        try {
+            const payload = {
+                name: form.name.trim(),
+                role: form.role.trim(),
+                email: form.email.trim() || undefined,
+                phone: form.phone.trim() || undefined,
+                tags: form.tags.split(",").map(tag => tag.trim()).filter(Boolean),
+                status: "READY" as CastStatus,
+                rating: 5
+            };
+            const res = await theaterApi.saveMember(payload);
+            setCastMembers(prev => [...prev, res.data as CastMember].sort((a, b) => a.name.localeCompare(b.name)));
+            setForm({ name: "", role: "", email: "", phone: "", tags: "" });
+            setShowForm(false);
+            toast.success("Talento cadastrado.");
+        } catch {
+            toast.error("Erro ao salvar talento.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const filteredMembers = castMembers.filter(m => {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch = m.name.toLowerCase().includes(term) || m.role.toLowerCase().includes(term);
+        const matchesStatus = statusFilter === "ALL" || m.status === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
 
     const getStatusStyle = (status: string) => {
         switch(status) {
@@ -57,24 +107,38 @@ export const TheaterCast: React.FC = () => {
                     <p className="text-slate-500 font-medium mt-2">{t("theater.cast.subtitle", "Gerencie sua força criativa, elencos e equipes técnicas.")}</p>
                 </div>
                 <div className="flex gap-4">
-                    <Button className="bg-red-600 hover:bg-red-700 text-white px-10 py-7 rounded-3xl font-black italic shadow-2xl shadow-red-600/20 flex items-center gap-3">
+                    <Button onClick={() => setShowForm(value => !value)} className="bg-red-600 hover:bg-red-700 text-white px-10 py-7 rounded-3xl font-black italic shadow-2xl shadow-red-600/20 flex items-center gap-3">
                         <UserPlus size={20} /> {t("theater.cast.new_talent", "Novo Talento")}
                     </Button>
                 </div>
             </div>
 
-            {/* ═══ AI MATCHMAKING BANNER ═════════ */}
+            {showForm && (
+                <div className="premium-glass p-8 rounded-[40px] border-red-500/30 bg-red-500/5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input placeholder="Nome" value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} className="bg-black/40 border-white/10 text-white" />
+                    <Input placeholder="Função" value={form.role} onChange={e => setForm(prev => ({ ...prev, role: e.target.value }))} className="bg-black/40 border-white/10 text-white" />
+                    <Input placeholder="Email" value={form.email} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} className="bg-black/40 border-white/10 text-white" />
+                    <Input placeholder="Telefone" value={form.phone} onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))} className="bg-black/40 border-white/10 text-white" />
+                    <Input placeholder="Tags separadas por vírgula" value={form.tags} onChange={e => setForm(prev => ({ ...prev, tags: e.target.value }))} className="bg-black/40 border-white/10 text-white md:col-span-2" />
+                    <div className="md:col-span-2 flex justify-end gap-3">
+                        <Button variant="secondary" onClick={() => setShowForm(false)}>Cancelar</Button>
+                        <Button onClick={saveMember} isLoading={saving} className="bg-red-600 text-white">Salvar Talento</Button>
+                    </div>
+                </div>
+            )}
+
+            {/* ═══ CAST SUMMARY ═════════ */}
             <div className="premium-glass p-8 rounded-[40px] border-red-500/30 bg-red-500/5 flex flex-col sm:flex-row sm:items-center gap-8 group">
                 <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-black rounded-3xl flex items-center justify-center text-white shrink-0 shadow-2xl shadow-red-600/30 group-hover:scale-110 transition-transform">
                     <Sparkles size={32} />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-black text-white italic">{t("theater.cast.ai_matchmaking", "IA Matchmaking: Sugestão de Casting")}</h3>
+                    <h3 className="text-lg font-black text-white italic">Resumo do elenco cadastrado</h3>
                     <p className="text-sm text-slate-400 leading-relaxed mt-1">
-                        {t("theater.cast.ai_suggestion", "\"Para o papel de Carlotta Giudicelli, identifiquei que Christine Daaé possui a tessitura vocal ideal e 98% de compatibilidade com o cronograma de ensaios.\"")}
+                        {castMembers.length} talentos no cadastro, {castMembers.filter(member => member.status === "READY").length} prontos e {castMembers.filter(member => member.status === "REHEARSING").length} em ensaio.
                     </p>
                 </div>
-                <Button variant="secondary" className="text-[10px] px-6">{t("theater.cast.view_analysis", "Ver Análise")}</Button>
+                <Button variant="secondary" onClick={loadMembers} className="text-[10px] px-6">Atualizar</Button>
             </div>
 
             {/* ═══ SEARCH & FILTERS ═════════ */}
@@ -88,9 +152,16 @@ export const TheaterCast: React.FC = () => {
                         onChange={e => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <Button variant="secondary" className="px-8 py-8 rounded-[32px] flex items-center gap-3 font-black text-xs uppercase tracking-widest">
-                    <Filter size={20} /> {t("theater.cast.advanced_filters", "Filtros Avançados")}
-                </Button>
+                <select
+                    value={statusFilter}
+                    onChange={e => setStatusFilter(e.target.value as "ALL" | CastStatus)}
+                    className="px-8 py-5 rounded-[32px] bg-white/5 border border-white/10 text-white font-black text-xs uppercase tracking-widest outline-none"
+                >
+                    <option value="ALL" className="bg-slate-900">Todos</option>
+                    <option value="READY" className="bg-slate-900">Prontos</option>
+                    <option value="REHEARSING" className="bg-slate-900">Em ensaio</option>
+                    <option value="AWAY" className="bg-slate-900">Ausentes</option>
+                </select>
             </div>
 
             {/* ═══ CAST GRID ═════════ */}
@@ -110,9 +181,11 @@ export const TheaterCast: React.FC = () => {
                             <div className="w-16 h-16 rounded-[24px] bg-gradient-to-tr from-slate-800 to-black flex items-center justify-center text-white text-2xl font-black shadow-xl group-hover:scale-110 transition-transform border border-white/5">
                                 {member.name.charAt(0)}
                             </div>
-                            <button className="text-slate-700 hover:text-white transition-colors">
-                                <MoreVertical size={20} />
-                            </button>
+                            {member.email && (
+                                <a href={`mailto:${member.email}`} className="text-slate-700 hover:text-white transition-colors">
+                                    <Mail size={20} />
+                                </a>
+                            )}
                         </div>
 
                         <div className="space-y-1 mb-6">
@@ -125,7 +198,7 @@ export const TheaterCast: React.FC = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-8">
-                            {member.tags.map((tag: string) => (
+                            {(member.tags ?? []).map((tag) => (
                                 <span key={tag} className="px-3 py-1 bg-white/5 rounded-lg text-[9px] font-bold text-slate-500">#{tag}</span>
                             ))}
                         </div>
@@ -136,39 +209,37 @@ export const TheaterCast: React.FC = () => {
                                     <Star key={i} size={10} className={i < member.rating ? "text-gold-500 fill-gold-500" : "text-slate-800"} />
                                 ))}
                             </div>
-                            <button className="text-slate-500 hover:text-red-500 transition-colors">
-                                <ArrowUpRight size={18} />
-                            </button>
+                            {member.email && (
+                                <a href={`mailto:${member.email}`} className="text-slate-500 hover:text-red-500 transition-colors">
+                                    <ArrowUpRight size={18} />
+                                </a>
+                            )}
                         </div>
                     </motion.div>
                 ))}
                 </div>
             )}
 
-            {/* ═══ TECHNICAL CREW MINI LIST ═════════ */}
+            {/* ═══ CONTACT LIST ═════════ */}
             <section className="premium-glass p-10 rounded-[48px] border-white/5">
                 <div className="flex items-center justify-between mb-8">
                     <h3 className="text-xl font-black text-white italic flex items-center gap-3">
-                        <Award className="text-red-500" /> {t("theater.cast.technical_crew", "Equipe Técnica (Backstage)")}
+                        <Award className="text-red-500" /> Contatos cadastrados
                     </h3>
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("theater.cast.active_members", "12 Membros Ativos")}</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{castMembers.length} registros</span>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                        { name: "Luan Silva", skill: "Iluminação", active: true },
-                        { name: "Beatriz M.", skill: "Sonorização", active: true },
-                        { name: "Ricardo P.", skill: "Cenografia", active: false },
-                    ].map((tech, i) => (
-                        <div key={tech.name} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
-                            <div className={`w-3 h-3 rounded-full ${tech.active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`} />
+                    {castMembers.filter(member => member.email || member.phone).slice(0, 6).map((member) => (
+                        <div key={member.id} className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <div className={`w-3 h-3 rounded-full ${member.status === "READY" ? 'bg-emerald-500 animate-pulse' : 'bg-slate-700'}`} />
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-black text-white">{tech.name}</p>
-                                <p className="text-[10px] text-slate-500 font-bold uppercase">{tech.skill}</p>
+                                <p className="text-sm font-black text-white">{member.name}</p>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase">{member.role}</p>
                             </div>
                             <div className="flex gap-2">
-                                <Phone size={14} className="text-slate-600 hover:text-white cursor-pointer" />
-                                <Mail size={14} className="text-slate-600 hover:text-white cursor-pointer" />
+                                {member.phone && <a href={`tel:${member.phone}`}><Phone size={14} className="text-slate-600 hover:text-white cursor-pointer" /></a>}
+                                {member.email && <a href={`mailto:${member.email}`}><Mail size={14} className="text-slate-600 hover:text-white cursor-pointer" /></a>}
                             </div>
                         </div>
                     ))}

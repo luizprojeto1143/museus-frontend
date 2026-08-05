@@ -4,21 +4,7 @@ import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { 
-  Shield, 
-  Check, 
-  X, 
-  AlertTriangle, 
-  MessageSquare, 
-  Search, 
-  Filter,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Sparkles,
-  User,
-  Star
-} from "lucide-react";
+import { Shield, Check, X, AlertTriangle, MessageSquare, Clock, Sparkles, User, Star } from "lucide-react";
 import { 
   Card, 
   Button, 
@@ -29,23 +15,51 @@ import {
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
+type ModerationFilter = "ALL" | "PENDING" | "APPROVED" | "REJECTED";
+
+type ReviewModeration = {
+    isApproved: boolean | null;
+    aiScore?: number | null;
+    aiReason?: string | null;
+    flagReason?: string | null;
+};
+
+type ModerationReview = {
+    id: string;
+    rating: number;
+    comment?: string | null;
+    createdAt: string;
+    moderation?: ReviewModeration | null;
+    work?: { title?: string | null } | null;
+    visitor?: { name?: string | null } | null;
+};
+
+type ModerationStats = {
+    totalReviews: number;
+    pending: number;
+    approved: number;
+    flagged: number;
+};
+
+type ReviewListResponse = ModerationReview[] | { data?: ModerationReview[] };
+
 export const AdminModeration: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
     
-    const [reviews, setReviews] = useState<any[]>([]);
-    const [stats, setStats] = useState<unknown>(null);
+    const [reviews, setReviews] = useState<ModerationReview[]>([]);
+    const [stats, setStats] = useState<ModerationStats | null>(null);
     const [loading, setLoading] = useState(true);
-    const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
+    const [statusFilter, setStatusFilter] = useState<ModerationFilter>('ALL');
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [r, s] = await Promise.all([
-                api.get(`/moderation?tenantId=${tenantId}`),
-                api.get(`/moderation/stats?tenantId=${tenantId}`)
+                api.get<ReviewListResponse>(`/moderation?tenantId=${tenantId}`),
+                api.get<ModerationStats>(`/moderation/stats?tenantId=${tenantId}`)
             ]);
-            setReviews(r.data);
+            setReviews(Array.isArray(r.data) ? r.data : r.data.data || []);
             setStats(s.data);
         } catch (error) { 
             logger.error(error); 
@@ -65,7 +79,7 @@ export const AdminModeration: React.FC = () => {
             await api.post(`/moderation/${reviewId}`, { isApproved, flagReason });
             toast.success(isApproved ? "Avaliação publicada!" : "Avaliação ocultada.", { id: loadingToast });
             fetchData();
-        } catch (err) { 
+        } catch (_err) { 
             toast.error("Erro ao processar moderação.", { id: loadingToast }); 
         }
     };

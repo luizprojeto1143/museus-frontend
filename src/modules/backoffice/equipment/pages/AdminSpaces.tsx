@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useToast } from "../../../../contexts/ToastContext";
-import {
-    Building2, Plus, Edit2, Trash2, Users, MapPin,
-    Settings, Loader2, Search, Filter
-} from "lucide-react";
-import { Button, Input } from "../../../../components/ui";
+import { Building2, Plus, Edit2, Trash2, MapPin, Loader2, Search } from "lucide-react";
+import { Button } from "../../../../components/ui";
 import "./AdminShared.css";
 
 
@@ -27,16 +24,18 @@ export const AdminSpaces: React.FC = () => {
     const [spaces, setSpaces] = useState<Space[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [spaceToDelete, setSpaceToDelete] = useState<Space | null>(null);
 
     useEffect(() => {
         fetchSpaces();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchSpaces = async () => {
         try {
             setLoading(true);
-            const res = await api.get("/spaces");
-            setSpaces(res.data);
+            const res = await api.get<Space[]>("/spaces");
+            setSpaces(Array.isArray(res.data) ? res.data : []);
         } catch {
             addToast(t("common.error"), "error");
         } finally {
@@ -45,11 +44,11 @@ export const AdminSpaces: React.FC = () => {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm(t("common.confirmDelete"))) return;
         try {
             await api.delete(`/spaces/${id}`);
             addToast(t("common.successDelete"), "success");
             setSpaces(spaces.filter(s => s.id !== id));
+            setSpaceToDelete(null);
         } catch {
             addToast(t("common.errorDelete"), "error");
         }
@@ -150,7 +149,7 @@ export const AdminSpaces: React.FC = () => {
                                             <Edit2 size={16} />
                                         </button>
                                         <button
-                                            onClick={() => handleDelete(space.id)}
+                                            onClick={() => setSpaceToDelete(space)}
                                             className="btn btn-sm btn-secondary hover:text-red-500 hover:border-red-500"
                                             title="Excluir"
                                         >
@@ -162,6 +161,23 @@ export const AdminSpaces: React.FC = () => {
                         ))}
                     </tbody>
                 </table>
+            )}
+
+            {spaceToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[var(--bg-surface)] p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold mb-3">{t("common.delete", "Excluir")}</h2>
+                        <p className="text-sm opacity-80 mb-6">{t("common.confirmDelete")} {spaceToDelete.name}</p>
+                        <div className="flex justify-end gap-3">
+                            <button type="button" className="btn btn-secondary" onClick={() => setSpaceToDelete(null)}>
+                                {t("common.cancel", "Cancelar")}
+                            </button>
+                            <button type="button" className="btn btn-primary bg-red-600" onClick={() => void handleDelete(spaceToDelete.id)}>
+                                {t("common.confirm", "Confirmar")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

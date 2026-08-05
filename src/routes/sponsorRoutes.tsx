@@ -14,7 +14,7 @@ const SponsorCertificates = React.lazy(() => import('../modules/backoffice/spons
 
 import { Role } from '../types/auth';
 
-export const sponsorRoutes = (RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }>) => (
+export const sponsorRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
   <>
     {/* Public/Landing paths */}
     <Route path="/patrocinar" element={<SponsorLanding />} />

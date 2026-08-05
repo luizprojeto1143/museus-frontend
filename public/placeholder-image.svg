@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Imagem indisponivel</title>
+  <desc id="desc">Placeholder visual do Cultura Viva para conteudos sem imagem cadastrada.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#15110d"/>
+      <stop offset="0.52" stop-color="#263a34"/>
+      <stop offset="1" stop-color="#6f5a2f"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="42%" r="52%">
+      <stop offset="0" stop-color="#f4d57a" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#f4d57a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#bg)"/>
+  <rect width="1200" height="800" fill="url(#halo)"/>
+  <g fill="none" stroke="#f5d27a" stroke-opacity="0.26" stroke-width="2">
+    <path d="M160 590c150-115 285-170 405-165 126 5 195 83 307 71 72-8 130-50 181-96"/>
+    <path d="M170 630c175-103 312-133 411-91 117 49 221 25 349-73"/>
+  </g>
+  <g transform="translate(500 250)">
+    <rect x="0" y="0" width="200" height="150" rx="18" fill="#0e0b09" fill-opacity="0.4" stroke="#f5d27a" stroke-opacity="0.5"/>
+    <circle cx="64" cy="55" r="18" fill="#f5d27a" fill-opacity="0.62"/>
+    <path d="M34 124l44-44 31 31 21-21 46 34H34z" fill="#f5d27a" fill-opacity="0.34"/>
+  </g>
+  <text x="600" y="475" text-anchor="middle" fill="#fff5d6" font-family="Arial, sans-serif" font-size="34" font-weight="700">Cultura Viva</text>
+  <text x="600" y="520" text-anchor="middle" fill="#d8c89d" font-family="Arial, sans-serif" font-size="20">Imagem em preparacao</text>
+</svg>

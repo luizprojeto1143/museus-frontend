@@ -1,43 +1,54 @@
 import React, { useState, useEffect } from "react";
-import { 
-    Zap, Music, Tv, Wind, 
-    Mic2, Play, Pause, SkipForward,
-    AlertTriangle, MessageSquare, Clock,
-    Monitor, Radio, Volume2, Sparkles, Activity
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Zap, Play, SkipForward, AlertTriangle, Monitor, Radio, Volume2, Activity } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "../../../components/ui";
 import { toast } from "react-hot-toast";
 import { theaterApi } from "../../../api/theater";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+type CueType = "LIGHT" | "SOUND" | "SCENE" | string;
+type ConsoleStatus = "STANDBY" | "GO";
+
+interface TheaterCue {
+    id: string;
+    type: CueType;
+    label: string;
+    desc?: string | null;
+    time: string;
+    order?: number;
+}
+
 export const TheaterCueMaster: React.FC = () => {
     const { t } = useTranslation();
     const { id: sessionId } = useParams();
     const [activeCue, setActiveCue] = useState<string | null>(null);
-    const [status, setStatus] = useState("STANDBY");
+    const [status, setStatus] = useState<ConsoleStatus>("STANDBY");
     const [time, setTime] = useState(new Date().toLocaleTimeString());
-    const [cues, setCues] = useState<any[]>([]);
+    const [cues, setCues] = useState<TheaterCue[]>([]);
     const [loading, setLoading] = useState(true);
+    const [savingCue, setSavingCue] = useState(false);
 
-    const loadCues = async () => {
-        if (!sessionId) return;
+    const loadCues = React.useCallback(async () => {
+        if (!sessionId) {
+            setLoading(false);
+            return;
+        }
         try {
             const res = await theaterApi.getCues(sessionId);
-            setCues(res.data);
-        } catch (err: unknown) {
+            setCues(res.data as TheaterCue[]);
+        } catch {
             toast.error(t("theater.cuemaster.load_error", "Erro ao carregar cues"));
         } finally {
             setLoading(false);
         }
-    };
+    }, [sessionId, t]);
 
     useEffect(() => {
         loadCues();
         const timer = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
         return () => clearInterval(timer);
-    }, [sessionId]);
+    }, [loadCues]);
 
     const triggerCue = (id: string) => {
         setActiveCue(id);
@@ -46,6 +57,42 @@ export const TheaterCueMaster: React.FC = () => {
             style: { borderRadius: '20px', background: '#333', color: '#fff' }
         });
     };
+
+    const createCue = async () => {
+        if (!sessionId) {
+            toast.error(t("theater.cuemaster.select_session", "Selecione uma Sessão"));
+            return;
+        }
+        setSavingCue(true);
+        try {
+            const nextOrder = cues.length + 1;
+            const res = await theaterApi.saveCue(sessionId, {
+                type: "SCENE",
+                label: `Cue ${nextOrder}`,
+                desc: "Cue criado pelo console",
+                time: "00:00",
+                order: nextOrder
+            });
+            setCues(prev => [...prev, res.data as TheaterCue].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+            toast.success("Cue criado.");
+        } catch {
+            toast.error("Erro ao criar cue.");
+        } finally {
+            setSavingCue(false);
+        }
+    };
+
+    const triggerNextCue = () => {
+        const currentIndex = cues.findIndex(cue => cue.id === activeCue);
+        const nextCue = cues[currentIndex + 1] ?? cues[0];
+        if (nextCue) triggerCue(nextCue.id);
+    };
+
+    const cueTypeStats = [
+        { label: "Luz", val: cues.filter(cue => cue.type === "LIGHT").length },
+        { label: "Som", val: cues.filter(cue => cue.type === "SOUND").length },
+        { label: "Cena", val: cues.filter(cue => cue.type !== "LIGHT" && cue.type !== "SOUND").length },
+    ];
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-700 pb-20 px-4">
@@ -58,7 +105,7 @@ export const TheaterCueMaster: React.FC = () => {
                     </div>
                     <h1 className="text-5xl font-black text-white tracking-tighter italic">{t("theater.cuemaster.title", "Cue Master Pro")}</h1>
                     <p className="text-slate-500 font-medium mt-2 flex items-center gap-2">
-                        <Activity size={14} className="text-red-500" /> {t("theater.cuemaster.latency", "Latência do Sistema:")} <strong className="text-white">12ms</strong> • {t("theater.cuemaster.nodes", "Nodes Online:")} <strong className="text-white">14/14</strong>
+                        <Activity size={14} className="text-red-500" /> Cues carregados: <strong className="text-white">{cues.length}</strong> • Status local: <strong className="text-white">{status}</strong>
                     </p>
                 </div>
                 <div className="text-right">
@@ -78,10 +125,10 @@ export const TheaterCueMaster: React.FC = () => {
                             {status === "GO" ? "STOP / ABORT" : "READY / STANDBY"}
                         </Button>
                         <div className="grid grid-cols-2 gap-4">
-                            <Button variant="secondary" className="py-6 rounded-2xl flex flex-col gap-1">
+                            <Button variant="secondary" onClick={triggerNextCue} disabled={cues.length === 0} className="py-6 rounded-2xl flex flex-col gap-1">
                                 <SkipForward size={18} /> <span className="text-[9px] font-black uppercase">Next</span>
                             </Button>
-                            <Button variant="secondary" className="py-6 rounded-2xl flex flex-col gap-1">
+                            <Button variant="secondary" onClick={() => { setStatus("STANDBY"); setActiveCue(null); }} className="py-6 rounded-2xl flex flex-col gap-1">
                                 <AlertTriangle size={18} className="text-gold-500" /> <span className="text-[9px] font-black uppercase">Panic</span>
                             </Button>
                         </div>
@@ -92,18 +139,14 @@ export const TheaterCueMaster: React.FC = () => {
                             <Monitor size={14} /> System Health
                          </h4>
                          <div className="space-y-4">
-                            {[
-                                { label: "Lighting Desk", val: 98 },
-                                { label: "Sound Array", val: 100 },
-                                { label: "Stage Automation", val: 85 },
-                            ].map(sys => (
+                            {cueTypeStats.map(sys => (
                                 <div key={sys.label} className="space-y-2">
                                     <div className="flex justify-between text-[10px] font-black uppercase">
                                         <span className="text-slate-400">{sys.label}</span>
-                                        <span className="text-white">{sys.val}%</span>
+                                        <span className="text-white">{sys.val}</span>
                                     </div>
                                     <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                        <div className="h-full bg-red-600" style={{ width: `${sys.val}%` }} />
+                                        <div className="h-full bg-red-600" style={{ width: `${cues.length ? Math.max(8, (sys.val / cues.length) * 100) : 0}%` }} />
                                     </div>
                                 </div>
                             ))}
@@ -128,7 +171,7 @@ export const TheaterCueMaster: React.FC = () => {
                         ) : cues.length === 0 ? (
                             <div className="text-center p-20 border border-dashed border-white/10 rounded-[32px]">
                                 <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">{t("theater.cuemaster.no_cues", "Nenhum Cue programado para esta sessão.")}</p>
-                                <Button variant="secondary" className="mt-4 px-8">{t("theater.cuemaster.program_cue", "Programar Primeiro Cue")}</Button>
+                                <Button variant="secondary" isLoading={savingCue} onClick={createCue} className="mt-4 px-8">{t("theater.cuemaster.program_cue", "Programar Primeiro Cue")}</Button>
                             </div>
                         ) : (
                             <div className="space-y-4 relative">
@@ -156,7 +199,7 @@ export const TheaterCueMaster: React.FC = () => {
 
                                         <div className="flex-1">
                                             <h4 className={`text-lg font-black ${activeCue === cue.id ? 'text-white' : 'text-slate-200'}`}>{cue.label}</h4>
-                                            <p className={`text-xs ${activeCue === cue.id ? 'text-red-100' : 'text-slate-500'} font-medium`}>{cue.desc}</p>
+                                            <p className={`text-xs ${activeCue === cue.id ? 'text-red-100' : 'text-slate-500'} font-medium`}>{cue.desc || "Sem descrição cadastrada."}</p>
                                         </div>
 
                                         <div className="text-right">
@@ -171,7 +214,7 @@ export const TheaterCueMaster: React.FC = () => {
                         )}
 
                         <div className="mt-12 flex justify-center">
-                            <button className="flex items-center gap-2 text-slate-700 hover:text-red-500 transition-colors font-black text-[10px] uppercase tracking-widest">
+                            <button onClick={() => { setStatus("GO"); triggerNextCue(); }} className="flex items-center gap-2 text-slate-700 hover:text-red-500 transition-colors font-black text-[10px] uppercase tracking-widest">
                                 <Play size={14} fill="currentColor" /> {t("theater.cuemaster.simulate_rehearsal", "Simular Ensaio Completo")}
                             </button>
                         </div>
@@ -184,14 +227,12 @@ export const TheaterCueMaster: React.FC = () => {
                                 <Radio size={24} />
                             </div>
                             <div>
-                                <h4 className="text-white font-black italic">{t("theater.cuemaster.intercom_dir", "Intercom: Direção Táctica")}</h4>
-                                <p className="text-xs text-blue-300 font-medium">{t("theater.cuemaster.channel_active", "Canal 1: Ativo (3 participantes)")}</p>
+                                <h4 className="text-white font-black italic">Operação local da sessão</h4>
+                                <p className="text-xs text-blue-300 font-medium">{activeCue ? `Cue ativo: ${cues.find(cue => cue.id === activeCue)?.label ?? activeCue}` : "Nenhum cue ativo no momento."}</p>
                             </div>
                         </div>
                         <div className="flex gap-2">
-                             <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white text-[10px] font-black">JS</div>
-                             <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white text-[10px] font-black">AM</div>
-                             <div className="w-8 h-8 rounded-full bg-red-500 border border-white/10 flex items-center justify-center text-white text-[10px] font-black">DIR</div>
+                             <div className="px-4 py-2 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white text-[10px] font-black">{cues.length} cues</div>
                         </div>
                     </div>
                 </div>

@@ -1,39 +1,16 @@
 import React, { useState } from "react";
 import { logger } from "@/utils/logger";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useTerminology } from "../../../../hooks/useTerminology";
 import { useDebounce } from "../../../../hooks/useDebounce";
-import { 
-  Plus, 
-  Search, 
-  Edit3, 
-  Eye, 
-  Trash2, 
-  History, 
-  ExternalLink, 
-  MoreVertical,
-  Filter,
-  Image as ImageIcon,
-  Code,
-  User as UserIcon,
-  ChevronRight
-} from "lucide-react";
-import { 
-  Card, 
-  Button, 
-  Input, 
-  Badge, 
-  Skeleton, 
-  ConfirmModal, 
-  EmptyState,
-  AnimateIn
-} from "@/components/ui";
+import { Plus, Search, Edit3, Eye, Filter, Image as ImageIcon, Code, User as UserIcon } from "lucide-react";
+import { Card, Button, Badge, ConfirmModal, EmptyState, AnimateIn } from "@/components/ui";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { staggerContainer, staggerItem } from "@/lib/motion";
 
 type AdminWorkItem = {
@@ -44,6 +21,24 @@ type AdminWorkItem = {
   vestigeActive?: boolean;
   code?: string;
   imageUrl?: string;
+};
+
+type RawWorkItem = {
+  id: string;
+  title: string;
+  artist?: string | null;
+  published?: boolean | null;
+  vestigeActive?: boolean | null;
+  imageUrl?: string | null;
+  qrCode?: { code?: string | null } | null;
+};
+
+type WorksResponse = {
+  data?: RawWorkItem[];
+  pagination?: {
+    total?: number;
+    totalPages?: number;
+  };
 };
 
 export const AdminWorks: React.FC = () => {
@@ -67,20 +62,20 @@ export const AdminWorks: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await api.get("/works", { 
+      const res = await api.get<WorksResponse>("/works", { 
         params: { tenantId, page, limit: 12, search: debouncedSearch || undefined } 
       });
       const responseData = res.data;
       const worksList = responseData.data || [];
       const pagination = responseData.pagination || {};
 
-      const apiWorks = worksList.map((w: unknown) => ({
+      const apiWorks = worksList.map((w) => ({
         id: w.id,
         title: w.title,
         artist: w.artist ?? "",
         published: w.published ?? true,
         vestigeActive: w.vestigeActive ?? false,
-        imageUrl: w.imageUrl,
+        imageUrl: w.imageUrl || undefined,
         code: w.qrCode?.code || ""
       }));
 
@@ -105,7 +100,7 @@ export const AdminWorks: React.FC = () => {
       await api.post(`/vestiges/expire/${id}`);
       toast.success("Vestígio expirado com sucesso!");
       loadWorks();
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao expirar vestígio.");
     } finally {
       setShowConfirmExpire(null);

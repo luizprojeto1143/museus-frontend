@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import "./Achievements.css";
 
 export default function Achievements() {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { isGuest } = useAuth();
   const { stats, loading } = useGamification();
   const navigate = useNavigate();

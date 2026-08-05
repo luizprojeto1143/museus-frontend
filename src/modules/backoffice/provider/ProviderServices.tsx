@@ -1,25 +1,8 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { 
-    Briefcase, 
-    Loader2, 
-    Check, 
-    Plus, 
-    Trash2, 
-    Zap, 
-    ShieldCheck, 
-    Eye, 
-    Volume2, 
-    HandMetal, 
-    Accessibility, 
-    BookOpen, 
-    Search,
-    Ear,
-    Activity
-} from "lucide-react";
-import { useAuth } from "../../auth/AuthContext";
+import { Check, ShieldCheck, Eye, Volume2, HandMetal, Accessibility, BookOpen, Search, Ear, Activity } from "lucide-react";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
 import { 
@@ -28,69 +11,67 @@ import {
     AnimateIn, 
     Button 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+
+interface AccessibilityProvider {
+    id: string;
+    services?: string[] | null;
+}
 
 const SERVICE_CONFIG: Record<string, { label: string; icon: React.ReactNode; desc: string; color: string }> = {
-    AUDIO_DESCRIPTION: { 
-        label: "Audiodescrição", 
-        icon: <Volume2 size={24} />, 
-        desc: "Narrativas detalhadas para pessoas com deficiência visual.",
+    AUDIO_DESCRIPTION: {
+        label: "Audiodescricao",
+        icon: <Volume2 size={24} />,
+        desc: "Narrativas detalhadas para pessoas com deficiencia visual.",
         color: "text-purple-400 bg-purple-400/10"
     },
-    LIBRAS_INTERPRETATION: { 
-        label: "Interpretação de Libras", 
-        icon: <HandMetal size={24} />, 
-        desc: "Tradução simultânea para Língua Brasileira de Sinais.",
+    LIBRAS_INTERPRETATION: {
+        label: "Interpretacao de Libras",
+        icon: <HandMetal size={24} />,
+        desc: "Traducao simultanea para Lingua Brasileira de Sinais.",
         color: "text-blue-400 bg-blue-400/10"
     },
-    BRAILLE_PRINTING: { 
-        label: "Impressão em Braille", 
-        icon: <Accessibility size={24} />, 
-        desc: "Produção de materiais táteis e sinalização Braille.",
+    BRAILLE: {
+        label: "Impressao em Braille",
+        icon: <Accessibility size={24} />,
+        desc: "Producao de materiais tateis e sinalizacao Braille.",
         color: "text-amber-400 bg-amber-400/10"
     },
-    TACTILE_REPRODUCTION: { 
-        label: "Reprodução Tátil", 
-        icon: <Eye size={24} />, 
-        desc: "Maquetes e réplicas táteis para exploração sensorial.",
+    TACTILE_MODEL: {
+        label: "Modelo Tatil",
+        icon: <Eye size={24} />,
+        desc: "Maquetes e replicas tateis para exploracao sensorial.",
         color: "text-emerald-400 bg-emerald-400/10"
     },
-    SUBTITLING: { 
-        label: "Legendagem (LSE)", 
-        icon: <Ear size={24} />, 
+    CAPTIONING: {
+        label: "Legendagem",
+        icon: <Ear size={24} />,
         desc: "Legendagem descritiva para surdos e ensurdecidos.",
         color: "text-indigo-400 bg-indigo-400/10"
     },
-    CONSULTANCY: { 
-        label: "Consultoria e Auditoria", 
-        icon: <ShieldCheck size={24} />, 
-        desc: "Avaliação técnica de conformidade e acessibilidade.",
-        color: "text-rose-400 bg-rose-400/10"
-    },
-    TRAINING: { 
-        label: "Treinamento de Equipes", 
-        icon: <BookOpen size={24} />, 
-        desc: "Capacitação em atendimento inclusivo e diversidade.",
+    EASY_READING: {
+        label: "Leitura Facil",
+        icon: <BookOpen size={24} />,
+        desc: "Adaptacao de textos para linguagem simples e inclusiva.",
         color: "text-cyan-400 bg-cyan-400/10"
     },
-    PHYSICAL_ACCESSIBILITY: { 
-        label: "Acessibilidade Física", 
-        icon: <Zap size={24} />, 
-        desc: "Projetos de adaptação de espaços e fluxos.",
-        color: "text-orange-400 bg-orange-400/10"
+    OTHER: {
+        label: "Outros servicos de acessibilidade",
+        icon: <ShieldCheck size={24} />,
+        desc: "Consultoria, treinamento, auditoria e adaptacoes especiais.",
+        color: "text-rose-400 bg-rose-400/10"
     }
 };
-
 export const ProviderServices: React.FC = () => {
-    const { t } = useTranslation();
-    const [provider, setProvider] = useState<unknown>(null);
+    const { t: _t } = useTranslation();
+    const [provider, setProvider] = useState<AccessibilityProvider | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/providers/me");
+            const res = await api.get<AccessibilityProvider>("/providers/me");
             setProvider(res.data);
         } catch (error) {
             logger.error(error);
@@ -105,6 +86,7 @@ export const ProviderServices: React.FC = () => {
     }, [fetchData]);
 
     const toggleService = async (service: string) => {
+        if (!provider) return;
         const currentServices = provider.services || [];
         const isRemoving = currentServices.includes(service);
         const newServices = isRemoving
@@ -113,10 +95,10 @@ export const ProviderServices: React.FC = () => {
 
         try {
             setSaving(true);
-            const res = await api.put(`/providers/${provider.id}`, { services: newServices });
+            const res = await api.put<AccessibilityProvider>(`/providers/${provider.id}`, { services: newServices });
             setProvider(res.data);
             toast.success(isRemoving ? "Serviço removido." : "Serviço ativado no seu perfil!");
-        } catch (error) {
+        } catch (_error) {
             toast.error("Erro ao atualizar portfólio de serviços.");
         } finally {
             setSaving(false);

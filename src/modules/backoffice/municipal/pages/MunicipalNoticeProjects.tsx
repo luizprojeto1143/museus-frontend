@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Button } from "../../../../components/ui";
-import {
-    ArrowLeft, FileText, Calendar, Users, Sparkles,
-    ExternalLink, MapPin, DollarSign, CheckCircle2, Download, Share, CheckCircle,
-    Filter, SortAsc, SortDesc, TrendingUp
-} from "lucide-react";
+import { ArrowLeft, FileText, Calendar, Users, Sparkles, ExternalLink, MapPin, DollarSign, Download, Share, Filter, SortAsc, TrendingUp } from "lucide-react";
 import "../../equipment/pages/AdminShared.css";
 
 type Project = {
@@ -60,6 +56,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
     const [notice, setNotice] = useState<Notice | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showPublishConfirm, setShowPublishConfirm] = useState(false);
 
     // Filters & Sorting
     const [statusFilter, setStatusFilter] = useState("ALL");
@@ -71,11 +68,11 @@ export const MunicipalNoticeProjects: React.FC = () => {
 
         setLoading(true);
         Promise.all([
-            api.get(`/notices/${id}`),
-            api.get(`/projects?noticeId=${id}&tenantId=${tenantId}`)
+            api.get<Notice>(`/notices/${id}`),
+            api.get<Project[]>(`/projects?noticeId=${id}&tenantId=${tenantId}`)
         ]).then(([noticeRes, projectsRes]) => {
             setNotice(noticeRes.data);
-            setProjects(projectsRes.data);
+            setProjects(Array.isArray(projectsRes.data) ? projectsRes.data : []);
         }).catch(err => {
             logger.error(err);
             addToast("Erro ao carregar projetos do edital", "error");
@@ -84,6 +81,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
 
     useEffect(() => {
         fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, tenantId]);
 
     const handleExportCSV = () => {
@@ -114,10 +112,9 @@ export const MunicipalNoticeProjects: React.FC = () => {
     };
 
     const handlePublishResults = async () => {
-        if (!window.confirm("Deseja publicar os resultados finais deste edital? Isso oficializar� as decis�es tomadas.")) return;
-
         try {
             await api.put(`/notices/${id}/publish-results`);
+            setShowPublishConfirm(false);
             addToast("Resultados publicados com sucesso!", "success");
             fetchAll();
         } catch (err) {
@@ -211,7 +208,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
 
                     {notice?.status !== "RESULTS_PUBLISHED" && (
                         <Button
-                            onClick={handlePublishResults}
+                            onClick={() => setShowPublishConfirm(true)}
                             className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-900/20 h-9 px-3 text-xs"
                         >
                             <Share size={14} className="mr-2" /> Publicar Resultados
@@ -224,6 +221,25 @@ export const MunicipalNoticeProjects: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {showPublishConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-emerald-500/30 bg-zinc-950 p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold text-white mb-3">Publicar resultados</h2>
+                        <p className="text-sm text-zinc-300 mb-6">
+                            Deseja publicar os resultados finais deste edital? Isso oficializa as decisões tomadas.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button type="button" variant="ghost" onClick={() => setShowPublishConfirm(false)}>
+                                Cancelar
+                            </Button>
+                            <Button type="button" className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => void handlePublishResults()}>
+                                Confirmar
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Project Grid */}
             <div className="grid grid-cols-1 gap-4">

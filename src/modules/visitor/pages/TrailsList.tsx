@@ -4,22 +4,35 @@ import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { ArrowRight, Compass, Clock, Image as ImageIcon, Map as MapIcon } from "lucide-react";
+import { ArrowRight, Clock, Image as ImageIcon } from "lucide-react";
 import { SmartRouteGenerator } from "../components/SmartRouteGenerator";
 import { motion } from "framer-motion";
 import "./Trails.css";
 
-export const TrailsList: React.FC = () => {
-  const { t } = useTranslation();
-  
-  type TrailItem = {
+type TrailItem = {
     id: string;
     name: string;
     description?: string;
     duration?: string;
     worksCount?: number;
     type?: string;
-  };
+};
+
+type TrailApiItem = {
+    id: string;
+    title?: string | null;
+    name?: string | null;
+    description?: string | null;
+    duration?: number | string | null;
+    workIds?: string[] | null;
+};
+
+type TrailsResponse = TrailApiItem[] | {
+    data?: TrailApiItem[];
+};
+
+export const TrailsList: React.FC = () => {
+  const { t: _t } = useTranslation();
 
   const [trails, setTrails] = useState<TrailItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,14 +45,14 @@ export const TrailsList: React.FC = () => {
     let mounted = true;
     setLoading(true);
 
-    api.get("/trails", { params: { tenantId, equipamentoId } })
+    api.get<TrailsResponse>("/trails", { params: { tenantId, equipamentoId } })
       .then((res) => {
         if (!mounted) return;
         const trailsData = Array.isArray(res.data) ? res.data : (res.data?.data || []);
-        const apiTrails = trailsData.map((item: unknown) => ({
+        const apiTrails = trailsData.map((item) => ({
           id: item.id,
-          name: item.title,
-          description: item.description,
+          name: item.title || item.name || "Trilha cultural",
+          description: item.description || undefined,
           duration: item.duration ? `${item.duration} min` : undefined,
           worksCount: Array.isArray(item.workIds) ? item.workIds.length : 0,
           type: "Trilha"

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
-import { Search, Filter, Plus, FileText, ArrowRight, Calendar, Download, TrendingUp } from "lucide-react";
+import { FileText, ArrowRight, Calendar, Download, TrendingUp, Scale } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 
 interface Notice {
@@ -75,9 +75,7 @@ export const ProducerNotices: React.FC = () => {
                             <FileText size={40} />
                         </div>
                         <h3 className="text-xl font-bold text-[#EAE0D5] mb-2">Nenhum edital aberto</h3>
-                        <p className="text-[#B0A090] max-w-md mx-auto">{t("producer.producernotices.noMomentoNoHEditaisComInscriesAbertasFiq", `
-                            No momento não há editais com inscrições abertas. Fique atento às novidades.
-                        `)}</p>
+                        <p className="text-[#B0A090] max-w-md mx-auto">{t("producer.producernotices.noMomentoNoHEditaisComInscriesAbertasFiq", "No momento nao ha editais com inscricoes abertas. Fique atento as novidades.")}</p>
                     </div>
                 ) : (
                     notices.map(notice => (
@@ -162,12 +160,20 @@ export const ProducerNotices: React.FC = () => {
                                     </a>
                                 )}
                                 {notice.status === "RESULTS_PUBLISHED" ? (
-                                    <button
-                                        onClick={() => navigate(`/producer/editais/${notice.id}/results`)}
-                                        className="flex-1 py-3 bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--accent-primary)]/10"
-                                    >
-                                        Ver Classificação <TrendingUp size={18} />
-                                    </button>
+                                    <div className="flex-1 grid grid-cols-2 gap-2">
+                                        <button
+                                            onClick={() => navigate(`/producer/editais/${notice.id}/results`)}
+                                            className="py-3 bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-[var(--accent-primary)]/10"
+                                        >
+                                            Classificação <TrendingUp size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => navigate(`/producer/editais/${notice.id}/transparencia`)}
+                                            className="py-3 bg-black/30 text-[var(--accent-primary)] hover:bg-black/50 rounded-xl font-bold flex items-center justify-center gap-2 transition-all border border-[var(--accent-primary)]/20"
+                                        >
+                                            Transparência <Scale size={18} />
+                                        </button>
+                                    </div>
                                 ) : notice.status === "INSCRIPTIONS_OPEN" && canSubmit ? (
                                     <button
                                         onClick={() => handleApply(notice.id)}

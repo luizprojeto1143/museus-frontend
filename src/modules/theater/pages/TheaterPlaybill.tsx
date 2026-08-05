@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import { 
-    BookOpen, Image as ImageIcon, Users, Type, 
-    QrCode, Share2, Eye, Save, Plus, 
-    Trash2, Sparkles, Wand2, Smartphone
-} from "lucide-react";
+import { Image as ImageIcon, Users, Type, QrCode, Share2, Eye, Save, Plus, Trash2, Wand2, Smartphone } from "lucide-react";
 import { Button, Input, Textarea } from "../../../components/ui";
-import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
-
-export const TheaterPlaybill: React.FC = () => {
-    const [step, setStep] = useState(1);
+import { motion } from "framer-motion";export const TheaterPlaybill: React.FC = () => {
+    const [_step, _setStep] = useState(1);
     const [playbill, setPlaybill] = useState({
         title: "O Fantasma da Ópera",
         synopsis: "Um gênio musical deformado vive nas catacumbas da Ópera de Paris...",

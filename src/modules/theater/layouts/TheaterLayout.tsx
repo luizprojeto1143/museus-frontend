@@ -3,19 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
-import { 
-  LayoutDashboard, 
-  Theater, 
-  Armchair, 
-  Users2, 
-  Zap, 
-  Settings, 
-  LogOut, 
-  Menu, 
-  X,
-  FileText,
-  Ticket
-} from "lucide-react";
+import { LayoutDashboard, Theater, Armchair, Users2, LogOut, Menu, X, FileText, Ticket } from "lucide-react";
 import "./TheaterLayout.css";
 
 interface TheaterLayoutProps {

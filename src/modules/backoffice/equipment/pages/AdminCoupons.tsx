@@ -1,10 +1,27 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from 'react';
+import { isAxiosError } from "axios";
+import { z } from "zod";
 import { Plus, Trash2, Tag, Check, X, Search } from 'lucide-react';
 import { api } from '../../../../api/client';
 import toast from 'react-hot-toast';
 import "./AdminShared.css";
 
+const couponSchema = z.object({
+    code: z.string().trim().min(2, "Informe o codigo do cupom.").max(40, "Codigo muito longo."),
+    discountType: z.enum(["PERCENTAGE", "FIXED"]),
+    discountValue: z.coerce.number().positive("Informe um valor de desconto maior que zero."),
+    xpCost: z.union([z.literal(""), z.coerce.number().int().min(0)]),
+    description: z.string().trim().max(180, "Descricao muito longa.")
+}).superRefine((data, ctx) => {
+    if (data.discountType === "PERCENTAGE" && Number(data.discountValue) > 100) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["discountValue"],
+            message: "Desconto percentual nao pode passar de 100%."
+        });
+    }
+});
 
 interface Coupon {
     id: string;
@@ -31,6 +48,7 @@ export function AdminCoupons() {
     const [xpCost, setXpCost] = useState('');
     const [description, setDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [deleteTarget, setDeleteTarget] = useState<Coupon | null>(null);
 
     useEffect(() => {
         fetchCoupons();
@@ -38,9 +56,9 @@ export function AdminCoupons() {
 
     const fetchCoupons = async () => {
         try {
-            const { data } = await api.get('/coupons');
+            const { data } = await api.get<Coupon[]>('/coupons');
             setCoupons(data);
-        } catch (error) {
+        } catch (_error) {
             toast.error('Erro ao buscar cupons');
         } finally {
             setIsLoading(false);
@@ -52,39 +70,46 @@ export function AdminCoupons() {
             await api.put(`/coupons/${id}/toggle`, { isActive: !current });
             toast.success(current ? 'Cupom desativado' : 'Cupom ativado');
             fetchCoupons();
-        } catch (err) {
+        } catch (_err) {
             toast.error('Erro ao alterar status');
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!window.confirm('Tem certeza que deseja deletar este cupom? Esta ação é irreversível.')) {
-            return;
-        }
+    const handleDelete = async () => {
+        if (!deleteTarget) return;
         try {
-            await api.delete(`/coupons/${id}`);
+            await api.delete(`/coupons/${deleteTarget.id}`);
             toast.success('Cupom deletado');
+            setDeleteTarget(null);
             fetchCoupons();
-        } catch (err) {
+        } catch (_err) {
             toast.error('Erro ao deletar cupom');
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!code || !discountValue) {
-            toast.error('Código e valor do desconto são obrigatórios');
+        const parsed = couponSchema.safeParse({
+            code,
+            discountType,
+            discountValue,
+            xpCost,
+            description
+        });
+
+        if (!parsed.success) {
+            toast.error(parsed.error.issues[0]?.message || 'Revise os dados do cupom');
             return;
         }
 
         try {
             setIsSubmitting(true);
             await api.post('/coupons', {
-                code,
-                discountType,
-                discountValue: Number(discountValue),
-                xpCost: xpCost ? Number(xpCost) : null,
-                description,
+                code: parsed.data.code,
+                discountType: parsed.data.discountType,
+                discountValue: parsed.data.discountValue,
+                xpCost: parsed.data.xpCost === "" ? null : parsed.data.xpCost,
+                description: parsed.data.description,
                 isActive: true
             });
 
@@ -92,8 +117,11 @@ export function AdminCoupons() {
             setIsModalOpen(false);
             resetForm();
             fetchCoupons();
-        } catch (err: unknown) {
-            toast.error(err.response?.data?.error || 'Erro ao criar cupom');
+        } catch (err) {
+            const message = isAxiosError<{ error?: string }>(err)
+                ? err.response?.data?.error
+                : undefined;
+            toast.error(message || 'Erro ao criar cupom');
         } finally {
             setIsSubmitting(false);
         }
@@ -204,7 +232,7 @@ export function AdminCoupons() {
                                     </button>
 
                                     <button
-                                        onClick={() => handleDelete(coupon.id)}
+                                        onClick={() => setDeleteTarget(coupon)}
                                         className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
                                         title="Excluir"
                                     >
@@ -251,7 +279,7 @@ export function AdminCoupons() {
                                     <label className="block text-sm font-medium text-zinc-200 mb-1">Tipo de Desconto</label>
                                     <select
                                         value={discountType}
-                                        onChange={(e) => setDiscountType(e.target.value as unknown)}
+                                        onChange={(e) => setDiscountType(e.target.value as Coupon['discountType'])}
                                         className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold"
                                     >
                                         <option value="PERCENTAGE">Porcentagem (%)</option>
@@ -319,6 +347,35 @@ export function AdminCoupons() {
                 </div>
             )}
 
+            {deleteTarget && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[110]">
+                    <div className="bg-zinc-900 border border-red-500/20 rounded-2xl shadow-2xl shadow-black/50 w-full max-w-md p-8">
+                        <h2 className="text-xl font-bold text-white mb-3">Excluir cupom?</h2>
+                        <p className="text-zinc-300 text-sm">
+                            Esta acao remove o cupom <strong>{deleteTarget.code}</strong> e nao pode ser desfeita.
+                        </p>
+                        <div className="pt-6 flex justify-end space-x-3">
+                            <button
+                                type="button"
+                                onClick={() => setDeleteTarget(null)}
+                                className="px-6 py-2.5 text-zinc-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDelete}
+                                className="px-6 py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors"
+                            >
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
+
+

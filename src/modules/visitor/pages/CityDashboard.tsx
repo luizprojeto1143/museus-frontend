@@ -1,22 +1,15 @@
-import { logger } from "@/utils/logger";
-import { VisitorProfile, Achievement, Event, Trail } from "../types/domain";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
-import { 
-  Compass, Landmark, Calendar, MapPin, 
-  Sparkles, ShieldAlert, ArrowLeft, ArrowRight,
-  Accessibility, MessageSquare, Map, Award, HelpCircle,
-  Search, Bell, User, ChevronRight, ChevronDown, Moon, Sun, 
-  Activity, Check, Heart, Clock, Volume2, BookOpen, Navigation
-} from "lucide-react";
+import { Compass, ShieldAlert, ArrowLeft, ArrowRight, Map, Search, Bell, ChevronRight, ChevronDown, Activity, Heart, Navigation } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Card, Badge, Button } from "@/components/ui";
-import { pageVariants, staggerContainer, staggerItem } from "@/lib/motion";
+import { pageVariants } from "@/lib/motion";
 import "./CityDashboard.css";
 
 interface CityEquipment {
@@ -55,8 +48,78 @@ interface CityData {
   totalTrailsCount?: number;
 }
 
+
+type ApiError = {
+  name?: string;
+  code?: string;
+};
+
+type CitySummaryResponse = {
+  cities?: CityData[];
+};
+
+type RankingEntry = {
+  id?: string;
+  rank?: number;
+  name?: string;
+  email?: string | null;
+  xp?: number;
+};
+
+type LeaderboardResponse = {
+  ranking?: RankingEntry[];
+  myRank?: RankingEntry | null;
+};
+
+type CityAchievement = {
+  id: string;
+  name?: string;
+  title?: string;
+  description?: string;
+};
+
+type CityEvent = {
+  id: string;
+  title: string;
+  description?: string | null;
+  startDate: string;
+  endDate?: string | null;
+  coverImageUrl?: string | null;
+  coverUrl?: string | null;
+  tenantId?: string;
+};
+
+type CityTrail = {
+  id: string;
+  title?: string | null;
+  name?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  tenantId?: string;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
+
+const isCanceledRequest = (err: unknown): boolean => {
+  const apiError = err as ApiError;
+  return apiError.name === 'CanceledError' || apiError.code === 'ERR_CANCELED';
+};
+
+const unwrapList = <T,>(payload: ListResponse<T>): T[] => Array.isArray(payload) ? payload : payload.data || [];
+
+const getEventImage = (event: CityEvent): string | null => event.coverImageUrl || event.coverUrl || null;
+const getEventEndDate = (event: CityEvent): string => event.endDate || event.startDate;
+const getTrailTitle = (trail: CityTrail): string => trail.title || trail.name || "Roteiro cultural";
+const getAchievementTitle = (achievement: CityAchievement): string => achievement.title || achievement.name || "Conquista";
+const getAchievementIcon = (achievement: CityAchievement): string => {
+  const title = getAchievementTitle(achievement);
+  if (title.includes("Pioneiro")) return "🥇";
+  if (title.includes("Mestre")) return "👑";
+  if (title.includes("Rotas")) return "🧭";
+  return "🔒";
+};
 export const CityDashboard: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { citySlug } = useParams<{ citySlug: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, updateSession, isGuest, enterAsGuest, role, name: authName } = useAuth();
@@ -72,11 +135,11 @@ export const CityDashboard: React.FC = () => {
   const [mapFilter, setMapFilter] = useState<string>("Todos");
 
   // Dynamic Database-Integrated States
-  const [dbRankings, setDbRankings] = useState<VisitorProfile[]>([]);
-  const [dbMyRank, setDbMyRank] = useState<VisitorProfile | null>(null);
-  const [dbAchievements, setDbAchievements] = useState<Achievement[]>([]);
-  const [dbEvents, setDbEvents] = useState<Event[]>([]);
-  const [dbTrails, setDbTrails] = useState<Trail[]>([]);
+  const [dbRankings, setDbRankings] = useState<RankingEntry[]>([]);
+  const [dbMyRank, setDbMyRank] = useState<RankingEntry | null>(null);
+  const [dbAchievements, setDbAchievements] = useState<CityAchievement[]>([]);
+  const [dbEvents, setDbEvents] = useState<CityEvent[]>([]);
+  const [dbTrails, setDbTrails] = useState<CityTrail[]>([]);
 
   // Fetch City Data from PWA dynamic analytics
   useEffect(() => {
@@ -86,7 +149,7 @@ export const CityDashboard: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await api.get("/analytics/municipal-pwa/summary", { signal: abortController.signal });
+        const res = await api.get<CitySummaryResponse>("/analytics/municipal-pwa/summary", { signal: abortController.signal });
         if (res.data && res.data.cities) {
           // Robust slug matching (e.g. betim or betim-cultura)
           const found = res.data.cities.find((c: CityData) => 
@@ -95,27 +158,27 @@ export const CityDashboard: React.FC = () => {
           if (found) {
             const enrichedEquipments = found.equipments.map((eq: CityEquipment) => ({
               ...eq,
-              missao: eq.missao || "Espaço dedicado à preservação da história, arte e memória municipal com acervo conectado.",
-              horarios: eq.horarios || "09h às 18h",
-              endereco: eq.endereco || "Centro Histórico",
-              latitude: eq.latitude ?? null,
-              longitude: eq.longitude ?? null,
-              acessibilidade: eq.acessibilidade || "Disponível",
-              ingresso: eq.ingresso || "Gratuito",
+              missao: eq.missao || undefined,
+              horarios: eq.horarios || undefined,
+              endereco: eq.endereco || undefined,
+              latitude: eq.latitude ?? undefined,
+              longitude: eq.longitude ?? undefined,
+              acessibilidade: eq.acessibilidade || undefined,
+              ingresso: eq.ingresso || undefined,
             }));
             setCity({
               ...found,
               equipments: enrichedEquipments
             });
             if (enrichedEquipments.length > 0) {
-              setSelectedPin(enrichedEquipments[0]);
+              setSelectedPin(enrichedEquipments[0] || null);
             }
           } else {
             setError("Cidade não encontrada no ecossistema municipal.");
           }
         }
-      } catch (err: unknown) {
-        if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+      } catch (err) {
+        if (isCanceledRequest(err)) return;
         logger.error("Error loading city data", err);
         setError("Erro de rede ao carregar o ecossistema municipal.");
       } finally {
@@ -139,50 +202,44 @@ export const CityDashboard: React.FC = () => {
       const signal = abortController.signal;
 
       // 1. Fetch Real Ranking for this City
-      api.get(`/leaderboard/city/${city.id}`, { signal })
+      api.get<LeaderboardResponse>(`/leaderboard/city/${city.id}`, { signal })
         .then(res => {
           if (res.data && res.data.ranking) {
             setDbRankings(res.data.ranking);
-            setDbMyRank(res.data.myRank);
+            setDbMyRank(res.data.myRank || null);
           }
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database rankings:", err)
+            if (!isCanceledRequest(err)) logger.warn("Could not load database rankings:", err)
         });
 
       // 2. Fetch Real Achievements for this City
-      api.get(`/achievements?tenantId=${city.id}`, { signal })
+      api.get<ListResponse<CityAchievement>>(`/achievements?tenantId=${city.id}`, { signal })
         .then(res => {
-          if (Array.isArray(res.data)) {
-            setDbAchievements(res.data);
-          }
+          setDbAchievements(unwrapList(res.data));
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database achievements:", err)
+            if (!isCanceledRequest(err)) logger.warn("Could not load database achievements:", err)
         });
 
       // 3. Fetch Real Events of City and Children
-      api.get("/events", { signal })
+      api.get<ListResponse<CityEvent>>("/events", { signal })
         .then(res => {
-          if (Array.isArray(res.data)) {
-            const filtered = res.data.filter(ev => allTenantIds.includes(ev.tenantId));
-            setDbEvents(filtered);
-          }
+          const filtered = unwrapList(res.data).filter(ev => ev.tenantId && allTenantIds.includes(ev.tenantId));
+          setDbEvents(filtered);
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database events:", err)
+            if (!isCanceledRequest(err)) logger.warn("Could not load database events:", err)
         });
 
       // 4. Fetch Real Trails/Roteiros of City and Children
-      api.get("/trails", { signal })
+      api.get<ListResponse<CityTrail>>("/trails", { signal })
         .then(res => {
-          if (Array.isArray(res.data)) {
-            const filtered = res.data.filter(tr => allTenantIds.includes(tr.tenantId));
-            setDbTrails(filtered);
-          }
+          const filtered = unwrapList(res.data).filter(tr => tr.tenantId && allTenantIds.includes(tr.tenantId));
+          setDbTrails(filtered);
         })
         .catch(err => {
-            if (err.name !== 'CanceledError' && err.code !== 'ERR_CANCELED') logger.warn("Could not load database trails:", err)
+            if (!isCanceledRequest(err)) logger.warn("Could not load database trails:", err)
         });
 
       return () => {
@@ -225,7 +282,7 @@ export const CityDashboard: React.FC = () => {
   const eventsPercent = activeEventsCount > 0 ? (registeredEventsCount / activeEventsCount) * 100 : 0;
   const trailsPercent = totalTrailsCount > 0 ? (completedTrailsCount / totalTrailsCount) * 100 : 0;
   // Filtered equipments list based on search bar query
-  const filteredEquipments = useMemo(() => {
+  const _filteredEquipments = useMemo(() => {
     if (!city) return [];
     return city.equipments.filter(eq => 
       eq.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -243,7 +300,7 @@ export const CityDashboard: React.FC = () => {
     });
   }, [city, mapFilter]);
 
-  // Dynamic values parsed from database seeds or elegant mock fallbacks
+  // Dynamic values loaded from database-backed endpoints
   const firstMuseum = city?.equipments[0] || null;
   const firstEvent = dbEvents[0] || null;
   const firstTrail = dbTrails[0] || null;
@@ -302,7 +359,7 @@ export const CityDashboard: React.FC = () => {
 
           <nav className="sidebar-nav-links">
             <button className="sidebar-nav-item active" onClick={() => { setMobileTab("dashboard"); }}>
-              <span className="sidebar-nav-icon">🏠</span> Início
+              <span className="sidebar-nav-icon">IN</span> Inicio
             </button>
             <button className="sidebar-nav-item" onClick={() => navigate("/cidades")}>
               <span className="sidebar-nav-icon">🧭</span> Explorar
@@ -320,7 +377,7 @@ export const CityDashboard: React.FC = () => {
               <span className="sidebar-nav-icon">🏆</span> Conquistas
             </button>
             <button className="sidebar-nav-item" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
-              <span className="sidebar-nav-icon">🤝</span> Parceiros
+              <span className="sidebar-nav-icon">🧭</span> Roteiros
             </button>
             <button className="sidebar-nav-item" onClick={() => navigate("/perfil")}>
               <span className="sidebar-nav-icon">👤</span> Perfil
@@ -436,21 +493,18 @@ export const CityDashboard: React.FC = () => {
                     <Map size={14} /> Ver mapa da cidade
                   </Button>
                 </div>
-              </div>
-
-              {/* Weather Widget */}
-              <div className="hero-weather-widget p-4 text-left">
-                <span className="widget-title text-[9px] text-gray-500 font-bold uppercase block">Clima agora</span>
+              </div>              <div className="hero-weather-widget p-4 text-left">
+                <span className="widget-title text-[9px] text-gray-500 font-bold uppercase block">Rede cultural</span>
                 <div className="temp-row flex items-center gap-3 my-1">
-                  <Moon className="text-gold-400" size={24} />
+                  <Activity className="text-gold-400" size={24} />
                   <div>
-                    <span className="temp-value font-black text-white text-2xl">23°C</span>
-                    <span className="temp-lbl text-[9px] text-gray-400 block">Céu limpo</span>
+                    <span className="temp-value font-black text-white text-2xl">{equipmentsCount}</span>
+                    <span className="temp-lbl text-[9px] text-gray-400 block">equipamentos cadastrados</span>
                   </div>
                 </div>
                 <div className="widget-footer border-t border-white/5 pt-2 mt-2 flex items-center gap-1.5 text-gray-400 text-[10px]">
-                  <Sun size={12} className="text-gold-400" />
-                  <span>Melhor horário: <b>Pôr do sol 17:42</b></span>
+                  <Compass size={12} className="text-gold-400" />
+                  <span>{activeEventsCount} eventos e {dbTrails.length} roteiros ativos</span>
                 </div>
               </div>
             </div>
@@ -480,41 +534,6 @@ export const CityDashboard: React.FC = () => {
                   <span className="sub">{dbTrails.length} roteiros</span>
                 </div>
               </button>
-              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
-                <span className="emoji">🎨</span>
-                <div>
-                  <span className="title">Arte Pública</span>
-                  <span className="sub">Disponível</span>
-                </div>
-              </button>
-              <button className="category-pill-btn" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
-                <span className="emoji">🍴</span>
-                <div>
-                  <span className="title">Gastronomia</span>
-                  <span className="sub">Parceiros</span>
-                </div>
-              </button>
-              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
-                <span className="emoji">✈️</span>
-                <div>
-                  <span className="title">Turismo</span>
-                  <span className="sub">Atrações</span>
-                </div>
-              </button>
-              <button className="category-pill-btn" onClick={() => navigate("/chat")}>
-                <span className="emoji">🎧</span>
-                <div>
-                  <span className="title">Guias & Áudios</span>
-                  <span className="sub">Disponíveis</span>
-                </div>
-              </button>
-              <button className="category-pill-btn" onClick={() => navigate("/cidades")}>
-                <span className="emoji">♿</span>
-                <div>
-                  <span className="title">Acessibilidade</span>
-                  <span className="sub">Ativa</span>
-                </div>
-              </button>
             </div>
           </section>
 
@@ -535,7 +554,7 @@ export const CityDashboard: React.FC = () => {
                     onClick={() => handleSelectMuseum(firstMuseum)}
                   >
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "/placeholder-image.jpg"} alt={firstMuseum.name} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={firstMuseum?.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "/placeholder-image.svg"} alt={firstMuseum.name} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute uppercase">Destaque</span>
                     </div>
@@ -553,17 +572,17 @@ export const CityDashboard: React.FC = () => {
                 {firstEvent && (
                   <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate(`/cidades/${citySlug}/agenda`)}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={(firstEvent as unknown)?.coverImageUrl ? getFullUrl((firstEvent as unknown).coverImageUrl) : "/placeholder-image.jpg"} alt={(firstEvent as unknown).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={getEventImage(firstEvent) ? getFullUrl(getEventImage(firstEvent) || "") : "/placeholder-image.svg"} alt={firstEvent.title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute event-badge uppercase">Evento</span>
                     </div>
                     <div className="card-info p-4">
-                      <h4 className="card-title font-black text-white text-base">{(firstEvent as unknown).title}</h4>
+                      <h4 className="card-title font-black text-white text-base">{firstEvent.title}</h4>
                       <p className="card-desc text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstEvent as unknown).description || "Programação completa disponível no portal."}
+                        {firstEvent.description || "Sem descrição cadastrada."}
                       </p>
                       <span className="card-date-badge font-extrabold text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-4">
-                        {`${new Date((firstEvent as unknown).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as unknown).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                        {`${new Date(firstEvent.startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date(getEventEndDate(firstEvent)).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
                       </span>
                     </div>
                   </Card>
@@ -573,14 +592,14 @@ export const CityDashboard: React.FC = () => {
                 {firstTrail && (
                   <Card className="highlight-item-card cursor-pointer overflow-hidden border-white/5 bg-white/5 group" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                     <div className="card-image-wrapper h-40 relative overflow-hidden">
-                      <img src={(firstTrail as unknown)?.imageUrl ? getFullUrl((firstTrail as unknown).imageUrl) : "/placeholder-image.jpg"} alt={(firstTrail as unknown).title} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={firstTrail.imageUrl ? getFullUrl(firstTrail.imageUrl) : "/placeholder-image.svg"} alt={getTrailTitle(firstTrail)} className="card-image w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       <div className="card-overlay"></div>
                       <span className="card-badge-absolute route-badge uppercase">Roteiro</span>
                     </div>
                     <div className="card-info p-4">
-                      <h4 className="card-title font-black text-white text-base">{(firstTrail as unknown).title}</h4>
+                      <h4 className="card-title font-black text-white text-base">{getTrailTitle(firstTrail)}</h4>
                       <p className="card-desc text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstTrail as unknown).description || `Percorra os principais marcos históricos.`}
+                        {firstTrail.description || "Sem descrição cadastrada."}
                       </p>
                       <span className="card-action-btn font-extrabold text-gold-400 text-xs block mt-4 group-hover:translate-x-1 transition-transform">Ver roteiro &gt;</span>
                     </div>
@@ -601,7 +620,7 @@ export const CityDashboard: React.FC = () => {
               <div className="experiences-horizontal-grid flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
                 {city.equipments.map((eq) => (
                   <Card key={eq.id} className="experience-compact-item flex-shrink-0 cursor-pointer overflow-hidden relative" onClick={() => handleSelectMuseum(eq)}>
-                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "/placeholder-image.jpg"} alt={eq.name} />
+                    <img src={eq.coverImageUrl ? getFullUrl(eq.coverImageUrl) : "/placeholder-image.svg"} alt={eq.name} />
                     <div className="info-overlay flex flex-col justify-end p-3 text-left">
                       <span className="title font-bold text-white text-xs">{eq.name}</span>
                       <span className="count text-[9px] text-gray-400">{eq.worksCount} obras</span>
@@ -694,11 +713,11 @@ export const CityDashboard: React.FC = () => {
                 dbRankings.slice(0, 3).map((r, index) => {
                   const isMe = r.email === dbMyRank?.email;
                   return (
-                    <div key={(r as unknown).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
-                      <span className={`rank-num font-black text-sm ${(r as unknown).rank === 1 ? 'text-yellow-500' : (r as unknown).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as unknown).rank}</span>
-                      <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as unknown).name ? (r as unknown).name.charAt(0) : "V"}</div>
+                    <div key={r.rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
+                      <span className={`rank-num font-black text-sm ${r.rank === 1 ? 'text-yellow-500' : r.rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{r.rank}</span>
+                      <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{r.name ? r.name.charAt(0) : "V"}</div>
                       <div className="flex-1 min-w-0">
-                        <span className="name font-bold text-xs text-white block truncate">{(r as unknown).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                        <span className="name font-bold text-xs text-white block truncate">{r.name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                       </div>
                       <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                     </div>
@@ -727,8 +746,8 @@ export const CityDashboard: React.FC = () => {
                   const colors = ["gold", "purple", "bronze", "dark"];
                   const color = colors[idx % 4];
                   return (
-                    <div key={ach.id} className={`achievement-badge-shield ${color}`} title={ach.description || (ach as unknown).title}>
-                      {(ach as unknown).title.includes("Pioneiro") ? "🥇" : (ach as unknown).title.includes("Mestre") ? "👑" : (ach as unknown).title.includes("Rotas") ? "🧭" : "🔒"}
+                    <div key={ach.id} className={`achievement-badge-shield ${color}`} title={ach.description || getAchievementTitle(ach)}>
+                      {getAchievementIcon(ach)}
                     </div>
                   );
                 })
@@ -854,19 +873,18 @@ export const CityDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile Weather Widget */}
             <div className="mobile-weather-section px-6 mt-6 text-left">
               <Card className="mobile-weather-card p-4 border-white/5 bg-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Moon className="text-gold-400" size={24} />
+                  <Activity className="text-gold-400" size={24} />
                   <div>
-                    <span className="mobile-weather-title text-xs text-gray-500 font-bold uppercase block">Clima agora</span>
-                    <span className="temp-value font-black text-white text-lg">23°C • Céu limpo</span>
+                    <span className="mobile-weather-title text-xs text-gray-500 font-bold uppercase block">Rede cultural</span>
+                    <span className="temp-value font-black text-white text-lg">{equipmentsCount} equipamentos</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="mobile-weather-title text-xs text-gray-500 font-bold uppercase block">Melhor horário</span>
-                  <span className="text-xs text-gray-300 font-bold">Pôr do sol 17:42</span>
+                  <span className="mobile-weather-title text-xs text-gray-500 font-bold uppercase block">Programação</span>
+                  <span className="text-xs text-gray-300 font-bold">{activeEventsCount} eventos</span>
                 </div>
               </Card>
             </div>
@@ -894,31 +912,6 @@ export const CityDashboard: React.FC = () => {
                   <span className="lbl">Roteiros</span>
                   <span className="sub">{dbTrails.length} rotas</span>
                 </button>
-                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
-                  <span className="emoji">🎨</span>
-                  <span className="lbl">Arte</span>
-                  <span className="sub">{totalExperiences} obras</span>
-                </button>
-                <button className="mob-category-btn" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
-                  <span className="emoji">🍴</span>
-                  <span className="lbl">Gastron.</span>
-                  <span className="sub">Parceiros</span>
-                </button>
-                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
-                  <span className="emoji">✈️</span>
-                  <span className="lbl">Turismo</span>
-                  <span className="sub">Atrações</span>
-                </button>
-                <button className="mob-category-btn" onClick={() => navigate("/chat")}>
-                  <span className="emoji">🎧</span>
-                  <span className="lbl">Guias</span>
-                  <span className="sub">Disponív.</span>
-                </button>
-                <button className="mob-category-btn" onClick={() => navigate("/cidades")}>
-                  <span className="emoji">♿</span>
-                  <span className="lbl">Acessib.</span>
-                  <span className="sub">Ativa</span>
-                </button>
               </div>
             </section>
 
@@ -937,7 +930,7 @@ export const CityDashboard: React.FC = () => {
                     onClick={() => handleSelectMuseum(firstMuseum)}
                   >
                     <div className="h-44 relative overflow-hidden">
-                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "/placeholder-image.jpg"} alt={firstMuseum.name} className="w-full h-full object-cover" />
+                      <img src={firstMuseum.coverImageUrl ? getFullUrl(firstMuseum.coverImageUrl) : "/placeholder-image.svg"} alt={firstMuseum.name} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge uppercase">Museu em destaque</span>
                     </div>
@@ -955,17 +948,17 @@ export const CityDashboard: React.FC = () => {
                 {firstEvent && (
                   <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate(`/cidades/${citySlug}/agenda`)}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={(firstEvent as unknown).coverImageUrl ? getFullUrl((firstEvent as unknown).coverImageUrl) : "/placeholder-image.jpg"} alt={(firstEvent as unknown).title} className="w-full h-full object-cover" />
+                      <img src={getEventImage(firstEvent) ? getFullUrl(getEventImage(firstEvent) || "") : "/placeholder-image.svg"} alt={firstEvent.title} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge event uppercase">Evento em alta</span>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-black text-white text-base">{(firstEvent as unknown).title}</h4>
+                      <h4 className="font-black text-white text-base">{firstEvent.title}</h4>
                       <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstEvent as unknown).description || "Programação completa disponível no portal."}
+                        {firstEvent.description || "Sem descrição cadastrada."}
                       </p>
                       <span className="text-[10px] text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full inline-block mt-3 font-extrabold">
-                        {`${new Date((firstEvent as unknown).startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date((firstEvent as unknown).endDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
+                        {`${new Date(firstEvent.startDate).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})} - ${new Date(getEventEndDate(firstEvent)).toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'})}`}
                       </span>
                     </div>
                   </Card>
@@ -975,14 +968,14 @@ export const CityDashboard: React.FC = () => {
                 {firstTrail && (
                   <Card className="mobile-highlight-card overflow-hidden border-white/5 bg-white/5" onClick={() => navigate(`/cidades/${citySlug}/roteiros`)}>
                     <div className="h-44 relative overflow-hidden">
-                      <img src={(firstTrail as unknown).imageUrl ? getFullUrl((firstTrail as unknown).imageUrl) : "/placeholder-image.jpg"} alt={(firstTrail as unknown).title} className="w-full h-full object-cover" />
+                      <img src={firstTrail.imageUrl ? getFullUrl(firstTrail.imageUrl) : "/placeholder-image.svg"} alt={getTrailTitle(firstTrail)} className="w-full h-full object-cover" />
                       <div className="card-overlay"></div>
                       <span className="card-badge route uppercase">Roteiro sugerido</span>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-black text-white text-base">{(firstTrail as unknown).title}</h4>
+                      <h4 className="font-black text-white text-base">{getTrailTitle(firstTrail)}</h4>
                       <p className="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-2">
-                        {(firstTrail as unknown).description || `Percorra os principais marcos históricos do município.`}
+                        {firstTrail.description || "Sem descrição cadastrada."}
                       </p>
                       <span className="text-xs text-gold-400 font-bold block mt-3">Ver roteiro &gt;</span>
                     </div>
@@ -1083,11 +1076,11 @@ export const CityDashboard: React.FC = () => {
                   dbRankings.slice(0, 3).map((r, index) => {
                     const isMe = r.email === dbMyRank?.email;
                     return (
-                      <div key={(r as unknown).rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
-                        <span className={`rank-num font-black text-sm ${(r as unknown).rank === 1 ? 'text-yellow-500' : (r as unknown).rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{(r as unknown).rank}</span>
-                        <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{(r as unknown).name ? (r as unknown).name.charAt(0) : "V"}</div>
+                      <div key={r.rank || index} className={`explorer-rank-item flex items-center gap-3 ${isMe ? 'active-user-rank-style' : ''}`}>
+                        <span className={`rank-num font-black text-sm ${r.rank === 1 ? 'text-yellow-500' : r.rank === 2 ? 'text-gold-400' : 'text-gray-500'}`}>{r.rank}</span>
+                        <div className="rank-avatar bg-[#101622] text-white font-bold uppercase">{r.name ? r.name.charAt(0) : "V"}</div>
                         <div className="flex-1">
-                          <span className="name font-bold text-xs text-white block">{(r as unknown).name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
+                          <span className="name font-bold text-xs text-white block">{r.name || "Visitante Anônimo"} {isMe && "(Você)"}</span>
                         </div>
                         <span className="xp-tag text-[10px] text-gold-400 font-semibold">{r.xp} XP</span>
                       </div>
@@ -1110,8 +1103,8 @@ export const CityDashboard: React.FC = () => {
                 <div className="flex gap-2">
                   {dbAchievements.length > 0 ? (
                     dbAchievements.slice(0, 4).map((ach) => (
-                      <span key={ach.id} className="text-xl" title={(ach as unknown).title}>
-                        {(ach as unknown).title.includes("Pioneiro") ? "🥇" : (ach as unknown).title.includes("Mestre") ? "👑" : (ach as unknown).title.includes("Rotas") ? "🧭" : "🔒"}
+                      <span key={ach.id} className="text-xl" title={getAchievementTitle(ach)}>
+                        {getAchievementIcon(ach)}
                       </span>
                     ))
                   ) : (
@@ -1161,7 +1154,7 @@ export const CityDashboard: React.FC = () => {
 
             {/* Filter Pills */}
             <div className="map-filter-pills flex gap-2 overflow-x-auto px-6 py-3 flex-shrink-0 scrollbar-none bg-[#070b13]/40">
-              {["Todos", "Museus", "Eventos", "Roteiros", "Arte Pública"].map(pill => (
+              {["Todos", "Museus", "Eventos", "Roteiros"].map(pill => (
                 <button 
                   key={pill} 
                   className={`pill-btn text-xs font-black uppercase px-4 py-2 min-h-[44px] rounded-full border transition-all ${mapFilter === pill ? "bg-gold-400 text-black border-gold-400" : "bg-transparent text-gray-400 border-white/10"}`}
@@ -1216,8 +1209,7 @@ export const CityDashboard: React.FC = () => {
                         <span className="category-tag text-[9px] text-gold-400 font-extrabold uppercase">Equipamento Cultural • {selectedPin.name.toLowerCase().includes("museu") ? "Museu" : "Ponto Cultural"}</span>
                         <h3 className="sheet-title font-black text-white text-lg my-1">{selectedPin.name}</h3>
                         <div className="stats-row flex gap-3 text-[10px] text-gray-400 mt-1 font-bold">
-                          <span>📍 350 m</span>
-                          <span>🏃 5 min</span>
+                          {selectedPin.endereco && <span>{selectedPin.endereco}</span>}
                         </div>
                       </div>
                       <button className="favorite-btn p-2 rounded-full border border-white/5 bg-white/5">
@@ -1226,13 +1218,13 @@ export const CityDashboard: React.FC = () => {
                     </div>
 
                     <p className="sheet-desc text-xs text-gray-400 mt-3 leading-relaxed">
-                      {selectedPin.missao || "Espaço dedicado à preservação da história, arte e memória municipal com acervo conectado."}
+                      {selectedPin.missao || "Sem descrição cadastrada."}
                     </p>
 
                     <div className="details-tags-row flex gap-2 flex-wrap my-4">
-                      <Badge className="badge-tag gold-text">Aberto agora • {selectedPin.horarios}</Badge>
-                      <Badge className="badge-tag">Acessibilidade {selectedPin.acessibilidade}</Badge>
-                      <Badge className="badge-tag gold-text">Entrada {selectedPin.ingresso}</Badge>
+                      {selectedPin.horarios && <Badge className="badge-tag gold-text">Horário {selectedPin.horarios}</Badge>}
+                      {selectedPin.acessibilidade && <Badge className="badge-tag">Acessibilidade {selectedPin.acessibilidade}</Badge>}
+                      {selectedPin.ingresso && <Badge className="badge-tag gold-text">Entrada {selectedPin.ingresso}</Badge>}
                     </div>
 
                     <div className="sheet-actions-grid grid grid-cols-2 gap-4 mt-4 border-t border-white/5 pt-4">
@@ -1268,8 +1260,8 @@ export const CityDashboard: React.FC = () => {
             className={`mob-nav-item flex flex-col items-center ${mobileTab === "dashboard" ? "active-gold" : ""}`}
             onClick={() => setMobileTab("dashboard")}
           >
-            <span className="mob-nav-icon text-lg">🏠</span>
-            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Início</span>
+            <span className="mob-nav-icon text-lg">IN</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Inicio</span>
           </button>
           
           <button 
@@ -1307,3 +1299,12 @@ export const CityDashboard: React.FC = () => {
     </motion.div>
   );
 };
+
+
+
+
+
+
+
+
+

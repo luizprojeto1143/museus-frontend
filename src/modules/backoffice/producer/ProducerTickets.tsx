@@ -3,9 +3,10 @@ import { logger } from "@/utils/logger";
 
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { Ticket, Plus, DollarSign, Users, Calendar } from "lucide-react";
+import { Ticket, Plus, Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "../../../components/ui";
+import { toast } from "react-hot-toast";
 
 type TicketBatch = {
     id: string;
@@ -20,13 +21,18 @@ type TicketBatch = {
     status?: string;
 };
 
+type ProducerEvent = {
+    id: string;
+    title: string;
+};
+
 export const ProducerTickets: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId } = useAuth();
+    const { tenantId: _tenantId } = useAuth();
     const [tickets, setTickets] = useState<TicketBatch[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<ProducerEvent[]>([]);
     const [formData, setFormData] = useState({
         name: "",
         price: "",
@@ -38,11 +44,12 @@ export const ProducerTickets: React.FC = () => {
         setLoading(true);
         try {
             const [ticketsRes, eventsRes] = await Promise.all([
-                api.get("/tickets"),
-                api.get("/events")
+                api.get<TicketBatch[]>("/tickets"),
+                api.get<ProducerEvent[] | { data?: ProducerEvent[] }>("/events")
             ]);
-            setTickets(ticketsRes.data);
-            setEvents(eventsRes.data);
+            setTickets(Array.isArray(ticketsRes.data) ? ticketsRes.data : []);
+            const eventsData = Array.isArray(eventsRes.data) ? eventsRes.data : eventsRes.data.data;
+            setEvents(Array.isArray(eventsData) ? eventsData : []);
         } catch (err) {
             logger.error("Error fetching data", err);
         } finally {
@@ -64,10 +71,10 @@ export const ProducerTickets: React.FC = () => {
             });
             setShowModal(false);
             setFormData({ name: "", price: "", quantity: "", eventId: "" });
-            fetchData();
+            void fetchData();
         } catch (err) {
             logger.error("Error creating batch", err);
-            logger.warn("Alert:", "Erro ao criar lote");
+            toast.error("Erro ao criar lote.");
         }
     };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
@@ -13,22 +13,7 @@ import {
   Badge, 
   AnimateIn 
 } from "@/components/ui";
-import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Search, 
-  Plus, 
-  Filter, 
-  ChevronLeft, 
-  ChevronRight,
-  Edit, 
-  BarChart2,
-  CalendarDays,
-  MoreHorizontal,
-  Eye,
-  Info
-} from "lucide-react";
+import { Calendar, Clock, MapPin, Search, Plus, Filter, ChevronLeft, ChevronRight, Edit, BarChart2, CalendarDays, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
@@ -45,8 +30,24 @@ type AdminEventItem = {
   location?: string;
 };
 
+type RawEventItem = {
+  id: string;
+  title: string;
+  startDate?: string | null;
+  type?: string | null;
+  status?: string | null;
+  active?: boolean | null;
+  location?: string | null;
+  isOnline?: boolean | null;
+};
+
+type EventListResponse = RawEventItem[] | {
+  data?: RawEventItem[];
+  meta?: { totalPages?: number };
+};
+
 export const AdminEvents: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { tenantId, hasPermission } = useAuth();
   const term = useTerminology();
   const navigate = useNavigate();
@@ -61,12 +62,12 @@ export const AdminEvents: React.FC = () => {
 
     try {
       setLoading(true);
-      const res = await api.get("/events", { params: { tenantId, page, limit: 10 } });
+      const res = await api.get<EventListResponse>("/events", { params: { tenantId, page, limit: 10 } });
       const responseData = res.data;
       const rawData = Array.isArray(responseData) ? responseData : (responseData.data || []);
-      const meta = responseData.meta || {};
+      const meta = Array.isArray(responseData) ? {} : responseData.meta || {};
 
-      const eventsData = rawData.map((e: unknown) => {
+      const eventsData = rawData.map((e) => {
         const d = e.startDate ? new Date(e.startDate) : null;
         return {
           id: e.id,
@@ -75,8 +76,8 @@ export const AdminEvents: React.FC = () => {
           day: d ? d.getDate().toString().padStart(2, '0') : "",
           month: d ? d.toLocaleString('pt-BR', { month: 'short' }).toUpperCase().replace('.', '') : "",
           time: d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
-          rawDate: e.startDate,
-          type: e.type,
+          rawDate: e.startDate || undefined,
+          type: e.type || undefined,
           status: e.status || (e.active ? "PUBLISHED" : "DRAFT"),
           location: e.location || (e.isOnline ? "Online" : "")
         };

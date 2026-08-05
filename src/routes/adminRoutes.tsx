@@ -41,6 +41,7 @@ const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equip
 const AdminEventSurvey = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventSurvey").then(m => ({ default: m.AdminEventSurvey })));
 const AdminEventReport = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEventReport").then(m => ({ default: m.AdminEventReport })));
 const AdminSponsorships = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminSponsorships").then(m => ({ default: m.AdminSponsorships })));
+const AdminBoxOffice = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
 
 const AdminAccessibilityForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAccessibilityForm").then(m => ({ default: m.AdminAccessibilityForm })));
 const AdminEquipments = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipments").then(m => ({ default: m.AdminEquipments })));
@@ -64,6 +65,7 @@ const AdminTeachers = React.lazy(() => import("../modules/backoffice/equipment/p
 const AdminMemberships = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminMemberships").then(m => ({ default: m.AdminMemberships })));
 const AdminVolunteers = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminVolunteers").then(m => ({ default: m.AdminVolunteers })));
 const AdminConservation = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminConservation").then(m => ({ default: m.AdminConservation })));
+const AdminCollectibles = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminCollectibles").then(m => ({ default: m.AdminCollectibles })));
 
 const AdminTranslations = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTranslations").then(m => ({ default: m.AdminTranslations })));
 const AdminModeration = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminModeration").then(m => ({ default: m.AdminModeration })));
@@ -87,11 +89,11 @@ const ServiceProviderForm = React.lazy(() => import("../modules/backoffice/equip
 const ProviderDashboard = React.lazy(() => import("../modules/backoffice/equipment/pages/ProviderDashboard").then(m => ({ default: m.ProviderDashboard })));
 const MasterEcosystemDashboard = React.lazy(() => import("../modules/backoffice/equipment/pages/MasterEcosystemDashboard").then(m => ({ default: m.MasterEcosystemDashboard })));
 
-type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
+type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 /** Helper to wrap admin page with layout + role guard */
 const ar = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
-    <RequireRole allowed={["admin", "collaborator"]}>
+    <RequireRole allowed={["admin", "equipment_admin", "equipment_collaborator", "collaborator"]}>
         <AdminLayout>
             <Component />
         </AdminLayout>
@@ -115,6 +117,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/eventos/:id/checkin" element={ar(AdminEventCheckIn, RequireRole)} />
             <Route path="/admin/eventos/:id/pesquisa" element={ar(AdminEventSurvey, RequireRole)} />
             <Route path="/admin/eventos/:id/relatorio" element={ar(AdminEventReport, RequireRole)} />
+            <Route path="/admin/sessoes" element={ar(AdminBoxOffice, RequireRole)} />
             <Route path="/admin/espacos" element={ar(AdminSpaces, RequireRole)} />
             <Route path="/admin/espacos/novo" element={ar(AdminSpaceForm, RequireRole)} />
             <Route path="/admin/espacos/:id" element={ar(AdminSpaceForm, RequireRole)} />
@@ -170,6 +173,7 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/assinaturas" element={ar(AdminMemberships, RequireRole)} />
             {/* Phase 4 — Municipal */}
             <Route path="/admin/voluntarios" element={ar(AdminVolunteers, RequireRole)} />
+            <Route path="/admin/conservacao" element={ar(AdminConservation, RequireRole)} />
 
             {/* Phase 5 — Gamification, AI & i18n */}
             <Route path="/admin/colecao" element={ar(AdminCollectibles, RequireRole)} />

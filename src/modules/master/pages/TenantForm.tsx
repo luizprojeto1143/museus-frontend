@@ -1,60 +1,14 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
 useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
-import {
-  Building2, 
-  Save, 
-  ArrowLeft, 
-  Package, 
-  Map, 
-  Settings,
-  Landmark, 
-  Music, 
-  Tent, 
-  CheckCircle2,
-  Users, 
-  Mail, 
-  Lock, 
-  Globe, 
-  FileText, 
-  ChevronRight, 
-  CheckCircle,
-  Zap,
-  ShieldCheck,
-  Layers,
-  ArrowRight,
-  Database,
-  Cpu,
-  Sparkles,
-  BarChart3,
-  Dna,
-  Layout,
-  Terminal,
-  Activity,
-  Briefcase,
-  Ticket,
-  Bot,
-  HeartHandshake,
-  Sticker,
-  Puzzle,
-  Microscope,
-  Award,
-    Calendar,
-} from "lucide-react";
-import { 
-    Button, 
-    Input, 
-    Select, 
-    Textarea, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
+import { Building2, Save, ArrowLeft, Package, Map, Settings, Landmark, Music, Tent, CheckCircle2, Users, Mail, Lock, Globe, CheckCircle, Zap, ShieldCheck, Layers, ArrowRight, Database, Dna, Activity, Briefcase, Ticket, Bot, HeartHandshake, Sticker, Puzzle, Microscope, Award, Calendar, type LucideIcon } from "lucide-react";
+import { Button, Input, Select, Card, Badge, AnimateIn } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 const STEPS = [
   { id: 0, title: "Identificação", icon: Landmark, description: "DNA e Dados Básicos" },
@@ -74,6 +28,9 @@ interface PlanOption {
   id: string;
   name: string;
 }
+
+type TenantType = "MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA";
+type PlanCode = "START" | "PRO" | "ENTERPRISE" | "CUSTOM" | string;
 
 interface TenantFeatures {
   featureWorks: boolean;
@@ -112,10 +69,10 @@ interface TenantFeatures {
 interface TenantPayload extends TenantFeatures {
   name: string;
   slug: string;
-  type: string;
+  type: TenantType;
   parentId: string | null;
   isCityMode: boolean;
-  plan: string;
+  plan: PlanCode;
   maxWorks: number;
   termsOfUse: string;
   privacyPolicy: string;
@@ -125,8 +82,43 @@ interface TenantPayload extends TenantFeatures {
   adminPassword?: string;
 }
 
+type TenantResponse = Partial<TenantPayload> & {
+  id: string;
+  type?: TenantType;
+};
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const tenantTypes: TenantType[] = ["MUSEUM", "PRODUCER", "CITY", "CULTURAL_SPACE", "SECRETARIA"];
+
+const tenantSchema = z.object({
+  name: z.string().trim().min(2, "Informe o nome da instituicao."),
+  slug: z.string().trim().min(2, "Informe o slug de URL.").regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use um slug valido, com letras minusculas, numeros e hifens."),
+  type: z.enum(tenantTypes as [TenantType, ...TenantType[]]),
+  parentId: z.string().nullable(),
+  isCityMode: z.boolean(),
+  plan: z.string().trim().min(1, "Informe o plano."),
+  maxWorks: z.number().int().min(0, "A quota de obras nao pode ser negativa."),
+  termsOfUse: z.string(),
+  privacyPolicy: z.string(),
+  isPublicInstitution: z.boolean(),
+  adminEmail: z.string().trim().email("Informe um e-mail valido para o administrador.").optional(),
+  adminName: z.string().trim().min(2, "Informe o nome do administrador.").optional(),
+  adminPassword: z.string().trim().min(8, "A senha do administrador deve ter pelo menos 8 caracteres.").optional()
+}).passthrough();
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
 export const TenantForm: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
@@ -140,15 +132,15 @@ export const TenantForm: React.FC = () => {
   const [termsOfUse, setTermsOfUse] = useState("");
   const [privacyPolicy, setPrivacyPolicy] = useState("");
 
-  const [tenantType, setTenantType] = useState<"MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA">("MUSEUM");
+  const [tenantType, setTenantType] = useState<TenantType>("MUSEUM");
   const [parentId, setParentId] = useState<string | null>(null);
   const [cities, setCities] = useState<TenantOption[]>([]);
-  const [availablePlans, setAvailablePlans] = useState<PlanOption[]>([]);
+  const [_availablePlans, setAvailablePlans] = useState<PlanOption[]>([]);
 
   const [adminEmail, setAdminEmail] = useState("");
   const [adminName, setAdminName] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
-  const [plan, setPlan] = useState("START");
+  const [plan, setPlan] = useState<PlanCode>("START");
   const [maxWorks, setMaxWorks] = useState(50);
 
   // Feature Flags
@@ -193,7 +185,7 @@ export const TenantForm: React.FC = () => {
   const loadTenant = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/tenants/${id}`);
+      const res = await api.get<TenantResponse>(`/tenants/${id}`);
       const data = res.data;
       setName(data.name || "");
       setSlug(data.slug || "");
@@ -240,8 +232,8 @@ export const TenantForm: React.FC = () => {
       setTermsOfUse(data.termsOfUse || "");
       setPrivacyPolicy(data.privacyPolicy || "");
       setIsPublicInstitution(data.isPublicInstitution ?? false);
-    } catch {
-      toast.error("Falha ao sincronizar node.");
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, "Falha ao sincronizar node."));
       navigate("/master/tenants");
     } finally {
       setLoading(false);
@@ -253,14 +245,14 @@ export const TenantForm: React.FC = () => {
   }, [isEdit, id, loadTenant]);
 
   useEffect(() => {
-    api.get("/tenants").then(res => {
+    api.get<TenantOption[]>("/tenants").then(res => {
         const cityTenants = (Array.isArray(res.data) ? res.data : []).filter((item: TenantOption) =>
           item.type === "CITY" || item.type === "SECRETARIA" || item.isCityMode === true
         );
         setCities(cityTenants);
       }).catch(console.error);
 
-    api.get("/plans").then(res => {
+    api.get<PlanOption[]>("/plans").then(res => {
         setAvailablePlans(Array.isArray(res.data) ? res.data : []);
       }).catch(console.error);
   }, []);
@@ -326,23 +318,30 @@ export const TenantForm: React.FC = () => {
       payload.adminPassword = adminPassword;
     }
 
+    const validation = tenantSchema.safeParse(payload);
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || "Revise os dados do node.");
+      setSaving(false);
+      return;
+    }
+
     try {
       if (id) {
-        await api.put(`/tenants/${id}`, payload);
+        await api.put<TenantResponse>(`/tenants/${id}`, validation.data);
         toast.success("Arquitetura de Node atualizada.");
       } else {
-        await api.post("/tenants", payload);
+        await api.post<TenantResponse>("/tenants", validation.data);
         toast.success("Novo Node implantado com sucesso!");
       }
       navigate("/master/tenants");
-    } catch (error: unknown) {
-      toast.error("Falha no manifesto de implantação.");
+    } catch (err: unknown) {
+      toast.error(getApiErrorMessage(err, "Falha no manifesto de implantacao."));
     } finally {
       setSaving(false);
     }
   };
 
-  const typeOptions = [
+  const typeOptions: Array<{ value: TenantType; icon: React.ReactNode; label: string; desc: string }> = [
     { value: "SECRETARIA", icon: <Building2 size={28} />, label: "Secretaria de Cultura", desc: "Gestão pública de múltiplos equipamentos culturais." },
     { value: "CITY", icon: <Map size={28} />, label: "Cidade / Órgão", desc: "Instância de governança turística ou cultural." },
     { value: "MUSEUM", icon: <Landmark size={28} />, label: "Museu / Unidade", desc: "Tipologia clássica com acervo e exposições." },
@@ -355,7 +354,7 @@ export const TenantForm: React.FC = () => {
       state: boolean;
       setter: React.Dispatch<React.SetStateAction<boolean>>;
       premium?: boolean;
-      icon?: React.FC<{ size?: number }>;
+      icon?: LucideIcon;
   }
 
   const FeatureToggle: React.FC<FeatureToggleProps> = ({ label, state, setter, premium, icon: Icon }) => (
@@ -449,7 +448,7 @@ export const TenantForm: React.FC = () => {
                                 {typeOptions.map(opt => (
                                     <Card 
                                         key={opt.value}
-                                        onClick={() => setTenantType(opt.value as unknown)}
+                                        onClick={() => setTenantType(opt.value)}
                                         className={`p-8 rounded-[40px] cursor-pointer transition-all border-2 flex flex-col items-center text-center group hover:scale-105 ${tenantType === opt.value ? 'bg-blue-600/10 border-blue-500 shadow-2xl shadow-blue-600/10' : 'bg-white/[0.02] border-white/5 grayscale opacity-50 hover:grayscale-0 hover:opacity-100'}`}
                                     >
                                         <div className={`w-16 h-16 rounded-[24px] mb-6 flex items-center justify-center transition-all ${tenantType === opt.value ? 'bg-blue-600 text-white shadow-xl' : 'bg-white/5 text-slate-500'}`}>
@@ -612,7 +611,7 @@ export const TenantForm: React.FC = () => {
                                         label="Quota Máxima de Ativos (Obras)"
                                         type="number"
                                         value={maxWorks}
-                                        onChange={e => setMaxWorks(parseInt(e.target.value) || 0)}
+                                        onChange={e => setMaxWorks(Number.isFinite(Number(e.target.value)) ? Math.max(0, Math.trunc(Number(e.target.value))) : 0)}
                                         className="h-16 bg-white/5 border-white/5 rounded-2xl px-6 font-mono"
                                     />
                                     <div className="p-6 bg-emerald-500/5 border border-emerald-500/10 rounded-3xl flex items-center gap-4">
@@ -737,3 +736,5 @@ export const TenantForm: React.FC = () => {
     </AnimateIn>
   );
 };
+
+

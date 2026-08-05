@@ -6,12 +6,9 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Input, Select, Textarea, Button } from "../../../../components/ui";
-import {
-    ArrowLeft, Save, User, Calendar, DollarSign,
-    CheckCircle, Clock, AlertCircle, Headphones,
-    Type, HandMetal, Eye, FileText, Layers, Box
-} from "lucide-react";
+import { ArrowLeft, Save, User, DollarSign, CheckCircle, AlertCircle, Headphones, Type, HandMetal, Eye, FileText, Layers, Box } from "lucide-react";
 import "./AdminShared.css";
+import { toast } from "react-hot-toast";
 
 const ACCESSIBILITY_SERVICES = [
     { value: "LIBRAS_INTERPRETATION", label: "Interpretação em LIBRAS", icon: <HandMetal size={24} />, description: "Tradução simultânea para língua de sinais" },
@@ -133,7 +130,7 @@ export const AdminAccessibilityForm: React.FC = () => {
             navigate("/admin/acessibilidade");
         } catch (error) {
             logger.error("Erro ao salvar execução:", error);
-            logger.warn("Alert:", "Erro ao salvar. Verifique os dados.");
+      toast.error("Erro ao salvar. Verifique os dados.");
         } finally {
             setSaving(false);
         }

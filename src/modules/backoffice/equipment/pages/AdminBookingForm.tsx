@@ -7,6 +7,7 @@ import { api } from "../../../../api/client";
 import { useTranslation } from "react-i18next";
 import { Input, Select, Textarea, Button } from "../../../../components/ui";
 import { ArrowLeft, Save, Calendar, Clock, MapPin, Users, Info } from "lucide-react";
+import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
 interface InPersonService {
@@ -24,6 +25,12 @@ interface Event {
     id: string;
     title: string;
 }
+
+type ListResponse<T> = T[] | { data?: T[] };
+
+type ApiError = {
+    response?: { data?: { message?: string } };
+};
 
 export const AdminBookingForm: React.FC = () => {
     const { t } = useTranslation();
@@ -55,13 +62,13 @@ export const AdminBookingForm: React.FC = () => {
             setLoading(true);
             try {
                 // Fetch services using the current tenantId (was hardcoded to QS Inclusão before)
-                const servicesRes = await api.get(`/in-person-services?tenantId=${tenantId}`);
-                const spacesRes = await api.get(`/spaces?tenantId=${tenantId}`);
-                const eventsRes = await api.get(`/events?tenantId=${tenantId}`);
+                const servicesRes = await api.get<ListResponse<InPersonService>>(`/in-person-services?tenantId=${tenantId}`);
+                const spacesRes = await api.get<ListResponse<Space>>(`/spaces?tenantId=${tenantId}`);
+                const eventsRes = await api.get<ListResponse<Event>>(`/events?tenantId=${tenantId}`);
 
-                setServices(Array.isArray(servicesRes.data) ? servicesRes.data : []);
-                setSpaces(Array.isArray(spacesRes.data) ? spacesRes.data : []);
-                setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : []);
+                setServices(Array.isArray(servicesRes.data) ? servicesRes.data : servicesRes.data.data || []);
+                setSpaces(Array.isArray(spacesRes.data) ? spacesRes.data : spacesRes.data.data || []);
+                setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : eventsRes.data.data || []);
             } catch (err) {
                 logger.error("Erro ao carregar opções para o formulário:", err);
                 setServices([]);
@@ -78,7 +85,8 @@ export const AdminBookingForm: React.FC = () => {
     const handleSubmit = async () => {
         if (!tenantId) return;
         if (!formData.inPersonServiceId || !formData.date || !formData.startTime || !formData.endTime) {
-            return logger.warn("Alert:", `Por favor, preencha os campos obrigatórios (Serviço, ${t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).`);
+            toast.error(`Por favor, preencha os campos obrigatórios (Serviço, ${t("admin.bookingForm.dateTimeTab", "Data e Horário")}s).`);
+            return;
         }
 
         setSaving(true);
@@ -100,13 +108,14 @@ export const AdminBookingForm: React.FC = () => {
             };
 
             await api.post("/bookings", payload);
-            logger.warn("Alert:", "Solicitação de serviço presencial enviada com sucesso!");
+            toast.success("Solicitação de serviço presencial enviada com sucesso!");
 
             // Navigate back to somewhere, maybe the calendar or dashboard
             navigate("/admin");
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error("Erro ao solicitar serviço presencial:", error);
-            logger.warn("Alert:", error.response?.data?.message || "Erro ao solicitar serviço presencial.");
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.message || "Erro ao solicitar serviço presencial.");
         } finally {
             setSaving(false);
         }

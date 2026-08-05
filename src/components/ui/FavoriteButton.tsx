@@ -25,7 +25,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
 
     const checkFavoriteStatus = useCallback(async () => {
         try {
-            const res = await api.get(`/favorites/check/${workId}`);
+            const res = await api.get(`/favorites/check?type=work&id=${workId}`);
             setIsFavorite(res.data.isFavorite);
         } catch (error: unknown) {
             logger.error('Error checking favorite:', error);
@@ -42,11 +42,11 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
         setLoading(true);
         try {
             if (isFavorite) {
-                await api.delete(`/favorites/${workId}`);
+                await api.delete(`/favorites/work/${workId}`);
                 setIsFavorite(false);
                 setCount(c => Math.max(0, c - 1));
             } else {
-                await api.post(`/favorites/${workId}`);
+                await api.post('/favorites', { type: 'work', itemId: workId });
                 setIsFavorite(true);
                 setCount(c => c + 1);
             }

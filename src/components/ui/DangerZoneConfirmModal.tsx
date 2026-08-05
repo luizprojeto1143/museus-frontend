@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertOctagon, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/cn';
-import { springs, durations, easings } from '../../lib/motion';
+import { springs, durations } from '../../lib/motion';
 
 interface DangerZoneConfirmModalProps {
     isOpen: boolean;

@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 
-import { VisitorLayout } from "./modules/visitor/VisitorLayout";
 import { GamificationProvider } from "./modules/gamification/context/GamificationContext";
 import { GeoFencingProvider } from "./modules/visitor/context/GeoFencingProvider";
 import { AudioProvider } from "./modules/visitor/context/AudioContext";
@@ -33,9 +32,10 @@ const Welcome = React.lazy(() => import("./modules/visitor/pages/Welcome").then(
 const SelectMuseum = React.lazy(() => import("./modules/visitor/pages/SelectMuseum").then(m => ({ default: m.SelectMuseum })));
 const CertificateValidator = React.lazy(() => import("./modules/public/CertificateValidator").then(m => ({ default: m.CertificateValidator })));
 const GlobalEvents = React.lazy(() => import("./modules/public/GlobalEvents").then(m => ({ default: m.GlobalEvents })));
-const Home = React.lazy(() => import("./modules/visitor/pages/Home").then(m => ({ default: m.Home })));
+const NationalCulturePage = React.lazy(() => import("./modules/public/NationalCulturePage").then(m => ({ default: m.NationalCulturePage })));
 const PublicPassportPage = React.lazy(() => import("./modules/visitor/pages/PublicPassportPage").then(m => ({ default: m.PublicPassportPage })));
 const AccessDeniedPage = React.lazy(() => import("./modules/public/AccessDeniedPage").then(m => ({ default: m.AccessDeniedPage })));
+const CheckoutReturnPage = React.lazy(() => import("./modules/public/CheckoutReturnPage").then(m => ({ default: m.CheckoutReturnPage })));
 
 // Route groups
 import { visitorRoutes } from "./routes/visitorRoutes";
@@ -66,7 +66,7 @@ const queryClient = new QueryClient({
 });
 
 // Auth guards
-const RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }> = ({
+const RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }> = ({
   allowed,
   children
 }) => {
@@ -91,11 +91,11 @@ const RootRedirector: React.FC = () => {
   const isCityMode = useIsCityMode();
 
   if (role === "master") return <Navigate to="/master" replace />;
-  if (role === "admin" || role === "municipal_admin" || role === "municipal_secretary") {
+  if (role === "equipment_admin" || role === "equipment_collaborator" || role === "municipal_admin" || role === "municipal_secretary") {
     if (isCityMode || role.startsWith("municipal")) return <Navigate to="/municipal" replace />;
     return <Navigate to="/admin" replace />;
   }
-  if (role === "theater" || role === "theater_admin") return <Navigate to="/theater" replace />;
+  if (role === "theater_admin") return <Navigate to="/theater" replace />;
   if (role === "producer") return <Navigate to="/producer" replace />;
   if (role === "provider") return <Navigate to="/provider" replace />;
   if (role === "collaborator") return <Navigate to="/admin" replace />;
@@ -141,11 +141,15 @@ const App: React.FC = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route path="/events" element={<GlobalEvents />} />
+                  <Route path="/nacional" element={<NationalCulturePage />} />
                   <Route path="/p/:id" element={<PublicPassportPage />} />
+                  <Route path="/inbox/:id/success" element={<RequireRole allowed={["provider", "producer", "master", "equipment_admin"]}><CheckoutReturnPage status="success" context="inbox-payment" /></RequireRole>} />
+                  <Route path="/inbox/:id/cancel" element={<RequireRole allowed={["provider", "producer", "master", "equipment_admin"]}><CheckoutReturnPage status="cancel" context="inbox-payment" /></RequireRole>} />
+                  <Route path="/accessibility/success" element={<RequireRole allowed={["provider", "producer", "master", "equipment_admin"]}><CheckoutReturnPage status="success" context="accessibility" /></RequireRole>} />
 
                   {/* Legacy redirect */}
                   <Route path="/app" element={
-                    <RequireRole allowed={["visitor", "admin", "master"]}>
+                    <RequireRole allowed={["visitor", "equipment_admin", "equipment_collaborator", "master"]}>
                       <RootRedirector />
                     </RequireRole>
                   } />

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/client';
 import { Button } from '../../../../components/ui/Button';
 import { Plus, Trash, Zap } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 interface CertificateRule {
     id: string;
@@ -22,12 +23,23 @@ export const CertificateRules: React.FC = () => {
 
     const loadRules = useCallback(async () => {
         try {
-            const res = await api.get('/certificate-rules');
-            setRules(res.data);
+            const res = await api.get<CertificateRule[] | { data?: CertificateRule[] }>('/certificate-rules');
+            setRules(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (err) {
             logger.error(err);
         }
     }, []);
+
+    const deleteRule = async (id: string) => {
+        try {
+            await api.delete(`/certificate-rules/${id}`);
+            toast.success("Regra excluída.");
+            loadRules();
+        } catch (err) {
+            logger.error(err);
+            toast.error("Erro ao excluir regra.");
+        }
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => loadRules(), 0);
@@ -74,7 +86,7 @@ export const CertificateRules: React.FC = () => {
                                     )}
                                 </td>
                                 <td className="p-4 text-right">
-                                    <button className="text-red-500 hover:text-red-700">
+                                    <button onClick={() => deleteRule(rule.id)} className="text-red-500 hover:text-red-700">
                                         <Trash size={18} />
                                     </button>
                                 </td>

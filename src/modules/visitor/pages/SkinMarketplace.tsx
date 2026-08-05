@@ -1,8 +1,8 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
-import { Gem, Star, Lock, Info, CheckCircle2 } from "lucide-react";
+import { Gem, Star, CheckCircle2, CreditCard } from "lucide-react";
 import { useToast } from "../../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../auth/AuthContext";
@@ -14,19 +14,45 @@ interface Skin {
     description: string;
     imageUrl: string;
     xpCost: number;
+    priceCents?: number | null;
+    currency?: string | null;
+    acquisitionMode?: string;
+    assetType?: string;
+    previewUrl?: string | null;
+    thumbnailUrl?: string | null;
     rarity: string;
     owned: boolean;
 }
 
+
+type VisitorProfileResponse = {
+    id: string;
+    xp?: number | null;
+};
+
+type BuySkinResponse = {
+    newXpBalance?: number;
+    checkoutUrl?: string;
+};
 export const SkinMarketplace: React.FC = () => {
     const { addToast } = useToast();
     const { tenantId, isAuthenticated, isGuest } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
     const [skins, setSkins] = useState<Skin[]>([]);
     const [visitorXp, setVisitorXp] = useState(0);
     const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [buyingId, setBuyingId] = useState<string | null>(null);
-    const [showWarning, setShowWarning] = useState<Skin | null>(null);
+    const [showWarning, setShowWarning] = useState<{ skin: Skin; method: "xp" | "money" } | null>(null);
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        if (params.get("skinPurchase") === "cancel") {
+            addToast("Compra cancelada. Seu marketplace continua intacto.", "info");
+            navigate("/marketplace", { replace: true });
+        }
+    }, [location.search, addToast, navigate]);
 
     useEffect(() => {
         const loadMarketplace = async () => {
@@ -35,7 +61,7 @@ export const SkinMarketplace: React.FC = () => {
                 return;
             }
             try {
-                const profileRes = await api.get("/visitors/me");
+                const profileRes = await api.get<VisitorProfileResponse>("/visitors/me");
                 const vid = profileRes.data.id;
                 const currentXp = profileRes.data.xp || 0;
                 
@@ -47,9 +73,9 @@ export const SkinMarketplace: React.FC = () => {
                 setVisitorXp(currentXp);
 
                 // L8 Fix: profileRes already contains XP, only need marketplace now
-                const skinsRes = await api.get(`/marketplace?visitorId=${vid}`);
-                setSkins(skinsRes.data);
-            } catch (err: unknown) {
+                const skinsRes = await api.get<Skin[]>(`/marketplace?visitorId=${vid}`);
+                setSkins(Array.isArray(skinsRes.data) ? skinsRes.data : []);
+            } catch (err) {
                 logger.error(err);
                 addToast("Erro ao carregar marketplace", "error");
             } finally {
@@ -60,7 +86,7 @@ export const SkinMarketplace: React.FC = () => {
         // B-07: Sync XP when window regains focus
         const handleFocus = () => {
             if (isAuthenticated && !isGuest && visitorId) {
-                api.get(`/visitors/${visitorId}`).then(res => setVisitorXp(res.data.xp)).catch(() => {});
+                api.get<VisitorProfileResponse>(`/visitors/${visitorId}`).then(res => setVisitorXp(res.data.xp || 0)).catch(() => {});
             }
         };
 
@@ -74,25 +100,40 @@ export const SkinMarketplace: React.FC = () => {
         
         window.addEventListener('focus', handleFocus);
         return () => window.removeEventListener('focus', handleFocus);
-    }, [isAuthenticated, isGuest, tenantId, visitorId]);
+    }, [isAuthenticated, isGuest, tenantId, visitorId, addToast]);
 
-    const navigate = useNavigate();
+    const formatMoney = (cents?: number | null, currency = "BRL") =>
+        new Intl.NumberFormat("pt-BR", { style: "currency", currency }).format((cents || 0) / 100);
 
-    const handleBuy = async (skin: Skin) => {
-        if (visitorXp < skin.xpCost) {
+    const canBuyWithXp = (skin: Skin) =>
+        ["FREE", "XP_ONLY", "XP_OR_MONEY"].includes(skin.acquisitionMode || "XP_ONLY");
+
+    const canBuyWithMoney = (skin: Skin) =>
+        ["MONEY_ONLY", "XP_OR_MONEY", "XP_PLUS_MONEY"].includes(skin.acquisitionMode || "XP_ONLY") && Number(skin.priceCents || 0) > 0;
+
+    const handleBuy = async (skin: Skin, method: "xp" | "money") => {
+        if (method === "xp" && visitorXp < skin.xpCost) {
             addToast("XP insuficiente!", "error");
+            return;
+        }
+        if (method === "money" && skin.acquisitionMode === "XP_PLUS_MONEY" && visitorXp < skin.xpCost) {
+            addToast("Esta skin tambem exige XP. Continue explorando para liberar.", "error");
             return;
         }
 
         setBuyingId(skin.id);
         try {
-            const res = await api.post(`/marketplace/${skin.id}/buy`);
-            // B-04: Toast with CTA to wardrobe
-            addToast("Skin desbloqueada! Vá ao Vestiário para equipar.", "success");
-            setVisitorXp(res.data.newXpBalance);
+            const endpoint = method === "money" ? "buy-money" : "buy";
+            const res = await api.post<BuySkinResponse>(`/marketplace/${skin.id}/${endpoint}`);
+            if (res.data.checkoutUrl) {
+                window.location.href = res.data.checkoutUrl;
+                return;
+            }
+            addToast("Skin desbloqueada! Va ao Guarda-Roupa para equipar.", "success");
+            if (res.data.newXpBalance !== undefined) setVisitorXp(res.data.newXpBalance);
             setSkins(prev => prev.map(s => s.id === skin.id ? { ...s, owned: true } : s));
             setShowWarning(null);
-        } catch (err: unknown) {
+        } catch (_err) {
             addToast("Erro na compra", "error");
         } finally {
             setBuyingId(null);
@@ -142,7 +183,7 @@ export const SkinMarketplace: React.FC = () => {
                         >
                             <div className="market-visual-premium">
                                 <span className="market-rarity-tag">{getRarityLabel(skin.rarity)}</span>
-                                <img src={skin.imageUrl} className="market-img-premium" alt={skin.name} />
+                                <img src={skin.previewUrl || skin.thumbnailUrl || skin.imageUrl} className="market-img-premium" alt={skin.name} />
                                 
                                 {skin.owned && (
                                      <div className="absolute inset-0 bg-bg/60 backdrop-blur-[2px] flex items-center justify-center">
@@ -154,26 +195,50 @@ export const SkinMarketplace: React.FC = () => {
                             <div className="market-content-premium">
                                 <h3 className="market-item-name">{skin.name}</h3>
                                 <p className="market-item-desc line-clamp-2">{skin.description}</p>
+                                <div className="market-meta-row">
+                                    <span>{skin.assetType || "IMAGE_2D"}</span>
+                                    <span>{skin.acquisitionMode || "XP_ONLY"}</span>
+                                </div>
                                 
                                 {skin.owned ? (
                                     <div className="market-owned-badge">
                                         <Gem size={14} /> Item Conquistado
                                     </div>
                                 ) : (
-                                    <button 
-                                        className={`market-buy-btn-premium ${visitorXp >= skin.xpCost ? 'can-afford' : 'cannot-afford'}`}
-                                        onClick={() => setShowWarning(skin)}
-                                        disabled={buyingId === skin.id || visitorXp < skin.xpCost}
-                                    >
-                                        {buyingId === skin.id ? (
-                                            <div className="w-5 h-5 border-2 border-bg2 border-t-gold animate-spin rounded-full" />
-                                        ) : (
-                                            <>
-                                                {skin.xpCost.toLocaleString()} XP
-                                                <Star size={14} fill="currentColor" />
-                                            </>
+                                    <div className="market-actions-stack">
+                                        {canBuyWithXp(skin) && (
+                                            <button 
+                                                className={`market-buy-btn-premium ${visitorXp >= skin.xpCost ? 'can-afford' : 'cannot-afford'}`}
+                                                onClick={() => setShowWarning({ skin, method: "xp" })}
+                                                disabled={buyingId === skin.id || visitorXp < skin.xpCost}
+                                            >
+                                                {buyingId === skin.id ? (
+                                                    <div className="w-5 h-5 border-2 border-bg2 border-t-gold animate-spin rounded-full" />
+                                                ) : (
+                                                    <>
+                                                        {skin.acquisitionMode === "FREE" ? "Gratis" : `${skin.xpCost.toLocaleString()} XP`}
+                                                        <Star size={14} fill="currentColor" />
+                                                    </>
+                                                )}
+                                            </button>
                                         )}
-                                    </button>
+                                        {canBuyWithMoney(skin) && (
+                                            <button
+                                                className="market-buy-btn-premium money"
+                                                onClick={() => setShowWarning({ skin, method: "money" })}
+                                                disabled={buyingId === skin.id}
+                                            >
+                                                {buyingId === skin.id ? (
+                                                    <div className="w-5 h-5 border-2 border-white/40 border-t-white animate-spin rounded-full" />
+                                                ) : (
+                                                    <>
+                                                        {formatMoney(skin.priceCents, skin.currency || "BRL")}
+                                                        <CreditCard size={14} />
+                                                    </>
+                                                )}
+                                            </button>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </motion.div>
@@ -193,7 +258,7 @@ export const SkinMarketplace: React.FC = () => {
                         >
                             <h2 className="text-3xl font-fd text-white mb-6">Iniciação de Troca</h2>
                             <p className="text-muted text-sm leading-relaxed mb-8">
-                                Ao declarar posse sobre <span className="text-white font-bold">{showWarning.name}</span>, você consumirá <span className="text-gold-hi font-bold">{showWarning.xpCost.toLocaleString()} XP</span> de seu saldo eterno.
+                                Ao declarar posse sobre <span className="text-white font-bold">{showWarning.skin.name}</span>, voce usara <span className="text-gold-hi font-bold">{showWarning.method === "money" ? formatMoney(showWarning.skin.priceCents, showWarning.skin.currency || "BRL") : `${showWarning.skin.xpCost.toLocaleString()} XP`}</span> para desbloquear esta identidade.
                             </p>
                             
                             <div className="flex gap-4">
@@ -205,10 +270,10 @@ export const SkinMarketplace: React.FC = () => {
                                 </button>
                                 <button 
                                     className="flex-1 py-4 bg-gold text-bg font-fm text-[10px] uppercase tracking-widest rounded-2xl shadow-xl shadow-gold-glow"
-                                    onClick={() => handleBuy(showWarning)}
-                                    disabled={buyingId === showWarning.id}
+                                    onClick={() => handleBuy(showWarning.skin, showWarning.method)}
+                                    disabled={buyingId === showWarning.skin.id}
                                 >
-                                    {buyingId === showWarning.id ? "Processando..." : "Confirmar Troca"}
+                                    {buyingId === showWarning.skin.id ? "Processando..." : "Confirmar Troca"}
                                 </button>
                             </div>
                         </motion.div>
@@ -218,3 +283,4 @@ export const SkinMarketplace: React.FC = () => {
         </div>
     );
 };
+

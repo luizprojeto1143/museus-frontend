@@ -1,35 +1,24 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import {
-    Percent,
-    Plus,
-    Building2,
-    Calendar,
-    CheckCircle2,
-    XCircle,
-    Info,
-    Search,
-    SlidersHorizontal,
-    Play,
-    Edit2,
-    Trash2,
-    RefreshCw,
-    X,
-    FileText,
-    TrendingUp,
-    ShieldAlert,
-    Clock,
-    DollarSign
-} from "lucide-react";
+import { Percent, Plus, Building2, Calendar, CheckCircle2, Info, Search, Play, Edit2, Trash2, RefreshCw, X, FileText, TrendingUp, ShieldAlert, Clock } from "lucide-react";
 import { Button, Badge, AnimateIn, Card } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+type FeePaidBy = "BUYER" | "SELLER";
 
 interface TenantOption {
     id: string;
     name: string;
     slug: string;
+}
+
+interface FeeSourceOption {
+    value: string;
+    label: string;
 }
 
 interface FeeConfig {
@@ -41,7 +30,7 @@ interface FeeConfig {
     priority: number;
     percentage: number;
     fixedFee: number | null;
-    feePaidBy: "BUYER" | "SELLER";
+    feePaidBy: FeePaidBy;
     isActive: boolean;
     startsAt: string | null;
     endsAt: string | null;
@@ -76,7 +65,7 @@ interface SimulationResult {
     percentage: number;
     fixedFeeCents: number;
     platformFeeCents: number;
-    feePaidBy: "BUYER" | "SELLER";
+    feePaidBy: FeePaidBy;
     baseAmountCents: number;
     buyerPaysCents: number;
     sellerGrossCents: number;
@@ -104,12 +93,92 @@ interface AuditLogEntry {
         tenantName?: string;
         percentage?: number;
         reason?: string;
-        diff?: Record<string, { from: any; to: any }>;
+        diff?: Record<string, { from: unknown; to: unknown }>;
     } | null;
     user?: {
         name: string;
         email: string;
     } | null;
+}
+
+interface PaginatedFeesResponse {
+    data?: FeeConfig[];
+    pagination?: {
+        pages?: number;
+    };
+}
+
+interface FeeSourcesResponse {
+    sources?: FeeSourceOption[];
+}
+
+interface SeedDefaultsResponse {
+    message?: string;
+}
+
+interface AuditLogResponse {
+    data?: AuditLogEntry[];
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+interface FeeQueryParams {
+    page: number;
+    limit: number;
+    tenantId?: string;
+    sourceType?: string;
+    isActive?: string;
+    search?: string;
+}
+
+interface SimulationQueryParams {
+    sourceType: string;
+    amountCents: number;
+    tenantId?: string;
+}
+
+interface FeePayload {
+    tenantId: string | null;
+    sourceType: string;
+    name: string | null;
+    percentage: number;
+    fixedFee: number | null;
+    feePaidBy: FeePaidBy;
+    isActive: boolean;
+    startsAt: string | null;
+    endsAt: string | null;
+    notes: string | null;
+    priority: number;
+}
+
+const feeFormSchema = z.object({
+    tenantId: z.string().nullable(),
+    sourceType: z.string().min(1, "Selecione a fonte de receita."),
+    name: z.string().nullable(),
+    percentage: z.number().min(0, "A taxa percentual nao pode ser negativa.").max(100, "A taxa percentual nao pode passar de 100%."),
+    fixedFee: z.number().min(0, "A taxa fixa nao pode ser negativa.").nullable(),
+    feePaidBy: z.enum(["BUYER", "SELLER"]),
+    isActive: z.boolean(),
+    startsAt: z.string().nullable(),
+    endsAt: z.string().nullable(),
+    notes: z.string().nullable(),
+    priority: z.number().int("A prioridade precisa ser um numero inteiro.")
+}).refine((data) => {
+    if (!data.startsAt || !data.endsAt) return true;
+    return new Date(data.startsAt).getTime() <= new Date(data.endsAt).getTime();
+}, {
+    message: "A data de inicio precisa ser anterior a data de fim.",
+    path: ["endsAt"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
 }
 
 export function MasterFinancialFees() {
@@ -118,7 +187,7 @@ export function MasterFinancialFees() {
     // Data lists & loading states
     const [configs, setConfigs] = useState<FeeConfig[]>([]);
     const [tenants, setTenants] = useState<TenantOption[]>([]);
-    const [sources, setSources] = useState<{ value: string; label: string }[]>([]);
+    const [sources, setSources] = useState<FeeSourceOption[]>([]);
     const [overview, setOverview] = useState<OverviewData | null>(null);
     const [loading, setLoading] = useState(true);
     const [seeding, setSeeding] = useState(false);
@@ -142,7 +211,7 @@ export function MasterFinancialFees() {
     const [formName, setFormName] = useState<string>("");
     const [formPercentage, setFormPercentage] = useState<number>(5);
     const [formFixedFee, setFormFixedFee] = useState<string>("");
-    const [formFeePaidBy, setFormFeePaidBy] = useState<"BUYER" | "SELLER">("SELLER");
+    const [formFeePaidBy, setFormFeePaidBy] = useState<FeePaidBy>("SELLER");
     const [formIsActive, setFormIsActive] = useState<boolean>(true);
     const [formStartsAt, setFormStartsAt] = useState<string>("");
     const [formEndsAt, setFormEndsAt] = useState<string>("");
@@ -160,11 +229,13 @@ export function MasterFinancialFees() {
     const [selectedConfigForAudit, setSelectedConfigForAudit] = useState<FeeConfig | null>(null);
     const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
     const [loadingAudit, setLoadingAudit] = useState(false);
+    const [seedConfirmOpen, setSeedConfirmOpen] = useState(false);
+    const [deactivateTarget, setDeactivateTarget] = useState<FeeConfig | null>(null);
 
     // Load initial data
     const fetchOverview = useCallback(async () => {
         try {
-            const res = await api.get("/master/fees/overview");
+            const res = await api.get<OverviewData>("/master/fees/overview");
             setOverview(res.data);
         } catch (err) {
             console.error("Erro ao carregar overview:", err);
@@ -173,10 +244,11 @@ export function MasterFinancialFees() {
 
     const fetchSources = useCallback(async () => {
         try {
-            const res = await api.get("/master/fees/sources");
-            setSources(res.data.sources || []);
-            if (res.data.sources?.length > 0 && !formSourceType) {
-                setFormSourceType(res.data.sources[0].value);
+            const res = await api.get<FeeSourcesResponse>("/master/fees/sources");
+            const sourceOptions = res.data.sources || [];
+            setSources(sourceOptions);
+            if (sourceOptions.length > 0 && !formSourceType) {
+                setFormSourceType(sourceOptions[0].value);
             }
         } catch (err) {
             console.error("Erro ao carregar fontes de taxas:", err);
@@ -185,7 +257,7 @@ export function MasterFinancialFees() {
 
     const fetchTenants = useCallback(async () => {
         try {
-            const res = await api.get("/tenants/list/options"); // rota de opções de inquilinos
+            const res = await api.get<TenantOption[]>("/tenants/list/options"); // rota de opções de inquilinos
             setTenants(res.data || []);
         } catch (err) {
             console.error("Erro ao carregar lista de tenants:", err);
@@ -195,7 +267,7 @@ export function MasterFinancialFees() {
     const fetchConfigs = useCallback(async () => {
         try {
             setLoading(true);
-            const params: any = {
+            const params: FeeQueryParams = {
                 page,
                 limit: 10
             };
@@ -204,9 +276,9 @@ export function MasterFinancialFees() {
             if (filterStatus) params.isActive = filterStatus;
             if (searchTerm) params.search = searchTerm;
 
-            const res = await api.get("/master/fees", { params });
+            const res = await api.get<PaginatedFeesResponse>("/master/fees", { params });
             setConfigs(res.data.data || []);
-            setTotalPages(res.data.pagination.pages || 1);
+            setTotalPages(res.data.pagination?.pages || 1);
         } catch (err) {
             console.error("Erro ao carregar configs de taxas:", err);
             toast.error(t("master.fees.error_load", "Erro ao carregar configurações de taxas."));
@@ -225,19 +297,22 @@ export function MasterFinancialFees() {
         fetchConfigs();
     }, [fetchConfigs]);
 
-    // Handle Seeding Defaults
     const handleSeedDefaults = async () => {
-        if (!confirm(t("master.fees.confirm_seed", "Confirma a criação das taxas globais padrão do sistema?"))) return;
+        setSeedConfirmOpen(true);
+    };
+
+    const runSeedDefaults = async () => {
         setSeeding(true);
         try {
-            const res = await api.post("/master/fees/seed-defaults");
+            const res = await api.post<SeedDefaultsResponse>("/master/fees/seed-defaults");
             toast.success(res.data.message || t("master.fees.seed_success", "Taxas padrão criadas com sucesso!"));
             fetchOverview();
             fetchConfigs();
-        } catch (err: any) {
-            toast.error(err.response?.data?.error || t("master.fees.seed_error", "Erro ao rodar seed de taxas."));
+        } catch (err: unknown) {
+            toast.error(getApiErrorMessage(err, t("master.fees.seed_error", "Erro ao rodar seed de taxas.")));
         } finally {
             setSeeding(false);
+            setSeedConfirmOpen(false);
         }
     };
 
@@ -282,7 +357,7 @@ export function MasterFinancialFees() {
         e.preventDefault();
         setFormError(null);
 
-        const payload = {
+        const payload: FeePayload = {
             tenantId: formTenantId || null,
             sourceType: formSourceType,
             name: formName || null,
@@ -296,33 +371,44 @@ export function MasterFinancialFees() {
             priority: Number(formPriority)
         };
 
+        const parsedPayload = feeFormSchema.safeParse(payload);
+        if (!parsedPayload.success) {
+            setFormError(parsedPayload.error.issues[0]?.message || t("master.fees.validation_error", "Revise os dados da regra de taxa."));
+            return;
+        }
+
         try {
             if (editingConfig) {
-                await api.patch(`/master/fees/${editingConfig.id}`, payload);
+                await api.patch(`/master/fees/${editingConfig.id}`, parsedPayload.data);
                 toast.success(t("master.fees.update_success", "Taxa atualizada com sucesso!"));
             } else {
-                await api.post("/master/fees", payload);
+                await api.post("/master/fees", parsedPayload.data);
                 toast.success(t("master.fees.create_success", "Nova regra de taxa criada com sucesso!"));
             }
             setIsFormOpen(false);
             fetchOverview();
             fetchConfigs();
-        } catch (err: any) {
-            const errorMsg = err.response?.data?.message || err.response?.data?.error || t("master.fees.save_error", "Erro ao salvar regra de taxa.");
-            setFormError(errorMsg);
+        } catch (err: unknown) {
+            setFormError(getApiErrorMessage(err, t("master.fees.save_error", "Erro ao salvar regra de taxa.")));
         }
     };
 
     // Deactivate Config
-    const handleDeactivate = async (id: string) => {
-        if (!confirm(t("master.fees.confirm_deactivate", "Deseja realmente desativar esta regra de taxa?"))) return;
+    const handleDeactivate = (config: FeeConfig) => {
+        setDeactivateTarget(config);
+    };
+
+    const runDeactivate = async () => {
+        if (!deactivateTarget) return;
         try {
-            await api.delete(`/master/fees/${id}`);
+            await api.delete(`/master/fees/${deactivateTarget.id}`);
             toast.success(t("master.fees.deactivate_success", "Regra desativada com sucesso."));
             fetchOverview();
             fetchConfigs();
-        } catch (err) {
+        } catch (_err) {
             toast.error(t("master.fees.deactivate_error", "Erro ao desativar taxa."));
+        } finally {
+            setDeactivateTarget(null);
         }
     };
 
@@ -331,15 +417,15 @@ export function MasterFinancialFees() {
         setSimulating(true);
         try {
             const valCents = Math.round(Number(simAmount) * 100);
-            const params: any = {
+            const params: SimulationQueryParams = {
                 sourceType: simSource,
                 amountCents: valCents
             };
             if (simTenant) params.tenantId = simTenant;
 
-            const res = await api.get("/master/fees/simulate", { params });
+            const res = await api.get<SimulationResult>("/master/fees/simulate", { params });
             setSimResult(res.data);
-        } catch (err) {
+        } catch (_err) {
             toast.error(t("master.fees.simulate_error", "Erro ao simular taxa."));
         } finally {
             setSimulating(false);
@@ -351,9 +437,9 @@ export function MasterFinancialFees() {
         setSelectedConfigForAudit(cfg);
         setLoadingAudit(true);
         try {
-            const res = await api.get(`/master/fees/${cfg.id}/audit`);
+            const res = await api.get<AuditLogResponse>(`/master/fees/${cfg.id}/audit`);
             setAuditLogs(res.data.data || []);
-        } catch (err) {
+        } catch (_err) {
             toast.error(t("master.fees.audit_error", "Erro ao buscar histórico de auditoria."));
         } finally {
             setLoadingAudit(false);
@@ -592,7 +678,7 @@ export function MasterFinancialFees() {
                                                             </button>
                                                             {cfg.isActive && (
                                                                 <button
-                                                                    onClick={() => handleDeactivate(cfg.id)}
+                                                                    onClick={() => handleDeactivate(cfg)}
                                                                     title={t("master.fees.deactivate", "Desativar")}
                                                                     className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors"
                                                                 >
@@ -965,6 +1051,85 @@ export function MasterFinancialFees() {
                 )}
             </AnimatePresence>
 
+            <AnimatePresence>
+                {seedConfirmOpen && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-[#0b0f19] border border-white/10 rounded-[28px] w-full max-w-md shadow-2xl p-8 space-y-6"
+                        >
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-black text-white">{t("master.fees.confirm_seed_title", "Resetar taxas globais")}</h3>
+                                <p className="text-sm text-slate-400">
+                                    {t("master.fees.confirm_seed", "Confirma a criação das taxas globais padrão do sistema?")}
+                                </p>
+                            </div>
+                            <div className="flex justify-end gap-3">
+                                <Button
+                                    type="button"
+                                    variant="glass"
+                                    onClick={() => setSeedConfirmOpen(false)}
+                                    disabled={seeding}
+                                    className="h-11 px-5 rounded-2xl border-white/5 text-slate-400 hover:text-white"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={runSeedDefaults}
+                                    disabled={seeding}
+                                    className="h-11 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                    {seeding ? t("master.fees.seed_running", "Processando...") : t("master.fees.seed_confirm_btn", "Confirmar")}
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {deactivateTarget && (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-[#0b0f19] border border-white/10 rounded-[28px] w-full max-w-md shadow-2xl p-8 space-y-6"
+                        >
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-black text-white">{t("master.fees.confirm_deactivate_title", "Desativar regra")}</h3>
+                                <p className="text-sm text-slate-400">
+                                    {t("master.fees.confirm_deactivate", "Deseja realmente desativar esta regra de taxa?")}
+                                </p>
+                                <p className="text-xs font-bold text-white">
+                                    {deactivateTarget.name || deactivateTarget.sourceLabel}
+                                </p>
+                            </div>
+                            <div className="flex justify-end gap-3">
+                                <Button
+                                    type="button"
+                                    variant="glass"
+                                    onClick={() => setDeactivateTarget(null)}
+                                    className="h-11 px-5 rounded-2xl border-white/5 text-slate-400 hover:text-white"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    type="button"
+                                    onClick={runDeactivate}
+                                    className="h-11 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white"
+                                >
+                                    {t("master.fees.deactivate_confirm_btn", "Desativar")}
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
             {/* Audit Logs Drawer */}
             <AnimatePresence>
                 {selectedConfigForAudit && (
@@ -1024,7 +1189,7 @@ export function MasterFinancialFees() {
 
                                                     {diff && (
                                                         <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl space-y-1 text-xs">
-                                                            {Object.entries(diff).map(([key, value]: any) => (
+                                                            {Object.entries(diff).map(([key, value]) => (
                                                                 <div key={key} className="flex flex-wrap items-center gap-1.5">
                                                                     <span className="text-slate-500 font-bold uppercase text-[9px] tracking-wider">{key}:</span>
                                                                     <span className="text-rose-400 line-through">{String(value.from)}</span>

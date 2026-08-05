@@ -5,10 +5,23 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Lock, ArrowLeft, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { api } from "../../api/client";
+import { isAxiosError } from "axios";
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
 
 export const ResetPasswordPage: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const token = query.get("token");
@@ -47,8 +60,8 @@ export const ResetPasswordPage: React.FC = () => {
       await api.post("/auth/reset-password", { token, newPassword: password });
       setSuccess(true);
     } catch (err: unknown) {
-      logger.error(err);
-      setError(err.response?.data?.message || t("auth.resetpassword.errorReset", "Não foi possível redefinir a senha. O link pode ter expirado."));
+      logger.error("Error resetting password", err);
+      setError(getApiErrorMessage(err, t("auth.resetpassword.errorReset", "Nao foi possivel redefinir a senha. O link pode ter expirado.")));
     } finally {
       setLoading(false);
     }
@@ -199,3 +212,4 @@ export const ResetPasswordPage: React.FC = () => {
     </div>
   );
 };
+

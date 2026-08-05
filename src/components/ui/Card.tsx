@@ -2,7 +2,7 @@ import React from "react";
 import { motion, type MotionProps } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../lib/cn";
-import { microInteractions, springs } from "../../lib/motion";
+import { microInteractions } from "../../lib/motion";
 
 // ─── Card Root ──────────────────────────────────────────────────
 
@@ -118,7 +118,7 @@ CardRoot.displayName = "Card";
 
 // ─── Card.Header ────────────────────────────────────────────────
 
-interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+type CardHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CardHeader: React.FC<CardHeaderProps> = ({
   className,
@@ -140,7 +140,7 @@ CardHeader.displayName = "Card.Header";
 
 // ─── Card.Content ───────────────────────────────────────────────
 
-interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {}
+type CardContentProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CardContent: React.FC<CardContentProps> = ({
   className,
@@ -156,7 +156,7 @@ CardContent.displayName = "Card.Content";
 
 // ─── Card.Footer ────────────────────────────────────────────────
 
-interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
+type CardFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 const CardFooter: React.FC<CardFooterProps> = ({
   className,

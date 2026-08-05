@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
-import { 
-    Users, Ticket, TrendingUp, Calendar, Layout, 
-    Music, Sparkles, Mic2, Tv, Map as MapIcon, 
-    Clapperboard, UserPlus, Info, ArrowUpRight, Play
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { api } from "../../../api/client";
-import { Button } from "../../../components/ui";
+import { Users, Ticket, TrendingUp, Mic2, Clapperboard, UserPlus, ArrowUpRight, Play } from "lucide-react";
+import { motion } from "framer-motion";import { Button } from "../../../components/ui";
 
 import { theaterApi } from "../../../api/theater";
 import { useTranslation } from "react-i18next";
@@ -50,7 +44,7 @@ export const TheaterDashboard: React.FC = () => {
             {/* ═══ THEATER HERO ═══════════ */}
             <header className="relative p-12 rounded-[48px] overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-950 via-black to-slate-900 z-0"></div>
-                <div className="absolute inset-0 opacity-20 bg-[url('/placeholder-image.jpg')] bg-cover bg-center z-0 group-hover:scale-105 transition-transform duration-1000"></div>
+                <div className="absolute inset-0 opacity-20 bg-[url('/placeholder-image.svg')] bg-cover bg-center z-0 group-hover:scale-105 transition-transform duration-1000"></div>
                 
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
                     <div>
@@ -193,3 +187,4 @@ export const TheaterDashboard: React.FC = () => {
         </div>
     );
 };
+

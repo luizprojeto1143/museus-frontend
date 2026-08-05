@@ -1,18 +1,34 @@
 import { useEffect, useState } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../../api/client';
 
-const Button = ({ children, className, onClick }: unknown) => (
-  <button className={className} onClick={onClick}>{children}</button>
+interface SponsorableWork {
+  id: string;
+  title: string;
+  imageUrl?: string | null;
+  tenantName: string;
+  hasExclusiveSponsor: boolean;
+  sharedSlotsAvailable: number;
+  maxSharedSponsors: number;
+  canSponsorShared: boolean;
+}
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  children: ReactNode;
+};
+
+const Button = ({ children, className, ...props }: ButtonProps) => (
+  <button className={className} {...props}>{children}</button>
 );
 
 export function SponsorBrowseWorks() {
   const { t } = useTranslation();
-  const [works, setWorks] = useState<any[]>([]);
+  const [works, setWorks] = useState<SponsorableWork[]>([]);
 
   useEffect(() => {
-    api.get('/sponsor-portal/works').then((res: unknown) => setWorks(res.data));
+    api.get<SponsorableWork[]>('/sponsor-portal/works').then((res) => setWorks(res.data));
   }, []);
 
   return (
@@ -24,8 +40,15 @@ export function SponsorBrowseWorks() {
             {w.imageUrl && <img src={w.imageUrl} alt={w.title} className="w-full h-48 object-cover rounded-lg mb-4" />}
             <h2 className="text-xl font-bold">{w.title}</h2>
             <p className="text-sm text-slate-400 mb-4">{w.tenantName}</p>
-            {w.hasExclusiveSponsor ? (
-              <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-xs">{t("sponsor.browse.exclusive_active", "Patrocínio Exclusivo Ativo")}</span>
+            <p className="text-xs text-slate-500 mb-4">
+              {w.hasExclusiveSponsor
+                ? t("sponsor.browse.exclusive_active", "Patrocínio Exclusivo Ativo")
+                : t("sponsor.browse.shared_slots", "{{available}} de {{max}} cotas compartilhadas disponíveis", { available: w.sharedSlotsAvailable ?? 0, max: w.maxSharedSponsors ?? 10 })}
+            </p>
+            {w.hasExclusiveSponsor || !w.canSponsorShared ? (
+              <span className="bg-rose-500/20 text-rose-400 px-3 py-1 rounded-full text-xs">
+                {w.hasExclusiveSponsor ? t("sponsor.browse.exclusive_active", "Patrocínio Exclusivo Ativo") : t("sponsor.browse.shared_full", "Cotas compartilhadas esgotadas")}
+              </span>
             ) : (
               <Link to={`/patrocinar/checkout/${w.id}`}>
                 <Button className="w-full bg-gold-500 text-slate-900 py-2 rounded-lg mt-4 font-bold">{t("sponsor.browse.sponsor_btn", "Patrocinar")}</Button>

@@ -1,16 +1,28 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Baby, ToggleLeft, ToggleRight, Smile, Type, Palette } from "lucide-react";
+import { Baby, ToggleLeft, ToggleRight, Smile } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+
+type KidsConfig = {
+    minAge: string;
+    maxAge: string;
+    fontSize: string;
+    simplifyDescriptions: boolean;
+    showGamification: boolean;
+    showEmojis: boolean;
+    customWelcomeMessage: string;
+};
+
+type ToggleConfigKey = "simplifyDescriptions" | "showGamification" | "showEmojis";
 
 export const AdminKidsMode: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
     const [enabled, setEnabled] = useState(false);
-    const [config, setConfig] = useState({
+    const [config, setConfig] = useState<KidsConfig>({
         minAge: '5', maxAge: '12',
         fontSize: 'large', simplifyDescriptions: true,
         showGamification: true, showEmojis: true,
@@ -30,7 +42,7 @@ export const AdminKidsMode: React.FC = () => {
                 }
             });
             toast.success("Modo Criança configurado!");
-        } catch (err) { toast.error("Erro ao salvar configurações"); }
+        } catch (_err) { toast.error("Erro ao salvar configurações"); }
         finally { setSaving(false); }
     };
 
@@ -102,8 +114,8 @@ export const AdminKidsMode: React.FC = () => {
                                 <p style={{ color: "white", fontSize: "0.85rem", fontWeight: 700 }}>{opt.label}</p>
                                 <p style={{ color: "#64748b", fontSize: "0.75rem" }}>{opt.desc}</p>
                             </div>
-                            <button onClick={() => setConfig({ ...config, [opt.key]: !(config as unknown)[opt.key] })}>
-                                {(config as unknown)[opt.key] ? <ToggleRight size={28} style={{ color: "#34d399" }} /> : <ToggleLeft size={28} style={{ color: "#475569" }} />}
+                            <button onClick={() => setConfig({ ...config, [opt.key]: !config[opt.key as ToggleConfigKey] })}>
+                                {config[opt.key as ToggleConfigKey] ? <ToggleRight size={28} style={{ color: "#34d399" }} /> : <ToggleLeft size={28} style={{ color: "#475569" }} />}
                             </button>
                         </div>
                     ))}

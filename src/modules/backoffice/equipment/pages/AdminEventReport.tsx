@@ -3,13 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../../../../api/client';
 import { useAuth } from '../../../auth/AuthContext';
-import {
-
-
-    Calendar, MapPin, Users, CheckCircle, XCircle,
-    Printer, Download, ChevronLeft, TrendingUp, DollarSign, Star
-} from 'lucide-react';
-// import { Bar, Doughnut } from 'react-chartjs-2'; // Adding chartjs might be too heavy, let's use simple HTML/CSS bars for MVP
+import { Calendar, MapPin, Users, Printer, ChevronLeft, TrendingUp, Star } from 'lucide-react';
+// Charts are rendered with lightweight HTML/CSS bars to keep this report fast.
 import "./AdminShared.css";
 
 interface TicketBreakdown {
@@ -73,7 +68,7 @@ export const AdminEventReport: React.FC = () => {
 
     useEffect(() => {
         if (id && tenantId) {
-            api.get(`/events/${id}/report`)
+            api.get<ReportData>(`/events/${id}/report`)
                 .then(res => setReport(res.data))
                 .catch(console.error)
                 .finally(() => setLoading(false));
@@ -163,7 +158,7 @@ export const AdminEventReport: React.FC = () => {
                     </h2>
 
                     <div className="space-y-8">
-                        {survey.questions.map((q: unknown) => (
+                        {survey.questions.map((q) => (
                             <div key={q.id} className="border-b border-white/5 last:border-0 pb-6 last:pb-0 print:break-inside-avoid">
                                 <h3 className="font-semibold text-zinc-200 mb-4">{q.question}</h3>
 
@@ -182,7 +177,7 @@ export const AdminEventReport: React.FC = () => {
 
                                         {/* Simple Bar Chart */}
                                         <div className="space-y-2">
-                                            {Object.entries(q.aggregation.distribution).map(([key, count]: unknown) => (
+                                            {Object.entries(q.aggregation.distribution || {}).map(([key, count]) => (
                                                 <div key={key} className="flex items-center gap-3 text-sm">
                                                     <span className="w-4 font-bold text-zinc-300">{key}</span>
                                                     <div className="flex-1 h-3 bg-zinc-800 rounded-full overflow-hidden">
@@ -200,7 +195,7 @@ export const AdminEventReport: React.FC = () => {
 
                                 {q.type === 'CHOICE' && (
                                     <div className="space-y-2">
-                                        {Object.entries(q.aggregation.distribution).map(([key, count]: unknown) => (
+                                        {Object.entries(q.aggregation.distribution || {}).map(([key, count]) => (
                                             <div key={key} className="flex justify-between items-center p-3 bg-zinc-900/60 rounded border border-white/5">
                                                 <span>{key}</span>
                                                 <span className="font-bold bg-zinc-900/40 px-2 py-1 rounded shadow-md shadow-black/20 text-zinc-300">{count}</span>
@@ -211,7 +206,7 @@ export const AdminEventReport: React.FC = () => {
 
                                 {q.type === 'TEXT' && (
                                     <div className="space-y-2">
-                                        {q.aggregation.recentAnswers.map((ans: unknown, idx: number) => (
+                                        {(q.aggregation.recentAnswers || []).map((ans, idx) => (
                                             <div key={idx} className="p-3 bg-yellow-50 text-yellow-900 rounded italic text-sm border-l-4 border-yellow-300">
                                                 "{ans.answer}"
                                             </div>
@@ -245,7 +240,7 @@ export const AdminEventReport: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="text-sm">
-                        {participants.map((p: unknown) => (
+                        {participants.map((p) => (
                             <tr key={p.id} className="border-b border-white/5 last:border-0 hover:">
                                 <td className="py-3 pl-2">
                                     <div className="font-medium text-white">{p.name}</div>

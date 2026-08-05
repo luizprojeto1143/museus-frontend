@@ -31,11 +31,7 @@ export const MasterErrorLogs: React.FC = () => {
   const [source, setSource] = useState("");
   const [selectedLog, setSelectedLog] = useState<ErrorLog | null>(null);
 
-  useEffect(() => {
-    fetchLogs();
-  }, [page, severity, source]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/master/monitoring/errors", {
@@ -49,12 +45,16 @@ export const MasterErrorLogs: React.FC = () => {
       });
       setLogs(res.data.data);
       setTotal(res.data.total);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar logs de erro.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, page, search, severity, source]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

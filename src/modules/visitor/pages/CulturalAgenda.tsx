@@ -2,9 +2,9 @@ import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
-import { MapPin, Calendar, Clock, ArrowRight, Sparkles, Search, Building2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Badge, PageLoader } from "@/components/ui";
+import { MapPin, Calendar, Clock, ArrowRight, Sparkles, Building2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { PageLoader } from "@/components/ui";
 import { getFullUrl } from "../../../utils/url";
 import "./CulturalAgenda.css";
 
@@ -12,6 +12,7 @@ interface City {
   id: string;
   name: string;
   slug: string;
+  type?: string;
 }
 
 interface EventItem {
@@ -26,6 +27,15 @@ interface EventItem {
   }
 }
 
+type EventListResponse = EventItem[] | { data?: EventItem[] };
+
+type CityListResponse = City[] | { data?: City[] };
+
+type EventQueryParams = {
+  discovery: string;
+  cityId?: string;
+};
+
 export const CulturalAgenda: React.FC = () => {
   const [cities, setCities] = useState<City[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -37,16 +47,15 @@ export const CulturalAgenda: React.FC = () => {
       try {
         setLoading(true);
         const [citiesRes, eventsRes] = await Promise.all([
-          api.get("/tenants/public"),
-          api.get("/events", { params: { discovery: 'true' } })
+          api.get<CityListResponse>("/tenants/public"),
+          api.get<EventListResponse>("/events", { params: { discovery: 'true' } })
         ]);
         
-        // Filter only tenants that are cities (or secretaria)
-        const cityData = Array.isArray(citiesRes.data) ? citiesRes.data : [];
-        const cityTenants = cityData.filter((t: unknown) => t.type === 'CITY' || t.type === 'SECRETARIA');
+        const cityData = Array.isArray(citiesRes.data) ? citiesRes.data : citiesRes.data.data || [];
+        const cityTenants = cityData.filter((item) => item.type === 'CITY' || item.type === 'SECRETARIA');
         setCities(cityTenants);
-        setEvents(eventsRes.data.data || []);
-      } catch (err: unknown) {
+        setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : eventsRes.data.data || []);
+      } catch (err) {
         logger.error("Error fetching agenda data", err);
       } finally {
         setLoading(false);
@@ -58,12 +67,12 @@ export const CulturalAgenda: React.FC = () => {
   const fetchFilteredEvents = async (cityId: string) => {
     setLoading(true);
     try {
-      const params: unknown = { discovery: 'true' };
+      const params: EventQueryParams = { discovery: 'true' };
       if (cityId !== 'ALL') params.cityId = cityId;
       
-      const res = await api.get("/events", { params });
-      setEvents(res.data.data || []);
-    } catch (err: unknown) {
+      const res = await api.get<EventListResponse>("/events", { params });
+      setEvents(Array.isArray(res.data) ? res.data : res.data.data || []);
+    } catch (err) {
       logger.error("Error fetching filtered events", err);
     } finally {
       setLoading(false);

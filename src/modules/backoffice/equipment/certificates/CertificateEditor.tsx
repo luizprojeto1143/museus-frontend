@@ -5,11 +5,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 // import { useTranslation } from 'react-i18next';
 import { api } from '../../../../api/client';
 import { Save, ArrowLeft, RotateCcw, RotateCw, Loader2, FileText } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 import { CertificateProvider, useCertificate } from './context/CertificateContext';
 import { CertificateCanvas } from './components/CertificateCanvas';
 import { Toolbar } from './components/Toolbar';
 import { PropertiesPanel } from './components/PropertiesPanel';
+import type { CertificateElement } from './types';
+
+type CertificateTemplate = {
+    id: string;
+    name: string;
+    backgroundUrl?: string | null;
+    elements?: CertificateElement[] | null;
+    dimensions?: { width: number; height: number };
+};
 
 const CertificateEditorContent: React.FC = () => {
     const { id } = useParams();
@@ -27,15 +37,16 @@ const CertificateEditorContent: React.FC = () => {
         if (id) {
             const fetchTemplate = async () => {
                 try {
-                    const res = await api.get('/certificate-templates');
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const found = res.data.find((item: unknown) => item.id === id);
+                    const res = await api.get<CertificateTemplate[] | { data?: CertificateTemplate[] }>('/certificate-templates');
+                     
+                    const templates = Array.isArray(res.data) ? res.data : res.data.data || [];
+                    const found = templates.find((item) => item.id === id);
                     if (found) {
                         loadTemplate({
                             id: found.id,
                             name: found.name,
-                            backgroundUrl: found.backgroundUrl,
-                            elements: found.elements,
+                            backgroundUrl: found.backgroundUrl || "",
+                            elements: found.elements || [],
                             dimensions: found.dimensions || { width: 842, height: 595 }
                         });
                     }
@@ -65,7 +76,7 @@ const CertificateEditorContent: React.FC = () => {
             navigate('/admin/certificates');
         } catch (err) {
             logger.error(err);
-            logger.warn("Alert:", 'Erro ao salvar modelo');
+            toast.error('Erro ao salvar modelo');
         } finally {
             setSaving(false);
         }

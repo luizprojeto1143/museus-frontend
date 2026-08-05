@@ -1,63 +1,49 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { 
-    Loader2, 
-    Plus, 
-    Building2, 
-    FileText, 
-    Calendar, 
-    Users, 
-    Star, 
-    ArrowRight, 
-    MapPin, 
-    Globe, 
-    Phone, 
-    Mail, 
-    Clock, 
-    Image, 
-    Shield, 
-    Hash, 
-    LayoutDashboard, 
-    Settings,
-    ArrowUpRight,
-    Search,
-    Activity,
-    Compass
-} from "lucide-react";
+import { Plus, Building2, MapPin, ArrowUpRight, Search, Activity, Compass } from "lucide-react";
 import { 
     Button, 
     Badge, 
     AnimateIn, 
     Card 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
-
+type MunicipalEquipment = {
+    id: string;
+    name: string;
+    type?: string | null;
+    address?: string | null;
+    mission?: string | null;
+    _count?: {
+        works?: number;
+    };
+};
 export const MunicipalEquipments: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const navigate = useNavigate();
-    const [equipments, setEquipments] = useState<any[]>([]);
+    const _navigate = useNavigate();
+    const [equipments, setEquipments] = useState<MunicipalEquipment[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
 
     const fetchEquipments = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/tenants?parentId=${tenantId}`);
-            setEquipments(res.data);
+            const res = await api.get<MunicipalEquipment[]>(`/tenants?parentId=${tenantId}`);
+            setEquipments(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             logger.error(error);
             toast.error(t("municipal.equipments.error_load", "Erro ao carregar rede de equipamentos."));
         } finally {
             setLoading(false);
         }
-    }, [tenantId]);
+    }, [tenantId, t]);
 
     useEffect(() => {
         fetchEquipments();
@@ -172,7 +158,7 @@ export const MunicipalEquipments: React.FC = () => {
                                                     
                                                     // Redirecionamento completo da página (força recarregar auth context e atualizar session no front)
                                                     window.location.href = "/admin";
-                                                } catch (err) {
+                                                } catch (_err) {
                                                     toast.error(t("municipal.equipments.switch_failed", "Falha ao trocar contexto. Sem permissão ou erro de servidor."), { id: loadingToast });
                                                 }
                                             }}

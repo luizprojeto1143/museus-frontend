@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
-import { Award, Printer, Download, Eye, X } from "lucide-react";
-import { Button } from "../../../../components/ui";
+import { Award, Printer, Eye, X } from "lucide-react";
 
 interface Certificate {
   id: string;
@@ -33,7 +32,7 @@ export const SponsorCertificates: React.FC = () => {
     try {
       const res = await api.get("/sponsor-portal/certificates");
       setCertificates(res.data);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar certificados.");
     } finally {
       setLoading(false);

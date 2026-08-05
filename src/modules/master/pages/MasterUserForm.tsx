@@ -4,54 +4,65 @@ import { logger } from "@/utils/logger";
 import { api, isDemoMode } from "../../../api/client";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { 
-    User, 
-    Lock, 
-    Mail, 
-    Building, 
-    ArrowLeft, 
-    Save, 
-    Shield,
-    ShieldCheck,
-    Globe,
-    Layers,
-    ArrowUpRight,
-    Search,
-    X,
-    Database,
-    Cpu,
-    Sparkles,
-    Fingerprint,
-    ShieldAlert,
-    KeyRound,
-    UserPlus2,
-    Edit3,
-    Terminal,
-    UserCheck,
-    BadgeCheck,
-    LockKeyhole,
-    Activity,
-    Signal,
-    Workflow,
-    Zap,
-    MapPin,
-    AlertTriangle,
-    ShieldQuestion
-} from "lucide-react";
-import { 
-    Button, 
-    Input, 
-    Select, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { User, Mail, Building, ArrowLeft, Save, Shield, ShieldCheck, Globe, Fingerprint, ShieldAlert, UserPlus2, Edit3, Terminal, UserCheck, BadgeCheck, LockKeyhole, Workflow } from "lucide-react";
+import { Button, Input, Select, Card, Badge, AnimateIn } from "@/components/ui";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+type MasterUserRole = "MASTER" | "ADMIN";
+
+interface TenantOption {
+    id: string;
+    name: string;
+}
+
+interface UserResponse {
+    id: string;
+    email: string;
+    name: string;
+    role: MasterUserRole;
+    tenantId?: string | null;
+}
+
+interface UserPayload {
+    email: string;
+    name: string;
+    role: MasterUserRole;
+    tenantId: string | null;
+    password?: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const userSchema = z.object({
+    email: z.string().trim().email("Informe um e-mail valido."),
+    name: z.string().trim().min(2, "Informe o nome da autoridade."),
+    role: z.enum(["MASTER", "ADMIN"]),
+    tenantId: z.string().nullable(),
+    password: z.string().trim().min(8, "A senha deve ter pelo menos 8 caracteres.").optional()
+}).refine(data => data.role !== "ADMIN" || Boolean(data.tenantId), {
+    message: "Selecione um node institucional de destino.",
+    path: ["tenantId"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
+function normalizeMasterUserRole(role: unknown): MasterUserRole {
+    return role === "MASTER" || role === "ADMIN" ? role : "ADMIN";
+}
 
 export const MasterUserForm: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const isEdit = Boolean(id);
     const navigate = useNavigate();
@@ -59,18 +70,18 @@ export const MasterUserForm: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [role, setRole] = useState("ADMIN");
+    const [role, setRole] = useState<MasterUserRole>("ADMIN");
     const [tenantId, setTenantId] = useState("");
-    const [tenants, setTenants] = useState<Array<{ id: string; name: string }>>([]);
+    const [tenants, setTenants] = useState<TenantOption[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchTenants = useCallback(async () => {
         if (!isDemoMode) {
             try {
-                const res = await api.get("/tenants");
+                const res = await api.get<TenantOption[]>("/tenants");
                 setTenants(res.data || []);
             } catch (err: unknown) {
-                logger.error(err);
+                logger.error("Error fetching tenants", err);
             }
         }
     }, []);
@@ -79,14 +90,14 @@ export const MasterUserForm: React.FC = () => {
         if (isEdit && id && !isDemoMode) {
             setLoading(true);
             try {
-                const res = await api.get(`/users/${id}`);
+                const res = await api.get<UserResponse>(`/users/${id}`);
                 const u = res.data;
-                setEmail(u.email);
-                setName(u.name);
-                setRole(u.role);
+                setEmail(u.email || "");
+                setName(u.name || "");
+                setRole(normalizeMasterUserRole(u.role));
                 setTenantId(u.tenantId || "");
-            } catch {
-                toast.error("Falha ao carregar credenciais de autoridade.");
+            } catch (err: unknown) {
+                toast.error(getApiErrorMessage(err, "Falha ao carregar credenciais de autoridade."));
                 navigate("/master/users");
             } finally {
                 setLoading(false);
@@ -116,14 +127,6 @@ export const MasterUserForm: React.FC = () => {
             return;
         }
 
-        interface UserPayload {
-            email: string;
-            name: string;
-            role: string;
-            tenantId: string | null;
-            password?: string;
-        }
-
         const payload: UserPayload = {
             email,
             name,
@@ -135,17 +138,23 @@ export const MasterUserForm: React.FC = () => {
             payload.password = password;
         }
 
+        const validation = userSchema.safeParse(payload);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise as credenciais.");
+            return;
+        }
+
         try {
             if (id) {
-                await api.put(`/users/${id}`, payload);
+                await api.put<UserResponse>(`/users/${id}`, validation.data);
                 toast.success("Credenciais de autoridade atualizadas com sucesso.");
             } else {
-                await api.post("/users", payload);
+                await api.post<UserResponse>("/users", validation.data);
                 toast.success("Nova autoridade integrada à malha MSV.");
             }
             navigate("/master/users");
-        } catch (error: unknown) {
-            toast.error("Falha no protocolo de salvamento de autoridade.");
+        } catch (err: unknown) {
+            toast.error(getApiErrorMessage(err, "Falha no protocolo de salvamento de autoridade."));
         }
     };
 
@@ -261,7 +270,7 @@ export const MasterUserForm: React.FC = () => {
                                 <div className="relative group/sel">
                                     <Select
                                         value={role}
-                                        onChange={(e) => setRole(e.target.value)}
+                                        onChange={(e) => setRole(e.target.value as MasterUserRole)}
                                         className="h-16 bg-white/5 border-2 border-white/10 rounded-2xl px-8 text-white font-black uppercase tracking-widest italic appearance-none cursor-pointer hover:border-indigo-500/30 transition-all"
                                     >
                                         <option value="MASTER" className="bg-slate-950">Agente Master (Global Governance)</option>
@@ -413,3 +422,4 @@ export const MasterUserForm: React.FC = () => {
         </AnimateIn>
     );
 };
+

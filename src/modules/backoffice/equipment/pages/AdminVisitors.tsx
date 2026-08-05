@@ -5,21 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { 
-  Users, 
-  Search, 
-  Download, 
-  ChevronRight, 
-  Star, 
-  Map, 
-  Eye, 
-  Calendar,
-  Award,
-  Filter,
-  MoreVertical,
-  Mail,
-  Clock
-} from "lucide-react";
+import { Users, Search, Download, ChevronRight, Map, Eye, Calendar, Mail, Clock } from "lucide-react";
 import { 
   Card, 
   Button, 
@@ -44,9 +30,9 @@ interface Visitor {
 }
 
 export const AdminVisitors: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { tenantId } = useAuth();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);

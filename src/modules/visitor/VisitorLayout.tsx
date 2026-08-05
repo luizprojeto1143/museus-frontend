@@ -1,7 +1,7 @@
 import { logger } from "@/utils/logger";
 import { storage } from "@/utils/storage";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../components/LanguageSwitcher";
@@ -31,6 +31,56 @@ import { useGamification } from "../gamification/context/GamificationContext";
 import { GlobalBackground } from "./components/GlobalBackground";
 
 import { WelcomeAnimation } from "./components/WelcomeAnimation";
+import { isAxiosError } from "axios";
+
+type VisitorThemeMode = "light" | "dark";
+
+interface VisitorSettingsBase {
+  primaryColor: string;
+  secondaryColor: string;
+  historicalFont: boolean;
+  logoUrl?: string;
+  name?: string;
+  frameUrl?: string;
+  bannerUrl?: string;
+  welcomeVideoUrl?: string;
+  theme?: VisitorThemeMode;
+  fontFamily?: string;
+  featureWorks?: boolean;
+  featureTrails?: boolean;
+  featureEvents?: boolean;
+  featureGamification?: boolean;
+  featureQRCodes?: boolean;
+  featureChatAI?: boolean;
+  featureShop?: boolean;
+  featureDonations?: boolean;
+  featureCertificates?: boolean;
+  featureReviews?: boolean;
+  featureGuestbook?: boolean;
+  featureAccessibility?: boolean;
+}
+
+interface VisitorSettings extends VisitorSettingsBase {
+  [key: string]: string | boolean | undefined;
+}
+
+type PublicTenantSettingsResponse = Partial<VisitorSettingsBase>;
+
+interface PublicEquipmentResponse extends Partial<VisitorSettingsBase> {
+  nome?: string;
+  corPrimaria?: string;
+  corSecundaria?: string;
+  fontePrincipal?: string;
+  tenant?: Partial<VisitorSettingsBase>;
+}
+
+interface VisitorMeResponse {
+  isTeacher?: boolean;
+}
+
+function normalizeTheme(theme: unknown): VisitorThemeMode {
+  return theme === "light" ? "light" : "dark";
+}
 
 export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
@@ -44,9 +94,9 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [showInstallGuide, setShowInstallGuide] = useState(false);
 
   // Logic: Show button if NOT installed.
-  const shouldShowInstallButton = !isInstalled;
+  const _shouldShowInstallButton = !isInstalled;
 
-  const handleInstallClick = () => {
+  const _handleInstallClick = () => {
     if (canInstall) {
       promptInstall();
     } else {
@@ -54,40 +104,16 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [_isMenuOpen, _setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [isGlobalMenuOpen, setIsGlobalMenuOpen] = useState(false);
 
-  const { currentLevel, stats, progressToNextLevel } = useGamification();
+  const { currentLevel: _currentLevel, stats: _stats, progressToNextLevel: _progressToNextLevel } = useGamification();
 
   // Theme and Features State
-  const [settings, setSettings] = useState<{
-    primaryColor: string;
-    secondaryColor: string;
-    historicalFont: boolean;
-    logoUrl?: string;
-    name?: string;
-    frameUrl?: string;
-    bannerUrl?: string;
-    // Feature Flags
-    featureWorks?: boolean;
-    featureTrails?: boolean;
-    featureEvents?: boolean;
-    featureGamification?: boolean;
-    featureQRCodes?: boolean;
-    featureChatAI?: boolean;
-    featureShop?: boolean;
-    featureDonations?: boolean;
-    featureCertificates?: boolean;
-    featureReviews?: boolean;
-    featureGuestbook?: boolean;
-    featureAccessibility?: boolean;
-    // Media
-    welcomeVideoUrl?: string;
-    theme?: string;
-  } | null>(null);
+  const [settings, setSettings] = useState<VisitorSettings | null>(null);
 
   const { setSpaceTheme } = useVisitorTheme();
 
@@ -95,18 +121,19 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     const fetchSettings = async () => {
       try {
         if (equipamentoId) {
-          const res = await api.get(`/equipamentos/public/${equipamentoId}`);
+          const res = await api.get<PublicEquipmentResponse>(`/equipamentos/public/${equipamentoId}`);
           const equip = res.data;
-          const mergedSettings = {
-            ...equip,
+          const { tenant: _tenant, ...equipSettings } = equip;
+          const mergedSettings: VisitorSettings = {
+            ...equipSettings,
             primaryColor: equip.corPrimaria || equip.tenant?.primaryColor || "var(--accent-primary)",
             secondaryColor: equip.corSecundaria || equip.tenant?.secondaryColor || "var(--accent-secondary)",
             logoUrl: equip.logoUrl || equip.tenant?.logoUrl,
             bannerUrl: equip.bannerUrl || equip.tenant?.bannerUrl,
             frameUrl: equip.frameUrl || equip.tenant?.frameUrl,
             welcomeVideoUrl: equip.welcomeVideoUrl || equip.tenant?.welcomeVideoUrl,
-            theme: equip.theme || equip.tenant?.theme || "dark",
-            historicalFont: equip.historicalFont !== undefined ? equip.historicalFont : equip.tenant?.historicalFont,
+            theme: normalizeTheme(equip.theme || equip.tenant?.theme),
+            historicalFont: equip.historicalFont !== undefined ? Boolean(equip.historicalFont) : Boolean(equip.tenant?.historicalFont),
             name: equip.nome,
             fontFamily: equip.fontePrincipal || equip.tenant?.fontFamily || "'Inter', sans-serif"
           };
@@ -114,27 +141,33 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           setSpaceTheme({
             primaryColor: mergedSettings.primaryColor,
             secondaryColor: mergedSettings.secondaryColor,
-            theme: mergedSettings.theme as "light" | "dark",
+            theme: mergedSettings.theme || "dark",
             historicalFont: mergedSettings.historicalFont
           });
         } else if (tenantId && tenantId !== "undefined" && tenantId !== "null") {
           try {
-            const res = await api.get(`/tenants/${tenantId}/settings`);
-            const tenantSettings = res.data;
+            const res = await api.get<PublicTenantSettingsResponse>(`/tenants/${tenantId}/settings`);
+            const tenantSettings: VisitorSettings = {
+              primaryColor: res.data.primaryColor || "var(--accent-primary)",
+              secondaryColor: res.data.secondaryColor || "var(--accent-secondary)",
+              historicalFont: Boolean(res.data.historicalFont),
+              ...res.data,
+              theme: normalizeTheme(res.data.theme)
+            };
             setSettings(tenantSettings);
             setSpaceTheme({
               primaryColor: tenantSettings.primaryColor || "var(--accent-primary)",
               secondaryColor: tenantSettings.secondaryColor || "var(--accent-secondary)",
-              theme: (tenantSettings.theme as "light" | "dark") || "dark",
+              theme: tenantSettings.theme || "dark",
               historicalFont: tenantSettings.historicalFont
             });
           } catch (apiErr: unknown) {
-            if (apiErr.response?.status !== 404) {
+            if (!isAxiosError(apiErr) || apiErr.response?.status !== 404) {
                logger.warn("Could not load tenant settings", apiErr);
             }
           }
         }
-      } catch (err: unknown) {
+      } catch (_err: unknown) {
         // Silently skip if it's just a non-existent public equipamento or tenant
         // console.debug("Settings not loaded", err);
       }
@@ -158,7 +191,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isTeacher, setIsTeacher] = useState(false);
   useEffect(() => {
     if (tenantId && email) {
-      api.get(`/visitors/me`)
+      api.get<VisitorMeResponse>(`/visitors/me`)
         .then(res => setIsTeacher(res.data?.isTeacher || false))
         .catch(() => { });
     }
@@ -173,12 +206,12 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     if (link.feature === "teacherOnly") return isTeacher;
     if (!link.feature) return true;
     if (!settings) return true;
-    return (settings as Record<string, unknown>)[link.feature] !== false;
+    return settings[link.feature] !== false;
   });
 
   const [fontSizeMultiplier, setFontSizeMultiplier] = useState(1);
-  const increaseFontSize = () => setFontSizeMultiplier(prev => Math.min(prev + 0.2, 1.6));
-  const decreaseFontSize = () => setFontSizeMultiplier(prev => Math.max(prev - 0.2, 0.8));
+  const _increaseFontSize = () => setFontSizeMultiplier(prev => Math.min(prev + 0.2, 1.6));
+  const _decreaseFontSize = () => setFontSizeMultiplier(prev => Math.max(prev - 0.2, 0.8));
 
   useEffect(() => {
     document.documentElement.style.fontSize = `${fontSizeMultiplier * 100}%`;
@@ -191,7 +224,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <GlobalBackground 
         primaryColor={settings?.primaryColor} 
         secondaryColor={settings?.secondaryColor} 
-        theme={(settings?.theme as "light" | "dark") || "dark"}
+        theme={settings?.theme || "dark"}
         imageUrl={settings?.bannerUrl}
       />
 
@@ -272,10 +305,11 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
           videoUrl={settings?.welcomeVideoUrl}
           logoUrl={settings?.logoUrl}
           primaryColor={settings?.primaryColor}
-          theme={(settings?.theme as "light" | "dark") || "dark"}
+          theme={settings?.theme || "dark"}
           onComplete={() => setShowWelcome(false)}
         />
       )}
     </div>
   );
 };
+

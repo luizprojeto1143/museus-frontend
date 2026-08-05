@@ -48,7 +48,7 @@ export const usePushNotifications = () => {
 
         try {
             // Register the Firebase service worker
-            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            const _registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
             // console.debug('Firebase SW registered:', registration);
 
             // Get FCM token

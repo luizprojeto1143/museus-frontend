@@ -4,26 +4,37 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Clock } from "lucide-react";
 
+type TimelineWork = {
+    id: string;
+    title: string;
+    artist?: string | null;
+    year?: string | null;
+    yearNumeric?: number | null;
+    period?: string | null;
+    technique?: string | null;
+    imageUrl?: string | null;
+};
+
 export const WorkTimeline: React.FC = () => {
     const { tenantId } = useAuth();
-    const [works, setWorks] = useState<any[]>([]);
+    const [works, setWorks] = useState<TimelineWork[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
 
     const fetchWorks = useCallback(async () => {
         try {
-            const { data } = await api.get(`/works?tenantId=${tenantId}`);
+            const { data } = await api.get<TimelineWork[] | { data?: TimelineWork[] }>(`/works?tenantId=${tenantId}`);
             // Sort by yearNumeric or year field
             const rawData = Array.isArray(data) ? data : (data.data || []);
             const sorted = rawData
-                .filter((w: unknown) => w.year || w.yearNumeric)
-                .sort((a: unknown, b: unknown) => {
-                    const yearA = a.yearNumeric || parseInt(a.year) || 0;
-                    const yearB = b.yearNumeric || parseInt(b.year) || 0;
+                .filter((w) => w.year || w.yearNumeric)
+                .sort((a, b) => {
+                    const yearA = a.yearNumeric || parseInt(a.year || "") || 0;
+                    const yearB = b.yearNumeric || parseInt(b.year || "") || 0;
                     return yearA - yearB;
                 });
             setWorks(sorted);
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
         } finally {
             setLoading(false);
@@ -37,7 +48,7 @@ export const WorkTimeline: React.FC = () => {
     if (loading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin text-amber-500" /></div>;
 
     // Group by period
-    const periods = new Map<string, any[]>();
+    const periods = new Map<string, TimelineWork[]>();
     works.forEach(w => {
         const period = w.period || "Sem Período";
         if (!periods.has(period)) periods.set(period, []);

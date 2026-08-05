@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
@@ -9,11 +9,18 @@ import { useNavigate } from "react-router-dom";
 
 const emojiOptions = ['🏛️', '🎨', '✨', '📸', '🎭', '🎶', '❤️', '🔥', '🌟', '👀'];
 
+type SocialCheckin = {
+    id: string;
+    emoji?: string | null;
+    message?: string | null;
+    createdAt: string;
+};
+
 export const SocialCheckinPage: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId, isGuest } = useAuth();
     const navigate = useNavigate();
-    const [checkins, setCheckins] = useState<any[]>([]);
+    const [checkins, setCheckins] = useState<SocialCheckin[]>([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [emoji, setEmoji] = useState('🏛️');
@@ -21,9 +28,9 @@ export const SocialCheckinPage: React.FC = () => {
 
     const fetchData = useCallback(async () => {
         try {
-            const res = await api.get(`/social-checkin?tenantId=${tenantId}`);
-            setCheckins(res.data);
-        } catch (error: unknown) { logger.error(error); }
+            const res = await api.get<SocialCheckin[]>(`/social-checkin?tenantId=${tenantId}`);
+            setCheckins(Array.isArray(res.data) ? res.data : []);
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -36,7 +43,7 @@ export const SocialCheckinPage: React.FC = () => {
             toast.success("Check-in realizado! 🎉");
             setMessage('');
             fetchData();
-        } catch (err: unknown) { toast.error("Erro"); }
+        } catch (_err) { toast.error("Erro"); }
         finally { setPosting(false); }
     };
 
@@ -81,7 +88,7 @@ export const SocialCheckinPage: React.FC = () => {
 
             {/* Feed */}
             <div style={{ display: 'grid', gap: '0.75rem' }}>
-                {checkins.map((c: unknown) => (
+                {checkins.map((c) => (
                     <div key={c.id} style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', padding: '1rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
                         <span style={{ fontSize: '1.5rem' }}>{c.emoji || '🏛️'}</span>
                         <div style={{ flex: 1 }}>
@@ -100,3 +107,4 @@ export const SocialCheckinPage: React.FC = () => {
         </div>
     );
 };
+

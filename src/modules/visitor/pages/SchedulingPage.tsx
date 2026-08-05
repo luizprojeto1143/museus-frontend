@@ -27,15 +27,11 @@ export const SchedulingPage: React.FC = () => {
     const [inPersonServices, setInPersonServices] = useState<{ id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+    const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
 
     const [initialLoading, setInitialLoading] = useState(!isGuest);
 
-    useEffect(() => {
-        if (!isGuest) fetchBookings();
-        else setInitialLoading(false);
-    }, [isGuest]);
-
-    const fetchBookings = async () => {
+    const fetchBookings = React.useCallback(async () => {
         setInitialLoading(true);
         try {
             const [bookingsRes, servicesRes] = await Promise.all([
@@ -49,7 +45,12 @@ export const SchedulingPage: React.FC = () => {
         } finally {
             setInitialLoading(false);
         }
-    };
+    }, [tenantId]);
+
+    useEffect(() => {
+        if (!isGuest) fetchBookings();
+        else setInitialLoading(false);
+    }, [fetchBookings, isGuest]);
 
     const handleSchedule = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -79,10 +80,9 @@ export const SchedulingPage: React.FC = () => {
     };
 
     const handleCancel = async (id: string) => {
-        if (!confirm(t("visitor.scheduling.confirmCancel", "Tem certeza que deseja cancelar?"))) return;
-
         try {
             await api.delete(`/bookings/${id}`);
+            setBookingToCancel(null);
             fetchBookings();
         } catch {
             setMessage({ type: "error", text: t("visitor.scheduling.cancelError", "Erro ao cancelar.") });
@@ -222,7 +222,7 @@ export const SchedulingPage: React.FC = () => {
                                 </div>
                                 {booking.status !== "CANCELLED" && (
                                     <button
-                                        onClick={() => handleCancel(booking.id)}
+                                        onClick={() => setBookingToCancel(booking)}
                                         className="scheduling-cancel-btn"
                                     >
                                         {t("common.cancel", "Cancelar")}
@@ -233,6 +233,33 @@ export const SchedulingPage: React.FC = () => {
                     ))
                 )}
             </div>
+
+            {bookingToCancel && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-slate-950 p-6 text-white shadow-2xl">
+                        <h2 className="text-xl font-bold mb-3">{t("common.cancel", "Cancelar")}</h2>
+                        <p className="text-sm text-slate-300 mb-6">
+                            {t("visitor.scheduling.confirmCancel", "Tem certeza que deseja cancelar?")}
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setBookingToCancel(null)}
+                                className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-bold text-slate-300"
+                            >
+                                {t("common.back", "Voltar")}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => void handleCancel(bookingToCancel.id)}
+                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white"
+                            >
+                                {t("common.confirm", "Confirmar")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

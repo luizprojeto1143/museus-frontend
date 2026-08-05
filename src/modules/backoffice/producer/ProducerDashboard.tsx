@@ -1,7 +1,7 @@
 import React from "react";
 import { logger } from "@/utils/logger";
 
-import { DollarSign, Ticket, Calendar, TrendingUp, Plus, ExternalLink, BarChart3, AlertCircle, Briefcase, Rocket, Sparkles, ListChecks, ArrowRight, Wand2 } from "lucide-react";
+import { DollarSign, Ticket, Calendar, Plus, BarChart3, Rocket, Sparkles, ListChecks, ArrowRight, Wand2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -9,13 +9,55 @@ import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import "./ProducerDashboard.css";
 
+type ApiList<T> = T[] | { data?: T[] };
+
+type SalesSummaryResponse = {
+    ticketsSold?: number;
+    totalRevenue?: number;
+    raisedAmount?: number;
+    lastMonthRevenue?: number | null;
+};
+
+type ProducerEvent = {
+    id: string;
+    title: string;
+    status?: string | null;
+    startDate: string;
+};
+
+type Notice = {
+    id: string;
+    title: string;
+    inscriptionEnd: string;
+    maxPerProject?: number | string | null;
+};
+
+type ProducerProject = {
+    status: string;
+};
+
+type EventReportResponse = {
+    ticketsSold?: number;
+};
+
+type NextEvent = {
+    id: string;
+    name: string;
+    date: string;
+    sales: string;
+};
+
+function unwrapList<T>(data: ApiList<T>): T[] {
+    return Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
+}
+
 export const ProducerDashboard: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
     const { tenantId } = useAuth();
     const [loading, setLoading] = React.useState(true);
-    const [openNotices, setOpenNotices] = React.useState<any[]>([]);
+    const [openNotices, setOpenNotices] = React.useState<Notice[]>([]);
     const [projectSummary, setProjectSummary] = React.useState({
         drafts: 0,
         submitted: 0,
@@ -28,8 +70,8 @@ export const ProducerDashboard: React.FC = () => {
         raisedAmount: "R$ 0,00",
         revenueGrowth: null as number | null
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [nextEvents, setNextEvents] = React.useState<any[]>([]);
+     
+    const [nextEvents, setNextEvents] = React.useState<NextEvent[]>([]);
 
     React.useEffect(() => {
         if (!tenantId) return;
@@ -37,10 +79,10 @@ export const ProducerDashboard: React.FC = () => {
         const fetchData = async () => {
             try {
                 const [salesRes, eventsRes, noticesRes, projectsRes] = await Promise.all([
-                    api.get("/analytics/sales-summary"),
-                    api.get("/events"),
-                    api.get("/notices/public"),
-                    api.get("/projects/my")
+                    api.get<SalesSummaryResponse>("/analytics/sales-summary"),
+                    api.get<ApiList<ProducerEvent>>("/events"),
+                    api.get<ApiList<Notice>>("/notices/public"),
+                    api.get<ApiList<ProducerProject>>("/projects/my")
                 ]);
 
                 // Sales & Metrics
@@ -49,19 +91,19 @@ export const ProducerDashboard: React.FC = () => {
                 const raised = salesRes.data.raisedAmount || 0;
 
                 // Notices (Recent & Active)
-                const notices = (noticesRes.data.data ? noticesRes.data.data : noticesRes.data) as unknown[];
+                const notices = unwrapList(noticesRes.data);
                 setOpenNotices(notices.filter(n => new Date(n.inscriptionEnd) >= new Date()).slice(0, 3));
 
                 // Projects Summary
-                const projects = (projectsRes.data.data ? projectsRes.data.data : projectsRes.data) as unknown[];
+                const projects = unwrapList(projectsRes.data);
                 setProjectSummary({
                     drafts: projects.filter(p => p.status === 'DRAFT').length,
                     submitted: projects.filter(p => p.status === 'SUBMITTED' || p.status === 'UNDER_REVIEW').length,
                     approved: projects.filter(p => p.status === 'APPROVED' || p.status === 'IN_EXECUTION').length,
                 });
 
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const allEvents = (eventsRes.data.data ? eventsRes.data.data : eventsRes.data) as unknown[];
+                 
+                const allEvents = unwrapList(eventsRes.data);
 
                 const activeCount = allEvents.filter(e => e.status !== 'INACTIVE').length;
 
@@ -70,9 +112,9 @@ export const ProducerDashboard: React.FC = () => {
                     .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
                     .slice(0, 3);
 
-                const upcoming = await Promise.all(upcomingRaw.map(async (e: unknown) => {
+                const upcoming = await Promise.all(upcomingRaw.map(async (e) => {
                     try {
-                        const reportRes = await api.get(`/events/${e.id}/report`);
+                        const reportRes = await api.get<EventReportResponse>(`/events/${e.id}/report`);
                         return {
                             id: e.id,
                             name: e.title,
@@ -112,7 +154,7 @@ export const ProducerDashboard: React.FC = () => {
         fetchData();
     }, [tenantId]);
 
-    const isNewProducer = !loading && stats.activeEvents === 0 && nextEvents.length === 0 && projectSummary.drafts === 0;
+    const _isNewProducer = !loading && stats.activeEvents === 0 && nextEvents.length === 0 && projectSummary.drafts === 0;
 
     // Loading skeleton
     if (loading) {

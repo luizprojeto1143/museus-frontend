@@ -1,35 +1,45 @@
-/**
- * Logger utilitário seguro para produção.
+﻿/**
+ * Logger utilitario seguro para producao.
  * Em modo de desenvolvimento, ele usa console.* normalmente.
- * Em produção, ele não vaza dados sensíveis e pode ser integrado com Sentry/Datadog no futuro.
+ * Em producao, ele nao vaza dados sensiveis e pode ser integrado com Sentry/Datadog no futuro.
  */
 class Logger {
     private isProduction = process.env.NODE_ENV === 'production';
 
-    info(message: string, ...optionalParams: unknown[]) {
-        if (!this.isProduction) {
-            console.log(`[INFO] ${message}`, ...optionalParams);
+    private formatMessage(message: unknown) {
+        if (typeof message === "string") return message;
+        if (message instanceof Error) return message.message;
+        try {
+            return JSON.stringify(message);
+        } catch {
+            return String(message);
         }
     }
 
-    warn(message: string, ...optionalParams: unknown[]) {
+    info(message: unknown, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
-            console.warn(`[WARN] ${message}`, ...optionalParams);
+            console.log(`[INFO] ${this.formatMessage(message)}`, ...optionalParams);
         }
     }
 
-    error(message: string, ...optionalParams: unknown[]) {
+    warn(message: unknown, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
-            console.error(`[ERROR] ${message}`, ...optionalParams);
+            console.warn(`[WARN] ${this.formatMessage(message)}`, ...optionalParams);
+        }
+    }
+
+    error(message: unknown, ...optionalParams: unknown[]) {
+        if (!this.isProduction) {
+            console.error(`[ERROR] ${this.formatMessage(message)}`, ...optionalParams);
         } else {
-            // Em produção, você pode enviar isso para o Sentry
-            // Sentry.captureException(optionalParams[0] || new Error(message));
+            // Em producao, voce pode enviar isso para o Sentry.
+            // Sentry.captureException(optionalParams[0] || message);
         }
     }
 
-    debug(message: string, ...optionalParams: unknown[]) {
+    debug(message: unknown, ...optionalParams: unknown[]) {
         if (!this.isProduction) {
-            console.debug(`[DEBUG] ${message}`, ...optionalParams);
+            console.debug(`[DEBUG] ${this.formatMessage(message)}`, ...optionalParams);
         }
     }
 }

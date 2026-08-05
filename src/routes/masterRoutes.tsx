@@ -25,6 +25,7 @@ import { MasterErrorMonitor } from "../modules/master/pages/MasterErrorMonitor";
 import { MasterCardManager } from "../modules/master/pages/MasterCardManager";
 import { MasterFinancialSettings } from "../modules/master/pages/MasterFinancialSettings";
 import { MasterFinancialFees } from "../modules/master/pages/MasterFinancialFees";
+import { MasterEquipmentQRCodes } from "../modules/master/pages/MasterEquipmentQRCodes";
 
 import { MasterMonitoring } from "../modules/master/pages/MasterMonitoring";
 import { MasterErrorLogs } from "../modules/master/pages/MasterErrorLogs";
@@ -33,7 +34,7 @@ import { MasterIntegrationLogs } from "../modules/master/pages/MasterIntegration
 import { MasterJobLogs } from "../modules/master/pages/MasterJobLogs";
 import { MasterTenantActivity } from "../modules/master/pages/MasterTenantActivity";
 
-type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
+type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 const mr = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
     <RequireRole allowed={["master"]}>
@@ -71,6 +72,7 @@ export function masterRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/master/cards" element={mr(MasterCardManager, RequireRole)} />
             <Route path="/master/financeiro" element={mr(MasterFinancialSettings, RequireRole)} />
             <Route path="/master/financeiro/taxas" element={mr(MasterFinancialFees, RequireRole)} />
+            <Route path="/master/qrcodes-equipamentos" element={mr(MasterEquipmentQRCodes, RequireRole)} />
 
             {/* Sprint 14 Observability Routes */}
             <Route path="/master/monitoramento" element={mr(MasterMonitoring, RequireRole)} />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
-import { Award, CheckCircle, XCircle, Handshake, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Button } from "../../../../components/ui";
 
 interface Opportunity {
@@ -35,7 +35,7 @@ export const MunicipalSponsorships: React.FC = () => {
     try {
       const res = await api.get("/sponsor-portal/opportunities");
       setOpportunities(res.data);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar oportunidades de patrocínio.");
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ export const MunicipalSponsorships: React.FC = () => {
       setPrice(500);
       setQuotaLimit(3);
       fetchOpportunities();
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao criar oportunidade.");
     } finally {
       setSubmitting(false);

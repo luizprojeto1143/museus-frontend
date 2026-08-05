@@ -1,25 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
-import { 
-  Star, 
-  CheckCircle, 
-  XCircle, 
-  User, 
-  Clock, 
-  Filter, 
-  MessageCircle, 
-  BookOpen, 
-  Eye, 
-  EyeOff,
-  Trash2,
-  Check,
-  ShieldCheck,
-  Flame,
-  ThumbsUp,
-  MessageSquare
-} from 'lucide-react';
+import { Star, User, BookOpen, Eye, EyeOff, Trash2, Check, ShieldCheck, MessageSquare } from 'lucide-react';
 import { api } from '../../../../api/client';
 import { useAuth } from '../../../auth/AuthContext';
 import { 
@@ -30,6 +13,8 @@ import {
 } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface Review {
     id: string;
@@ -57,9 +42,28 @@ interface GuestbookEntry {
 }
 
 type TabMode = 'reviews' | 'guestbook';
+type DeleteTarget = { type: 'review'; id: string; label: string } | { type: 'guestbook'; id: string; label: string };
+
+interface ReviewsResponse {
+    reviews?: Review[];
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const moderationIdSchema = z.string().trim().min(1);
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 export const AdminReviews: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
     const [mode, setMode] = useState<TabMode>('reviews');
 
@@ -70,10 +74,12 @@ export const AdminReviews: React.FC = () => {
     // Guestbook State
     const [guestbook, setGuestbook] = useState<GuestbookEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
 
     useEffect(() => {
         if (mode === 'reviews') fetchReviews();
         else fetchGuestbook();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId, mode, reviewFilter]);
 
     const fetchReviews = async () => {
@@ -81,11 +87,11 @@ export const AdminReviews: React.FC = () => {
         setLoading(true);
         try {
             const approved = reviewFilter === 'all' ? 'all' : reviewFilter === 'approved' ? 'true' : 'false';
-            const res = await api.get(`/reviews?tenantId=${tenantId}&approved=${approved}`);
-            setReviews(res.data.reviews || []);
+            const res = await api.get<ReviewsResponse>('/reviews', { params: { tenantId, approved } });
+            setReviews(Array.isArray(res.data.reviews) ? res.data.reviews : []);
         } catch (error) {
             logger.error('Error fetching reviews:', error);
-            toast.error("Erro ao carregar avaliações");
+            toast.error(getApiErrorMessage(error, "Erro ao carregar avaliações"));
         } finally {
             setLoading(false);
         }
@@ -95,55 +101,67 @@ export const AdminReviews: React.FC = () => {
         if (!tenantId) return;
         setLoading(true);
         try {
-            const res = await api.get(`/guestbook?tenantId=${tenantId}&includeHidden=true`);
-            setGuestbook(res.data);
+            const res = await api.get<GuestbookEntry[]>('/guestbook', { params: { tenantId, includeHidden: true } });
+            setGuestbook(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             logger.error('Error fetching guestbook:', error);
-            toast.error("Erro ao carregar livro de visitas");
+            toast.error(getApiErrorMessage(error, "Erro ao carregar livro de visitas"));
         } finally {
             setLoading(false);
         }
     };
 
     const handleApproveReview = async (id: string) => {
+        const validation = moderationIdSchema.safeParse(id);
+        if (!validation.success) return;
+
         try {
-            await api.patch(`/reviews/${id}/approve`);
-            setReviews(prev => prev.map(r => r.id === id ? { ...r, approved: true } : r));
+            await api.patch(`/reviews/${validation.data}/approve`);
+            setReviews(prev => prev.map(r => r.id === validation.data ? { ...r, approved: true } : r));
             toast.success("Avaliação aprovada!");
         } catch (error) {
-            toast.error("Erro ao aprovar avaliação");
+            toast.error(getApiErrorMessage(error, "Erro ao aprovar avaliação"));
         }
     };
 
     const handleDeleteReview = async (id: string) => {
-        if (!confirm('Deseja realmente excluir esta avaliação?')) return;
+        const validation = moderationIdSchema.safeParse(id);
+        if (!validation.success) return;
+
         try {
-            await api.delete(`/reviews/${id}`);
-            setReviews(prev => prev.filter(r => r.id !== id));
+            await api.delete(`/reviews/${validation.data}`);
+            setReviews(prev => prev.filter(r => r.id !== validation.data));
+            setDeleteTarget(null);
             toast.success("Avaliação excluída");
         } catch (error) {
-            toast.error("Erro ao excluir");
+            toast.error(getApiErrorMessage(error, "Erro ao excluir avaliação"));
         }
     };
 
     const handleToggleVisibility = async (id: string, currentStatus: boolean) => {
+        const validation = moderationIdSchema.safeParse(id);
+        if (!validation.success) return;
+
         try {
-            await api.patch(`/guestbook/${id}/visibility`, { isVisible: !currentStatus });
-            setGuestbook(prev => prev.map(g => g.id === id ? { ...g, isVisible: !currentStatus } : g));
+            await api.patch(`/guestbook/${validation.data}/visibility`, { isVisible: !currentStatus });
+            setGuestbook(prev => prev.map(g => g.id === validation.data ? { ...g, isVisible: !currentStatus } : g));
             toast.success(currentStatus ? "Mensagem ocultada" : "Mensagem visível");
         } catch (error) {
-            toast.error("Erro ao atualizar visibilidade");
+            toast.error(getApiErrorMessage(error, "Erro ao atualizar visibilidade"));
         }
     };
 
     const handleDeleteGuestbook = async (id: string) => {
-        if (!confirm('Excluir mensagem do livro de visitas?')) return;
+        const validation = moderationIdSchema.safeParse(id);
+        if (!validation.success) return;
+
         try {
-            await api.delete(`/guestbook/${id}`);
-            setGuestbook(prev => prev.filter(g => g.id !== id));
+            await api.delete(`/guestbook/${validation.data}`);
+            setGuestbook(prev => prev.filter(g => g.id !== validation.data));
+            setDeleteTarget(null);
             toast.success("Mensagem excluída");
         } catch (error) {
-            toast.error("Erro ao excluir");
+            toast.error(getApiErrorMessage(error, "Erro ao excluir mensagem"));
         }
     };
 
@@ -264,7 +282,7 @@ export const AdminReviews: React.FC = () => {
                                             )}
                                             <Button 
                                                 variant="glass" 
-                                                onClick={() => handleDeleteReview(review.id)}
+                                                onClick={() => setDeleteTarget({ type: 'review', id: review.id, label: review.visitor.name })}
                                                 className="h-10 w-10 p-0 rounded-xl border-white/5 hover:bg-red-500/10 hover:text-red-500"
                                             >
                                                 <Trash2 size={16} />
@@ -327,7 +345,7 @@ export const AdminReviews: React.FC = () => {
                                         </Button>
                                         <Button 
                                             variant="glass" 
-                                            onClick={() => handleDeleteGuestbook(entry.id)}
+                                            onClick={() => setDeleteTarget({ type: 'guestbook', id: entry.id, label: entry.visitor.name })}
                                             className="h-10 w-10 p-0 rounded-xl border-white/5 hover:bg-red-500/10 hover:text-red-500"
                                         >
                                             <Trash2 size={16} />
@@ -337,6 +355,53 @@ export const AdminReviews: React.FC = () => {
                             ))
                         )}
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {deleteTarget && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            onClick={() => setDeleteTarget(null)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.94, opacity: 0, y: 12 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.94, opacity: 0, y: 12 }}
+                            className="relative w-full max-w-md rounded-[32px] border border-white/10 bg-slate-950 p-7 shadow-2xl"
+                        >
+                            <div className="mb-6 flex items-start gap-4">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-300">
+                                    <Trash2 size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-white">
+                                        {deleteTarget.type === 'review' ? 'Excluir avaliação' : 'Excluir mensagem'}
+                                    </h3>
+                                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                                        O registro de {deleteTarget.label} será removido da moderação.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Button type="button" variant="glass" className="h-12 rounded-2xl" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+                                <Button
+                                    type="button"
+                                    className="h-12 rounded-2xl bg-red-500 text-white font-black hover:bg-red-400"
+                                    onClick={() => {
+                                        if (deleteTarget.type === 'review') handleDeleteReview(deleteTarget.id);
+                                        else handleDeleteGuestbook(deleteTarget.id);
+                                    }}
+                                >
+                                    Excluir
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
         </AnimateIn>

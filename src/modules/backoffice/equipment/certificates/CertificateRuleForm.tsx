@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState } from 'react';
@@ -6,31 +6,50 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../../../api/client';
 import { Button } from '../../../../components/ui/Button';
 import { useAuth } from '../../../auth/AuthContext';
+import { toast } from 'react-hot-toast';
+
+type CertificateTemplate = {
+    id: string;
+    name: string;
+};
+
+type TrailOption = {
+    id: string;
+    title?: string | null;
+    name?: string | null;
+};
+
+type RuleConditions = {
+    trail_id?: string;
+    min_xp?: number;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
 
 export const CertificateRuleForm: React.FC = () => {
   const { t } = useTranslation();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [templates, setTemplates] = useState<any[]>([]);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [trails, setTrails] = useState<any[]>([]);
+
+    const [templates, setTemplates] = useState<CertificateTemplate[]>([]);
+
+    const [trails, setTrails] = useState<TrailOption[]>([]);
 
     // Form State
     const [name, setName] = useState('');
     const [triggerType, setTriggerType] = useState('TRAIL_COMPLETED');
     const [templateId, setTemplateId] = useState('');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [conditions, setConditions] = useState<unknown>({});
+     
+    const [conditions, setConditions] = useState<RuleConditions>({});
 
     const loadData = async () => {
         try {
             const [tplRes, trailRes] = await Promise.all([
-                api.get('/certificate-templates'),
-                api.get('/trails', { params: { tenantId } })
+                api.get<ListResponse<CertificateTemplate>>('/certificate-templates'),
+                api.get<ListResponse<TrailOption>>('/trails', { params: { tenantId } })
             ]);
-            setTemplates(tplRes.data);
-            setTrails(trailRes.data);
+            setTemplates(Array.isArray(tplRes.data) ? tplRes.data : tplRes.data.data || []);
+            setTrails(Array.isArray(trailRes.data) ? trailRes.data : trailRes.data.data || []);
         } catch (err) {
             logger.error("Failed to load data", err);
         }
@@ -39,6 +58,7 @@ export const CertificateRuleForm: React.FC = () => {
     useEffect(() => {
         loadData();
          
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleSave = async () => {
@@ -53,7 +73,7 @@ export const CertificateRuleForm: React.FC = () => {
             navigate('/admin/certificates/rules');
         } catch (err) {
             logger.error(err);
-            logger.warn("Alert:", "Erro ao salvar regra");
+            toast.error("Erro ao salvar regra");
         }
     };
 
@@ -95,7 +115,7 @@ export const CertificateRuleForm: React.FC = () => {
                         >
                             <option value="">Qualquer Trilha</option>
                             {trails.map(trail => (
-                                <option key={trail.id} value={trail.id}>{trail.title}</option>
+                                <option key={trail.id} value={trail.id}>{trail.title || trail.name || "Trilha sem nome"}</option>
                             ))}
                         </select>
                     </div>

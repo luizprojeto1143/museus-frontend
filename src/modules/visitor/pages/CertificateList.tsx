@@ -2,21 +2,34 @@ import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, Award, Download, ExternalLink, Calendar, Search } from "lucide-react";
+import { Loader2, Award, Download, ExternalLink, Calendar } from "lucide-react";
 import "./CertificateList.css";
+
+interface CertificateItem {
+    id: string;
+    code: string;
+    type?: "TRAIL" | "EVENT" | string;
+    generatedAt: string;
+    metadata?: {
+        title?: string | null;
+    } | null;
+    tenant?: {
+        name?: string | null;
+    } | null;
+}
 
 export const CertificateList: React.FC = () => {
     const { tenantId } = useAuth();
-    const [certificates, setCertificates] = useState<any[]>([]);
+    const [certificates, setCertificates] = useState<CertificateItem[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCerts = async () => {
             try {
-                const res = await api.get(`/certificates/mine?tenantId=${tenantId}`);
-                setCertificates(res.data);
+                const res = await api.get<CertificateItem[]>(`/certificates/mine?tenantId=${tenantId}`);
+                setCertificates(Array.isArray(res.data) ? res.data : []);
             } catch (error: unknown) {
-                logger.error(error);
+                logger.error("Error loading visitor certificates", error);
             } finally {
                 setLoading(false);
             }
@@ -25,7 +38,7 @@ export const CertificateList: React.FC = () => {
         if (tenantId) fetchCerts();
     }, [tenantId]);
 
-    const handleDownload = (id: string, code: string) => {
+    const handleDownload = (id: string, _code: string) => {
         const url = `${api.defaults.baseURL}/certificates/${id}/pdf`;
         window.open(url, "_blank");
     };

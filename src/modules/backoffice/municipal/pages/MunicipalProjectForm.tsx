@@ -1,20 +1,37 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import {
-    LayoutList, Tag, CheckCircle2, AlertCircle, Clock, XCircle,
-    Sparkles, TrendingUp, ThumbsUp, ThumbsDown, Info, RefreshCw, Send,
-    Download, ShieldCheck, AlertTriangle, ArrowLeft, Save, Users, DollarSign, FileText, Accessibility
-} from "lucide-react";
+import { LayoutList, CheckCircle2, AlertCircle, Clock, XCircle, Sparkles, ThumbsUp, ThumbsDown, Info, RefreshCw, ShieldCheck, AlertTriangle, ArrowLeft, Save, Users, DollarSign, FileText, Accessibility, Download } from "lucide-react";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Input, Textarea, Button, Select } from "../../../../components/ui";
 import "../../equipment/pages/AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
-const STATUS_OPTIONS = [
+type ProjectStatus =
+    | "DRAFT"
+    | "SUBMITTED"
+    | "UNDER_REVIEW"
+    | "APPROVED"
+    | "REJECTED"
+    | "IN_EXECUTION"
+    | "COMPLETED"
+    | "CANCELED";
+
+interface StatusOption {
+    value: ProjectStatus;
+    label: string;
+    icon: React.ReactNode;
+    color: string;
+    bg: string;
+    border: string;
+}
+
+const STATUS_OPTIONS: StatusOption[] = [
     { value: "DRAFT", label: "Rascunho", icon: <Clock size={16} />, color: "text-zinc-500", bg: "0/10", border: "border-slate-500/20" },
     { value: "SUBMITTED", label: "Submetido", icon: <CheckCircle2 size={16} />, color: "text-blue-400", bg: "bg-[var(--accent-primary)]/10", border: "border-blue-500/20" },
     { value: "UNDER_REVIEW", label: "Em Análise", icon: <AlertCircle size={16} />, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
@@ -44,6 +61,167 @@ interface Notice {
     title: string;
 }
 
+interface CategoryOption {
+    id: string;
+    name: string;
+}
+
+interface ProponentInfo {
+    name?: string;
+    email?: string;
+    image?: string;
+}
+
+interface AccessibilityPlan {
+    hasAccessibility: boolean;
+    services: string[];
+    description: string;
+}
+
+interface RequirementCheck {
+    met: boolean;
+    requirement: string;
+    justification: string;
+}
+
+interface ProjectAiAnalysis {
+    summary?: string;
+    recommendation?: "APPROVE" | "REJECT" | "REVIEW";
+    scores?: Record<string, number>;
+    strengths?: string[];
+    weaknesses?: string[];
+    requirementsCheck?: RequirementCheck[];
+}
+
+interface ProjectAttachment {
+    name?: string;
+    url?: string;
+    date?: string;
+    type?: string;
+}
+
+interface ProjectResponse {
+    title?: string;
+    summary?: string;
+    description?: string;
+    culturalCategory?: string;
+    targetRegion?: string;
+    requestedBudget?: number | null;
+    approvedBudget?: number | null;
+    expectedAudience?: number | null;
+    actualAudience?: number | null;
+    status?: ProjectStatus;
+    noticeId?: string | null;
+    proponentId?: string | null;
+    proponent?: ProponentInfo | null;
+    attachments?: ProjectAttachment[];
+    accessibilityPlan?: AccessibilityPlan | null;
+    aiAnalysis?: ProjectAiAnalysis | null;
+    aiAnalyzedAt?: string | null;
+    reviewNotes?: string | null;
+    humanScore?: number | null;
+    reviewedBy?: string | null;
+    reviewedAt?: string | null;
+}
+
+interface ProjectAppeal {
+    id: string;
+    status: "SUBMITTED" | "UNDER_REVIEW" | "ACCEPTED" | "REJECTED" | "PARTIALLY_ACCEPTED";
+    reason: string;
+    requestedAdjustment?: string | null;
+    response?: string | null;
+    createdAt: string;
+}
+
+interface ProjectTerm {
+    id: string;
+    title: string;
+    status: "PENDING_SIGNATURE" | "SIGNED" | "CANCELED";
+    signedAt?: string | null;
+}
+
+interface ProjectAccountability {
+    id: string;
+    status: "DRAFT" | "SUBMITTED" | "UNDER_REVIEW" | "APPROVED" | "REJECTED" | "ADJUSTMENTS_REQUIRED";
+    executionSummary?: string | null;
+    audienceReached?: number | null;
+    amountSpent?: number | string | null;
+    reviewNotes?: string | null;
+}
+
+interface ProjectWorkflowResponse {
+    appeals: ProjectAppeal[];
+    terms: ProjectTerm[];
+    accountabilities: ProjectAccountability[];
+}
+
+interface ProjectFormData {
+    title: string;
+    summary: string;
+    description: string;
+    culturalCategory: string;
+    targetRegion: string;
+    requestedBudget: string;
+    approvedBudget: string;
+    expectedAudience: string;
+    actualAudience: string;
+    status: ProjectStatus;
+    noticeId: string;
+    proponentId: string;
+    proponent: ProponentInfo | null;
+    attachments: ProjectAttachment[];
+    accessibilityPlan: AccessibilityPlan;
+    aiAnalysis: ProjectAiAnalysis | null;
+    aiAnalyzedAt: string | null;
+    reviewNotes: string;
+    humanScore: string;
+    reviewedBy: string;
+    reviewedAt: string | null;
+}
+
+interface ProjectPayload extends Omit<ProjectFormData, "requestedBudget" | "approvedBudget" | "expectedAudience" | "actualAudience" | "noticeId" | "proponentId" | "humanScore"> {
+    tenantId: string;
+    requestedBudget: number | null;
+    approvedBudget: number | null;
+    expectedAudience: number | null;
+    actualAudience: number | null;
+    noticeId: string | null;
+    proponentId: string;
+    humanScore: number | null;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const numberStringSchema = z.string().refine((value) => value === "" || Number.isFinite(Number(value)), "Informe um numero valido.");
+const nonNegativeNumberStringSchema = numberStringSchema.refine((value) => value === "" || Number(value) >= 0, "Informe um valor maior ou igual a zero.");
+
+const projectFormSchema = z.object({
+    title: z.string().trim().min(3, "Informe um titulo com pelo menos 3 caracteres."),
+    summary: z.string(),
+    description: z.string().trim().min(10, "Informe uma descricao mais completa do projeto."),
+    culturalCategory: z.string(),
+    targetRegion: z.string(),
+    requestedBudget: nonNegativeNumberStringSchema,
+    approvedBudget: nonNegativeNumberStringSchema,
+    expectedAudience: nonNegativeNumberStringSchema,
+    actualAudience: nonNegativeNumberStringSchema,
+    humanScore: nonNegativeNumberStringSchema.refine((value) => value === "" || Number(value) <= 100, "A nota humana deve ficar entre 0 e 100.")
+});
+
+function parseOptionalNumber(value: string) {
+    return value === "" ? null : Number(value);
+}
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const MunicipalProjectForm: React.FC = () => {
     const { t } = useTranslation();
     const { addToast } = useToast();
@@ -57,8 +235,15 @@ export const MunicipalProjectForm: React.FC = () => {
     const [saving, setSaving] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
     const [notices, setNotices] = useState<Notice[]>([]);
+    const [workflow, setWorkflow] = useState<ProjectWorkflowResponse>({ appeals: [], terms: [], accountabilities: [] });
+    const [appealResponses, setAppealResponses] = useState<Record<string, string>>({});
+    const [termForm, setTermForm] = useState({
+        title: "Termo de Execução Cultural",
+        termsText: ""
+    });
+    const [accountabilityReview, setAccountabilityReview] = useState<Record<string, string>>({});
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ProjectFormData>({
         title: "",
         summary: "",
         description: "",
@@ -71,14 +256,14 @@ export const MunicipalProjectForm: React.FC = () => {
         status: "DRAFT",
         noticeId: searchParams.get("noticeId") || "",
         proponentId: "",
-        proponent: null as unknown,
-        attachments: [] as unknown[],
+        proponent: null,
+        attachments: [],
         accessibilityPlan: {
             hasAccessibility: false,
             services: [] as string[],
             description: ""
         },
-        aiAnalysis: null as unknown,
+        aiAnalysis: null,
         aiAnalyzedAt: null as string | null,
         reviewNotes: "",
         humanScore: "",
@@ -86,24 +271,38 @@ export const MunicipalProjectForm: React.FC = () => {
         reviewedAt: null as string | null
     });
 
-    const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([]);
+    const [categories, setCategories] = useState<CategoryOption[]>([]);
+
+    const loadWorkflow = React.useCallback(async () => {
+        if (!id) return;
+        try {
+            const res = await api.get<ProjectWorkflowResponse>(`/projects/${id}/workflow`);
+            setWorkflow({
+                appeals: res.data.appeals || [],
+                terms: res.data.terms || [],
+                accountabilities: res.data.accountabilities || []
+            });
+        } catch (err) {
+            logger.error("Erro ao carregar ciclo do projeto", err);
+        }
+    }, [id]);
 
     useEffect(() => {
         if (tenantId) {
             // Fetch Notices
-            api.get(`/notices?tenantId=${tenantId}`)
+            api.get<Notice[]>(`/notices?tenantId=${tenantId}`)
                 .then(res => setNotices(res.data))
                 .catch(console.error);
 
             // Fetch Categories (Dynamic)
-            api.get(`/categories?tenantId=${tenantId}`)
+            api.get<CategoryOption[]>(`/categories?tenantId=${tenantId}`)
                 .then(res => setCategories(res.data))
                 .catch(console.error);
         }
 
         const fetchProject = () => {
             if (!id || !tenantId) return;
-            api.get(`/projects/${id}`)
+            api.get<ProjectResponse>(`/projects/${id}`)
                 .then(res => {
                     const data = res.data;
                     setFormData(prev => ({
@@ -120,23 +319,24 @@ export const MunicipalProjectForm: React.FC = () => {
                         status: data.status || "DRAFT",
                         noticeId: data.noticeId || "",
                         proponentId: data.proponentId || "",
-                        proponent: data.proponent,
+                        proponent: data.proponent || null,
                         attachments: data.attachments || [],
                         accessibilityPlan: data.accessibilityPlan || {
                             hasAccessibility: false,
                             services: [],
                             description: ""
                         },
-                        aiAnalysis: data.aiAnalysis,
-                        aiAnalyzedAt: data.aiAnalyzedAt,
+                        aiAnalysis: data.aiAnalysis || null,
+                        aiAnalyzedAt: data.aiAnalyzedAt || null,
                         reviewNotes: data.reviewNotes || "",
                         humanScore: data.humanScore?.toString() || "",
                         reviewedBy: data.reviewedBy || "",
-                        reviewedAt: data.reviewedAt
+                        reviewedAt: data.reviewedAt || null
                     }));
                 })
                 .catch(console.error)
                 .finally(() => setLoading(false));
+            void loadWorkflow();
         };
 
         if (id && tenantId) {
@@ -145,16 +345,16 @@ export const MunicipalProjectForm: React.FC = () => {
         }
 
         // Polling if AI analysis is missing and project is submitted
-        let pollInterval: unknown;
+        let pollInterval: ReturnType<typeof setInterval> | undefined;
         if (isEdit) {
             pollInterval = setInterval(() => {
                 if (!formData.aiAnalyzedAt && formData.status !== 'DRAFT') {
-                    api.get(`/projects/${id}`).then(res => {
+                    api.get<ProjectResponse>(`/projects/${id}`).then(res => {
                         if (res.data.aiAnalyzedAt) {
                             setFormData(prev => ({
                                 ...prev,
-                                aiAnalysis: res.data.aiAnalysis,
-                                aiAnalyzedAt: res.data.aiAnalyzedAt
+                                aiAnalysis: res.data.aiAnalysis || null,
+                                aiAnalyzedAt: res.data.aiAnalyzedAt || null
                             }));
                             addToast("Análise IA recebida!", "success");
                         }
@@ -164,23 +364,30 @@ export const MunicipalProjectForm: React.FC = () => {
         }
 
         return () => clearInterval(pollInterval);
-    }, [id, tenantId, isEdit, formData.aiAnalyzedAt, formData.status]);
+    }, [id, tenantId, isEdit, formData.aiAnalyzedAt, formData.status, addToast, loadWorkflow]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!tenantId) return;
 
+        const validation = projectFormSchema.safeParse(formData);
+        if (!validation.success) {
+            addToast(validation.error.issues[0]?.message || "Revise os dados do projeto.", "error");
+            return;
+        }
+
         setSaving(true);
         try {
-            const payload = {
+            const payload: ProjectPayload = {
                 ...formData,
                 tenantId,
-                requestedBudget: formData.requestedBudget ? parseFloat(formData.requestedBudget) : null,
-                approvedBudget: formData.approvedBudget ? parseFloat(formData.approvedBudget) : null,
-                expectedAudience: formData.expectedAudience ? parseInt(formData.expectedAudience) : null,
-                actualAudience: formData.actualAudience ? parseInt(formData.actualAudience) : null,
+                requestedBudget: parseOptionalNumber(formData.requestedBudget),
+                approvedBudget: parseOptionalNumber(formData.approvedBudget),
+                expectedAudience: parseOptionalNumber(formData.expectedAudience),
+                actualAudience: parseOptionalNumber(formData.actualAudience),
                 noticeId: formData.noticeId || null,
-                proponentId: formData.proponentId || "system"
+                proponentId: formData.proponentId || "system",
+                humanScore: parseOptionalNumber(formData.humanScore)
             };
 
             if (isEdit) {
@@ -192,7 +399,7 @@ export const MunicipalProjectForm: React.FC = () => {
             navigate("/municipal/projetos");
         } catch (error) {
             logger.error("Erro ao salvar projeto:", error);
-            addToast("Erro ao salvar projeto. Verifique os dados.", "error");
+            addToast(getApiErrorMessage(error, "Erro ao salvar projeto. Verifique os dados."), "error");
         } finally {
             setSaving(false);
         }
@@ -214,7 +421,7 @@ export const MunicipalProjectForm: React.FC = () => {
         if (!id) return;
         setAnalyzing(true);
         try {
-            const res = await api.post(`/projects/${id}/analyze`);
+            const res = await api.post<ProjectAiAnalysis>(`/projects/${id}/analyze`);
             setFormData(prev => ({
                 ...prev,
                 aiAnalysis: res.data,
@@ -222,28 +429,86 @@ export const MunicipalProjectForm: React.FC = () => {
             }));
             addToast("Análise IA concluída!", "success");
         } catch (err: unknown) {
-            logger.error(err);
-            addToast("Falha na análise IA.", "error");
+            logger.error("Falha na análise IA.", err);
+            addToast(getApiErrorMessage(err, "Falha na análise IA."), "error");
         } finally {
             setAnalyzing(false);
         }
     };
 
-    const handleUpdateStatus = async (newStatus: string) => {
+    const handleUpdateStatus = async (newStatus: ProjectStatus) => {
         if (!id) return;
         setSaving(true);
         try {
             await api.put(`/projects/${id}/status`, {
                 status: newStatus,
                 notes: formData.reviewNotes,
-                humanScore: formData.humanScore ? parseFloat(formData.humanScore) : null,
-                approvedBudget: formData.approvedBudget ? parseFloat(formData.approvedBudget) : null
+                humanScore: parseOptionalNumber(formData.humanScore),
+                approvedBudget: parseOptionalNumber(formData.approvedBudget)
             });
             setFormData(prev => ({ ...prev, status: newStatus }));
             addToast(`Status atualizado para ${newStatus}`, "success");
+        } catch (err: unknown) {
+            logger.error("Erro ao atualizar status do projeto.", err);
+            addToast(getApiErrorMessage(err, "Erro ao atualizar status."), "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleReviewAppeal = async (appealId: string, status: ProjectAppeal["status"]) => {
+        if (!id) return;
+        const response = appealResponses[appealId]?.trim();
+        if (!response) {
+            addToast("Informe a resposta do recurso.", "error");
+            return;
+        }
+        setSaving(true);
+        try {
+            await api.put(`/projects/${id}/appeals/${appealId}`, { status, response });
+            await loadWorkflow();
+            addToast("Recurso respondido.", "success");
         } catch (err) {
-            logger.error(err);
-            addToast("Erro ao atualizar status.", "error");
+            addToast(getApiErrorMessage(err, "Erro ao responder recurso."), "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleCreateTerm = async () => {
+        if (!id) return;
+        if (!termForm.title.trim() || termForm.termsText.trim().length < 20) {
+            addToast("Informe título e texto do termo.", "error");
+            return;
+        }
+        setSaving(true);
+        try {
+            await api.post(`/projects/${id}/terms`, {
+                title: termForm.title.trim(),
+                termsText: termForm.termsText.trim()
+            });
+            setTermForm({ title: "Termo de Execução Cultural", termsText: "" });
+            await loadWorkflow();
+            addToast("Termo emitido para assinatura.", "success");
+        } catch (err) {
+            addToast(getApiErrorMessage(err, "Erro ao emitir termo."), "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleReviewAccountability = async (accountabilityId: string, status: ProjectAccountability["status"]) => {
+        if (!id) return;
+        setSaving(true);
+        try {
+            await api.put(`/projects/${id}/accountability/${accountabilityId}/review`, {
+                status,
+                reviewNotes: accountabilityReview[accountabilityId] || undefined
+            });
+            await loadWorkflow();
+            addToast("Prestação de contas revisada.", "success");
+        } catch (err) {
+            addToast(getApiErrorMessage(err, "Erro ao revisar prestação de contas."), "error");
         } finally {
             setSaving(false);
         }
@@ -476,7 +741,7 @@ export const MunicipalProjectForm: React.FC = () => {
                                         <div>
                                             <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-4">{t("admin.project.pontuaoTcnica", `Pontuação Técnica`)}</div>
                                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                                                {Object.entries(formData.aiAnalysis.scores || {}).map(([key, value]: [string, any]) => (
+                                                {Object.entries(formData.aiAnalysis.scores || {}).map(([key, value]) => (
                                                     <div key={key} className="bg-black/20 p-3 rounded-xl border border-white/5 text-center">
                                                         <div className="text-[10px] text-[var(--fg-muted)] uppercase font-bold truncate mb-1">{key}</div>
                                                         <div className="text-xl font-black text-purple-400">{value}</div>
@@ -518,7 +783,7 @@ export const MunicipalProjectForm: React.FC = () => {
                                             <div>
                                                 <div className="text-xs font-bold text-[var(--fg-muted)] uppercase tracking-wider mb-3">Checklist do Edital</div>
                                                 <div className="space-y-2">
-                                                    {formData.aiAnalysis.requirementsCheck.map((req: unknown, i: number) => (
+                                                    {formData.aiAnalysis.requirementsCheck.map((req, i) => (
                                                         <div key={i} className="flex items-start gap-3 p-3 bg-black/10 rounded-xl border border-white/5">
                                                             {req.met ? <CheckCircle2 size={16} className="text-emerald-400 mt-0.5" /> : <AlertTriangle size={16} className="text-red-400 mt-0.5" />}
                                                             <div>
@@ -703,6 +968,127 @@ export const MunicipalProjectForm: React.FC = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {isEdit && (
+                            <div className="admin-section shadow-xl">
+                                <h3 className="admin-section-title">
+                                    <FileText className="text-[var(--accent-gold)]" size={20} /> Ciclo do Edital
+                                </h3>
+
+                                <div className="space-y-5">
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <div className="p-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-center">
+                                            <div className="text-xl font-black text-white">{workflow.appeals.length}</div>
+                                            <div className="text-[9px] uppercase text-[var(--fg-muted)] font-bold">Recursos</div>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-center">
+                                            <div className="text-xl font-black text-white">{workflow.terms.filter(term => term.status === "SIGNED").length}/{workflow.terms.length}</div>
+                                            <div className="text-[9px] uppercase text-[var(--fg-muted)] font-bold">Termos</div>
+                                        </div>
+                                        <div className="p-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-center">
+                                            <div className="text-xl font-black text-white">{workflow.accountabilities.length}</div>
+                                            <div className="text-[9px] uppercase text-[var(--fg-muted)] font-bold">Contas</div>
+                                        </div>
+                                    </div>
+
+                                    {workflow.appeals.map(appeal => (
+                                        <div key={appeal.id} className="p-4 rounded-xl bg-black/20 border border-white/10 space-y-3">
+                                            <div className="flex justify-between gap-3">
+                                                <span className="text-sm font-bold text-white">Recurso</span>
+                                                <span className="text-[9px] uppercase font-black text-amber-400">{appeal.status}</span>
+                                            </div>
+                                            <p className="text-xs text-[var(--fg-muted)]">{appeal.reason}</p>
+                                            <Textarea
+                                                rows={3}
+                                                value={appealResponses[appeal.id] || appeal.response || ""}
+                                                onChange={e => setAppealResponses(prev => ({ ...prev, [appeal.id]: e.target.value }))}
+                                                placeholder="Resposta oficial ao recurso..."
+                                                className="text-xs"
+                                            />
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Button type="button" variant="outline" disabled={saving} onClick={() => handleReviewAppeal(appeal.id, "REJECTED")} className="text-xs border-red-500/40 text-red-400">
+                                                    Indeferir
+                                                </Button>
+                                                <Button type="button" disabled={saving} onClick={() => handleReviewAppeal(appeal.id, "ACCEPTED")} className="text-xs bg-emerald-600 text-white">
+                                                    Deferir
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    <div className="p-4 rounded-xl bg-black/20 border border-white/10 space-y-3">
+                                        <div className="text-sm font-bold text-white">Emitir termo</div>
+                                        <Input
+                                            value={termForm.title}
+                                            onChange={e => setTermForm(prev => ({ ...prev, title: e.target.value }))}
+                                            placeholder="Título do termo"
+                                        />
+                                        <Textarea
+                                            rows={4}
+                                            value={termForm.termsText}
+                                            onChange={e => setTermForm(prev => ({ ...prev, termsText: e.target.value }))}
+                                            placeholder="Texto do termo, obrigações e cronograma..."
+                                        />
+                                        <Button type="button" disabled={saving} onClick={handleCreateTerm} className="w-full bg-[var(--accent-primary)] text-black">
+                                            Emitir para assinatura
+                                        </Button>
+                                    </div>
+
+                                    {workflow.terms.map(term => (
+                                        <div key={term.id} className="p-4 rounded-xl bg-black/20 border border-white/10 space-y-3">
+                                            <div className="flex justify-between gap-3">
+                                                <div>
+                                                    <span className="text-sm font-bold text-white">{term.title}</span>
+                                                    <div className="text-[9px] uppercase font-black text-[var(--fg-muted)]">{term.status}</div>
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    leftIcon={<Download size={14} />}
+                                                    onClick={() => window.open(`${api.defaults.baseURL}/projects/${id}/terms/${term.id}/pdf`, "_blank")}
+                                                    className="text-xs"
+                                                >
+                                                    PDF
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {workflow.accountabilities.map(accountability => (
+                                        <div key={accountability.id} className="p-4 rounded-xl bg-black/20 border border-white/10 space-y-3">
+                                            <div className="flex justify-between gap-3">
+                                                <span className="text-sm font-bold text-white">Prestação de contas</span>
+                                                <span className="text-[9px] uppercase font-black text-blue-400">{accountability.status}</span>
+                                            </div>
+                                            <p className="text-xs text-[var(--fg-muted)]">{accountability.executionSummary || "Sem resumo informado."}</p>
+                                            <Textarea
+                                                rows={3}
+                                                value={accountabilityReview[accountability.id] || accountability.reviewNotes || ""}
+                                                onChange={e => setAccountabilityReview(prev => ({ ...prev, [accountability.id]: e.target.value }))}
+                                                placeholder="Parecer sobre a prestação..."
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                leftIcon={<Download size={14} />}
+                                                onClick={() => window.open(`${api.defaults.baseURL}/projects/${id}/accountability/${accountability.id}/pdf`, "_blank")}
+                                                className="w-full text-xs"
+                                            >
+                                                Baixar PDF da prestação
+                                            </Button>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Button type="button" variant="outline" disabled={saving} onClick={() => handleReviewAccountability(accountability.id, "ADJUSTMENTS_REQUIRED")} className="text-xs border-amber-500/40 text-amber-400">
+                                                    Ajustes
+                                                </Button>
+                                                <Button type="button" disabled={saving} onClick={() => handleReviewAccountability(accountability.id, "APPROVED")} className="text-xs bg-emerald-600 text-white">
+                                                    Aprovar contas
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* NUMBERS CARD */}
                         <div className="admin-section">

@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { BentoSkeleton, WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
 import { pageVariants, staggerItem } from "@/lib/motion";
-import { Badge, AnimateIn, PageLoader } from "@/components/ui";
+import { Badge, AnimateIn } from "@/components/ui";
 import "./Home.css";
 
 interface FeaturedWork {
@@ -23,6 +23,14 @@ interface FeaturedWork {
   category?: { name: string } | string;
 }
 
+type WorksResponse = FeaturedWork[] | {
+  data?: FeaturedWork[];
+};
+
+type EquipmentResponse = {
+  nome?: string | null;
+  name?: string | null;
+};
 
 export const Home: React.FC = () => {
   const { t } = useTranslation();
@@ -36,25 +44,24 @@ export const Home: React.FC = () => {
 
   useEffect(() => {
     if (role === "master") { navigate("/master", { replace: true }); return; }
-    if (role === "admin") { navigate("/admin", { replace: true }); return; }
+    if (role === "equipment_admin") { navigate("/admin", { replace: true }); return; }
   }, [role, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [worksRes, , equipRes] = await Promise.all([
-          api.get(`/works?tenantId=${tenantId}&equipamentoId=${equipamentoId}&limit=3`),
-          api.get(`/trails?tenantId=${tenantId}&equipamentoId=${equipamentoId}&limit=2`),
-          api.get(`/equipamentos/public/${equipamentoId}`).catch(() => ({ data: {} }))
+        const [worksRes, equipRes] = await Promise.all([
+          api.get<WorksResponse>(`/works?tenantId=${tenantId}&equipamentoId=${equipamentoId}&limit=3`),
+          api.get<EquipmentResponse>(`/equipamentos/public/${equipamentoId}`).catch(() => ({ data: {} as EquipmentResponse }))
         ]);
         setFeaturedWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
 
         if (equipRes.data) {
-          setMuseumName(equipRes.data.nome || "");
+          setMuseumName(equipRes.data.nome || equipRes.data.name || "");
         }
         
-      } catch (err: unknown) {
+      } catch (err) {
         logger.error("Error fetching home data", err);
       } finally {
         setLoading(false);
@@ -244,3 +251,4 @@ export const Home: React.FC = () => {
     </motion.div>
   );
 };
+

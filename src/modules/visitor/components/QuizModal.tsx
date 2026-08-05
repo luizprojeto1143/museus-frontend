@@ -2,7 +2,7 @@ import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { Button } from "../../../components/ui";
-import { CheckCircle2, XCircle, Award, Sparkles, HelpCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Award, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./QuizModal.css";
 

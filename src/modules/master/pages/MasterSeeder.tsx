@@ -1,60 +1,67 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from "react-i18next";
 import { api } from '../../../api/client';
-import { 
-    Users, 
-    Trash2, 
-    PlayCircle, 
-    Activity, 
-    Zap, 
-    ShieldAlert,
-    Globe,
-    Layers,
-    ArrowUpRight,
-    Search,
-    X,
-    Database,
-    Cpu,
-    Sparkles,
-    BarChart3,
-    History,
-    Dna,
-    AlertCircle,
-    CheckCircle2,
-    FlaskConical,
-    Binary,
-    Workflow,
-    ShieldCheck,
-    ZapOff,
-    Fingerprint,
-    Boxes,
-    Server,
-    Waves
-} from 'lucide-react';
-import { 
-    Button, 
-    Input, 
-    Select, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
+import { Users, Trash2, PlayCircle, Activity, Zap, ShieldAlert, ArrowUpRight, Cpu, History, Dna, FlaskConical, ShieldCheck, ZapOff, Fingerprint, Server } from 'lucide-react';
+import { Button, Input, Select, Card, Badge, AnimateIn } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 type TenantOption = { id: string; name: string; slug: string };
+type SeederStats = { visits: number; stamps: number; achievements: number; guestbook: number; reviews: number };
+
+interface SeederResponse {
+    message?: string;
+    stats?: SeederStats;
+}
+
+interface SimulationSettings {
+    visitors: number;
+    minVisits: number;
+    maxVisits: number;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const tenantIdSchema = z.string().trim().min(1, "Selecione um node de destino.");
+
+const generateSchema = z.object({
+    tenantId: tenantIdSchema,
+    count: z.number().int().min(1).max(100)
+});
+
+const simulationSchema = z.object({
+    tenantId: tenantIdSchema,
+    visitorCount: z.number().int().min(1).max(500),
+    minVisits: z.number().int().min(1).max(100),
+    maxVisits: z.number().int().min(1).max(100)
+}).refine((data) => data.maxVisits >= data.minVisits, {
+    message: "O maximo de visitas precisa ser maior ou igual ao minimo.",
+    path: ["maxVisits"]
+});
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 export const MasterSeeder: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [tenantId, setTenantId] = useState('');
     const [count, setCount] = useState(10);
     const [loading, setLoading] = useState(false);
-    const [lastResult, setLastResult] = useState<{ visits: number; stamps: number; achievements: number; guestbook: number; reviews: number } | null>(null);
+    const [lastResult, setLastResult] = useState<SeederStats | null>(null);
     const [tenants, setTenants] = useState<TenantOption[]>([]);
     const [loadingTenants, setLoadingTenants] = useState(true);
+    const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
 
-    const [simSettings, setSimSettings] = useState({
+    const [simSettings, setSimSettings] = useState<SimulationSettings>({
         visitors: 20,
         minVisits: 2,
         maxVisits: 6
@@ -63,12 +70,12 @@ export const MasterSeeder: React.FC = () => {
     const loadTenants = useCallback(async () => {
         try {
             setLoadingTenants(true);
-            const res = await api.get('/tenants/public');
-            const data: TenantOption[] = Array.isArray(res.data) ? res.data : [];
+            const res = await api.get<TenantOption[]>("/tenants/public");
+            const data = Array.isArray(res.data) ? res.data : [];
             setTenants(data);
             if (data.length > 0 && !tenantId) setTenantId(data[0].id);
-        } catch (err: unknown) {
-            toast.error("Falha ao sincronizar nodes de museus.");
+        } catch (err) {
+            toast.error(getApiErrorMessage(err, "Falha ao sincronizar nodes de museus."));
         } finally {
             setLoadingTenants(false);
         }
@@ -79,47 +86,53 @@ export const MasterSeeder: React.FC = () => {
     }, [loadTenants]);
 
     const handleGenerate = async () => {
-        if (!tenantId) return toast.error("Selecione um node de destino.");
+        const validation = generateSchema.safeParse({ tenantId, count });
+        if (!validation.success) return toast.error(validation.error.issues[0]?.message || "Revise os parâmetros de geração.");
+
         setLoading(true);
         try {
-            const res = await api.post('/seeder/generate', { tenantId, count });
-            toast.success(`Protocolo Gênesis: ${res.data.message}`);
-        } catch (error: unknown) {
-            toast.error("Falha na injeção de visitantes.");
+            const res = await api.post<SeederResponse>("/seeder/generate", validation.data);
+            toast.success(`Protocolo Gênesis: ${res.data.message || "visitantes gerados."}`);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Falha na injeção de visitantes."));
         } finally {
             setLoading(false);
         }
     };
 
     const handleBulkDelete = async () => {
-        if (!window.confirm("CONFIRMAÇÃO DE PROTOCOLO: Deseja expurgar todos os dados simulados deste node? Esta ação é irreversível.")) return;
-        if (!tenantId) return toast.error("Selecione um node de destino.");
+        const validation = tenantIdSchema.safeParse(tenantId);
+        if (!validation.success) return toast.error(validation.error.issues[0]?.message || "Selecione um node de destino.");
+
         setLoading(true);
         try {
-            const res = await api.delete('/seeder/bulk', { data: { tenantId } });
-            toast.success(`Protocolo Expurgar: ${res.data.message}`);
-        } catch (error: unknown) {
-            toast.error("Erro no expurgo de dados sintéticos.");
+            const res = await api.delete<SeederResponse>("/seeder/bulk", { data: { tenantId: validation.data } });
+            setConfirmBulkDelete(false);
+            toast.success(`Protocolo Expurgar: ${res.data.message || "dados simulados removidos."}`);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Erro no expurgo de dados sintéticos."));
         } finally {
             setLoading(false);
         }
     };
 
     const handleSimulate = async () => {
-        if (!tenantId) return toast.error("Selecione um node de destino.");
+        const validation = simulationSchema.safeParse({
+            tenantId,
+            visitorCount: simSettings.visitors,
+            minVisits: simSettings.minVisits,
+            maxVisits: simSettings.maxVisits
+        });
+        if (!validation.success) return toast.error(validation.error.issues[0]?.message || "Revise os parâmetros da simulação.");
+
         setLoading(true);
         setLastResult(null);
         try {
-            const res = await api.post('/seeder/simulate-traffic', {
-                tenantId,
-                visitorCount: simSettings.visitors,
-                minVisits: simSettings.minVisits,
-                maxVisits: simSettings.maxVisits
-            });
-            toast.success(`Simulação de Tráfego Concluída.`);
+            const res = await api.post<SeederResponse>("/seeder/simulate-traffic", validation.data);
+            toast.success("Simulação de Tráfego Concluída.");
             if (res.data.stats) setLastResult(res.data.stats);
-        } catch (e: unknown) {
-            toast.error("Falha na simulação de tráfego.");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Falha na simulação de tráfego."));
         } finally {
             setLoading(false);
         }
@@ -348,7 +361,7 @@ export const MasterSeeder: React.FC = () => {
                             </div>
                         </div>
                         <Button
-                            onClick={handleBulkDelete}
+                            onClick={() => setConfirmBulkDelete(true)}
                             disabled={loading}
                             className="w-full h-20 rounded-[28px] bg-white/5 text-rose-500 border-2 border-rose-500/20 hover:bg-rose-600 hover:text-white transition-all font-black uppercase tracking-[0.3em] text-xs shadow-2xl flex items-center justify-center gap-4 group/del"
                         >
@@ -381,6 +394,44 @@ export const MasterSeeder: React.FC = () => {
                 <div className="absolute top-[-50%] right-[-10%] w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[200px] pointer-events-none" />
                 <div className="absolute left-[-5%] bottom-[-10%] w-[300px] h-[300px] bg-amber-600/5 rounded-full blur-[120px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
+
+            <AnimatePresence>
+                {confirmBulkDelete && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+                            onClick={() => setConfirmBulkDelete(false)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.94, opacity: 0, y: 12 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.94, opacity: 0, y: 12 }}
+                            className="relative w-full max-w-md rounded-[32px] border border-rose-500/20 bg-slate-950 p-7 shadow-2xl"
+                        >
+                            <div className="mb-6 flex items-start gap-4">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-300">
+                                    <ShieldAlert size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-white">Expurgar dados mock</h3>
+                                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                                        Os dados simulados de "{tenants.find(t => t.id === tenantId)?.name || "node selecionado"}" serão removidos.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Button type="button" variant="glass" className="h-12 rounded-2xl" onClick={() => setConfirmBulkDelete(false)}>Cancelar</Button>
+                                <Button type="button" disabled={loading} className="h-12 rounded-2xl bg-rose-600 text-white font-black hover:bg-rose-500" onClick={handleBulkDelete}>
+                                    Expurgar
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </AnimateIn>
     );
 };

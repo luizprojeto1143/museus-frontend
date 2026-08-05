@@ -1,39 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
-import { 
-  Calendar as CalendarIcon, 
-  ChevronLeft, 
-  ChevronRight, 
-  Clock, 
-  MapPin, 
-  Edit2, 
-  Trash2, 
-  Plus, 
-  X,
-  Info,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  Route
-} from "lucide-react";
-import { 
-  Button, 
-  Card, 
-  AnimateIn, 
-  Badge, 
-  AnimatedCounter 
-} from "@/components/ui";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock, Edit2, Trash2, Plus, Info, XCircle } from "lucide-react";
+import { Button, Card, AnimateIn, Badge } from "@/components/ui";
 import { useAuth } from "../../../auth/AuthContext";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 // --- Types ---
 type Booking = {
     id: string;
     date: string;
+    spaceId?: string;
     startTime?: string;
     endTime?: string;
     purpose?: string;
@@ -52,6 +34,35 @@ type Space = {
     name: string;
     type?: string;
 };
+
+interface BookingFormData {
+    spaceId: string;
+    startTime: string;
+    endTime: string;
+    purpose: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const bookingFormSchema = z.object({
+    spaceId: z.string().min(1, "Selecione um ambiente."),
+    startTime: z.string().min(1, "Informe o horario inicial."),
+    endTime: z.string().min(1, "Informe o horario final."),
+    purpose: z.string()
+}).refine((data) => data.startTime < data.endTime, {
+    message: "O horario inicial precisa ser anterior ao horario final.",
+    path: ["endTime"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 // --- Utils ---
 const getDaysInMonth = (date: Date) => {
@@ -78,7 +89,7 @@ const getDaysInMonth = (date: Date) => {
 };
 
 export const AdminCalendar: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
 
     // State
@@ -92,7 +103,8 @@ export const AdminCalendar: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [formData, setFormData] = useState({
+    const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
+    const [formData, setFormData] = useState<BookingFormData>({
         spaceId: "",
         startTime: "09:00",
         endTime: "10:00",
@@ -101,7 +113,7 @@ export const AdminCalendar: React.FC = () => {
 
     const fetchSpaces = useCallback(async () => {
         try {
-            const res = await api.get("/spaces");
+            const res = await api.get<Space[]>("/spaces");
             setSpaces(res.data);
             if (res.data.length > 0 && !formData.spaceId) {
                 setFormData(prev => ({ ...prev, spaceId: res.data[0].id }));
@@ -116,7 +128,7 @@ export const AdminCalendar: React.FC = () => {
         try {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth() + 1;
-            const res = await api.get("/bookings", { params: { year, month, tenantId } });
+            const res = await api.get<Booking[]>("/bookings", { params: { year, month, tenantId } });
             setBookings(res.data);
         } catch (e) {
             logger.error("Erro ao carregar reservas", e);
@@ -136,6 +148,11 @@ export const AdminCalendar: React.FC = () => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedDate || !formData.spaceId) return;
+        const validation = bookingFormSchema.safeParse(formData);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados da reserva.");
+            return;
+        }
 
         setIsSubmitting(true);
         const loadingToast = toast.loading(editingId ? "Atualizando reserva..." : "Criando reserva...");
@@ -167,26 +184,25 @@ export const AdminCalendar: React.FC = () => {
             setEditingId(null);
             fetchBookings();
         } catch (err: unknown) {
-            const msg = err.response?.data?.message || "Erro ao salvar";
+            const msg = getApiErrorMessage(err, "Erro ao salvar");
             toast.error(msg, { id: loadingToast });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Deseja realmente excluir esta reserva?")) return;
-        
+    const handleDelete = async () => {
+        if (!deleteTarget) return;
         const loadingToast = toast.loading("Excluindo reserva...");
         try {
-            await api.delete(`/bookings/${id}`, { params: { hard: "true" } });
-            toast.success("Reserva excluída", { id: loadingToast });
+            await api.delete(`/bookings/${deleteTarget.id}`, { params: { hard: "true" } });
+            toast.success("Reserva excluida", { id: loadingToast });
+            setDeleteTarget(null);
             fetchBookings();
-        } catch {
-            toast.error("Erro ao excluir", { id: loadingToast });
+        } catch (err: unknown) {
+            toast.error(getApiErrorMessage(err, "Erro ao excluir"), { id: loadingToast });
         }
     };
-
     const openNewModal = () => {
         setEditingId(null);
         setFormData(prev => ({ ...prev, purpose: "", startTime: "09:00", endTime: "10:00" }));
@@ -199,7 +215,7 @@ export const AdminCalendar: React.FC = () => {
         const eTime = b.endTime ? new Date(b.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : "10:00";
 
         setFormData({
-            spaceId: (b as unknown).spaceId || spaces.find(s => s.name === b.space?.name)?.id || spaces[0]?.id || "",
+            spaceId: b.spaceId || spaces.find(s => s.name === b.space?.name)?.id || spaces[0]?.id || "",
             startTime: sTime,
             endTime: eTime,
             purpose: b.purpose || ""
@@ -388,7 +404,7 @@ export const AdminCalendar: React.FC = () => {
                                                             <Edit2 size={16} />
                                                         </button>
                                                         <button 
-                                                            onClick={() => handleDelete(b.id)} 
+                                                            onClick={() => setDeleteTarget(b)} 
                                                             className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-all"
                                                         >
                                                             <Trash2 size={16} />
@@ -432,6 +448,39 @@ export const AdminCalendar: React.FC = () => {
 
             {/* Premium Reservation Modal */}
             <AnimatePresence>
+                {deleteTarget && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            onClick={() => setDeleteTarget(null)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 12 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 12 }}
+                            className="relative w-full max-w-md bg-slate-950 border border-white/10 rounded-[32px] p-8 shadow-2xl"
+                        >
+                            <div className="space-y-3">
+                                <h2 className="text-2xl font-black text-white tracking-tight">Excluir reserva?</h2>
+                                <p className="text-sm text-slate-400">
+                                    {deleteTarget.space?.name || "Reserva"} em {new Date(deleteTarget.date).toLocaleDateString("pt-BR")}
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 pt-8">
+                                <Button type="button" variant="glass" onClick={() => setDeleteTarget(null)} className="h-12 rounded-2xl">
+                                    Cancelar
+                                </Button>
+                                <Button type="button" onClick={handleDelete} className="h-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white">
+                                    Excluir
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                         <motion.div 
@@ -547,3 +596,4 @@ export const AdminCalendar: React.FC = () => {
         </AnimateIn>
     );
 };
+

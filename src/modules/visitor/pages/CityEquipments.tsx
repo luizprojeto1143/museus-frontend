@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '@/api/client';
 import { PageLoader } from '@/components/ui/PageLoader';
@@ -7,21 +7,39 @@ import { Card } from '@/components/ui';
 import { Helmet } from 'react-helmet-async';
 import { MapPin } from 'lucide-react';
 
+type CityEquipment = {
+  id: string;
+  slug?: string | null;
+  name: string;
+  missao?: string | null;
+  coverImageUrl?: string | null;
+};
+
+type CitySummary = {
+  slug: string;
+  name: string;
+  equipments?: CityEquipment[];
+};
+
+type MunicipalPwaSummary = {
+  cities?: CitySummary[];
+};
+
 export const CityEquipments: React.FC = () => {
   const { citySlug } = useParams<{ citySlug: string }>();
   const navigate = useNavigate();
-  const [equipments, setEquipments] = useState<any[]>([]);
+  const [equipments, setEquipments] = useState<CityEquipment[]>([]);
   const [cityName, setCityName] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCityData = async () => {
       try {
-        const res = await api.get("/analytics/municipal-pwa/summary");
+        const res = await api.get<MunicipalPwaSummary>("/analytics/municipal-pwa/summary");
         if (res.data && res.data.cities) {
-          const city = res.data.cities.find((c: any) => c.slug === citySlug);
+          const city = res.data.cities.find((c) => c.slug === citySlug);
           if (city) {
-            setEquipments(city.equipments);
+            setEquipments(city.equipments || []);
             setCityName(city.name);
           }
         }
@@ -64,7 +82,7 @@ export const CityEquipments: React.FC = () => {
                 )}
                 <div className="p-4">
                   <h2 className="text-xl font-bold text-white mb-2">{eq.name}</h2>
-                  <p className="text-xs text-gray-400 line-clamp-2">{eq.missao || "Espaço de preservação cultural e memória."}</p>
+                  <p className="text-xs text-gray-400 line-clamp-2">{eq.missao || "Sem descrição cadastrada."}</p>
                 </div>
               </Card>
             ))}
@@ -79,3 +97,4 @@ export const CityEquipments: React.FC = () => {
     </>
   );
 };
+

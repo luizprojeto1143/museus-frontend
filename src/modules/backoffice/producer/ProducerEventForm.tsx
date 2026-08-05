@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Save, ArrowLeft, Calendar, MapPin, Image as ImageIcon, AlignLeft, Tag, Clock, Globe, Info } from "lucide-react";
+import { Save, ArrowLeft, Calendar, MapPin, Image as ImageIcon, AlignLeft, Tag, Clock, Info } from "lucide-react";
 import { useToast } from "../../../contexts/ToastContext";
-import { Button, Input, Textarea, Select } from "../../../components/ui";
+import { Button, Input, Textarea } from "../../../components/ui";
 
 export const ProducerEventForm: React.FC = () => {
     const { t } = useTranslation();
@@ -64,7 +64,7 @@ export const ProducerEventForm: React.FC = () => {
                 })
                 .finally(() => setLoading(false));
         }
-    }, [id, tenantId, addToast]);
+    }, [id, tenantId, addToast, t]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;

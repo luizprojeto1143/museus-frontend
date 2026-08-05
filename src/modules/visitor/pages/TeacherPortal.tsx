@@ -1,46 +1,71 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, GraduationCap, BookOpen, Calendar, Users, FileText, Plus } from "lucide-react";
+import { Loader2, GraduationCap, BookOpen, Calendar, Users, Plus } from "lucide-react";
 import { toast } from "react-hot-toast";
+
+type TeacherVisit = {
+    id: string;
+    schoolName?: string | null;
+    status?: string | null;
+    studentCount?: number | null;
+    grade?: string | null;
+    preferredDate?: string | null;
+};
+
+type TeacherVisitForm = {
+    schoolName: string;
+    grade: string;
+    studentCount: string;
+    preferredDate: string;
+    objectives: string;
+};
+
+type EducationalResource = {
+    title: string;
+    desc: string;
+    icon: string;
+    level: string;
+};
 
 export const TeacherPortal: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId, email } = useAuth();
     const [tab, setTab] = useState<'visits' | 'resources'>('visits');
-    const [visits, setVisits] = useState<any[]>([]);
+    const [visits, setVisits] = useState<TeacherVisit[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
-    const [form, setForm] = useState({ schoolName: '', grade: '', studentCount: '', preferredDate: '', objectives: '' });
+    const [form, setForm] = useState<TeacherVisitForm>({ schoolName: '', grade: '', studentCount: '', preferredDate: '', objectives: '' });
 
     const fetchData = useCallback(async () => {
         try {
-            const res = await api.get(`/teachers/visits?tenantId=${tenantId}`);
+            const res = await api.get<TeacherVisit[]>(`/teachers/visits?tenantId=${tenantId}`);
             setVisits(Array.isArray(res.data) ? res.data : []);
-        } catch (error: unknown) { logger.error(error); }
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
     const onSubmitVisit = async () => {
-        if (!form.schoolName || !form.studentCount) return toast.error("Preencha os campos obrigatórios");
+        const studentCount = Number.parseInt(form.studentCount, 10);
+        if (!form.schoolName || !studentCount) return toast.error("Preencha os campos obrigatórios");
         try {
-            await api.post('/teachers/visits', { ...form, studentCount: parseInt(form.studentCount), tenantId, teacherEmail: email });
+            await api.post('/teachers/visits', { ...form, studentCount, tenantId, teacherEmail: email });
             toast.success("Visita agendada!");
             setShowForm(false);
             setForm({ schoolName: '', grade: '', studentCount: '', preferredDate: '', objectives: '' });
             fetchData();
-        } catch (err: unknown) { toast.error("Erro"); }
+        } catch (_err) { toast.error("Erro"); }
     };
 
-    const educationalResources = [
-        { title: 'Guia de Visita — Ensino Fundamental', desc: 'Roteiro com atividades para crianças de 6-10 anos', icon: '📚', level: 'Fundamental I' },
-        { title: 'Caderno de Atividades — Arte Barroca', desc: 'Atividades de colorir e identificar elementos barrocos', icon: '🎨', level: 'Fundamental II' },
-        { title: 'Projeto Interdisciplinar — Patrimônio', desc: 'Plano de aula conectando história, artes e geografia', icon: '🗺️', level: 'Ensino Médio' },
-        { title: 'Ficha de Observação de Obras', desc: 'Template para alunos registrarem observações', icon: '📝', level: 'Todos' }
+    const educationalResources: EducationalResource[] = [
+        { title: 'Guia de Visita - Ensino Fundamental', desc: 'Material local de apoio para atividades com crianças de 6-10 anos', icon: '📚', level: 'Fundamental I' },
+        { title: 'Caderno de Atividades - Arte Barroca', desc: 'Material local para colorir e identificar elementos barrocos', icon: '🎨', level: 'Fundamental II' },
+        { title: 'Projeto Interdisciplinar - Patrimônio', desc: 'Material local conectando história, artes e geografia', icon: '🗺️', level: 'Ensino Médio' },
+        { title: 'Ficha de Observação de Obras', desc: 'Material local para alunos registrarem observações', icon: '📝', level: 'Todos' }
     ];
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} /></div>;
@@ -83,7 +108,7 @@ export const TeacherPortal: React.FC = () => {
                     )}
 
                     <div style={{ display: 'grid', gap: '0.75rem' }}>
-                        {visits.map((v: unknown) => (
+                        {visits.map((v) => (
                             <div key={v.id} style={{ background: 'rgba(30,32,38,0.9)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', padding: '1rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <h3 style={{ color: 'white', fontWeight: 700, fontSize: '0.9rem' }}>{v.schoolName || 'Escola'}</h3>
@@ -118,3 +143,4 @@ export const TeacherPortal: React.FC = () => {
         </div>
     );
 };
+

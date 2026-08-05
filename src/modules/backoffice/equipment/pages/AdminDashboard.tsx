@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Calendar, Clock, MapPin, Ticket, ChevronRight, BarChart2, Users, Star, Layout, AlertTriangle, Sparkles, TrendingUp, Zap } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useIsCityMode } from "../../../auth/TenantContext";
 import { Card, AnimatedCounter, Button, Badge, AnimateIn } from "@/components/ui";
-import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
 type DashboardData = {
   visitorsThisMonth: number;
@@ -62,12 +62,12 @@ export const AdminDashboard: React.FC = () => {
       if (!tenantId) return;
 
       const [dashRes, eventsRes] = await Promise.all([
-        api.get(`/analytics/dashboard/${tenantId}`),
-        api.get("/events", { params: { tenantId, status: 'PUBLISHED', limit: 3 } })
+        api.get<DashboardData>(`/analytics/dashboard/${tenantId}`),
+        api.get<{ data?: UpcomingEvent[] } | UpcomingEvent[]>("/events", { params: { tenantId, status: 'PUBLISHED', limit: 3 } })
       ]);
 
       setData(dashRes.data);
-      setUpcomingEvents(eventsRes.data.data || []);
+      setUpcomingEvents(Array.isArray(eventsRes.data) ? eventsRes.data : eventsRes.data.data || []);
     } catch (err) {
       logger.error("Erro ao carregar dashboard", err);
       setData(null);
@@ -141,7 +141,7 @@ export const AdminDashboard: React.FC = () => {
             {t("admin.dashboard.commandCenter")}
           </Badge>
           <div className="flex flex-col">
-            <span className="text-zinc-500 font-black text-xs md:text-[10px] uppercase tracking-[0.2em] mb-2">{t("admin.dashboard.welcomeBack", "Bem-vindo de volta")}, {name} • {role === 'master' ? t("admin.dashboard.board", "Diretoria") : role === 'admin' ? t("admin.dashboard.admin", "Administrador") : t("admin.dashboard.tech_team", "Equipe Técnica")}</span>
+            <span className="text-zinc-500 font-black text-xs md:text-[10px] uppercase tracking-[0.2em] mb-2">{t("admin.dashboard.welcomeBack", "Bem-vindo de volta")}, {name} • {role === 'master' ? t("admin.dashboard.board", "Diretoria") : role === 'equipment_admin' ? t("admin.dashboard.admin", "Administrador") : t("admin.dashboard.tech_team", "Equipe Técnica")}</span>
             <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter leading-none">
               {t("admin.dashboard.title_dashboard", "Dashboard")} <span className={isCityMode ? 'text-blue-400' : 'text-gold-400'}>{t("admin.dashboard.title_strategic", "Estratégico")}</span>
             </h1>
@@ -150,7 +150,7 @@ export const AdminDashboard: React.FC = () => {
             {t("admin.dashboard.subtitle", "Visão consolidada da operação, engajamento e métricas de impacto do museu.")}
           </p>
         </div>
-        {(role === 'admin' || role === 'master') && (
+        {(role === 'equipment_admin' || role === 'master') && (
           <div className="flex gap-3">
               <Button
                 variant="glass"
@@ -385,3 +385,4 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 };
+

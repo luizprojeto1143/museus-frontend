@@ -1,16 +1,29 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../auth/AuthContext';
 import { api } from '../../../../api/client';
-import { Globe, TrendingUp, Users, Video, ShieldCheck } from 'lucide-react';
+import { Globe, TrendingUp, Users, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+type EcosystemActivity = {
+  text: string;
+  time: string;
+};
+
+type EcosystemStats = {
+  ecosystemVolume: number;
+  platformRevenue: number;
+  totalProviders: number;
+  totalPassports: number;
+  recentActivity?: EcosystemActivity[];
+};
 
 export const MasterEcosystemDashboard: React.FC = () => {
   const { tenantSlug } = useAuth();
-  const [stats, setStats] = useState<unknown>(null);
+  const [stats, setStats] = useState<EcosystemStats | null>(null);
 
   useEffect(() => {
     if (tenantSlug) {
-      api.get(`/${tenantSlug}/master-ecosystem/stats`)
+      api.get<EcosystemStats>(`/${tenantSlug}/master-ecosystem/stats`)
         .then(res => setStats(res.data))
         .catch(console.error);
     }
@@ -64,12 +77,13 @@ export const MasterEcosystemDashboard: React.FC = () => {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Atividade Recente */}
+      <div className="grid grid-cols-1 gap-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Atividade em Tempo Real</h2>
           <div className="space-y-4">
-            {stats.recentActivity.map((act: unknown, i: number) => (
+            {(stats.recentActivity || []).length === 0 ? (
+              <p className="text-sm text-gray-500">Nenhuma atividade recente reportada pelo backend.</p>
+            ) : (stats.recentActivity || []).map((act, i) => (
               <div key={i} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50">
                 <div className="w-2 h-2 mt-2 rounded-full bg-amber-500 animate-pulse"></div>
                 <div>
@@ -78,31 +92,6 @@ export const MasterEcosystemDashboard: React.FC = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Moderação de Vídeos Rápida */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Video size={24} className="text-red-500" /> Moderação de Vídeos (Reviews)
-            </h2>
-            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full font-bold">1 Pendente</span>
-          </div>
-          <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden relative">
-            <div className="aspect-video bg-gray-900 flex items-center justify-center">
-              <p className="text-gray-500">Player de Vídeo (TikTok/Reels format)</p>
-            </div>
-            <div className="p-4 bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
-              <div>
-                <p className="font-bold text-gray-900 dark:text-white">Maria Guia Turística</p>
-                <p className="text-sm text-gray-500">Enviado por: @turista_feliz (5 estrelas)</p>
-              </div>
-              <div className="flex gap-2">
-                <button className="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors font-bold">Bloquear</button>
-                <button className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-bold">Aprovar Vídeo</button>
-              </div>
-            </div>
           </div>
         </div>
       </div>

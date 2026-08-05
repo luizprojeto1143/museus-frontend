@@ -54,7 +54,7 @@ export const inboxService = {
         return response.data;
     },
 
-    // Create Payment (Asaas)
+    // Create Payment (Stripe Checkout)
     createPayment: async (conversationId: string, amount: number, description: string, paymentMethod: "PIX" | "CREDIT_CARD") => {
         const response = await api.post(`/inbox/${conversationId}/payment`, { amount, description, paymentMethod });
         return response.data;

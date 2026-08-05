@@ -1,52 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+﻿import React, { useEffect, useState, useRef } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { 
-  Settings, 
-  Building2, 
-  MapPin, 
-  Clock, 
-  Phone, 
-  Mail, 
-  Globe,
-  Volume2, 
-  Upload, 
-  Headphones, 
-  Video, 
-  Map as MapIcon, 
-  Image as ImageIcon,
-  Plus, 
-  Edit, 
-  Trash2, 
-  Palette, 
-  Save, 
-  Smartphone, 
-  CreditCard, 
-  HelpCircle,
-  ArrowUpRight, 
-  ShieldCheck, 
-  CheckCircle,
-  Eye,
-  Camera,
-  Layout,
-  Music,
-  Share2,
-  Route,
-  XCircle
-} from "lucide-react";
-import { 
-  Card, 
-  Button, 
-  Input, 
-  Badge, 
-  AnimateIn,
-  AnimatedCounter 
-} from "@/components/ui";
+import { Settings, Building2, MapPin, Volume2, Upload, Headphones, Video, Map as MapIcon, Image as ImageIcon, Plus, Trash2, Palette, Save, Smartphone, CreditCard, HelpCircle, ShieldCheck, CheckCircle, Camera, Layout, Music, Route, XCircle } from "lucide-react";
+import { Card, Button, Badge, AnimateIn } from "@/components/ui";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface FloorPlan {
   id: string;
@@ -84,14 +47,60 @@ interface MuseumSettings {
   isPublicInstitution?: boolean;
 }
 
+interface FloorPlanForm {
+  name: string;
+  floor: number;
+  imageUrl: string;
+}
+
+interface UploadResponse {
+  url?: string;
+}
+
+interface StripeOnboardingResponse {
+  url?: string;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const hexColorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Informe uma cor em formato hexadecimal.");
+
+const museumSettingsSchema = z.object({
+  name: z.string().trim().min(2, "Informe o nome oficial."),
+  email: z.string().trim().email("Informe um email valido.").or(z.literal("")),
+  website: z.string().trim().url("Informe uma URL valida.").or(z.literal("")),
+  whatsapp: z.string(),
+  latitude: z.number().min(-90).max(90).nullable(),
+  longitude: z.number().min(-180).max(180).nullable(),
+  primaryColor: hexColorSchema,
+  secondaryColor: hexColorSchema,
+  capacityPerHour: z.number().min(0).optional()
+});
+
+const floorPlanSchema = z.object({
+  name: z.string().trim().min(2, "Informe o nome do andar."),
+  floor: z.number().int("A ordem do andar precisa ser inteira."),
+  imageUrl: z.string().trim().min(1, "Envie a imagem da planta.")
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
 export const AdminMuseumSettings: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { tenantId } = useAuth();
 
   const logoInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const frameInputRef = useRef<HTMLInputElement>(null);
-  const mapInputRef = useRef<HTMLInputElement>(null);
+  const _mapInputRef = useRef<HTMLInputElement>(null);
   const floorPlanInputRef = useRef<HTMLInputElement>(null);
 
   const [settings, setSettings] = useState<MuseumSettings>({
@@ -127,13 +136,14 @@ export const AdminMuseumSettings: React.FC = () => {
   const [floorPlans, setFloorPlans] = useState<FloorPlan[]>([]);
   const [showFloorPlanModal, setShowFloorPlanModal] = useState(false);
   const [editingFloorPlan, setEditingFloorPlan] = useState<FloorPlan | null>(null);
-  const [newFloorPlan, setNewFloorPlan] = useState({ name: "", floor: 0, imageUrl: "" });
+  const [newFloorPlan, setNewFloorPlan] = useState<FloorPlanForm>({ name: "", floor: 0, imageUrl: "" });
+  const [deleteFloorPlanTarget, setDeleteFloorPlanTarget] = useState<FloorPlan | null>(null);
   const [activeTab, setActiveTab] = useState<string>("dados");
 
   const loadFloorPlans = React.useCallback(async () => {
     if (!tenantId) return;
     try {
-      const res = await api.get("/floor-plans", { params: { tenantId } });
+      const res = await api.get<FloorPlan[]>("/floor-plans", { params: { tenantId } });
       setFloorPlans(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       logger.error("Erro ao carregar plantas", err);
@@ -142,7 +152,7 @@ export const AdminMuseumSettings: React.FC = () => {
 
   const loadSettings = React.useCallback(async () => {
     try {
-      const res = await api.get(`/tenants/${tenantId}/settings`);
+      const res = await api.get<MuseumSettings>(`/tenants/${tenantId}/settings`);
       if (res.data) setSettings(res.data);
     } catch {
       logger.error("Erro ao carregar configurações");
@@ -157,12 +167,18 @@ export const AdminMuseumSettings: React.FC = () => {
   }, [loadSettings, loadFloorPlans]);
 
   const handleSave = async () => {
+    const validation = museumSettingsSchema.safeParse(settings);
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || "Revise os dados das configurações.");
+      return;
+    }
+
     setSaving(true);
     try {
-      await api.put(`/tenants/${tenantId}/settings`, settings);
+      await api.put(`/tenants/${tenantId}/settings`, validation.data);
       toast.success("Configurações salvas com sucesso!");
-    } catch {
-      toast.error("Erro ao salvar configurações.");
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Erro ao salvar configurações."));
     } finally {
       setSaving(false);
     }
@@ -173,11 +189,13 @@ export const AdminMuseumSettings: React.FC = () => {
     formData.append("file", file);
     const loadingToast = toast.loading("Enviando imagem...");
     try {
-      const res = await api.post("/upload/image", formData);
-      setSettings(prev => ({ ...prev, [field]: res.data.url }));
+      const res = await api.post<UploadResponse>("/upload/image", formData);
+      if (!res.data.url) throw new Error("Upload sem URL de retorno.");
+      const uploadedUrl = res.data.url;
+      setSettings(prev => ({ ...prev, [field]: uploadedUrl }));
       toast.success("Imagem enviada!", { id: loadingToast });
-    } catch {
-      toast.error("Erro no upload.", { id: loadingToast });
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Erro no upload."), { id: loadingToast });
     }
   };
 
@@ -186,11 +204,13 @@ export const AdminMuseumSettings: React.FC = () => {
     formData.append("file", file);
     const loadingToast = toast.loading("Enviando áudio...");
     try {
-      const res = await api.post("/upload/audio", formData);
-      setSettings(prev => ({ ...prev, welcomeAudioUrl: res.data.url }));
+      const res = await api.post<UploadResponse>("/upload/audio", formData);
+      if (!res.data.url) throw new Error("Upload sem URL de retorno.");
+      const uploadedUrl = res.data.url;
+      setSettings(prev => ({ ...prev, welcomeAudioUrl: uploadedUrl }));
       toast.success("Áudio enviado!", { id: loadingToast });
-    } catch {
-      toast.error("Erro no upload do áudio.", { id: loadingToast });
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Erro no upload do áudio."), { id: loadingToast });
     }
   };
 
@@ -199,24 +219,28 @@ export const AdminMuseumSettings: React.FC = () => {
     formData.append("file", file);
     const loadingToast = toast.loading("Enviando planta...");
     try {
-      const res = await api.post("/upload/image", formData);
-      setNewFloorPlan(prev => ({ ...prev, imageUrl: res.data.url }));
+      const res = await api.post<UploadResponse>("/upload/image", formData);
+      if (!res.data.url) throw new Error("Upload sem URL de retorno.");
+      const uploadedUrl = res.data.url;
+      setNewFloorPlan(prev => ({ ...prev, imageUrl: uploadedUrl }));
       toast.success("Planta enviada!", { id: loadingToast });
-    } catch {
-      toast.error("Erro no upload.", { id: loadingToast });
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Erro no upload."), { id: loadingToast });
     }
   };
 
   const handleSaveFloorPlan = async () => {
-    if (!newFloorPlan.name || !newFloorPlan.imageUrl) {
-      toast.error("Nome e imagem são obrigatórios");
+    const validation = floorPlanSchema.safeParse(newFloorPlan);
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || "Revise os dados da planta.");
       return;
     }
+
     try {
       if (editingFloorPlan) {
-        await api.put(`/floor-plans/${editingFloorPlan.id}`, newFloorPlan);
+        await api.put(`/floor-plans/${editingFloorPlan.id}`, validation.data);
       } else {
-        await api.post("/floor-plans", { ...newFloorPlan, tenantId });
+        await api.post("/floor-plans", { ...validation.data, tenantId });
       }
       setShowFloorPlanModal(false);
       setEditingFloorPlan(null);
@@ -224,18 +248,20 @@ export const AdminMuseumSettings: React.FC = () => {
       loadFloorPlans();
       toast.success("Andar salvo!");
     } catch (err) {
-      toast.error("Erro ao salvar andar");
+      toast.error(getApiErrorMessage(err, "Erro ao salvar andar"));
     }
   };
 
-  const handleDeleteFloorPlan = async (id: string) => {
-    if (!confirm("Deseja excluir esta planta?")) return;
+  const handleDeleteFloorPlan = async () => {
+    if (!deleteFloorPlanTarget) return;
+
     try {
-      await api.delete(`/floor-plans/${id}`);
+      await api.delete(`/floor-plans/${deleteFloorPlanTarget.id}`);
+      setDeleteFloorPlanTarget(null);
       loadFloorPlans();
       toast.success("Planta excluída");
     } catch (err) {
-      toast.error("Erro ao excluir planta");
+      toast.error(getApiErrorMessage(err, "Erro ao excluir planta"));
     }
   };
 
@@ -562,8 +588,8 @@ export const AdminMuseumSettings: React.FC = () => {
                         <div className="space-y-4">
                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-4">Localização (Coordenadas)</label>
                            <div className="grid grid-cols-2 gap-4">
-                              <input type="number" step="any" placeholder="Latitude" value={settings.latitude ?? ""} onChange={e => setSettings({...settings, latitude: parseFloat(e.target.value)})} className="h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" />
-                              <input type="number" step="any" placeholder="Longitude" value={settings.longitude ?? ""} onChange={e => setSettings({...settings, longitude: parseFloat(e.target.value)})} className="h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" />
+                              <input type="number" step="any" placeholder="Latitude" value={settings.latitude ?? ""} onChange={e => setSettings({...settings, latitude: e.target.value === "" ? null : Number(e.target.value)})} className="h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" />
+                              <input type="number" step="any" placeholder="Longitude" value={settings.longitude ?? ""} onChange={e => setSettings({...settings, longitude: e.target.value === "" ? null : Number(e.target.value)})} className="h-14 px-6 bg-white/5 border border-white/5 rounded-2xl text-white outline-none" />
                            </div>
                            <div className="h-40 rounded-[32px] bg-slate-900 overflow-hidden relative border border-white/5">
                               <div className="absolute inset-0 flex items-center justify-center text-slate-800">
@@ -584,7 +610,7 @@ export const AdminMuseumSettings: React.FC = () => {
                                        <h5 className="text-sm font-bold text-white">{plan.name}</h5>
                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Nível {plan.floor}</span>
                                     </div>
-                                    <button onClick={() => handleDeleteFloorPlan(plan.id)} className="p-2 text-slate-700 hover:text-red-500 transition-colors">
+                                    <button onClick={() => setDeleteFloorPlanTarget(plan)} className="p-2 text-slate-700 hover:text-red-500 transition-colors">
                                        <Trash2 size={16} />
                                     </button>
                                  </div>
@@ -641,10 +667,10 @@ export const AdminMuseumSettings: React.FC = () => {
                                     className="w-full bg-gold-400 text-slate-950 font-black rounded-xl h-12"
                                     onClick={async () => {
                                       try {
-                                        const { data } = await api.get('/stripe/onboarding-link?type=MUSEUM');
+                                        const { data } = await api.get<StripeOnboardingResponse>('/stripe/onboarding-link', { params: { type: 'MUSEUM' } });
                                         if (data && data.url) window.location.href = data.url;
                                       } catch (err) {
-                                        toast.error("Erro ao gerar link do Stripe");
+                                        toast.error(getApiErrorMessage(err, "Erro ao gerar link do Stripe"));
                                       }
                                     }}
                                  >
@@ -745,6 +771,42 @@ export const AdminMuseumSettings: React.FC = () => {
            </div>
         </div>
       </div>
+
+      <AnimatePresence>
+         {deleteFloorPlanTarget && (
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+               <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                  onClick={() => setDeleteFloorPlanTarget(null)}
+               />
+               <motion.div
+                  initial={{ scale: 0.94, opacity: 0, y: 12 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.94, opacity: 0, y: 12 }}
+                  className="relative w-full max-w-md rounded-[32px] border border-white/10 bg-slate-950 p-7 shadow-2xl"
+               >
+                  <div className="mb-6 flex items-start gap-4">
+                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-500/10 text-red-300">
+                        <Trash2 size={20} />
+                     </div>
+                     <div>
+                        <h3 className="text-lg font-black text-white">Excluir planta</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                           A planta "{deleteFloorPlanTarget.name}" será removida da navegação indoor.
+                        </p>
+                     </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                     <Button variant="glass" className="h-12 rounded-2xl" onClick={() => setDeleteFloorPlanTarget(null)}>Cancelar</Button>
+                     <Button className="h-12 rounded-2xl bg-red-500 text-white font-black hover:bg-red-400" onClick={handleDeleteFloorPlan}>Excluir</Button>
+                  </div>
+               </motion.div>
+            </div>
+         )}
+      </AnimatePresence>
 
       {/* Floor Plan Modal */}
       <AnimatePresence>

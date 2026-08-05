@@ -58,7 +58,7 @@ export const ExitPinModal: React.FC<ExitPinModalProps> = ({ onClose }) => {
           setPin("");
         }
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Erro ao verificar PIN com o servidor");
     } finally {
       setLoading(false);

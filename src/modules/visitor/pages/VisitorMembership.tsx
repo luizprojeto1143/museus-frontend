@@ -7,19 +7,29 @@ import { Loader2, Crown, Check, Star, ShieldCheck } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+type MembershipPlan = {
+    id: string;
+    name: string;
+    description?: string | null;
+    monthlyPrice?: number | string | null;
+    yearlyPrice?: number | string | null;
+    benefits?: string[] | null;
+    shopDiscount?: number | null;
+};
+
 export const VisitorMembership: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId, email, name, isGuest } = useAuth();
     const navigate = useNavigate();
-    const [plans, setPlans] = useState<any[]>([]);
+    const [plans, setPlans] = useState<MembershipPlan[]>([]);
     const [loading, setLoading] = useState(true);
     const [subscribing, setSubscribing] = useState<string | null>(null);
 
     const fetchPlans = useCallback(async () => {
         try {
-            const res = await api.get(`/memberships/plans?tenantId=${tenantId}`);
-            setPlans(res.data);
-        } catch (error: unknown) { logger.error(error); }
+            const res = await api.get<MembershipPlan[]>(`/memberships/plans?tenantId=${tenantId}`);
+            setPlans(Array.isArray(res.data) ? res.data : []);
+        } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
@@ -32,7 +42,7 @@ export const VisitorMembership: React.FC = () => {
             await api.post("/memberships", { planId, visitorEmail: email, visitorName: name || "Visitante", tenantId });
             toast.success("Assinatura realizada! 🎉");
             fetchPlans();
-        } catch (err: unknown) { toast.error("Erro ao assinar"); }
+        } catch (_err) { toast.error("Erro ao assinar"); }
         finally { setSubscribing(null); }
     };
 
@@ -57,7 +67,7 @@ export const VisitorMembership: React.FC = () => {
             </div>
 
             <div style={{ display: 'grid', gap: '1.5rem' }}>
-                {plans.map((plan: unknown) => (
+                {plans.map((plan) => (
                     <div key={plan.id} style={{
                         background: 'rgba(30,32,38,0.9)',
                         border: '1px solid rgba(255,255,255,0.08)',

@@ -8,12 +8,50 @@ interface Tenant {
   name: string;
 }
 
-interface ActivityLogs {
-  recentErrors: any[];
-  recentSecurity: any[];
-  recentAudit: any[];
-  recentRequests: any[];
+interface ListResponse<T> {
+  data?: T[];
 }
+
+interface AuditLog {
+  id: string;
+  action: string;
+  createdAt: string;
+  user?: {
+    email?: string | null;
+  } | null;
+}
+
+interface SecurityLog {
+  id: string;
+  type: string;
+  ipAddress?: string | null;
+  createdAt: string;
+}
+
+interface ErrorLog {
+  id: string;
+  message: string;
+  method?: string | null;
+  path?: string | null;
+  createdAt: string;
+}
+
+interface RequestLog {
+  id: string;
+  method: string;
+  path: string;
+  statusCode: number;
+  durationMs?: number | null;
+}
+
+interface ActivityLogs {
+  recentErrors: ErrorLog[];
+  recentSecurity: SecurityLog[];
+  recentAudit: AuditLog[];
+  recentRequests: RequestLog[];
+}
+
+const unwrapList = <T,>(payload: T[] | ListResponse<T>): T[] => Array.isArray(payload) ? payload : payload.data ?? [];
 
 export const MasterTenantActivity: React.FC = () => {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -22,37 +60,43 @@ export const MasterTenantActivity: React.FC = () => {
   const [loadingTenants, setLoadingTenants] = useState(true);
   const [loadingActivity, setLoadingActivity] = useState(false);
 
-  useEffect(() => {
-    fetchTenants();
-  }, []);
-
-  const fetchTenants = async () => {
-    setLoadingTenants(true);
-    try {
-      const res = await api.get("/tenants");
-      setTenants(res.data);
-      if (res.data.length > 0) {
-        setSelectedTenantId(res.data[0].id);
-        fetchActivity(res.data[0].id);
-      }
-    } catch (err) {
-      toast.error("Erro ao obter lista de tenants.");
-    } finally {
-      setLoadingTenants(false);
-    }
-  };
-
-  const fetchActivity = async (tenantId: string) => {
+  const fetchActivity = React.useCallback(async (tenantId: string) => {
     setLoadingActivity(true);
     try {
-      const res = await api.get(`/master/monitoring/tenants/${tenantId}/activity`);
-      setActivity(res.data);
-    } catch (err) {
+      const res = await api.get<ActivityLogs>(`/master/monitoring/tenants/${tenantId}/activity`);
+      setActivity({
+        recentErrors: res.data.recentErrors ?? [],
+        recentSecurity: res.data.recentSecurity ?? [],
+        recentAudit: res.data.recentAudit ?? [],
+        recentRequests: res.data.recentRequests ?? []
+      });
+    } catch {
       toast.error("Erro ao buscar logs do tenant.");
     } finally {
       setLoadingActivity(false);
     }
-  };
+  }, []);
+
+  const fetchTenants = React.useCallback(async () => {
+    setLoadingTenants(true);
+    try {
+      const res = await api.get<Tenant[] | ListResponse<Tenant>>("/tenants");
+      const tenantList = unwrapList(res.data);
+      setTenants(tenantList);
+      if (tenantList.length > 0) {
+        setSelectedTenantId(tenantList[0].id);
+        fetchActivity(tenantList[0].id);
+      }
+    } catch {
+      toast.error("Erro ao obter lista de tenants.");
+    } finally {
+      setLoadingTenants(false);
+    }
+  }, [fetchActivity]);
+
+  useEffect(() => {
+    fetchTenants();
+  }, [fetchTenants]);
 
   const handleTenantChange = (tenantId: string) => {
     setSelectedTenantId(tenantId);

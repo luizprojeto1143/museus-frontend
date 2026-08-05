@@ -1,37 +1,11 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
 import {
 useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { 
-    Trophy, 
-    Upload, 
-    ArrowLeft, 
-    Save, 
-    Building2, 
-    Tag, 
-    FileText, 
-    ImageIcon,
-    Zap,
-    ShieldCheck,
-    Globe,
-    Layers,
-    ArrowUpRight,
-    Star,
-    Award,
-    Crown,
-    X,
-    Sparkles,
-    Settings,
-    Package,
-    Terminal,
-    CloudUpload,
-    Medal,
-    Gem,
-    RefreshCw,
-} from "lucide-react";
+import { ArrowLeft, Save, Globe, Crown, Settings, Package, Terminal, CloudUpload, Medal, Gem, RefreshCw } from "lucide-react";
 import { 
     Button, 
     Input, 
@@ -41,16 +15,54 @@ import {
     Badge, 
     AnimateIn 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface Tenant {
     id: string;
     name: string;
 }
 
+interface AchievementFormData {
+    tenantId: string;
+    code: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+}
+
+interface AchievementResponse extends AchievementFormData {
+    id: string;
+}
+
+interface UploadResponse {
+    url?: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const achievementSchema = z.object({
+    tenantId: z.string().trim().min(1, "Dominio municipal obrigatorio."),
+    code: z.string().trim().min(2, "Informe o codigo da conquista.").regex(/^[A-Z0-9_]+$/, "Use apenas letras maiusculas, numeros e underline no codigo."),
+    title: z.string().trim().min(2, "Informe o titulo da conquista."),
+    description: z.string().trim().optional(),
+    imageUrl: z.string().trim().url("Informe uma URL valida para a medalha.").or(z.literal(""))
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const MasterAchievementForm: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const navigate = useNavigate();
     const { id } = useParams();
     const [searchParams] = useSearchParams();
@@ -60,7 +72,7 @@ export const MasterAchievementForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<AchievementFormData>({
         tenantId: initialTenantId,
         code: "",
         title: "",
@@ -72,17 +84,18 @@ export const MasterAchievementForm: React.FC = () => {
 
     const loadTenants = useCallback(async () => {
         try {
-            const res = await api.get("/tenants");
-            setTenants(res.data);
-        } catch (err: unknown) {
+            const res = await api.get<Tenant[]>("/tenants");
+            setTenants(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
             logger.error("Erro ao carregar tenants", err);
+            toast.error(getApiErrorMessage(err, "Erro ao carregar municípios."));
         }
     }, []);
 
     const loadAchievement = useCallback(async (achievementId: string) => {
         setLoading(true);
         try {
-            const res = await api.get(`/achievements/${achievementId}`);
+            const res = await api.get<AchievementResponse>(`/achievements/${achievementId}`);
             setFormData({
                 tenantId: res.data.tenantId,
                 code: res.data.code,
@@ -90,8 +103,8 @@ export const MasterAchievementForm: React.FC = () => {
                 description: res.data.description || "",
                 imageUrl: res.data.imageUrl || ""
             });
-        } catch (err: unknown) {
-            toast.error("Falha na sincronização da medalha.");
+        } catch (err) {
+            toast.error(getApiErrorMessage(err, "Falha na sincronização da medalha."));
             navigate("/master/achievements");
         } finally {
             setLoading(false);
@@ -107,23 +120,24 @@ export const MasterAchievementForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.tenantId) {
-            toast.error("Domínio municipal obrigatório.");
+        const validation = achievementSchema.safeParse(formData);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados da conquista.");
             return;
         }
 
         setSaving(true);
         try {
             if (isEditing) {
-                await api.put(`/achievements/${id}`, formData);
+                await api.put(`/achievements/${id}`, validation.data);
                 toast.success("Medalha atualizada no registro global.");
             } else {
-                await api.post("/achievements", formData);
+                await api.post("/achievements", validation.data);
                 toast.success("Nova conquista forjada!");
             }
             navigate("/master/achievements");
-        } catch (err: unknown) {
-            toast.error("Falha no protocolo de salvamento.");
+        } catch (err) {
+            toast.error(getApiErrorMessage(err, "Falha no protocolo de salvamento."));
         } finally {
             setSaving(false);
         }
@@ -247,13 +261,15 @@ export const MasterAchievementForm: React.FC = () => {
                                             const uploadData = new FormData();
                                             uploadData.append("file", file);
                                             try {
-                                                const res = await api.post("/upload/image", uploadData, {
+                                                const res = await api.post<UploadResponse>("/upload/image", uploadData, {
                                                     headers: { "Content-Type": "multipart/form-data" }
                                                 });
-                                                setFormData(prev => ({ ...prev, imageUrl: res.data.url }));
+                                                if (!res.data.url) throw new Error("Upload sem URL de retorno.");
+                                                const uploadedUrl = res.data.url;
+                                                setFormData(prev => ({ ...prev, imageUrl: uploadedUrl }));
                                                 toast.success("Ativo visual injetado com sucesso.");
-                                            } catch (err: unknown) {
-                                                toast.error("Falha na injeção de ativo.");
+                                            } catch (err) {
+                                                toast.error(getApiErrorMessage(err, "Falha na injeção de ativo."));
                                             }
                                         }}
                                     />

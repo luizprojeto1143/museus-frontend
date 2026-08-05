@@ -3,8 +3,8 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import { Heart, Calendar, Users, Music, Play, Pause, ChevronLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Calendar, Users, Play, Pause, ChevronLeft } from "lucide-react";
+import { motion } from "framer-motion";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
 import { PageLoader, Button, Badge } from "@/components/ui";
@@ -53,13 +53,14 @@ export const FamilyTimeline: React.FC = () => {
 
     useEffect(() => {
         fetchProfile();
+        const audio = audioRef.current;
 
         // Cleanup function for audio memory
         return () => {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.src = "";
-                audioRef.current.load();
+            if (audio) {
+                audio.pause();
+                audio.src = "";
+                audio.load();
             }
         };
     }, [fetchProfile]);

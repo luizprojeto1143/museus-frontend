@@ -1,37 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+﻿import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
 api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
-import { 
-    Accessibility, 
-    Upload, 
-    CheckCircle, 
-    Clock, 
-    Video, 
-    FileAudio, 
-    AlertCircle, 
-    X,
-    Target,
-    Activity,
-    Globe,
-    Zap,
-    ShieldCheck,
-    BarChart3,
-    ArrowUpRight,
-    Search,
-    ChevronRight,
-    Layers,
-    Play,
-    Heart,
-    Eye,
-    Ear,
-    Languages,
-    FileCheck,
-    CloudUpload,
-    Scan,
-    Info,
-    RefreshCw,
-} from "lucide-react";
+import { Accessibility, Upload, CheckCircle, Clock, Video, FileAudio, X, Activity, ShieldCheck, BarChart3, Search, Layers, Heart, Eye, Ear, Languages, FileCheck, CloudUpload, Scan, Info, RefreshCw } from "lucide-react";
 import { 
     Button, 
     Card, 
@@ -41,11 +12,13 @@ import {
 } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface AccessRequest {
     id: string;
-    type: string;
-    status: string;
+    type: AccessRequestType;
+    status: AccessRequestStatus;
     notes: string;
     workId: string;
     work: { title: string; id: string; imageUrl?: string; audioUrl?: string; description?: string };
@@ -53,8 +26,34 @@ interface AccessRequest {
     createdAt: string;
 }
 
+type AccessRequestType = "LIBRAS" | "AUDIO_DESC" | "BOTH";
+type AccessRequestStatus = "PENDING" | "COMPLETED" | "REJECTED";
+
+interface UploadResponse {
+    url?: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const fulfillSchema = z.object({
+    requestId: z.string().trim().min(1),
+    librasUrl: z.string().trim().url().or(z.literal("")),
+    audioUrl: z.string().trim().url().or(z.literal("")),
+    masterNotes: z.string().trim().min(1)
+});
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const MasterAccessibilityRequests: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [requests, setRequests] = useState<AccessRequest[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -68,10 +67,10 @@ export const MasterAccessibilityRequests: React.FC = () => {
     const loadRequests = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/accessibility/master");
-            setRequests(res.data);
-        } catch (error: unknown) {
-            toast.error("Erro na sincronização de conformidade LBI.");
+            const res = await api.get<AccessRequest[]>("/accessibility/master");
+            setRequests(Array.isArray(res.data) ? res.data : []);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Erro na sincronização de conformidade LBI."));
         } finally {
             setLoading(false);
         }
@@ -98,34 +97,44 @@ export const MasterAccessibilityRequests: React.FC = () => {
             if (librasFile) {
                 const formData = new FormData();
                 formData.append("file", librasFile);
-                const res = await api.post("/upload/video", formData, {
+                const res = await api.post<UploadResponse>("/upload/video", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                     onUploadProgress: (pEvent) => {
                         const p = pEvent.total ? Math.round((pEvent.loaded * 100) / pEvent.total) : 0;
                         setProgress(needsAudio ? Math.round(p / 2) : p);
                     }
                 });
+                if (!res.data.url) throw new Error("Upload de Libras sem URL de retorno.");
                 uploadedLibrasUrl = res.data.url;
             }
 
             if (audioFile) {
                 const formData = new FormData();
                 formData.append("file", audioFile);
-                const res = await api.post("/upload/audio", formData, {
+                const res = await api.post<UploadResponse>("/upload/audio", formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                     onUploadProgress: (pEvent) => {
                         const p = pEvent.total ? Math.round((pEvent.loaded * 100) / pEvent.total) : 0;
                         setProgress(needsLibras ? 50 + Math.round(p / 2) : p);
                     }
                 });
+                if (!res.data.url) throw new Error("Upload de áudio sem URL de retorno.");
                 uploadedAudioUrl = res.data.url;
             }
 
             setProgress(95);
-            await api.post(`/accessibility/${selectedRequest.id}/fulfill`, {
+            const validation = fulfillSchema.safeParse({
+                requestId: selectedRequest.id,
                 librasUrl: uploadedLibrasUrl,
                 audioUrl: uploadedAudioUrl,
                 masterNotes: "Asset auditado e homologado via Master Hub Elite."
+            });
+            if (!validation.success) throw new Error(validation.error.issues[0]?.message || "Payload de homologação inválido.");
+
+            await api.post(`/accessibility/${validation.data.requestId}/fulfill`, {
+                librasUrl: validation.data.librasUrl,
+                audioUrl: validation.data.audioUrl,
+                masterNotes: validation.data.masterNotes
             });
 
             setProgress(100);
@@ -135,8 +144,8 @@ export const MasterAccessibilityRequests: React.FC = () => {
             setAudioFile(null);
             setProgress(0);
             loadRequests();
-        } catch (error: unknown) {
-            toast.error("Falha no processamento da conformidade.");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Falha no processamento da conformidade."));
         } finally {
             setUploading(false);
         }

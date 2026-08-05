@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -25,8 +25,8 @@ export const AdminNewsletter: React.FC = () => {
 
     const fetchSubscribers = useCallback(async () => {
         try {
-            const res = await api.get(`/newsletter/list?tenantId=${tenantId}`);
-            setSubscribers(res.data);
+            const res = await api.get<Subscriber[]>(`/newsletter/list?tenantId=${tenantId}`);
+            setSubscribers(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao carregar inscritos");

@@ -1,27 +1,20 @@
-import React, { useEffect, useState, useCallback } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { useAuth } from "../../auth/AuthContext";
-import {
-    CreditCard,
-    CheckCircle,
-    ShieldCheck,
-    TrendingUp,
-    Banknote,
-    Percent,
-    ArrowUpRight,
-    Settings,
-    Save
-} from "lucide-react";
+import { CreditCard, CheckCircle, ShieldCheck, TrendingUp, Banknote, Percent, ArrowUpRight, Save } from "lucide-react";
 import { Button, Badge, AnimateIn, Card } from "@/components/ui";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
 interface FinancialSettings {
-    stripeConnectId?: string;
+    stripeConnectId?: string | null;
     platformFee?: number;
+}
+
+interface StripeLinkResponse {
+    url?: string;
 }
 
 export const MasterFinancialSettings: React.FC = () => {
@@ -33,9 +26,9 @@ export const MasterFinancialSettings: React.FC = () => {
     const fetchSettings = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/platform/settings/financial`);
+            const res = await api.get<FinancialSettings>(`/platform/settings/financial`);
             setSettings(res.data || {});
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
             toast.error(t("master.financial.error_load", "Erro ao carregar configurações financeiras."));
         } finally {
@@ -52,10 +45,36 @@ export const MasterFinancialSettings: React.FC = () => {
         try {
             await api.put(`/platform/settings/financial`, settings);
             toast.success(t("master.financial.save_success", "Configurações financeiras salvas!"));
-        } catch (error: unknown) {
+        } catch {
             toast.error(t("master.financial.save_error", "Erro ao salvar configurações."));
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleOpenStripeDashboard = async () => {
+        try {
+            const { data } = await api.get<StripeLinkResponse>("/stripe/dashboard-link?type=MASTER");
+            if (data.url) {
+                window.location.href = data.url;
+                return;
+            }
+            toast.error(t("master.financial.stripe_dashboard_missing", "Link do Stripe indisponivel."));
+        } catch {
+            toast.error(t("master.financial.stripe_dashboard_error", "Erro ao abrir dashboard do Stripe."));
+        }
+    };
+
+    const handleConnectStripe = async () => {
+        try {
+            const { data } = await api.get<StripeLinkResponse>("/stripe/onboarding-link?type=MASTER");
+            if (data.url) {
+                window.location.href = data.url;
+                return;
+            }
+            toast.error(t("master.financial.stripe_link_missing", "Link do Stripe indisponivel."));
+        } catch {
+            toast.error(t("master.financial.stripe_error", "Erro ao gerar link do Stripe"));
         }
     };
 
@@ -97,7 +116,7 @@ export const MasterFinancialSettings: React.FC = () => {
                         <Banknote size={20} />
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("master.financial.total_revenue", "Receita Total")}</p>
-                    <p className="text-2xl font-black text-white">R$ 0,00</p>
+                    <p className="text-2xl font-black text-white">--</p><p className="text-[10px] font-bold uppercase tracking-widest text-slate-700">{t("master.financial.metric_unavailable", "Metrica nao integrada")}</p>
                 </motion.div>
 
                 <motion.div
@@ -110,7 +129,7 @@ export const MasterFinancialSettings: React.FC = () => {
                         <Percent size={20} />
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("master.financial.platform_fee", "Taxa da Plataforma")}</p>
-                    <p className="text-2xl font-black text-white">10%</p>
+                    <p className="text-2xl font-black text-white">{settings.platformFee ?? "--"}{settings.platformFee !== undefined ? "%" : ""}</p>
                 </motion.div>
 
                 <motion.div
@@ -123,7 +142,7 @@ export const MasterFinancialSettings: React.FC = () => {
                         <TrendingUp size={20} />
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">{t("master.financial.connected_tenants", "Tenants Conectados")}</p>
-                    <p className="text-2xl font-black text-white">0</p>
+                    <p className="text-2xl font-black text-white">--</p><p className="text-[10px] font-bold uppercase tracking-widest text-slate-700">{t("master.financial.metric_unavailable", "Metrica nao integrada")}</p>
                 </motion.div>
             </div>
 
@@ -159,7 +178,7 @@ export const MasterFinancialSettings: React.FC = () => {
                                 <h5 className="text-lg font-black text-white italic">ID: {settings.stripeConnectId}</h5>
                                 <Badge className="bg-green-500/10 text-green-400 border-green-500/20">{t("master.financial.operational", "OPERACIONAL")}</Badge>
                                 <div className="pt-4 flex gap-3 justify-center">
-                                    <Button variant="glass" className="rounded-xl border-white/5">
+                                    <Button variant="glass" className="rounded-xl border-white/5" onClick={handleOpenStripeDashboard}>
                                         <ArrowUpRight size={14} className="mr-2" />
                                         {t("master.financial.open_stripe", "Abrir Stripe Dashboard")}
                                     </Button>
@@ -171,14 +190,7 @@ export const MasterFinancialSettings: React.FC = () => {
                                 <p className="text-sm text-slate-400">{t("master.financial.connect_prompt", "Conecte sua conta bancária para começar a receber as taxas e comissões de toda a plataforma.")}</p>
                                 <Button 
                                     className="w-full bg-gold-400 text-slate-950 font-black rounded-xl h-14 text-sm"
-                                    onClick={async () => {
-                                        try {
-                                            const { data } = await api.get('/stripe/onboarding-link?type=MASTER');
-                                            if (data && data.url) window.location.href = data.url;
-                                        } catch (err: unknown) {
-                                            toast.error(t("master.financial.stripe_error", "Erro ao gerar link do Stripe"));
-                                        }
-                                    }}
+                                    onClick={handleConnectStripe}
                                 >
                                     {t("master.financial.connect_now", "CONECTAR CONTA BANCÁRIA")}
                                 </Button>
@@ -202,3 +214,4 @@ export const MasterFinancialSettings: React.FC = () => {
         </AnimateIn>
     );
 };
+

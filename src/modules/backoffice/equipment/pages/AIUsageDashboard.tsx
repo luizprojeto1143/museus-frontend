@@ -3,20 +3,7 @@ import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
-import { 
-  Cpu, 
-  Activity, 
-  Database, 
-  DollarSign, 
-  BarChart3, 
-  Zap, 
-  ShieldCheck, 
-  AlertTriangle,
-  History,
-  TrendingUp,
-  ArrowUpRight,
-  Sparkles
-} from "lucide-react";
+import { Cpu, Activity, Database, DollarSign, Zap, ShieldCheck, AlertTriangle, History, TrendingUp, ArrowUpRight, Sparkles } from "lucide-react";
 import { 
   Card, 
   Button, 
@@ -24,7 +11,7 @@ import {
   AnimateIn, 
   AnimatedCounter 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 type AIUsageData = {
     current: {
@@ -62,7 +49,7 @@ type LimitData = {
 };
 
 const AIUsageDashboard: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [usage, setUsage] = useState<AIUsageData | null>(null);
     const [limits, setLimits] = useState<LimitData | null>(null);
     const [loading, setLoading] = useState(true);

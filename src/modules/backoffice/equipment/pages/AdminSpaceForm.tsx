@@ -3,21 +3,61 @@ import { useTranslation } from "react-i18next";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useToast } from "../../../../contexts/ToastContext";
-import {
-    Building2, Save, ArrowLeft, Layers, Users,
-    Monitor, CheckCircle, Wifi, Box, Loader2
-} from "lucide-react";
-import { Button, Input, Select, Textarea } from "../../../../components/ui";
+import { Save, ArrowLeft, Layers, Monitor, CheckCircle, Box, Loader2 } from "lucide-react";
+import { Button } from "../../../../components/ui";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+const spaceTypes = ["ROOM", "AUDITORIUM", "LAB", "STUDIO", "OPEN_AIR"] as const;
+type SpaceType = typeof spaceTypes[number];
 
 type SpaceFormData = {
     name: string;
     description: string;
     capacity: number;
-    type: string;
+    type: SpaceType;
     resources: string[];
     isBookable: boolean;
     imageUrl: string;
 };
+
+interface SpaceResponse extends Partial<Omit<SpaceFormData, "resources">> {
+    id: string;
+    resources?: string[] | string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const spaceSchema = z.object({
+    name: z.string().trim().min(2, "Informe o nome do espaco."),
+    description: z.string().trim().optional().default(""),
+    capacity: z.number().int().min(0, "A capacidade nao pode ser negativa."),
+    type: z.enum(spaceTypes),
+    resources: z.array(z.string()),
+    isBookable: z.boolean(),
+    imageUrl: z.string().trim().url("Informe uma URL valida para a imagem.").or(z.literal(""))
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
+function parseResources(resources: SpaceResponse["resources"]): string[] {
+    if (Array.isArray(resources)) return resources.filter((item): item is string => typeof item === "string");
+    if (typeof resources !== "string") return [];
+    try {
+        const parsed: unknown = JSON.parse(resources);
+        return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
+    } catch {
+        return [];
+    }
+}
 
 const RESOURCE_OPTIONS = [
     "Projetor", "Sistema de Som", "Ar Condicionado", "WiFi",
@@ -45,33 +85,26 @@ export const AdminSpaceForm: React.FC = () => {
         if (id && id !== 'new') {
             fetchSpace();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     const fetchSpace = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/spaces/${id}`);
+            const res = await api.get<SpaceResponse>(`/spaces/${id}`);
             const data = res.data;
 
-            // Parse resources if needed (backend sends string or array depending on strictness)
-            let parsedResources = [];
-            if (Array.isArray(data.resources)) {
-                parsedResources = data.resources;
-            } else if (typeof data.resources === 'string') {
-                try { parsedResources = JSON.parse(data.resources); } catch { parsedResources = []; }
-            }
-
             setFormData({
-                name: data.name,
+                name: data.name || "",
                 description: data.description || "",
                 capacity: data.capacity || 10,
-                type: data.type || "ROOM",
-                resources: parsedResources,
+                type: spaceTypes.includes(data.type as SpaceType) ? data.type as SpaceType : "ROOM",
+                resources: parseResources(data.resources),
                 isBookable: data.isBookable ?? true,
                 imageUrl: data.imageUrl || ""
             });
-        } catch {
-            addToast(t("common.error"), "error");
+        } catch (err: unknown) {
+            addToast(getApiErrorMessage(err, t("common.error")), "error");
         } finally {
             setLoading(false);
         }
@@ -81,22 +114,25 @@ export const AdminSpaceForm: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const payload: unknown = {
-                ...formData,
-                resources: formData.resources // Backend handles serialization if needed
-            };
-            if (!payload.imageUrl) delete payload.imageUrl;
+            const validation = spaceSchema.safeParse(formData);
+            if (!validation.success) {
+                addToast(validation.error.issues[0]?.message || t("common.errorSave"), "error");
+                return;
+            }
+            const payload = validation.data.imageUrl
+                ? validation.data
+                : { ...validation.data, imageUrl: undefined };
 
             if (id && id !== 'new') {
-                await api.put(`/spaces/${id}`, payload);
+                await api.put<SpaceResponse>(`/spaces/${id}`, payload);
                 addToast(t("common.successUpdate"), "success");
             } else {
-                await api.post("/spaces", payload);
+                await api.post<SpaceResponse>("/spaces", payload);
                 addToast(t("common.successCreate"), "success");
             }
             navigate("/admin/espacos");
-        } catch {
-            addToast(t("common.errorSave"), "error");
+        } catch (err: unknown) {
+            addToast(getApiErrorMessage(err, t("common.errorSave")), "error");
         } finally {
             setLoading(false);
         }
@@ -152,7 +188,7 @@ export const AdminSpaceForm: React.FC = () => {
                             <label className="form-label">Tipo de Ambiente</label>
                             <select
                                 value={formData.type}
-                                onChange={e => setFormData({ ...formData, type: e.target.value })}
+                                onChange={e => setFormData({ ...formData, type: e.target.value as SpaceType })}
                                 className="input w-full"
                             >
                                 <option value="ROOM">Sala Multiuso</option>
@@ -168,7 +204,10 @@ export const AdminSpaceForm: React.FC = () => {
                             <input
                                 type="number"
                                 value={formData.capacity}
-                                onChange={e => setFormData({ ...formData, capacity: Number(e.target.value) })}
+                                onChange={e => {
+                                    const value = Number(e.target.value);
+                                    setFormData({ ...formData, capacity: Number.isFinite(value) ? Math.max(0, Math.trunc(value)) : 0 });
+                                }}
                                 className="input w-full"
                             />
                         </div>
@@ -269,3 +308,4 @@ export const AdminSpaceForm: React.FC = () => {
         </div>
     );
 };
+

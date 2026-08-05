@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -9,12 +9,37 @@ import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
+type Teacher = {
+    id: string;
+    name: string;
+    email: string;
+    school: string;
+    subject?: string | null;
+    _count?: { schoolVisits?: number };
+};
+
+type SchoolVisit = {
+    id: string;
+    schoolName: string;
+    status: string;
+    studentCount: number;
+    visitDate: string;
+    grade?: string | null;
+    certificateIssued?: boolean;
+    teacher?: { name?: string | null } | null;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
+
+type ApiError = {
+    response?: { data?: { message?: string } };
+};
 
 export const AdminTeachers: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [teachers, setTeachers] = useState<any[]>([]);
-    const [visits, setVisits] = useState<any[]>([]);
+    const [teachers, setTeachers] = useState<Teacher[]>([]);
+    const [visits, setVisits] = useState<SchoolVisit[]>([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<'teachers' | 'visits'>('teachers');
     const [showForm, setShowForm] = useState(false);
@@ -23,11 +48,11 @@ export const AdminTeachers: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             const [results_t, results_v] = await Promise.all([
-                api.get(`/teachers?tenantId=${tenantId}`),
-                api.get(`/teachers/visits?tenantId=${tenantId}`)
+                api.get<ListResponse<Teacher>>(`/teachers?tenantId=${tenantId}`),
+                api.get<ListResponse<SchoolVisit>>(`/teachers/visits?tenantId=${tenantId}`)
             ]);
-            setTeachers(results_t.data);
-            setVisits(results_v.data);
+            setTeachers(Array.isArray(results_t.data) ? results_t.data : results_t.data.data || []);
+            setVisits(Array.isArray(results_v.data) ? results_v.data : results_v.data.data || []);
         } catch (error) { logger.error(error); toast.error("Erro ao carregar dados"); }
         finally { setLoading(false); }
     }, [tenantId]);
@@ -42,7 +67,10 @@ export const AdminTeachers: React.FC = () => {
             setShowForm(false);
             setForm({ name: '', email: '', phone: '', school: '', city: '', subject: '' });
             fetchData();
-        } catch (err: unknown) { toast.error(err.response?.data?.message || "Erro"); }
+        } catch (err) {
+            const apiError = err as ApiError;
+            toast.error(apiError.response?.data?.message || "Erro");
+        }
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
@@ -92,7 +120,7 @@ export const AdminTeachers: React.FC = () => {
                             <tr><th className="px-6 py-3">Professor</th><th className="px-6 py-3">Escola</th><th className="px-6 py-3">Disciplina</th><th className="px-6 py-3 text-center">Visitas</th></tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {teachers.map((item: unknown) => (
+                            {teachers.map((item) => (
                                 <tr key={item.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                     <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{item.name}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{item.email}</p></td>
                                     <td className="px-6 py-3 text-gray-300 text-sm">{item.school}</td>
@@ -112,7 +140,7 @@ export const AdminTeachers: React.FC = () => {
                             <Calendar size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                             <p style={{ color: "#64748b" }}>Nenhuma visita escolar agendada</p>
                         </div>
-                    ) : visits.map((v: unknown) => (
+                    ) : visits.map((v) => (
                         <div key={v.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem" }}>
                             <div className="flex items-center justify-between">
                                 <div>

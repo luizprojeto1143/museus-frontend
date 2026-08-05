@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,17 @@ import { api } from "../../../api/client";
 import { extractQRCode } from "../../../utils/qrHelpers";
 import "./Scanner.css";
 
+type ScannerError = {
+    name?: string;
+    message?: string;
+    response?: { data?: { message?: string } };
+};
+
+type ResolveResponse = {
+    redirectUrl?: string;
+    xpReward?: number;
+};
+
 export const ScannerPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -19,7 +30,7 @@ export const ScannerPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isScanning, setIsScanning] = useState(false);
     const [validating, setValidating] = useState(false);
-    const { equipamentoId, tenantId, enterAsGuest, updateSession, role, name, isAuthenticated } = useAuth();
+    const { equipamentoId: _equipamentoId, tenantId: _tenantId, enterAsGuest: _enterAsGuest, updateSession: _updateSession, role: _role, name: _name, isAuthenticated: _isAuthenticated } = useAuth();
     const scannerRef = useRef<Html5Qrcode | null>(null);
 
     const stopScanner = async () => {
@@ -27,7 +38,7 @@ export const ScannerPage: React.FC = () => {
             try {
                 await scannerRef.current.stop();
                 scannerRef.current.clear();
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error("Error stopping scanner", err);
             }
         }
@@ -58,14 +69,15 @@ export const ScannerPage: React.FC = () => {
                 }
             );
             setIsScanning(true);
-        } catch (err: unknown) {
+        } catch (err) {
             logger.error("Error starting scanner", err);
+            const scannerError = err as ScannerError;
             let errMsg = "Não foi possível acessar a câmera. Verifique se você permitiu o acesso.";
             if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
                 errMsg = "⚠️ O leitor de QR Code exige uma conexão segura (HTTPS). Se você estiver usando um celular, o navegador bloqueia a câmera em conexões HTTP normais.";
-            } else if (err?.name === "NotAllowedError" || err?.message?.includes("Permission")) {
+            } else if (scannerError.name === "NotAllowedError" || scannerError.message?.includes("Permission")) {
                 errMsg = "Acesso à câmera foi negado. Por favor, libere a permissão nas configurações do seu navegador e recarregue a página.";
-            } else if (err?.name === "NotFoundError" || err?.message?.includes("device")) {
+            } else if (scannerError.name === "NotFoundError" || scannerError.message?.includes("device")) {
                 errMsg = "Nenhuma câmera foi encontrada no seu dispositivo.";
             }
             setError(errMsg);
@@ -84,7 +96,7 @@ export const ScannerPage: React.FC = () => {
                 throw new Error("Código inválido");
             }
 
-            const res = await api.get(`/qrcodes/${code}/resolve`);
+            const res = await api.get<ResolveResponse>(`/qrcodes/${code}/resolve`);
             const data = res.data;
 
             if (data.redirectUrl) {
@@ -101,9 +113,9 @@ export const ScannerPage: React.FC = () => {
             } else {
                 throw new Error("Destino não encontrado");
             }
-        } catch (err: unknown) {
+        } catch (err) {
             logger.error("Erro ao validar scan", err);
-            const msg = (err as any)?.response?.data?.message || "QR Code não identificado ou expirado.";
+            const msg = (err as ScannerError)?.response?.data?.message || "QR Code não identificado ou expirado.";
             addToast(msg, "error");
             setValidating(false);
         }

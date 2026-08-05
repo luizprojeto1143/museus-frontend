@@ -1,24 +1,38 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Trophy, Medal, Star, TrendingUp } from "lucide-react";
+import { Loader2, Trophy } from "lucide-react";
 import "./AdminShared.css";
 
+type MuseumBattleRank = {
+    tenantId: string;
+    rank: number;
+    name: string;
+    score: number;
+    visitors: number;
+    events: number;
+    avgRating: number;
+    city?: string | null;
+};
+
+type MuseumBattleResponse = {
+    ranking?: MuseumBattleRank[];
+};
 
 export const AdminMuseumBattle: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [ranking, setRanking] = useState<any[]>([]);
+    const [ranking, setRanking] = useState<MuseumBattleRank[]>([]);
     const [month, setMonth] = useState(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`);
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/museum-battle/ranking?month=${month}`);
+            const res = await api.get<MuseumBattleResponse>(`/museum-battle/ranking?month=${month}`);
             setRanking(res.data.ranking || []);
         } catch (error) { logger.error(error); }
         finally { setLoading(false); }
@@ -69,7 +83,7 @@ export const AdminMuseumBattle: React.FC = () => {
                     </div>
                 ) : (
                     <div className="divide-y divide-white/5">
-                        {ranking.map((r: unknown) => {
+                        {ranking.map((r) => {
                             const isMe = r.tenantId === tenantId;
                             return (
                                 <div key={r.tenantId} className={`px-6 py-4 flex items-center gap-4 ${isMe ? 'bg-amber-500/5' : 'hover:bg-zinc-900/40 border border-gold/20/5'} transition-colors`}>

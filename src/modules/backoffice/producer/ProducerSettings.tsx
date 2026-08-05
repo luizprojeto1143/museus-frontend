@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
-import { Save, Bell, Lock, User, Globe, Shield, ToggleLeft, ToggleRight } from "lucide-react";
-import { useAuth } from "../../auth/AuthContext";
-import { api } from "../../../api/client";
+import { Save, Bell, Lock, Globe, Shield, ToggleLeft, ToggleRight } from "lucide-react";import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button } from "../../../components/ui";
 

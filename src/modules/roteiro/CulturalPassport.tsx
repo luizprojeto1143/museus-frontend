@@ -2,29 +2,57 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Award, ArrowLeft, Star, Map, Gift } from 'lucide-react';
+import { api } from '../../api/client';
+
+interface PassportStampResponse {
+  id: string;
+  createdAt: string;
+  work?: {
+    title?: string | null;
+  } | null;
+}
+
+interface PassportResponse {
+  xp?: number;
+  stamps?: PassportStampResponse[];
+}
+
+interface PassportStamp {
+  id: string;
+  name: string;
+  date: string;
+  icon: string;
+}
+
+interface PassportViewModel {
+  level: number;
+  culturaCoins: number;
+  stamps: PassportStamp[];
+  nextRewardAt: number;
+}
+
+const emptyPassport: PassportViewModel = { level: 1, culturaCoins: 0, stamps: [], nextRewardAt: 500 };
 
 export const CulturalPassport: React.FC = () => {
   const navigate = useNavigate();
 
-  // Mocked state for the visitor's passport
-  const [passport, setPassport] = React.useState<unknown>(null);
+  const [passport, setPassport] = React.useState<PassportViewModel>(emptyPassport);
   const [loading, setLoading] = React.useState(true);
   
   React.useEffect(() => {
-    import("../../api/client").then(({ api }) => {
-      api.get("/visitors/me/passport").then(res => {
-        const data = res.data;
-        setPassport({
-          level: Math.floor(data.xp / 500) + 1,
-          culturaCoins: data.xp,
-          stamps: data.stamps.map((s: unknown) => ({ id: s.id, name: s.work?.title || "Local Cultural", date: new Date(s.createdAt).toLocaleDateString("pt-BR"), icon: "🏛️" })),
-          nextRewardAt: (Math.floor(data.xp / 500) + 1) * 500
-        });
-        setLoading(false);
-      }).catch(() => {
-        setPassport({ level: 1, culturaCoins: 0, stamps: [], nextRewardAt: 500 });
-        setLoading(false);
+    api.get<PassportResponse>("/visitors/me/passport").then(res => {
+      const data = res.data;
+      const xp = Number(data.xp || 0);
+      setPassport({
+        level: Math.floor(xp / 500) + 1,
+        culturaCoins: xp,
+        stamps: (data.stamps || []).map((s) => ({ id: s.id, name: s.work?.title || "Local Cultural", date: new Date(s.createdAt).toLocaleDateString("pt-BR"), icon: "???" })),
+        nextRewardAt: (Math.floor(xp / 500) + 1) * 500
       });
+      setLoading(false);
+    }).catch(() => {
+      setPassport(emptyPassport);
+      setLoading(false);
     });
   }, []);
 
@@ -89,7 +117,7 @@ export const CulturalPassport: React.FC = () => {
           <Star className="text-amber-500" /> Carimbos Conquistados
         </h2>
         <div className="space-y-4">
-          {passport.stamps.map((stamp: unknown, i: number) => (
+          {passport.stamps.map((stamp, i) => (
             <motion.div 
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -111,3 +139,4 @@ export const CulturalPassport: React.FC = () => {
     </div>
   );
 };
+

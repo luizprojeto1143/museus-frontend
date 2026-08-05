@@ -8,6 +8,8 @@ import { Loader2, Plus, MessageSquare, Pin, Pencil, Trash2, Image as ImageIcon }
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 
 interface CuratorNote {
@@ -20,6 +22,33 @@ interface CuratorNote {
     createdAt: string;
 }
 
+interface WorkOption {
+    id: string;
+    title: string;
+    room?: string | null;
+}
+
+interface ListResponse<T> {
+    data?: T[];
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const curatorNoteSchema = z.object({
+    content: z.string().trim().min(3, "Preencha a nota do curador."),
+    workId: z.string().trim().min(1, "Selecione uma obra.")
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const AdminCuratorNotes: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
@@ -27,7 +56,8 @@ export const AdminCuratorNotes: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingNote, setEditingNote] = useState<CuratorNote | null>(null);
-    const [works, setWorks] = useState<any[]>([]);
+    const [works, setWorks] = useState<WorkOption[]>([]);
+    const [deleteTarget, setDeleteTarget] = useState<CuratorNote | null>(null);
 
     // Form state
     const [content, setContent] = useState("");
@@ -38,14 +68,14 @@ export const AdminCuratorNotes: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             const [notesRes, worksRes] = await Promise.all([
-                api.get(`/curator-notes/all?tenantId=${tenantId}`),
-                api.get(`/works?tenantId=${tenantId}`)
+                api.get<CuratorNote[] | ListResponse<CuratorNote>>(`/curator-notes/all`, { params: { tenantId } }),
+                api.get<WorkOption[] | ListResponse<WorkOption>>(`/works`, { params: { tenantId } })
             ]);
             setNotes(Array.isArray(notesRes.data) ? notesRes.data : (notesRes.data.data || []));
             setWorks(Array.isArray(worksRes.data) ? worksRes.data : (worksRes.data.data || []));
         } catch (error) {
-            logger.error(error);
-            toast.error("Erro ao carregar notas");
+            logger.error("Erro ao carregar notas do curador.", error);
+            toast.error(getApiErrorMessage(error, "Erro ao carregar notas"));
         } finally {
             setLoading(false);
         }
@@ -74,8 +104,9 @@ export const AdminCuratorNotes: React.FC = () => {
     };
 
     const onSave = async () => {
-        if (!content || !workId) {
-            toast.error("Preencha o conteúdo e selecione uma obra");
+        const validation = curatorNoteSchema.safeParse({ content, workId });
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise a nota.");
             return;
         }
         try {
@@ -87,22 +118,22 @@ export const AdminCuratorNotes: React.FC = () => {
             toast.success(editingNote ? "Nota atualizada!" : "Nota criada!");
             resetForm();
             fetchData();
-        } catch (error) {
-            toast.error("Erro ao salvar nota");
+        } catch (error: unknown) {
+            toast.error(getApiErrorMessage(error, "Erro ao salvar nota"));
         }
     };
 
-    const onDelete = async (id: string) => {
-        if (!confirm("Excluir esta nota?")) return;
+    const onDelete = async () => {
+        if (!deleteTarget) return;
         try {
-            await api.delete(`/curator-notes/${id}`);
-            toast.success("Nota excluída");
+            await api.delete(`/curator-notes/${deleteTarget.id}`);
+            toast.success("Nota excluida");
+            setDeleteTarget(null);
             fetchData();
-        } catch (error) {
-            toast.error("Erro ao excluir");
+        } catch (error: unknown) {
+            toast.error(getApiErrorMessage(error, "Erro ao excluir"));
         }
     };
-
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
@@ -129,7 +160,7 @@ export const AdminCuratorNotes: React.FC = () => {
                             style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}
                         >
                             <option value="">Selecione uma obra...</option>
-                            {works.map((w: unknown) => (
+                            {works.map((w) => (
                                 <option key={w.id} value={w.id}>{w.title} {w.room ? `(${w.room})` : ''}</option>
                             ))}
                         </select>
@@ -173,7 +204,7 @@ export const AdminCuratorNotes: React.FC = () => {
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "5rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <MessageSquare size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                     <h3 className="text-lg font-bold text-white mb-1">Nenhuma nota cadastrada</h3>
-                    <p style={{ color: "#64748b" }}>{t("admin.curatornotes.adicioneNotasDeCuradorSObrasDoAcervoPara", `Adicione notas de curador às obras do acervo para enriquecer a experiência do visitante.`)}</p>
+                    <p style={{ color: "#64748b" }}>{t("admin.curatornotes.adicioneNotasDeCuradorSObrasDoAcervoPara", "Adicione notas de curador as obras do acervo para enriquecer a experiencia do visitante.")}</p>
                 </div>
             ) : (
                 <div style={{ display: "grid", gap: "0.75rem" }}>
@@ -203,7 +234,7 @@ export const AdminCuratorNotes: React.FC = () => {
                                     <button onClick={() => onEdit(note)} className="p-2 hover:bg-zinc-900/40 border border-gold/20/5 rounded-lg transition-colors text-zinc-400 hover:text-white">
                                         <Pencil size={14} />
                                     </button>
-                                    <button onClick={() => onDelete(note.id)} className="p-2 hover:bg-red-500/10 rounded-lg transition-colors text-zinc-400 hover:text-red-400">
+                                    <button onClick={() => setDeleteTarget(note)} className="p-2 hover:bg-red-500/10 rounded-lg transition-colors text-zinc-400 hover:text-red-400">
                                         <Trash2 size={14} />
                                     </button>
                                 </div>
@@ -212,6 +243,19 @@ export const AdminCuratorNotes: React.FC = () => {
                     ))}
                 </div>
             )}
+            {deleteTarget && (
+                <div className="bg-[var(--bg-surface)] border border-red-500/20 shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
+                    <div>
+                        <h2 className="card-title" style={{ margin: 0 }}>Excluir nota?</h2>
+                        <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "0.4rem" }}>{deleteTarget.work?.title || deleteTarget.content}</p>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                        <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+                        <Button onClick={onDelete}>Excluir</Button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+

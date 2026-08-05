@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+﻿import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../api/client";
@@ -61,6 +61,7 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     useEffect(() => {
         fetchTenant();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId]);
 
     return (
@@ -77,7 +78,6 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useTenant(): TenantSettings | null {
     const ctx = useContext(TenantContext);
     if (!ctx) {
@@ -87,7 +87,6 @@ export function useTenant(): TenantSettings | null {
     return ctx.tenant;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useTenantContext(): TenantContextValue {
     const ctx = useContext(TenantContext);
     if (!ctx) {
@@ -96,7 +95,6 @@ export function useTenantContext(): TenantContextValue {
     return ctx;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useIsCityMode(): boolean {
     const ctx = useContext(TenantContext);
     return ctx?.isCityMode ?? false;

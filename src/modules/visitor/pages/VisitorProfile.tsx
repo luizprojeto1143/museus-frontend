@@ -4,15 +4,11 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { 
-  Award, LogOut, ChevronRight, User, Star, Map, ExternalLink, 
-  CheckCircle, ShoppingBag, Clock, Package, TicketPercent, Zap, Share2
-} from 'lucide-react';
+import { Award, LogOut, ChevronRight, User, Star, Map, ShoppingBag, TicketPercent, Zap } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { TicketCard } from "../components/TicketCard";
-import { Button } from "../../../components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import "./VisitorProfile.css";
 
 interface Certificate {
@@ -71,11 +67,28 @@ interface RedeemedCoupon {
     coupon: Coupon;
 }
 
+interface VisitorStamp {
+    name?: string;
+    icon?: string;
+}
+
+interface FavoriteItem {
+    type: 'work' | 'trail' | string;
+    itemId: string;
+    title?: string;
+    name?: string;
+}
+
+interface CouponsResponse {
+    available?: Coupon[];
+    redeemed?: RedeemedCoupon[];
+}
+
 export const VisitorProfile: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { name, email, logout, isGuest } = useAuth();
-    const { currentLevel, stats, progressToNextLevel, nextLevel } = useGamification();
+    const { currentLevel, stats, progressToNextLevel, nextLevel: _nextLevel } = useGamification();
 
     const [activeTab, setActiveTab] = useState<'info' | 'tickets' | 'certificates' | 'orders' | 'rewards'>('info');
 
@@ -83,9 +96,9 @@ export const VisitorProfile: React.FC = () => {
     const [registrations, setRegistrations] = useState<Registration[]>([]);
     const [orders, setOrders] = useState<Order[]>([]);
     const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
-    const [redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>([]);
-    const [stamps, setStamps] = useState<any[]>([]);
-    const [favorites, setFavorites] = useState<any[]>([]);
+    const [_redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>([]);
+    const [stamps, setStamps] = useState<VisitorStamp[]>([]);
+    const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -95,8 +108,8 @@ export const VisitorProfile: React.FC = () => {
 
         setLoading(true);
         Promise.all([
-            api.get('/visitors/stamps', { signal }).then(res => setStamps(res.data.slice(0, 4))).catch(() => {}),
-            api.get('/favorites', { signal }).then(res => setFavorites(res.data.slice(0, 3))).catch(() => {})
+            api.get<VisitorStamp[]>('/visitors/stamps', { signal }).then(res => setStamps(Array.isArray(res.data) ? res.data.slice(0, 4) : [])).catch(() => {}),
+            api.get<FavoriteItem[]>('/favorites', { signal }).then(res => setFavorites(Array.isArray(res.data) ? res.data.slice(0, 3) : [])).catch(() => {})
         ]).finally(() => setLoading(false));
 
         return () => abortController.abort();
@@ -108,31 +121,31 @@ export const VisitorProfile: React.FC = () => {
 
         if (tab === 'certificates' && certificates.length === 0) {
             setLoading(true);
-            api.get('/certificates/mine')
-                .then(res => setCertificates(res.data))
+            api.get<Certificate[]>('/certificates/mine')
+                .then(res => setCertificates(Array.isArray(res.data) ? res.data : []))
                 .catch(logger.error)
                 .finally(() => setLoading(false));
         }
 
         if (tab === 'tickets' && registrations.length === 0) {
             setLoading(true);
-            api.get('/registrations/my-registrations')
-                .then(res => setRegistrations(res.data))
+            api.get<Registration[]>('/registrations/my-registrations')
+                .then(res => setRegistrations(Array.isArray(res.data) ? res.data : []))
                 .catch(() => setRegistrations([]))
                 .finally(() => setLoading(false));
         }
 
         if (tab === 'orders' && orders.length === 0) {
             setLoading(true);
-            api.get('/shop/my-orders')
-                .then(res => setOrders(res.data))
+            api.get<Order[]>('/shop/my-orders')
+                .then(res => setOrders(Array.isArray(res.data) ? res.data : []))
                 .catch(logger.error)
                 .finally(() => setLoading(false));
         }
 
         if (tab === 'rewards' && availableCoupons.length === 0) {
             setLoading(true);
-            api.get('/coupons/available')
+            api.get<CouponsResponse>('/coupons/available')
                 .then(res => {
                     setAvailableCoupons(res.data?.available || []);
                     setRedeemedCoupons(res.data?.redeemed || []);
@@ -146,10 +159,10 @@ export const VisitorProfile: React.FC = () => {
         try {
             setLoading(true);
             await api.post(`/coupons/${couponId}/redeem`);
-            const res = await api.get('/coupons/available');
+            const res = await api.get<CouponsResponse>('/coupons/available');
             setAvailableCoupons(res.data?.available || []);
             setRedeemedCoupons(res.data?.redeemed || []);
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
         } finally {
             setLoading(false);

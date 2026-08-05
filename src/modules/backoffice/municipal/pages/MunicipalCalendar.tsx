@@ -1,25 +1,38 @@
-import React, { useEffect, useState, useCallback } from "react";
+ï»¿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Calendar, MapPin, Clock, Users, ExternalLink } from "lucide-react";
+import { Loader2, Calendar, MapPin, Users } from "lucide-react";
 import { toast } from "react-hot-toast";
 import "../../equipment/pages/AdminShared.css";
 
+type MunicipalCalendarEvent = {
+    id: string;
+    title: string;
+    startDate: string;
+    location?: string | null;
+    type?: string | null;
+    maxCapacity?: number | null;
+    status?: string | null;
+};
+
+type EventListResponse = MunicipalCalendarEvent[] | {
+    data?: MunicipalCalendarEvent[];
+};
 
 export const MunicipalCalendar: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<MunicipalCalendarEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [month, setMonth] = useState(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/events?tenantId=${tenantId}&limit=50`);
+            const res = await api.get<EventListResponse>(`/events?tenantId=${tenantId}&limit=50`);
             const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
             setEvents(data);
         } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
@@ -36,7 +49,7 @@ export const MunicipalCalendar: React.FC = () => {
     }).sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
 
     // Group by day
-    const grouped = new Map<string, any[]>();
+    const grouped = new Map<string, MunicipalCalendarEvent[]>();
     filteredEvents.forEach(e => {
         const day = new Date(e.startDate).toLocaleDateString("pt-BR", { weekday: 'long', day: 'numeric', month: 'long' });
         if (!grouped.has(day)) grouped.set(day, []);
@@ -49,8 +62,8 @@ export const MunicipalCalendar: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.municipalcalendar.calendrioCultural", `Calendário Cultural`)}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.municipalcalendar.visoUnificadaDaProgramaoMunicipal", `Visão unificada da programação municipal`)}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.municipalcalendar.calendrioCultural", `Calendï¿½rio Cultural`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.municipalcalendar.visoUnificadaDaProgramaoMunicipal", `Visï¿½o unificada da programaï¿½ï¿½o municipal`)}</p>
                 </div>
                 <input type="month" value={month} onChange={e => setMonth(e.target.value)} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} />
             </div>
@@ -60,7 +73,7 @@ export const MunicipalCalendar: React.FC = () => {
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <Calendar style={{ margin: "0 auto 0.5rem", color: "var(--accent-primary)" }} size={24} />
                     <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{filteredEvents.length}</p>
-                    <p className="stat-label">{t("admin.municipalcalendar.eventosNoMs", `Eventos no Mês`)}</p>
+                    <p className="stat-label">{t("admin.municipalcalendar.eventosNoMs", `Eventos no Mï¿½s`)}</p>
                 </div>
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 mb-4">
                     <p className="tabular-nums tracking-tight font-bold text-3xl bg-gradient-to-br from-[var(--accent-primary)] to-[var(--accent-secondary)] bg-clip-text text-transparent">{grouped.size}</p>
@@ -76,7 +89,7 @@ export const MunicipalCalendar: React.FC = () => {
             {grouped.size === 0 ? (
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ textAlign: "center", padding: "4rem 2rem", border: "2px dashed rgba(212,175,55,0.15)" }}>
                     <Calendar size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
-                    <p style={{ color: "#64748b" }}>{t("admin.municipalcalendar.nenhumEventoNesteMs", `Nenhum evento neste mês`)}</p>
+                    <p style={{ color: "#64748b" }}>{t("admin.municipalcalendar.nenhumEventoNesteMs", `Nenhum evento neste mï¿½s`)}</p>
                 </div>
             ) : (
                 <div className="space-y-6">
@@ -84,7 +97,7 @@ export const MunicipalCalendar: React.FC = () => {
                         <div key={day}>
                             <h3 className="text-sm font-bold text-amber-500 uppercase tracking-wider mb-3">{day}</h3>
                             <div style={{ display: "grid", gap: "0.5rem" }}>
-                                {dayEvents.map((e: unknown) => (
+                                {dayEvents.map((e) => (
                                     <div key={e.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "all 0.2s" }}>
                                         <div className="w-14 text-center shrink-0">
                                             <p className="text-lg font-black text-white">{new Date(e.startDate).toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' })}</p>

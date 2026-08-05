@@ -4,7 +4,7 @@ import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Plus, Trash2, Save, HelpCircle, CheckCircle2, Layout, Award } from "lucide-react";
+import { Loader2, Plus, Trash2, Save, HelpCircle, CheckCircle2, Award } from "lucide-react";
 import { Button, Input, Select } from "../../../../components/ui";
 import { toast } from "react-hot-toast";
 
@@ -15,16 +15,30 @@ interface Question {
     xpReward: number;
 }
 
+type TargetType = "SPACE" | "WORK";
+
+type SpaceOption = {
+    id: string;
+    name: string;
+};
+
+type WorkOption = {
+    id: string;
+    title: string;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
+
 export const AdminQuizBuilder: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
-    const [spaces, setSpaces] = useState<any[]>([]);
-    const [works, setWorks] = useState<any[]>([]);
+    const [spaces, setSpaces] = useState<SpaceOption[]>([]);
+    const [works, setWorks] = useState<WorkOption[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Form state
     const [title, setTitle] = useState("");
-    const [targetType, setTargetType] = useState("SPACE");
+    const [targetType, setTargetType] = useState<TargetType>("SPACE");
     const [targetId, setTargetId] = useState("");
     const [questions, setQuestions] = useState<Question[]>([
         { question: "", options: ["", "", "", ""], correctIndex: 0, xpReward: 50 }
@@ -34,10 +48,10 @@ export const AdminQuizBuilder: React.FC = () => {
     const loadData = useCallback(async () => {
         try {
             const [s, w] = await Promise.all([
-                api.get("/spaces", { params: { tenantId } }),
-                api.get("/works", { params: { tenantId, limit: 100 } })
+                api.get<ListResponse<SpaceOption>>("/spaces", { params: { tenantId } }),
+                api.get<ListResponse<WorkOption>>("/works", { params: { tenantId, limit: 100 } })
             ]);
-            setSpaces(s.data);
+            setSpaces(Array.isArray(s.data) ? s.data : s.data.data || []);
             setWorks(Array.isArray(w.data) ? w.data : (w.data.data || []));
         } catch (error) {
             logger.error(error);
@@ -59,9 +73,9 @@ export const AdminQuizBuilder: React.FC = () => {
         setQuestions(questions.filter((_, i) => i !== idx));
     };
 
-    const updateQuestion = (idx: number, field: string, value: unknown) => {
+    const updateQuestion = (idx: number, field: keyof Question, value: Question[keyof Question]) => {
         const newQuestions = [...questions];
-        (newQuestions[idx] as unknown)[field] = value;
+        newQuestions[idx] = { ...newQuestions[idx], [field]: value };
         setQuestions(newQuestions);
     };
 
@@ -125,7 +139,7 @@ export const AdminQuizBuilder: React.FC = () => {
                         <Select
                             label="Tipo de Alvo"
                             value={targetType}
-                            onChange={(e) => { setTargetType(e.target.value); setTargetId(""); }}
+                            onChange={(e) => { setTargetType(e.target.value as TargetType); setTargetId(""); }}
                         >
                             <option value="SPACE">Espaço</option>
                             <option value="WORK">Obra</option>

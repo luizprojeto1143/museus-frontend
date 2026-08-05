@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
+import { toast } from "react-hot-toast";
 
 interface VisitorDetail {
     id: string;
@@ -47,7 +48,7 @@ export const AdminVisitorProfile: React.FC = () => {
                 .then(res => setVisitor(res.data))
                 .catch(err => {
                     logger.error("Erro ao carregar visitante", err);
-                    logger.warn("Alert:", t("common.errorLoad"));
+      toast.error(t("common.errorLoad"));
                     navigate("/admin/visitantes");
                 })
                 .finally(() => setLoading(false));

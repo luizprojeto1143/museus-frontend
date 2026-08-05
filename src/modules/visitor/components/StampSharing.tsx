@@ -1,7 +1,7 @@
 import { logger } from "@/utils/logger";
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Share2, Instagram, MessageCircle, Download, Check, Loader2 } from "lucide-react";
+import { Instagram, MessageCircle, Download, Check, Loader2 } from "lucide-react";
 import html2canvas from "html2canvas";
 import "./StampSharing.css";
 import { toast } from "react-hot-toast";

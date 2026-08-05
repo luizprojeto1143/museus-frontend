@@ -7,20 +7,33 @@ import { Loader2, ArrowLeftRight, ChevronDown, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./WorkComparator.css";
 
+type ComparableWork = {
+    id: string;
+    title: string;
+    artist?: string | null;
+    year?: string | null;
+    period?: string | null;
+    technique?: string | null;
+    medium?: string | null;
+    dimensions?: string | null;
+    description?: string | null;
+    imageUrl?: string | null;
+};
+
 export const WorkComparator: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
-    const [works, setWorks] = useState<any[]>([]);
+    const [works, setWorks] = useState<ComparableWork[]>([]);
     const [loading, setLoading] = useState(true);
     const [leftId, setLeftId] = useState<string>("");
     const [rightId, setRightId] = useState<string>("");
 
     const fetchWorks = useCallback(async () => {
         try {
-            const res = await api.get(`/works?tenantId=${tenantId}`);
+            const res = await api.get<ComparableWork[] | { data?: ComparableWork[] }>(`/works?tenantId=${tenantId}`);
             const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
             setWorks(list);
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
         } finally {
             setLoading(false);
@@ -106,7 +119,7 @@ export const WorkComparator: React.FC = () => {
                         <div className="comparison-visuals-grid">
                             <div className="work-side-premium">
                                 <div className="work-img-frame">
-                                    <img src={leftWork.imageUrl} alt={leftWork.title} />
+                                    <img src={leftWork.imageUrl || undefined} alt={leftWork.title} />
                                     <div className="work-img-overlay" />
                                 </div>
                                 <div className="work-meta-overlay">
@@ -123,7 +136,7 @@ export const WorkComparator: React.FC = () => {
 
                             <div className="work-side-premium">
                                 <div className="work-img-frame">
-                                    <img src={rightWork.imageUrl} alt={rightWork.title} />
+                                    <img src={rightWork.imageUrl || undefined} alt={rightWork.title} />
                                     <div className="work-img-overlay" />
                                 </div>
                                 <div className="work-meta-overlay">

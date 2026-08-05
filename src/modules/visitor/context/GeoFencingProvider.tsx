@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
@@ -36,6 +36,38 @@ type GeoPoint = {
     url: string;
 };
 
+type PublicEquipmentGeo = {
+    id: string;
+    nome?: string | null;
+    name?: string | null;
+    lat?: number | null;
+    latitude?: number | null;
+    lng?: number | null;
+    longitude?: number | null;
+    logoUrl?: string | null;
+};
+
+type WorkGeoItem = {
+    id: string;
+    title?: string | null;
+    artist?: string | null;
+    lat?: number | null;
+    latitude?: number | null;
+    lng?: number | null;
+    longitude?: number | null;
+    captureRadiusM?: number | null;
+    room?: string | null;
+    floor?: string | null;
+    equipamentoId?: string | null;
+    vestigeActive?: boolean | null;
+    imageUrl?: string | null;
+};
+
+type WorksGeoResponse = WorkGeoItem[] | {
+    data?: WorkGeoItem[];
+    works?: WorkGeoItem[];
+};
+
 export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { tenantId } = useAuth();
     const isCityModeFromContext = useIsCityMode();
@@ -61,14 +93,14 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // Haversine distance formula
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const R = 6371e3; // metres
-        const φ1 = (lat1 * Math.PI) / 180;
-        const φ2 = (lat2 * Math.PI) / 180;
-        const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-        const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+        const phi1 = (lat1 * Math.PI) / 180;
+        const phi2 = (lat2 * Math.PI) / 180;
+        const deltaPhi = ((lat2 - lat1) * Math.PI) / 180;
+        const deltaLambda = ((lon2 - lon1) * Math.PI) / 180;
 
         const a =
-            Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+            Math.cos(phi1) * Math.cos(phi2) * Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return R * c;
@@ -78,13 +110,13 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         // Browser Notification (Push)
         if (typeof Notification !== "undefined" && Notification.permission === "granted") {
             const typeLabel = point.type === 'museum' ? 'museu' : point.type === 'point' ? 'ponto turístico' : 'obra';
-            new Notification(`Você está perto de um ${typeLabel}!`, {
+            const notificationOptions: NotificationOptions & { renotify?: boolean } = {
                 body: `"${point.title}" está a ${Math.round(distance)}m de você.`,
                 icon: point.imageUrl || "/pwa-192x192.png",
                 tag: point.id, // Prevents duplicate notifications
-                // @ts-ignore
                 renotify: false
-            });
+            };
+            new Notification(`Você está perto de um ${typeLabel}!`, notificationOptions);
         } else if (typeof Notification !== "undefined" && Notification.permission !== "denied") {
             Notification.requestPermission();
         }
@@ -135,18 +167,21 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         try {
             if (isCityMode) {
                 // City Mode: Load all cultural equipments with coordinates
-                const equipRes = await api.get("/equipamentos/public");
+                const equipRes = await api.get<PublicEquipmentGeo[]>("/equipamentos/public");
                 const equipments = Array.isArray(equipRes.data) ? equipRes.data : [];
 
-                equipments.forEach((item: { id: string; nome: string; lat?: number; lng?: number; logoUrl?: string | null }) => {
-                    if (typeof item.lat === 'number' && typeof item.lng === 'number') {
+                equipments.forEach((item) => {
+                    const latitude = item.lat ?? item.latitude;
+                    const longitude = item.lng ?? item.longitude;
+
+                    if (typeof latitude === 'number' && typeof longitude === 'number') {
                         points.push({
                             id: `equip-${item.id}`,
                             type: 'museum',
-                            title: item.nome,
+                            title: item.nome || item.name || "Equipamento cultural",
                             subtitle: 'Equipamento Cultural',
-                            latitude: item.lat,
-                            longitude: item.lng,
+                            latitude,
+                            longitude,
                             radius: 100,
                             imageUrl: item.logoUrl || undefined,
                             url: `/select-museum?select=${item.id}`
@@ -157,12 +192,12 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
             if (tenantId) {
                 // L2 Fix: Load ONLY works that are marked as vestiges to avoid museum-wide alerts
-                const worksRes = await api.get(`/works?tenantId=${tenantId}&vestigeActive=true`);
+                const worksRes = await api.get<WorksGeoResponse>(`/works?tenantId=${tenantId}&vestigeActive=true`);
                 const worksArray = Array.isArray(worksRes.data)
                     ? worksRes.data
                     : (worksRes.data?.data || worksRes.data?.works || []);
 
-                worksArray.forEach((w: unknown) => {
+                worksArray.forEach((w) => {
                     const finalLat = w.lat ?? w.latitude;
                     const finalLng = w.lng ?? w.longitude;
 
@@ -170,8 +205,8 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
                         points.push({
                             id: `work-${w.id}`,
                             type: 'work',
-                            title: w.title,
-                            subtitle: w.artist,
+                            title: w.title || "Vestígio cultural",
+                            subtitle: w.artist || undefined,
                             latitude: finalLat,
                             longitude: finalLng,
                             radius: w.captureRadiusM || (w.room || w.floor || w.equipamentoId ? 3 : (w.vestigeActive ? 20 : 10)),
@@ -183,7 +218,7 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             }
 
             setGeoPoints(points);
-        } catch (err: unknown) {
+        } catch (err) {
             logger.error("Failed to load geo points", err);
             setGeoPoints([]);
         }
@@ -265,3 +300,8 @@ export const GeoFencingProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         </GeoContext.Provider>
     );
 };
+
+
+
+
+

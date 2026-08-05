@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -9,9 +9,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
-import { getFullUrl } from "../../../utils/url";
-import { VideoPlayer } from "../../../components/common/VideoPlayer";
-import { useToast } from "../../../contexts/ToastContext";
+import { getFullUrl } from "../../../utils/url";import { useToast } from "../../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
 import "./EventDetail.css";
 
@@ -77,7 +75,7 @@ export const EventDetail: React.FC = () => {
   const [selectedTicketId, setSelectedTicketId] = useState<string>("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [paymentData, setPaymentData] = useState<{ pixQrCode?: string; pixPayload?: string; invoiceUrl?: string } | null>(null);
+  const [paymentData, setPaymentData] = useState<{ checkoutUrl?: string; pixQrCode?: string; pixPayload?: string; invoiceUrl?: string } | null>(null);
 
   const fetchEventData = useCallback(async () => {
     if (id) {
@@ -85,7 +83,7 @@ export const EventDetail: React.FC = () => {
       try {
         const [evRes, tickRes, attRes] = await Promise.all([
           api.get(`/events/${id}`),
-          api.get(`/events/${id}/tickets`).catch(() => ({ data: [] })),
+          api.get(`/tickets/events/${id}/tickets`).catch(() => ({ data: [] })),
           api.get(`/events/${id}/my-attendance`).catch(() => ({ data: { attended: false } }))
         ]);
         const evData = evRes.data;
@@ -147,8 +145,15 @@ export const EventDetail: React.FC = () => {
     try {
       const res = await api.post(`/events/${id}/register`, {
         ticketId: selectedTicketId,
-        answers
+        quantity: 1,
+        customFormData: answers
       });
+
+      if (res.data.payment?.checkoutUrl) {
+        addToast("Ingresso reservado. Redirecionando para o pagamento seguro...", "success");
+        window.location.href = res.data.payment.checkoutUrl;
+        return;
+      }
 
       if (res.data.payment) {
         setPaymentData(res.data.payment);
@@ -193,7 +198,7 @@ export const EventDetail: React.FC = () => {
     >
       <header className="event-hero-premium">
         <img
-          src={event.coverImageUrl || "/placeholder-image.jpg"}
+          src={event.coverImageUrl || "/placeholder-image.svg"}
           className="event-hero-img-premium"
           alt={event.title}
         />
@@ -372,26 +377,36 @@ export const EventDetail: React.FC = () => {
 
               {paymentData ? (
                 <div className="space-y-8 text-center">
-                  <div className="p-8 bg-white rounded-[40px] inline-block shadow-2xl">
-                    <img src={`data:image/png;base64,${paymentData.pixQrCode}`} alt="QR Code" className="w-48 h-48" />
-                  </div>
-                  
-                  <div className="space-y-4">
-                     <p className="font-fd text-white text-xl">Confirmação via PIX</p>
-                     <p className="text-muted text-sm">Copie o código abaixo para finalizar a transação no seu banco.</p>
-                     
-                     <div className="flex gap-2 bg-bg2 p-4 rounded-2xl border border-border">
-                        <input readOnly value={paymentData.pixPayload || ''} className="bg-transparent border-none text-[10px] text-muted outline-none flex-1 font-mono" />
-                        <button 
-                           onClick={() => navigator.clipboard.writeText(paymentData.pixPayload || '')}
-                           className="text-gold font-fm text-[10px] uppercase"
-                        >
-                           Copiar
-                        </button>
-                     </div>
-                  </div>
-                  
-                  <button onClick={() => { setIsCheckoutOpen(false); setPaymentData(null); }} className="gallery-cta w-full">Finalizar</button>
+                  {paymentData.checkoutUrl ? (
+                    <>
+                      <p className="font-fd text-white text-xl">Pagamento seguro</p>
+                      <p className="text-muted text-sm">Continue no checkout para confirmar seu ingresso.</p>
+                      <button onClick={() => { window.location.href = paymentData.checkoutUrl!; }} className="gallery-cta w-full">Ir para pagamento</button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="p-8 bg-white rounded-[40px] inline-block shadow-2xl">
+                        <img src={`data:image/png;base64,${paymentData.pixQrCode}`} alt="QR Code" className="w-48 h-48" />
+                      </div>
+                      
+                      <div className="space-y-4">
+                         <p className="font-fd text-white text-xl">Confirmação via PIX</p>
+                         <p className="text-muted text-sm">Copie o código abaixo para finalizar a transação no seu banco.</p>
+                         
+                         <div className="flex gap-2 bg-bg2 p-4 rounded-2xl border border-border">
+                            <input readOnly value={paymentData.pixPayload || ''} className="bg-transparent border-none text-[10px] text-muted outline-none flex-1 font-mono" />
+                            <button 
+                               onClick={() => navigator.clipboard.writeText(paymentData.pixPayload || '')}
+                               className="text-gold font-fm text-[10px] uppercase"
+                            >
+                               Copiar
+                            </button>
+                         </div>
+                      </div>
+                      
+                      <button onClick={() => { setIsCheckoutOpen(false); setPaymentData(null); }} className="gallery-cta w-full">Finalizar</button>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-8">
@@ -453,3 +468,4 @@ export const EventDetail: React.FC = () => {
     </motion.div>
   );
 };
+

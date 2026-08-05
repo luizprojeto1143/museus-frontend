@@ -2,9 +2,9 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
-import { ArrowRight, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { getFullUrl } from "../../../utils/url";
-import { useWorks } from "../hooks/useWorks";
+import { useWorks, type Work } from "../hooks/useWorks";
 import { motion, AnimatePresence } from "framer-motion";
 import { WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
 import "./WorksList.css";
@@ -32,18 +32,18 @@ export const WorksList: React.FC = () => {
     visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
   };
 
-  const itemVariants = {
+  const _itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1 }
   };
 
   const filteredWorks = filter === "all" 
     ? works 
-    : works.filter((w: unknown) => {
-        const catName = typeof w.category === 'object' ? w.category?.name : w.category;
+    : works.filter((w: Work) => {
+        const catName = w.category;
         return catName?.toLowerCase() === filter.toLowerCase();
       });
-  const categories = ["all", ...new Set(works.map((w: unknown) => typeof w.category === 'object' ? w.category?.name : w.category).filter(Boolean))];
+  const categories = ["all", ...new Set(works.map((w: Work) => w.category).filter((category): category is string => Boolean(category)))];
 
   return (
     <motion.div 
@@ -61,7 +61,7 @@ export const WorksList: React.FC = () => {
         
         <div className="workslist-controls">
           <div className="workslist-filter-pill">
-            {categories.map((cat: unknown) => (
+            {categories.map((cat) => (
               <button 
                 key={cat}
                 onClick={() => setFilter(cat)}
@@ -89,7 +89,7 @@ export const WorksList: React.FC = () => {
       ) : (
         <div className="workslist-grid-premium">
           <AnimatePresence mode="popLayout">
-            {filteredWorks.map((work: unknown) => (
+            {filteredWorks.map((work) => (
               <motion.div
                 key={work.id}
                 layout
@@ -106,7 +106,7 @@ export const WorksList: React.FC = () => {
                       className="work-img-premium"
                     />
                     <div className="work-category-tag">
-                      {work.category?.name || t("visitor.workslist.general", "Geral")}
+                      {work.category || t("visitor.workslist.general", "Geral")}
                     </div>
                   </div>
 

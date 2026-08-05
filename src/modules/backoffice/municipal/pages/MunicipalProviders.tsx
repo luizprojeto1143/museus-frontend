@@ -34,13 +34,14 @@ export const MunicipalProviders: React.FC = () => {
     const { tenantId } = useAuth();
     const { addToast } = useToast();
     const [providers, setProviders] = useState<Provider[]>([]);
+    const [providerToDelete, setProviderToDelete] = useState<Provider | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!tenantId) return;
 
-        api.get("/providers", { params: { tenantId } })
-            .then(res => setProviders(res.data))
+        api.get<Provider[]>("/providers", { params: { tenantId } })
+            .then(res => setProviders(Array.isArray(res.data) ? res.data : []))
             .catch(err => {
                 logger.error("Erro ao carregar prestadores", err);
                 setProviders([]);
@@ -48,6 +49,18 @@ export const MunicipalProviders: React.FC = () => {
             })
             .finally(() => setLoading(false));
     }, [tenantId, addToast]);
+
+    const handleDelete = async (provider: Provider) => {
+        try {
+            await api.delete(`/providers/${provider.id}`);
+            setProviders(current => current.filter(p => p.id !== provider.id));
+            setProviderToDelete(null);
+            addToast("Prestador excluído com sucesso", "success");
+        } catch (err) {
+            logger.error("Erro ao excluir", err);
+            addToast("Erro ao excluir prestador", "error");
+        }
+    };
 
     return (
         <div>
@@ -128,18 +141,7 @@ export const MunicipalProviders: React.FC = () => {
                                     <button
                                         className="btn ml-2"
                                         style={{ backgroundColor: "#ef4444", color: "#fff", borderColor: "#ef4444" }}
-                                        onClick={async () => {
-                                            if (window.confirm(`Excluir prestador "${provider.name}"?`)) {
-                                                try {
-                                                    await api.delete(`/providers/${provider.id}`);
-                                                    setProviders(providers.filter(p => p.id !== provider.id));
-                                                    addToast("Prestador excluído com sucesso", "success");
-                                                } catch (err) {
-                                                    logger.error("Erro ao excluir", err);
-                                                    addToast("Erro ao excluir prestador", "error");
-                                                }
-                                            }
-                                        }}
+                                        onClick={() => setProviderToDelete(provider)}
                                     >
                                         Excluir
                                     </button>
@@ -148,6 +150,28 @@ export const MunicipalProviders: React.FC = () => {
                         ))}
                     </tbody>
                 </table>
+            )}
+
+            {providerToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[var(--bg-surface)] p-6 shadow-2xl">
+                        <h2 className="text-xl font-bold mb-3">Excluir prestador</h2>
+                        <p className="text-sm opacity-80 mb-6">Excluir prestador "{providerToDelete.name}"?</p>
+                        <div className="flex justify-end gap-3">
+                            <button type="button" className="btn" onClick={() => setProviderToDelete(null)}>
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                className="btn"
+                                style={{ backgroundColor: "#ef4444", color: "#fff" }}
+                                onClick={() => void handleDelete(providerToDelete)}
+                            >
+                                Confirmar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

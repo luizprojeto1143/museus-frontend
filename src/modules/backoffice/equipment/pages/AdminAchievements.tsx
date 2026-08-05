@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
+import { toast } from "react-hot-toast";
 
 interface Achievement {
   id: string;
@@ -23,12 +24,13 @@ export const AdminAchievements: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [achievementToDelete, setAchievementToDelete] = useState<Achievement | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadAchievements = React.useCallback(async () => {
     try {
-      const res = await api.get(`/achievements?tenantId=${tenantId}`);
-      setAchievements(res.data);
+      const res = await api.get<Achievement[]>(`/achievements?tenantId=${tenantId}`);
+      setAchievements(Array.isArray(res.data) ? res.data : []);
     } catch {
       logger.error("Erro ao carregar conquistas");
     } finally {
@@ -41,13 +43,12 @@ export const AdminAchievements: React.FC = () => {
   }, [loadAchievements]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t("admin.achievements.alerts.confirmDelete"))) return;
-
     try {
       await api.delete(`/achievements/${id}`);
+      setAchievementToDelete(null);
       loadAchievements();
     } catch {
-      logger.warn("Alert:", t("admin.achievements.alerts.errorDelete"));
+      toast.error(t("admin.achievements.alerts.errorDelete"));
     }
   };
 
@@ -56,7 +57,7 @@ export const AdminAchievements: React.FC = () => {
       await api.patch(`/achievements/${id}`, { active: !currentStatus });
       loadAchievements();
     } catch {
-      logger.warn("Alert:", t("admin.achievements.alerts.errorUpdate"));
+      toast.error(t("admin.achievements.alerts.errorUpdate"));
     }
   };
 
@@ -185,7 +186,7 @@ export const AdminAchievements: React.FC = () => {
                   {achievement.active ? t("admin.achievements.card.disable") : t("admin.achievements.card.enable")}
                 </button>
                 <button
-                  onClick={() => handleDelete(achievement.id)}
+                  onClick={() => setAchievementToDelete(achievement)}
                   className="inline-flex items-center justify-center gap-2 font-bold uppercase tracking-wider transition-colors cursor-pointer border bg-[var(--bg-surface-hover)] text-[var(--fg-main)] border-[var(--border-default)] text-[13px] px-5 py-2.5 rounded-[var(--radius-md)]"
                   style={{
                     padding: "0.5rem",
@@ -200,6 +201,23 @@ export const AdminAchievements: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {achievementToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+          <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[var(--bg-surface)] p-6 shadow-2xl">
+            <h2 className="text-xl font-bold mb-3">{t("common.delete")}</h2>
+            <p className="text-sm opacity-80 mb-6">{t("admin.achievements.alerts.confirmDelete")}</p>
+            <div className="flex justify-end gap-3">
+              <button type="button" className="btn btn-secondary" onClick={() => setAchievementToDelete(null)}>
+                {t("common.cancel")}
+              </button>
+              <button type="button" className="btn btn-primary bg-red-600" onClick={() => void handleDelete(achievementToDelete.id)}>
+                {t("common.confirm", "Confirmar")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

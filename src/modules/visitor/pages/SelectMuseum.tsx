@@ -22,7 +22,7 @@ import {
   Badge
 } from "@/components/ui";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
-import { fadeInUp, staggerContainer, staggerItem } from "@/lib/motion";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 import { motion } from "framer-motion";
 
 interface Equipamento {
@@ -34,13 +34,16 @@ interface Equipamento {
   fotoCapaUrl?: string;
   lat?: number;
   lng?: number;
-  horarios?: unknown;
+  horarios?: {
+    seg?: string;
+  };
   endereco?: string;
   cidade?: string;
   cityId?: string | null;
   missao?: string;
   descricao?: string;
   address?: string;
+  estado?: string;
   // Computed client-side
   distance?: number;
 }
@@ -56,6 +59,12 @@ interface Evento {
   equipamentoNome?: string;
 }
 
+const isCanceledRequest = (err: unknown) => {
+  if (!err || typeof err !== "object") return false;
+  const maybeCanceled = err as { name?: string; code?: string };
+  return maybeCanceled.name === "CanceledError" || maybeCanceled.code === "ERR_CANCELED";
+};
+
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -68,6 +77,8 @@ export const SelectMuseum: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("ALL");
+  const [selectedEstado, setSelectedEstado] = useState<string | null>(null);
+  const [selectedCidade, setSelectedCidade] = useState<string | null>(null);
   const [selectedLandmark, setSelectedLandmark] = useState<Equipamento | null>(null);
   const [events, setEvents] = useState<Evento[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
@@ -148,8 +159,8 @@ export const SelectMuseum: React.FC = () => {
       const lower = searchTerm.toLowerCase();
       result = result.filter(e =>
         e.nome.toLowerCase().includes(lower) ||
-        (e.slug && e.slug.toLowerCase().includes(lower)) ||
-        (e.address && e.address.toLowerCase().includes(lower))
+        (e.cidade && e.cidade.toLowerCase().includes(lower)) ||
+        (e.estado && e.estado.toLowerCase().includes(lower))
       );
     }
 
@@ -171,18 +182,33 @@ export const SelectMuseum: React.FC = () => {
       .slice(0, 3);
   }, [filteredAndSortedEquipamentos, userLocation]);
 
+  const estadosDisponiveis = useMemo(() => {
+    const estados = new Set(filteredAndSortedEquipamentos.map(e => e.estado || "MG"));
+    return Array.from(estados).sort();
+  }, [filteredAndSortedEquipamentos]);
+
+  const cidadesDoEstado = useMemo(() => {
+    if (!selectedEstado) return [];
+    const cidades = new Set(filteredAndSortedEquipamentos.filter(e => (e.estado || "MG") === selectedEstado).map(e => e.cidade));
+    return Array.from(cidades).sort();
+  }, [filteredAndSortedEquipamentos, selectedEstado]);
+
+  const equipamentosDaCidade = useMemo(() => {
+    if (!selectedCidade || !selectedEstado) return [];
+    return filteredAndSortedEquipamentos.filter(e => (e.estado || "MG") === selectedEstado && e.cidade === selectedCidade);
+  }, [filteredAndSortedEquipamentos, selectedEstado, selectedCidade]);
+
   const handleSelect = async (equip: Equipamento) => {
     // Se logado, atualiza sessao
     if (isAuthenticated && !isGuest) {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL as string;
         // Reutilizamos switch-tenant mas agora focando em equipamento contextualmente se necessario,
         // ou apenas atualizamos localmente o ID
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
         navigate("/hub");
         return;
       } catch (err: unknown) {
-        logger.error(err);
+        logger.error("Error selecting equipment", err);
       }
     }
 
@@ -305,7 +331,7 @@ export const SelectMuseum: React.FC = () => {
                   >
                     <div className="relative h-44">
                       <img 
-                        src={event.coverImage || "/placeholder-image.jpg"} 
+                        src={event.coverImage || "/placeholder-image.svg"} 
                         alt={event.title} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
@@ -405,7 +431,7 @@ export const SelectMuseum: React.FC = () => {
                 >
                   <div className="relative h-60 overflow-hidden">
                     <img
-                      src={event.coverImage || "/placeholder-image.jpg"}
+                      src={event.coverImage || "/placeholder-image.svg"}
                       alt={event.title}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
@@ -439,56 +465,142 @@ export const SelectMuseum: React.FC = () => {
             ))}
           </motion.div>
         ) : (
-          <motion.div 
-            variants={staggerContainer()}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {filteredAndSortedEquipamentos.map(equip => (
-              <motion.div key={equip.id} variants={staggerItem}>
-                <Card
-                  animated glow
-                  className="h-full flex flex-col group cursor-pointer overflow-hidden border-white/5"
-                  onClick={() => handleSelect(equip)}
-                >
-                  <div className="relative h-60 overflow-hidden">
-                    <img
-                      src={equip.fotoCapaUrl || "/placeholder-image.jpg"}
-                      alt={equip.nome}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
-                    />
-                    <Badge className="absolute top-4 left-4 bg-black/60 shadow-xl" variant="glass">
-                      <Theater size={12} className="mr-2" />
-                      {equip.tipo}
-                    </Badge>
-                  </div>
+          <div className="flex flex-col gap-4">
+            {!searchTerm && (selectedEstado || selectedCidade) && (
+              <div className="flex items-center gap-4 mb-4">
+                 <Button variant="ghost" onClick={() => {
+                   if (selectedCidade) setSelectedCidade(null);
+                   else if (selectedEstado) setSelectedEstado(null);
+                 }} leftIcon={<ArrowRight className="rotate-180" size={16} />}>
+                   {selectedCidade ? "Voltar para Cidades" : "Voltar para Estados"}
+                 </Button>
+                 <span className="text-[var(--fg-tertiary)] text-sm font-bold">
+                   {selectedEstado} {selectedCidade ? ` > ${selectedCidade}` : ""}
+                 </span>
+              </div>
+            )}
 
-                  <div className="p-8 flex-1 flex flex-col">
-                    <h3 className="text-2xl font-bold mb-3 tracking-tight text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
-                    <div className="flex gap-3 mb-6">
-                      <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
-                        <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}
-                      </Badge>
-                      <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5">
-                        <Star size={12} className="mr-1 fill-current" /> 4.9
-                      </Badge>
-                    </div>
-                    <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
-                      {equip.endereco || "Localização não informada • Minas Gerais"}
-                    </p>
-                    <Button 
-                      variant="primary"
-                      className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base"
-                      rightIcon={<ArrowRight size={20} />}
+            <motion.div 
+              variants={staggerContainer()}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              {searchTerm ? (
+                filteredAndSortedEquipamentos.map(equip => (
+                  <motion.div key={equip.id} variants={staggerItem}>
+                    <Card
+                      animated glow
+                      className="h-full flex flex-col group cursor-pointer overflow-hidden border-white/5"
+                      onClick={() => handleSelect(equip)}
                     >
-                      {t("visitor.selectMuseum.enterLocation")}
-                    </Button>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+                      <div className="relative h-60 overflow-hidden">
+                        <img
+                          src={equip.fotoCapaUrl || "/placeholder-image.svg"}
+                          alt={equip.nome}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                        />
+                        <Badge className="absolute top-4 left-4 bg-black/60 shadow-xl" variant="glass">
+                          <Theater size={12} className="mr-2" />
+                          {equip.tipo}
+                        </Badge>
+                      </div>
+
+                      <div className="p-8 flex-1 flex flex-col">
+                        <h3 className="text-2xl font-bold mb-3 tracking-tight text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
+                        <div className="flex gap-3 mb-6">
+                          <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
+                            <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}
+                          </Badge>
+                          <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5">
+                            <Star size={12} className="mr-1 fill-current" /> 4.9
+                          </Badge>
+                        </div>
+                        <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
+                          {equip.endereco || "Localização não informada"} • {equip.cidade} - {equip.estado || "MG"}
+                        </p>
+                        <Button 
+                          variant="primary"
+                          className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base"
+                          rightIcon={<ArrowRight size={20} />}
+                        >
+                          {t("visitor.selectMuseum.enterLocation")}
+                        </Button>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))
+              ) : !selectedEstado ? (
+                estadosDisponiveis.map(estado => (
+                   <motion.div key={estado} variants={staggerItem}>
+                     <Card animated glow className="p-10 cursor-pointer text-center group border-white/5 bg-white/5 backdrop-blur-md" onClick={() => setSelectedEstado(estado)}>
+                       <MapIcon size={48} className="mx-auto mb-6 text-[var(--accent-primary)] opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                       <h3 className="text-4xl font-black text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors">{estado}</h3>
+                       <p className="text-[var(--fg-tertiary)] mt-4 font-medium uppercase tracking-widest text-xs">
+                         {equipamentos.filter(e => (e.estado || "MG") === estado).length} Equipamentos
+                       </p>
+                     </Card>
+                   </motion.div>
+                ))
+              ) : !selectedCidade ? (
+                cidadesDoEstado.map(cidade => (
+                   <motion.div key={cidade} variants={staggerItem}>
+                     <Card animated glow className="p-10 cursor-pointer text-center group border-white/5 bg-white/5 backdrop-blur-md" onClick={() => setSelectedCidade(cidade)}>
+                       <Navigation size={40} className="mx-auto mb-6 text-[var(--accent-primary)] opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                       <h3 className="text-2xl font-bold text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors">{cidade}</h3>
+                       <p className="text-[var(--fg-tertiary)] mt-4 font-medium uppercase tracking-widest text-xs">
+                         {equipamentos.filter(e => e.cidade === cidade && (e.estado || "MG") === selectedEstado).length} Equipamentos
+                       </p>
+                     </Card>
+                   </motion.div>
+                ))
+              ) : (
+                equipamentosDaCidade.map(equip => (
+                  <motion.div key={equip.id} variants={staggerItem}>
+                    <Card
+                      animated glow
+                      className="h-full flex flex-col group cursor-pointer overflow-hidden border-white/5"
+                      onClick={() => handleSelect(equip)}
+                    >
+                      <div className="relative h-60 overflow-hidden">
+                        <img
+                          src={equip.fotoCapaUrl || "/placeholder-image.svg"}
+                          alt={equip.nome}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                        />
+                        <Badge className="absolute top-4 left-4 bg-black/60 shadow-xl" variant="glass">
+                          <Theater size={12} className="mr-2" />
+                          {equip.tipo}
+                        </Badge>
+                      </div>
+
+                      <div className="p-8 flex-1 flex flex-col">
+                        <h3 className="text-2xl font-bold mb-3 tracking-tight text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors line-clamp-1">{equip.nome}</h3>
+                        <div className="flex gap-3 mb-6">
+                          <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5">
+                            <MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}
+                          </Badge>
+                          <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5">
+                            <Star size={12} className="mr-1 fill-current" /> 4.9
+                          </Badge>
+                        </div>
+                        <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">
+                          {equip.endereco || "Localização não informada"}
+                        </p>
+                        <Button 
+                          variant="primary"
+                          className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base"
+                          rightIcon={<ArrowRight size={20} />}
+                        >
+                          {t("visitor.selectMuseum.enterLocation")}
+                        </Button>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))
+              )}
+            </motion.div>
+          </div>
         )}
 
         {filteredAndSortedEquipamentos.length === 0 && !loading && (
@@ -566,4 +678,5 @@ export const SelectMuseum: React.FC = () => {
     </div>
   );
 };
+
 

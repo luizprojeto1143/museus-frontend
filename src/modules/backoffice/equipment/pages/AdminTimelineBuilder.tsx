@@ -3,15 +3,30 @@ import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Plus, Trash2, Save, Clock, MapPin, Image as ImageIcon } from "lucide-react";
+import { Loader2, Clock } from "lucide-react";
 import { Button, Input, Select, Textarea } from "../../../../components/ui";
 import { toast } from "react-hot-toast";
 
+type SpaceOption = {
+    id: string;
+    name: string;
+};
+
+type TimelineEvent = {
+    id: string;
+    year: number;
+    title: string;
+    description?: string | null;
+    imageUrl?: string | null;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
+
 export const AdminTimelineBuilder: React.FC = () => {
     const { tenantId } = useAuth();
-    const [spaces, setSpaces] = useState<any[]>([]);
+    const [spaces, setSpaces] = useState<SpaceOption[]>([]);
     const [selectedSpaceId, setSelectedSpaceId] = useState("");
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -25,9 +40,10 @@ export const AdminTimelineBuilder: React.FC = () => {
 
     const loadData = useCallback(async () => {
         try {
-            const res = await api.get("/spaces", { params: { tenantId } });
-            setSpaces(res.data);
-            if (res.data.length > 0) setSelectedSpaceId(res.data[0].id);
+            const res = await api.get<ListResponse<SpaceOption>>("/spaces", { params: { tenantId } });
+            const spaceList = Array.isArray(res.data) ? res.data : res.data.data || [];
+            setSpaces(spaceList);
+            if (spaceList.length > 0) setSelectedSpaceId(spaceList[0].id);
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao carregar espaços");
@@ -39,8 +55,8 @@ export const AdminTimelineBuilder: React.FC = () => {
     const loadEvents = useCallback(async () => {
         if (!selectedSpaceId) return;
         try {
-            const res = await api.get(`/roadmap-extra/events?spaceId=${selectedSpaceId}`);
-            setEvents(res.data);
+            const res = await api.get<ListResponse<TimelineEvent>>(`/roadmap-extra/events?spaceId=${selectedSpaceId}`);
+            setEvents(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (error) {
             logger.error(error);
         }
@@ -67,7 +83,7 @@ export const AdminTimelineBuilder: React.FC = () => {
             toast.success("Evento adicionado!");
             setNewEvent({ year: new Date().getFullYear(), title: "", description: "", imageUrl: "" });
             loadEvents();
-        } catch (err) {
+        } catch (_err) {
             toast.error("Erro ao salvar");
         } finally {
             setIsSaving(false);
@@ -167,9 +183,6 @@ export const AdminTimelineBuilder: React.FC = () => {
                                                     <p className="text-zinc-400 text-sm mt-1">{event.description}</p>
                                                 </div>
                                             </div>
-                                            <button className="text-zinc-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2">
-                                                <Trash2 size={16} />
-                                            </button>
                                         </div>
                                     </div>
                                 </div>

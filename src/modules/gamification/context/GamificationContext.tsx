@@ -3,7 +3,7 @@ import { storage } from "@/utils/storage";
 
 import { logger } from "@/utils/logger";
 
-import { UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
+import { Achievement, UserStats, LEVELS, INITIAL_ACHIEVEMENTS } from "../types";
 import { api } from "../../../api/client";
 import { AchievementModal } from "../components/AchievementModal";
 import { useAuth } from "../../auth/AuthContext";
@@ -21,6 +21,16 @@ interface GamificationContextType {
     refreshGamification?: () => void;
 }
 
+interface BackendAchievement {
+    code: string;
+    unlockedAt?: string;
+}
+
+interface VisitorSummaryResponse {
+    xp?: number;
+    achievements?: BackendAchievement[];
+}
+
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined);
 const STORAGE_KEY = "msv_gamification_stats";
 
@@ -32,14 +42,17 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     const { addToast } = useToast();
     const { isAuthenticated, email, tenantId } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [unlockedAchievement, setUnlockedAchievement] = useState<unknown>(null);
+    const [unlockedAchievement, setUnlockedAchievement] = useState<Achievement | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     
     const [stats, setStats] = useState<UserStats>(() => {
         try {
-            const stored = storage.get(STORAGE_KEY);
+            const stored = storage.get<UserStats | string>(STORAGE_KEY);
+            if (typeof stored === "string") {
+                return JSON.parse(stored) as UserStats;
+            }
             if (stored) {
-                return JSON.parse(stored);
+                return stored;
             }
         } catch {
             // Ignore parse errors
@@ -64,7 +77,8 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
         setLoading(true);
         try {
-            const res = await api.get(`/visitors/me/summary?email=${email}&tenantId=${tenantId}`);
+            const params = new URLSearchParams({ email, tenantId });
+            const res = await api.get<VisitorSummaryResponse>(`/visitors/me/summary?${params.toString()}`);
             const data = res.data;
 
             // Merge backend data with local stats structure
@@ -75,7 +89,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 // Map backend achievements to frontend structure
                 const backendAchievements = data.achievements || [];
                 const mergedAchievements = prev.achievements.map(localAch => {
-                    const found = backendAchievements.find((ba: { code: string; unlockedAt?: string }) => ba.code === localAch.id);
+                    const found = backendAchievements.find((ba) => ba.code === localAch.id);
                     if (found) {
                         return { ...localAch, unlockedAt: found.unlockedAt };
                     }
@@ -89,7 +103,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                     achievements: mergedAchievements,
                 };
             });
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error("Error fetching gamification data", error);
         } finally {
             setLoading(false);
@@ -109,7 +123,7 @@ export const GamificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     useEffect(() => {
         try {
-            storage.set(STORAGE_KEY, JSON.stringify(stats));
+            storage.set(STORAGE_KEY, stats);
         } catch {
             // Ignore storage errors
         }

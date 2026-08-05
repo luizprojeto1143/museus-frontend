@@ -1,34 +1,18 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-    Mail, 
-    Send, 
-    Paperclip, 
-    DollarSign, 
-    Search, 
-    MoreVertical, 
-    ArrowLeft, 
-    User, 
-    Clock, 
-    CheckCircle2, 
-    AlertCircle, 
-    CreditCard,
-    Plus,
-    X,
-    Sparkles
-} from 'lucide-react';
-import { Button, Input, Card, Badge, AnimateIn } from '@/components/ui';
-import { inboxService, Conversation, Message } from '../../../services/inboxService';
+import { Mail, Send, Paperclip, DollarSign, Search, MoreVertical, ArrowLeft, Clock, CheckCircle2, CreditCard, X } from 'lucide-react';
+import { Button, Badge, AnimateIn } from '@/components/ui';
+import { inboxService, Conversation } from '../../../services/inboxService';
 import { useAuth } from '../../auth/AuthContext';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 export const ProviderInbox: React.FC = () => {
-    const { t } = useTranslation();
-    const { name: myName } = useAuth();
+    const { t: _t } = useTranslation();
+    const { name: _myName } = useAuth();
     const location = useLocation();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -41,7 +25,7 @@ export const ProviderInbox: React.FC = () => {
     // Payment Form State
     const [amount, setAmount] = useState("");
     const [description, setDescription] = useState("");
-    const [paymentMethod, setPaymentMethod] = useState<"PIX" | "CREDIT_CARD">("PIX");
+    const [paymentMethod] = useState<"CREDIT_CARD">("CREDIT_CARD");
     const [creatingPayment, setCreatingPayment] = useState(false);
 
     // Delivery Modal State
@@ -126,7 +110,7 @@ export const ProviderInbox: React.FC = () => {
         try {
             setCreatingPayment(true);
             await inboxService.createPayment(selectedId, parseFloat(amount), description, paymentMethod);
-            toast.success("Solicitação de pagamento enviada via Asaas!");
+            toast.success("Solicitacao de pagamento enviada via checkout seguro!");
             setShowPaymentModal(false);
             setAmount("");
             setDescription("");
@@ -438,7 +422,7 @@ export const ProviderInbox: React.FC = () => {
                                     </div>
                                     <div>
                                         <h2 className="text-xl font-black text-white tracking-tight">Solicitar Pagamento</h2>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Transação Segura Asaas</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Checkout seguro Stripe</p>
                                     </div>
                                 </div>
                                 <button onClick={() => setShowPaymentModal(false)} className="text-slate-500 hover:text-white transition-colors">
@@ -467,20 +451,11 @@ export const ProviderInbox: React.FC = () => {
                                         className="w-full bg-white/5 border border-white/5 rounded-2xl p-6 text-sm text-white focus:outline-none focus:border-indigo-500/50 min-h-[100px] resize-none"
                                     />
                                 </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <button 
-                                        onClick={() => setPaymentMethod("PIX")}
-                                        className={`h-14 rounded-2xl border transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest ${paymentMethod === "PIX" ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-lg' : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'}`}
-                                    >
-                                        <Sparkles size={16} /> PIX
-                                    </button>
-                                    <button 
-                                        onClick={() => setPaymentMethod("CREDIT_CARD")}
-                                        className={`h-14 rounded-2xl border transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest ${paymentMethod === "CREDIT_CARD" ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-lg' : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'}`}
-                                    >
-                                        <CreditCard size={16} /> Cartão
-                                    </button>
+                                <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-4 text-xs font-medium leading-relaxed text-indigo-100">
+                                    <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-300">
+                                        <CreditCard size={16} /> Checkout seguro
+                                    </div>
+                                    O produtor recebera um link de pagamento processado pelo gateway. As formas de pagamento disponiveis sao controladas no checkout.
                                 </div>
 
                                 <Button 
@@ -566,3 +541,4 @@ export const ProviderInbox: React.FC = () => {
         </AnimateIn>
     );
 };
+

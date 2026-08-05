@@ -1,7 +1,5 @@
 import { logger } from "@/utils/logger";
 import { storage } from "@/utils/storage";
-
-import { Work } from "../types/domain";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
@@ -18,15 +16,13 @@ import { ShareCard } from "../components/ShareCard";
 import { AiChatWidget } from "../components/AiChatWidget";
 import { NavigationModal } from "../../../components/navigation/NavigationModal";
 import { useTerminology } from "../../../hooks/useTerminology";
-import { 
-  Compass, Share2, Star, Volume2, VolumeX, ChevronLeft, 
-  ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles, Shield, Zap
-} from "lucide-react";
+import { Share2, Volume2, VolumeX, ChevronLeft, ChevronRight, MapPin, Map, MessageCircle, Heart, Sparkles, Shield, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { Badge, Button, MagneticButton, Card, AnimateIn, PageLoader } from "@/components/ui";
+import { Badge, Button, PageLoader } from "@/components/ui";
 import { ModelViewer } from "@/components/ui/ModelViewer";
-import { pageVariants, staggerContainer, staggerItem } from "@/lib/motion";
+import { pageVariants } from "@/lib/motion";
+import { toast } from "react-hot-toast";
 import "./WorkDetail.css";
 
 type WorkDetailData = {
@@ -45,13 +41,66 @@ type WorkDetailData = {
   modelUrl?: string | null;
   latitude?: number;
   longitude?: number;
-  collectibleCards?: unknown[];
+  collectibleCards?: CollectibleCard[];
+};
+
+type WorkCategory = {
+  name?: string | null;
+};
+
+type CollectibleCard = {
+  id: string;
+  title: string;
+  imageUrl?: string | null;
+  rarity?: string | null;
+  xpReward?: number | null;
+};
+
+type WorkApiData = Omit<WorkDetailData, "artist" | "category" | "collectibleCards"> & {
+  artist?: string | null;
+  category?: WorkCategory | string | null;
+  collectibleCards?: CollectibleCard[] | null;
+};
+
+type SponsorWorkSponsorship = {
+  id: string;
+  sponsorName: string;
+  sponsorLogo?: string | null;
+  sponsorUrl?: string | null;
+  tier?: "EXCLUSIVE" | "SHARED" | string | null;
+};
+
+type TrailResponse = {
+  title?: string;
+  works?: Array<{ id: string }>;
+};
+
+type TreasureClue = {
+  id: string;
+  isActive?: boolean;
+  targetWorkId?: string;
+  xpReward?: number;
+};
+
+type FavoriteCheckResponse = {
+  isFavorite?: boolean;
+};
+
+type OwnedFragmentResponse = {
+  cardId: string;
+};
+
+type EarnFragmentResponse = {
+  message?: string;
+  alreadyOwned?: boolean;
+  xpGained?: number;
+  card?: { cardId?: string; collectibleCard?: CollectibleCard };
 };
 
 export const WorkDetail: React.FC = () => {
   const { id, citySlug, equipmentSlug } = useParams<{ id: string; citySlug: string; equipmentSlug: string }>();
   const navigate = useNavigate();
-  const { tenantId, equipamentoId, email, isGuest } = useAuth();
+  const { tenantId, equipamentoId, email: _email, isGuest } = useAuth();
   const { t, i18n } = useTranslation();
 
   const [relatedWorks, setRelatedWorks] = useState<WorkDetailData[]>([]);
@@ -62,17 +111,20 @@ export const WorkDetail: React.FC = () => {
   const [showShare, setShowShare] = useState(false);
   const [showNavigation, setShowNavigation] = useState(false);
   const { speak, cancel, isSpeaking } = useTTS();
-  const terms = useTerminology();
+  const _terms = useTerminology();
   const [searchParams] = useSearchParams();
   const trailId = searchParams.get("trailId");
+  const canCaptureFragment = searchParams.get("scan") === "true";
   const [trailWorks, setTrailWorks] = useState<string[]>([]);
   const [trailTitle, setTrailTitle] = useState("");
-  const [sponsorships, setSponsorships] = useState<any[]>([]);
+  const [sponsorships, setSponsorships] = useState<SponsorWorkSponsorship[]>([]);
+  const [ownedFragmentIds, setOwnedFragmentIds] = useState<Set<string>>(new Set());
+  const [acquiringFragmentId, setAcquiringFragmentId] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
-       api.get(`/sponsor-portal/works/${id}/sponsorships`)
-         .then((res: unknown) => setSponsorships(res.data))
+       api.get<SponsorWorkSponsorship[]>(`/sponsor-portal/works/${id}/sponsorships`)
+         .then((res) => setSponsorships(Array.isArray(res.data) ? res.data : []))
          .catch(logger.error);
     }
   }, [id]);
@@ -82,11 +134,11 @@ export const WorkDetail: React.FC = () => {
 
   useEffect(() => {
     if (trailId) {
-      api.get(`/trails/${trailId}`)
+      api.get<TrailResponse>(`/trails/${trailId}`)
         .then(res => {
           if (res.data.works) {
             setTrailWorks(res.data.works.map((w: { id: string }) => w.id));
-            setTrailTitle(res.data.title);
+            setTrailTitle(res.data.title || "");
           }
         })
         .catch(logger.error);
@@ -106,7 +158,7 @@ export const WorkDetail: React.FC = () => {
     if (!id) return;
     setLoading(true);
     
-    api.get(`/works/${id}`)
+    api.get<WorkApiData>(`/works/${id}`)
       .then((res) => {
         const w = res.data;
         const mapped: WorkDetailData = {
@@ -114,7 +166,7 @@ export const WorkDetail: React.FC = () => {
           title: w.title,
           artist: w.artist ?? "Artista desconhecido",
           year: w.year ?? "",
-          category: w.category?.name ?? w.category ?? "",
+          category: typeof w.category === "object" ? w.category?.name ?? "" : w.category ?? "",
           description: w.description ?? "",
           room: w.room ?? "",
           floor: w.floor ?? "",
@@ -133,39 +185,56 @@ export const WorkDetail: React.FC = () => {
         visitWork(w.id);
 
         // Treasure logic
-        const clues = storage.get("treasure_clues") || [];
-        const solved = storage.get("treasure_solved") || [];
-        const matchedClue = clues.find((c: unknown) => c.isActive && c.targetWorkId === w.id && !solved.includes(c.id));
+        const clues = storage.get<TreasureClue[]>("treasure_clues") || [];
+        const solved = storage.get<string[]>("treasure_solved") || [];
+        const matchedClue = clues.find((c) => c.isActive && c.targetWorkId === w.id && !solved.includes(c.id));
         if (matchedClue) {
           solved.push(matchedClue.id);
-          storage.set("treasure_solved", JSON.stringify(solved));
-          addXp(matchedClue.xpReward);
-          setTreasureFound({ found: true, xp: matchedClue.xpReward });
+          storage.set("treasure_solved", solved);
+          addXp(matchedClue.xpReward || 0);
+          setTreasureFound({ found: true, xp: matchedClue.xpReward || 0 });
         }
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
 
     if (!isGuest) {
-      api.get(`/favorites/check?type=work&id=${id}`)
-        .then(res => setIsFavorite(res.data.isFavorite))
+      api.get<FavoriteCheckResponse>(`/favorites/check?type=work&id=${id}`)
+        .then(res => setIsFavorite(Boolean(res.data.isFavorite)))
         .catch(logger.error);
     }
   }, [id, tenantId, isGuest, visitWork, addXp]);
 
   useEffect(() => {
     if (tenantId && id) {
-      api.get(`/works/${id}/related?tenantId=${tenantId}&equipamentoId=${equipamentoId}`)
+      api.get<WorkApiData[]>(`/works/${id}/related?tenantId=${tenantId}&equipamentoId=${equipamentoId}`)
         .then((res) => {
           const works = Array.isArray(res.data) ? res.data : [];
-          setRelatedWorks(works.map((w: unknown) => ({
+          setRelatedWorks(works.map((w) => ({
              ...w,
-             imageUrl: getFullUrl(w.imageUrl)
+             artist: w.artist ?? "Artista desconhecido",
+             category: typeof w.category === "object" ? w.category?.name ?? "" : w.category ?? "",
+             imageUrl: w.imageUrl ? getFullUrl(w.imageUrl) : undefined,
+             collectibleCards: w.collectibleCards || []
           })));
         })
         .catch(logger.error);
+      }
+  }, [tenantId, id, equipamentoId]);
+
+  useEffect(() => {
+    if (isGuest) {
+      setOwnedFragmentIds(new Set());
+      return;
     }
-  }, [tenantId, id]);
+
+    api.get<OwnedFragmentResponse[]>("/collectibles/my")
+      .then((res) => {
+        const ids = new Set((Array.isArray(res.data) ? res.data : []).map((item) => item.cardId));
+        setOwnedFragmentIds(ids);
+      })
+      .catch(logger.error);
+  }, [isGuest, id]);
 
   const toggleFavorite = async () => {
     if (isGuest) return;
@@ -177,7 +246,30 @@ export const WorkDetail: React.FC = () => {
         await api.post('/favorites', { type: "work", itemId: id });
         setIsFavorite(true);
       }
-    } catch (err: unknown) { logger.error(err); }
+    } catch (err) { logger.error(err); }
+  };
+
+  const handleAcquireFragment = async (card: CollectibleCard) => {
+    if (isGuest) {
+      const redirect = `${window.location.pathname}${window.location.search}`;
+      navigate(`/login?redirect=${encodeURIComponent(redirect)}`);
+      return;
+    }
+
+    try {
+      setAcquiringFragmentId(card.id);
+      const res = await api.post<EarnFragmentResponse>(`/collectibles/earn/${card.id}`);
+      setOwnedFragmentIds((prev) => new Set(prev).add(card.id));
+      toast.success(res.data.message || "Fragmento anexado ao seu passaporte.");
+      if (res.data.xpGained && res.data.xpGained > 0) {
+        addXp(res.data.xpGained);
+      }
+    } catch (err: unknown) {
+      logger.error(err);
+      toast.error("Nao foi possivel adquirir este fragmento.");
+    } finally {
+      setAcquiringFragmentId(null);
+    }
   };
 
   if (loading) return <PageLoader label="Preparando curadoria..." />;
@@ -280,6 +372,51 @@ export const WorkDetail: React.FC = () => {
         )}
       </section>
 
+      {sponsorships.length > 0 && (
+        <section className="mt-8 rounded-2xl border border-gold-500/30 bg-gold-500/10 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="sidebar-label-premium !mb-0 !text-gold-500">Apoio cultural desta obra</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+              {sponsorships.length} patrocinador{sponsorships.length > 1 ? "es" : ""}
+            </span>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {sponsorships.map((sponsor) => {
+              const cardClassName = `flex items-center gap-3 rounded-xl border border-gold-500/10 bg-black/40 p-3 transition-colors ${sponsor.sponsorUrl ? 'hover:border-gold-500/50 cursor-pointer' : ''}`;
+              const sponsorContent = (
+                <>
+                  {sponsor.sponsorLogo ? (
+                    <img src={sponsor.sponsorLogo} alt={sponsor.sponsorName} className="h-12 w-12 rounded-lg object-contain bg-white p-1" />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gold-500 text-lg font-black text-black">
+                      {sponsor.sponsorName.charAt(0)}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-gold-400">{sponsor.sponsorName}</p>
+                    <p className="text-[10px] text-slate-400">Patrocinador {sponsor.tier === 'EXCLUSIVE' ? 'Exclusivo' : 'Apoiador'}</p>
+                  </div>
+                </>
+              );
+
+              if (sponsor.sponsorUrl) {
+                return (
+                  <a key={sponsor.id} href={sponsor.sponsorUrl} target="_blank" rel="noopener noreferrer" className={cardClassName}>
+                    {sponsorContent}
+                  </a>
+                );
+              }
+
+              return (
+                <div key={sponsor.id} className={cardClassName}>
+                  {sponsorContent}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {treasureFound && (
         <motion.div 
           className="treasure-notification"
@@ -359,9 +496,9 @@ export const WorkDetail: React.FC = () => {
                 <div className="sidebar-card-premium !bg-[var(--accent-primary)]/5 !border-[var(--accent-primary)]/20">
                    <div className="flex items-center gap-2 mb-2">
                        <Sparkles size={14} className="text-[var(--accent-primary)]" />
-                       <span className="sidebar-label-premium !text-[var(--accent-primary)] !mb-0">Card Colecionável</span>
+                        <span className="sidebar-label-premium !text-[var(--accent-primary)] !mb-0">Fragmento Cultural</span>
                    </div>
-                   {work.collectibleCards.map((card: unknown) => (
+                   {work.collectibleCards.map((card) => (
                        <div key={card.id} className="mt-4 p-4 rounded-xl bg-[var(--bg-surface-hover)] border border-[var(--border-subtle)] text-center">
                            <div className="w-20 h-24 mx-auto mb-3 rounded-lg overflow-hidden border-2 border-[var(--accent-primary)]/30">
                                <img src={getFullUrl(card.imageUrl || work.imageUrl)} alt={card.title} className="w-full h-full object-cover" />
@@ -371,7 +508,26 @@ export const WorkDetail: React.FC = () => {
                                <span className="text-[8px] font-black text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-2 py-0.5 rounded uppercase">{card.rarity}</span>
                                <span className="text-[8px] font-black text-[var(--fg-main)]/40 uppercase">+{card.xpReward} XP</span>
                            </div>
-                           <p className="text-[9px] text-[var(--fg-tertiary)] mt-3 leading-relaxed">Escanei o QR Code desta obra para adicionar este card ao seu Grimório!</p>
+                            <p className="text-[9px] text-[var(--fg-tertiary)] mt-3 leading-relaxed">
+                              {canCaptureFragment
+                                ? "Adquira este fragmento para anexar ao seu passaporte cultural."
+                                : "Escaneie o QR Code fisico desta obra para liberar a captura do fragmento."}
+                            </p>
+                            {canCaptureFragment ? (
+                              <Button
+                                size="sm"
+                                className="mt-4 w-full rounded-xl text-[10px] font-black uppercase tracking-widest"
+                                disabled={ownedFragmentIds.has(card.id) || acquiringFragmentId === card.id}
+                                isLoading={acquiringFragmentId === card.id}
+                                onClick={() => handleAcquireFragment(card)}
+                              >
+                                {ownedFragmentIds.has(card.id) ? "Anexado" : "Capturar Fragmento"}
+                              </Button>
+                            ) : (
+                              <div className="mt-4 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/5 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-[var(--accent-primary)]">
+                                Fragmento bloqueado
+                              </div>
+                            )}
                        </div>
                    ))}
                 </div>
@@ -391,33 +547,6 @@ export const WorkDetail: React.FC = () => {
                <div className="sidebar-card-premium">
                   <span className="sidebar-label-premium">Multimídia</span>
                   <VideoPlayer url={work.videoUrl} title="Documentário" />
-               </div>
-            )}
-            
-            {sponsorships.length > 0 && (
-               <div className="sidebar-card-premium !bg-gold-500/10 !border-gold-500/30">
-                  <span className="sidebar-label-premium !text-gold-500">Patrocinadores Culturais</span>
-                  <div className="flex flex-col gap-3 mt-4">
-                     {sponsorships.map((sponsor) => {
-                        const Wrapper: unknown = sponsor.sponsorUrl ? 'a' : 'div';
-                        const wrapperProps = sponsor.sponsorUrl ? { href: sponsor.sponsorUrl, target: "_blank", rel: "noopener noreferrer" } : {};
-                        return (
-                           <Wrapper key={sponsor.id} {...wrapperProps} className={`flex items-center gap-3 bg-black/40 p-3 rounded-lg border border-gold-500/10 transition-colors ${sponsor.sponsorUrl ? 'hover:border-gold-500/50 cursor-pointer' : ''}`}>
-                              {sponsor.sponsorLogo ? (
-                                 <img src={sponsor.sponsorLogo} alt={sponsor.sponsorName} className="w-10 h-10 rounded-full object-cover" />
-                              ) : (
-                                 <div className="w-10 h-10 rounded-full bg-gold-500 text-black flex items-center justify-center font-bold text-lg">
-                                    {sponsor.sponsorName.charAt(0)}
-                                 </div>
-                              )}
-                              <div>
-                                 <p className="font-bold text-sm text-gold-400 hover:underline">{sponsor.sponsorName}</p>
-                                 <p className="text-[10px] text-slate-400">Patrocinador {sponsor.tier === 'EXCLUSIVE' ? 'Exclusivo' : 'Apoiador'}</p>
-                              </div>
-                           </Wrapper>
-                        );
-                     })}
-                  </div>
                </div>
             )}
          </aside>

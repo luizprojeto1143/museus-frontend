@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
-import { Award, CheckCircle, XCircle, FileText, Landmark, ShieldCheck } from "lucide-react";
+import { Award, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "../../../../components/ui";
 
 interface Contract {
@@ -23,12 +23,20 @@ interface Contract {
   }>;
 }
 
+type SponsorshipAsset = Contract["assets"][number];
+
+type ContractListResponse = Contract[] | { data?: Contract[] };
+
+type ApiError = {
+  response?: { data?: { error?: string; message?: string } };
+};
+
 export const AdminSponsorships: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(false);
-  const [reviewingAsset, setReviewingAsset] = useState<any>(null);
+  const [reviewingAsset, setReviewingAsset] = useState<SponsorshipAsset | null>(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [actioning, setActioning] = useState(false);
+  const [_actioning, setActioning] = useState(false);
 
   useEffect(() => {
     fetchContracts();
@@ -37,9 +45,9 @@ export const AdminSponsorships: React.FC = () => {
   const fetchContracts = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/sponsor-portal/admin/list");
-      setContracts(res.data);
-    } catch (err) {
+      const res = await api.get<ContractListResponse>("/sponsor-portal/admin/list");
+      setContracts(Array.isArray(res.data) ? res.data : res.data.data || []);
+    } catch (_err) {
       toast.error("Erro ao carregar contratos.");
     } finally {
       setLoading(false);
@@ -62,7 +70,7 @@ export const AdminSponsorships: React.FC = () => {
       setReviewingAsset(null);
       setRejectionReason("");
       fetchContracts();
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao revisar ativo.");
     } finally {
       setActioning(false);
@@ -77,8 +85,9 @@ export const AdminSponsorships: React.FC = () => {
       });
       toast.success("Certificado emitido e registrado no livro oficial da prefeitura!");
       fetchContracts();
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || "Erro ao emitir certificado.");
+    } catch (err) {
+      const apiError = err as ApiError;
+      toast.error(apiError.response?.data?.error || apiError.response?.data?.message || "Erro ao emitir certificado.");
     }
   };
 

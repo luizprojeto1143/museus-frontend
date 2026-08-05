@@ -2,21 +2,36 @@ import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
-import { Star, Award, MapPin, Globe, ShieldCheck } from "lucide-react";
+import { Star, Award, MapPin, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
+
+type PublicSkin = {
+    imageUrl?: string | null;
+};
+
+type PublicStamp = {
+    work?: { imageUrl?: string | null };
+};
+
+type PublicVisitor = {
+    name: string;
+    xp?: number;
+    skins?: Array<{ equipped?: boolean; skin?: PublicSkin | null }>;
+    stamps?: PublicStamp[];
+};
 
 export const PublicPassportPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const [visitor, setVisitor] = useState<unknown>(null);
+    const [visitor, setVisitor] = useState<PublicVisitor | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadPublicData = async () => {
             try {
                 // Public route - doesn't need auth (needs to be created in backend)
-                const res = await api.get(`/visitors/public-passport/${id}`);
+                const res = await api.get<PublicVisitor>(`/visitors/public-passport/${id}`);
                 setVisitor(res.data);
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error(err);
             } finally {
                 setLoading(false);
@@ -28,7 +43,7 @@ export const PublicPassportPage: React.FC = () => {
     if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-500">Autenticando Passaporte...</div>;
     if (!visitor) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-red-500">Passaporte não encontrado.</div>;
 
-    const equippedSkin = visitor.skins?.find((s: unknown) => s.equipped)?.skin;
+    const equippedSkin = visitor.skins?.find((item) => item.equipped)?.skin;
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-[var(--accent-primary)]/30 overflow-x-hidden">
@@ -108,13 +123,13 @@ export const PublicPassportPage: React.FC = () => {
                 </div>
                 
                 <div className="grid grid-cols-4 gap-4 mb-16">
-                    {visitor.stamps?.map((stamp: unknown, idx: number) => (
+                    {visitor.stamps?.map((stamp, idx) => (
                         <motion.div 
                             key={idx} 
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             className="aspect-square bg-white/5 rounded-2xl border border-white/10 flex items-center justify-center group relative cursor-help shadow-lg"
                         >
-                            <img src={stamp.work?.imageUrl} className="w-[75%] h-[75%] object-contain drop-shadow-lg transition-transform" />
+                            <img src={stamp.work?.imageUrl || "/placeholder-work.png"} className="w-[75%] h-[75%] object-contain drop-shadow-lg transition-transform" />
                             <div className="absolute inset-0 bg-[var(--accent-primary)]/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="absolute -bottom-1 -right-1 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg p-1.5 shadow-xl border border-white/20">
                                 <ShieldCheck size={12} className="text-white" />

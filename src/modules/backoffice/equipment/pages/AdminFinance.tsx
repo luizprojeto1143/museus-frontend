@@ -36,6 +36,24 @@ interface FinanceData {
     dailyRevenue: DailyRevenue[];
 }
 
+interface FinancialDashboardResponse {
+    summary?: {
+        buyerPaidCents?: number;
+        grossAmountCents?: number;
+        platformFeeCents?: number;
+        sellerNetCents?: number;
+    };
+    recentTransactions?: Array<{
+        createdAt?: string;
+        amount?: number;
+        grossAmount?: number;
+    }>;
+    bySourceType?: Array<{
+        name: string;
+        value: number;
+    }>;
+}
+
 const COLORS = ['var(--accent-primary)', '#10b981', 'var(--accent-primary)', '#a855f7'];
 
 export const AdminFinance: React.FC = () => {
@@ -52,8 +70,27 @@ export const AdminFinance: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const res = await api.get('/finance/dashboard');
-            setData(res.data);
+            const res = await api.get<FinancialDashboardResponse>('/financial/dashboard');
+            const summary = res.data.summary || {};
+            const recentTransactions = Array.isArray(res.data.recentTransactions) ? res.data.recentTransactions : [];
+            setData({
+                summary: {
+                    grossTotal: Number(summary.buyerPaidCents ?? summary.grossAmountCents ?? 0) / 100,
+                    platformFee: Number(summary.platformFeeCents ?? 0) / 100,
+                    netTotal: Number(summary.sellerNetCents ?? 0) / 100,
+                    totalTransactions: recentTransactions.length,
+                },
+                distribution: (res.data.bySourceType || []).map((item) => ({
+                    name: item.name,
+                    value: Number(item.value || 0) / 100,
+                })),
+                dailyRevenue: recentTransactions.map((item) => ({
+                    date: String(item.createdAt || "").slice(0, 10),
+                    loja: Number(item.grossAmount ?? item.amount ?? 0),
+                    doacoes: 0,
+                    patrocinios: 0,
+                })),
+            });
         } catch (error) {
             logger.error('Error fetching finance data:', error);
             toast.error('Erro ao buscar dados financeiros.');
@@ -70,7 +107,7 @@ export const AdminFinance: React.FC = () => {
         if (!dateStr) return '';
         const parts = dateStr.split('-');
         if (parts.length === 3) {
-            const [year, month, day] = parts;
+            const [_year, month, day] = parts;
             return `${day}/${month}`;
         }
         return dateStr;
@@ -237,7 +274,7 @@ export const AdminFinance: React.FC = () => {
                                 />
                                 <RechartsTooltip
                                     formatter={(value: unknown) => formatCurrency(Number(value))}
-                                    labelFormatter={(label: unknown) => `Data: ${formatDate(label)}`}
+                                    labelFormatter={(label: unknown) => `Data: ${formatDate(String(label || ''))}`}
                                     contentStyle={{ backgroundColor: 'rgba(24, 24, 27, 0.95)', borderColor: 'rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.5)' }}
                                     itemStyle={{ color: '#fff', fontWeight: 600 }}
                                     labelStyle={{ color: '#a1a1aa', fontSize: '12px', marginBottom: '8px', fontWeight: 500 }}

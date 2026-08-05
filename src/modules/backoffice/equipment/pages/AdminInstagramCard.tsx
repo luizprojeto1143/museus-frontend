@@ -4,14 +4,32 @@ import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import { api, baseURL } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Instagram, Download, RefreshCw, Image as ImageIcon, Palette, Type } from "lucide-react";
+import { Loader2, Download, RefreshCw } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import { getFullUrl } from "../../../../utils/url";
 import "./AdminShared.css";
 
+type WorkItem = {
+    id: string;
+    title: string;
+    artist?: string | null;
+    year?: string | number | null;
+    description?: string | null;
+    imageUrl?: string | null;
+};
 
-const templates = [
+type WorksResponse = WorkItem[] | { data?: WorkItem[] };
+
+type Template = {
+    id: string;
+    name: string;
+    bg: string;
+    textColor: string;
+    accentColor: string;
+};
+
+const templates: Template[] = [
     { id: 'classic', name: 'Split Moderno', bg: 'linear-gradient(135deg, #1a1c22, #111827)', textColor: '#ffffff', accentColor: 'var(--accent-primary)' },
     { id: 'dark', name: 'Cyber Neon', bg: 'linear-gradient(135deg, #0a0b0d, #1a1c22)', textColor: '#ffffff', accentColor: '#a78bfa' },
     { id: 'warm', name: 'Polaroid', bg: 'linear-gradient(135deg, #fdfbf7, #f4ede4)', textColor: '#4a2c1a', accentColor: 'var(--accent-primary)' },
@@ -21,8 +39,8 @@ const templates = [
 export const AdminInstagramCard: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [works, setWorks] = useState<any[]>([]);
-    const [selectedWork, setSelectedWork] = useState<unknown>(null);
+    const [works, setWorks] = useState<WorkItem[]>([]);
+    const [selectedWork, setSelectedWork] = useState<WorkItem | null>(null);
     const [template, setTemplate] = useState(templates[0]);
     const [loading, setLoading] = useState(true);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,7 +48,10 @@ export const AdminInstagramCard: React.FC = () => {
 
     useEffect(() => {
         if (tenantId) {
-            api.get(`/works?tenantId=${tenantId}`).then(res => setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []))).catch(console.error).finally(() => setLoading(false));
+            api.get<WorksResponse>(`/works?tenantId=${tenantId}`)
+                .then(res => setWorks(Array.isArray(res.data) ? res.data : res.data.data || []))
+                .catch(console.error)
+                .finally(() => setLoading(false));
         }
     }, [tenantId]);
 
@@ -137,9 +158,9 @@ export const AdminInstagramCard: React.FC = () => {
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 24px sans-serif';
-            try { (ctx as unknown).letterSpacing = "4px"; } catch (e) { }
+            (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing = "4px";
             ctx.fillText('MUSEU CULTURA VIVA', 80, 80);
-            try { (ctx as unknown).letterSpacing = "0px"; } catch (e) { }
+            (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing = "0px";
         }
 
         // --- Template: dark (Cyber Neon / Floating Image) ---
@@ -153,7 +174,7 @@ export const AdminInstagramCard: React.FC = () => {
             if (img) {
                 ctx.save();
                 ctx.beginPath();
-                if ((ctx as unknown).roundRect) (ctx as unknown).roundRect(80, 80, 920, 500, 40);
+                if (ctx.roundRect) ctx.roundRect(80, 80, 920, 500, 40);
                 else ctx.rect(80, 80, 920, 500);
                 ctx.clip();
                 drawImageCover(img, 80, 80, 920, 500);
@@ -286,9 +307,9 @@ export const AdminInstagramCard: React.FC = () => {
                     <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                         <div>
                             <label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra</label>
-                            <select value={selectedWork?.id || ''} onChange={e => setSelectedWork(works.find(w => w.id === e.target.value))} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
+                            <select value={selectedWork?.id || ''} onChange={e => setSelectedWork(works.find(w => w.id === e.target.value) || null)} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Selecione uma obra...</option>
-                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
 

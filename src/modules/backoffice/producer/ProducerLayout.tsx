@@ -6,24 +6,7 @@ useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import {
-    LayoutDashboard,
-    Calendar,
-    Ticket,
-    Users,
-    Briefcase,
-    Image,
-    Trophy,
-    Settings,
-    LogOut,
-    Menu,
-    FileText,
-    ExternalLink,
-    MessageSquare,
-    Folder,
-    FolderLock,
-    QrCode,
-} from "lucide-react";
+import { LayoutDashboard, Calendar, Users, Briefcase, Settings, LogOut, Menu, FileText, ExternalLink, MessageSquare, Folder } from "lucide-react";
 // Removed import "./ProducerLayout.css";
 
 export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -31,7 +14,7 @@ export const ProducerLayout: React.FC<{ children: React.ReactNode }> = ({ childr
     const { logout, name, tenantId } = useAuth();
     const location = useLocation();
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [features, setFeatures] = useState<unknown>({
+    const [_features, setFeatures] = useState<unknown>({
         featureProjects: true,
         featureTickets: false,
         featureServices: true,

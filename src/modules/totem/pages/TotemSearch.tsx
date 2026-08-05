@@ -4,30 +4,61 @@ import { logger } from "@/utils/logger";
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Search, User, Ticket, CheckCircle, XCircle } from "lucide-react";
+import { Search, Ticket, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+
+interface Registration {
+    id: string;
+    code: string;
+    status: string;
+    guestName?: string | null;
+    visitor?: { name?: string | null } | null;
+    event?: { title?: string | null } | null;
+    ticket?: { name?: string | null } | null;
+}
+
+interface RegistrationsResponse {
+    data: Registration[];
+}
+
+interface SearchResult {
+    id: string;
+    code: string;
+    status: string;
+    ownerName: string;
+    eventName: string;
+    ticketName?: string | null;
+}
+
+interface ApiError {
+    response?: {
+        data?: {
+            error?: string;
+            message?: string;
+        };
+    };
+}
 
 export const TotemSearch: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<any[]>([]);
+    const [results, setResults] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
 
-    const handleSearch = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const executeSearch = async () => {
         if (!query.trim()) return;
 
         setLoading(true);
         setSearched(true);
         try {
-            // Search registrations by code, guest name, visitor name
-            const res = await api.get(`/registrations?tenantId=${tenantId}&q=${query}`);
-            // Map backend format to frontend expectation
-            const mapped = res.data.data.map((reg: unknown) => ({
+            const params = new URLSearchParams({ q: query });
+            if (tenantId) params.set("tenantId", tenantId);
+            const res = await api.get<RegistrationsResponse>(`/registrations?${params.toString()}`);
+            const mapped = res.data.data.map((reg) => ({
                 id: reg.id,
                 code: reg.code,
                 status: reg.status,
@@ -36,7 +67,7 @@ export const TotemSearch: React.FC = () => {
                 ticketName: reg.ticket?.name
             }));
             setResults(mapped);
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
             toast.error(t("totem.search.search_error", "Erro ao buscar"));
             setResults([]);
@@ -45,14 +76,19 @@ export const TotemSearch: React.FC = () => {
         }
     };
 
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await executeSearch();
+    };
+
     const handleCheckIn = async (ticketCode: string) => {
         try {
             await api.post('/registrations/checkin', { code: ticketCode });
             toast.success(t("totem.search.checkin_success", "Check-in realizado!"));
-            // Refresh results
-            handleSearch({ preventDefault: () => { } } as unknown);
-        } catch (error: unknown) {
-            toast.error(error.response?.data?.error || t("totem.search.checkin_error", "Erro ao realizar check-in"));
+            await executeSearch();
+        } catch (error) {
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.error || apiError.response?.data?.message || t("totem.search.checkin_error", "Erro ao realizar check-in"));
         }
     };
 

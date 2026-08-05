@@ -1,39 +1,7 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { 
-    Brain, 
-    DollarSign, 
-    BarChart3, 
-    Cpu, 
-    AlertTriangle, 
-    Building2, 
-    TrendingUp, 
-    Zap, 
-    ShieldAlert, 
-    Globe, 
-    Activity, 
-    ActivitySquare,
-    Layers,
-    ArrowUpRight,
-    RefreshCw,
-    Network,
-    Gauge,
-    Server,
-    LineChart,
-    PieChart,
-    Search,
-    Filter,
-    Coins,
-    Microchip,
-    Target,
-    BarChart,
-    Wallet,
-    Binary,
-    Terminal,
-    Fingerprint,
-    ShieldCheck
-} from "lucide-react";
+import { Brain, AlertTriangle, Activity, ActivitySquare, RefreshCw, Network, Gauge, Coins, Microchip, Wallet, Binary, Terminal, Fingerprint, ShieldCheck } from "lucide-react";
 import { 
     Button, 
     Card, 
@@ -41,7 +9,7 @@ import {
     AnimateIn,
     AnimatedCounter
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
 interface AIReport {
@@ -70,7 +38,7 @@ interface AIReport {
 }
 
 export const MasterAICosts: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [report, setReport] = useState<AIReport | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -79,7 +47,7 @@ export const MasterAICosts: React.FC = () => {
             setLoading(true);
             const res = await api.get("/ai-costs/report");
             setReport(res.data);
-        } catch (error: unknown) {
+        } catch (_error: unknown) {
             toast.error("Erro na sincronização de telemetria neuronal.");
         } finally {
             setLoading(false);

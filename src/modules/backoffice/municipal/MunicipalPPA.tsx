@@ -1,25 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+﻿import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { 
-    Loader2, 
-    Target, 
-    TrendingUp, 
-    Building, 
-    Coins,
-    ChevronRight,
-    Search,
-    Calendar,
-    Activity,
-    Flag,
-    ArrowUpRight,
-    Zap,
-    Download,
-    Globe
-} from "lucide-react";
+import { Target, Flag, Zap, Download, Globe } from "lucide-react";
 import { 
     Button, 
     Card, 
@@ -27,13 +12,25 @@ import {
     AnimateIn, 
     AnimatedCounter 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+type PPAGoalBreakdown = {
+    tenantName: string;
+    currentValue: number;
+    targetValue: number;
+};
 
+type PPAGoal = {
+    title: string;
+    metric?: string | null;
+    currentValue: number;
+    targetValue: number;
+    goals: PPAGoalBreakdown[];
+};
 export const MunicipalPPA: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [goals, setGoals] = useState<any[]>([]);
+    const [goals, setGoals] = useState<PPAGoal[]>([]);
     const [loading, setLoading] = useState(true);
     const [year, setYear] = useState(new Date().getFullYear());
 
@@ -41,15 +38,15 @@ export const MunicipalPPA: React.FC = () => {
         if (!tenantId) return;
         try {
             setLoading(true);
-            const res = await api.get(`/ppa/consolidated?tenantId=${tenantId}&year=${year}`);
-            setGoals(res.data);
+            const res = await api.get<PPAGoal[]>(`/ppa/consolidated?tenantId=${tenantId}&year=${year}`);
+            setGoals(Array.isArray(res.data) ? res.data : []);
         } catch (error) { 
             logger.error(error); 
             toast.error(t("municipal.ppa.error_load", "Erro ao consolidar metas do PPA."));
         } finally { 
             setLoading(false); 
         }
-    }, [tenantId, year]);
+    }, [tenantId, year, t]);
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -221,7 +218,7 @@ export const MunicipalPPA: React.FC = () => {
                                                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t("municipal.ppa.execution_by_unit", "Execução por Unidade")}</span>
                                             </div>
                                             <div className="grid grid-cols-1 gap-3">
-                                                {g.goals.map((item: unknown, i: number) => (
+                                                {g.goals.map((item, i: number) => (
                                                     <div key={i} className="flex items-center justify-between p-4 bg-white/[0.01] hover:bg-white/[0.03] rounded-2xl border border-white/5 transition-all">
                                                         <div className="flex items-center gap-3">
                                                             <div className={`w-1.5 h-1.5 rounded-full ${item.currentValue >= item.targetValue ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-700'}`} />

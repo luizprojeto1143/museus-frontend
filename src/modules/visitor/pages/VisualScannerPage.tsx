@@ -1,7 +1,10 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import { storage } from "@/utils/storage";
 
 import React, { useEffect, useRef, useState } from "react";
+import type { Tensor2D } from "@tensorflow/tfjs";
+import type { MobileNet } from "@tensorflow-models/mobilenet";
+import type { KNNClassifier } from "@tensorflow-models/knn-classifier";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
@@ -11,6 +14,14 @@ import { Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import "./VisualScanner.css";
 
+
+type ScannerModelResponse = {
+    dataset?: Record<string, number[]>;
+};
+
+type WorksResponse = {
+    data?: Array<{ id: string; title: string }>;
+};
 export const VisualScannerPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -19,8 +30,8 @@ export const VisualScannerPage: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState(t("visitor.visualScanner.loadingModel", "Carregando modelo de IA..."));
-    const [classifier, setClassifier] = useState<unknown>(null);
-    const [net, setNet] = useState<unknown>(null);
+    const [classifier, setClassifier] = useState<KNNClassifier | null>(null);
+    const [net, setNet] = useState<MobileNet | null>(null);
     const [scanning, setScanning] = useState(false);
     const [match, setMatch] = useState<{ label: string; conf: number } | null>(null);
 
@@ -55,11 +66,23 @@ export const VisualScannerPage: React.FC = () => {
                     setStatus(t("visitor.visualScanner.loadingWorks", "Carregando modelo treinado..."));
                 }
 
-                const savedModel = storage.get(`scanner_model_${tenantId}`);
-                if (savedModel) {
+                let datasetObj: Record<string, number[]> | null = null;
+                try {
+                    const remoteModel = await api.get<ScannerModelResponse>(`/scanner/models/${tenantId}`);
+                    datasetObj = remoteModel.data?.dataset || null;
+                } catch (error) {
+                    logger.warn("Modelo remoto do scanner indisponivel, tentando fallback local.", error);
+                }
+
+                if (!datasetObj) {
+                    const savedModel = storage.get<Record<string, number[]> | string>(`scanner_model_${tenantId}`);
+                    if (typeof savedModel === "string") datasetObj = JSON.parse(savedModel) as Record<string, number[]>;
+                    else if (savedModel) datasetObj = savedModel;
+                }
+
+                if (datasetObj) {
                     try {
-                        const datasetObj = JSON.parse(savedModel);
-                        const dataset: Record<string, any> = {};
+                        const dataset: Record<string, Tensor2D> = {};
                         
                         // Import tf for tensor creation if not available in current scope
                         const tf = await import("@tensorflow/tfjs");
@@ -68,11 +91,11 @@ export const VisualScannerPage: React.FC = () => {
                             dataset[key] = tf.tensor(datasetObj[key], [datasetObj[key].length / 1024, 1024]);
                         });
                         loadedClassifier.setClassifierDataset(dataset);
-                    } catch (e: unknown) {
+                    } catch (e) {
                         logger.error("Erro ao carregar modelo", e);
                     }
                 } else {
-                    if (isMounted) setStatus("Scan offline disponível.");
+                    if (isMounted) setStatus("Nenhum modelo visual treinado para este museu.");
                 }
 
                 if (isMounted) {
@@ -80,7 +103,7 @@ export const VisualScannerPage: React.FC = () => {
                     setStatus("");
                 }
 
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error("Error initializing scanner:", err);
                 if (isMounted) {
                     setStatus(t("common.error", "Erro ao inicializar scanner"));
@@ -104,7 +127,7 @@ export const VisualScannerPage: React.FC = () => {
                 videoRef.current.play();
                 setScanning(true);
                 requestAnimationFrame(scanLoop);
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error("Error accessing camera:", err);
                 addToast(t("visitor.scan.permission", "Precisamos de permissão para acessar a câmera"), "error");
             }
@@ -138,7 +161,7 @@ export const VisualScannerPage: React.FC = () => {
                     setMatch(null);
                 }
                 activation.dispose();
-            } catch (e: unknown) {
+            } catch (e) {
                 logger.error("Error predicting", e);
             }
         }
@@ -150,7 +173,7 @@ export const VisualScannerPage: React.FC = () => {
 
     useEffect(() => {
         if (tenantId) {
-            api.get("/works", { params: { tenantId, limit: 100 } })
+            api.get<WorksResponse>("/works", { params: { tenantId, limit: 100 } })
                 .then(res => {
                     const list = res.data.data || [];
                     const mapping: Record<string, string> = {};
@@ -248,3 +271,6 @@ export const VisualScannerPage: React.FC = () => {
         </div>
     );
 };
+
+
+

@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState } from "react";
@@ -6,8 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
-import { Button, Input } from "../../../../components/ui";
-import { Search, Plus, Filter, FileText, Calendar, DollarSign, Clock, MoreHorizontal, Edit, Trash2, CheckCircle, Users } from "lucide-react";
+import { Button } from "../../../../components/ui";
+import { Search, Plus, Filter, FileText, Calendar, DollarSign, Edit, CheckCircle, Users, Scale } from "lucide-react";
 import "../../equipment/pages/AdminShared.css";
 
 
@@ -44,8 +44,8 @@ export const MunicipalNotices: React.FC = () => {
     const fetchNotices = () => {
         if (!tenantId) return;
         setLoading(true);
-        api.get("/notices", { params: { tenantId } })
-            .then(res => setNotices(res.data))
+        api.get<Notice[]>("/notices", { params: { tenantId } })
+            .then(res => setNotices(Array.isArray(res.data) ? res.data : []))
             .catch(err => {
                 logger.error("Erro ao carregar editais", err);
                 setNotices([]);
@@ -56,6 +56,7 @@ export const MunicipalNotices: React.FC = () => {
 
     useEffect(() => {
         fetchNotices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId]);
 
     const handlePublish = async (id: string) => {
@@ -64,7 +65,7 @@ export const MunicipalNotices: React.FC = () => {
             addToast("Edital publicado com sucesso!", "success");
             fetchNotices();
         } catch (err) {
-            logger.error(err);
+            logger.error("Erro ao publicar edital.", err);
             addToast("Erro ao publicar edital", "error");
         }
     };
@@ -259,6 +260,15 @@ export const MunicipalNotices: React.FC = () => {
                                             >
                                                 <Users size={16} className="mr-2" /> Projetos
                                             </Button>
+                                            {["RESULTS_PUBLISHED", "FINISHED"].includes(notice.status) && (
+                                                <Button
+                                                    variant="ghost"
+                                                    className="btn-ghost w-full md:w-auto justify-center hover:bg-zinc-900/40 border border-transparent hover:border-white/10"
+                                                    onClick={() => navigate(`/municipal/editais/${notice.id}/transparencia`)}
+                                                >
+                                                    <Scale size={16} className="mr-2" /> Transparência
+                                                </Button>
+                                            )}
                                             <Button
                                                 variant="ghost"
                                                 className="btn-ghost w-full md:w-auto justify-center hover:bg-zinc-900/40 border border-gold/20/5 border border-transparent hover:border-white/10"

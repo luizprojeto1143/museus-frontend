@@ -7,6 +7,8 @@ import React, {
 import { api, baseURL, isDemoMode } from "../../api/client";
 import { storage } from "@/utils/storage";
 import { Role, TenantType, normalizeRole, normalizeTenantType } from "@/types/auth";
+import { isAxiosError } from "axios";
+export type { Role };
 
 import { logger } from "@/utils/logger";
 // ─── Tipos ────────────────────────────────────────────────────────
@@ -30,6 +32,43 @@ interface AuthState {
   permissions: Record<string, boolean> | null;
   tenantSlug?: string | null;
   user?: { email: string | null; name: string | null; id: string | null; tenantId: string | null } | null;
+}
+
+interface AuthUserResponse {
+  email?: string | null;
+  name?: string | null;
+  id?: string | null;
+  tenantId?: string | null;
+  role?: string | null;
+  hasProviderProfile?: boolean | null;
+  cityId?: string | null;
+  permissions?: Record<string, boolean> | null;
+}
+
+interface AuthSessionResponse {
+  role?: string | null;
+  tenantId?: string | null;
+  equipamentoId?: string | null;
+  tenantType?: string | null;
+  hasProviderProfile?: boolean | null;
+  cityId?: string | null;
+  permissions?: Record<string, boolean> | null;
+  email?: string | null;
+  name?: string | null;
+  id?: string | null;
+  user?: AuthUserResponse | null;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return err instanceof Error ? err.message : fallback;
 }
 
 interface AuthContextValue extends AuthState {
@@ -131,15 +170,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login: AuthContextValue["login"] = async ({ email, password }) => {
     if (!isDemoMode && baseURL) {
       try {
-        const res = await api.post("/auth/login", { email, password });
-        const data = res.data as {
-        role?: string;
-        tenantId?: string | null;
-        equipamentoId?: string | null;
-        tenantType?: string | null;
-        hasProviderProfile?: boolean;
-        user?: { email: string; name?: string; id?: string; hasProviderProfile?: boolean };
-      };
+        const res = await api.post<AuthSessionResponse>("/auth/login", { email, password });
+        const data = res.data;
 
       const newState: AuthState = {
         role: normalizeRole(data.role),
@@ -151,8 +183,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         userId: data.user?.id ?? null,
         hasProviderProfile: data.hasProviderProfile ?? data.user?.hasProviderProfile ?? false,
         isGuest: false,
-        cityId: (data as unknown).cityId ?? (data.user as unknown)?.cityId ?? null,
-        permissions: (data as unknown).permissions ?? (data.user as unknown)?.permissions ?? null,
+        cityId: data.cityId ?? data.user?.cityId ?? null,
+        permissions: data.permissions ?? data.user?.permissions ?? null,
       };
 
       dispatch({ type: "LOGIN", payload: newState });
@@ -162,11 +194,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return { role: newState.role!, tenantType: newState.tenantType, hasProviderProfile: newState.hasProviderProfile };
     } catch (err: unknown) {
-      const message = err instanceof Error ? (err as unknown).response?.data?.message || err.message : "Erro de conexão";
-      throw new Error(message);
+      throw new Error(getApiErrorMessage(err, "Erro de conexao"));
     }
-  } else {
-    // Modo demo
+  } else if (isDemoMode) {
+      logger.warn("[Auth] Demo mode is enabled for local development only.");
       const simulatedRole: Role = email.includes("master") ? "master" : normalizeRole("admin");
       const simulatedTenantType = email.includes("producer") ? normalizeTenantType("PRODUCER") : normalizeTenantType("MUSEUM");
 
@@ -188,6 +219,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       persistAuth(newState);
 
       return { role: simulatedRole, tenantType: simulatedTenantType, hasProviderProfile: false };
+    } else {
+      throw new Error("Login indisponivel: VITE_API_URL precisa apontar para o backend de producao.");
     }
   };
 
@@ -254,18 +287,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   React.useEffect(() => {
     const restore = async () => {
       try {
-        const res = await api.get("/auth/me");
+        const res = await api.get<AuthSessionResponse>("/auth/me");
         if (res.data) {
           const user = res.data;
           const restoredState: AuthState = {
             role: normalizeRole(user.role),
-            tenantId: user.tenantId,
-            equipamentoId: user.equipamentoId,
+            tenantId: user.tenantId ?? null,
+            equipamentoId: user.equipamentoId ?? null,
             tenantType: normalizeTenantType(user.tenantType),
-            email: user.email,
-            name: user.name,
-            userId: user.id,
-            hasProviderProfile: user.hasProviderProfile,
+            email: user.email ?? null,
+            name: user.name ?? null,
+            userId: user.id ?? null,
+            hasProviderProfile: user.hasProviderProfile ?? false,
             isGuest: false,
             cityId: user.cityId || null,
             permissions: user.permissions || null,
@@ -274,7 +307,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       } catch (e: unknown) {
         // Not authenticated or error, clear storage
-        if ((e as unknown).response?.status !== 401) {
+        if (!isAxiosError(e) || e.response?.status !== 401) {
           logger.info("Session restore failed, treating as guest/logged out.");
         }
         dispatch({ type: "LOGOUT" });
@@ -286,7 +319,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     };
 
-    if (import.meta.env.VITE_DEMO_MODE === "true") {
+    if (isDemoMode) {
       setIsRestoring(false);
     } else {
       restore();
@@ -324,7 +357,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) {
@@ -332,3 +364,4 @@ export function useAuth(): AuthContextValue {
   }
   return ctx;
 }
+

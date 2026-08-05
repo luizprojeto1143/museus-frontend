@@ -1,11 +1,11 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Button, AnimateIn, Badge, Card as UICard } from "../../../../components/ui";
-import { FileText, Rocket, LayoutDashboard, Calendar, Accessibility, Folder } from "lucide-react";
+import { Button, Badge } from "../../../../components/ui";
+import { FileText, Rocket, LayoutDashboard } from "lucide-react";
 import "./SecretaryDashboard.css"; // Import the new styles
 
 type DashboardData = {
@@ -55,6 +55,7 @@ const SecretaryDashboard: React.FC = () => {
 
     useEffect(() => {
         fetchDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchDashboard = async () => {
@@ -158,7 +159,7 @@ const SecretaryDashboard: React.FC = () => {
             {/* Alerts */}
             {data.alerts.length > 0 && (
                 <div className="sec-alerts">
-                    <h2 className="sec-section-title">{t("admin.secretarydashboard.AlertasDeAteno", `⚠️ Alertas de Atenção`)}</h2>
+                    <h2 className="sec-section-title">{t("admin.secretarydashboard.AlertasDeAteno", "Alertas de Atencao")}</h2>
                     <div className="sec-alert-list">
                         {data.alerts.map((alert, idx) => (
                             <div

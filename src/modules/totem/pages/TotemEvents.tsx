@@ -3,35 +3,48 @@ import { logger } from "@/utils/logger";
 
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Calendar, Users, CheckCircle, Clock } from "lucide-react";
+import { Users, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
+interface TotemEvent {
+    id: string;
+    title: string;
+    startDate: string;
+    registrationsCount?: number;
+    checkedInCount?: number;
+}
+
+interface ListResponse<T> {
+    data?: T[];
+}
+
+const unwrapList = <T,>(payload: T[] | ListResponse<T>): T[] => Array.isArray(payload) ? payload : payload.data ?? [];
 
 export const TotemEvents: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<TotemEvent[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchEvents();
-    }, [tenantId]);
-
-    const fetchEvents = async () => {
+    const fetchEvents = React.useCallback(async () => {
         try {
-            // Fetch events for today (or all upcoming)
-            // Ideally backend supports date filter. Using generic list for now.
-            const res = await api.get(`/events?tenantId=${tenantId}`);
-            setEvents(res.data);
-        } catch (error: unknown) {
+            const params = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : "";
+            const res = await api.get<TotemEvent[] | ListResponse<TotemEvent>>(`/events${params}`);
+            setEvents(unwrapList(res.data));
+        } catch (error) {
             logger.error(error);
             toast.error(t("totem.events.load_error", "Erro ao carregar eventos"));
         } finally {
             setLoading(false);
         }
-    };
+    }, [tenantId, t]);
+
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
 
     return (
         <div style={{ padding: "2rem", height: "100%", overflowY: "auto" }}>

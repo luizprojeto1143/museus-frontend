@@ -1,6 +1,6 @@
 import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
@@ -16,6 +16,25 @@ interface SurveyQuestion {
     required: boolean;
 }
 
+type SurveyAnswerValue = string | number;
+
+type EventDetailsResponse = {
+    title?: string;
+};
+
+type SurveyResponseItem = {
+    questionId: string;
+    answer: SurveyAnswerValue;
+};
+
+type ApiError = {
+    response?: {
+        data?: {
+            error?: string;
+        };
+    };
+};
+
 export const EventSurveyPage: React.FC = () => {
     const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
@@ -23,7 +42,10 @@ export const EventSurveyPage: React.FC = () => {
     const navigate = useNavigate();
     const { addToast } = useToast();
 
-    const currentUser = isAuthenticated ? { email: authEmail || "" } : null;
+    const currentUser = useMemo(
+        () => isAuthenticated ? { email: authEmail || "" } : null,
+        [authEmail, isAuthenticated]
+    );
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -31,33 +53,33 @@ export const EventSurveyPage: React.FC = () => {
     const [eventTitle, setEventTitle] = useState("");
     const [questions, setQuestions] = useState<SurveyQuestion[]>([]);
 
-    const [answers, setAnswers] = useState<Record<string, any>>({});
+    const [answers, setAnswers] = useState<Record<string, SurveyAnswerValue>>({});
     const [guestEmail, setGuestEmail] = useState("");
 
     const loadSurvey = useCallback(async () => {
         try {
-            const eventRes = await api.get(`/events/${id}`);
-            setEventTitle(eventRes.data.title);
+            const eventRes = await api.get<EventDetailsResponse>(`/events/${id}`);
+            setEventTitle(eventRes.data.title || "");
 
-            const surveyRes = await api.get(`/events/${id}/survey`);
-            setQuestions(surveyRes.data);
+            const surveyRes = await api.get<SurveyQuestion[]>(`/events/${id}/survey`);
+            setQuestions(Array.isArray(surveyRes.data) ? surveyRes.data : []);
 
             if (currentUser) {
                 try {
-                    const myResp = await api.get(`/events/${id}/survey/my-responses`);
+                    const myResp = await api.get<SurveyResponseItem[]>(`/events/${id}/survey/my-responses`);
                     const loadedAnswers: Record<string, string | number> = {};
-                    myResp.data.forEach((r: unknown) => {
+                    myResp.data.forEach((r) => {
                         loadedAnswers[r.questionId] = r.answer;
                     });
                     setAnswers(loadedAnswers);
                     if (myResp.data.length > 0 && myResp.data.length === surveyRes.data.length) {
                         setSuccess(true);
                     }
-                } catch (error: unknown) {
+                } catch (error) {
                     logger.warn("Failed to load existing responses or none found", error);
                 }
             }
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
             addToast("Falha ao carregar a pesquisa.", "error");
         } finally {
@@ -87,15 +109,16 @@ export const EventSurveyPage: React.FC = () => {
             await api.post(`/events/${id}/survey/respond`, payload);
             setSuccess(true);
             addToast("Pesquisa enviada com sucesso!", "success");
-        } catch (err: unknown) {
+        } catch (err) {
             logger.error(err);
-            addToast(err.response?.data?.error || 'Erro ao enviar respostas.', "error");
+            const apiError = err as ApiError;
+            addToast(apiError.response?.data?.error || 'Erro ao enviar respostas.', "error");
         } finally {
             setSubmitting(false);
         }
     };
 
-    const handleAnswer = (qId: string, value: unknown) => {
+    const handleAnswer = (qId: string, value: SurveyAnswerValue) => {
         setAnswers(prev => ({ ...prev, [qId]: value }));
     };
 
@@ -172,10 +195,10 @@ export const EventSurveyPage: React.FC = () => {
                                                 key={star}
                                                 type="button"
                                                 onClick={() => handleAnswer(q.id, star)}
-                                                className={`p-3 rounded-xl transition-all hover:scale-110 ${answers[q.id] >= star ? 'text-yellow-400 bg-yellow-400/10 lg:bg-transparent' : 'text-white/10 hover:text-white/20'
+                                                className={`p-3 rounded-xl transition-all hover:scale-110 ${Number(answers[q.id] || 0) >= star ? 'text-yellow-400 bg-yellow-400/10 lg:bg-transparent' : 'text-white/10 hover:text-white/20'
                                                     }`}
                                             >
-                                                <Star className={`w-10 h-10 ${answers[q.id] >= star ? 'fill-current' : 'fill-none'}`} />
+                                                <Star className={`w-10 h-10 ${Number(answers[q.id] || 0) >= star ? 'fill-current' : 'fill-none'}`} />
                                             </button>
                                         ))}
                                     </div>
@@ -222,7 +245,7 @@ export const EventSurveyPage: React.FC = () => {
 
                                 {q.type === 'TEXT' && (
                                     <Textarea
-                                        value={answers[q.id] || ''}
+                                        value={String(answers[q.id] || '')}
                                         onChange={e => handleAnswer(q.id, e.target.value)}
                                         placeholder={t("visitor.eventsurveypage.suaOpinioImportanteParaNs", `Sua opinião é importante para nós...`)}
                                         rows={4}

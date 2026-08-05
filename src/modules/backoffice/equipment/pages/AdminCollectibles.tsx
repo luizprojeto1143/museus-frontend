@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -18,12 +18,36 @@ const rarityConfig: Record<string, { label: string; color: string; bg: string; i
     LEGENDARY: { label: 'Lendário', color: 'text-amber-400', bg: 'bg-amber-500/10', icon: <Diamond size={14} /> }
 };
 
+
+type WorkOption = {
+    id: string;
+    title: string;
+};
+
+type CollectibleCard = {
+    id: string;
+    title: string;
+    rarity: string;
+    imageUrl?: string | null;
+    totalMinted: number;
+    xpReward: number;
+    work?: { imageUrl?: string | null } | null;
+    _count?: { owners?: number };
+};
+
+type CollectibleStats = {
+    totalCards?: number;
+    totalOwned?: number;
+    byRarity?: Array<{ rarity: string; count: number }>;
+};
+
+type ListResponse<T> = T[] | { data?: T[] };
 export const AdminCollectibles: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [cards, setCards] = useState<any[]>([]);
-    const [stats, setStats] = useState<unknown>(null);
-    const [works, setWorks] = useState<any[]>([]);
+    const [cards, setCards] = useState<CollectibleCard[]>([]);
+    const [stats, setStats] = useState<CollectibleStats | null>(null);
+    const [works, setWorks] = useState<WorkOption[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({ title: '', description: '', rarity: 'COMMON', workId: '', totalMinted: '100', xpReward: '10' });
@@ -31,11 +55,11 @@ export const AdminCollectibles: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             const [c, s, w] = await Promise.all([
-                api.get(`/collectibles?tenantId=${tenantId}`),
-                api.get(`/collectibles/stats?tenantId=${tenantId}`),
-                api.get(`/works?tenantId=${tenantId}`)
+                api.get<ListResponse<CollectibleCard>>(`/collectibles?tenantId=${tenantId}`),
+                api.get<CollectibleStats>(`/collectibles/stats?tenantId=${tenantId}`),
+                api.get<ListResponse<WorkOption>>(`/works?tenantId=${tenantId}`)
             ]);
-            setCards(c.data);
+            setCards(Array.isArray(c.data) ? c.data : c.data.data || []);
             setStats(s.data);
             setWorks(Array.isArray(w.data) ? w.data : (w.data.data || []));
         } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
@@ -52,7 +76,7 @@ export const AdminCollectibles: React.FC = () => {
             setShowForm(false);
             setForm({ title: '', description: '', rarity: 'COMMON', workId: '', totalMinted: '100', xpReward: '10' });
             fetchData();
-        } catch (err) { toast.error("Erro ao criar"); }
+        } catch (_err) { toast.error("Erro ao criar"); }
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
@@ -81,7 +105,7 @@ export const AdminCollectibles: React.FC = () => {
                     </div>
                     <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                         <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", marginBottom: "0.5rem" }}>Por Raridade</p>
-                        {stats.byRarity?.map((r: unknown) => (
+                        {stats.byRarity?.map((r) => (
                             <div key={r.rarity} className="flex items-center justify-between text-sm">
                                 <span className={rarityConfig[r.rarity]?.color || 'text-gray-400'}>{rarityConfig[r.rarity]?.label || r.rarity}</span>
                                 <span style={{ color: "white", fontWeight: 700 }}>{r.count}</span>
@@ -104,7 +128,7 @@ export const AdminCollectibles: React.FC = () => {
                         <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Obra Vinculada</label>
                             <select value={form.workId} onChange={e => setForm({ ...form, workId: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="">Nenhuma</option>
-                                {works.map((w: unknown) => <option key={w.id} value={w.id}>{w.title}</option>)}
+                                {works.map((w) => <option key={w.id} value={w.id}>{w.title}</option>)}
                             </select>
                         </div>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
@@ -122,7 +146,7 @@ export const AdminCollectibles: React.FC = () => {
 
             {/* Card Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem" }}>
-                {cards.map((card: unknown) => {
+                {cards.map((card) => {
                     const r = rarityConfig[card.rarity] || rarityConfig.COMMON;
                     return (
                         <div key={card.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ padding: "1.25rem", textAlign: "center" }}>

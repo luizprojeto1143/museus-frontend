@@ -306,6 +306,22 @@
   margin-bottom: 16px;
 }
 
+.aqr-art-preview {
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  overflow: auto;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.aqr-art-scale {
+  width: max-content;
+  transform: scale(0.42);
+  transform-origin: top left;
+  margin-bottom: -540px;
+}
+
 .aqr-qr-image {
   width: 200px;
   height: 200px;

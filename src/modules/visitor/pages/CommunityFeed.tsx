@@ -2,7 +2,7 @@ import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
-import { Button, Input, Textarea } from "../../../components/ui";
+import { Button, Textarea } from "../../../components/ui";
 import { MessageSquare, Heart, Share2, Send, Clock, ShieldCheck, Lock } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,7 +25,7 @@ export const CommunityFeed: React.FC = () => {
     const [newPost, setNewPost] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const fetchPosts = async () => {
+    const fetchPosts = React.useCallback(async () => {
         try {
             const res = await api.get(`/community?targetId=${targetId}`);
             setPosts(res.data);
@@ -34,11 +34,11 @@ export const CommunityFeed: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [targetId]);
 
     useEffect(() => {
         fetchPosts();
-    }, [targetId]);
+    }, [fetchPosts]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

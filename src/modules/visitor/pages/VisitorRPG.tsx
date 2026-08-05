@@ -16,13 +16,40 @@ const classConfig: Record<string, { label: string; color: string; bg: string; ic
     LENDA: { label: 'Lenda', color: 'var(--accent-primary)', bg: 'rgba(212,175,55,0.1)', icon: <Trophy size={20} /> }
 };
 
+type RpgVisitor = {
+    class?: string | null;
+    currentXp?: number | null;
+    nextLevelXp?: number | null;
+    level?: number | null;
+    totalVisits?: number | null;
+    totalWorks?: number | null;
+    totalCards?: number | null;
+};
+
+type RpgCharacter = {
+    id: string;
+    characterName?: string | null;
+    isActive?: boolean;
+    avatarStatus?: string | null;
+    displayAvatarUrl?: string | null;
+};
+
+type RpgResponse = {
+    visitor?: RpgVisitor | null;
+    characters?: RpgCharacter[];
+};
+
+type AvatarStatusResponse = {
+    status: string;
+};
+
 export const VisitorRPG: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { isGuest } = useAuth();
     const navigate = useNavigate();
-    const [visitor, setVisitor] = useState<unknown>(null);
-    const [characters, setCharacters] = useState<any[]>([]);
-    const [activeChar, setActiveChar] = useState<unknown>(null);
+    const [visitor, setVisitor] = useState<RpgVisitor | null>(null);
+    const [characters, setCharacters] = useState<RpgCharacter[]>([]);
+    const [activeChar, setActiveChar] = useState<RpgCharacter | null>(null);
     const [loading, setLoading] = useState(true);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
@@ -31,18 +58,19 @@ export const VisitorRPG: React.FC = () => {
 
     const fetchRPG = useCallback(async () => {
         try {
-            const res = await api.get('/rpg/me');
-            setVisitor(res.data.visitor);
-            setCharacters(res.data.characters);
+            const res = await api.get<RpgResponse>('/rpg/me');
+            const loadedCharacters = res.data.characters || [];
+            setVisitor(res.data.visitor || null);
+            setCharacters(loadedCharacters);
             
-            const active = res.data.characters.find((c: unknown) => c.isActive) || res.data.characters[0];
+            const active = loadedCharacters.find((c) => c.isActive) || loadedCharacters[0];
             setActiveChar(active);
             if (active) {
-                setNewName(active.characterName);
+                setNewName(active.characterName || '');
                 setAvatarStatus(active.avatarStatus || 'NONE');
                 setIsGenerating(active.avatarStatus === 'GENERATING');
             }
-        } catch (error: unknown) { 
+        } catch (error) { 
             logger.error(error); 
         } finally { 
             setLoading(false); 
@@ -55,7 +83,7 @@ export const VisitorRPG: React.FC = () => {
 
         const interval = setInterval(async () => {
             try {
-                const res = await api.get('/rpg/avatar-status');
+                const res = await api.get<AvatarStatusResponse>('/rpg/avatar-status');
                 if (res.data.status !== 'GENERATING') {
                     setIsGenerating(false);
                     setAvatarStatus(res.data.status);
@@ -64,7 +92,7 @@ export const VisitorRPG: React.FC = () => {
                         toast.success("Seu avatar personalizado está pronto! ✨");
                     }
                 }
-            } catch (err: unknown) {
+            } catch (err) {
                 logger.error("Polling error", err);
             }
         }, 4000);
@@ -83,7 +111,7 @@ export const VisitorRPG: React.FC = () => {
             toast.success("Nome atualizado!");
             setEditing(false);
             fetchRPG();
-        } catch (err: unknown) { toast.error("Erro"); }
+        } catch (_err) { toast.error("Erro"); }
     };
 
     const handleSelfieUpload = async (file: File) => {
@@ -95,7 +123,7 @@ export const VisitorRPG: React.FC = () => {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success("Foto enviada! A IA está trabalhando...");
-        } catch (err: unknown) {
+        } catch (_err) {
             setIsGenerating(false);
             toast.error("Erro ao enviar selfie");
         }
@@ -134,7 +162,8 @@ export const VisitorRPG: React.FC = () => {
 
     if (!visitor) return null;
 
-    const cls = classConfig[visitor.class] || classConfig.NOVATO;
+    const visitorClass = visitor.class || "NOVATO";
+    const cls = classConfig[visitorClass] || classConfig.NOVATO;
     const currentXp = Number(visitor.currentXp) || 0;
     const nextLevelXp = Number(visitor.nextLevelXp) || 100;
     const xpPct = nextLevelXp > 0 ? Math.round((currentXp / nextLevelXp) * 100) : 0;
@@ -177,10 +206,10 @@ export const VisitorRPG: React.FC = () => {
                 <div className="bg-black/40 rounded-3xl p-6 border border-white/5">
                     <div className="flex justify-between items-end mb-3">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl font-black text-white italic">Nv. {visitor.level}</span>
+                            <span className="text-3xl font-black text-white italic">Nv. {visitor.level || 1}</span>
                             <span className="text-[10px] bg-yellow-600/20 text-yellow-600 px-2 rounded-md font-mono">{xpPct}%</span>
                         </div>
-                        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{visitor.currentXp.toLocaleString()} / {visitor.nextLevelXp.toLocaleString()} XP</span>
+                        <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{currentXp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP</span>
                     </div>
                     <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                         <div 
@@ -222,7 +251,7 @@ export const VisitorRPG: React.FC = () => {
                                 onClick={() => setActiveChar(char)}
                                 className={`flex-shrink-0 p-3 rounded-2xl border-2 transition-all ${activeChar?.id === char.id ? 'bg-yellow-600/20 border-yellow-600 shadow-[0_0_15px_rgba(212,175,55,0.3)]' : 'bg-white/5 border-white/10 opacity-70 hover:opacity-100'}`}
                             >
-                                <img src={char.displayAvatarUrl || '/default_avatar.png'} className="w-10 h-10 object-contain rounded-full" alt={char.characterName} />
+                                <img src={char.displayAvatarUrl || '/default_avatar.png'} className="w-10 h-10 object-contain rounded-full" alt={char.characterName || "Personagem"} />
                             </button>
                         ))}
                     </div>
@@ -267,7 +296,7 @@ export const VisitorRPG: React.FC = () => {
                 <div className="rpg-evo-title">Graus de Iniciação Cultural</div>
                 <div className="rpg-evo-path">
                     {Object.entries(classConfig).map(([key, cfg], idx) => {
-                        const reached = Object.keys(classConfig).indexOf(visitor.class) >= idx;
+                        const reached = Object.keys(classConfig).indexOf(visitorClass) >= idx;
                         return (
                             <div key={key} className={`rpg-evo-node ${reached ? 'active' : ''}`}>
                                 <div className="rpg-evo-icon">

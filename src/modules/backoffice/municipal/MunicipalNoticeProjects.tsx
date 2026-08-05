@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+﻿import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -11,28 +11,8 @@ import {
     Badge, 
     AnimateIn 
 } from "@/components/ui";
-import {
-    ArrowLeft, 
-    FileText, 
-    Calendar, 
-    Users, 
-    Sparkles,
-    ExternalLink, 
-    MapPin, 
-    DollarSign, 
-    Download, 
-    Share,
-    Filter, 
-    SortAsc, 
-    TrendingUp,
-    Search,
-    ChevronRight,
-    AlertCircle,
-    CheckCircle2,
-    Activity,
-    Target
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, FileText, Users, Sparkles, MapPin, Download, Search, ChevronRight, Activity, Target } from "lucide-react";
+import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 
 type Project = {
@@ -93,11 +73,10 @@ export const MunicipalNoticeProjects: React.FC = () => {
             setLoading(true);
             const projectsUrl = id ? `/projects?noticeId=${id}&tenantId=${tenantId}` : `/projects?tenantId=${tenantId}&consolidated=true`;
             
-            const promises = [api.get(projectsUrl)];
-            if (id) promises.push(api.get(`/notices/${id}`));
-
-            const [projectsRes, noticeRes] = await Promise.all(promises);
-            setProjects(projectsRes.data);
+            const projectsPromise = api.get<Project[]>(projectsUrl);
+            const noticePromise = id ? api.get<Notice>(`/notices/${id}`) : Promise.resolve(null);
+            const [projectsRes, noticeRes] = await Promise.all([projectsPromise, noticePromise]);
+            setProjects(Array.isArray(projectsRes.data) ? projectsRes.data : []);
             if (noticeRes) setNotice(noticeRes.data);
         } catch (err) {
             logger.error(err);
@@ -105,7 +84,7 @@ export const MunicipalNoticeProjects: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [id, tenantId]);
+    }, [id, tenantId, t]);
 
     useEffect(() => {
         fetchData();

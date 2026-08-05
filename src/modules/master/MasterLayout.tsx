@@ -26,13 +26,10 @@ import {
     Bell,
     Globe,
     Crown,
-    Percent
+    Percent,
+    QrCode
 } from "lucide-react";
-import { 
-    Button, 
-    AnimateIn, 
-    Badge 
-} from "@/components/ui";
+import { Badge } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -61,6 +58,7 @@ export const MasterLayout: React.FC<{ children: React.ReactNode }> = ({ children
         { to: "/master/accessibility-requests", label: t("master.sidebar.lbi_center", "LBI Center"), icon: <Accessibility size={20} /> },
         { to: "/master/system-health", label: t("master.sidebar.core_health", "Core Health"), icon: <Activity size={20} /> },
         { to: "/master/monitoramento", label: t("master.sidebar.observability", "Observabilidade"), icon: <Activity size={20} /> },
+        { to: "/master/qrcodes-equipamentos", label: t("master.sidebar.equipment_qrcodes", "QR Equipamentos"), icon: <QrCode size={20} /> },
         { to: "/master/financeiro", label: t("master.sidebar.financial", "Financeiro"), icon: <CreditCard size={20} /> },
         { to: "/master/financeiro/taxas", label: t("master.sidebar.fees", "Central de Taxas"), icon: <Percent size={20} /> }
     ];

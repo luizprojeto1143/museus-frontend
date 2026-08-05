@@ -25,7 +25,7 @@ export function extractQRCode(rawValue: string): string | null {
 
     // If it's just the code itself
     return rawValue.trim();
-  } catch (e) {
+  } catch (_e) {
     // Fallback if URL parsing fails but string is valid
     const parts = rawValue.split('/').filter(Boolean);
     return parts[parts.length - 1] || rawValue.trim();

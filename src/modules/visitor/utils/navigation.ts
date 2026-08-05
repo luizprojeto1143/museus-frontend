@@ -1,4 +1,6 @@
 import React from 'react';
+import type { TFunction } from 'i18next';
+import type { Terminology } from '../../../hooks/useTerminology';
 
 export interface NavLink {
   to: string;
@@ -7,8 +9,8 @@ export interface NavLink {
   feature: string | null;
 }
 
-export const getVisitorLinks = (t: unknown, term: unknown, isCityMode: boolean): NavLink[] => {
-  const _t = typeof t === 'function' ? t : (k: string, d: string) => d;
+export const getVisitorLinks = (t: TFunction, term: Terminology, isCityMode: boolean): NavLink[] => {
+  const _t = (key: string, fallback?: string) => t(key, fallback || key);
   return [
     { to: "/hub", label: _t("visitor.sidebar.home", "Início"), icon: "🏠", feature: null },
   { to: "/obras", label: term.works, icon: isCityMode ? "🏛️" : "🎨", feature: "featureWorks" },

@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
+import { isAxiosError } from 'axios';
 import { Mail, Send, CheckCircle } from 'lucide-react';
 import { api } from '../../api/client';
 import { useAuth } from '../../modules/auth/AuthContext';
+
+type ApiErrorResponse = {
+    message?: string;
+};
+
+const getApiErrorMessage = (err: unknown, fallback: string) => {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || fallback;
+    }
+    return fallback;
+};
 
 /**
  * Newsletter Subscription Form
@@ -36,8 +48,7 @@ export const NewsletterForm: React.FC<{ variant?: 'inline' | 'card' }> = ({
             });
             setSuccess(true);
         } catch (err: unknown) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setError((err as unknown).response?.data?.message || 'Erro ao inscrever');
+            setError(getApiErrorMessage(err, 'Erro ao inscrever'));
         } finally {
             setLoading(false);
         }

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
+import { toast } from "react-hot-toast";
 
 type CategoryItem = {
   id: string;
@@ -16,14 +17,15 @@ export const AdminCategories: React.FC = () => {
   const { t } = useTranslation();
   const { tenantId } = useAuth();
   const [categories, setCategories] = useState<CategoryItem[]>([]);
+  const [categoryToDelete, setCategoryToDelete] = useState<CategoryItem | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!tenantId) return;
 
-    api.get("/categories", { params: { tenantId } })
+    api.get<CategoryItem[]>("/categories", { params: { tenantId } })
       .then(res => {
-        setCategories(res.data);
+        setCategories(Array.isArray(res.data) ? res.data : []);
       })
       .catch(err => {
         logger.error("Erro ao buscar categorias", err);
@@ -32,15 +34,12 @@ export const AdminCategories: React.FC = () => {
   }, [tenantId]);
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t("common.confirmDelete"))) return;
-
-
-
     try {
       await api.delete(`/categories/${id}`);
       setCategories(categories.filter(c => c.id !== id));
+      setCategoryToDelete(null);
     } catch {
-      logger.warn("Alert:", t("common.error"));
+      toast.error(t("common.error"));
     }
   };
 
@@ -97,7 +96,7 @@ export const AdminCategories: React.FC = () => {
                 </Link>
                 <button
                   className="px-4 py-2 rounded border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-all"
-                  onClick={() => handleDelete(cat.id)}
+                  onClick={() => setCategoryToDelete(cat)}
                 >
                   {t("common.delete")}
                 </button>
@@ -112,6 +111,23 @@ export const AdminCategories: React.FC = () => {
               </Link>
             </div>
           )}
+        </div>
+      )}
+
+      {categoryToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+          <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[var(--bg-surface)] p-6 shadow-2xl">
+            <h2 className="text-xl font-bold mb-3">{t("common.delete")}</h2>
+            <p className="text-sm opacity-80 mb-6">{t("common.confirmDelete")}</p>
+            <div className="flex justify-end gap-3">
+              <button type="button" className="btn btn-secondary" onClick={() => setCategoryToDelete(null)}>
+                {t("common.cancel")}
+              </button>
+              <button type="button" className="btn btn-primary bg-red-600" onClick={() => void handleDelete(categoryToDelete.id)}>
+                {t("common.confirm", "Confirmar")}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

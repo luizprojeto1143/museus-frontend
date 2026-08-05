@@ -4,16 +4,25 @@ import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, FileText, Download, Calendar } from "lucide-react";
+import { Loader2, FileText, Download } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import "../../equipment/pages/AdminShared.css";
 
+type AnalyticsSummary = {
+    tenantName?: string | null;
+    totalVisitors?: number;
+    totalEvents?: number;
+    totalRevenue?: number;
+    totalWorks?: number;
+    totalReviews?: number;
+    avgRating?: number;
+};
 
 export const MunicipalTCEExport: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [stats, setStats] = useState<unknown>(null);
+    const [stats, setStats] = useState<AnalyticsSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [year, setYear] = useState(new Date().getFullYear());
     const [quarter, setQuarter] = useState(Math.ceil((new Date().getMonth() + 1) / 3));
@@ -21,7 +30,7 @@ export const MunicipalTCEExport: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/analytics/summary?tenantId=${tenantId}`);
+            const res = await api.get<AnalyticsSummary>(`/analytics/summary?tenantId=${tenantId}`);
             setStats(res.data);
         } catch (error) { logger.error(error); }
         finally { setLoading(false); }
@@ -44,14 +53,14 @@ export const MunicipalTCEExport: React.FC = () => {
             observacoes: ''
         };
         const csv = Object.entries(data).map(([k, v]) => `${k};${v}`).join('\n');
-        const blob = new Blob([`Relatório TCE-MG\n${csv}`], { type: 'text/csv;charset=utf-8;' });
+        const blob = new Blob([`Relatï¿½rio TCE-MG\n${csv}`], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `tce_${year}_Q${quarter}.csv`;
         a.click();
         URL.revokeObjectURL(url);
-        toast.success("Relatório exportado!");
+        toast.success("Relatï¿½rio exportado!");
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
@@ -60,8 +69,8 @@ export const MunicipalTCEExport: React.FC = () => {
         <div style={{ display: "grid", gap: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
-                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.tceexport.exportaoTcemg", `Exportação TCE-MG`)}</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.tceexport.relatrioFormatadoParaOTribunalDeContas", `Relatório formatado para o Tribunal de Contas`)}</p>
+                    <h1 className="section-title" style={{ margin: 0 }}>{t("admin.tceexport.exportaoTcemg", `Exportaï¿½ï¿½o TCE-MG`)}</h1>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>{t("admin.tceexport.relatrioFormatadoParaOTribunalDeContas", `Relatï¿½rio formatado para o Tribunal de Contas`)}</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <select value={year} onChange={e => setYear(Number(e.target.value))} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -78,7 +87,7 @@ export const MunicipalTCEExport: React.FC = () => {
             <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ overflow: "hidden", padding: 0 }}>
                 <div className="px-6 py-4 border-b border-white/5 flex items-center gap-2">
                     <FileText size={18} className="text-amber-500" />
-                    <h2 className="card-title" style={{ margin: 0 }}>Prévia do Relatório — {year} Q{quarter}</h2>
+                    <h2 className="card-title" style={{ margin: 0 }}>Prï¿½via do Relatï¿½rio ï¿½ {year} Q{quarter}</h2>
                 </div>
                 <table className="w-full text-left">
                     <thead className="bg-black/40 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
@@ -86,11 +95,11 @@ export const MunicipalTCEExport: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {[
-                            { label: 'Visitantes no Período', value: stats?.totalVisitors?.toLocaleString("pt-BR") || '0' },
+                            { label: 'Visitantes no Perï¿½odo', value: stats?.totalVisitors?.toLocaleString("pt-BR") || '0' },
                             { label: 'Eventos Realizados', value: stats?.totalEvents || '0' },
                             { label: 'Total de Obras no Acervo', value: stats?.totalWorks || '0' },
-                            { label: 'Avaliações Recebidas', value: stats?.totalReviews || '0' },
-                            { label: 'Nota Média do Público', value: stats?.avgRating ? `${stats.avgRating.toFixed(1)}/5` : 'N/A' },
+                            { label: 'Avaliaï¿½ï¿½es Recebidas', value: stats?.totalReviews || '0' },
+                            { label: 'Nota Mï¿½dia do Pï¿½blico', value: stats?.avgRating ? `${stats.avgRating.toFixed(1)}/5` : 'N/A' },
                             { label: 'Receita Registrada', value: stats?.totalRevenue ? `R$ ${stats.totalRevenue.toLocaleString("pt-BR")}` : 'R$ 0,00' }
                         ].map((row, i) => (
                             <tr key={i} className="hover:bg-zinc-900/40 border border-gold/20/5">
@@ -104,7 +113,7 @@ export const MunicipalTCEExport: React.FC = () => {
 
             <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-5">
                 <p className="text-amber-400 text-sm font-bold mb-1">?? Nota</p>
-                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.tceexport.esteUmRelatrioSimplificadoParaAtenderAoF", `Este é um relatório simplificado. Para atender ao formato exato do TCE-MG, ajuste os campos conforme o modelo oficial do seu município.`)}</p>
+                <p style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("admin.tceexport.esteUmRelatrioSimplificadoParaAtenderAoF", `Este ï¿½ um relatï¿½rio simplificado. Para atender ao formato exato do TCE-MG, ajuste os campos conforme o modelo oficial do seu municï¿½pio.`)}</p>
             </div>
         </div>
     );

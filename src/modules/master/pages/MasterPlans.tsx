@@ -1,38 +1,8 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+﻿import React, { useEffect, useState, useCallback } from "react";
 import {
 useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
-import { 
-    Plus, 
-    Edit, 
-    Trash2, 
-    Shield, 
-    Zap, 
-    FileText, 
-    CheckCircle2, 
-    DollarSign,
-    Target,
-    Layers,
-    Cpu,
-    Activity,
-    Globe,
-    Crown,
-    ArrowUpRight,
-    X,
-    Server,
-    ShieldCheck,
-    BarChart,
-    Diamond,
-    Rocket,
-    CloudCog,
-    Briefcase,
-    Gem,
-    Workflow,
-    RefreshCw,
-    TrendingUp,
-    ShieldAlert,
-    User, Code,
-} from "lucide-react";
+import { Plus, Edit, Trash2, Shield, Zap, CheckCircle2, DollarSign, Layers, Cpu, Globe, Crown, X, Server, ShieldCheck, BarChart, Diamond, Rocket, CloudCog, Briefcase, Gem, Workflow, RefreshCw, TrendingUp, User, Code } from "lucide-react";
 import { 
     Button, 
     Input, 
@@ -45,6 +15,8 @@ import {
 } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 type Plan = {
     id: string;
@@ -58,8 +30,8 @@ type Plan = {
     maxEvents: number;
     maxChildTenants: number;
     maxUsers: number;
-    aiTier: string;
-    slaTier: string;
+    aiTier: AiTier;
+    slaTier: SlaTier;
     supportResponseHours: number;
     monthlyPrice?: number;
     hasExecutiveReports: boolean;
@@ -68,6 +40,52 @@ type Plan = {
     hasWhiteLabel: boolean;
     _count?: { tenants: number };
 };
+
+type AiTier = "BASIC" | "CONTINUOUS" | "ADVANCED";
+type SlaTier = "STANDARD" | "EXTENDED" | "DEDICATED";
+
+type PlanFormState = Omit<Plan, "id" | "_count" | "description" | "monthlyPrice" | "aiTier" | "slaTier"> & {
+    description: string;
+    monthlyPrice: number;
+    aiTier: AiTier;
+    slaTier: SlaTier;
+};
+
+type NumericPlanField = "maxWorks" | "maxActiveProjects" | "maxAIAnalyses" | "maxUsers";
+type BooleanPlanField = "hasExecutiveReports" | "hasLegalCompliance" | "hasAPIAccess" | "hasWhiteLabel";
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const planSchema = z.object({
+    name: z.string().trim().min(2, "Informe o nome do plano."),
+    description: z.string().trim().optional(),
+    maxActiveProjects: z.number().int().min(0),
+    maxAccessibilityReqs: z.number().int().min(0),
+    maxReportsPerMonth: z.number().int().min(0),
+    maxAIAnalyses: z.number().int().min(0),
+    maxWorks: z.number().int().min(0),
+    maxEvents: z.number().int().min(0),
+    maxChildTenants: z.number().int().min(0),
+    maxUsers: z.number().int().min(0),
+    aiTier: z.enum(["BASIC", "CONTINUOUS", "ADVANCED"]),
+    slaTier: z.enum(["STANDARD", "EXTENDED", "DEDICATED"]),
+    supportResponseHours: z.number().int().min(0),
+    monthlyPrice: z.number().min(0),
+    hasExecutiveReports: z.boolean(),
+    hasLegalCompliance: z.boolean(),
+    hasAPIAccess: z.boolean(),
+    hasWhiteLabel: z.boolean()
+});
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 const aiTierLabels: Record<string, string> = {
     BASIC: "Básico",
@@ -82,19 +100,20 @@ const slaTierLabels: Record<string, string> = {
 };
 
 export const MasterPlans: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<Plan | null>(null);
 
     const fetchPlans = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await api.get("/plans");
-            setPlans(response.data || []);
-        } catch (err: unknown) {
-            toast.error("Erro na sincronização de camadas de serviço.");
+            const response = await api.get<Plan[]>("/plans");
+            setPlans(Array.isArray(response.data) ? response.data : []);
+        } catch (err) {
+            toast.error(getApiErrorMessage(err, "Erro na sincronização de camadas de serviço."));
         } finally {
             setLoading(false);
         }
@@ -104,14 +123,16 @@ export const MasterPlans: React.FC = () => {
         fetchPlans();
     }, [fetchPlans]);
 
-    const deletePlan = async (id: string) => {
-        if (!window.confirm("PROTOCOL: Tem certeza que deseja eliminar esta camada de serviço? Todas as instâncias vinculadas poderão ser afetadas.")) return;
+    const deletePlan = async () => {
+        if (!deleteTarget) return;
+
         try {
-            await api.delete(`/plans/${id}`);
+            await api.delete(`/plans/${deleteTarget.id}`);
+            setDeleteTarget(null);
             toast.success("Plano removido com sucesso.");
             fetchPlans();
-        } catch (err: unknown) {
-            toast.error("Erro ao excluir plano: verifique dependências ativas.");
+        } catch (err) {
+            toast.error(getApiErrorMessage(err, "Erro ao excluir plano: verifique dependências ativas."));
         }
     };
 
@@ -266,7 +287,7 @@ export const MasterPlans: React.FC = () => {
                                             <Edit size={18} className="mr-3" /> Revisar Tier
                                         </Button>
                                         <button
-                                            onClick={() => deletePlan(plan.id)}
+                                            onClick={() => setDeleteTarget(plan)}
                                             className="w-14 h-14 rounded-2xl bg-rose-500/5 text-rose-500/40 border border-rose-500/10 flex items-center justify-center hover:bg-rose-600 hover:text-white transition-all active:scale-95 group/del shadow-xl"
                                         >
                                             <Trash2 size={18} className="group-hover/del:scale-110 transition-transform" />
@@ -280,6 +301,42 @@ export const MasterPlans: React.FC = () => {
                     ))}
                 </AnimatePresence>
             </div>
+
+            <AnimatePresence>
+                {deleteTarget && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+                            onClick={() => setDeleteTarget(null)}
+                        />
+                        <motion.div
+                            initial={{ scale: 0.94, opacity: 0, y: 12 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.94, opacity: 0, y: 12 }}
+                            className="relative w-full max-w-md rounded-[32px] border border-white/10 bg-slate-950 p-7 shadow-2xl"
+                        >
+                            <div className="mb-6 flex items-start gap-4">
+                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-300">
+                                    <Trash2 size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-white">Excluir plano</h3>
+                                    <p className="mt-1 text-sm leading-relaxed text-slate-400">
+                                        "{deleteTarget.name}" será removido das camadas comerciais. Instituições vinculadas podem ser afetadas.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Button type="button" variant="glass" className="h-12 rounded-2xl" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+                                <Button type="button" className="h-12 rounded-2xl bg-rose-600 text-white font-black hover:bg-rose-500" onClick={deletePlan}>Excluir</Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             {/* Strategic Footer */}
             <div className="bg-[#0f172a]/60 p-12 rounded-[56px] border border-blue-500/10 flex flex-col md:flex-row items-center justify-between gap-12 relative overflow-hidden group shadow-2xl">
@@ -332,8 +389,22 @@ const FeatureBadge: React.FC<{ label: string }> = ({ label }) => (
     </span>
 );
 
+const numericLimits: Array<{ id: NumericPlanField; label: string; icon: React.ReactNode }> = [
+    { id: 'maxWorks', label: 'Obras', icon: <Layers size={14} /> },
+    { id: 'maxActiveProjects', label: 'Projetos', icon: <Workflow size={14} /> },
+    { id: 'maxAIAnalyses', label: 'IA Tokens', icon: <Cpu size={14} /> },
+    { id: 'maxUsers', label: 'Users', icon: <User size={14} /> }
+];
+
+const premiumFeatures: Array<{ id: BooleanPlanField; label: string; icon: React.ReactNode }> = [
+    { id: 'hasExecutiveReports', label: 'Executive Insights', icon: <BarChart size={16} /> },
+    { id: 'hasLegalCompliance', label: 'LBI Governance', icon: <Shield size={16} /> },
+    { id: 'hasAPIAccess', label: 'API Sovereign Hub', icon: <Code size={16} /> },
+    { id: 'hasWhiteLabel', label: 'Full White Label', icon: <Globe size={16} /> }
+];
+
 const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: () => void }> = ({ plan, onClose, onSave }) => {
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<PlanFormState>({
         name: plan?.name || "",
         description: plan?.description || "",
         maxActiveProjects: plan?.maxActiveProjects || 10,
@@ -357,18 +428,24 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const validation = planSchema.safeParse(form);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados do plano.");
+            return;
+        }
+
         setSaving(true);
         try {
             if (plan) {
-                await api.put(`/plans/${plan.id}`, form);
+                await api.put(`/plans/${plan.id}`, validation.data);
                 toast.success("Plano atualizado estrategicamente.");
             } else {
-                await api.post("/plans", form);
+                await api.post("/plans", validation.data);
                 toast.success("Nova camada de serviço provisionada.");
             }
             onSave();
-        } catch (err: unknown) {
-            toast.error("Erro na autorização do plano.");
+        } catch (err) {
+            toast.error(getApiErrorMessage(err, "Erro na autorização do plano."));
         } finally {
             setSaving(false);
         }
@@ -416,14 +493,14 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-6 italic">Precificação Mensal (BRL)</label>
                             <div className="relative">
-                                <Input type="number" step="0.01" value={form.monthlyPrice} onChange={(e) => setForm({ ...form, monthlyPrice: Number(e.target.value) })} className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 pr-8 font-black text-blue-400" />
+                                <Input type="number" step="0.01" value={form.monthlyPrice} onChange={(e) => setForm({ ...form, monthlyPrice: e.target.value === "" ? 0 : Number(e.target.value) })} className="h-16 bg-white/5 border-white/10 rounded-2xl pl-16 pr-8 font-black text-blue-400" />
                                 <DollarSign size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" />
                             </div>
                         </div>
                         <div className="space-y-4">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-6 italic">Protocolo de Inteligência IA</label>
                             <div className="relative">
-                                <Select value={form.aiTier} onChange={(e) => setForm({ ...form, aiTier: e.target.value })} className="h-16 bg-white/5 border-white/10 rounded-2xl px-8 font-black uppercase tracking-widest text-white appearance-none">
+                                <Select value={form.aiTier} onChange={(e) => setForm({ ...form, aiTier: e.target.value as AiTier })} className="h-16 bg-white/5 border-white/10 rounded-2xl px-8 font-black uppercase tracking-widest text-white appearance-none">
                                     <option value="BASIC" className="bg-slate-950">Basic (Legacy Engine)</option>
                                     <option value="CONTINUOUS" className="bg-slate-950">Continuous (GPT-4o Mesh)</option>
                                     <option value="ADVANCED" className="bg-slate-950">Advanced (Neural Custom)</option>
@@ -439,20 +516,15 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                             <Server size={18} /> Operational Limits Matrix
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {[
-                                { id: 'maxWorks', label: 'Obras', icon: <Layers size={14} /> },
-                                { id: 'maxActiveProjects', label: 'Projetos', icon: <Workflow size={14} /> },
-                                { id: 'maxAIAnalyses', label: 'IA Tokens', icon: <Cpu size={14} /> },
-                                { id: 'maxUsers', label: 'Users', icon: <User size={14} /> }
-                            ].map(limit => (
+                            {numericLimits.map(limit => (
                                 <div key={limit.id} className="space-y-3">
                                     <div className="flex items-center gap-2 text-[9px] font-black text-slate-600 uppercase tracking-widest italic ml-4">
                                         {limit.icon} {limit.label}
                                     </div>
                                     <Input 
                                         type="number" 
-                                        value={form[limit.id as keyof typeof form] as number} 
-                                        onChange={(e) => setForm({ ...form, [limit.id]: Number(e.target.value) })} 
+                                        value={form[limit.id]} 
+                                        onChange={(e) => setForm({ ...form, [limit.id]: e.target.value === "" ? 0 : Number(e.target.value) })} 
                                         className="h-14 bg-white/5 border-white/5 rounded-2xl px-6 font-black text-center" 
                                     />
                                 </div>
@@ -466,30 +538,25 @@ const PlanFormModal: React.FC<{ plan: Plan | null; onClose: () => void; onSave: 
                             <Zap size={18} /> Entitlements & Premium Módulos
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {[
-                                { id: 'hasExecutiveReports', label: 'Executive Insights', icon: <BarChart size={16} /> },
-                                { id: 'hasLegalCompliance', label: 'LBI Governance', icon: <Shield size={16} /> },
-                                { id: 'hasAPIAccess', label: 'API Sovereign Hub', icon: <Code size={16} /> },
-                                { id: 'hasWhiteLabel', label: 'Full White Label', icon: <Globe size={16} /> }
-                            ].map(feature => (
+                            {premiumFeatures.map(feature => (
                                 <button
                                     key={feature.id}
                                     type="button"
-                                    onClick={() => setForm({ ...form, [feature.id]: !form[feature.id as keyof typeof form] })}
+                                    onClick={() => setForm({ ...form, [feature.id]: !form[feature.id] })}
                                     className={`flex items-center justify-between p-6 rounded-3xl border-2 transition-all duration-500 group/btn ${
-                                        form[feature.id as keyof typeof form] 
+                                        form[feature.id] 
                                         ? 'bg-blue-600/10 border-blue-500/40 text-white shadow-[0_0_30px_rgba(37,99,235,0.1)]' 
                                         : 'bg-white/5 border-white/5 text-slate-500 hover:border-white/10'
                                     }`}
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${form[feature.id as keyof typeof form] ? 'bg-blue-600 text-white shadow-xl' : 'bg-white/5 text-slate-600'}`}>
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${form[feature.id] ? 'bg-blue-600 text-white shadow-xl' : 'bg-white/5 text-slate-600'}`}>
                                             {feature.icon}
                                         </div>
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">{feature.label}</span>
                                     </div>
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${form[feature.id as keyof typeof form] ? 'bg-blue-500 text-white shadow-lg' : 'border-2 border-white/10'}`}>
-                                        {form[feature.id as keyof typeof form] && <CheckCircle2 size={14} />}
+                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${form[feature.id] ? 'bg-blue-500 text-white shadow-lg' : 'border-2 border-white/10'}`}>
+                                        {form[feature.id] && <CheckCircle2 size={14} />}
                                     </div>
                                 </button>
                             ))}

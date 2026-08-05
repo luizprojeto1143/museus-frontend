@@ -15,7 +15,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
         i18n.changeLanguage(lng);
     };
 
-    const currentLang = i18n.language.split("-")[0]; // pt-BR -> pt
+    const _currentLang = i18n.language.split("-")[0]; // pt-BR -> pt
 
     const languages = [
         { code: "pt-BR", label: "PT", flag: "🇧🇷", title: "Português" },

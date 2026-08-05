@@ -1,16 +1,34 @@
 import { logger } from "@/utils/logger";
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
-import { Mail, MapPin, BadgeCheck, AlertCircle, CheckCircle, ArrowRight } from "lucide-react";
-import { Button, Input } from "../../../components/ui";
+import { BadgeCheck, AlertCircle, ArrowRight } from "lucide-react";
+import { Input } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import { motion } from "framer-motion";
 import { useAuth } from "../../auth/AuthContext";
 
+type VisitorSkin = {
+    equipped?: boolean;
+    skin?: {
+        imageUrl?: string | null;
+    } | null;
+};
+
+type VisitorBadgeProfile = {
+    id: string;
+    name?: string | null;
+    xp?: number | null;
+    skins?: VisitorSkin[];
+};
+
+type VisitorMeResponse = {
+    id: string;
+};
+
 export const BadgeRequestPage: React.FC = () => {
     const { addToast } = useToast();
     const { isAuthenticated, tenantId: authTenantId } = useAuth();
-    const [visitorData, setVisitorData] = useState<unknown>(null);
+    const [visitorData, setVisitorData] = useState<VisitorBadgeProfile | null>(null);
     const [visitorId, setVisitorId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -26,14 +44,14 @@ export const BadgeRequestPage: React.FC = () => {
         const loadVisitor = async () => {
             try {
                 // Get real visitor ID
-                const profileRes = await api.get("/visitors/me");
+                const profileRes = await api.get<VisitorMeResponse>("/visitors/me");
                 const vid = profileRes.data.id;
                 setVisitorId(vid);
 
-                const res = await api.get(`/visitors/${vid}`);
+                const res = await api.get<VisitorBadgeProfile>(`/visitors/${vid}`);
                 setVisitorData(res.data);
-                setFormData(prev => ({ ...prev, addressName: res.data.name }));
-            } catch (err: unknown) {
+                setFormData(prev => ({ ...prev, addressName: res.data.name || "" }));
+            } catch (err) {
                 logger.error(err);
             } finally {
                 setLoading(false);
@@ -44,6 +62,10 @@ export const BadgeRequestPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!visitorId || !authTenantId) {
+            addToast("Dados do visitante indisponíveis. Faça login novamente.", "error");
+            return;
+        }
         setSubmitting(true);
         try {
             await api.post("/badges", {
@@ -53,7 +75,7 @@ export const BadgeRequestPage: React.FC = () => {
             });
             addToast("Solicitação enviada!", "success");
             // Redirect or show success
-        } catch (err: unknown) {
+        } catch (_err) {
             addToast("Erro ao solicitar", "error");
         } finally {
             setSubmitting(false);
@@ -159,7 +181,7 @@ export const BadgeRequestPage: React.FC = () => {
                         <div className="mt-10 flex gap-8 items-center relative z-10 px-2">
                             <div className="w-28 h-28 bg-slate-900 rounded-[32px] border-4 border-white/5 flex items-center justify-center overflow-hidden shadow-2xl relative">
                                  <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-transparent" />
-                                 <img src={visitorData?.skins?.find((s: unknown) => s.equipped)?.skin?.imageUrl || "/default_avatar.png"} className="h-[85%] object-contain drop-shadow-xl z-10" alt="Avatar" />
+                                 <img src={visitorData?.skins?.find((s) => s.equipped)?.skin?.imageUrl || "/default_avatar.png"} className="h-[85%] object-contain drop-shadow-xl z-10" alt="Avatar" />
                             </div>
                             <div className="flex flex-col">
                                 <h2 className="text-2xl font-black text-white tracking-tight leading-none mb-1">{visitorData?.name || "Visitante"}</h2>

@@ -2,7 +2,7 @@ import { logger } from "@/utils/logger";
 import React, { useState } from "react";
 import { api } from "../../../api/client";
 import { Button, Input, Textarea } from "../../../components/ui";
-import { Upload, Camera, Send, CheckCircle } from "lucide-react";
+import { Camera, Send, CheckCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./SubmitWorkModal.css";
 

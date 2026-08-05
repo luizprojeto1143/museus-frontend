@@ -2,17 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
-import { 
-  Activity, 
-  AlertTriangle, 
-  ShieldAlert, 
-  Database, 
-  Clock, 
-  ChevronRight, 
-  FileCode2, 
-  Sparkles,
-  Building
-} from "lucide-react";
+import { Activity, AlertTriangle, ShieldAlert, Database, Clock, ChevronRight, Building } from "lucide-react";
 
 interface OverviewStats {
   errors24h: number;
@@ -38,7 +28,7 @@ export const MasterMonitoring: React.FC = () => {
     try {
       const res = await api.get("/master/monitoring/overview");
       setStats(res.data);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao obter visão geral de monitoramento.");
     } finally {
       setLoading(false);

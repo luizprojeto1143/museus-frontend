@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { MapPin, Ticket, Clock, Filter, Calendar, Search } from "lucide-react";
+import { MapPin, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Events.css";
 
@@ -17,11 +17,15 @@ type EventItem = {
   coverImageUrl?: string;
 };
 
+type EventFilter = 'UPCOMING' | 'WEEK' | 'MONTH';
+
+type EventListResponse = EventItem[] | { data?: EventItem[] };
+
 export const EventsList: React.FC = () => {
   const { t } = useTranslation();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'UPCOMING' | 'WEEK' | 'MONTH'>('UPCOMING');
+  const [filter, setFilter] = useState<EventFilter>('UPCOMING');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const { tenantId, equipamentoId } = useAuth();
   const { citySlug, equipmentSlug } = useParams<{ citySlug: string; equipmentSlug: string }>();
@@ -30,8 +34,8 @@ export const EventsList: React.FC = () => {
     if (!tenantId) return;
     setLoading(true);
     try {
-      const res = await api.get("/events", { params: { tenantId, equipamentoId, status: 'PUBLISHED' } });
-      setEvents(res.data.data || []);
+      const res = await api.get<EventListResponse>("/events", { params: { tenantId, equipamentoId, status: 'PUBLISHED' } });
+      setEvents(Array.isArray(res.data) ? res.data : res.data.data || []);
     } catch { logger.error("Failed to fetch events"); }
     finally { setLoading(false); }
   }, [tenantId, equipamentoId]);
@@ -73,7 +77,7 @@ export const EventsList: React.FC = () => {
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
-  const itemVariants = {
+  const _itemVariants = {
     hidden: { x: -20, opacity: 0 },
     visible: { x: 0, opacity: 1 }
   };
@@ -92,11 +96,11 @@ export const EventsList: React.FC = () => {
         
         <div className="workslist-controls mt-10">
           <div className="workslist-filter-pill">
-            {['UPCOMING', 'WEEK', 'MONTH'].map(f => (
+            {(['UPCOMING', 'WEEK', 'MONTH'] as EventFilter[]).map(f => (
               <button
                 key={f}
                 className={`filter-btn ${filter === f ? 'active' : ''}`}
-                onClick={() => setFilter(f as unknown)}
+                onClick={() => setFilter(f)}
               >
                 {f === 'UPCOMING' ? t('visitor.eventslist.setfilterupcomingPrximos') : f === 'WEEK' ? 'Esta Semana' : 'Este Mês'}
               </button>

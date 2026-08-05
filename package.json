@@ -7,8 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest",
-    "lint": "eslint ."
+    "test": "vitest --pool=forks --maxWorkers=1 --fileParallelism=false",
+    "test:run": "vitest --run --pool=forks --maxWorkers=1 --fileParallelism=false",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

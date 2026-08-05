@@ -25,7 +25,7 @@ const typeLabels: Record<string, { label: string; icon: string }> = {
 };
 
 export const AdminEquipments: React.FC = () => {
-    const { tenantId } = useAuth();
+    const { tenantId: _tenantId } = useAuth();
     const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
     const [loading, setLoading] = useState(true);
 

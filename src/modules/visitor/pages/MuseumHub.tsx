@@ -6,11 +6,7 @@ import { getFullUrl } from "../../../utils/url";
 import { buildCityUrl, buildWorkUrl, buildEventUrl, buildTrailUrl, buildScannerUrl, buildMuseumMapUrl, buildPassportUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import {
-  MapPin, Clock, Accessibility, Ticket, ArrowLeft, QrCode,
-  BookOpen, Calendar, Map, ChevronRight, Star, Volume2, Award,
-  ShoppingBag, ExternalLink, Users
-} from "lucide-react";
+import { MapPin, Clock, Accessibility, Ticket, ArrowLeft, QrCode, BookOpen, Calendar, Map, ChevronRight, Star, Volume2, Award, ShoppingBag, ExternalLink } from "lucide-react";
 import "./MuseumHub.css";
 
 interface Work {
@@ -57,7 +53,7 @@ interface MuseumData {
 export const MuseumHub: React.FC = () => {
   const { citySlug, equipmentSlug } = useParams<{ citySlug: string; equipmentSlug: string }>();
   const navigate = useNavigate();
-  const { updateSession, isAuthenticated, role, name: authName, equipamentoId } = useAuth();
+  const { updateSession, isAuthenticated, role, name: authName, equipamentoId: _equipamentoId } = useAuth();
 
   const [museum, setMuseum] = useState<MuseumData | null>(null);
   const [featuredWorks, setFeaturedWorks] = useState<Work[]>([]);
@@ -106,7 +102,7 @@ export const MuseumHub: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [equipmentSlug, isAuthenticated, role, authName, updateSession]);
+  }, [citySlug, equipmentSlug, isAuthenticated, role, authName, updateSession]);
 
   useEffect(() => {
     fetchMuseum();

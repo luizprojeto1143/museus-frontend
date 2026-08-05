@@ -1,53 +1,12 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useTranslation } from "react-i18next";
-import { 
-    HandMetal, 
-    Plus, 
-    Edit, 
-    Trash2, 
-    CheckCircle, 
-    Clock, 
-    XCircle,
-    Globe,
-    Zap,
-    ShieldCheck,
-    Layers,
-    ArrowUpRight,
-    Search,
-    X,
-    MessageSquare,
-    Calendar,
-    Users,
-    MapPin,
-    Activity,
-    Briefcase,
-    Navigation,
-    Boxes,
-    HardHat,
-    LifeBuoy,
-    Contact,
-    ShieldAlert,
-    History,
-    RefreshCw,
-    SearchCheck,
-    Fingerprint,
-    Building,
-    ExternalLink
-} from "lucide-react";
-import { 
-    Button, 
-    Input, 
-    Select, 
-    Textarea, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter,
-    DangerZoneConfirmModal
-} from "@/components/ui";
+import { Plus, Edit, Trash2, CheckCircle, Clock, XCircle, Zap, ShieldCheck, X, Calendar, MapPin, Activity, Briefcase, Navigation, Boxes, HardHat, LifeBuoy, Contact, SearchCheck, Fingerprint, ExternalLink } from "lucide-react";
+import { Button, Input, Textarea, Card, Badge, AnimateIn, AnimatedCounter, DangerZoneConfirmModal } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface InPersonService {
     id: string;
@@ -55,14 +14,22 @@ interface InPersonService {
     description: string | null;
     active: boolean;
     tenantId: string;
+    tenant?: { name: string } | null;
 }
+
+interface TenantOption {
+    id: string;
+    name: string;
+}
+
+type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELLED";
 
 interface BookingRequest {
     id: string;
     date: string;
     startTime: string | null;
     endTime: string | null;
-    status: string;
+    status: BookingStatus;
     participants: number | null;
     inPersonService: InPersonService;
     tenant: { name: string };
@@ -71,8 +38,36 @@ interface BookingRequest {
     user: { name: string; email: string };
 }
 
+interface ServiceFormData {
+    name: string;
+    description: string;
+    active: boolean;
+    tenantId: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const serviceSchema = z.object({
+    name: z.string().trim().min(2, "Informe o nome do serviço."),
+    description: z.string().trim().optional(),
+    active: z.boolean(),
+    tenantId: z.string().trim().min(1, "Selecione o museu/teatro correspondente.")
+});
+
+const bookingStatusSchema = z.enum(["PENDING", "CONFIRMED", "CANCELLED"]);
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
+
 export const MasterInPersonServices: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [services, setServices] = useState<InPersonService[]>([]);
     const [requests, setRequests] = useState<BookingRequest[]>([]);
     const [loading, setLoading] = useState(true);
@@ -83,24 +78,28 @@ export const MasterInPersonServices: React.FC = () => {
     const [deleteServiceId, setDeleteServiceId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<ServiceFormData>({
         name: "",
         description: "",
         active: true,
         tenantId: ""
     });
 
+    const [tenants, setTenants] = useState<TenantOption[]>([]);
+
     const loadData = useCallback(async () => {
         try {
             setLoading(true);
-            const [servicesRes, requestsRes] = await Promise.all([
-                api.get("/in-person-services"),
-                api.get("/bookings/in-person")
+            const [servicesRes, requestsRes, tenantsRes] = await Promise.all([
+                api.get<InPersonService[]>("/in-person-services"),
+                api.get<BookingRequest[]>("/bookings/in-person"),
+                api.get<TenantOption[]>("/tenants/list/options")
             ]);
-            setServices(servicesRes.data || []);
-            setRequests(requestsRes.data || []);
-        } catch (error: unknown) {
-            toast.error("Erro ao sincronizar operações de campo.");
+            setServices(Array.isArray(servicesRes.data) ? servicesRes.data : []);
+            setRequests(Array.isArray(requestsRes.data) ? requestsRes.data : []);
+            setTenants(Array.isArray(tenantsRes.data) ? tenantsRes.data : []);
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Erro ao sincronizar operações de campo."));
         } finally {
             setLoading(false);
         }
@@ -111,22 +110,26 @@ export const MasterInPersonServices: React.FC = () => {
     }, [loadData]);
 
     const handleSaveService = async () => {
-        if (!formData.name) return toast.error("O nome do serviço é obrigatório.");
+        const validation = serviceSchema.safeParse(formData);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados do serviço.");
+            return;
+        }
 
         try {
             if (editService) {
-                await api.put(`/in-person-services/${editService.id}`, formData);
+                await api.put(`/in-person-services/${editService.id}`, validation.data);
                 toast.success("Catálogo operacional atualizado.");
             } else {
-                await api.post("/in-person-services", formData);
+                await api.post("/in-person-services", validation.data);
                 toast.success("Novo serviço integrado ao node regional.");
             }
             setIsAddModalOpen(false);
             setEditService(null);
             setFormData({ name: "", description: "", active: true, tenantId: "" });
             loadData();
-        } catch (error: unknown) {
-            toast.error("Erro no protocolo de salvamento tático.");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Erro no protocolo de salvamento tático."));
         }
     };
 
@@ -137,8 +140,8 @@ export const MasterInPersonServices: React.FC = () => {
             toast.success("Serviço removido do inventário operacional.");
             setDeleteServiceId(null);
             loadData();
-        } catch (error: unknown) {
-            toast.error("Falha na desativação do protocolo.");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Falha na desativação do protocolo."));
         } finally {
             setIsDeleting(false);
         }
@@ -150,13 +153,19 @@ export const MasterInPersonServices: React.FC = () => {
         setIsAddModalOpen(true);
     };
 
-    const handleUpdateBookingStatus = async (id: string, newStatus: string) => {
+    const handleUpdateBookingStatus = async (id: string, newStatus: BookingStatus) => {
+        const validation = bookingStatusSchema.safeParse(newStatus);
+        if (!validation.success) {
+            toast.error("Status de agendamento inválido.");
+            return;
+        }
+
         try {
-            await api.put(`/bookings/${id}`, { status: newStatus });
-            toast.success(`Protocolo ${newStatus}: Processamento finalizado.`);
+            await api.put(`/bookings/${id}`, { status: validation.data });
+            toast.success(`Protocolo ${validation.data}: Processamento finalizado.`);
             loadData();
-        } catch (error: unknown) {
-            toast.error("Falha na atualização do despacho logístico.");
+        } catch (error) {
+            toast.error(getApiErrorMessage(error, "Falha na atualização do despacho logístico."));
         }
     };
 
@@ -215,7 +224,7 @@ export const MasterInPersonServices: React.FC = () => {
                         <Button 
                             onClick={() => {
                                 setEditService(null);
-                                setFormData({ name: "", description: "", active: true, tenantId: "8cc9b546-7f7d-4908-a6cf-acdd7b86982b" });
+                                setFormData({ name: "", description: "", active: true, tenantId: "" });
                                 setIsAddModalOpen(true);
                             }}
                             className="w-14 h-14 p-0 rounded-[22px] bg-blue-600 hover:bg-blue-500 text-white shadow-2xl shadow-blue-600/20 active:scale-95 group transition-all"
@@ -242,10 +251,13 @@ export const MasterInPersonServices: React.FC = () => {
                                     <div className="flex justify-between items-start mb-6 relative z-10">
                                         <div className="space-y-2">
                                             <h4 className="text-lg font-black text-white uppercase tracking-tight italic group-hover:text-blue-400 transition-colors leading-none">{srv.name}</h4>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
                                                 <Badge className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest italic border-none ${srv.active ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"}`}>
                                                     {srv.active ? "Node Ativo" : "Protocolo Inativo"}
                                                 </Badge>
+                                                {srv.tenant && (
+                                                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">{srv.tenant.name}</span>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
@@ -313,7 +325,7 @@ export const MasterInPersonServices: React.FC = () => {
                                         </td>
                                     </tr>
                                 ) : (
-                                    requests.map((req, idx) => (
+                                    requests.map((req, _idx) => (
                                         <tr key={req.id} className="group hover:bg-white/[0.03] transition-all duration-500 cursor-default">
                                             <td className="px-14 py-12">
                                                 <div className="flex flex-col gap-2">
@@ -459,6 +471,22 @@ export const MasterInPersonServices: React.FC = () => {
                                         className="h-16 bg-white/5 border-2 border-white/10 rounded-[28px] px-8 text-white font-black italic tracking-tight uppercase focus:border-blue-500/50 transition-all"
                                     />
                                 </div>
+
+                                {!editService && (
+                                    <div className="space-y-4">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-8 italic">Organização / Museu Vinculado</label>
+                                        <select
+                                            value={formData.tenantId}
+                                            onChange={e => setFormData({ ...formData, tenantId: e.target.value })}
+                                            className="w-full h-16 bg-[#0b1120] border-2 border-white/10 rounded-[28px] px-8 text-white font-black italic tracking-tight uppercase focus:border-blue-500/50 transition-all focus:outline-none"
+                                        >
+                                            <option value="" disabled className="text-slate-500">Selecione o Museu/Teatro...</option>
+                                            {tenants.map(t => (
+                                                <option key={t.id} value={t.id} className="text-white font-bold">{t.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
 
                                 <div className="space-y-4">
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-8 italic">Diretrizes Operacionais de Atendimento</label>

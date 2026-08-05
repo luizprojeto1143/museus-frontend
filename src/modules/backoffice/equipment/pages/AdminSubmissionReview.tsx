@@ -3,20 +3,34 @@ import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Inbox, Check, X, User, MapPin, ExternalLink } from "lucide-react";
+import { Loader2, Inbox, Check, X, User, MapPin } from "lucide-react";
 import { toast } from "react-hot-toast";
+
+type SubmissionStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+type RoadmapSubmission = {
+    id: string;
+    title: string;
+    description?: string | null;
+    imageUrl?: string | null;
+    status: SubmissionStatus;
+    spaceId?: string | null;
+    user?: { name?: string | null } | null;
+};
+
+type SubmissionListResponse = RoadmapSubmission[] | { data?: RoadmapSubmission[] };
 
 export const AdminSubmissionReview: React.FC = () => {
     const { tenantId } = useAuth();
-    const [submissions, setSubmissions] = useState<any[]>([]);
+    const [submissions, setSubmissions] = useState<RoadmapSubmission[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState("PENDING");
+    const [filter, setFilter] = useState<SubmissionStatus>("PENDING");
 
     const fetchSubmissions = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await api.get(`/roadmap-family/submissions?tenantId=${tenantId}&status=${filter}`);
-            setSubmissions(res.data);
+            const res = await api.get<SubmissionListResponse>(`/roadmap-family/submissions?tenantId=${tenantId}&status=${filter}`);
+            setSubmissions(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (error) {
             logger.error(error);
             toast.error("Erro ao carregar submissões");
@@ -31,12 +45,10 @@ export const AdminSubmissionReview: React.FC = () => {
 
     const handleModerate = async (id: string, status: "APPROVED" | "REJECTED") => {
         try {
-            // Reusing status update logic or specific route if needed
-            // For now assuming we add status update to backend or use generic update
             await api.put(`/roadmap-family/submissions/${id}`, { status });
             toast.success(status === "APPROVED" ? "Obra aprovada!" : "Obra rejeitada!");
             fetchSubmissions();
-        } catch (err) {
+        } catch (_err) {
             toast.error("Erro ao moderar");
         }
     };
@@ -53,7 +65,7 @@ export const AdminSubmissionReview: React.FC = () => {
                 </div>
 
                 <div className="flex bg-zinc-900 p-1 rounded-lg">
-                    {["PENDING", "APPROVED", "REJECTED"].map((s) => (
+                    {(["PENDING", "APPROVED", "REJECTED"] as SubmissionStatus[]).map((s) => (
                         <button
                             key={s}
                             onClick={() => setFilter(s)}

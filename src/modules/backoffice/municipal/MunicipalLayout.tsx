@@ -1,29 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
-import {
-    LayoutDashboard,
-    Building2,
-    FileText,
-    BarChart3,
-    ShieldCheck,
-    Settings,
-    LogOut,
-    Menu,
-    ExternalLink,
-    ChevronRight,
-    Search,
-    TrendingUp,
-    Zap,
-    X,
-    Bell,
-    Globe,
-    Map,
-    Landmark
-} from "lucide-react";
-import { Badge, Button } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { LayoutDashboard, Building2, FileText, BarChart3, Settings, LogOut, Menu, ChevronRight, Search, TrendingUp, Bell, Globe, Map, Landmark } from "lucide-react";import { motion, AnimatePresence } from "framer-motion";
 
 export const MunicipalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { t } = useTranslation();

@@ -3,9 +3,52 @@ import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
-import { Button, Card, Badge } from "../../../../components/ui";
+import { Button, Card } from "../../../../components/ui";
 import { Shield, User, Mail, Lock, CheckCircle2, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+const collaboratorRoles = ["COLLABORATOR", "PRODUCER"] as const;
+type CollaboratorRole = typeof collaboratorRoles[number];
+
+interface CollaboratorFormData {
+  name: string;
+  email: string;
+  password: string;
+  role: CollaboratorRole;
+  permissions: Record<string, boolean>;
+}
+
+interface UserResponse extends Partial<CollaboratorFormData> {
+  id: string;
+  tenantId?: string | null;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const collaboratorSchema = z.object({
+  name: z.string().trim().min(2, "Informe o nome do usuario."),
+  email: z.string().trim().email("Informe um e-mail valido."),
+  password: z.string().trim().min(8, "A senha deve ter pelo menos 8 caracteres.").optional(),
+  role: z.enum(collaboratorRoles),
+  tenantId: z.string().trim().min(1, "Tenant nao identificado."),
+  permissions: z.record(z.string(), z.boolean())
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
+function normalizeCollaboratorRole(role: unknown): CollaboratorRole {
+  return role === "PRODUCER" || role === "COLLABORATOR" ? role : "COLLABORATOR";
+}
 
 const PERMISSION_FLAGS = [
   { id: "manage_works", label: "Gerenciar Obras", description: "Cadastrar, editar e excluir acervo" },
@@ -27,32 +70,32 @@ export const AdminCollaboratorForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tenantId } = useAuth();
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CollaboratorFormData>({
     name: "",
     email: "",
     password: "",
-    role: "COLLABORATOR" as "COLLABORATOR" | "PRODUCER",
-    permissions: {} as Record<string, boolean>
+    role: "COLLABORATOR",
+    permissions: {}
   });
 
   useEffect(() => {
     if (isEdit) {
       setLoading(true);
-      api.get(`/users/${id}`)
+      api.get<UserResponse>(`/users/${id}`)
         .then(res => {
           setFormData({
-            name: res.data.name,
-            email: res.data.email,
+            name: res.data.name || "",
+            email: res.data.email || "",
             password: "", 
-            role: res.data.role || "COLLABORATOR",
+            role: normalizeCollaboratorRole(res.data.role),
             permissions: res.data.permissions || {}
           });
         })
-        .catch(() => toast.error("Erro ao carregar usuário"))
+        .catch((err: unknown) => toast.error(getApiErrorMessage(err, "Erro ao carregar usuario")))
         .finally(() => setLoading(false));
     }
   }, [id, isEdit]);
@@ -67,17 +110,25 @@ export const AdminCollaboratorForm: React.FC = () => {
         tenantId: tenantId
       };
 
+      const validation = collaboratorSchema.safeParse({
+        ...payload,
+        password: payload.password || undefined
+      });
+      if (!validation.success) {
+        toast.error(validation.error.issues[0]?.message || "Revise os dados do usuario");
+        return;
+      }
+
       if (isEdit) {
-        if (!payload.password) delete (payload as unknown).password;
-        await api.put(`/users/${id}`, payload);
+        await api.put<UserResponse>(`/users/${id}`, validation.data);
         toast.success("Usuário atualizado!");
       } else {
-        await api.post("/users", payload);
+        await api.post<UserResponse>("/users", validation.data);
         toast.success("Usuário criado com sucesso!");
       }
       navigate("/admin/usuarios");
     } catch (err: unknown) {
-      toast.error(err.response?.data?.message || "Erro ao salvar usuário");
+      toast.error(getApiErrorMessage(err, "Erro ao salvar usuario"));
     } finally {
       setLoading(false);
     }
@@ -129,7 +180,7 @@ export const AdminCollaboratorForm: React.FC = () => {
                 <select 
                   className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-gold outline-none transition-all"
                   value={formData.role}
-                  onChange={e => setFormData({ ...formData, role: e.target.value as unknown })}
+                  onChange={e => setFormData({ ...formData, role: e.target.value as CollaboratorRole })}
                 >
                   <option value="COLLABORATOR">Colaborador (Equipe Interna)</option>
                   <option value="PRODUCER">Produtor Cultural (Exposições/Eventos)</option>
@@ -216,3 +267,5 @@ export const AdminCollaboratorForm: React.FC = () => {
     </div>
   );
 };
+
+

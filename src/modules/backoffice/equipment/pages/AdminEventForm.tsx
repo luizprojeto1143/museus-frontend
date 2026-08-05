@@ -1,31 +1,19 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  Input, 
-  Select, 
-  Textarea, 
-  Button, 
-  Switch, 
-  Card, 
-  Badge, 
-  AnimateIn 
-} from "@/components/ui";
-import {
-  Calendar, MapPin, Ticket, Clock,
-  ChevronRight, ChevronLeft, CheckCircle, Plus, Trash2, Globe, Video, Save,
-  Image as ImageIcon, Monitor, Mic, PlayCircle, ArrowLeft, Upload, Circle,
-  Sparkles, Info, Target, ListOrdered, CheckCircle2, Layout, Lock
-} from 'lucide-react';
+import { Input, Select, Textarea, Button, Switch, Card, AnimateIn } from "@/components/ui";
+import { Calendar, MapPin, Ticket, Clock, ChevronRight, CheckCircle, Plus, Trash2, Globe, Save, Image as ImageIcon, Monitor, PlayCircle, ArrowLeft, Upload, Circle, Sparkles, Info, Target, CheckCircle2, Layout, Lock } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 import { useTerminology } from "../../../../hooks/useTerminology";
 import "./AdminShared.css";
 import { QRCodeCanvas } from "qrcode.react";
+import { isAxiosError } from "axios";
+import { z } from "zod";
 
 interface TicketData {
   id?: string;
@@ -33,6 +21,135 @@ interface TicketData {
   type: 'FREE' | 'PAID';
   price: number;
   quantity: number;
+}
+
+type EventFormat = "PRESENTIAL" | "ONLINE";
+type EventVisibility = "PUBLIC" | "PRIVATE";
+type EventStatus = "DRAFT" | "PUBLISHED";
+type EventType = "OTHER" | "WORKSHOP" | "EXHIBITION" | "SHOW" | "LECTURE";
+
+interface OptionItem {
+  id: string;
+  name: string;
+}
+
+interface EquipmentOption {
+  id: string;
+  nome: string;
+}
+
+interface EventFormData {
+  title: string;
+  description: string;
+  categoryId: string;
+  coverImageUrl: string;
+  format: EventFormat;
+  startDate: string;
+  endDate: string;
+  location: string;
+  zipCode: string;
+  address: string;
+  number: string;
+  city: string;
+  state: string;
+  platform: string;
+  meetingLink: string;
+  producerName: string;
+  producerDescription: string;
+  visibility: EventVisibility;
+  status: EventStatus;
+  audioUrl: string;
+  videoUrl: string;
+  type: EventType;
+  instructor: string;
+  materials: string;
+  certificateBackgroundUrl: string;
+  minMinutesForCertificate: string;
+  certificateRequiresSurvey: boolean;
+  spaceId: string;
+  equipamentoId: string;
+  neighborhood?: string;
+}
+
+interface EventResponse extends Partial<Omit<EventFormData, "endDate" | "minMinutesForCertificate">> {
+  isOnline?: boolean;
+  startDate?: string;
+  endDate?: string | null;
+  minMinutesForCertificate?: number | string | null;
+}
+
+interface EventPayload {
+  title: string;
+  description: string;
+  format: EventFormat;
+  location?: string;
+  zipCode?: string;
+  address?: string;
+  number?: string;
+  city?: string;
+  state?: string;
+  platform: string;
+  meetingLink?: string;
+  producerName?: string;
+  producerDescription?: string;
+  visibility: EventVisibility;
+  status: EventStatus;
+  type: EventType;
+  instructor?: string;
+  materials?: string;
+  certificateRequiresSurvey: boolean;
+  tenantId: string;
+  equipamentoId?: string;
+  startDate: string;
+  endDate: string | null;
+  isOnline: boolean;
+  minMinutesForCertificate: number | null;
+  categoryId?: string;
+  spaceId?: string;
+  coverImageUrl?: string;
+  audioUrl?: string;
+  videoUrl?: string;
+  certificateBackgroundUrl?: string;
+}
+
+interface UploadResponse {
+  url?: string;
+}
+
+interface CreateEventResponse {
+  id?: string;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const eventSchema = z.object({
+  title: z.string().trim().min(3, "Informe o titulo do evento."),
+  description: z.string(),
+  equipamentoId: z.string().min(1, "Selecione o equipamento responsavel."),
+  startDate: z.string().min(1, "Informe a data e hora de inicio."),
+  endDate: z.string(),
+  minMinutesForCertificate: z.string().refine((value) => value === "" || Number(value) >= 0, "Minutos para certificado deve ser maior ou igual a zero."),
+  format: z.enum(["PRESENTIAL", "ONLINE"]),
+  meetingLink: z.string()
+}).refine((data) => {
+  if (!data.endDate) return true;
+  return new Date(data.startDate).getTime() <= new Date(data.endDate).getTime();
+}, {
+  message: "A data de inicio precisa ser anterior a data de termino.",
+  path: ["endDate"]
+}).refine((data) => data.format !== "ONLINE" || data.meetingLink.trim().length > 0, {
+  message: "Informe o link do evento online.",
+  path: ["meetingLink"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
 }
 
 // Wizard Steps moved inside
@@ -45,7 +162,7 @@ interface TicketData {
 
 export const AdminEventForm: React.FC = () => {
   const { t } = useTranslation();
-  const term = useTerminology();
+  const _term = useTerminology();
   const STEPS = [
     { id: 0, title: "Básico", desc: "Informações principais", icon: Calendar },
     { id: 1, title: "Local & Data", desc: "Onde e quando", icon: MapPin },
@@ -63,13 +180,13 @@ export const AdminEventForm: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
-  const [spaces, setSpaces] = useState<{ id: string, name: string }[]>([]);
-  const [equipamentos, setEquipamentos] = useState<Array<{ id: string; nome: string }>>([]);
+  const [categories, setCategories] = useState<OptionItem[]>([]);
+  const [spaces, setSpaces] = useState<OptionItem[]>([]);
+  const [equipamentos, setEquipamentos] = useState<EquipmentOption[]>([]);
   const [tickets, setTickets] = useState<TicketData[]>([]);
 
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EventFormData>({
     title: "",
     description: "",
     categoryId: "",
@@ -106,22 +223,22 @@ export const AdminEventForm: React.FC = () => {
   // Load Data
   useEffect(() => {
     if (tenantId) {
-      api.get("/categories", { params: { tenantId, type: 'EVENT' } })
+      api.get<OptionItem[]>("/categories", { params: { tenantId, type: 'EVENT' } })
         .then(res => setCategories(res.data))
         .catch(console.error);
 
-      api.get("/spaces", { params: { tenantId } })
+      api.get<OptionItem[]>("/spaces", { params: { tenantId } })
         .then(res => setSpaces(res.data))
         .catch(console.error);
 
-      api.get("/equipamentos")
+      api.get<EquipmentOption[]>("/equipamentos")
         .then(res => setEquipamentos(res.data))
         .catch(console.error);
     }
 
     if (id && tenantId) {
       setLoading(true);
-      api.get(`/events/${id}`)
+      api.get<EventResponse>(`/events/${id}`)
         .then(async (res) => {
           const data = res.data;
           setFormData({
@@ -150,7 +267,7 @@ export const AdminEventForm: React.FC = () => {
             instructor: data.instructor || "",
             materials: data.materials || "",
             certificateBackgroundUrl: data.certificateBackgroundUrl || "",
-            minMinutesForCertificate: data.minMinutesForCertificate || "",
+            minMinutesForCertificate: data.minMinutesForCertificate?.toString() || "",
             certificateRequiresSurvey: data.certificateRequiresSurvey || false,
             spaceId: data.spaceId || "",
             equipamentoId: data.equipamentoId || "",
@@ -158,9 +275,9 @@ export const AdminEventForm: React.FC = () => {
 
           // Fetch tickets
           try {
-            const ticketRes = await api.get(`/events/${id}/tickets`);
+            const ticketRes = await api.get<TicketData[]>(`/tickets/events/${id}/tickets`);
             setTickets(ticketRes.data);
-          } catch (e) { logger.error(e); }
+          } catch (e: unknown) { logger.error("Erro ao carregar ingressos do evento.", e); }
         })
         .finally(() => setLoading(false));
     }
@@ -180,7 +297,7 @@ export const AdminEventForm: React.FC = () => {
             state: data.uf
           }));
         }
-      } catch (e) { logger.error(e); }
+      } catch (e: unknown) { logger.error("Erro ao buscar CEP.", e); }
     }
   }
 
@@ -192,14 +309,14 @@ export const AdminEventForm: React.FC = () => {
 
       try {
         setIsUploading(true);
-        const res = await api.post(`/upload/${type}`, formData, {
+        const res = await api.post<UploadResponse>(`/upload/${type}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
-        setter(res.data.url);
+        setter(res.data.url || "");
         toast.success("Arquivo enviado com sucesso!");
       } catch (error) {
         logger.error(`Error uploading ${type}`, error);
-        toast.error("Erro ao enviar arquivo");
+        toast.error(getApiErrorMessage(error, "Erro ao enviar arquivo"));
       } finally {
         setIsUploading(false);
       }
@@ -222,9 +339,15 @@ export const AdminEventForm: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!tenantId) return;
+    const validation = eventSchema.safeParse(formData);
+    if (!validation.success) {
+      toast.error(validation.error.issues[0]?.message || "Revise os dados do evento.");
+      return;
+    }
+
     setSaving(true);
     try {
-      const payload: unknown = {
+      const payload: EventPayload = {
         title: formData.title,
         description: formData.description,
         format: formData.format,
@@ -263,22 +386,22 @@ export const AdminEventForm: React.FC = () => {
       if (id) {
         await api.put(`/events/${id}`, payload);
       } else {
-        const res = await api.post("/events", payload);
+        const res = await api.post<CreateEventResponse>("/events", payload);
         eventId = res.data.id;
       }
 
       // Save Tickets (Simple create logic)
       if (eventId) {
         for (const ticket of tickets) {
-          if (!ticket.id) await api.post(`/events/${eventId}/tickets`, ticket);
+          if (!ticket.id) await api.post(`/tickets/events/${eventId}/tickets`, ticket);
         }
       }
 
       toast.success(isEdit ? "Evento atualizado!" : "Evento criado!");
       navigate("/admin/eventos");
     } catch (error) {
-      logger.error(error);
-      toast.error("Erro ao salvar.");
+      logger.error("Erro ao salvar evento.", error);
+      toast.error(getApiErrorMessage(error, "Erro ao salvar."));
     } finally {
       setSaving(false);
     }
@@ -415,7 +538,7 @@ export const AdminEventForm: React.FC = () => {
                       <Select
                         label="Tipo de Evento"
                         value={formData.type}
-                        onChange={e => setFormData({ ...formData, type: e.target.value })}
+                        onChange={e => setFormData({ ...formData, type: e.target.value as EventType })}
                       >
                         <option value="OTHER">Geral / Outro</option>
                         <option value="WORKSHOP">Oficina / Workshop</option>
@@ -723,7 +846,7 @@ export const AdminEventForm: React.FC = () => {
                                 label="Tipo"
                                 value={ticket.type}
                                 onChange={e => {
-                                  const n = [...tickets]; n[idx].type = e.target.value as unknown; setTickets(n);
+                                  const n = [...tickets]; n[idx].type = e.target.value as TicketData["type"]; setTickets(n);
                                 }}
                                 className="bg-black/20"
                               >

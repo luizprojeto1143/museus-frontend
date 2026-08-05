@@ -1,44 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { api } from "../../../api/client";
-import { 
-    BadgeCheck, 
-    Clock, 
-    CheckCircle, 
-    XCircle, 
-    Truck, 
-    Download, 
-    Search, 
-    User, 
-    Eye, 
-    X, 
-    Star,
-    Globe,
-    Zap,
-    ShieldCheck,
-    Layers,
-    ArrowUpRight,
-    MapPin,
-    Hash,
-    Printer,
-    Package,
-    ShieldAlert,
-    Navigation,
-    Boxes,
-    Scan,
-    FileSearch,
-    RefreshCw,
-    Fingerprint,
-    Activity,
-    CreditCard
-} from "lucide-react";
-import { 
-    Button, 
-    Input, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
+import { CheckCircle, XCircle, Truck, Download, Eye, X, Star, Globe, MapPin, Printer, Package, Navigation, Boxes, RefreshCw } from "lucide-react";
+import { Button, Card, Badge, AnimateIn, AnimatedCounter } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
@@ -69,13 +32,15 @@ export const MasterBadgeQueue: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("PENDING");
     const [previewBadge, setPreviewBadge] = useState<BadgeRequest | null>(null);
+    const [shippingRequest, setShippingRequest] = useState<BadgeRequest | null>(null);
+    const [trackingCode, setTrackingCode] = useState("");
 
     const loadRequests = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/badges/queue");
-            setRequests(res.data || []);
-        } catch (err: unknown) {
+            const res = await api.get<BadgeRequest[]>("/badges/queue");
+            setRequests(Array.isArray(res.data) ? res.data : []);
+        } catch (_err: unknown) {
             toast.error("Erro ao sincronizar terminal logístico.");
         } finally {
             setLoading(false);
@@ -86,19 +51,17 @@ export const MasterBadgeQueue: React.FC = () => {
         loadRequests();
     }, [loadRequests]);
 
-    const handleUpdateStatus = async (id: string, status: string) => {
-        let trackingCode = "";
-        if (status === "SHIPPED") {
-            trackingCode = window.prompt("PROTOCOL: Informe o código de rastreamento oficial:") || "";
-            if (!trackingCode) return;
-        }
+    const handleUpdateStatus = async (id: string, status: string, code = "") => {
+        if (status === "SHIPPED" && !code.trim()) return;
 
         try {
-            await api.put(`/badges/${id}/status`, { status, trackingCode });
-            toast.success(`Logística: ${status} processado.`);
-            loadRequests();
-        } catch (err: unknown) {
-            toast.error("Falha no protocolo de atualização.");
+            await api.put(`/badges/${id}/status`, { status, trackingCode: code.trim() });
+            toast.success(`Logistica: ${status} processado.`);
+            setShippingRequest(null);
+            setTrackingCode("");
+            void loadRequests();
+        } catch (_err: unknown) {
+            toast.error("Falha no protocolo de atualizacao.");
         }
     };
 
@@ -194,7 +157,7 @@ export const MasterBadgeQueue: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {filtered.map((req, idx) => (
+                            {filtered.map((req, _idx) => (
                                 <tr key={req.id} className="group hover:bg-white/[0.03] transition-all duration-500 cursor-default">
                                     <td className="px-14 py-12">
                                         <div className="flex items-center gap-8">
@@ -254,7 +217,10 @@ export const MasterBadgeQueue: React.FC = () => {
                                                     </>
                                                 )}
                                                 {req.status === "APPROVED" && (
-                                                    <button className="w-14 h-14 flex items-center justify-center bg-indigo-600/10 text-indigo-400 rounded-2xl border-2 border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition-all shadow-xl active:scale-95 group/btn" title="Despachar Logística" onClick={() => handleUpdateStatus(req.id, "SHIPPED")}>
+                                                    <button className="w-14 h-14 flex items-center justify-center bg-indigo-600/10 text-indigo-400 rounded-2xl border-2 border-indigo-500/20 hover:bg-indigo-600 hover:text-white transition-all shadow-xl active:scale-95 group/btn" title="Despachar Logística" onClick={() => {
+                                                        setShippingRequest(req);
+                                                        setTrackingCode(req.trackingCode || "");
+                                                    }}>
                                                         <Truck size={24} className="group-hover/btn:scale-110 transition-transform" />
                                                     </button>
                                                 )}
@@ -384,6 +350,61 @@ export const MasterBadgeQueue: React.FC = () => {
                                     </Button>
                                 </div>
                             </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {shippingRequest && (
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/85 backdrop-blur-xl">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                            className="w-full max-w-lg"
+                        >
+                            <Card className="p-10 bg-[#0b1120] border-2 border-indigo-500/20 rounded-[40px] shadow-2xl">
+                                <div className="flex items-start gap-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
+                                        <Truck size={26} />
+                                    </div>
+                                    <div className="space-y-3 flex-1">
+                                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tight">Despachar cracha</h2>
+                                        <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                                            Informe o codigo de rastreamento oficial para "{shippingRequest.addressName}".
+                                        </p>
+                                        <input
+                                            value={trackingCode}
+                                            onChange={(event) => setTrackingCode(event.target.value)}
+                                            className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-5 text-white font-mono text-sm outline-none focus:border-indigo-500/50"
+                                            placeholder="Ex: BR123456789BR"
+                                            autoFocus
+                                        />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                                    <Button
+                                        type="button"
+                                        variant="glass"
+                                        onClick={() => {
+                                            setShippingRequest(null);
+                                            setTrackingCode("");
+                                        }}
+                                        className="h-14 flex-1 rounded-2xl border-white/10 text-slate-400 font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        disabled={!trackingCode.trim()}
+                                        onClick={() => void handleUpdateStatus(shippingRequest.id, "SHIPPED", trackingCode)}
+                                        className="h-14 flex-1 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase text-[10px] tracking-widest disabled:opacity-50"
+                                    >
+                                        Confirmar envio
+                                    </Button>
+                                </div>
+                            </Card>
                         </motion.div>
                     </div>
                 )}

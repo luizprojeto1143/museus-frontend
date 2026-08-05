@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
-import { FileText, Download, TrendingUp, DollarSign, Ticket, Users, BarChart3, PieChart } from "lucide-react";
+import { FileText, Download, TrendingUp, DollarSign, Ticket, Users, BarChart3 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";

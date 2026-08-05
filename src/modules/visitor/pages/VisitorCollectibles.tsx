@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
@@ -15,30 +15,55 @@ const rarityConfig: Record<string, { label: string; color: string; gradient: str
     LEGENDARY: { label: 'Lendário', color: 'var(--accent-primary)', gradient: 'linear-gradient(135deg, #5c4a1e, #2d2310)', icon: <Diamond size={14} /> }
 };
 
+
+type CollectibleWork = {
+    title?: string | null;
+    imageUrl?: string | null;
+};
+
+type CollectibleCard = {
+    id: string;
+    title: string;
+    rarity?: string | null;
+    imageUrl?: string | null;
+    xpReward?: number | null;
+    work?: CollectibleWork | null;
+};
+
+type OwnedCollectibleCard = {
+    cardId: string;
+    card?: CollectibleCard;
+    collectibleCard?: CollectibleCard;
+};
+
+type DisplayCollectibleCard = CollectibleCard & {
+    owned: boolean;
+};
 export const VisitorCollectibles: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId, isGuest } = useAuth();
     const navigate = useNavigate();
-    const [allCards, setAllCards] = useState<any[]>([]);
-    const [myCards, setMyCards] = useState<any[]>([]);
+    const [allCards, setAllCards] = useState<CollectibleCard[]>([]);
+    const [myCards, setMyCards] = useState<OwnedCollectibleCard[]>([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<'collection' | 'all'>('collection');
 
     const fetchData = useCallback(async () => {
         try {
             const [all, my] = await Promise.all([
-                api.get(`/collectibles?tenantId=${tenantId}`),
-                api.get('/collectibles/my')
+                api.get<CollectibleCard[]>(`/collectibles?tenantId=${tenantId}`),
+                api.get<OwnedCollectibleCard[]>('/collectibles/my')
             ]);
-            setAllCards(all.data);
-            setMyCards(my.data);
-        } catch (error: unknown) { logger.error(error); toast.error("Erro ao carregar"); }
+            setAllCards(Array.isArray(all.data) ? all.data : []);
+            setMyCards(Array.isArray(my.data) ? my.data : []);
+        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
-    const myCardIds = new Set(myCards.map((c: unknown) => c.cardId));
+    const getOwnedCard = (owned: OwnedCollectibleCard) => owned.collectibleCard || owned.card;
+    const myCardIds = new Set(myCards.map((c) => c.cardId));
     const totalCards = allCards.length;
     const ownedCount = myCards.length;
     const pct = totalCards > 0 ? Math.round((ownedCount / totalCards) * 100) : 0;
@@ -77,8 +102,14 @@ export const VisitorCollectibles: React.FC = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                {(tab === 'collection' ? myCards.map((mc: unknown) => ({ ...mc.card, owned: true })) : allCards.map((c: unknown) => ({ ...c, owned: myCardIds.has(c.id) }))).map((card: unknown) => {
-                    const r = rarityConfig[card.rarity] || rarityConfig.COMMON;
+                {(tab === 'collection'
+                    ? myCards
+                        .map(getOwnedCard)
+                        .filter((card): card is CollectibleCard => Boolean(card))
+                        .map((card): DisplayCollectibleCard => ({ ...card, owned: true }))
+                    : allCards.map((c): DisplayCollectibleCard => ({ ...c, owned: myCardIds.has(c.id) }))
+                ).map((card) => {
+                    const r = rarityConfig[card.rarity || "COMMON"] || rarityConfig.COMMON;
                     return (
                         <div key={card.id} style={{
                             background: r.gradient,
@@ -136,3 +167,4 @@ export const VisitorCollectibles: React.FC = () => {
         </div>
     );
 };
+

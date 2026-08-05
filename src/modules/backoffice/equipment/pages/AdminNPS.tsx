@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -31,7 +31,7 @@ export const AdminNPS: React.FC = () => {
     const fetchReport = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/nps/report?tenantId=${tenantId}&months=${months}`);
+            const res = await api.get<NPSReport>(`/nps/report?tenantId=${tenantId}&months=${months}`);
             setReport(res.data);
         } catch (error) {
             logger.error(error);

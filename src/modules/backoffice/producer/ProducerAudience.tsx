@@ -1,10 +1,9 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
-import { Search, Mail, Download, User, ArrowLeft } from "lucide-react";
+import { Search, Mail, Download, User } from "lucide-react";
 import { Button, Input } from "../../../components/ui";
 
 type Participant = {
@@ -17,6 +16,24 @@ type Participant = {
     date: string;
 };
 
+type RegistrationResponse = {
+    id: string;
+    guestName?: string | null;
+    guestEmail?: string | null;
+    status: Participant["status"];
+    createdAt: string;
+    visitor?: {
+        name?: string | null;
+        email?: string | null;
+    } | null;
+    event?: {
+        title?: string | null;
+    } | null;
+    ticket?: {
+        name?: string | null;
+    } | null;
+};
+
 export const ProducerAudience: React.FC = () => {
   const { t } = useTranslation();
     const [participants, setParticipants] = useState<Participant[]>([]);
@@ -25,10 +42,11 @@ export const ProducerAudience: React.FC = () => {
 
     useEffect(() => {
         // Fetch real registrations
-        api.get("/registrations")
+        api.get<RegistrationResponse[]>("/registrations")
             .then(res => {
                 // Map API response to Participant type
-                const data = res.data.map((reg: unknown) => ({
+                const registrations = Array.isArray(res.data) ? res.data : [];
+                const data = registrations.map((reg) => ({
                     id: reg.id,
                     name: reg.visitor?.name || reg.guestName || t("producer.produceraudience.visitor", "Visitante"),
                     email: reg.visitor?.email || reg.guestEmail || "",
@@ -41,7 +59,7 @@ export const ProducerAudience: React.FC = () => {
             })
             .catch(err => logger.error("Error fetching audience", err))
             .finally(() => setLoading(false));
-    }, []);
+    }, [t]);
 
     const handleExport = () => {
         const header = ["ID", "Nome", "Email", "Evento", "Ingresso", "Status", "Data"];

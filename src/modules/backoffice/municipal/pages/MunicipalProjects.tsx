@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useToast } from "../../../../contexts/ToastContext";
 import { Button, Input, Select } from "../../../../components/ui";
-import { Search, Filter, Briefcase, MapPin, DollarSign, FileText, ExternalLink, Calendar, Sparkles, TrendingUp } from "lucide-react";
+import { Search, Briefcase, MapPin, FileText, ExternalLink, Sparkles } from "lucide-react";
 import "../../equipment/pages/AdminShared.css";
 
 
@@ -26,6 +26,11 @@ type Project = {
     };
     aiAnalyzedAt?: string;
     createdAt?: string;
+};
+
+type ProjectListParams = {
+    tenantId: string;
+    status?: string;
 };
 
 const statusLabels: Record<string, { label: string; color: string; bg: string; border: string }> = {
@@ -55,11 +60,11 @@ export const MunicipalProjects: React.FC = () => {
         if (!tenantId) return;
 
         setLoading(true);
-        const params: unknown = { tenantId };
+        const params: ProjectListParams = { tenantId };
         if (filter) params.status = filter;
 
-        api.get("/projects", { params })
-            .then(res => setProjects(res.data))
+        api.get<Project[]>("/projects", { params })
+            .then(res => setProjects(Array.isArray(res.data) ? res.data : []))
             .catch(err => {
                 logger.error("Erro ao carregar projetos", err);
                 setProjects([]);

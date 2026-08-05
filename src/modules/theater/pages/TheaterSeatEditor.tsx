@@ -1,29 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { 
-    Layout, Plus, Save, Trash2, Layers, 
-    MousePointer2, Grid, Accessibility, Star, 
-    Copy, Move, RefreshCw, Sparkles, Info
-} from "lucide-react";
+import { Layout, Plus, Save, Trash2, Layers, MousePointer2, Grid, Accessibility, Star, Sparkles, Info } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button, Input } from "../../../components/ui";
+import { Button } from "../../../components/ui";
 import { toast } from "react-hot-toast";
 
 import { spacesApi } from "../../../api/spaces";
 
+interface SeatRow {
+    id: string;
+    seats: number;
+    type: "STANDARD" | "VIP" | "ACCESSIBLE";
+}
+
+interface TheaterLayout {
+    rows?: SeatRow[];
+}
+
+interface Space {
+    id: string;
+    name: string;
+    capacity?: number;
+    theaterLayout?: TheaterLayout | null;
+}
+
 export const TheaterSeatEditor: React.FC = () => {
-    const [spaces, setSpaces] = useState<any[]>([]);
+    const [spaces, setSpaces] = useState<Space[]>([]);
     const [selectedSpaceId, setSelectedSpaceId] = useState<string>("");
-    const [loading, setLoading] = useState(false);
+    const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
+    const [_loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
-    const [rows, setRows] = useState<any[]>([]);
+    const [rows, setRows] = useState<SeatRow[]>([]);
+    const totalSeats = rows.reduce((acc, row) => acc + row.seats, 0);
 
     useEffect(() => {
         const fetchSpaces = async () => {
             setLoading(true);
             try {
                 const res = await spacesApi.list();
-                setSpaces(res.data);
-            } catch (err: unknown) {
+                setSpaces(res.data as Space[]);
+            } catch {
                 toast.error("Erro ao carregar espaços");
             } finally {
                 setLoading(false);
@@ -36,17 +51,20 @@ export const TheaterSeatEditor: React.FC = () => {
         setSelectedSpaceId(id);
         if (!id) {
             setRows([]);
+            setSelectedSpace(null);
             return;
         }
         setLoading(true);
         try {
             const res = await spacesApi.get(id);
-            if (res.data.theaterLayout) {
-                setRows(res.data.theaterLayout.rows || []);
+            const space = res.data as Space;
+            setSelectedSpace(space);
+            if (space.theaterLayout) {
+                setRows(space.theaterLayout.rows || []);
             } else {
                 setRows([]);
             }
-        } catch (err: unknown) {
+        } catch {
             toast.error("Erro ao carregar layout");
         } finally {
             setLoading(false);
@@ -68,8 +86,9 @@ export const TheaterSeatEditor: React.FC = () => {
                 theaterLayout: { rows }
             };
             await spacesApi.update(selectedSpaceId, updateData);
+            setSelectedSpace(updateData as Space);
             toast.success("Layout salvo com sucesso!");
-        } catch (err: unknown) {
+        } catch {
             toast.error("Erro ao salvar layout");
         } finally {
             setSaving(false);
@@ -134,24 +153,24 @@ export const TheaterSeatEditor: React.FC = () => {
                             <Button onClick={addRow} variant="secondary" className="w-full justify-start gap-3 py-6 rounded-2xl">
                                 <Plus size={18} /> Adicionar Fileira
                             </Button>
-                            <Button variant="secondary" className="w-full justify-start gap-3 py-6 rounded-2xl opacity-50 cursor-not-allowed">
+                            <Button onClick={() => setRows([...rows, { id: `A${rows.length + 1}`, seats: 2, type: "ACCESSIBLE" }])} variant="secondary" className="w-full justify-start gap-3 py-6 rounded-2xl">
                                 <Accessibility size={18} /> Zona Acessível
                             </Button>
-                            <Button variant="secondary" className="w-full justify-start gap-3 py-6 rounded-2xl opacity-50 cursor-not-allowed">
+                            <Button onClick={() => setRows([...rows, { id: `V${rows.length + 1}`, seats: 8, type: "VIP" }])} variant="secondary" className="w-full justify-start gap-3 py-6 rounded-2xl">
                                 <Star size={18} /> Área VIP
                             </Button>
                         </div>
 
                         <div className="pt-6 border-t border-white/5">
-                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Precificação Automática (IA)</h4>
+                            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Resumo do layout</h4>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl">
-                                    <span className="text-xs font-bold text-white">VIP</span>
-                                    <span className="text-emerald-400 font-black">R$ 150</span>
+                                    <span className="text-xs font-bold text-white">Fileiras</span>
+                                    <span className="text-emerald-400 font-black">{rows.length}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl">
-                                    <span className="text-xs font-bold text-white">Padrão</span>
-                                    <span className="text-emerald-400 font-black">R$ 80</span>
+                                    <span className="text-xs font-bold text-white">Assentos</span>
+                                    <span className="text-emerald-400 font-black">{totalSeats}</span>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +181,7 @@ export const TheaterSeatEditor: React.FC = () => {
                             <Sparkles size={14} /> Sugestão do Arquiteto
                          </div>
                          <p className="text-[11px] text-slate-400 leading-relaxed">
-                            "Para espetáculos intimistas, recomendo um layout em <strong>Arena</strong>. Posso converter as fileiras atuais automaticamente para você."
+                            {selectedSpace ? `Capacidade cadastrada do espaço: ${selectedSpace.capacity ?? "não informada"}.` : "Selecione um espaço para carregar o layout salvo."}
                          </p>
                     </div>
                 </div>
@@ -201,7 +220,7 @@ export const TheaterSeatEditor: React.FC = () => {
                                             key={sIdx} 
                                             className={`
                                                 w-8 h-8 rounded-lg border flex items-center justify-center text-[9px] font-black
-                                                ${row.type === 'VIP' ? 'bg-gold-500/20 border-gold-500/40 text-gold-500' : 'bg-white/5 border-white/10 text-slate-600'}
+                                                ${row.type === 'VIP' ? 'bg-gold-500/20 border-gold-500/40 text-gold-500' : row.type === 'ACCESSIBLE' ? 'bg-blue-500/20 border-blue-500/40 text-blue-400' : 'bg-white/5 border-white/10 text-slate-600'}
                                             `}
                                         >
                                             {sIdx + 1}
@@ -237,10 +256,10 @@ export const TheaterSeatEditor: React.FC = () => {
                     {/* INFOBAR */}
                     <div className="mt-20 pt-8 border-t border-white/5 flex justify-between items-center text-slate-500">
                         <div className="flex gap-8">
-                            <div className="flex items-center gap-2"><Info size={14} /> Total: {rows.reduce((acc, r) => acc + r.seats, 0)} Assentos</div>
-                            <div className="flex items-center gap-2"><Layout size={14} /> Capacidade: 520 Pessoas</div>
+                            <div className="flex items-center gap-2"><Info size={14} /> Total: {totalSeats} Assentos</div>
+                            <div className="flex items-center gap-2"><Layout size={14} /> Capacidade cadastrada: {selectedSpace?.capacity ?? "--"}</div>
                         </div>
-                        <div className="text-[10px] font-black uppercase tracking-widest italic">Draft v1.4 • Ultima alteração hoje às 14:05</div>
+                        <div className="text-[10px] font-black uppercase tracking-widest italic">Layout salvo no cadastro do espaço</div>
                     </div>
                 </div>
             </div>

@@ -12,12 +12,12 @@ const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/Theat
 const TheaterMobileBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterMobileBoxOffice").then(m => ({ default: m.TheaterMobileBoxOffice })));
 const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
 
-export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children: React.ReactElement }>) => (
+export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
     <>
         <Route
             path="/theater"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <TheaterDashboard />
                     </TheaterLayout>
@@ -27,7 +27,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/mobile"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterMobileBoxOffice />
                 </RequireRole>
             }
@@ -35,7 +35,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/assentos"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <TheaterSeatEditor />
                     </TheaterLayout>
@@ -45,7 +45,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/sessoes"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <AdminBoxOffice />
                     </TheaterLayout>
@@ -55,7 +55,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/sessoes/:id/cue-master"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <TheaterCueMaster />
                     </TheaterLayout>
@@ -65,7 +65,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/playbill"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <TheaterPlaybill />
                     </TheaterLayout>
@@ -75,7 +75,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/elenco"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <TheaterCast />
                     </TheaterLayout>
@@ -85,7 +85,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: Role[]; children:
         <Route
             path="/theater/theater-club"
             element={
-                <RequireRole allowed={["theater", "admin"]}>
+                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
                     <TheaterLayout>
                         <TheaterSubscriptions />
                     </TheaterLayout>

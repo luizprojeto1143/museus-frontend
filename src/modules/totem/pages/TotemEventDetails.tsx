@@ -4,10 +4,41 @@ import { logger } from "@/utils/logger";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
-import { Users, CheckCircle, Search, ArrowLeft, Ticket } from "lucide-react";
+import { Users, CheckCircle, Search, ArrowLeft } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import { useTranslation } from "react-i18next";
+
+interface TotemEvent {
+    id: string;
+    title: string;
+    startDate: string;
+}
+
+interface Attendee {
+    id: string;
+    code: string;
+    status: string;
+    guestName?: string | null;
+    guestEmail?: string | null;
+    visitor?: {
+        name?: string | null;
+        email?: string | null;
+    } | null;
+}
+
+interface RegistrationsResponse {
+    data: Attendee[];
+}
+
+interface ApiError {
+    response?: {
+        data?: {
+            error?: string;
+            message?: string;
+        };
+    };
+}
 
 export const TotemEventDetails: React.FC = () => {
     const { t } = useTranslation();
@@ -15,32 +46,32 @@ export const TotemEventDetails: React.FC = () => {
     const { tenantId } = useAuth();
     const navigate = useNavigate();
 
-    const [event, setEvent] = useState<unknown>(null);
-    const [attendees, setAttendees] = useState<any[]>([]);
+    const [event, setEvent] = useState<TotemEvent | null>(null);
+    const [attendees, setAttendees] = useState<Attendee[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState("");
 
-    useEffect(() => {
-        if (id && tenantId) {
-            fetchDetails();
-        }
-    }, [id, tenantId]);
-
-    const fetchDetails = async () => {
+    const fetchDetails = React.useCallback(async () => {
         try {
             const [eventRes, attendeesRes] = await Promise.all([
-                api.get(`/events/${id}`),
-                api.get(`/registrations?eventId=${id}&limit=1000`)
+                api.get<TotemEvent>(`/events/${id}`),
+                api.get<RegistrationsResponse>(`/registrations?eventId=${id}&limit=1000`)
             ]);
             setEvent(eventRes.data);
             setAttendees(attendeesRes.data.data);
-        } catch (error: unknown) {
+        } catch (error) {
             logger.error(error);
             toast.error(t("totem.event_details.load_error", "Erro ao carregar detalhes"));
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, t]);
+
+    useEffect(() => {
+        if (id && tenantId) {
+            fetchDetails();
+        }
+    }, [fetchDetails, id, tenantId]);
 
     const handleCheckIn = async (code: string) => {
         try {
@@ -50,8 +81,9 @@ export const TotemEventDetails: React.FC = () => {
             setAttendees(prev => prev.map(att =>
                 att.code === code ? { ...att, status: 'CHECKED_IN' } : att
             ));
-        } catch (error: unknown) {
-            toast.error(error.response?.data?.error || t("totem.event_details.checkin_error", "Erro no check-in"));
+        } catch (error) {
+            const apiError = error as ApiError;
+            toast.error(apiError.response?.data?.error || apiError.response?.data?.message || t("totem.event_details.checkin_error", "Erro no check-in"));
         }
     };
 

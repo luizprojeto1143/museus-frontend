@@ -1,46 +1,8 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { api } from "../../../api/client";
-import { 
-    Trash2, 
-    Plus, 
-    Search, 
-    CheckCircle, 
-    ShieldCheck, 
-    Star, 
-    Mail, 
-    Phone, 
-    Info, 
-    Wrench, 
-    Briefcase, 
-    Target, 
-    Activity, 
-    Zap, 
-    Globe, 
-    ArrowUpRight,
-    X,
-    UserCheck,
-    Layers,
-    Award,
-    Verified,
-    Contact,
-    Building,
-    ExternalLink,
-    SearchCheck,
-    CloudCheck,
-    Handshake,
-    RefreshCw
-} from "lucide-react";
+import { Trash2, Plus, Search, CheckCircle, ShieldCheck, Star, Mail, Phone, X, UserCheck, Layers, Award, Verified, CloudCheck, Handshake } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { 
-    Button, 
-    Input, 
-    Textarea, 
-    EmptyState, 
-    Card, 
-    Badge, 
-    AnimateIn,
-    AnimatedCounter
-} from "@/components/ui";
+import { Button, Input, Textarea, Card, Badge, AnimateIn, AnimatedCounter } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
@@ -69,10 +31,11 @@ const serviceLabels: Record<string, string> = {
 const serviceOptions = Object.keys(serviceLabels);
 
 export const MasterProviders: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [providers, setProviders] = useState<Provider[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
+    const [providerToDelete, setProviderToDelete] = useState<Provider | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [formData, setFormData] = useState({
         name: "",
@@ -86,9 +49,9 @@ export const MasterProviders: React.FC = () => {
     const fetchProviders = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/providers");
-            setProviders(res.data || []);
-        } catch (err: unknown) {
+            const res = await api.get<Provider[]>("/providers");
+            setProviders(Array.isArray(res.data) ? res.data : []);
+        } catch (_err: unknown) {
             toast.error("Erro na sincronização do ecossistema.");
         } finally {
             setLoading(false);
@@ -114,18 +77,18 @@ export const MasterProviders: React.FC = () => {
             setFormData({ name: "", description: "", email: "", phone: "", services: [], tenantId: "" });
             fetchProviders();
             toast.success("Parceiro homologado no ecossistema!");
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro na autorização do parceiro.");
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm("PROTOCOL: Deseja desativar este parceiro do ecossistema global?")) return;
         try {
             await api.delete(`/providers/${id}`);
             setProviders(prev => prev.filter(p => p.id !== id));
+            setProviderToDelete(null);
             toast.success("Parceiro removido do registro histórico.");
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             toast.error("Erro no protocolo de remoção.");
         }
     };
@@ -247,7 +210,7 @@ export const MasterProviders: React.FC = () => {
                                         </div>
                                         <div className="flex gap-3 translate-y-[-10px] opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
                                             <button
-                                                onClick={() => handleDelete(provider.id)}
+                                                onClick={() => setProviderToDelete(provider)}
                                                 className="w-12 h-12 rounded-2xl bg-white/5 text-rose-500/40 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center border border-white/10 shadow-2xl backdrop-blur-md group/del"
                                             >
                                                 <Trash2 size={20} className="group-hover/del:scale-110 transition-transform" />
@@ -414,6 +377,50 @@ export const MasterProviders: React.FC = () => {
                                     </Button>
                                 </div>
                             </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+                {providerToDelete && (
+                    <div className="fixed inset-0 z-[120] flex items-center justify-center p-6 bg-black/85 backdrop-blur-xl">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.96, y: 16 }}
+                            className="w-full max-w-lg"
+                        >
+                            <Card className="p-10 bg-[#0b1120] border-2 border-rose-500/20 rounded-[40px] shadow-2xl">
+                                <div className="flex items-start gap-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
+                                        <Trash2 size={26} />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h2 className="text-2xl font-black text-white uppercase italic tracking-tight">Remover parceiro</h2>
+                                        <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                                            Deseja desativar o parceiro "{providerToDelete.name}" do ecossistema global?
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col sm:flex-row gap-4 mt-10">
+                                    <Button
+                                        type="button"
+                                        variant="glass"
+                                        onClick={() => setProviderToDelete(null)}
+                                        className="h-14 flex-1 rounded-2xl border-white/10 text-slate-400 font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={() => handleDelete(providerToDelete.id)}
+                                        className="h-14 flex-1 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black uppercase text-[10px] tracking-widest"
+                                    >
+                                        Confirmar
+                                    </Button>
+                                </div>
+                            </Card>
                         </motion.div>
                     </div>
                 )}

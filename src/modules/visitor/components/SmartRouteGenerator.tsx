@@ -6,14 +6,18 @@ import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
+type RouteWork = {
+    id: string;
+    title?: string;
+};
+
 export const SmartRouteGenerator: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId } = useAuth();
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [result, setResult] = useState<any[] | null>(null);
+    const [result, setResult] = useState<RouteWork[] | null>(null);
     const [time, setTime] = useState(30);
     const [interests, setInterests] = useState<string[]>([]);
 
@@ -36,7 +40,7 @@ export const SmartRouteGenerator: React.FC = () => {
 
         try {
             // Using REAL AI Endpoint
-            const res = await api.post("/ai/itinerary", {
+            const res = await api.post<RouteWork[]>("/ai/itinerary", {
                 tenantId,
                 preferences: {
                     timeAvailable: time,
@@ -45,7 +49,7 @@ export const SmartRouteGenerator: React.FC = () => {
                 }
             });
             setResult(res.data);
-        } catch (err: unknown) {
+        } catch (err) {
             logger.error(err);
         } finally {
             setLoading(false);

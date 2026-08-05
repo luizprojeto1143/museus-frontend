@@ -2,14 +2,40 @@ import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
+import { isAxiosError } from "axios";
 import { api } from "../../../../api/client";
 import { DollarSign, ExternalLink, Activity, ArrowUpRight, TrendingUp, FileText } from "lucide-react";
 
+type BalanceResponse = {
+    available: number;
+    pending: number;
+};
+
+type LinkResponse = {
+    url: string;
+};
+
+type PayoutResponse = {
+    message?: string;
+};
+
+type ApiErrorResponse = {
+    message?: string;
+};
+
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || fallback;
+    }
+    return fallback;
+};
+
 export const ProducerFinance: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [balance, setBalance] = useState({ available: 0, pending: 0 });
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
+    const [showConnectPrompt, setShowConnectPrompt] = useState(false);
 
     useEffect(() => {
         fetchBalance();
@@ -18,8 +44,11 @@ export const ProducerFinance: React.FC = () => {
     const fetchBalance = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/stripe/balance?type=PRODUCER');
-            setBalance(res.data);
+            const res = await api.get<BalanceResponse>('/stripe/balance?type=PRODUCER');
+            setBalance({
+                available: Number(res.data.available) || 0,
+                pending: Number(res.data.pending) || 0
+            });
         } catch (error) {
             logger.error("Failed to fetch balance", error);
         } finally {
@@ -30,7 +59,7 @@ export const ProducerFinance: React.FC = () => {
     const handleConnect = async () => {
         try {
             setActionLoading(true);
-            const res = await api.get('/stripe/onboarding-link?type=PRODUCER');
+            const res = await api.get<LinkResponse>('/stripe/onboarding-link?type=PRODUCER');
             window.location.href = res.data.url;
         } catch (error) {
             logger.error("Failed to connect", error);
@@ -43,14 +72,11 @@ export const ProducerFinance: React.FC = () => {
     const handleDashboard = async () => {
         try {
             setActionLoading(true);
-            const res = await api.get('/stripe/dashboard-link?type=PRODUCER');
+            const res = await api.get<LinkResponse>('/stripe/dashboard-link?type=PRODUCER');
             window.open(res.data.url, '_blank');
         } catch (error) {
             logger.error("Failed to open dashboard", error);
-            // If they don't have an account, prompt to create
-            if (window.confirm("Conta não configurada. Deseja configurar agora?")) {
-                handleConnect();
-            }
+            setShowConnectPrompt(true);
         } finally {
             setActionLoading(false);
         }
@@ -63,12 +89,12 @@ export const ProducerFinance: React.FC = () => {
         }
         try {
             setActionLoading(true);
-            const res = await api.post('/stripe/payout?type=PRODUCER');
+            const res = await api.post<PayoutResponse>('/stripe/payout?type=PRODUCER');
             logger.warn("Alert:", res.data.message || "Saque solicitado com sucesso!");
-            fetchBalance();
+            void fetchBalance();
         } catch (error: unknown) {
             logger.error("Failed to process payout", error);
-            const errMsg = error.response?.data?.message || "Erro ao solicitar saque";
+            const errMsg = getApiErrorMessage(error, "Erro ao solicitar saque");
             logger.warn("Alert:", errMsg);
         } finally {
             setActionLoading(false);
@@ -196,6 +222,34 @@ export const ProducerFinance: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {showConnectPrompt && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-[var(--accent-primary)]/30 bg-[#1a1108] p-6 shadow-2xl">
+                        <h2 className="text-xl font-black text-white mb-3">Conta Stripe nao configurada</h2>
+                        <p className="text-sm text-gray-300 mb-6">Deseja configurar sua conta agora?</p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                type="button"
+                                className="px-4 py-2 rounded-lg bg-white/5 text-white border border-white/10 font-bold"
+                                onClick={() => setShowConnectPrompt(false)}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                className="px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[#1a1108] font-bold"
+                                onClick={() => {
+                                    setShowConnectPrompt(false);
+                                    void handleConnect();
+                                }}
+                            >
+                                Configurar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

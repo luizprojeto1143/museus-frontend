@@ -4,7 +4,7 @@ import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Heart, DollarSign, Users, Clock, Gift } from "lucide-react";
+import { Loader2, Heart, DollarSign, Clock, Gift } from "lucide-react";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
@@ -25,6 +25,10 @@ interface Donation {
     createdAt: string;
 }
 
+interface DonationsWallResponse {
+    donations?: Donation[];
+}
+
 export const AdminDonations: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
@@ -35,8 +39,8 @@ export const AdminDonations: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             const [statsRes, wallRes] = await Promise.all([
-                api.get(`/donations/stats?tenantId=${tenantId}`),
-                api.get(`/donations/wall?tenantId=${tenantId}`)
+                api.get<DonationStats>(`/donations/stats?tenantId=${tenantId}`),
+                api.get<DonationsWallResponse>(`/donations/wall?tenantId=${tenantId}`)
             ]);
             setStats(statsRes.data);
             setDonations(wallRes.data.donations || []);

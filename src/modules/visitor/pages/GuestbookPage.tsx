@@ -20,7 +20,7 @@ type GuestbookEntry = {
 
 export const GuestbookPage: React.FC = () => {
     const { t } = useTranslation();
-    const { tenantId, isAuthenticated, email, isGuest } = useAuth();
+    const { tenantId, isAuthenticated: _isAuthenticated, email, isGuest } = useAuth();
     const [entries, setEntries] = useState<GuestbookEntry[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(false);

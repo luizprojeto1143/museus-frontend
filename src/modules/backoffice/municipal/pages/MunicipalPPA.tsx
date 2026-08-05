@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+ï»¿import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -7,48 +7,91 @@ import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Target, Plus, Trash2 } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+interface PPAGoal {
+    id: string;
+    title: string;
+    description?: string | null;
+    metric: string;
+    targetValue: number;
+    currentValue: number;
+    year: number;
+    quarter?: number | null;
+}
+
+interface PPAFormState {
+    title: string;
+    description: string;
+    metric: string;
+    targetValue: string;
+    year: number;
+    quarter: string;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const ppaFormSchema = z.object({
+    title: z.string().trim().min(2, "Preencha o titulo da meta."),
+    targetValue: z.string().refine((value) => Number(value) > 0, "Informe um valor alvo maior que zero."),
+    year: z.number().int().min(2024).max(2035),
+    quarter: z.string().refine((value) => value === "" || ["1", "2", "3", "4"].includes(value), "Trimestre invalido.")
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 export const MunicipalPPA: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [goals, setGoals] = useState<any[]>([]);
+    const [goals, setGoals] = useState<PPAGoal[]>([]);
     const [loading, setLoading] = useState(true);
     const [year, setYear] = useState(new Date().getFullYear());
     const [showForm, setShowForm] = useState(false);
-    const [form, setForm] = useState({ title: '', description: '', metric: 'visitantes', targetValue: '', year: new Date().getFullYear(), quarter: '' });
+    const [form, setForm] = useState<PPAFormState>({ title: '', description: '', metric: 'visitantes', targetValue: '', year: new Date().getFullYear(), quarter: '' });
+    const [deleteTarget, setDeleteTarget] = useState<PPAGoal | null>(null);
 
     const fetchData = useCallback(async () => {
         try {
-            const res = await api.get(`/ppa?tenantId=${tenantId}&year=${year}`);
+            const res = await api.get<PPAGoal[]>(`/ppa`, { params: { tenantId, year } });
             setGoals(res.data);
-        } catch (error) { logger.error(error); toast.error("Erro ao carregar metas"); }
+        } catch (error: unknown) { logger.error("Erro ao carregar metas PPA.", error); toast.error(getApiErrorMessage(error, "Erro ao carregar metas")); }
         finally { setLoading(false); }
     }, [tenantId, year]);
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
     const onSave = async () => {
-        if (!form.title || !form.targetValue) return toast.error("Preencha título e valor");
+        const validation = ppaFormSchema.safeParse(form);
+        if (!validation.success) return toast.error(validation.error.issues[0]?.message || "Revise os dados da meta.");
         try {
-            await api.post("/ppa", { ...form, targetValue: parseInt(form.targetValue as string), quarter: form.quarter ? parseInt(form.quarter as string) : null });
+            await api.post("/ppa", { ...form, targetValue: Number(form.targetValue), quarter: form.quarter ? Number(form.quarter) : null });
             toast.success("Meta criada!");
             setShowForm(false);
+            setForm({ title: '', description: '', metric: 'visitantes', targetValue: '', year, quarter: '' });
             fetchData();
-        } catch (err) { toast.error("Erro"); }
+        } catch (err: unknown) { toast.error(getApiErrorMessage(err, "Erro ao criar meta")); }
     };
 
-    const onDelete = async (id: string) => {
-        if (!confirm("Excluir meta?")) return;
-        try { await api.delete(`/ppa/${id}`); toast.success("Meta excluída"); fetchData(); } catch (err) { toast.error("Erro"); }
+    const onDelete = async () => {
+        if (!deleteTarget) return;
+        try { await api.delete(`/ppa/${deleteTarget.id}`); toast.success("Meta excluida"); setDeleteTarget(null); fetchData(); } catch (err: unknown) { toast.error(getApiErrorMessage(err, "Erro ao excluir meta")); }
     };
 
-    const onUpdateProgress = async (id: string, currentValue: number) => {
+    const _onUpdateProgress = async (id: string, currentValue: number) => {
         try {
             await api.patch(`/ppa/${id}`, { currentValue });
             fetchData();
-        } catch (err) { toast.error("Erro"); }
+        } catch (err: unknown) { toast.error(getApiErrorMessage(err, "Erro ao atualizar progresso")); }
     };
-
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
 
     return (
@@ -56,7 +99,7 @@ export const MunicipalPPA: React.FC = () => {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                     <h1 className="section-title" style={{ margin: 0 }}>Metas PPA</h1>
-                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Plano Plurianual — acompanhamento de metas</p>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", marginTop: "0.25rem" }}>Plano Plurianual ï¿½ acompanhamento de metas</p>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <select value={year} onChange={e => setYear(Number(e.target.value))} style={{ background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.5rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
@@ -70,9 +113,9 @@ export const MunicipalPPA: React.FC = () => {
                 <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
                     <h2 className="card-title" style={{ margin: 0 }}>Nova Meta</h2>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.ppa.ttulo", `Título`)}</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Atender 50.000 visitantes" style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.ppa.ttulo", `Tï¿½tulo`)}</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="Atender 50.000 visitantes" style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
                         <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>Valor Alvo</label><input type="number" value={form.targetValue} onChange={e => setForm({ ...form, targetValue: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }} /></div>
-                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.ppa.mtrica", `Métrica`)}</label>
+                        <div><label style={{ display: "block", color: "var(--accent-primary)", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.4rem" }}>{t("admin.ppa.mtrica", `Mï¿½trica`)}</label>
                             <select value={form.metric} onChange={e => setForm({ ...form, metric: e.target.value })} style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "0.75rem", padding: "0.75rem 1rem", color: "white", fontSize: "0.85rem", outline: "none" }}>
                                 <option value="visitantes">Visitantes</option><option value="eventos">Eventos</option><option value="projetos">Projetos</option><option value="oficinas">Oficinas</option><option value="receita">Receita (R$)</option>
                             </select>
@@ -96,7 +139,7 @@ export const MunicipalPPA: React.FC = () => {
                         <Target size={48} style={{ margin: "0 auto 1rem", color: "#64748b", opacity: 0.3 }} />
                         <p style={{ color: "#64748b" }}>Nenhuma meta definida para {year}</p>
                     </div>
-                ) : goals.map((g: unknown) => {
+                ) : goals.map((g) => {
                     const pct = g.targetValue > 0 ? Math.min(Math.round((g.currentValue / g.targetValue) * 100), 100) : 0;
                     const color = pct >= 100 ? 'bg-green-500' : pct >= 60 ? 'bg-amber-500' : 'bg-red-500';
                     const textColor = pct >= 100 ? 'text-green-400' : pct >= 60 ? 'text-amber-400' : 'text-red-400';
@@ -105,11 +148,11 @@ export const MunicipalPPA: React.FC = () => {
                             <div className="flex justify-between items-start mb-3">
                                 <div>
                                     <h3 style={{ color: "white", fontWeight: 700 }}>{g.title}</h3>
-                                    <p style={{ color: "#64748b", fontSize: "0.75rem" }}>{g.metric} {g.quarter ? `• Q${g.quarter}` : '• Anual'}</p>
+                                    <p style={{ color: "#64748b", fontSize: "0.75rem" }}>{g.metric} {g.quarter ? `ï¿½ Q${g.quarter}` : 'ï¿½ Anual'}</p>
                                 </div>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                                     <span className={`text-2xl font-black ${textColor}`}>{pct}%</span>
-                                    <button onClick={() => onDelete(g.id)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-zinc-300 hover:text-red-400"><Trash2 size={14} /></button>
+                                    <button onClick={() => setDeleteTarget(g)} className="p-1.5 hover:bg-red-500/10 rounded-lg text-zinc-300 hover:text-red-400"><Trash2 size={14} /></button>
                                 </div>
                             </div>
                             <div className="w-full bg-black/40 rounded-full h-3 mb-2">
@@ -123,6 +166,19 @@ export const MunicipalPPA: React.FC = () => {
                     );
                 })}
             </div>
+            {deleteTarget && (
+                <div className="bg-[var(--bg-surface)] border border-red-500/20 shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ display: "grid", gap: "1rem" }}>
+                    <div>
+                        <h2 className="card-title" style={{ margin: 0 }}>Excluir meta?</h2>
+                        <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "0.4rem" }}>{deleteTarget.title}</p>
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                        <Button variant="outline" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+                        <Button onClick={onDelete}>Excluir</Button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
+

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
@@ -32,7 +32,7 @@ export const AdminSentimentAnalysis: React.FC = () => {
 
     const fetchReport = useCallback(async () => {
         try {
-            const res = await api.get(`/sentiment/report?tenantId=${tenantId}`);
+            const res = await api.get<SentimentReport>(`/sentiment/report?tenantId=${tenantId}`);
             setReport(res.data);
         } catch (error) {
             logger.error(error);

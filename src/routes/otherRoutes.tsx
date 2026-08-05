@@ -10,6 +10,8 @@ import { ProviderProfile } from "../modules/backoffice/provider/ProviderProfile"
 import { ProviderServices } from "../modules/backoffice/provider/ProviderServices";
 import { ProviderSettings } from "../modules/backoffice/provider/ProviderSettings";
 import { ProviderInvoices } from "../modules/backoffice/provider/ProviderInvoices";
+import { ProviderExecutions, ProviderQuotes, ProviderRequests, ProviderWallet } from "../modules/backoffice/provider/ProviderOperationalPages";
+import { CheckoutReturnPage } from "../modules/public/CheckoutReturnPage";
 
 // Totem
 import { TotemLayout } from "../modules/totem/TotemLayout";
@@ -19,8 +21,7 @@ import { TotemEvents } from "../modules/totem/pages/TotemEvents";
 import { TotemEventDetails } from "../modules/totem/pages/TotemEventDetails";
 import { TotemSearch } from "../modules/totem/pages/TotemSearch";
 
-type RequireRoleProps = { allowed: Role[]; children: React.ReactElement };
-type RequireProviderProps = { children: React.ReactElement };
+type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 export function providerRoutes(RequireRole: React.FC<RequireRoleProps>) {
     const pvr = (Component: React.ComponentType) => (
@@ -34,15 +35,18 @@ export function providerRoutes(RequireRole: React.FC<RequireRoleProps>) {
     return (
         <>
             <Route path="/provider" element={pvr(ProviderDashboard)} />
-            <Route path="/provider/chamados" element={pvr(ProviderDashboard)} />
-            <Route path="/provider/orcamentos" element={pvr(ProviderDashboard)} />
-            <Route path="/provider/execucoes" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/dashboard" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/chamados" element={pvr(ProviderRequests)} />
+            <Route path="/provider/orcamentos" element={pvr(ProviderQuotes)} />
+            <Route path="/provider/execucoes" element={pvr(ProviderExecutions)} />
             <Route path="/provider/servicos" element={pvr(ProviderServices)} />
-            <Route path="/provider/carteira" element={pvr(ProviderDashboard)} />
+            <Route path="/provider/carteira" element={pvr(ProviderWallet)} />
             <Route path="/provider/notas-fiscais" element={pvr(ProviderInvoices)} />
             <Route path="/provider/mensagens" element={pvr(ProviderInbox)} />
             <Route path="/provider/perfil" element={pvr(ProviderProfile)} />
             <Route path="/provider/configuracoes" element={pvr(ProviderSettings)} />
+            <Route path="/provider/subscription-success" element={<RequireRole allowed={["provider"]}><CheckoutReturnPage status="success" context="provider-subscription" /></RequireRole>} />
+            <Route path="/provider/subscription-cancel" element={<RequireRole allowed={["provider"]}><CheckoutReturnPage status="cancel" context="provider-subscription" /></RequireRole>} />
             <Route path="/provider/*" element={pvr(ProviderDashboard)} />
         </>
     );
@@ -53,7 +57,7 @@ export function totemRoutes(RequireRole: React.FC<RequireRoleProps>) {
         <Route
             path="/totem"
             element={
-                <RequireRole allowed={["admin", "master"]}>
+                <RequireRole allowed={["totem_operator", "admin", "equipment_admin", "master"]}>
                     <TotemLayout />
                 </RequireRole>
             }

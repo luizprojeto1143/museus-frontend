@@ -1,27 +1,29 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-    FileText,
-    Download,
-    Calendar,
-    ChevronRight,
-    BarChart3,
-    PieChart,
-    TrendingUp,
-    ShieldCheck,
-    ArrowRight,
-    Search,
-    Globe,
-    Zap,
-    Scale,
-    Activity,
-    FileSearch,
-    Share2
-} from "lucide-react";
+import { FileText, Download, Calendar, ChevronRight, PieChart, TrendingUp, ShieldCheck, Globe, Zap, Scale, Activity, FileSearch, Share2 } from "lucide-react";
 import { toast } from "react-hot-toast";
+type ExecutiveReportsSummary = {
+    summary?: {
+        accessibilityPlanRate?: number;
+        accessibilityByType?: Record<string, number>;
+    };
+};
+
+type LegalComplianceItem = {
+    law?: string | null;
+    requirement?: string | null;
+    compliant: boolean;
+};
+
+type LegalComplianceResponse = {
+    summary?: {
+        complianceRate?: number;
+    };
+    matrix?: LegalComplianceItem[];
+};
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { 
@@ -31,22 +33,22 @@ import {
     AnimateIn, 
     AnimatedCounter 
 } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const MunicipalReports: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { tenantId } = useAuth();
     const [loading, setLoading] = useState(true);
-    const [summary, setSummary] = useState<unknown>(null);
-    const [compliance, setCompliance] = useState<unknown>(null);
+    const [summary, setSummary] = useState<ExecutiveReportsSummary | null>(null);
+    const [compliance, setCompliance] = useState<LegalComplianceResponse | null>(null);
 
     const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             const [summaryRes, complianceRes] = await Promise.all([
-                api.get("/executive-reports/summary", { params: { tenantId } }),
-                api.get("/secretary/legal-compliance", { params: { tenantId } })
+                api.get<ExecutiveReportsSummary>("/executive-reports/summary", { params: { tenantId } }),
+                api.get<LegalComplianceResponse>("/secretary/legal-compliance", { params: { tenantId } })
             ]);
             setSummary(summaryRes.data);
             setCompliance(complianceRes.data);
@@ -56,7 +58,7 @@ export const MunicipalReports: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [tenantId]);
+    }, [tenantId, t]);
 
     useEffect(() => {
         fetchData();
@@ -151,7 +153,7 @@ export const MunicipalReports: React.FC = () => {
                             <h4 className="text-sm font-black text-white uppercase tracking-widest">{t("municipal.reports.actions_by_type", "Ações por Tipologia")}</h4>
                         </div>
                         <div className="space-y-4">
-                            {Object.entries(summary?.summary?.accessibilityByType || {}).map(([type, count]: [string, any], idx) => (
+                            {Object.entries(summary?.summary?.accessibilityByType || {}).map(([type, count], _idx) => (
                                 <div key={type} className="flex justify-between items-center group">
                                     <div className="flex items-center gap-3">
                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 group-hover:bg-emerald-400 transition-colors" />
@@ -236,7 +238,7 @@ export const MunicipalReports: React.FC = () => {
                         </div>
                         
                         <div className="p-10 space-y-6">
-                            {(compliance?.matrix || []).slice(0, 3).map((item: unknown, idx: number) => (
+                            {(compliance?.matrix || []).slice(0, 3).map((item, idx: number) => (
                                 <motion.div 
                                     key={idx}
                                     whileHover={{ x: 5 }}

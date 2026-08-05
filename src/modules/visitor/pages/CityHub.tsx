@@ -1,4 +1,4 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -6,19 +6,14 @@ import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { getFullUrl } from "../../../utils/url";
 import { toast } from "react-hot-toast";
-import { 
-  MapPin, Calendar, Compass, Award, Star, Search, Flame, Map, 
-  BookOpen, Bell, Shield, Users, User, ArrowRight, Scan, 
-  ChevronRight, Landmark, HelpCircle, Utensils, Headphones, Monitor
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Star, Search, Bell, Scan, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { Card, Badge, Button } from "@/components/ui";
 import { HubHeader } from "../components/CityHub/HubHeader";
 import { HubFeaturedCities } from "../components/CityHub/HubFeaturedCities";
 import { HubHeroBanner } from "../components/CityHub/HubHeroBanner";
 import { HubCulturalProgress } from "../components/CityHub/HubCulturalProgress";
-import { pageVariants, staggerItem } from "@/lib/motion";
 import "./CityHub.css";
 
 interface CityEquipment {
@@ -47,22 +42,52 @@ export interface CityData {
   totalEquipmentsCount?: number;
 }
 
+type HubSettings = {
+  title: string;
+  subtitle: string;
+  imageUrl: string;
+};
+
+type VisitorSummary = {
+  xp: number;
+  achievements: number;
+  stamps: number;
+  name: string;
+  email: string;
+};
+
+type HubEvent = {
+  id: string;
+  title: string;
+  startDate: string;
+  location?: string | null;
+  tenant?: { name?: string | null } | null;
+};
+
+type HubSummaryResponse = {
+  cities?: CityData[];
+  hubSettings?: HubSettings | null;
+  visitor?: VisitorSummary | null;
+};
+
+type EventListResponse = HubEvent[] | { data?: HubEvent[] };
+
 export const CityHub: React.FC = () => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { role, name: authName } = useAuth();
   const navigate = useNavigate();
 
   const [cities, setCities] = useState<CityData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [mobileTab, setMobileTab] = useState<"inicio" | "explorar" | "missoes" | "perfil">("inicio");
-  const [hubSettings, setHubSettings] = useState<{ title: string; subtitle: string; imageUrl: string } | null>(null);
-  const [visitor, setVisitor] = useState<{ xp: number; achievements: number; stamps: number; name: string; email: string } | null>(null);
-  const [events, setEvents] = useState<any[]>([]);
+  const [hubSettings, setHubSettings] = useState<HubSettings | null>(null);
+  const [visitor, setVisitor] = useState<VisitorSummary | null>(null);
+  const [events, setEvents] = useState<HubEvent[]>([]);
 
   useEffect(() => {
     if (role === "master") { navigate("/master", { replace: true }); return; }
-    if (role === "admin") { navigate("/admin", { replace: true }); return; }
+    if (role === "equipment_admin") { navigate("/admin", { replace: true }); return; }
   }, [role, navigate]);
 
   useEffect(() => {
@@ -70,8 +95,8 @@ export const CityHub: React.FC = () => {
       try {
         setLoading(true);
         const [res, eventsRes] = await Promise.all([
-          api.get("/analytics/municipal-pwa/summary"),
-          api.get("/events", { params: { discovery: "true" } }).catch(() => ({ data: { data: [] } }))
+          api.get<HubSummaryResponse>("/analytics/municipal-pwa/summary"),
+          api.get<EventListResponse>("/events", { params: { discovery: "true" } }).catch(() => ({ data: { data: [] as HubEvent[] } }))
         ]);
         if (res.data) {
           setCities(res.data.cities || []);
@@ -79,9 +104,9 @@ export const CityHub: React.FC = () => {
           setVisitor(res.data.visitor || null);
         }
         if (eventsRes.data) {
-          setEvents(eventsRes.data.data || []);
+          setEvents(Array.isArray(eventsRes.data) ? eventsRes.data : eventsRes.data.data || []);
         }
-      } catch (err: unknown) {
+      } catch (err) {
         logger.error("Error fetching city hub data", err);
       } finally {
         setLoading(false);
@@ -143,7 +168,7 @@ export const CityHub: React.FC = () => {
 
           <nav className="sidebar-nav-links">
             <button className="sidebar-nav-item active">
-              <span className="sidebar-nav-icon">🏠</span> Início
+              <span className="sidebar-nav-icon">IN</span> Inicio
             </button>
             <button className="sidebar-nav-item" onClick={() => navigate("/select-museum")}>
               <span className="sidebar-nav-icon">🧭</span> Explorar
@@ -282,7 +307,7 @@ export const CityHub: React.FC = () => {
                   Nenhum evento agendado
                 </div>
               ) : (
-                events.slice(0, 3).map((evt, idx) => {
+                events.slice(0, 3).map((evt, _idx) => {
                   const dateObj = new Date(evt.startDate);
                   const day = dateObj.getDate().toString().padStart(2, '0');
                   const month = dateObj.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase();
@@ -321,7 +346,7 @@ export const CityHub: React.FC = () => {
                     alt={cities[0].equipments[0].name} 
                     className="continue-exploring-img"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
+                      (e.target as HTMLImageElement).src = "/placeholder-image.svg";
                     }}
                   />
                 </div>
@@ -484,7 +509,7 @@ export const CityHub: React.FC = () => {
                             alt={firstEquip?.name || featuredCity.name} 
                             className="mobile-featured-img object-cover w-full h-full"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
+                              (e.target as HTMLImageElement).src = "/placeholder-image.svg";
                             }}
                           />
                           <div className="mobile-featured-img-overlay"></div>
@@ -521,7 +546,7 @@ export const CityHub: React.FC = () => {
                   >
                     <div className="mobile-featured-img-wrapper h-48 relative">
                       <img 
-                        src="/placeholder-image.jpg" 
+                        src="/placeholder-image.svg" 
                         alt="Cultura Viva" 
                         className="mobile-featured-img object-cover w-full h-full opacity-55"
                       />
@@ -575,7 +600,7 @@ export const CityHub: React.FC = () => {
                         alt={c.name} 
                         className="w-16 h-16 rounded-xl object-cover" 
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/placeholder-image.jpg";
+                          (e.target as HTMLImageElement).src = "/placeholder-image.svg";
                         }}
                       />
                       <div className="flex-1 flex flex-col justify-center">
@@ -649,8 +674,8 @@ export const CityHub: React.FC = () => {
             className={`mob-nav-item flex flex-col items-center ${mobileTab === "inicio" ? "active-gold" : ""}`}
             onClick={() => setMobileTab("inicio")}
           >
-            <span className="mob-nav-icon text-lg">🏠</span>
-            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Início</span>
+            <span className="mob-nav-icon text-lg">IN</span>
+            <span className="mob-nav-lbl text-[10px] font-bold mt-1">Inicio</span>
           </button>
           <button 
             className={`mob-nav-item flex flex-col items-center ${mobileTab === "explorar" ? "active-gold" : ""}`}
@@ -686,3 +711,5 @@ export const CityHub: React.FC = () => {
     </div>
   );
 };
+
+

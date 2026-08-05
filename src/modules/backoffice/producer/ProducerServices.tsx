@@ -2,9 +2,9 @@ import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../../api/client";
-import { CheckCircle, MessageSquare, Mic, Ear, ShieldCheck, ArrowRight, PlayCircle, Star, Phone, Loader2 } from "lucide-react";
+import { MessageSquare, Mic, Ear, ShieldCheck, ArrowRight, PlayCircle, Star, Phone, Loader2 } from "lucide-react";
 import { EmptyState, Button } from "../../../components/ui";
 import { useToast } from "../../../contexts/ToastContext";
 import { inboxService } from "../../../services/inboxService";

@@ -3,13 +3,51 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
-import { 
-    Briefcase, ShieldCheck, Mail, Lock, User, 
-    ArrowRight, CheckCircle2, DollarSign, Zap,
-    Star, Globe, Info
-} from "lucide-react";
+import { Briefcase, ShieldCheck, Mail, Lock, User, DollarSign, Zap, Info } from "lucide-react";
 import { Button, Input, Badge } from "../../components/ui";
 import { useToast } from "../../contexts/ToastContext";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+const providerServiceTypes = ["LIBRAS_INTERPRETATION", "AUDIO_DESCRIPTION", "CAPTIONING", "BRAILLE", "OTHER"] as const;
+type ProviderServiceType = typeof providerServiceTypes[number];
+
+interface RegisterProviderForm {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+    serviceType: ProviderServiceType;
+    description: string;
+}
+
+interface RegisterProviderResponse {
+    checkoutUrl?: string | null;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const registerProviderSchema = z.object({
+    name: z.string().trim().min(2, "Informe o nome profissional."),
+    email: z.string().trim().email("Informe um e-mail valido."),
+    password: z.string().min(10, "A senha deve ter pelo menos 10 caracteres."),
+    confirmPassword: z.string().min(10),
+    serviceType: z.enum(providerServiceTypes),
+    description: z.string().trim().optional().default("")
+}).refine(data => data.password === data.confirmPassword, {
+    message: "As senhas nao coincidem.",
+    path: ["confirmPassword"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(err)) {
+        return err.response?.data?.message || err.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 export const RegisterProvider: React.FC = () => {
     const { t } = useTranslation();
@@ -18,7 +56,7 @@ export const RegisterProvider: React.FC = () => {
     const { login } = useAuth();
     const [loading, setLoading] = useState(false);
     
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<RegisterProviderForm>({
         name: "",
         email: "",
         password: "",
@@ -28,40 +66,30 @@ export const RegisterProvider: React.FC = () => {
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value } as RegisterProviderForm);
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-            addToast(t("auth.registerprovider.passwordsDontMatch", "As senhas não coincidem."), "error");
+        const validation = registerProviderSchema.safeParse(formData);
+        if (!validation.success) {
+            const issue = validation.error.issues[0];
+            addToast(issue?.path[0] === "confirmPassword" ? t("auth.registerprovider.passwordsDontMatch", "As senhas nao coincidem.") : issue?.message || t("auth.registerprovider.error", "Erro ao realizar cadastro."), "error");
             return;
         }
 
         setLoading(true);
         try {
             // Register as a provider
-            const response = await api.post("/auth/register-provider", {
-                ...formData,
-                services: [formData.serviceType]
+            await api.post<RegisterProviderResponse>("/auth/register-provider", {
+                ...validation.data,
+                services: [validation.data.serviceType]
             });
-            
-            if (response.data.checkoutUrl) {
-                addToast(t("auth.registerprovider.successCheckout", "Cadastro realizado! Redirecionando para o pagamento da assinatura..."), "success");
-                // Wait a bit for the toast
-                setTimeout(() => {
-                    window.location.href = response.data.checkoutUrl;
-                }, 1500);
-            } else {
-                addToast(t("auth.registerprovider.successNetwork", "Cadastro realizado! Bem-vindo à rede de prestadores."), "success");
-                
-                // Auto-login
-                await login({ email: formData.email, password: formData.password });
-                
-                navigate("/provider");
-            }
+            addToast(t("auth.registerprovider.successNetwork", "Cadastro gratuito realizado! Assine quando quiser enviar propostas."), "success");
+            await login({ email: validation.data.email, password: validation.data.password });
+            navigate("/provider");
         } catch (err: unknown) {
-            addToast(err.response?.data?.message || t("auth.registerprovider.error", "Erro ao realizar cadastro."), "error");
+            addToast(getApiErrorMessage(err, t("auth.registerprovider.error", "Erro ao realizar cadastro.")), "error");
         } finally {
             setLoading(false);
         }
@@ -99,8 +127,8 @@ export const RegisterProvider: React.FC = () => {
                                 <DollarSign size={24} />
                             </div>
                             <div>
-                                <h4 className="font-bold text-white">Investimento Inteligente</h4>
-                                <p className="text-sm text-[#b794f4]">Apenas R$ 50,00/mês para estar no topo da vitrine.</p>
+                                <h4 className="font-bold text-white">Cadastro Gratuito</h4>
+                                <p className="text-sm text-[#b794f4]">Crie o perfil sem pagar; a mensalidade entra apenas para enviar propostas.</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 group">
@@ -190,7 +218,7 @@ export const RegisterProvider: React.FC = () => {
                             <Info size={20} className="shrink-0 text-[#9f7aea]" />
                             <div>
                                 <span className="font-bold text-white block mb-1">Informação de Assinatura</span>
-                                Ao se cadastrar, você concorda com a taxa mensal de <strong>R$ 50,00</strong> para manutenção do seu perfil na rede de fomento. O primeiro pagamento será solicitado após o login.
+                                O cadastro e a vitrine inicial sao gratuitos. A mensalidade de <strong>R$ 50,00</strong>, controlada pela Central de Taxas, habilita respostas comerciais, propostas para projetos aprovados e solicitacoes de pagamento.
                             </div>
                         </div>
 
@@ -213,3 +241,4 @@ export const RegisterProvider: React.FC = () => {
         </div>
     );
 };
+

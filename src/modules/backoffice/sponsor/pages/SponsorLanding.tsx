@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const Button = ({ children, className, onClick }: unknown) => (
-  <button className={className} onClick={onClick}>{children}</button>
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  children: ReactNode;
+};
+
+const Button = ({ children, className, ...props }: ButtonProps) => (
+  <button className={className} {...props}>{children}</button>
 );
 
 export function SponsorLanding() {

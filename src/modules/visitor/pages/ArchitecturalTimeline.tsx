@@ -2,8 +2,8 @@ import { logger } from "@/utils/logger";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/client";
-import { Clock, Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { Clock, Users } from "lucide-react";
+import { motion } from "framer-motion";
 import "./ArchitecturalTimeline.css";
 
 interface TimelineEvent {

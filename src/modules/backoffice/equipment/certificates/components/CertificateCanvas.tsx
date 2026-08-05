@@ -12,7 +12,7 @@ interface ElementRendererProps {
 }
 
 const ElementRenderer: React.FC<ElementRendererProps> = ({ element, onSelect }) => {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
     const handleClick = (e: React.MouseEvent) => {
         e.stopPropagation(); // Prevent container click from clearing selection
         onSelect(element.id);

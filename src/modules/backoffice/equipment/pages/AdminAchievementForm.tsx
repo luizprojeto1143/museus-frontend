@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { Input, Select, Textarea, Button } from "../../../../components/ui";
-import {
-  ArrowLeft, Save, Trophy, Star, Target, Zap, Image,
-  CheckCircle, AlertCircle, ChevronRight, FileText, Gift
-} from "lucide-react";
+import { ArrowLeft, Save, Trophy, Star, Target, Zap, Image, CheckCircle, ChevronRight, FileText, Gift } from "lucide-react";
 import { useToast } from "../../../../contexts/ToastContext";
 import { motion, AnimatePresence } from "framer-motion";
 import "./AdminShared.css";
@@ -20,12 +17,18 @@ interface AchievementForm {
   iconUrl: string;
   condition: string;
   autoTrigger: boolean;
-  triggerType: "XP_THRESHOLD" | "VISIT_COUNT" | "TRAIL_COMPLETION" | "CATEGORY_COMPLETION" | "CUSTOM";
+  triggerType: TriggerType;
   triggerValue: number;
   active: boolean;
 }
 
-const TRIGGER_TYPES = [
+type TriggerType = "XP_THRESHOLD" | "VISIT_COUNT" | "TRAIL_COMPLETION" | "CATEGORY_COMPLETION" | "CUSTOM";
+
+interface UploadImageResponse {
+  url: string;
+}
+
+const TRIGGER_TYPES: Array<{ value: TriggerType; label: string }> = [
   { value: "XP_THRESHOLD", label: "Limite de XP Alcançado" },
   { value: "VISIT_COUNT", label: "Número de Visitas" },
   { value: "TRAIL_COMPLETION", label: "Conclusão de Trilha" },
@@ -71,7 +74,7 @@ export const AdminAchievementForm: React.FC = () => {
   const loadAchievement = React.useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/achievements/${id}`);
+      const res = await api.get<AchievementForm>(`/achievements/${id}`);
       setForm(res.data);
     } catch {
       addToast(t("admin.achievementForm.alerts.errorLoad"), "error");
@@ -148,7 +151,7 @@ export const AdminAchievementForm: React.FC = () => {
 
       try {
         setIsUploading(true);
-        const res = await api.post("/upload/image", formData);
+        const res = await api.post<UploadImageResponse>("/upload/image", formData);
         setForm({ ...form, iconUrl: res.data.url });
         addToast("Ícone enviado com sucesso!", "success");
       } catch {
@@ -329,7 +332,7 @@ export const AdminAchievementForm: React.FC = () => {
                     <Select
                       label="Tipo de Gatilho"
                       value={form.triggerType}
-                      onChange={(e) => setForm({ ...form, triggerType: e.target.value as unknown })}
+                      onChange={(e) => setForm({ ...form, triggerType: e.target.value as TriggerType })}
                     >
                       {TRIGGER_TYPES.map(item => (
                         <option key={item.value} value={item.value}>{item.label}</option>

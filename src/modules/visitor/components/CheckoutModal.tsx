@@ -1,15 +1,15 @@
-import { logger } from "@/utils/logger";
+﻿import { logger } from "@/utils/logger";
 import { storage } from "@/utils/storage";
 
 import { useTranslation } from "react-i18next";
 import React, { useState } from 'react';
+import { toast } from "react-hot-toast";
 import { X, Minus, Plus, Calendar, CreditCard, Ticket as TicketIcon } from 'lucide-react';
 import { api } from '../../../api/client';
 import { useAuth } from '../../../modules/auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Button, Badge } from "@/components/ui";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/cn";
+import { motion } from "framer-motion";
 import './CheckoutModal.css';
 
 interface Ticket {
@@ -34,6 +34,13 @@ interface CheckoutModalProps {
     onSuccess: () => void;
 }
 
+type RegistrationPayload = {
+    eventId: string;
+    ticketId: string;
+    guestName: string;
+    guestEmail: string;
+};
+
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, onClose, onSuccess }) => {
     const { t } = useTranslation();
     const { name, email, isAuthenticated } = useAuth();
@@ -49,9 +56,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
     const totalItems = Object.values(quantities).reduce((a, b) => a + b, 0);
 
     const handleUpdate = (ticketId: string, delta: number) => {
+        const ticket = tickets.find(item => item.id === ticketId);
+        const available = Math.max(0, (ticket?.quantity || 0) - (ticket?.sold || 0));
+
         setQuantities(prev => ({
             ...prev,
-            [ticketId]: Math.max(0, (prev[ticketId] || 0) + delta)
+            [ticketId]: Math.min(available, Math.max(0, (prev[ticketId] || 0) + delta))
         }));
     };
 
@@ -64,6 +74,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
         }
 
         if (totalItems === 0) return;
+        if (!email) {
+            toast.error(t("visitor.checkoutmodal.missing_email", "Atualize seu cadastro com um email antes de confirmar a inscrição."));
+            return;
+        }
 
         setLoading(true);
         try {
@@ -71,19 +85,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
 
             for (const [ticketId, qty] of items) {
                 for (let i = 0; i < qty; i++) {
-                    await api.post('/registrations', {
+                    const payload: RegistrationPayload = {
                         eventId: event.id,
                         ticketId,
                         guestName: name || "Visitante",
-                        guestEmail: email || "email@teste.com"
-                    });
+                        guestEmail: email
+                    };
+                    await api.post('/registrations', payload);
                 }
             }
 
             onSuccess();
-        } catch (e: unknown) {
+        } catch (e) {
             logger.error(e);
-            logger.warn("Alert:", t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
+            toast.error(t("visitor.checkoutmodal.error", "Erro ao processar inscrição. Tente novamente."));
         } finally {
             setLoading(false);
         }
@@ -167,6 +182,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
                                 </span>
                                 <button
                                     onClick={() => handleUpdate(ticket.id, 1)}
+                                    disabled={(quantities[ticket.id] || 0) >= Math.max(0, ticket.quantity - ticket.sold)}
                                     className="w-10 h-10 flex items-center justify-center rounded-lg bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:scale-105 active:scale-95 transition-all"
                                 >
                                     <Plus size={18} />
@@ -206,3 +222,4 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ event, tickets, on
         </div>
     );
 };
+

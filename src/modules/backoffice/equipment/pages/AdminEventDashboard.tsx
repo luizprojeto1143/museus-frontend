@@ -11,6 +11,7 @@ interface EventData {
     id: string;
     title: string;
     startDate: string;
+    views?: number | null;
 }
 
 interface TicketInfo {
@@ -18,6 +19,19 @@ interface TicketInfo {
     quantity: number;
     sold: number;
     price: number;
+}
+
+interface EventRegistration {
+    id: string;
+    guestName?: string | null;
+    createdAt: string;
+    status: string;
+    visitor?: { name?: string | null } | null;
+    ticket?: { name?: string | null } | null;
+}
+
+interface RegistrationListResponse {
+    data?: EventRegistration[];
 }
 
 export const AdminEventDashboard: React.FC = () => {
@@ -30,7 +44,7 @@ export const AdminEventDashboard: React.FC = () => {
         totalTickets: 0,
         revenue: 0,
         views: 0,
-        recentRegistrations: [] as Array<{ id: string; name: string }>
+        recentRegistrations: [] as EventRegistration[]
     });
 
     useEffect(() => {
@@ -39,14 +53,14 @@ export const AdminEventDashboard: React.FC = () => {
             api.post(`/events/${id}/view`).catch(console.error);
 
             // Fetch Event
-            api.get(`/events/${id}`).then(res => {
+            api.get<EventData>(`/events/${id}`).then(res => {
                 setEvent(res.data);
-                setStats(prev => ({ ...prev, views: res.data.views || 0 }));
+                setStats(prev => ({ ...prev, views: Number(res.data.views || 0) }));
             }).catch(console.error);
 
             // Fetch Tickets to calc total
-            api.get(`/events/${id}/tickets`).then(res => {
-                const tickets = res.data as TicketInfo[];
+            api.get<TicketInfo[]>(`/tickets/events/${id}/tickets`).then(res => {
+                const tickets = Array.isArray(res.data) ? res.data : [];
                 const total = tickets.reduce((acc: number, ticket) => acc + ticket.quantity, 0);
                 const sold = tickets.reduce((acc: number, ticket) => acc + ticket.sold, 0);
                 // Calculate simple revenue based on tickets sold (approx) if backend doesn't give precise
@@ -57,7 +71,7 @@ export const AdminEventDashboard: React.FC = () => {
             }).catch(console.error);
 
             // Fetch recent registrations
-            api.get(`/registrations?eventId=${id}&limit=5`).then(res => {
+            api.get<RegistrationListResponse>(`/registrations?eventId=${id}&limit=5`).then(res => {
                 setStats(prev => ({ ...prev, recentRegistrations: res.data.data || [] }));
             }).catch(console.error);
         }
@@ -163,7 +177,7 @@ export const AdminEventDashboard: React.FC = () => {
                             `)}</div>
                         ) : (
                             <div className="divide-y divide-white/5">
-                                {stats.recentRegistrations.map((reg: unknown) => (
+                                {stats.recentRegistrations.map((reg) => (
                                     <div key={reg.id} className="p-4 flex justify-between items-center hover:">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-blue-100 text-[var(--accent-primary)] flex items-center justify-center font-bold text-sm">

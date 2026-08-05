@@ -5,23 +5,108 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import {
-    ArrowLeft, Save, FileText, Send, Upload, Trash2, Download, Paperclip,
-    Trophy, Rocket, AlertCircle, CheckCircle2, History, Banknote,
-    Accessibility, Calendar, ListChecks, Info, Wand2, Sparkles, Calculator,
-    Share2, QrCode, ExternalLink, X, Ticket
-} from "lucide-react";
+import { ArrowLeft, Save, FileText, Send, Upload, Trash2, Download, Paperclip, Trophy, Rocket, AlertCircle, CheckCircle2, History, Banknote, Accessibility, Calendar, ListChecks, Info, Wand2, Sparkles, Share2, ExternalLink, X, Ticket } from "lucide-react";
 import { useToast } from "../../../contexts/ToastContext";
 import { Button, Input, Textarea } from "../../../components/ui";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { isAxiosError } from "axios";
 
 type AccountabilityDoc = {
     name: string;
     url: string;
     date: string;
 };
+
+type ProjectStatus = keyof typeof STATUS_STYLES;
+type ProjectTab = "DETAILS" | "ACCESSIBILITY" | "ACCOUNTABILITY" | "WORKFLOW";
+
+type NoticeResponse = {
+    id: string;
+    title?: string;
+    inscriptionEnd?: string;
+    documentUrl?: string | null;
+    requiresAccessibilityPlan?: boolean;
+    objectives?: string | null;
+    requirements?: string | null;
+    maxPerProject?: number | string | null;
+};
+
+type ProjectResponse = Partial<ProjectFormData> & {
+    id: string;
+    noticeId?: string | null;
+    status?: ProjectStatus;
+    attachments?: AccountabilityDoc[];
+    accessibilityPlan?: {
+        hasPlan: boolean;
+        services: string[];
+        description: string;
+    };
+    reviewNotes?: string | null;
+    reviewedAt?: string | null;
+    eventId?: string | null;
+};
+
+type ProjectAppeal = {
+    id: string;
+    status: string;
+    reason: string;
+    requestedAdjustment?: string | null;
+    response?: string | null;
+    counterResponse?: string | null;
+    createdAt: string;
+    reviewedAt?: string | null;
+};
+
+type ProjectTerm = {
+    id: string;
+    title: string;
+    termsText: string;
+    status: "PENDING_SIGNATURE" | "SIGNED" | "CANCELED";
+    documentUrl?: string | null;
+    signedAt?: string | null;
+};
+
+type ProjectAccountability = {
+    id: string;
+    status: string;
+    executionSummary?: string | null;
+    audienceReached?: number | null;
+    amountSpent?: number | string | null;
+    submittedAt?: string | null;
+    reviewNotes?: string | null;
+};
+
+type ProjectWorkflowResponse = {
+    appeals: ProjectAppeal[];
+    terms: ProjectTerm[];
+    accountabilities: ProjectAccountability[];
+};
+
+type RefineProposalResponse = {
+    response?: string;
+};
+
+type UploadResponse = {
+    url: string;
+};
+
+type PublishEventResponse = {
+    eventId: string;
+    slug?: string;
+};
+
+type ApiErrorResponse = {
+    message?: string;
+};
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || fallback;
+    }
+    return fallback;
+}
 
 // Gamified Status Styles - Gold Theme Adapted
 const STATUS_STYLES = {
@@ -61,13 +146,13 @@ export const ProducerProjectForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    const [activeTab, setActiveTab] = useState<"DETAILS" | "ACCESSIBILITY" | "ACCOUNTABILITY">("DETAILS");
+    const [activeTab, setActiveTab] = useState<ProjectTab>("DETAILS");
     const [uploading, setUploading] = useState(false);
     const [dragActive, setDragActive] = useState(false);
 
     const [extraData, setExtraData] = useState({
         noticeId: searchParams.get("noticeId") || "",
-        status: "DRAFT" as keyof typeof STATUS_STYLES,
+        status: "DRAFT" as ProjectStatus,
         attachments: [] as AccountabilityDoc[],
         accessibilityPlan: {
             hasPlan: false,
@@ -78,7 +163,7 @@ export const ProducerProjectForm: React.FC = () => {
         reviewedAt: null as string | null,
         eventId: null as string | null
     });
-    const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<ProjectFormData>({
+    const { register, handleSubmit, control: _control, setValue, watch, formState: { errors: _errors } } = useForm<ProjectFormData>({
         resolver: zodResolver(projectSchema),
         defaultValues: {
             title: "", summary: "", description: "", justification: "", culturalCategory: "",
@@ -91,13 +176,39 @@ export const ProducerProjectForm: React.FC = () => {
 
 
     const [showShareModal, setShowShareModal] = useState(false);
-    const [publishedEventData, setPublishedEventData] = useState<unknown>(null);
-    const [notice, setNotice] = useState<unknown>(null);
+    const [confirmAction, setConfirmAction] = useState<"submit" | "publish" | null>(null);
+    const [publishedEventData, setPublishedEventData] = useState<PublishEventResponse | null>(null);
+    const [notice, setNotice] = useState<NoticeResponse | null>(null);
+    const [workflow, setWorkflow] = useState<ProjectWorkflowResponse>({ appeals: [], terms: [], accountabilities: [] });
+    const [appealForm, setAppealForm] = useState({ reason: "", requestedAdjustment: "" });
+    const [accountabilityForm, setAccountabilityForm] = useState({ executionSummary: "", audienceReached: "", amountSpent: "" });
+
+    const loadWorkflow = React.useCallback(async () => {
+        if (!id) return;
+        try {
+            const res = await api.get<ProjectWorkflowResponse>(`/projects/${id}/workflow`);
+            setWorkflow({
+                appeals: res.data.appeals || [],
+                terms: res.data.terms || [],
+                accountabilities: res.data.accountabilities || []
+            });
+            const draft = res.data.accountabilities?.find(item => ["DRAFT", "ADJUSTMENTS_REQUIRED"].includes(item.status)) || res.data.accountabilities?.[0];
+            if (draft) {
+                setAccountabilityForm({
+                    executionSummary: draft.executionSummary || "",
+                    audienceReached: draft.audienceReached?.toString() || "",
+                    amountSpent: draft.amountSpent?.toString() || ""
+                });
+            }
+        } catch (err) {
+            logger.error("Erro ao carregar ciclo do edital", err);
+        }
+    }, [id]);
 
     useEffect(() => {
         if (id) {
             setLoading(true);
-            api.get(`/projects/${id}`).then(res => {
+            api.get<ProjectResponse>(`/projects/${id}`).then(res => {
                                 const data = res.data;
                 setValue("title", data.title || "");
                 setValue("summary", data.summary || "");
@@ -112,26 +223,27 @@ export const ProducerProjectForm: React.FC = () => {
                 
                 setExtraData({
                     noticeId: data.noticeId || "",
-                    status: data.status,
+                    status: data.status || "DRAFT",
                     attachments: data.attachments || [],
                     accessibilityPlan: data.accessibilityPlan || { hasPlan: false, services: [], description: "" },
                     reviewNotes: data.reviewNotes || "",
-                    reviewedAt: data.reviewedAt,
+                    reviewedAt: data.reviewedAt || null,
                     eventId: data.eventId || null
                 });
 
                 if (data.noticeId) {
-                    api.get(`/notices/public/${data.noticeId}`).then(nRes => setNotice(nRes.data)).catch(console.error);
+                    api.get<NoticeResponse>(`/notices/public/${data.noticeId}`).then(nRes => setNotice(nRes.data)).catch(console.error);
                 }
+                void loadWorkflow();
             }).finally(() => setLoading(false));
 
             if (searchParams.get("tab") === "accountability") {
                 setActiveTab("ACCOUNTABILITY");
             }
         } else if (searchParams.get("noticeId")) {
-            api.get(`/notices/public/${searchParams.get("noticeId")}`).then(nRes => setNotice(nRes.data)).catch(console.error);
+            api.get<NoticeResponse>(`/notices/public/${searchParams.get("noticeId")}`).then(nRes => setNotice(nRes.data)).catch(console.error);
         }
-    }, [id, searchParams]);
+    }, [id, searchParams, setValue, loadWorkflow]);
 
     
 
@@ -150,13 +262,13 @@ export const ProducerProjectForm: React.FC = () => {
             if (isEdit) {
                 await api.put(`/projects/${id}`, payload);
             } else {
-                const res = await api.post("/projects", payload);
+                const res = await api.post<ProjectResponse>("/projects", payload);
                 if (res.data.id) navigate(`/producer/projects/${res.data.id}`);
             }
 
             addToast("Salvo com sucesso!", "success");
         } catch (err: unknown) {
-            logger.error(err);
+            logger.error("Erro ao salvar projeto.", err);
             addToast("Erro ao salvar.", "error");
         } finally {
             setSaving(false);
@@ -171,7 +283,7 @@ export const ProducerProjectForm: React.FC = () => {
 
         setSaving(true);
         try {
-            const res = await api.post("/ai/refine-proposal", {
+            const res = await api.post<RefineProposalResponse>("/ai/refine-proposal", {
                 field,
                 projectTitle: title,
                 projectCurrentText: formValues[field as keyof ProjectFormData],
@@ -183,14 +295,14 @@ export const ProducerProjectForm: React.FC = () => {
                 setValue(field, res.data.response);
                 addToast("Texto refinado pela IA!", "success");
             }
-        } catch (err) {
+        } catch (_err) {
             addToast("O assistente de IA está ocupado agora. Tente novamente em breve.", "error");
         } finally {
             setSaving(false);
         }
     };
 
-    const handleSubmitProject = async () => {
+    const handleSubmitProject = async (confirmed = false) => {
         if (!id) return;
 
         // Budget Validation
@@ -201,32 +313,94 @@ export const ProducerProjectForm: React.FC = () => {
             }
         }
 
-        if (!window.confirm("Após enviar, não será possível editar a proposta. Confirmar?")) return;
+        if (!confirmed) {
+            setConfirmAction("submit");
+            return;
+        }
         try {
             await api.post(`/projects/${id}/submit`);
             addToast("Projeto submetido com sucesso!", "success");
             setExtraData(prev => ({ ...prev, status: "SUBMITTED" }));
         } catch (err: unknown) {
-            logger.error(err);
-            addToast(err.response?.data?.message || "Erro ao submeter projeto.", "error");
+            logger.error("Erro ao submeter projeto.", err);
+            addToast(getApiErrorMessage(err, "Erro ao submeter projeto."), "error");
         } finally {
             setSubmitting(false);
         }
     };
 
-    const handlePublish = async () => {
+    const handlePublish = async (confirmed = false) => {
         if (!id) return;
-        if (!window.confirm("Isso tornará o projeto um evento público na Agenda Cultural. Confirmar?")) return;
+        if (!confirmed) {
+            setConfirmAction("publish");
+            return;
+        }
 
         setSaving(true);
         try {
-            const res = await api.post(`/projects/${id}/publish-event`);
+            const res = await api.post<PublishEventResponse>(`/projects/${id}/publish-event`);
             addToast("Publicado na agenda com sucesso!", "success");
             setPublishedEventData(res.data);
             setShowShareModal(true);
             setExtraData(prev => ({ ...prev, status: "IN_EXECUTION", eventId: res.data.eventId }));
-        } catch (err: unknown) {
+        } catch (_err: unknown) {
             addToast("Erro ao publicar.", "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleCreateAppeal = async () => {
+        if (!id || !appealForm.reason.trim()) return;
+        setSaving(true);
+        try {
+            await api.post(`/projects/${id}/appeals`, {
+                reason: appealForm.reason.trim(),
+                requestedAdjustment: appealForm.requestedAdjustment.trim() || undefined
+            });
+            setAppealForm({ reason: "", requestedAdjustment: "" });
+            await loadWorkflow();
+            addToast("Recurso protocolado.", "success");
+        } catch (err) {
+            addToast(getApiErrorMessage(err, "Erro ao protocolar recurso."), "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSignTerm = async (termId: string) => {
+        if (!id) return;
+        setSaving(true);
+        try {
+            await api.post(`/projects/${id}/terms/${termId}/sign`, {});
+            await loadWorkflow();
+            addToast("Termo assinado com sucesso.", "success");
+        } catch (err) {
+            addToast(getApiErrorMessage(err, "Erro ao assinar termo."), "error");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSaveAccountability = async (submitAfterSave = false) => {
+        if (!id) return;
+        setSaving(true);
+        try {
+            const res = await api.post<ProjectAccountability>(`/projects/${id}/accountability`, {
+                executionSummary: accountabilityForm.executionSummary.trim() || undefined,
+                audienceReached: accountabilityForm.audienceReached ? Number(accountabilityForm.audienceReached) : undefined,
+                amountSpent: accountabilityForm.amountSpent ? Number(accountabilityForm.amountSpent) : undefined,
+                documents: extraData.attachments
+            });
+            if (submitAfterSave) {
+                await api.post(`/projects/${id}/accountability/${res.data.id}/submit`);
+                addToast("Prestação de contas enviada para análise.", "success");
+            } else {
+                addToast("Prestação de contas salva.", "success");
+            }
+            await loadWorkflow();
+        } catch (err) {
+            addToast(getApiErrorMessage(err, "Erro na prestação de contas."), "error");
         } finally {
             setSaving(false);
         }
@@ -243,7 +417,7 @@ export const ProducerProjectForm: React.FC = () => {
                 let type = "document";
                 if (file.type.startsWith("image/")) type = "image";
 
-                const res = await api.post(`/upload/${type}`, uploadData, {
+                const res = await api.post<UploadResponse>(`/upload/${type}`, uploadData, {
                     headers: { "Content-Type": "multipart/form-data" }
                 });
 
@@ -259,7 +433,7 @@ export const ProducerProjectForm: React.FC = () => {
                 }));
 
                 addToast("Arquivo anexado!", "success");
-            } catch (err) {
+            } catch (_err) {
                 addToast("Erro no upload.", "error");
             } finally {
                 setUploading(false);
@@ -353,7 +527,9 @@ export const ProducerProjectForm: React.FC = () => {
                             <div className="text-xs font-bold text-[var(--accent-primary)] uppercase tracking-widest mb-1">{t("producer.producerproject.inscrioVinculada", `Inscrição Vinculada`)}</div>
                             <h2 className="text-xl font-bold text-[#EAE0D5]">{notice.title}</h2>
                             <div className="flex flex-wrap gap-4 mt-1 text-sm text-[#B0A090]">
-                                <span className="flex items-center gap-1"><Calendar size={14} /> Fim: {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
+                                {notice.inscriptionEnd && (
+                                    <span className="flex items-center gap-1"><Calendar size={14} /> Fim: {new Date(notice.inscriptionEnd).toLocaleDateString()}</span>
+                                )}
                                 <span className="flex items-center gap-1"><Banknote size={14} /> Máx: R$ {Number(notice.maxPerProject).toLocaleString()}</span>
                             </div>
                         </div>
@@ -394,11 +570,12 @@ export const ProducerProjectForm: React.FC = () => {
                     {[
                         { id: "DETAILS", label: "Identidade", icon: <FileText size={14} /> },
                         { id: "ACCESSIBILITY", label: "Inclusão", icon: <Accessibility size={14} /> },
-                        { id: "ACCOUNTABILITY", label: "Fiscal", icon: <Banknote size={14} /> }
+                        { id: "ACCOUNTABILITY", label: "Fiscal", icon: <Banknote size={14} /> },
+                        { id: "WORKFLOW", label: "Ciclo", icon: <ListChecks size={14} /> }
                     ].map((step, idx, arr) => (
                         <React.Fragment key={step.id}>
                             <div 
-                                onClick={() => setActiveTab(step.id as unknown)}
+                                onClick={() => setActiveTab(step.id as ProjectTab)}
                                 className={`flex flex-col items-center gap-3 cursor-pointer transition-all group ${activeTab === step.id ? 'scale-110' : 'opacity-40 hover:opacity-100'}`}
                             >
                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all ${activeTab === step.id ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)] text-black shadow-lg shadow-[var(--accent-primary)]/20' : 'bg-black/20 border-white/10 text-white'}`}>
@@ -408,7 +585,7 @@ export const ProducerProjectForm: React.FC = () => {
                             </div>
                             {idx < arr.length - 1 && (
                                 <div className="flex-1 h-[2px] bg-white/5 mx-6 mb-8 relative overflow-hidden">
-                                    <div className={`absolute inset-0 bg-[var(--accent-primary)] transition-all duration-700 ${activeTab === arr[idx+1].id || (activeTab === "ACCOUNTABILITY" && idx < 2) ? 'w-full' : 'w-0'}`} />
+                                    <div className={`absolute inset-0 bg-[var(--accent-primary)] transition-all duration-700 ${arr.findIndex(item => item.id === activeTab) > idx ? 'w-full' : 'w-0'}`} />
                                 </div>
                             )}
                         </React.Fragment>
@@ -592,7 +769,7 @@ export const ProducerProjectForm: React.FC = () => {
                                     <div className="pt-6 flex flex-col md:flex-row justify-end gap-3 border-t border-[#463420]">
                                         {isEdit && extraData.status === "DRAFT" && (
                                             <Button
-                                                onClick={handleSubmitProject}
+                                                onClick={() => void handleSubmitProject()}
                                                 isLoading={submitting}
                                                 className="bg-[var(--accent-primary)] hover:bg-blue-700 text-white px-8 font-bold"
                                                 leftIcon={<Send size={18} />}
@@ -602,7 +779,7 @@ export const ProducerProjectForm: React.FC = () => {
                                         )}
                                         {isEdit && extraData.status === "APPROVED" && (
                                             <Button
-                                                onClick={handlePublish}
+                                                onClick={() => void handlePublish()}
                                                 disabled={saving}
                                                 variant="outline"
                                                 className="border-[var(--accent-primary)] text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10"
@@ -747,7 +924,7 @@ export const ProducerProjectForm: React.FC = () => {
                                 )}
                             </div>
                         </div>
-                    ) : (
+                    ) : activeTab === "ACCOUNTABILITY" ? (
                         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
 
                             {/* UPLOAD AREA */}
@@ -848,22 +1025,204 @@ export const ProducerProjectForm: React.FC = () => {
                             )}
 
                             {accountabilityEditable && (
-                                <div className="flex justify-end pt-4">
+                                <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8 space-y-4">
+                                    <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
+                                        <FileText className="text-[var(--accent-primary)]" size={22} /> Relato de execução
+                                    </h2>
+                                    <Textarea
+                                        label="Resumo da execução"
+                                        value={accountabilityForm.executionSummary}
+                                        onChange={(e) => setAccountabilityForm(prev => ({ ...prev, executionSummary: e.target.value }))}
+                                        rows={5}
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5]"
+                                    />
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Input
+                                            label="Público alcançado"
+                                            type="number"
+                                            value={accountabilityForm.audienceReached}
+                                            onChange={(e) => setAccountabilityForm(prev => ({ ...prev, audienceReached: e.target.value }))}
+                                            className="bg-black/20 border-[#463420] text-[#EAE0D5]"
+                                        />
+                                        <Input
+                                            label="Valor executado (R$)"
+                                            type="number"
+                                            value={accountabilityForm.amountSpent}
+                                            onChange={(e) => setAccountabilityForm(prev => ({ ...prev, amountSpent: e.target.value }))}
+                                            className="bg-black/20 border-[#463420] text-[#EAE0D5]"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {accountabilityEditable && (
+                                <div className="flex justify-end gap-3 pt-4">
                                     <Button
-                                        onClick={handleSubmit(handleSave)}
+                                        onClick={() => handleSaveAccountability(false)}
+                                        isLoading={saving}
+                                        disabled={uploading}
+                                        variant="secondary"
+                                        leftIcon={<Save size={18} />}
+                                    >
+                                        Salvar prestação
+                                    </Button>
+                                    <Button
+                                        onClick={() => handleSaveAccountability(true)}
                                         isLoading={saving}
                                         disabled={uploading}
                                         className="bg-[var(--accent-primary)] hover:bg-[#c5a028] text-[#1a1108] font-bold px-8 rounded-xl shadow-lg shadow-[var(--accent-primary)]/20 border-none"
-                                        leftIcon={<Save size={18} />}
+                                        leftIcon={<Send size={18} />}
                                     >
-                                        Salvar Documentos
+                                        Enviar para análise
                                     </Button>
                                 </div>
                             )}
                         </div>
+                    ) : (
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                            <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8 space-y-5">
+                                <h2 className="text-xl font-bold text-[#EAE0D5] flex items-center gap-2">
+                                    <ListChecks className="text-[var(--accent-primary)]" size={24} /> Ciclo do edital
+                                </h2>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="p-4 bg-black/20 rounded-2xl border border-[#463420]">
+                                        <div className="text-2xl font-black text-[var(--accent-primary)]">{workflow.appeals.length}</div>
+                                        <div className="text-xs text-[#B0A090] uppercase font-bold">Recursos</div>
+                                    </div>
+                                    <div className="p-4 bg-black/20 rounded-2xl border border-[#463420]">
+                                        <div className="text-2xl font-black text-[var(--accent-primary)]">{workflow.terms.filter(term => term.status === "SIGNED").length}/{workflow.terms.length}</div>
+                                        <div className="text-xs text-[#B0A090] uppercase font-bold">Termos assinados</div>
+                                    </div>
+                                    <div className="p-4 bg-black/20 rounded-2xl border border-[#463420]">
+                                        <div className="text-2xl font-black text-[var(--accent-primary)]">{workflow.accountabilities[0]?.status || "PENDENTE"}</div>
+                                        <div className="text-xs text-[#B0A090] uppercase font-bold">Prestação</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {["UNDER_REVIEW", "APPROVED", "REJECTED"].includes(extraData.status) && (
+                                <div className="bg-[#2c1e10] border border-[#463420] rounded-3xl p-8 space-y-4">
+                                    <h3 className="font-bold text-[#EAE0D5]">Protocolar recurso</h3>
+                                    <Textarea
+                                        label="Motivo do recurso"
+                                        value={appealForm.reason}
+                                        onChange={(e) => setAppealForm(prev => ({ ...prev, reason: e.target.value }))}
+                                        rows={4}
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5]"
+                                    />
+                                    <Textarea
+                                        label="Ajuste solicitado"
+                                        value={appealForm.requestedAdjustment}
+                                        onChange={(e) => setAppealForm(prev => ({ ...prev, requestedAdjustment: e.target.value }))}
+                                        rows={3}
+                                        className="bg-black/20 border-[#463420] text-[#EAE0D5]"
+                                    />
+                                    <div className="flex justify-end">
+                                        <Button onClick={handleCreateAppeal} isLoading={saving} className="bg-[var(--accent-primary)] text-[#1a1108]">
+                                            Enviar recurso
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="grid gap-4">
+                                {workflow.appeals.map(appeal => (
+                                    <div key={appeal.id} className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5">
+                                        <div className="flex justify-between gap-4 mb-2">
+                                            <div className="font-bold text-[#EAE0D5]">Recurso protocolado</div>
+                                            <span className="text-[10px] uppercase font-black text-[var(--accent-primary)]">{appeal.status}</span>
+                                        </div>
+                                        <p className="text-sm text-[#B0A090]">{appeal.reason}</p>
+                                        {appeal.response && <p className="mt-3 text-sm text-emerald-300">Resposta: {appeal.response}</p>}
+                                    </div>
+                                ))}
+                                {workflow.terms.map(term => (
+                                    <div key={term.id} className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div>
+                                            <div className="font-bold text-[#EAE0D5]">{term.title}</div>
+                                            <div className="text-xs text-[#B0A090] uppercase font-bold">{term.status}</div>
+                                        </div>
+                                        <div className="flex flex-col sm:flex-row gap-2">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                leftIcon={<Download size={16} />}
+                                                onClick={() => window.open(`${api.defaults.baseURL}/projects/${id}/terms/${term.id}/pdf`, "_blank")}
+                                            >
+                                                PDF
+                                            </Button>
+                                            {term.status === "PENDING_SIGNATURE" ? (
+                                                <Button onClick={() => handleSignTerm(term.id)} isLoading={saving} className="bg-emerald-600 text-white">
+                                                    Assinar termo
+                                                </Button>
+                                            ) : (
+                                                <span className="text-emerald-400 text-sm font-bold self-center">Assinado em {term.signedAt ? new Date(term.signedAt).toLocaleDateString() : "--"}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                                {workflow.accountabilities.map(accountability => (
+                                    <div key={accountability.id} className="bg-[#2c1e10] border border-[#463420] rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div>
+                                            <div className="font-bold text-[#EAE0D5]">Prestação de contas</div>
+                                            <div className="text-xs text-[#B0A090] uppercase font-bold">{accountability.status}</div>
+                                            {accountability.reviewNotes && <p className="text-sm text-[#B0A090] mt-2">{accountability.reviewNotes}</p>}
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            leftIcon={<Download size={16} />}
+                                            onClick={() => window.open(`${api.defaults.baseURL}/projects/${id}/accountability/${accountability.id}/pdf`, "_blank")}
+                                        >
+                                            Baixar PDF
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
+
+            {confirmAction && (
+                <div className="fixed inset-0 z-[1900] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#2c1e10] border border-[var(--accent-primary)]/40 rounded-[32px] max-w-md w-full p-8 shadow-2xl shadow-[var(--accent-primary)]/10">
+                        <h2 className="text-2xl font-bold text-[#EAE0D5] font-serif mb-3">
+                            {confirmAction === "submit" ? "Submeter proposta" : "Publicar evento"}
+                        </h2>
+                        <p className="text-[#B0A090] text-sm leading-relaxed mb-8">
+                            {confirmAction === "submit"
+                                ? "Após enviar, não será possível editar a proposta. Deseja continuar?"
+                                : "Isso tornará o projeto um evento público na Agenda Cultural. Deseja continuar?"}
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                className="text-[#B0A090] hover:text-[#EAE0D5]"
+                                onClick={() => setConfirmAction(null)}
+                            >
+                                Cancelar
+                            </Button>
+                            <Button
+                                type="button"
+                                className="bg-[var(--accent-primary)] text-[#1a1108] hover:bg-[#c5a028] font-bold"
+                                onClick={() => {
+                                    const action = confirmAction;
+                                    setConfirmAction(null);
+                                    if (action === "submit") {
+                                        void handleSubmitProject(true);
+                                    } else {
+                                        void handlePublish(true);
+                                    }
+                                }}
+                            >
+                                Confirmar
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* SHARE & ACTIVATE HUB MODAL */}
             {showShareModal && publishedEventData && (
@@ -893,7 +1252,6 @@ export const ProducerProjectForm: React.FC = () => {
                             {/* QR CODE PREVIEW */}
                             <div className="bg-black/30 rounded-3xl p-6 flex items-center gap-6 border border-[#463420]">
                                 <div className="bg-white p-2 rounded-xl shrink-0">
-                                    {/* Mock QR Code for Demo - In production we'd use a real lib or Google Charts API */}
                                     <img 
                                         src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://cultura.viva/events/${publishedEventData.eventId}`} 
                                         alt="QR Code" 

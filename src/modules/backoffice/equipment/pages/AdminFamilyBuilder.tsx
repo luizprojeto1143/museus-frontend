@@ -1,23 +1,92 @@
-import React, { useState, useEffect, useCallback } from "react";
+﻿import React, { useState, useEffect, useCallback } from "react";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, UserPlus, Trash2, Save, Users, Calendar, Music } from "lucide-react";
+import { Loader2, UserPlus, Trash2, Users, Calendar } from "lucide-react";
 import { Button, Input, Select, Textarea } from "../../../../components/ui";
 import { toast } from "react-hot-toast";
+import { isAxiosError } from "axios";
+import { z } from "zod";
+
+type FamilyEventType = "BIRTH" | "DEATH" | "MARRIAGE" | "ACHIEVEMENT" | "OTHER";
+
+interface SpaceOption {
+    id: string;
+    name: string;
+}
+
+interface FamilyEvent {
+    id: string;
+    year: number;
+    title: string;
+    description?: string | null;
+    type: FamilyEventType;
+}
+
+interface FamilyProfile {
+    id: string;
+    familyName: string;
+    description?: string | null;
+    coverImageUrl?: string | null;
+    audioUrl?: string | null;
+    spaceId?: string | null;
+    events?: FamilyEvent[];
+}
+
+interface ProfileFormState {
+    familyName: string;
+    description: string;
+    coverImageUrl: string;
+    audioUrl: string;
+    spaceId: string;
+}
+
+interface EventFormState {
+    year: number;
+    title: string;
+    description: string;
+    type: FamilyEventType;
+}
+
+interface ApiErrorResponse {
+    error?: string;
+    message?: string;
+}
+
+const profileSchema = z.object({
+    familyName: z.string().trim().min(2, "Informe o nome da família."),
+    description: z.string().trim().optional(),
+    coverImageUrl: z.string().trim().url("Informe uma URL válida para a foto de capa.").or(z.literal("")),
+    audioUrl: z.string().trim().url("Informe uma URL válida para o áudio.").or(z.literal("")),
+    spaceId: z.string().trim().optional()
+});
+
+const eventSchema = z.object({
+    year: z.number().int("O ano precisa ser inteiro.").min(1).max(3000),
+    title: z.string().trim().min(2, "Informe o título do acontecimento."),
+    description: z.string().trim().optional(),
+    type: z.enum(["BIRTH", "DEATH", "MARRIAGE", "ACHIEVEMENT", "OTHER"])
+});
+
+function getApiErrorMessage(error: unknown, fallback: string) {
+    if (isAxiosError<ApiErrorResponse>(error)) {
+        return error.response?.data?.message || error.response?.data?.error || fallback;
+    }
+    return fallback;
+}
 
 export const AdminFamilyBuilder: React.FC = () => {
     const { tenantId } = useAuth();
-    const [spaces, setSpaces] = useState<any[]>([]);
-    const [profiles, setProfiles] = useState<any[]>([]);
+    const [spaces, setSpaces] = useState<SpaceOption[]>([]);
+    const [profiles, setProfiles] = useState<FamilyProfile[]>([]);
     const [selectedProfileId, setSelectedProfileId] = useState("");
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
     // New profile form
     const [showProfileForm, setShowProfileForm] = useState(false);
-    const [newProfile, setNewProfile] = useState({
+    const [newProfile, setNewProfile] = useState<ProfileFormState>({
         familyName: "",
         description: "",
         coverImageUrl: "",
@@ -26,7 +95,7 @@ export const AdminFamilyBuilder: React.FC = () => {
     });
 
     // New event form
-    const [newEvent, setNewEvent] = useState({
+    const [newEvent, setNewEvent] = useState<EventFormState>({
         year: new Date().getFullYear(),
         title: "",
         description: "",
@@ -36,14 +105,15 @@ export const AdminFamilyBuilder: React.FC = () => {
     const loadData = useCallback(async () => {
         try {
             const [s, p] = await Promise.all([
-                api.get("/spaces", { params: { tenantId } }),
-                api.get("/roadmap-family/profiles", { params: { tenantId } }) // Needs adjusting if route needs spaceId
+                api.get<SpaceOption[]>("/spaces", { params: { tenantId } }),
+                api.get<FamilyProfile[]>("/roadmap-family/profiles", { params: { tenantId } })
             ]);
-            setSpaces(s.data);
-            setProfiles(p.data);
+            setSpaces(Array.isArray(s.data) ? s.data : []);
+            setProfiles(Array.isArray(p.data) ? p.data : []);
             if (p.data.length > 0) setSelectedProfileId(p.data[0].id);
         } catch (error) {
-            logger.error(error);
+            logger.error("Erro ao carregar memória familiar", error);
+            toast.error(getApiErrorMessage(error, "Erro ao carregar memória familiar."));
         } finally {
             setLoading(false);
         }
@@ -55,15 +125,21 @@ export const AdminFamilyBuilder: React.FC = () => {
 
     const handleCreateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
+        const validation = profileSchema.safeParse(newProfile);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados do perfil.");
+            return;
+        }
+
         setIsSaving(true);
         try {
-            // Add backend route if missing or use generic
-            await api.post("/roadmap-family/profiles", newProfile);
+            await api.post("/roadmap-family/profiles", { ...validation.data, tenantId });
             toast.success("Perfil familiar criado!");
             setShowProfileForm(false);
+            setNewProfile({ familyName: "", description: "", coverImageUrl: "", audioUrl: "", spaceId: "" });
             loadData();
         } catch (err) {
-            toast.error("Erro ao criar perfil");
+            toast.error(getApiErrorMessage(err, "Erro ao criar perfil"));
         } finally {
             setIsSaving(false);
         }
@@ -72,14 +148,20 @@ export const AdminFamilyBuilder: React.FC = () => {
     const handleAddEvent = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!selectedProfileId) return;
+        const validation = eventSchema.safeParse(newEvent);
+        if (!validation.success) {
+            toast.error(validation.error.issues[0]?.message || "Revise os dados do evento.");
+            return;
+        }
+
         setIsSaving(true);
         try {
-            await api.post(`/roadmap-family/profiles/${selectedProfileId}/events`, newEvent);
+            await api.post(`/roadmap-family/profiles/${selectedProfileId}/events`, validation.data);
             toast.success("Evento adicionado!");
             setNewEvent({ year: new Date().getFullYear(), title: "", description: "", type: "OTHER" });
             loadData();
         } catch (err) {
-            toast.error("Erro ao adicionar evento");
+            toast.error(getApiErrorMessage(err, "Erro ao adicionar evento"));
         } finally {
             setIsSaving(false);
         }
@@ -147,12 +229,15 @@ export const AdminFamilyBuilder: React.FC = () => {
                                             label="Ano"
                                             type="number"
                                             value={newEvent.year}
-                                            onChange={e => setNewEvent({ ...newEvent, year: parseInt(e.target.value) })}
+                                            onChange={e => setNewEvent({ ...newEvent, year: e.target.value === "" ? new Date().getFullYear() : Number(e.target.value) })}
                                         />
                                         <Select
                                             label="Tipo"
                                             value={newEvent.type}
-                                            onChange={e => setNewEvent({ ...newEvent, type: e.target.value })}
+                                            onChange={e => {
+                                                const parsed = eventSchema.shape.type.safeParse(e.target.value);
+                                                if (parsed.success) setNewEvent({ ...newEvent, type: parsed.data });
+                                            }}
                                         >
                                             <option value="BIRTH">Nascimento</option>
                                             <option value="DEATH">Falecimento</option>
@@ -181,7 +266,7 @@ export const AdminFamilyBuilder: React.FC = () => {
                                         <Calendar size={14} /> Histórico Registrado
                                     </h4>
                                     <div className="space-y-2">
-                                        {selectedProfile.events?.map((e: unknown) => (
+                                        {selectedProfile.events?.map((e) => (
                                             <div key={e.id} className="p-4 bg-zinc-900/50 border border-zinc-800 rounded-xl flex justify-between items-center group">
                                                 <div>
                                                     <span className="text-[10px] font-bold text-[var(--accent-primary)]">{e.year}</span>

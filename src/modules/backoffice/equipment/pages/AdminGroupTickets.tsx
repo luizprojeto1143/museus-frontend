@@ -7,28 +7,43 @@ import { useAuth } from "../../../auth/AuthContext";
 import { Loader2, Users, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "react-hot-toast";
 
+type GroupTicketStatus = "PENDING" | "CONFIRMED" | "CANCELED";
+
+type GroupTicket = {
+    id: string;
+    groupName: string;
+    totalTickets: number;
+    contactEmail: string;
+    contactName: string;
+    contactPhone?: string | null;
+    createdAt: string;
+    status: GroupTicketStatus;
+};
+
+type GroupTicketsResponse = GroupTicket[] | { data?: GroupTicket[] };
+
 export const AdminGroupTickets: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [tickets, setTickets] = useState<any[]>([]);
+    const [tickets, setTickets] = useState<GroupTicket[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchData = useCallback(async () => {
         try {
-            const res = await api.get(`/group-tickets?tenantId=${tenantId}`);
-            setTickets(res.data);
+            const res = await api.get<GroupTicketsResponse>(`/group-tickets?tenantId=${tenantId}`);
+            setTickets(Array.isArray(res.data) ? res.data : res.data.data || []);
         } catch (error) { logger.error(error); }
         finally { setLoading(false); }
     }, [tenantId]);
 
     useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
 
-    const onUpdateStatus = async (id: string, status: string) => {
+    const onUpdateStatus = async (id: string, status: GroupTicketStatus) => {
         try {
             await api.patch(`/group-tickets/${id}`, { status });
             toast.success(`Status atualizado para ${status}`);
             fetchData();
-        } catch (err) { toast.error("Erro"); }
+        } catch (_err) { toast.error("Erro"); }
     };
 
     if (loading) return (
@@ -75,7 +90,7 @@ export const AdminGroupTickets: React.FC = () => {
             </div>
 
             {/* List */}
-            {tickets.map((item: unknown) => {
+            {tickets.map((item) => {
                 const st = statusConfig[item.status] || statusConfig.PENDING;
                 return (
                     <div key={item.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors" style={{ marginBottom: '0.75rem', padding: '1.25rem' }}>

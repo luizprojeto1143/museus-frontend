@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { isAxiosError } from "axios";
 import { api } from "../../../../api/client";
 import { toast } from "react-hot-toast";
-import { Building2, UploadCloud, CheckCircle, AlertTriangle, ExternalLink } from "lucide-react";
+import { UploadCloud, ExternalLink } from "lucide-react";
 import { Button } from "../../../../components/ui";
 
 interface Contract {
@@ -36,18 +37,19 @@ export const SponsorAssets: React.FC = () => {
 
   useEffect(() => {
     fetchContracts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchContracts = async () => {
     setLoadingContracts(true);
     try {
-      const res = await api.get("/sponsor-portal/my-sponsorships");
+      const res = await api.get<Contract[]>("/sponsor-portal/my-contracts");
       setContracts(res.data);
       if (res.data.length > 0) {
         setSelectedContract(res.data[0]);
         fetchAssets(res.data[0].id);
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar contratos.");
     } finally {
       setLoadingContracts(false);
@@ -57,9 +59,9 @@ export const SponsorAssets: React.FC = () => {
   const fetchAssets = async (contractId: string) => {
     setLoadingAssets(true);
     try {
-      const res = await api.get(`/sponsor-portal/contracts/${contractId}/assets`);
+      const res = await api.get<Asset[]>(`/sponsor-portal/contracts/${contractId}/assets`);
       setAssets(res.data);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar arquivos da marca.");
     } finally {
       setLoadingAssets(false);
@@ -87,8 +89,11 @@ export const SponsorAssets: React.FC = () => {
       toast.success("Arquivo enviado com sucesso para aprovação!");
       setAssetUrl("");
       fetchAssets(selectedContract.id);
-    } catch (err: any) {
-      toast.error(err.response?.data?.error || "Erro ao enviar arquivo.");
+    } catch (err) {
+      const message = isAxiosError<{ error?: string }>(err)
+        ? err.response?.data?.error
+        : undefined;
+      toast.error(message || "Erro ao enviar arquivo.");
     } finally {
       setUploading(false);
     }
@@ -223,3 +228,4 @@ export const SponsorAssets: React.FC = () => {
     </div>
   );
 };
+

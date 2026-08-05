@@ -8,12 +8,16 @@ interface InstallGuideModalProps {
     onClose: () => void;
 }
 
+type IOSWindow = Window & {
+    MSStream?: unknown;
+};
+
 export const InstallGuideModal: React.FC<InstallGuideModalProps> = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
 
     if (!isOpen) return null;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown).MSStream;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as IOSWindow).MSStream;
 
     return (
         <div className="install-guide-backdrop" onClick={onClose}>

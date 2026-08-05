@@ -1,15 +1,20 @@
+const trimTrailingSlash = (value: string) => value.replace(/\/$/, "");
+
+export const getApiBaseUrl = () => {
+    const baseURL = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
+
+    if (!baseURL) {
+        throw new Error("VITE_API_URL precisa estar configurado para conectar o frontend ao backend.");
+    }
+
+    return trimTrailingSlash(baseURL);
+};
+
 export const getFullUrl = (path: string | null | undefined) => {
     if (!path) return undefined;
     if (path.startsWith("http")) return path;
 
-    // Use the VITE_API_URL or default to production backend
-    let baseURL = (import.meta.env.VITE_API_URL as string | undefined) || "https://museus-backend-1.onrender.com";
+    const safePath = path.startsWith("/") ? path : `/${path}`;
 
-    // Remove trailing slash
-    baseURL = baseURL.replace(/\/$/, "");
-
-    // If path doesn't start with /, add it
-    const safePath = path.startsWith('/') ? path : `/${path}`;
-
-    return `${baseURL}${safePath}`;
+    return `${getApiBaseUrl()}${safePath}`;
 };

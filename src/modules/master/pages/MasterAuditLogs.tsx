@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
-import { FileText, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../../../components/ui";
 
 interface AuditLog {
@@ -11,7 +11,7 @@ interface AuditLog {
   entityId: string | null;
   ipAddress: string | null;
   userAgent: string | null;
-  metadata: any;
+  metadata: unknown;
   createdAt: string;
   tenant: { name: string } | null;
   user: { name: string; email: string } | null;
@@ -28,11 +28,7 @@ export const MasterAuditLogs: React.FC = () => {
   const [action, setAction] = useState("");
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
-  useEffect(() => {
-    fetchLogs();
-  }, [page, action]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/master/monitoring/audit-logs", {
@@ -44,12 +40,16 @@ export const MasterAuditLogs: React.FC = () => {
       });
       setLogs(res.data.data);
       setTotal(res.data.total);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar logs de auditoria.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [action, limit, page]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useAuth } from "../../../auth/AuthContext";
@@ -6,6 +6,7 @@ import { api } from "../../../../api/client";
 import { useTranslation } from "react-i18next";
 import { HandMetal, CheckCircle2, XCircle } from "lucide-react";
 import "./AdminShared.css";
+import { toast } from "react-hot-toast";
 
 interface AdminServiceOption {
     id: string;
@@ -25,6 +26,7 @@ export const AdminInPersonServices: React.FC = () => {
         if (tenantId) {
             loadServices();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tenantId]);
 
     const loadServices = async () => {
@@ -56,7 +58,7 @@ export const AdminInPersonServices: React.FC = () => {
             loadServices();
         } catch (error) {
             logger.error("Erro ao atualizar serviço:", error);
-            logger.warn("Alert:", "Erro ao atualizar status do serviço.");
+      toast.error("Erro ao atualizar status do serviço.");
             loadServices(); // Revert on error
         }
     };

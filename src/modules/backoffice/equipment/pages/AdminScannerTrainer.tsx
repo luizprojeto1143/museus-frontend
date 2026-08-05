@@ -1,39 +1,48 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+﻿import React, { useEffect, useRef, useState, useCallback } from "react";
 import { storage } from "@/utils/storage";
 
 import { logger } from "@/utils/logger";
 
-import * as mobilenet from "@tensorflow-models/mobilenet";
-import * as knnClassifier from "@tensorflow-models/knn-classifier";
-import * as tf from "@tensorflow/tfjs";
-import "@tensorflow/tfjs-backend-webgl";
-import "@tensorflow/tfjs-backend-cpu";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { XCircle } from "lucide-react";
+import { toast } from "react-hot-toast";
+
+type WorkOption = {
+    id: string;
+    title: string;
+};
+
+type WorksResponse = WorkOption[] | { data?: WorkOption[] };
+
+type TensorLike = {
+    dataSync: () => Float32Array | Int32Array | Uint8Array;
+};
+
+type ClassifierLike = {
+    addExample: (activation: TensorLike, classId: string) => void;
+    getClassifierDataset: () => Record<string, TensorLike>;
+    dispose: () => void;
+};
+
+type MobileNetLike = {
+    infer: (input: HTMLVideoElement, embedding?: boolean) => TensorLike;
+};
 
 export const AdminScannerTrainer: React.FC = () => {
     const { t } = useTranslation();
     const { tenantId, hasPermission } = useAuth(); // Assuming admin is scoped to tenant
+    const canManageChatAi = hasPermission("manage_chat_ai");
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [classifier, setClassifier] = useState<knnClassifier.KNNClassifier | null>(null);
-    const [net, setNet] = useState<mobilenet.MobileNet | null>(null);
+    const [classifier, setClassifier] = useState<ClassifierLike | null>(null);
+    const [net, setNet] = useState<MobileNetLike | null>(null);
     const [loading, setLoading] = useState(true);
-    const [works, setWorks] = useState<{ id: string; title: string }[]>([]);
+    const [works, setWorks] = useState<WorkOption[]>([]);
     const [selectedWorkId, setSelectedWorkId] = useState<string>("");
     const [exampleCounts, setExampleCounts] = useState<Record<string, number>>({});
     const [training, setTraining] = useState(false);
 
-    if (!hasPermission("manage_chat_ai")) {
-      return (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
-          <XCircle size={64} className="text-red-500 mb-6 opacity-20" />
-          <h2 className="text-2xl font-black text-white mb-2">Treinamento Visual Restrito</h2>
-          <p className="text-zinc-500 max-w-sm">Você não possui a flag <strong>manage_chat_ai</strong> necessária para treinar a inteligência visual do scanner.</p>
-        </div>
-      );
-    }
 
     const startCamera = useCallback(async () => {
         if (videoRef.current) {
@@ -51,10 +60,24 @@ export const AdminScannerTrainer: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        if (!canManageChatAi) {
+            setLoading(false);
+            return;
+        }
+
         let isMounted = true;
 
         const init = async () => {
             try {
+                const [tf, mobilenet, knnClassifier] = await Promise.all([
+                    import("@tensorflow/tfjs"),
+                    import("@tensorflow-models/mobilenet"),
+                    import("@tensorflow-models/knn-classifier"),
+                ]);
+                await Promise.all([
+                    import("@tensorflow/tfjs-backend-webgl"),
+                    import("@tensorflow/tfjs-backend-cpu"),
+                ]);
                 // Ensure TFJS backend is ready
                 await tf.ready();
 
@@ -63,7 +86,7 @@ export const AdminScannerTrainer: React.FC = () => {
 
                 if (isMounted) {
                     setNet(loadedNet);
-                    setClassifier(loadedClassifier);
+                    setClassifier(loadedClassifier as unknown as ClassifierLike);
                     // console.debug("Model loaded");
                 } else {
                     // Cleanup if unmounted before load finish
@@ -72,8 +95,7 @@ export const AdminScannerTrainer: React.FC = () => {
 
                 // Load works
                 if (tenantId && isMounted) {
-                    const res = await api.get("/works", { params: { tenantId } });
-                    // API returns { data: works[], pagination: {} }
+                    const res = await api.get<WorksResponse>("/works", { params: { tenantId } });
                     setWorks(Array.isArray(res.data) ? res.data : (res.data.data || []));
                 }
 
@@ -98,9 +120,18 @@ export const AdminScannerTrainer: React.FC = () => {
                 return null;
             });
         };
-    }, [tenantId]);
+    }, [canManageChatAi, startCamera, stopCamera, tenantId]);
 
 
+    if (!canManageChatAi) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+          <XCircle size={64} className="text-red-500 mb-6 opacity-20" />
+          <h2 className="text-2xl font-black text-white mb-2">Treinamento Visual Restrito</h2>
+          <p className="text-zinc-500 max-w-sm">Usuario sem a flag <strong>manage_chat_ai</strong> necessaria para treinar a inteligencia visual do scanner.</p>
+        </div>
+      );
+    }
 
     const addExample = async () => {
         if (!selectedWorkId || !net || !classifier || !videoRef.current) return;
@@ -119,9 +150,6 @@ export const AdminScannerTrainer: React.FC = () => {
     };
 
     const saveModel = async () => {
-        // Saving KNN classifier is tricky because it stores tensors.
-        // For a hackathon/demo, we can save the *dataset* (activations) or just keep in memory if checking on same device.
-        // A robust way: Convert dataset to arrayBuffer, save to DB/LocalStore.
         if (!classifier) return;
 
         const dataset = classifier.getClassifierDataset();
@@ -133,15 +161,25 @@ export const AdminScannerTrainer: React.FC = () => {
             datasetObj[key] = Array.from(data);
         });
 
-        // This can be HUGE. For MVP we might hit localStorage limits.
-        // Let's try saving to localStorage first, but handle error.
         try {
-            const jsonStr = JSON.stringify(datasetObj);
-            storage.set(`scanner_model_${tenantId}`, jsonStr);
-            logger.warn("Alert:", "Modelo salvo localmente! (Visitante no mesmo navegador poderá usar)");
-        } catch (e) {
-            logger.error(e);
-            logger.warn("Alert:", "Erro ao salvar: modelo muito grande para localStorage. Em produção usaríamos IndexedDB ou upload.");
+            await api.put(`/scanner/models/${tenantId}`, {
+                tenantId,
+                dataset: datasetObj,
+                exampleCounts,
+                updatedAt: new Date().toISOString(),
+            });
+            storage.remove(`scanner_model_${tenantId}`);
+            toast.success("Modelo sincronizado com o backend.");
+        } catch (remoteError) {
+            logger.error("Error syncing scanner model", remoteError);
+            try {
+                const jsonStr = JSON.stringify(datasetObj);
+                storage.set(`scanner_model_${tenantId}`, jsonStr);
+                toast("Backend indisponível. Modelo salvo localmente nesta máquina.");
+            } catch (localError) {
+                logger.error(localError);
+                toast.error("Erro ao salvar modelo. Configure o endpoint de scanner ou reduza o dataset.");
+            }
         }
     };
 

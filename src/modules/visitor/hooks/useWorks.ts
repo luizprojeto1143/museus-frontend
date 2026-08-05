@@ -13,9 +13,20 @@ export interface Work {
     accessible?: boolean;
 }
 
-interface WorksResponse {
-    data: unknown[];
+interface _WorksResponse {
+    data: WorkResponse[];
     pagination?: unknown;
+}
+
+interface WorkResponse {
+    id: string;
+    title?: string | null;
+    artist?: string | null;
+    year?: string | null;
+    category?: { name?: string | null } | string | null;
+    imageUrl?: string | null;
+    audioUrl?: string | null;
+    librasUrl?: string | null;
 }
 
 export function useWorks(params?: { limit?: number; page?: number; search?: string }) {
@@ -26,18 +37,18 @@ export function useWorks(params?: { limit?: number; page?: number; search?: stri
         queryFn: async (): Promise<Work[]> => {
             if (!tenantId) return [];
 
-            const { data } = await api.get("/works", {
+            const { data } = await api.get<WorkResponse[] | _WorksResponse>("/works", {
                 params: { ...params, tenantId, equipamentoId }
             });
 
             const rawData = Array.isArray(data) ? data : (data.data || []);
 
-            return rawData.map((w: unknown) => ({
+            return rawData.map((w) => ({
                 id: w.id,
-                title: w.title,
+                title: w.title || "Sem titulo",
                 artist: w.artist ?? "Artista desconhecido",
                 year: w.year ?? "",
-                category: w.category && typeof w.category === 'object' ? w.category.name : (w.category || "Obra"),
+                category: (w.category && typeof w.category === 'object' ? w.category.name : w.category) || "Obra",
                 accessible: !!w.audioUrl || !!w.librasUrl,
                 imageUrl: getFullUrl(w.imageUrl)
             }));

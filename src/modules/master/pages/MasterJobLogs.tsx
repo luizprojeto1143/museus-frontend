@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
-import { Terminal, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Terminal, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../../../components/ui";
 
 interface JobLog {
@@ -12,7 +12,7 @@ interface JobLog {
   finishedAt: string | null;
   durationMs: number | null;
   message: string | null;
-  metadata: any;
+  metadata: unknown;
 }
 
 export const MasterJobLogs: React.FC = () => {
@@ -27,11 +27,7 @@ export const MasterJobLogs: React.FC = () => {
   const [status, setStatus] = useState("");
   const [selectedLog, setSelectedLog] = useState<JobLog | null>(null);
 
-  useEffect(() => {
-    fetchLogs();
-  }, [page, jobName, status]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/master/monitoring/jobs", {
@@ -44,12 +40,16 @@ export const MasterJobLogs: React.FC = () => {
       });
       setLogs(res.data.data);
       setTotal(res.data.total);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar logs de jobs.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [jobName, limit, page, status]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

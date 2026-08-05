@@ -1,34 +1,6 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { 
-    Mail, 
-    CheckCircle, 
-    Archive, 
-    AlertCircle, 
-    RefreshCw, 
-    User, 
-    Clock, 
-    Tag, 
-    ArrowUpRight, 
-    Search, 
-    X, 
-    Send,
-    Inbox,
-    ShieldCheck,
-    Briefcase,
-    Zap,
-    Layers,
-    MessageSquare,
-    Signal,
-    Radio,
-    Terminal,
-    Fingerprint,
-    SearchCheck,
-    FileText,
-    Share2,
-    CheckCircle2,
-    ShieldAlert
-} from "lucide-react";
+import { Archive, RefreshCw, User, Clock, Send, ShieldCheck, Signal, Radio, Terminal, Fingerprint, SearchCheck, FileText, Share2, CheckCircle2, ShieldAlert } from "lucide-react";
 import { api } from "../../../api/client";
 import { 
     Button, 
@@ -40,28 +12,37 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
 
+type MessageStatus = "NEW" | "READ" | "ARCHIVED" | "REPLIED";
+type MessageFilter = "ALL" | "NEW" | "ARCHIVED";
+
 interface Message {
     id: string;
     name: string;
     email: string;
-    subject: string;
+    subject?: string | null;
     message: string;
-    status: "NEW" | "READ" | "ARCHIVED" | "REPLIED";
+    status: MessageStatus;
     createdAt: string;
 }
 
+interface FilterOption {
+    id: MessageFilter;
+    label: string;
+    count: number;
+}
+
 export const MasterMessages: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<"ALL" | "NEW" | "ARCHIVED">("NEW");
+    const [filter, setFilter] = useState<MessageFilter>("NEW");
 
     const fetchMessages = useCallback(async () => {
         try {
             setLoading(true);
-            const res = await api.get("/contact");
+            const res = await api.get<Message[]>("/contact");
             setMessages(res.data || []);
-        } catch (err: unknown) {
+        } catch {
             toast.error("Erro ao sincronizar terminal de mensagens.");
         } finally {
             setLoading(false);
@@ -72,13 +53,28 @@ export const MasterMessages: React.FC = () => {
         fetchMessages();
     }, [fetchMessages]);
 
-    const updateStatus = async (id: string, newStatus: string) => {
+    const updateStatus = async (id: string, newStatus: MessageStatus) => {
         try {
-            await api.patch(`/contact/${id}`, { status: newStatus });
-            setMessages(prev => prev.map(m => m.id === id ? { ...m, status: newStatus as unknown } : m));
+            await api.patch<Message>(`/contact/${id}`, { status: newStatus });
+            setMessages(prev => prev.map(m => m.id === id ? { ...m, status: newStatus } : m));
             toast.success(`Protocolo: Mensagem ${newStatus === 'ARCHIVED' ? 'arquivada' : 'processada'}.`);
-        } catch (err: unknown) {
+        } catch {
             toast.error("Falha no protocolo de atualização de status.");
+        }
+    };
+
+    const shareMessage = async (msg: Message) => {
+        const subject = msg.subject || "Mensagem sem assunto";
+        const text = `${subject}\n${msg.name} <${msg.email}>\n\n${msg.message}`;
+        try {
+            if (navigator.share) {
+                await navigator.share({ title: subject, text });
+                return;
+            }
+            await navigator.clipboard.writeText(text);
+            toast.success("Dados do lead copiados.");
+        } catch {
+            toast.error("Nao foi possivel compartilhar o lead.");
         }
     };
 
@@ -135,14 +131,14 @@ export const MasterMessages: React.FC = () => {
             {/* Inbound Operations Filters */}
             <div className="flex flex-col md:flex-row items-center justify-between gap-10 bg-[#0b1120]/60 p-5 rounded-[40px] border-2 border-white/5 shadow-2xl backdrop-blur-xl border-t-white/10">
                 <div className="flex flex-wrap items-center gap-4">
-                    {[
+                    {([
                         { id: 'NEW', label: 'Nodes Ativos', count: messages.filter(m => m.status === 'NEW' || m.status === 'READ').length },
                         { id: 'ARCHIVED', label: 'Logs Arquivados', count: messages.filter(m => m.status === 'ARCHIVED').length },
                         { id: 'ALL', label: 'Manifesto Global', count: messages.length }
-                    ].map(f => (
+                    ] satisfies FilterOption[]).map(f => (
                         <button
                             key={f.id}
-                            onClick={() => setFilter(f.id as unknown)}
+                            onClick={() => setFilter(f.id)}
                             className={`px-10 py-5 rounded-[22px] text-[10px] font-black uppercase tracking-[0.2em] italic transition-all duration-500 shadow-lg flex items-center gap-4 ${filter === f.id ? 'bg-blue-600 text-white shadow-blue-600/20' : 'bg-white/5 text-slate-500 hover:bg-white/10 hover:text-white border border-white/5'}`}
                         >
                             {f.label} <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black ${filter === f.id ? 'bg-white/20 text-white' : 'bg-white/5 text-slate-600'}`}>{f.count}</span>
@@ -199,7 +195,7 @@ export const MasterMessages: React.FC = () => {
                                                     UUID: {msg.id.toUpperCase()}
                                                 </Badge>
                                             </div>
-                                            <h3 className="text-3xl font-black text-white italic tracking-tighter leading-none group-hover/msg:text-blue-400 transition-colors uppercase">{msg.subject}</h3>
+                                            <h3 className="text-3xl font-black text-white italic tracking-tighter leading-none group-hover/msg:text-blue-400 transition-colors uppercase">{msg.subject || "Mensagem sem assunto"}</h3>
                                             
                                             <div className="flex flex-wrap items-center gap-10 pt-4">
                                                 <div className="flex items-center gap-4 group/info">
@@ -268,11 +264,11 @@ export const MasterMessages: React.FC = () => {
                                             </Badge>
                                         </div>
                                         <div className="flex gap-4 w-full md:w-auto">
-                                            <Button variant="glass" className="h-16 flex-1 md:flex-none px-10 rounded-2xl border-white/10 text-slate-500 font-black uppercase text-[10px] tracking-widest hover:text-white group/share">
+                                            <Button variant="glass" onClick={() => shareMessage(msg)} className="h-16 flex-1 md:flex-none px-10 rounded-2xl border-white/10 text-slate-500 font-black uppercase text-[10px] tracking-widest hover:text-white group/share">
                                                 <Share2 size={18} className="mr-3 group-hover/share:rotate-12 transition-transform" /> Propagar Lead
                                             </Button>
                                             <a
-                                                href={`mailto:${msg.email}?subject=Re: ${msg.subject}`}
+                                                href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || "Mensagem sem assunto")}`}
                                                 className="h-16 flex-[1.5] md:flex-none px-12 rounded-2xl bg-blue-600 text-white font-black uppercase text-[10px] tracking-[0.3em] shadow-2xl shadow-blue-600/30 hover:bg-blue-500 active:scale-95 transition-all flex items-center justify-center gap-4 group/reply"
                                             >
                                                 Iniciar Resposta Tática <Send size={20} className="group-reply:translate-x-1 group-reply:-translate-y-1 transition-transform" />

@@ -1,17 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { logger } from "@/utils/logger";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Navigation, Star, MapPin } from 'lucide-react';
+import { ArrowLeft, Navigation } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import './InteractiveMap.css';
 import { api } from '@/api/client';
 
+interface RouteStop {
+  targetId: string;
+  targetType: string;
+  name: string;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
+  distanceKm?: number | string | null;
+}
+
+interface IntelligentRouteResponse {
+  stops?: RouteStop[];
+}
+
+interface MapPin {
+  id: string;
+  type: string;
+  title: string;
+  lat: number;
+  lng: number;
+  color: string;
+  distance?: number | string | null;
+}
+
 // Custom Marker Icons
-const createCustomIcon = (color: string, iconUrl: string) => {
+const _createCustomIcon = (color: string, iconUrl: string) => {
   return L.divIcon({
     className: 'custom-leaflet-icon',
     html: `
@@ -30,9 +53,35 @@ const defaultCenter: [number, number] = [-19.916681, -43.934493]; // Default to 
 export const InteractiveMap: React.FC = () => {
   const navigate = useNavigate();
   const { tenantSlug } = useParams<{ tenantSlug: string }>();
-  const [selectedPin, setSelectedPin] = useState<unknown>(null);
-  const [pins, setPins] = useState<any[]>([]);
+  const [selectedPin, setSelectedPin] = useState<MapPin | null>(null);
+  const [pins, setPins] = useState<MapPin[]>([]);
   const [userLocation, setUserLocation] = useState<[number, number]>(defaultCenter);
+
+  const fetchPins = useCallback(async (lat: number, lng: number) => {
+    try {
+      if (!tenantSlug) return;
+      const res = await api.post<IntelligentRouteResponse>(`/roteiros/${tenantSlug}/intelligent`, {
+        userLatitude: lat,
+        userLongitude: lng,
+        timeAvailable: 1440 // tempo ilimitado para listar todos
+      });
+      
+      const realPins: MapPin[] = (res.data.stops || []).map((stop) => ({
+        id: stop.targetId,
+        type: stop.targetType,
+        title: stop.name,
+        lat: Number(stop.latitude),
+        lng: Number(stop.longitude),
+        color: stop.targetType === 'WORK' ? '#d4af37' : '#ff4b4b',
+        distance: stop.distanceKm
+      }));
+
+      // Filtra itens sem coordenada válida
+      setPins(realPins.filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng) && p.lat !== 0 && p.lng !== 0));
+    } catch (err: unknown) {
+      logger.error("Erro ao carregar mapa", err);
+    }
+  }, [tenantSlug]);
 
   // Busca dados reais de obras e serviços pela proximidade
   useEffect(() => {
@@ -47,32 +96,7 @@ export const InteractiveMap: React.FC = () => {
     } else {
       fetchPins(defaultCenter[0], defaultCenter[1]);
     }
-  }, [tenantSlug]);
-
-  const fetchPins = async (lat: number, lng: number) => {
-    try {
-      const res = await api.post(`/roteiros/${tenantSlug}/intelligent`, {
-        userLatitude: lat,
-        userLongitude: lng,
-        timeAvailable: 1440 // tempo ilimitado para listar todos
-      });
-      
-      const realPins = res.data.stops.map((stop: unknown) => ({
-        id: stop.targetId,
-        type: stop.targetType,
-        title: stop.name,
-        lat: stop.latitude,
-        lng: stop.longitude,
-        color: stop.targetType === 'WORK' ? '#d4af37' : '#ff4b4b',
-        distance: stop.distanceKm
-      }));
-
-      // Filtra itens sem coordenada válida
-      setPins(realPins.filter((p: unknown) => p.lat !== 0 && p.lng !== 0));
-    } catch (err: unknown) {
-      logger.error("Erro ao carregar mapa", err);
-    }
-  };
+  }, [fetchPins]);
 
   return (
     <div className="interactive-map-container">
@@ -149,3 +173,5 @@ export const InteractiveMap: React.FC = () => {
     </div>
   );
 };
+
+

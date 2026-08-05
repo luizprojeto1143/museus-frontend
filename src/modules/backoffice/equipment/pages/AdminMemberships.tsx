@@ -1,20 +1,44 @@
-﻿import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { Loader2, Crown, Users, TrendingUp, Plus, CreditCard } from "lucide-react";
+import { Loader2, Crown, Users, TrendingUp, Plus } from "lucide-react";
 import { Button } from "../../../../components/ui/Button";
 import { toast } from "react-hot-toast";
 import "./AdminShared.css";
 
+type MembershipPlan = {
+    id: string;
+    name: string;
+    monthlyPrice: number | string;
+    description?: string | null;
+    _count?: { memberships?: number };
+};
+
+type MembershipStats = {
+    active?: number;
+    mrr?: number;
+    plans?: MembershipPlan[];
+};
+
+type MembershipMember = {
+    id: string;
+    visitorName: string;
+    visitorEmail: string;
+    status: string;
+    startDate: string;
+    plan?: { name?: string | null } | null;
+};
+
+type MembershipListResponse = MembershipMember[] | { data?: MembershipMember[] };
 
 export const AdminMemberships: React.FC = () => {
   const { t } = useTranslation();
     const { tenantId } = useAuth();
-    const [stats, setStats] = useState<unknown>(null);
-    const [members, setMembers] = useState<any[]>([]);
+    const [stats, setStats] = useState<MembershipStats | null>(null);
+    const [members, setMembers] = useState<MembershipMember[]>([]);
     const [loading, setLoading] = useState(true);
     const [showPlanForm, setShowPlanForm] = useState(false);
     const [planForm, setPlanForm] = useState({ name: '', description: '', monthlyPrice: '', yearlyPrice: '', shopDiscount: '' });
@@ -22,11 +46,11 @@ export const AdminMemberships: React.FC = () => {
     const fetchData = useCallback(async () => {
         try {
             const [s, m] = await Promise.all([
-                api.get(`/memberships/stats?tenantId=${tenantId}`),
-                api.get(`/memberships?tenantId=${tenantId}`)
+                api.get<MembershipStats>(`/memberships/stats?tenantId=${tenantId}`),
+                api.get<MembershipListResponse>(`/memberships?tenantId=${tenantId}`)
             ]);
             setStats(s.data);
-            setMembers(m.data);
+            setMembers(Array.isArray(m.data) ? m.data : m.data.data || []);
         } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
         finally { setLoading(false); }
     }, [tenantId]);
@@ -41,7 +65,7 @@ export const AdminMemberships: React.FC = () => {
             setShowPlanForm(false);
             setPlanForm({ name: '', description: '', monthlyPrice: '', yearlyPrice: '', shopDiscount: '' });
             fetchData();
-        } catch (err) { toast.error("Erro ao criar plano"); }
+        } catch (_err) { toast.error("Erro ao criar plano"); }
     };
 
     if (loading) return <div style={{ display: "flex", justifyContent: "center", padding: "5rem 0" }}><Loader2 className="animate-spin" style={{ color: "var(--accent-primary)" }} /></div>;
@@ -80,7 +104,7 @@ export const AdminMemberships: React.FC = () => {
             {/* Plans */}
             {stats?.plans && stats.plans.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {stats.plans.map((p: unknown) => (
+                    {stats.plans.map((p) => (
                         <div key={p.id} className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-[var(--shadow-surface)] rounded-[var(--radius-lg)] p-6 transition-colors">
                             <Crown className="text-amber-500 mb-3" size={28} />
                             <h3 className="text-white font-bold text-lg">{p.name}</h3>
@@ -117,7 +141,7 @@ export const AdminMemberships: React.FC = () => {
                         <tr><th className="px-6 py-3">Membro</th><th className="px-6 py-3">Plano</th><th className="px-6 py-3">Status</th><th className="px-6 py-3">Desde</th></tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {members.map((m: unknown) => (
+                        {members.map((m) => (
                             <tr key={m.id} className="hover:bg-zinc-900/40 border border-gold/20/5">
                                 <td className="px-6 py-3"><p style={{ color: "white", fontWeight: 700, fontSize: "0.9rem" }}>{m.visitorName}</p><p style={{ color: "#64748b", fontSize: "0.75rem" }}>{m.visitorEmail}</p></td>
                                 <td className="px-6 py-3 text-gray-300 text-sm">{m.plan?.name || '—'}</td>

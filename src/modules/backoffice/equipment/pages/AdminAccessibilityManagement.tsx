@@ -1,10 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
+import { toast } from "react-hot-toast";
 
 import React, { useEffect, useState } from "react";
 import { api } from "../../../../api/client";
 import { useAuth } from "../../../auth/AuthContext";
-import { DollarSign, ShieldCheck, CheckCircle, CreditCard, ExternalLink } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import "./AdminShared.css";
 
 
@@ -22,6 +23,18 @@ type DashboardData = {
     byStatus: { status: string; _count: number }[];
     byService: { serviceType: string; _count: number }[];
     recentExecutions: Execution[];
+};
+
+type AccessibilityWorkRequest = {
+    id: string;
+    type: string;
+    status: string;
+    createdAt: string;
+    work?: { id: string; title: string } | null;
+};
+
+type CheckoutResponse = {
+    checkoutUrl: string;
 };
 
 const serviceLabels: Record<string, string> = {
@@ -43,10 +56,10 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 };
 
 export const AdminAccessibilityManagement: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { tenantId } = useAuth();
     const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-    const [workRequests, setWorkRequests] = useState<any[]>([]);
+    const [workRequests, setWorkRequests] = useState<AccessibilityWorkRequest[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"EXECUTIONS" | "REQUESTS">("EXECUTIONS");
 
@@ -56,11 +69,11 @@ export const AdminAccessibilityManagement: React.FC = () => {
         const fetchData = async () => {
             try {
                 const [dashRes, reqRes] = await Promise.all([
-                    api.get("/accessibility-execution/dashboard", { params: { tenantId } }),
-                    api.get("/accessibility")
+                    api.get<DashboardData>("/accessibility-execution/dashboard", { params: { tenantId } }),
+                    api.get<AccessibilityWorkRequest[] | { data?: AccessibilityWorkRequest[] }>("/accessibility")
                 ]);
                 setDashboard(dashRes.data);
-                setWorkRequests(reqRes.data);
+                setWorkRequests(Array.isArray(reqRes.data) ? reqRes.data : reqRes.data.data || []);
             } catch (err) {
                 logger.error("Erro ao carregar dados", err);
             } finally {
@@ -178,11 +191,11 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                                         <button
                                                             onClick={async () => {
                                                                 try {
-                                                                    const res = await api.post(`/accessibility-execution/${exec.id}/pay`);
+                                                                    const res = await api.post<CheckoutResponse>(`/accessibility-execution/${exec.id}/pay`);
                                                                     window.location.href = res.data.checkoutUrl;
-                                                                } catch (err: unknown) {
+                                                                } catch (err) {
                                                                     logger.error("Erro ao pagar", err);
-                                                                    logger.warn("Alert:", err.response?.data?.message || "Erro ao processar pagamento.");
+                                                                    toast.error("Erro ao processar pagamento.");
                                                                 }
                                                             }}
                                                             className="text-[10px] uppercase font-bold bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded transition-colors flex items-center gap-2"
@@ -224,7 +237,7 @@ export const AdminAccessibilityManagement: React.FC = () => {
                                 <tr>
                                     <td colSpan={4} className="text-center py-8 text-zinc-400">Nenhuma solicitação encontrada.</td>
                                 </tr>
-                            ) : workRequests.map((req: unknown) => (
+                            ) : workRequests.map((req) => (
                                 <tr key={req.id}>
                                     <td className="font-bold text-white">{req.work?.title || "Obra removida"}</td>
                                     <td>{req.type}</td>

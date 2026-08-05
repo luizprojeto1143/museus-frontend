@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import { 
-    Gem, Users, TrendingUp, CreditCard, 
-    Gift, Star, ArrowUpRight, Plus, 
-    Search, Filter, CheckCircle2, ShieldCheck,
-    Sparkles, Flame
-} from "lucide-react";
-import { motion } from "framer-motion";
-import { Button, Input } from "../../../components/ui";
+import { Gem, Users, TrendingUp, Gift, ArrowUpRight, Plus, Search, CheckCircle2, Sparkles } from "lucide-react";import { Button, Input } from "../../../components/ui";
 
 export const TheaterSubscriptions: React.FC = () => {
-    const [searchTerm, setSearchTerm] = useState("");
+    const [_searchTerm, _setSearchTerm] = useState("");
 
     const plans = [
         { id: 1, name: "Amigo do Palco", price: 29.90, color: "text-blue-400", bg: "bg-blue-500/10", members: 124 },

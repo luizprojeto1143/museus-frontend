@@ -1,9 +1,7 @@
 import { logger } from "@/utils/logger";
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Volume2, Headphones, Sparkles, Loader2, Info } from 'lucide-react';
-import { Button } from "../../../components/ui";
-import { api } from "../../../api/client";
+import React, { useState } from 'react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, Headphones, Sparkles } from 'lucide-react';import { api } from "../../../api/client";
 import { useToast } from "../../../contexts/ToastContext";
 import { useAudio } from "../context/AudioContext";
 import './NarrativeAudioGuide.css';
@@ -29,7 +27,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
         progress
     } = useAudio();
 
-    const [generating, setGenerating] = useState(false);
+    const [_generating, setGenerating] = useState(false);
     const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null);
 
     // Determine the effective audio URL (uploaded or generated)
@@ -54,7 +52,7 @@ export const NarrativeAudioGuide: React.FC<NarrativeAudioGuideProps> = ({ audioU
         }
     };
 
-    const handleGenerateAudio = async () => {
+    const _handleGenerateAudio = async () => {
         if (!title && !artist) return;
         setGenerating(true);
         try {

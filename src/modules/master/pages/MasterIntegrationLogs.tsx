@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../api/client";
 import { toast } from "react-hot-toast";
-import { Database, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Database, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../../../components/ui";
 
 interface IntegrationLog {
@@ -11,7 +11,7 @@ interface IntegrationLog {
   status: string;
   requestId: string | null;
   message: string | null;
-  metadata: any;
+  metadata: unknown;
   createdAt: string;
 }
 
@@ -27,11 +27,7 @@ export const MasterIntegrationLogs: React.FC = () => {
   const [status, setStatus] = useState("");
   const [selectedLog, setSelectedLog] = useState<IntegrationLog | null>(null);
 
-  useEffect(() => {
-    fetchLogs();
-  }, [page, provider, status]);
-
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get("/master/monitoring/integrations", {
@@ -44,12 +40,16 @@ export const MasterIntegrationLogs: React.FC = () => {
       });
       setLogs(res.data.data);
       setTotal(res.data.total);
-    } catch (err) {
+    } catch (_err) {
       toast.error("Erro ao carregar logs de integração.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [limit, page, provider, status]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">

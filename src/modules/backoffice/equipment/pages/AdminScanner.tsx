@@ -1,25 +1,10 @@
-import { useTranslation } from "react-i18next";
+﻿import { useTranslation } from "react-i18next";
 import { logger } from "@/utils/logger";
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { api } from '../../../../api/client';
-import { 
-  ShieldCheck, 
-  XCircle, 
-  AlertTriangle, 
-  QrCode, 
-  Ticket, 
-  User, 
-  RefreshCw, 
-  Smartphone,
-  Camera,
-  Maximize2,
-  Scan,
-  Keyboard,
-  History,
-  CheckCircle2
-} from 'lucide-react';
+import { ShieldCheck, XCircle, QrCode, Ticket, User, RefreshCw, Smartphone, Camera, Maximize2, Scan, Keyboard, History, CheckCircle2 } from 'lucide-react';
 import { Button } from '../../../../components/ui';
 import { useAuth } from '../../../auth/AuthContext';
 
@@ -33,30 +18,36 @@ type ScanResult = {
     };
 };
 
+type CameraDevice = {
+    id: string;
+    label: string;
+};
+
+type ApiError = {
+    response?: { data?: { message?: string } };
+};
+
+type RecentCheckIn = {
+    id: string;
+    name: string;
+    time: string;
+};
+
 export const AdminScanner: React.FC = () => {
-    const { t } = useTranslation();
+    const { t: _t } = useTranslation();
     const { hasPermission } = useAuth();
+    const canManageScanner = hasPermission("manage_scanner");
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
     const [isScanning, setIsScanning] = useState(true);
     const [loading, setLoading] = useState(false);
     const [manualCode, setManualCode] = useState("");
     const [activeTab, setActiveTab] = useState<'camera' | 'manual'>('camera');
-    const [cameras, setCameras] = useState<any[]>([]);
+    const [cameras, setCameras] = useState<CameraDevice[]>([]);
     const [selectedCamera, setSelectedCamera] = useState<string>("");
+    const [recentCheckIns, setRecentCheckIns] = useState<RecentCheckIn[]>([]);
+    const [sessionCheckIns, setSessionCheckIns] = useState(0);
     
     const html5QrCode = useRef<Html5Qrcode | null>(null);
-
-    if (!hasPermission("manage_scanner")) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
-                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
-                    <XCircle size={40} className="text-red-500 opacity-60" />
-                </div>
-                <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Acesso Restrito</h2>
-                <p className="text-zinc-500 max-w-sm">Você não possui a flag de permissão <strong className="text-red-400">manage_scanner</strong> necessária para operar o validador.</p>
-            </div>
-        );
-    }
 
     const startScanner = async (cameraId: string) => {
         if (!html5QrCode.current) return;
@@ -89,6 +80,8 @@ export const AdminScanner: React.FC = () => {
     };
 
     useEffect(() => {
+        if (!canManageScanner) return;
+
         const init = async () => {
             try {
                 const devices = await Html5Qrcode.getCameras();
@@ -108,15 +101,30 @@ export const AdminScanner: React.FC = () => {
         return () => {
             stopScanner();
         };
-    }, []);
+    }, [canManageScanner]);
 
     useEffect(() => {
+        if (!canManageScanner) return;
+
         if (activeTab === 'camera' && isScanning && selectedCamera && html5QrCode.current) {
             startScanner(selectedCamera);
         } else {
             stopScanner();
         }
-    }, [activeTab, isScanning, selectedCamera]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, canManageScanner, isScanning, selectedCamera]);
+
+    if (!canManageScanner) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
+                    <XCircle size={40} className="text-red-500 opacity-60" />
+                </div>
+                <h2 className="text-2xl font-black text-white mb-2 tracking-tight">Acesso Restrito</h2>
+                <p className="text-zinc-500 max-w-sm">Usuario sem a flag <strong className="text-red-400">manage_scanner</strong> necessaria para operar o validador.</p>
+            </div>
+        );
+    }
 
     const handleValidation = async (code: string) => {
         if (loading) return;
@@ -126,17 +134,26 @@ export const AdminScanner: React.FC = () => {
         await stopScanner();
 
         try {
-            const res = await api.post(`/registrations/${code}/check-in`);
+            const res = await api.post<ScanResult>(`/registrations/${code}/check-in`);
             setScanResult(res.data);
+            if (res.data.valid) {
+                setSessionCheckIns(prev => prev + 1);
+                setRecentCheckIns(prev => [{
+                    id: `${code}-${Date.now()}`,
+                    name: res.data.details?.guestName || code,
+                    time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+                }, ...prev].slice(0, 3));
+            }
             
             // Success Haptic Feedback
             if ('vibrate' in navigator) {
                 navigator.vibrate(100);
             }
-        } catch (error: unknown) {
+        } catch (error) {
+            const apiError = error as ApiError;
             setScanResult({
                 valid: false,
-                message: error.response?.data?.message || "Erro de conexão ao validar ingresso."
+                message: apiError.response?.data?.message || "Erro de conexão ao validar ingresso."
             });
             
             // Error Haptic Feedback
@@ -194,21 +211,23 @@ export const AdminScanner: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                {/* Left side: History/Stats (Optional decoration) */}
+                {/* Left side: session history */}
                 <div className="hidden lg:block lg:col-span-3 space-y-4">
                     <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-6">
                         <h3 className="text-white font-black text-xs uppercase tracking-widest mb-6 flex items-center gap-2">
                             <History size={14} className="text-gold" /> Recentes
                         </h3>
                         <div className="space-y-4">
-                            {[1,2,3].map(i => (
-                                <div key={i} className="flex items-center gap-3 opacity-40">
+                            {recentCheckIns.length === 0 ? (
+                                <p className="text-[10px] text-zinc-500 uppercase tracking-widest">Nenhum check-in nesta sessão.</p>
+                            ) : recentCheckIns.map(item => (
+                                <div key={item.id} className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
                                         <CheckCircle2 size={14} className="text-emerald-500" />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-[10px] font-bold text-white truncate">Pedro Alvares...</p>
-                                        <p className="text-[8px] text-zinc-500 uppercase tracking-tighter">Há {i*5} min</p>
+                                        <p className="text-[10px] font-bold text-white truncate">{item.name}</p>
+                                        <p className="text-[8px] text-zinc-500 uppercase tracking-tighter">{item.time}</p>
                                     </div>
                                 </div>
                             ))}
@@ -216,8 +235,8 @@ export const AdminScanner: React.FC = () => {
                     </div>
 
                     <div className="bg-gold-500/5 backdrop-blur-xl border border-gold-500/10 rounded-3xl p-6">
-                        <p className="text-[10px] font-black text-gold-400 uppercase tracking-widest mb-1">Check-ins Hoje</p>
-                        <p className="text-3xl font-black text-white">124</p>
+                        <p className="text-[10px] font-black text-gold-400 uppercase tracking-widest mb-1">Check-ins da Sessão</p>
+                        <p className="text-3xl font-black text-white">{sessionCheckIns}</p>
                     </div>
                 </div>
 
