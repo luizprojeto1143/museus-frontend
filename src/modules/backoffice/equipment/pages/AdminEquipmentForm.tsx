@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -102,7 +102,7 @@ export const AdminEquipmentForm: React.FC = () => {
     const loadEquipment = async () => {
         try {
             setLoading(true);
-            const res = await api.get<EquipmentResponse>(`/equipamentos/public/${id}`);
+            const res = await api.get<EquipmentResponse>(`/equipamentos/${id}`);
             const data = res.data;
 
             setNome(data.nome);
