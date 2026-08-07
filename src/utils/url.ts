@@ -1,10 +1,11 @@
 const trimTrailingSlash = (value: string) => value.replace(/\/$/, "");
 
 export const getApiBaseUrl = () => {
-    const baseURL = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
+    let baseURL = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
 
-    if (!baseURL) {
-        throw new Error("VITE_API_URL precisa estar configurado para conectar o frontend ao backend.");
+    // In production or if missing/pointing to legacy URL, use the active backend URL
+    if (!baseURL || baseURL === "https://museus-backend.onrender.com" || baseURL === "https://museus-backend.onrender.com/") {
+        baseURL = "https://museus-backend-1.onrender.com";
     }
 
     return trimTrailingSlash(baseURL);
