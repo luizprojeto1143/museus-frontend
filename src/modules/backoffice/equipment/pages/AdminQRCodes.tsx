@@ -194,6 +194,8 @@ export const AdminQRCodes: React.FC = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const handleDownloadPNG = () => {
     if (!generated) return;
     const canvas = (qrCanvasRef.current?.querySelector("canvas") || document.querySelector("canvas")) as HTMLCanvasElement | null;
     if (!canvas) return;
