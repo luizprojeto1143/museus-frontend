@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
 import { isAxiosError } from "axios";
 import { z } from "zod";
+import { useAuth } from "./AuthContext";
+import toast from "react-hot-toast";
 
 interface RegisterProps {
   tenantId?: string;
@@ -51,6 +53,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+  const { login } = useAuth();
   const redirectParam = new URLSearchParams(location.search).get("redirect");
   const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//")
     ? redirectParam
@@ -143,8 +146,17 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
         isTeacher: validation.data.isTeacher
       });
 
-      // Return to login preserving the QR destination, when present.
-      navigate(safeRedirect ? `/login?redirect=${encodeURIComponent(safeRedirect)}` : "/login");
+      toast.success("Conta criada com sucesso! Entrando...");
+
+      try {
+        await login({ email: validation.data.email, password: validation.data.password });
+        navigate(safeRedirect || "/hub", { replace: true });
+        return;
+      } catch {
+        navigate(safeRedirect ? `/login?redirect=${encodeURIComponent(safeRedirect)}` : "/login");
+      }
+    } catch (err: unknown) {
+      logger.error("Error registering visitor", err);
       setError(getApiErrorMessage(err, t("auth.errors.registerFailed", "Falha ao registrar.")));
     } finally {
       setIsSubmitting(false);

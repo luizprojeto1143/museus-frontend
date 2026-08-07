@@ -247,6 +247,18 @@ export const SelectMuseum: React.FC = () => {
           <span className="text-[var(--fg-main)]">{t("visitor.selectMuseum.hubTitle")}</span>
         </div>
         <div className="pulse-top-actions flex items-center gap-4">
+          <Button
+            variant="glass"
+            size="sm"
+            onClick={() => {
+              enterAsGuest();
+              navigate("/hub");
+            }}
+            rightIcon={<ArrowRight size={16} />}
+            className="rounded-full px-5 text-xs font-bold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black transition-all"
+          >
+            Ir para o Hub
+          </Button>
           {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
           <LanguageSwitcher absolute={false} />
           <ThemeToggle />
